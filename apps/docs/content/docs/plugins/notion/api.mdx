@@ -31,9 +31,6 @@ await corsair.notion.api.blocks.appendBlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `block_id` | `string` | Yes | — |
 | `children` | `object[]` | Yes | — |
 
@@ -82,9 +79,6 @@ await corsair.notion.api.blocks.appendBlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -160,9 +154,6 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `block_id` | `string` | Yes | — |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
@@ -174,9 +165,6 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -254,9 +242,6 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database_id` | `string` | Yes | — |
 | `properties` | `object` | Yes | — |
 
@@ -277,9 +262,6 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `created_time` | `string` | Yes | — |
@@ -394,9 +376,6 @@ await corsair.notion.api.databasePages.getDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 
 
@@ -406,9 +385,6 @@ await corsair.notion.api.databasePages.getDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `created_time` | `string` | Yes | — |
@@ -523,9 +499,6 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database_id` | `string` | Yes | — |
 | `filter` | `any` | No | — |
 | `sorts` | `any[]` | No | — |
@@ -539,9 +512,6 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -637,9 +607,6 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `archived` | `boolean` | No | — |
@@ -661,9 +628,6 @@ await corsair.notion.api.databasePages.updateDatabasePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `created_time` | `string` | Yes | — |
@@ -780,9 +744,6 @@ await corsair.notion.api.databases.getDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database_id` | `string` | Yes | — |
 
 
@@ -792,9 +753,6 @@ await corsair.notion.api.databases.getDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `database` | Yes | — |
 | `id` | `string` | Yes | — |
 | `cover` | `object` | No | — |
@@ -958,9 +916,6 @@ await corsair.notion.api.databases.getManyDatabases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -971,9 +926,6 @@ await corsair.notion.api.databases.getManyDatabases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -1104,9 +1056,6 @@ await corsair.notion.api.databases.searchDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `sort` | `any` | No | — |
 | `filter` | `any` | No | — |
@@ -1120,9 +1069,6 @@ await corsair.notion.api.databases.searchDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -1255,9 +1201,6 @@ await corsair.notion.api.pages.archivePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 
 
@@ -1267,9 +1210,6 @@ await corsair.notion.api.pages.archivePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `created_time` | `string` | Yes | — |
@@ -1384,9 +1324,6 @@ await corsair.notion.api.pages.createPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `parent` | `object` | Yes | — |
 | `properties` | `object` | No | — |
 | `children` | `object[]` | No | — |
@@ -1460,9 +1397,6 @@ await corsair.notion.api.pages.createPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `page` | Yes | — |
 | `id` | `string` | Yes | — |
 | `created_time` | `string` | Yes | — |
@@ -1577,9 +1511,6 @@ await corsair.notion.api.pages.searchPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `sort` | `any` | No | — |
 | `filter` | `any` | No | — |
@@ -1593,9 +1524,6 @@ await corsair.notion.api.pages.searchPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -1779,9 +1707,6 @@ await corsair.notion.api.users.getManyUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1792,9 +1717,6 @@ await corsair.notion.api.users.getManyUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `list` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `next_cursor` | `string` | No | — |
@@ -1847,9 +1769,6 @@ await corsair.notion.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -1859,9 +1778,6 @@ await corsair.notion.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `user` | Yes | — |
 | `id` | `string` | Yes | — |
 | `type` | `person \| bot` | Yes | — |

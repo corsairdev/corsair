@@ -31,9 +31,6 @@ await corsair.replyio.api.contactLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -45,9 +42,6 @@ await corsair.replyio.api.contactLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -87,9 +81,6 @@ await corsair.replyio.api.contacts.clearStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactIds` | `number[]` | Yes | — |
 | `statuses` | `optedOut \| replied \| bounced[]` | No | — |
 
@@ -127,9 +118,6 @@ await corsair.replyio.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -169,9 +157,6 @@ await corsair.replyio.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | No | — |
 | `domain` | `string` | No | — |
@@ -234,9 +219,6 @@ await corsair.replyio.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -246,9 +228,6 @@ await corsair.replyio.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -272,9 +251,6 @@ await corsair.replyio.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -284,9 +260,6 @@ await corsair.replyio.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | No | — |
 | `domain` | `string` | No | — |
@@ -349,9 +322,6 @@ await corsair.replyio.api.contacts.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -361,9 +331,6 @@ await corsair.replyio.api.contacts.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `number` | Yes | — |
 | `isOptedOut` | `boolean` | Yes | — |
 | `callStatus` | `none \| toCall \| called` | Yes | — |
@@ -408,9 +375,6 @@ await corsair.replyio.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 | `email` | `string` | No | — |
@@ -423,9 +387,6 @@ await corsair.replyio.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -491,9 +452,6 @@ await corsair.replyio.api.contacts.searchByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
@@ -505,9 +463,6 @@ await corsair.replyio.api.contacts.searchByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -573,9 +528,6 @@ await corsair.replyio.api.contacts.setStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `contactIds` | `number[]` | Yes | — |
 | `statusInSequence` | `active \| paused \| finished \| outOfOffice` | Yes | — |
@@ -614,9 +566,6 @@ await corsair.replyio.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | No | — |
 | `firstName` | `string` | No | — |
@@ -662,9 +611,6 @@ await corsair.replyio.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | No | — |
 | `domain` | `string` | No | — |
@@ -732,9 +678,6 @@ await corsair.replyio.api.emailAccounts.connectGmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `provider` | `gmail` | Yes | — |
 
@@ -762,9 +705,6 @@ await corsair.replyio.api.emailAccounts.connectOffice365({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `provider` | `office-365` | Yes | — |
 
@@ -789,9 +729,6 @@ await corsair.replyio.api.emailAccounts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -801,9 +738,6 @@ await corsair.replyio.api.emailAccounts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -827,9 +761,6 @@ await corsair.replyio.api.emailAccounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 | `my` | `boolean` | No | — |
@@ -841,9 +772,6 @@ await corsair.replyio.api.emailAccounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -887,9 +815,6 @@ await corsair.replyio.api.emailAccounts.listDisconnected({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 
@@ -900,9 +825,6 @@ await corsair.replyio.api.emailAccounts.listDisconnected({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -946,9 +868,6 @@ await corsair.replyio.api.emailAccounts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `connection` | `object` | No | — |
 | `safety` | `object` | No | — |
@@ -1031,9 +950,6 @@ await corsair.replyio.api.emailAccounts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ownerUserId` | `number` | No | — |
 | `email` | `string` | Yes | — |
@@ -1072,9 +988,6 @@ await corsair.replyio.api.schedules.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1084,9 +997,6 @@ await corsair.replyio.api.schedules.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1112,9 +1022,6 @@ await corsair.replyio.api.sequenceContacts.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `contactIds` | `number[]` | Yes | — |
 | `removeFromExisting` | `boolean` | No | — |
@@ -1129,9 +1036,6 @@ await corsair.replyio.api.sequenceContacts.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `added` | `number[]` | Yes | — |
 | `notProcessed` | `object` | Yes | — |
 
@@ -1166,9 +1070,6 @@ await corsair.replyio.api.sequenceContacts.bulkRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `contactIds` | `number[]` | Yes | — |
 
@@ -1179,9 +1080,6 @@ await corsair.replyio.api.sequenceContacts.bulkRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requested` | `number` | Yes | — |
 | `removed` | `number` | Yes | — |
 | `notFound` | `number` | Yes | — |
@@ -1209,9 +1107,6 @@ await corsair.replyio.api.sequenceContacts.listExtended({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
@@ -1224,9 +1119,6 @@ await corsair.replyio.api.sequenceContacts.listExtended({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -1281,9 +1173,6 @@ await corsair.replyio.api.sequenceContacts.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `contactId` | `number` | Yes | — |
 
@@ -1294,9 +1183,6 @@ await corsair.replyio.api.sequenceContacts.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1320,9 +1206,6 @@ await corsair.replyio.api.sequenceContacts.setStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `contactIds` | `number[]` | Yes | — |
 | `statusInSequence` | `active \| paused \| finished \| outOfOffice` | Yes | — |
@@ -1363,9 +1246,6 @@ await corsair.replyio.api.sequences.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -1375,9 +1255,6 @@ await corsair.replyio.api.sequences.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ownerUserId` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -1454,9 +1331,6 @@ await corsair.replyio.api.sequences.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -1466,9 +1340,6 @@ await corsair.replyio.api.sequences.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1492,9 +1363,6 @@ await corsair.replyio.api.sequences.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -1504,9 +1372,6 @@ await corsair.replyio.api.sequences.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ownerUserId` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -1583,9 +1448,6 @@ await corsair.replyio.api.sequences.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 | `status` | `active \| paused \| new` | No | — |
@@ -1604,9 +1466,6 @@ await corsair.replyio.api.sequences.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -1648,9 +1507,6 @@ await corsair.replyio.api.sequences.pause({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -1660,9 +1516,6 @@ await corsair.replyio.api.sequences.pause({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ownerUserId` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -1739,9 +1592,6 @@ await corsair.replyio.api.sequences.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -1751,9 +1601,6 @@ await corsair.replyio.api.sequences.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ownerUserId` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -1832,9 +1679,6 @@ await corsair.replyio.api.steps.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `step` | `object` | Yes | — |
 
@@ -1900,9 +1744,6 @@ await corsair.replyio.api.steps.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `type` | `email \| linkedIn \| call \| sms \| whatsApp \| zapier \| task \| condition` | Yes | — |
 | `parentId` | `number` | No | — |
@@ -1930,9 +1771,6 @@ await corsair.replyio.api.steps.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 | `stepId` | `number` | Yes | — |
 
@@ -1943,9 +1781,6 @@ await corsair.replyio.api.steps.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `type` | `email \| linkedIn \| call \| sms \| whatsApp \| zapier \| task \| condition` | Yes | — |
 | `parentId` | `number` | No | — |
@@ -1973,9 +1808,6 @@ await corsair.replyio.api.steps.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sequenceId` | `number` | Yes | — |
 
 
@@ -2022,9 +1854,6 @@ await corsair.replyio.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `number` | Yes | — |
 | `username` | `string` | Yes | — |
 | `teamId` | `number` | Yes | — |

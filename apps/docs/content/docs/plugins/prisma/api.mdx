@@ -31,9 +31,6 @@ await corsair.prisma.api.backups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | Yes | — |
@@ -130,9 +127,6 @@ await corsair.prisma.api.backups.restore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -212,9 +206,6 @@ await corsair.prisma.api.connections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -335,9 +326,6 @@ await corsair.prisma.api.connections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -406,9 +394,6 @@ await corsair.prisma.api.connections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -517,9 +502,6 @@ await corsair.prisma.api.databases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 | `databaseId` | `string` | No | — |
@@ -701,9 +683,6 @@ await corsair.prisma.api.databases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | Yes | — |
@@ -772,9 +751,6 @@ await corsair.prisma.api.databases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | Yes | — |
@@ -945,9 +921,6 @@ await corsair.prisma.api.databases.getUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | Yes | — |
@@ -1180,9 +1153,6 @@ await corsair.prisma.api.databases.inspectSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -1229,9 +1199,6 @@ await corsair.prisma.api.databases.inspectSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tables` | `object[]` | Yes | — |
 
 
@@ -1278,9 +1245,6 @@ await corsair.prisma.api.databases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 | `databaseId` | `string` | No | — |
@@ -1449,9 +1413,6 @@ await corsair.prisma.api.integrations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -1550,9 +1511,6 @@ await corsair.prisma.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -1780,9 +1738,6 @@ await corsair.prisma.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 | `databaseId` | `string` | No | — |
@@ -1851,9 +1806,6 @@ await corsair.prisma.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 | `databaseId` | `string` | No | — |
@@ -2069,9 +2021,6 @@ await corsair.prisma.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2283,9 +2232,6 @@ await corsair.prisma.api.projects.transfer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 | `databaseId` | `string` | No | — |
@@ -2512,9 +2458,6 @@ await corsair.prisma.api.regions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2626,9 +2569,6 @@ await corsair.prisma.api.regions.listAccelerate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2740,9 +2680,6 @@ await corsair.prisma.api.regions.listPostgres({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2856,9 +2793,6 @@ await corsair.prisma.api.sql.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2907,9 +2841,6 @@ await corsair.prisma.api.sql.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `object[]` | Yes | — |
 | `rowCount` | `number` | No | — |
 | `command` | `string` | Yes | — |
@@ -2945,9 +2876,6 @@ await corsair.prisma.api.sql.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |
@@ -2996,9 +2924,6 @@ await corsair.prisma.api.sql.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `object[]` | Yes | — |
 | `rowCount` | `number` | No | — |
 | `command` | `string` | Yes | — |
@@ -3036,9 +2961,6 @@ await corsair.prisma.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `projectId` | `string` | No | — |
 | `databaseId` | `string` | No | — |

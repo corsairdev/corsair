@@ -56,9 +56,6 @@ A new chart annotation was created
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `annotation.created` | Yes | — |
 | `annotation_id` | `number` | Yes | — |
 | `date` | `string` | Yes | — |
@@ -119,9 +116,6 @@ A chart annotation was updated
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `annotation.updated` | Yes | — |
 | `annotation_id` | `number` | Yes | — |
 | `date` | `string` | Yes | — |
@@ -184,9 +178,6 @@ A cohort finished computing
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `cohort.computed` | Yes | — |
 | `cohort_id` | `string` | Yes | — |
 | `cohort_name` | `string` | Yes | — |
@@ -247,9 +238,6 @@ A user identify call was received by Amplitude
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `event.identify` | Yes | — |
 | `user_id` | `string` | No | — |
 | `device_id` | `string` | No | — |
@@ -321,9 +309,6 @@ An event was tracked by Amplitude
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `event.track` | Yes | — |
 | `event_id` | `string` | Yes | — |
 | `event_type` | `string` | Yes | — |
@@ -414,9 +399,6 @@ An experiment exposure was tracked for a user
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `experiment.exposure` | Yes | — |
 | `flag_key` | `string` | Yes | — |
 | `variant` | `string` | Yes | — |
@@ -521,9 +503,6 @@ An alert monitor threshold was triggered
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `monitor.alert` | Yes | — |
 | `monitor_id` | `string` | Yes | — |
 | `monitor_name` | `string` | Yes | — |

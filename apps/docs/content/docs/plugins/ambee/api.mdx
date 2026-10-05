@@ -31,9 +31,6 @@ await corsair.ambee.api.airQuality.getForecastByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 
@@ -44,9 +41,6 @@ await corsair.ambee.api.airQuality.getForecastByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -98,9 +92,6 @@ await corsair.ambee.api.airQuality.getHistoryByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -113,9 +104,6 @@ await corsair.ambee.api.airQuality.getHistoryByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -167,9 +155,6 @@ await corsair.ambee.api.airQuality.getHistoryByPostalCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postalCode` | `string` | Yes | Postal code, e.g. "560020" |
 | `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -182,9 +167,6 @@ await corsair.ambee.api.airQuality.getHistoryByPostalCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -236,9 +218,6 @@ await corsair.ambee.api.airQuality.getLatestByCity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `city` | `string` | Yes | City name, e.g. "Bengaluru" |
 | `limit` | `number` | No | Maximum number of stations to return (Ambee defaults to 1) |
 
@@ -249,9 +228,6 @@ await corsair.ambee.api.airQuality.getLatestByCity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `stations` | `object[]` | No | — |
 
@@ -308,9 +284,6 @@ await corsair.ambee.api.airQuality.getLatestByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
 | `limit` | `number` | No | Maximum number of stations to return (Ambee defaults to 1) |
 
@@ -321,9 +294,6 @@ await corsair.ambee.api.airQuality.getLatestByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `stations` | `object[]` | No | — |
 
@@ -380,9 +350,6 @@ await corsair.ambee.api.airQuality.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 
@@ -393,9 +360,6 @@ await corsair.ambee.api.airQuality.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `stations` | `object[]` | No | — |
 
@@ -452,9 +416,6 @@ await corsair.ambee.api.airQuality.getLatestByPostalCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postalCode` | `string` | Yes | Postal code, e.g. "560020" |
 | `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
 
@@ -465,9 +426,6 @@ await corsair.ambee.api.airQuality.getLatestByPostalCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `stations` | `object[]` | No | — |
 
@@ -526,9 +484,6 @@ await corsair.ambee.api.disasters.getHistoryByContinent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `continent` | `AFR \| ANT \| ASIA \| AUS \| EUR \| NAR \| SAR \| Ocean` | Yes | Continent code |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
 | `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -543,9 +498,6 @@ await corsair.ambee.api.disasters.getHistoryByContinent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -618,9 +570,6 @@ await corsair.ambee.api.disasters.getHistoryByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
 | `to` | `string` | Yes | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -635,9 +584,6 @@ await corsair.ambee.api.disasters.getHistoryByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -710,9 +656,6 @@ await corsair.ambee.api.disasters.getHistoryByDateRange({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
 | `to` | `string` | No | End of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
 | `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
@@ -726,9 +669,6 @@ await corsair.ambee.api.disasters.getHistoryByDateRange({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -801,9 +741,6 @@ await corsair.ambee.api.disasters.getHistoryByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -819,9 +756,6 @@ await corsair.ambee.api.disasters.getHistoryByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -894,9 +828,6 @@ await corsair.ambee.api.disasters.getLatestByContinent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `continent` | `AFR \| ANT \| ASIA \| AUS \| EUR \| NAR \| SAR \| Ocean` | Yes | Continent code |
 | `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
 | `limit` | `number` | No | Records per page (Ambee defaults to 1) |
@@ -909,9 +840,6 @@ await corsair.ambee.api.disasters.getLatestByContinent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -984,9 +912,6 @@ await corsair.ambee.api.disasters.getLatestByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `countryCode` | `string` | Yes | Three-letter ISO country code, e.g. "IND" or "USA" |
 | `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
 | `limit` | `number` | No | Records per page (Ambee defaults to 1) |
@@ -999,9 +924,6 @@ await corsair.ambee.api.disasters.getLatestByCountryCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -1074,9 +996,6 @@ await corsair.ambee.api.disasters.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `eventType` | `TN \| EQ \| TC \| WF \| FL \| ET \| DR \| SW \| SI \| VO \| LS \| Misc` | No | Restrict results to a single Ambee event-type code |
@@ -1090,9 +1009,6 @@ await corsair.ambee.api.disasters.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `result` | `object[]` | No | — |
 | `data` | `object[]` | No | — |
@@ -1167,9 +1083,6 @@ await corsair.ambee.api.elevation.getByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 
@@ -1180,9 +1093,6 @@ await corsair.ambee.api.elevation.getByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1225,9 +1135,6 @@ await corsair.ambee.api.elevation.getByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place` | `string` | Yes | Place name, e.g. "San Francisco, USA" |
 
 
@@ -1237,9 +1144,6 @@ await corsair.ambee.api.elevation.getByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1284,9 +1188,6 @@ await corsair.ambee.api.fire.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `type` | `reported \| detected` | No | Restrict results to reported or satellite-detected fires |
@@ -1298,9 +1199,6 @@ await corsair.ambee.api.fire.getLatestByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1348,9 +1246,6 @@ await corsair.ambee.api.fire.getLatestByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place` | `string` | Yes | Place name, e.g. "Virgin, UT" |
 | `type` | `reported \| detected` | No | Restrict results to reported or satellite-detected fires |
 
@@ -1361,9 +1256,6 @@ await corsair.ambee.api.fire.getLatestByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1411,9 +1303,6 @@ await corsair.ambee.api.fire.getRiskByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 
@@ -1424,9 +1313,6 @@ await corsair.ambee.api.fire.getRiskByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1467,9 +1353,6 @@ await corsair.ambee.api.fire.getRiskByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place` | `string` | Yes | Place name, e.g. "Leon, Mexico" |
 
 
@@ -1479,9 +1362,6 @@ await corsair.ambee.api.fire.getRiskByPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1524,9 +1404,6 @@ await corsair.ambee.api.geocode.byPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place` | `string` | Yes | Address or place name to geocode |
 
 
@@ -1536,9 +1413,6 @@ await corsair.ambee.api.geocode.byPlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1582,9 +1456,6 @@ await corsair.ambee.api.geocode.reverseByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 
@@ -1595,9 +1466,6 @@ await corsair.ambee.api.geocode.reverseByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `data` | `object[]` | No | — |
 
@@ -1643,9 +1511,6 @@ await corsair.ambee.api.ili.getForecastByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `details` | `boolean` | No | Include the supporting 28-day weather and pollen forecast (defaults to false) |
@@ -1657,9 +1522,6 @@ await corsair.ambee.api.ili.getForecastByLatLng({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -1725,9 +1587,6 @@ await corsair.ambee.api.pollen.getForecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -1803,9 +1662,6 @@ await corsair.ambee.api.pollen.getHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -1877,9 +1733,6 @@ await corsair.ambee.api.pollen.getLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |
@@ -1934,9 +1787,6 @@ await corsair.ambee.api.weather.getForecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `units` | `si` | No | Pass "si" to receive SI units instead of the imperial default |
@@ -1965,9 +1815,6 @@ await corsair.ambee.api.weather.getHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `from` | `string` | Yes | Start of the time range, as "YYYY-MM-DD hh:mm:ss" (UTC) or an ISO 8601 date |
@@ -1998,9 +1845,6 @@ await corsair.ambee.api.weather.getLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude, between -90 and 90 |
 | `lng` | `number` | Yes | Longitude, between -180 and 180 |
 | `units` | `si` | No | Pass "si" to receive SI units instead of the imperial default |
@@ -2012,9 +1856,6 @@ await corsair.ambee.api.weather.getLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | Ambee status message, "success" on a successful call |
 | `lat` | `number` | No | — |
 | `lng` | `number` | No | — |

@@ -31,9 +31,6 @@ await corsair.sendgrid.api.apiKeys.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `scopes` | `string[]` | No | — |
 
@@ -61,9 +58,6 @@ await corsair.sendgrid.api.apiKeys.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -90,9 +84,6 @@ await corsair.sendgrid.api.apiKeys.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 
 
@@ -119,9 +110,6 @@ await corsair.sendgrid.api.apiKeys.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -148,9 +136,6 @@ await corsair.sendgrid.api.apiKeys.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `scopes` | `string[]` | No | — |
@@ -181,9 +166,6 @@ await corsair.sendgrid.api.asm.addGroupSuppressions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `recipient_emails` | `string[]` | Yes | — |
 
@@ -211,9 +193,6 @@ await corsair.sendgrid.api.asm.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `is_default` | `boolean` | No | — |
@@ -242,9 +221,6 @@ await corsair.sendgrid.api.asm.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -271,9 +247,6 @@ await corsair.sendgrid.api.asm.deleteGroupSuppression({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `email` | `string` | Yes | — |
 
@@ -301,9 +274,6 @@ await corsair.sendgrid.api.asm.getGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -330,9 +300,6 @@ await corsair.sendgrid.api.asm.getGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 
 
@@ -369,9 +336,6 @@ await corsair.sendgrid.api.asm.getGroupSuppressions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -408,9 +372,6 @@ await corsair.sendgrid.api.asm.updateGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -442,9 +403,6 @@ await corsair.sendgrid.api.contacts.addOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_ids` | `string[]` | No | — |
 | `contacts` | `object[]` | Yes | — |
 
@@ -481,9 +439,6 @@ await corsair.sendgrid.api.contacts.addOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 
 
@@ -507,9 +462,6 @@ await corsair.sendgrid.api.contacts.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_ids` | `string[]` | No | — |
 | `segment_ids` | `string[]` | No | — |
 | `file_type` | `csv \| json` | No | — |
@@ -539,9 +491,6 @@ await corsair.sendgrid.api.contacts.exportStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -568,9 +517,6 @@ await corsair.sendgrid.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -617,9 +563,6 @@ await corsair.sendgrid.api.contacts.getSample({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_size` | `number` | No | — |
 | `page_token` | `string` | No | — |
 
@@ -647,9 +590,6 @@ await corsair.sendgrid.api.contacts.import({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_type` | `csv` | Yes | — |
 | `field_mappings` | `string \| null[]` | Yes | — |
 | `list_ids` | `string[]` | No | — |
@@ -678,9 +618,6 @@ await corsair.sendgrid.api.contacts.importStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -727,9 +664,6 @@ await corsair.sendgrid.api.contacts.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string` | Yes | — |
 
 
@@ -739,9 +673,6 @@ await corsair.sendgrid.api.contacts.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 
 
@@ -765,9 +696,6 @@ await corsair.sendgrid.api.contacts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 
 
@@ -794,9 +722,6 @@ await corsair.sendgrid.api.contacts.searchEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 
 
@@ -825,9 +750,6 @@ await corsair.sendgrid.api.fields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `field_type` | `string` | Yes | — |
 
@@ -875,9 +797,6 @@ await corsair.sendgrid.api.fields.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -904,9 +823,6 @@ await corsair.sendgrid.api.fields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -936,9 +852,6 @@ await corsair.sendgrid.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -948,9 +861,6 @@ await corsair.sendgrid.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `contact_count` | `number` | Yes | — |
@@ -987,9 +897,6 @@ await corsair.sendgrid.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `contact_sample` | `boolean` | No | — |
 
@@ -1017,9 +924,6 @@ await corsair.sendgrid.api.lists.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_size` | `number` | No | — |
 | `page_token` | `string` | No | — |
 
@@ -1030,9 +934,6 @@ await corsair.sendgrid.api.lists.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `object[]` | Yes | — |
 | `_metadata` | `object` | No | — |
 
@@ -1080,9 +981,6 @@ await corsair.sendgrid.api.lists.getContactCount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1109,9 +1007,6 @@ await corsair.sendgrid.api.lists.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `delete_contacts` | `boolean` | No | — |
 
@@ -1139,9 +1034,6 @@ await corsair.sendgrid.api.lists.removeContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `contact_ids` | `string` | Yes | — |
 
@@ -1152,9 +1044,6 @@ await corsair.sendgrid.api.lists.removeContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 
 
@@ -1178,9 +1067,6 @@ await corsair.sendgrid.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -1191,9 +1077,6 @@ await corsair.sendgrid.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `contact_count` | `number` | Yes | — |
@@ -1232,9 +1115,6 @@ await corsair.sendgrid.api.mail.cancelScheduledSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_id` | `string` | Yes | — |
 | `status` | `pause \| cancel` | Yes | — |
 
@@ -1282,9 +1162,6 @@ await corsair.sendgrid.api.mail.deleteScheduledSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_id` | `string` | Yes | — |
 
 
@@ -1311,9 +1188,6 @@ await corsair.sendgrid.api.mail.getScheduledSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_id` | `string` | Yes | — |
 
 
@@ -1380,9 +1254,6 @@ await corsair.sendgrid.api.mail.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `personalizations` | `object[]` | Yes | — |
 | `from` | `object` | Yes | — |
 | `subject` | `string` | No | — |
@@ -1474,9 +1345,6 @@ await corsair.sendgrid.api.mail.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x_message_id` | `string` | No | — |
 
 
@@ -1500,9 +1368,6 @@ await corsair.sendgrid.api.mail.updateScheduledSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_id` | `string` | Yes | — |
 | `status` | `pause \| cancel` | Yes | — |
 
@@ -1530,9 +1395,6 @@ await corsair.sendgrid.api.mail.validateBatchId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_id` | `string` | Yes | — |
 
 
@@ -1561,9 +1423,6 @@ await corsair.sendgrid.api.segments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `query_dsl` | `string` | No | — |
 | `parent_list_id` | `string` | No | — |
@@ -1592,9 +1451,6 @@ await corsair.sendgrid.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `contacts_sample` | `boolean` | No | — |
 
@@ -1622,9 +1478,6 @@ await corsair.sendgrid.api.segments.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `parent_list_ids` | `string` | No | — |
 | `no_parent_list_id` | `boolean` | No | — |
 
@@ -1652,9 +1505,6 @@ await corsair.sendgrid.api.segments.refresh({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `user_time_zone` | `string` | Yes | — |
 
@@ -1682,9 +1532,6 @@ await corsair.sendgrid.api.segments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1711,9 +1558,6 @@ await corsair.sendgrid.api.segments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `query_dsl` | `string` | No | — |
@@ -1744,9 +1588,6 @@ await corsair.sendgrid.api.senders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nickname` | `string` | Yes | — |
 | `from_email` | `string` | Yes | — |
 | `from_name` | `string` | No | — |
@@ -1801,9 +1642,6 @@ await corsair.sendgrid.api.senders.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `lastSeenID` | `number` | No | — |
 | `id` | `number` | No | — |
@@ -1815,9 +1653,6 @@ await corsair.sendgrid.api.senders.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 
 
@@ -1865,9 +1700,6 @@ await corsair.sendgrid.api.senders.getIdentity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1914,9 +1746,6 @@ await corsair.sendgrid.api.senders.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1943,9 +1772,6 @@ await corsair.sendgrid.api.senders.resend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1972,9 +1798,6 @@ await corsair.sendgrid.api.senders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `nickname` | `string` | No | — |
 | `from_email` | `string` | No | — |
@@ -2005,9 +1828,6 @@ await corsair.sendgrid.api.stats.getCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2051,9 +1871,6 @@ await corsair.sendgrid.api.stats.getClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2096,9 +1913,6 @@ await corsair.sendgrid.api.stats.getDevice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2141,9 +1955,6 @@ await corsair.sendgrid.api.stats.getGeo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2186,9 +1997,6 @@ await corsair.sendgrid.api.stats.getGlobal({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2231,9 +2039,6 @@ await corsair.sendgrid.api.stats.getMailboxProvider({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
 | `aggregated_by` | `string` | No | — |
@@ -2278,9 +2083,6 @@ await corsair.sendgrid.api.suppressions.addGlobalUnsubscribes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_emails` | `string[]` | Yes | — |
 
 
@@ -2307,9 +2109,6 @@ await corsair.sendgrid.api.suppressions.deleteBlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2336,9 +2135,6 @@ await corsair.sendgrid.api.suppressions.deleteBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_all` | `boolean` | No | — |
 | `emails` | `string[]` | No | — |
 
@@ -2366,9 +2162,6 @@ await corsair.sendgrid.api.suppressions.deleteBounce({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2395,9 +2188,6 @@ await corsair.sendgrid.api.suppressions.deleteBounces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_all` | `boolean` | No | — |
 | `emails` | `string[]` | No | — |
 
@@ -2425,9 +2215,6 @@ await corsair.sendgrid.api.suppressions.deleteGlobalUnsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2454,9 +2241,6 @@ await corsair.sendgrid.api.suppressions.deleteInvalidEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2483,9 +2267,6 @@ await corsair.sendgrid.api.suppressions.deleteInvalidEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_all` | `boolean` | No | — |
 | `emails` | `string[]` | No | — |
 
@@ -2513,9 +2294,6 @@ await corsair.sendgrid.api.suppressions.deleteSpamReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2542,9 +2320,6 @@ await corsair.sendgrid.api.suppressions.deleteSpamReports({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_all` | `boolean` | No | — |
 | `emails` | `string[]` | No | — |
 
@@ -2572,9 +2347,6 @@ await corsair.sendgrid.api.suppressions.getBlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2611,9 +2383,6 @@ await corsair.sendgrid.api.suppressions.getBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2626,9 +2395,6 @@ await corsair.sendgrid.api.suppressions.getBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 
 
@@ -2662,9 +2428,6 @@ await corsair.sendgrid.api.suppressions.getBounce({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2701,9 +2464,6 @@ await corsair.sendgrid.api.suppressions.getBounces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2716,9 +2476,6 @@ await corsair.sendgrid.api.suppressions.getBounces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bounces` | `object[]` | Yes | — |
 
 
@@ -2756,9 +2513,6 @@ await corsair.sendgrid.api.suppressions.getGlobalUnsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2785,9 +2539,6 @@ await corsair.sendgrid.api.suppressions.getGlobalUnsubscribes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2800,9 +2551,6 @@ await corsair.sendgrid.api.suppressions.getGlobalUnsubscribes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 
 
@@ -2836,9 +2584,6 @@ await corsair.sendgrid.api.suppressions.getInvalidEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2875,9 +2620,6 @@ await corsair.sendgrid.api.suppressions.getInvalidEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2890,9 +2632,6 @@ await corsair.sendgrid.api.suppressions.getInvalidEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 
 
@@ -2926,9 +2665,6 @@ await corsair.sendgrid.api.suppressions.getSpamReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -2965,9 +2701,6 @@ await corsair.sendgrid.api.suppressions.getSpamReports({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2980,9 +2713,6 @@ await corsair.sendgrid.api.suppressions.getSpamReports({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 
 
@@ -3018,9 +2748,6 @@ await corsair.sendgrid.api.templates.activateVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
 
@@ -3048,9 +2775,6 @@ await corsair.sendgrid.api.templates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `generation` | `string` | No | — |
 
@@ -3078,9 +2802,6 @@ await corsair.sendgrid.api.templates.createVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `subject` | `string` | No | — |
@@ -3112,9 +2833,6 @@ await corsair.sendgrid.api.templates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3141,9 +2859,6 @@ await corsair.sendgrid.api.templates.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generations` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3171,9 +2886,6 @@ await corsair.sendgrid.api.templates.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
 
@@ -3201,9 +2913,6 @@ await corsair.sendgrid.api.templates.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3230,9 +2939,6 @@ await corsair.sendgrid.api.templates.removeVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
 
@@ -3260,9 +2966,6 @@ await corsair.sendgrid.api.templates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -3290,9 +2993,6 @@ await corsair.sendgrid.api.templates.updateVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
 | `name` | `string` | No | — |

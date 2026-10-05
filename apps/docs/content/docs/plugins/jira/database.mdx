@@ -28,9 +28,6 @@ const rows = await corsair.jira.db.boards.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -61,9 +58,6 @@ const rows = await corsair.jira.db.comments.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `issueKey` | `string` | equals, contains, startsWith, endsWith, in |
@@ -95,9 +89,6 @@ const rows = await corsair.jira.db.issues.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `key` | `string` | equals, contains, startsWith, endsWith, in |
@@ -137,9 +128,6 @@ const rows = await corsair.jira.db.projects.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `key` | `string` | equals, contains, startsWith, endsWith, in |
@@ -171,9 +159,6 @@ const rows = await corsair.jira.db.sprints.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -205,9 +190,6 @@ const rows = await corsair.jira.db.users.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `accountId` | `string` | equals, contains, startsWith, endsWith, in |
 | `displayName` | `string` | equals, contains, startsWith, endsWith, in |

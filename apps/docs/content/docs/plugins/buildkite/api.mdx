@@ -34,9 +34,6 @@ await corsair.buildkite.api.getCurrentAccessToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `scopes` | `string[]` | Yes | — |
 | `description` | `string` | No | — |
@@ -82,9 +79,6 @@ await corsair.buildkite.api.getMeta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_ips` | `string[]` | Yes | — |
 
 
@@ -113,9 +107,6 @@ await corsair.buildkite.api.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `graphql_id` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -146,9 +137,6 @@ await corsair.buildkite.api.listOrganizations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 
@@ -198,9 +186,6 @@ await corsair.buildkite.api.listPipelineAgents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlug` | `string` | Yes | Official path param {org.slug} on GET /v2/organizations/{org.slug}/agents |
 | `name` | `string` | No | Official query: ?name= |
 | `hostname` | `string` | No | Official query: ?hostname= |

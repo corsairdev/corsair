@@ -34,9 +34,6 @@ await corsair.ticktick.api.oauth.generateAuthUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `state` | `string` | Yes | — |
 
@@ -63,9 +60,6 @@ await corsair.ticktick.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
 | `sortOrder` | `number` | No | — |
@@ -79,9 +73,6 @@ await corsair.ticktick.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
@@ -113,9 +104,6 @@ await corsair.ticktick.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -125,9 +113,6 @@ await corsair.ticktick.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -151,9 +136,6 @@ await corsair.ticktick.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -163,9 +145,6 @@ await corsair.ticktick.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
@@ -197,9 +176,6 @@ await corsair.ticktick.api.projects.getData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -209,9 +185,6 @@ await corsair.ticktick.api.projects.getData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `object` | Yes | — |
 | `tasks` | `object[]` | Yes | — |
 | `columns` | `object[]` | No | — |
@@ -339,9 +312,6 @@ await corsair.ticktick.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -356,9 +326,6 @@ await corsair.ticktick.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
@@ -392,9 +359,6 @@ await corsair.ticktick.api.tasks.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 
@@ -405,9 +369,6 @@ await corsair.ticktick.api.tasks.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -431,9 +392,6 @@ await corsair.ticktick.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `projectId` | `string` | Yes | — |
 | `content` | `string` | No | — |
@@ -467,9 +425,6 @@ await corsair.ticktick.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `projectId` | `string` | No | — |
 | `title` | `string` | Yes | — |
@@ -526,9 +481,6 @@ await corsair.ticktick.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 
@@ -539,9 +491,6 @@ await corsair.ticktick.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -565,9 +514,6 @@ await corsair.ticktick.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 
@@ -578,9 +524,6 @@ await corsair.ticktick.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `projectId` | `string` | No | — |
 | `title` | `string` | Yes | — |
@@ -692,9 +635,6 @@ await corsair.ticktick.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `projectId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -729,9 +669,6 @@ await corsair.ticktick.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `projectId` | `string` | No | — |
 | `title` | `string` | Yes | — |

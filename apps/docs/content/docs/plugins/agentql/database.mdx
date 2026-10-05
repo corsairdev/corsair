@@ -28,9 +28,6 @@ const rows = await corsair.agentql.db.accountUsage.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -55,9 +52,6 @@ const rows = await corsair.agentql.db.browserSessions.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `sessionId` | `string` | equals, contains, startsWith, endsWith, in |
 | `cdpUrl` | `string` | equals, contains, startsWith, endsWith, in |
@@ -92,9 +86,6 @@ const rows = await corsair.agentql.db.documentQueryResults.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `fileName` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
@@ -124,9 +115,6 @@ const rows = await corsair.agentql.db.queryResults.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
 | `prompt` | `string` | equals, contains, startsWith, endsWith, in |

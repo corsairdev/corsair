@@ -31,9 +31,6 @@ await corsair.zohomail.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderName` | `string` | Yes | — |
 | `parentFolderId` | `string` | No | Parent folder ID for creating a sub-folder. |
@@ -45,9 +42,6 @@ await corsair.zohomail.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folderId` | `string` | No | — |
 | `folderName` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -81,9 +75,6 @@ await corsair.zohomail.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | Yes | — |
 
@@ -111,9 +102,6 @@ await corsair.zohomail.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | Yes | — |
 
@@ -124,9 +112,6 @@ await corsair.zohomail.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folderId` | `string` | No | — |
 | `folderName` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -160,9 +145,6 @@ await corsair.zohomail.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 
 
@@ -172,9 +154,6 @@ await corsair.zohomail.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folders` | `object[]` | Yes | — |
 
 
@@ -219,9 +198,6 @@ await corsair.zohomail.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | Yes | — |
 | `mode` | `rename \| markAsRead \| emptyFolder` | Yes | — |
@@ -253,9 +229,6 @@ await corsair.zohomail.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -284,9 +257,6 @@ await corsair.zohomail.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -298,9 +268,6 @@ await corsair.zohomail.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messageId` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `folderId` | `string` | No | — |
@@ -348,9 +315,6 @@ await corsair.zohomail.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `folderId` | `string` | No | Folder to list emails from. Defaults to the Inbox when omitted. |
 | `start` | `number` | No | Starting sequence number (default 1). |
@@ -367,9 +331,6 @@ await corsair.zohomail.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | Yes | — |
 
 
@@ -423,9 +384,6 @@ await corsair.zohomail.api.messages.markRead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `messageId` | `string[]` | Yes | — |
 
@@ -453,9 +411,6 @@ await corsair.zohomail.api.messages.markUnread({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `messageId` | `string[]` | Yes | — |
 
@@ -483,9 +438,6 @@ await corsair.zohomail.api.messages.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `messageId` | `string[]` | Yes | Message IDs to move. |
 | `destfolderId` | `string` | Yes | Destination folder ID. |
@@ -514,9 +466,6 @@ await corsair.zohomail.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
 | `fromAddress` | `string` | Yes | Sender address; must belong to the authenticated account. |
 | `toAddress` | `string` | Yes | Recipient address(es), comma-separated. |
@@ -534,9 +483,6 @@ await corsair.zohomail.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messageId` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `folderId` | `string` | No | — |

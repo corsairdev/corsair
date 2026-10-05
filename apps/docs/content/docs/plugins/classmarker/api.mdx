@@ -31,9 +31,6 @@ await corsair.classmarker.api.accessLists.addCodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `access_list_id` | `number` | Yes | — |
 | `access_codes` | `string[]` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.classmarker.api.accessLists.addCodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -107,9 +101,6 @@ await corsair.classmarker.api.accessLists.deleteCodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `access_list_id` | `number` | Yes | — |
 | `access_codes` | `string[]` | Yes | — |
 
@@ -120,9 +111,6 @@ await corsair.classmarker.api.accessLists.deleteCodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -185,9 +173,6 @@ await corsair.classmarker.api.apiKeys.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key_id` | `number` | Yes | — |
 
 
@@ -197,9 +182,6 @@ await corsair.classmarker.api.apiKeys.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -246,9 +228,6 @@ await corsair.classmarker.api.categories.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_name` | `string` | Yes | — |
 | `parent_category_id` | `number` | Yes | — |
 | `verify_only` | `boolean` | No | — |
@@ -323,9 +302,6 @@ await corsair.classmarker.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -388,9 +364,6 @@ await corsair.classmarker.api.categories.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_id` | `number` | Yes | — |
 | `category_name` | `string` | Yes | — |
 | `parent_category_id` | `number` | Yes | — |
@@ -463,9 +436,6 @@ await corsair.classmarker.api.categories.updateParent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `parent_category_id` | `number` | Yes | — |
 | `parent_category_name` | `string` | Yes | — |
 | `verify_only` | `boolean` | No | — |
@@ -542,9 +512,6 @@ await corsair.classmarker.api.certificates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -600,9 +567,6 @@ await corsair.classmarker.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_name` | `string` | Yes | — |
 
 
@@ -612,9 +576,6 @@ await corsair.classmarker.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -659,9 +620,6 @@ await corsair.classmarker.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number` | Yes | — |
 
 
@@ -671,9 +629,6 @@ await corsair.classmarker.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -718,9 +673,6 @@ await corsair.classmarker.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number` | Yes | — |
 
 
@@ -730,9 +682,6 @@ await corsair.classmarker.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `group` | `object` | No | — |
 | `request_path` | `string` | No | — |
@@ -779,9 +728,6 @@ await corsair.classmarker.api.questions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `question` | `object` | Yes | — |
 | `verify_only` | `boolean` | No | — |
 
@@ -880,9 +826,6 @@ await corsair.classmarker.api.questions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `question_id` | `number` | Yes | — |
 
 
@@ -948,9 +891,6 @@ await corsair.classmarker.api.questions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 
 
@@ -960,9 +900,6 @@ await corsair.classmarker.api.questions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1030,9 +967,6 @@ await corsair.classmarker.api.questions.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `question_id` | `number` | Yes | — |
 | `question` | `object` | Yes | — |
 | `verify_only` | `boolean` | No | — |
@@ -1134,9 +1068,6 @@ await corsair.classmarker.api.recentResults.forAllGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `finishedAfterTimestamp` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -1147,9 +1078,6 @@ await corsair.classmarker.api.recentResults.forAllGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1269,9 +1197,6 @@ await corsair.classmarker.api.recentResults.forAllLinks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `finishedAfterTimestamp` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -1282,9 +1207,6 @@ await corsair.classmarker.api.recentResults.forAllLinks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1414,9 +1336,6 @@ await corsair.classmarker.api.recentResults.forGroupExam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number` | Yes | — |
 | `test_id` | `number` | Yes | — |
 | `finishedAfterTimestamp` | `number` | No | — |
@@ -1429,9 +1348,6 @@ await corsair.classmarker.api.recentResults.forGroupExam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1551,9 +1467,6 @@ await corsair.classmarker.api.recentResults.forLinkExam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `link_id` | `number` | Yes | — |
 | `test_id` | `number` | Yes | — |
 | `finishedAfterTimestamp` | `number` | No | — |
@@ -1566,9 +1479,6 @@ await corsair.classmarker.api.recentResults.forLinkExam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1700,9 +1610,6 @@ await corsair.classmarker.api.tests.deleteLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `link_id` | `number` | Yes | — |
 | `test_id` | `number` | Yes | — |
 
@@ -1713,9 +1620,6 @@ await corsair.classmarker.api.tests.deleteLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1760,9 +1664,6 @@ await corsair.classmarker.api.tests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `test_id` | `number` | Yes | — |
 
 
@@ -1772,9 +1673,6 @@ await corsair.classmarker.api.tests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `test` | `object` | No | — |
 | `assignments` | `object[]` | Yes | — |
@@ -1849,9 +1747,6 @@ await corsair.classmarker.api.tests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `tests` | `object[]` | Yes | — |
 
@@ -1890,9 +1785,6 @@ await corsair.classmarker.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
@@ -1905,9 +1797,6 @@ await corsair.classmarker.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -1952,9 +1841,6 @@ await corsair.classmarker.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `number` | Yes | — |
 
 
@@ -1964,9 +1850,6 @@ await corsair.classmarker.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -2011,9 +1894,6 @@ await corsair.classmarker.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `number` | Yes | — |
 
 
@@ -2074,9 +1954,6 @@ await corsair.classmarker.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 
 
@@ -2086,9 +1963,6 @@ await corsair.classmarker.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -2153,9 +2027,6 @@ await corsair.classmarker.api.utility.getInitialFinishedAfterTimestamp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `finishedAfterTimestamp` | `number` | Yes | — |
 
 
@@ -2181,9 +2052,6 @@ await corsair.classmarker.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `number` | Yes | — |
 
 
@@ -2193,9 +2061,6 @@ await corsair.classmarker.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |
@@ -2243,9 +2108,6 @@ await corsair.classmarker.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok \| no_results \| error \| verified` | Yes | — |
 | `request_path` | `string` | No | — |
 | `server_timestamp` | `number` | No | — |

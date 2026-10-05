@@ -34,9 +34,6 @@ await corsair.imgbb.api.auth.getApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `configured` | `boolean` | Yes | Whether an ImgBB API key is configured for this account |
 | `keyPreview` | `string` | Yes | Last 4 characters of the configured key, for identification only |
 
@@ -63,9 +60,6 @@ await corsair.imgbb.api.images.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `image` | `string \| custom \| custom \| custom` | Yes | Base64-encoded image data, image URL, or binary data (Blob, File, Buffer, Uint8Array) up to 32 MB per the ImgBB API |
 | `name` | `string` | No | Optional display name for the file |
 | `expiration` | `number` | No | Optional auto-delete window in seconds (60-15552000). Omit to keep the image indefinitely. |
@@ -77,9 +71,6 @@ await corsair.imgbb.api.images.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `url_viewer` | `string` | No | — |

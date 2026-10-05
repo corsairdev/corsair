@@ -31,9 +31,6 @@ await corsair.huggingface.api.account.deleteNotifications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discussionIds` | `string[]` | No | — |
 | `applyToAll` | `boolean` | No | — |
 | `filter` | `object` | No | — |
@@ -92,9 +89,6 @@ await corsair.huggingface.api.account.listNotifications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `read` | `boolean` | No | — |
 | `type` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -125,9 +119,6 @@ await corsair.huggingface.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -157,9 +148,6 @@ await corsair.huggingface.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | No | — |
 | `item` | `string` | No | — |
 | `sort` | `string` | No | — |
@@ -193,9 +181,6 @@ await corsair.huggingface.api.datasets.checkUploadMethod({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `files` | `object[]` | Yes | — |
@@ -239,9 +224,6 @@ await corsair.huggingface.api.datasets.checkValidity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -270,9 +252,6 @@ await corsair.huggingface.api.datasets.createBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
@@ -304,9 +283,6 @@ await corsair.huggingface.api.datasets.createCommit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
@@ -379,9 +355,6 @@ await corsair.huggingface.api.datasets.createSqlConsoleEmbed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `repoType` | `dataset` | Yes | — |
 | `title` | `string` | No | — |
@@ -412,9 +385,6 @@ await corsair.huggingface.api.datasets.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
@@ -444,9 +414,6 @@ await corsair.huggingface.api.datasets.deleteBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 
@@ -474,9 +441,6 @@ await corsair.huggingface.api.datasets.deleteTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
 
@@ -504,9 +468,6 @@ await corsair.huggingface.api.datasets.filterRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
@@ -539,9 +500,6 @@ await corsair.huggingface.api.datasets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | No | — |
 | `full` | `boolean` | No | — |
@@ -570,9 +528,6 @@ await corsair.huggingface.api.datasets.getCompare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
 
@@ -600,9 +555,6 @@ await corsair.huggingface.api.datasets.getCroissant({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -631,9 +583,6 @@ await corsair.huggingface.api.datasets.getFirstRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
@@ -662,9 +611,6 @@ await corsair.huggingface.api.datasets.getInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -693,9 +639,6 @@ await corsair.huggingface.api.datasets.getJwt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `write` | `boolean` | No | — |
 | `expireAt` | `number` | No | — |
@@ -724,9 +667,6 @@ await corsair.huggingface.api.datasets.getLeaderboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -753,9 +693,6 @@ await corsair.huggingface.api.datasets.getNotebook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -784,9 +721,6 @@ await corsair.huggingface.api.datasets.getResolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -816,9 +750,6 @@ await corsair.huggingface.api.datasets.getResolveCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -848,9 +779,6 @@ await corsair.huggingface.api.datasets.getRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
@@ -881,9 +809,6 @@ await corsair.huggingface.api.datasets.getScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -910,9 +835,6 @@ await corsair.huggingface.api.datasets.getSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -941,9 +863,6 @@ await corsair.huggingface.api.datasets.getStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
@@ -972,9 +891,6 @@ await corsair.huggingface.api.datasets.getTagsByType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 
 
@@ -1001,9 +917,6 @@ await corsair.huggingface.api.datasets.getTreeSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -1032,9 +945,6 @@ await corsair.huggingface.api.datasets.getXetReadToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 
@@ -1062,9 +972,6 @@ await corsair.huggingface.api.datasets.handleAccessRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `user` | `string` | No | — |
 | `userId` | `string` | No | — |
@@ -1094,9 +1001,6 @@ await corsair.huggingface.api.datasets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `author` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -1131,9 +1035,6 @@ await corsair.huggingface.api.datasets.listAccessRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `status` | `pending \| accepted \| rejected` | Yes | — |
 
@@ -1161,9 +1062,6 @@ await corsair.huggingface.api.datasets.listCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `limit` | `number` | No | — |
@@ -1193,9 +1091,6 @@ await corsair.huggingface.api.datasets.listParquetFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -1224,9 +1119,6 @@ await corsair.huggingface.api.datasets.listPathsInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `paths` | `string[]` | Yes | — |
@@ -1256,9 +1148,6 @@ await corsair.huggingface.api.datasets.listRefs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `includePullRequests` | `boolean` | No | — |
 
@@ -1286,9 +1175,6 @@ await corsair.huggingface.api.datasets.listSplits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | No | — |
 | `split` | `string` | No | — |
@@ -1317,9 +1203,6 @@ await corsair.huggingface.api.datasets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
@@ -1351,9 +1234,6 @@ await corsair.huggingface.api.datasets.squashCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
@@ -1382,9 +1262,6 @@ await corsair.huggingface.api.datasets.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
@@ -1425,9 +1302,6 @@ await corsair.huggingface.api.datasets.updateSqlConsoleEmbed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `repoType` | `dataset` | Yes | — |
 | `embedId` | `string` | Yes | — |
@@ -1461,9 +1335,6 @@ await corsair.huggingface.api.discussions.changeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1493,9 +1364,6 @@ await corsair.huggingface.api.discussions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -1526,9 +1394,6 @@ await corsair.huggingface.api.discussions.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1558,9 +1423,6 @@ await corsair.huggingface.api.discussions.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1589,9 +1451,6 @@ await corsair.huggingface.api.discussions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1620,9 +1479,6 @@ await corsair.huggingface.api.discussions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `status` | `open \| closed \| all` | No | — |
@@ -1653,9 +1509,6 @@ await corsair.huggingface.api.discussions.pin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1685,9 +1538,6 @@ await corsair.huggingface.api.discussions.updateTitle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `discussionNum` | `number` | Yes | — |
@@ -1739,9 +1589,6 @@ await corsair.huggingface.api.docs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | — |
 | `product` | `string` | No | — |
 
@@ -1771,9 +1618,6 @@ await corsair.huggingface.api.endpoints.deleteNetworkCidr({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `cidr` | `string` | Yes | — |
 
@@ -1801,9 +1645,6 @@ await corsair.huggingface.api.endpoints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | No | — |
 
@@ -1853,9 +1694,6 @@ await corsair.huggingface.api.inference.chatCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `temperature` | `number` | No | — |
@@ -1904,9 +1742,6 @@ await corsair.huggingface.api.inference.embeddings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `input` | `string \| string[]` | Yes | — |
 | `extra` | `object` | No | — |
@@ -1969,9 +1804,6 @@ await corsair.huggingface.api.models.checkUploadMethod({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `files` | `object[]` | Yes | — |
@@ -2015,9 +1847,6 @@ await corsair.huggingface.api.models.createBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
@@ -2049,9 +1878,6 @@ await corsair.huggingface.api.models.createCommit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
@@ -2124,9 +1950,6 @@ await corsair.huggingface.api.models.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
@@ -2156,9 +1979,6 @@ await corsair.huggingface.api.models.deleteBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 
@@ -2186,9 +2006,6 @@ await corsair.huggingface.api.models.deleteTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
 
@@ -2216,9 +2033,6 @@ await corsair.huggingface.api.models.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | No | — |
 | `full` | `boolean` | No | — |
@@ -2247,9 +2061,6 @@ await corsair.huggingface.api.models.getCompare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
 
@@ -2277,9 +2088,6 @@ await corsair.huggingface.api.models.getJwt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `write` | `boolean` | No | — |
 | `expireAt` | `number` | No | — |
@@ -2308,9 +2116,6 @@ await corsair.huggingface.api.models.getNotebook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -2339,9 +2144,6 @@ await corsair.huggingface.api.models.getResolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -2371,9 +2173,6 @@ await corsair.huggingface.api.models.getResolveCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -2403,9 +2202,6 @@ await corsair.huggingface.api.models.getScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -2432,9 +2228,6 @@ await corsair.huggingface.api.models.getTagsByType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 
 
@@ -2461,9 +2254,6 @@ await corsair.huggingface.api.models.getTreeSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -2492,9 +2282,6 @@ await corsair.huggingface.api.models.getXetReadToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 
@@ -2522,9 +2309,6 @@ await corsair.huggingface.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `author` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -2559,9 +2343,6 @@ await corsair.huggingface.api.models.listCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `limit` | `number` | No | — |
@@ -2591,9 +2372,6 @@ await corsair.huggingface.api.models.listPathsInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `paths` | `string[]` | Yes | — |
@@ -2623,9 +2401,6 @@ await corsair.huggingface.api.models.listRefs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `includePullRequests` | `boolean` | No | — |
 
@@ -2653,9 +2428,6 @@ await corsair.huggingface.api.models.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
@@ -2698,9 +2470,6 @@ await corsair.huggingface.api.organizations.getAvatar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -2727,9 +2496,6 @@ await corsair.huggingface.api.organizations.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `search` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -2759,9 +2525,6 @@ await corsair.huggingface.api.organizations.getSocials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -2790,9 +2553,6 @@ await corsair.huggingface.api.papers.claimAuthorship({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paperId` | `string` | Yes | — |
 | `extra` | `object` | No | — |
 
@@ -2830,9 +2590,6 @@ await corsair.huggingface.api.papers.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paperId` | `string` | Yes | — |
 | `comment` | `string` | Yes | — |
 
@@ -2860,9 +2617,6 @@ await corsair.huggingface.api.papers.createCommentReply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paperId` | `string` | Yes | — |
 | `commentId` | `string` | Yes | — |
 | `comment` | `string` | Yes | — |
@@ -2891,9 +2645,6 @@ await corsair.huggingface.api.papers.createIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paperId` | `string` | Yes | — |
 
 
@@ -2920,9 +2671,6 @@ await corsair.huggingface.api.papers.getDaily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 
 
@@ -2949,9 +2697,6 @@ await corsair.huggingface.api.papers.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 
@@ -2981,9 +2726,6 @@ await corsair.huggingface.api.repos.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `model \| dataset \| space` | Yes | — |
 | `private` | `boolean` | No | — |
@@ -3026,9 +2768,6 @@ await corsair.huggingface.api.repos.getResolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
@@ -3059,9 +2798,6 @@ await corsair.huggingface.api.repos.listFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
@@ -3095,9 +2831,6 @@ await corsair.huggingface.api.repos.requestAccess({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
 | `fields` | `object` | No | — |
@@ -3138,9 +2871,6 @@ await corsair.huggingface.api.settings.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `watched` | `object[]` | No | — |
 | `domains` | `string[]` | No | — |
@@ -3189,9 +2919,6 @@ await corsair.huggingface.api.settings.deleteWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -3218,9 +2945,6 @@ await corsair.huggingface.api.settings.getBillingUsageV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 
@@ -3308,9 +3032,6 @@ await corsair.huggingface.api.settings.getWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -3357,9 +3078,6 @@ await corsair.huggingface.api.settings.updateNotifications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notifications` | `object` | Yes | — |
 
 
@@ -3396,9 +3114,6 @@ await corsair.huggingface.api.settings.updateWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `add` | `object[]` | No | — |
 | `remove` | `object[]` | No | — |
 
@@ -3444,9 +3159,6 @@ await corsair.huggingface.api.settings.updateWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `watched` | `object[]` | No | — |
@@ -3495,9 +3207,6 @@ await corsair.huggingface.api.settings.updateWebhookStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `action` | `enable \| disable` | Yes | — |
 
@@ -3527,9 +3236,6 @@ await corsair.huggingface.api.spaces.checkUploadMethod({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `files` | `object[]` | Yes | — |
@@ -3573,9 +3279,6 @@ await corsair.huggingface.api.spaces.createBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
@@ -3607,9 +3310,6 @@ await corsair.huggingface.api.spaces.createCommit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
@@ -3682,9 +3382,6 @@ await corsair.huggingface.api.spaces.createSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -3714,9 +3411,6 @@ await corsair.huggingface.api.spaces.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
@@ -3746,9 +3440,6 @@ await corsair.huggingface.api.spaces.createVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -3778,9 +3469,6 @@ await corsair.huggingface.api.spaces.deleteBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 
@@ -3808,9 +3496,6 @@ await corsair.huggingface.api.spaces.deleteSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -3838,9 +3523,6 @@ await corsair.huggingface.api.spaces.deleteTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
 
@@ -3868,9 +3550,6 @@ await corsair.huggingface.api.spaces.deleteVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -3898,9 +3577,6 @@ await corsair.huggingface.api.spaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | No | — |
 | `full` | `boolean` | No | — |
@@ -3929,9 +3605,6 @@ await corsair.huggingface.api.spaces.getCompare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
 
@@ -3959,9 +3632,6 @@ await corsair.huggingface.api.spaces.getEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -3988,9 +3658,6 @@ await corsair.huggingface.api.spaces.getJwt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `write` | `boolean` | No | — |
 | `expireAt` | `number` | No | — |
@@ -4019,9 +3686,6 @@ await corsair.huggingface.api.spaces.getMetrics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -4048,9 +3712,6 @@ await corsair.huggingface.api.spaces.getNotebook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -4079,9 +3740,6 @@ await corsair.huggingface.api.spaces.getResolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -4111,9 +3769,6 @@ await corsair.huggingface.api.spaces.getResolveCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -4143,9 +3798,6 @@ await corsair.huggingface.api.spaces.getScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | namespace/repo |
 
 
@@ -4172,9 +3824,6 @@ await corsair.huggingface.api.spaces.getTreeSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -4203,9 +3852,6 @@ await corsair.huggingface.api.spaces.getXetReadToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 
@@ -4233,9 +3879,6 @@ await corsair.huggingface.api.spaces.getXetWriteToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 
@@ -4263,9 +3906,6 @@ await corsair.huggingface.api.spaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `author` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -4300,9 +3940,6 @@ await corsair.huggingface.api.spaces.listCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `limit` | `number` | No | — |
@@ -4352,9 +3989,6 @@ await corsair.huggingface.api.spaces.listLfsFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -4383,9 +4017,6 @@ await corsair.huggingface.api.spaces.listPathsInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `paths` | `string[]` | Yes | — |
@@ -4415,9 +4046,6 @@ await corsair.huggingface.api.spaces.listRefs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `includePullRequests` | `boolean` | No | — |
 
@@ -4445,9 +4073,6 @@ await corsair.huggingface.api.spaces.squashCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
@@ -4476,9 +4101,6 @@ await corsair.huggingface.api.spaces.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repoId` | `string` | Yes | — |
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
@@ -4521,9 +4143,6 @@ await corsair.huggingface.api.trending.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `model \| dataset \| space` | No | — |
 | `limit` | `number` | No | — |
 
@@ -4553,9 +4172,6 @@ await corsair.huggingface.api.users.getAvatar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 
 
@@ -4582,9 +4198,6 @@ await corsair.huggingface.api.users.getOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 
 
@@ -4611,9 +4224,6 @@ await corsair.huggingface.api.users.getSocials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 
 

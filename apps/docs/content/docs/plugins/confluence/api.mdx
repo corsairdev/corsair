@@ -31,9 +31,6 @@ await corsair.confluence.api.pages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `space_id` | `string` | No | Filter by space ID |
 | `title` | `string` | No | Filter pages by title |
 | `status` | `current \| trashed \| draft` | No | Filter pages by content status |
@@ -47,9 +44,6 @@ await corsair.confluence.api.pages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `_links` | `object` | No | — |
 
@@ -126,9 +120,6 @@ await corsair.confluence.api.pages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cql` | `string` | Yes | Confluence Query Language (CQL) query string |
 | `cqlcontext` | `string` | No | Context for the CQL query |
 | `includeArchivedSpaces` | `boolean` | No | Include archived spaces in results |
@@ -142,9 +133,6 @@ await corsair.confluence.api.pages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `start` | `number` | Yes | — |
 | `limit` | `number` | Yes | — |
@@ -231,9 +219,6 @@ await corsair.confluence.api.spaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | No | Filter by space key |
 | `type` | `global \| personal` | No | Filter by space type |
 | `status` | `current \| archived` | No | Filter by space status |
@@ -248,9 +233,6 @@ await corsair.confluence.api.spaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `start` | `number` | No | — |
 | `limit` | `number` | No | — |

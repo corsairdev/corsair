@@ -31,9 +31,6 @@ await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key_id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `created_by` | `object` | No | — |
@@ -100,9 +94,6 @@ await corsair.anthropicadministrator.api.apiKeys.listApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
@@ -117,9 +108,6 @@ await corsair.anthropicadministrator.api.apiKeys.listApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
@@ -172,9 +160,6 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `active \| archived \| inactive` | No | — |
@@ -186,9 +171,6 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `created_by` | `object` | No | — |
@@ -245,9 +227,6 @@ await corsair.anthropicadministrator.api.invites.createInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | Email address to invite |
 | `role` | `billing \| claude_code_user \| developer \| user \| admin` | Yes | — |
 | `rbac_group_ids` | `string[]` | No | — |
@@ -259,9 +238,6 @@ await corsair.anthropicadministrator.api.invites.createInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `accepted_at` | `string` | No | — |
 | `email` | `string` | Yes | — |
@@ -293,9 +269,6 @@ await corsair.anthropicadministrator.api.invites.deleteInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invite_id` | `string` | Yes | — |
 
 
@@ -305,9 +278,6 @@ await corsair.anthropicadministrator.api.invites.deleteInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `invite_deleted` | Yes | — |
 
@@ -332,9 +302,6 @@ await corsair.anthropicadministrator.api.invites.getInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invite_id` | `string` | Yes | — |
 
 
@@ -344,9 +311,6 @@ await corsair.anthropicadministrator.api.invites.getInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `accepted_at` | `string` | No | — |
 | `email` | `string` | Yes | — |
@@ -378,9 +342,6 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
@@ -395,9 +356,6 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
@@ -448,9 +406,6 @@ await corsair.anthropicadministrator.api.organization.getOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `organization` | Yes | — |
@@ -478,9 +433,6 @@ await corsair.anthropicadministrator.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -490,9 +442,6 @@ await corsair.anthropicadministrator.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `added_at` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
@@ -521,9 +470,6 @@ await corsair.anthropicadministrator.api.users.listUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
@@ -537,9 +483,6 @@ await corsair.anthropicadministrator.api.users.listUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
@@ -582,9 +525,6 @@ await corsair.anthropicadministrator.api.users.removeUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -594,9 +534,6 @@ await corsair.anthropicadministrator.api.users.removeUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `user_deleted` | Yes | — |
 
@@ -621,9 +558,6 @@ await corsair.anthropicadministrator.api.users.updateUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 | `role` | `billing \| claude_code_user \| developer \| user \| admin` | Yes | New organization role |
 
@@ -634,9 +568,6 @@ await corsair.anthropicadministrator.api.users.updateUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `added_at` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
@@ -667,9 +598,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.createWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_role` | `workspace_admin \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
@@ -681,9 +609,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.createWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `workspace_member` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_id` | `string` | Yes | — |
@@ -710,9 +635,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 
@@ -723,9 +645,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `workspace_member_deleted` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_id` | `string` | Yes | — |
@@ -751,9 +670,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.getWorkspaceMember({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 
@@ -764,9 +680,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.getWorkspaceMember({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `workspace_member` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_id` | `string` | Yes | — |
@@ -793,9 +706,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
@@ -808,9 +718,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
@@ -851,9 +758,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.updateWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_role` | `workspace_admin \| workspace_billing \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
@@ -865,9 +769,6 @@ await corsair.anthropicadministrator.api.workspaceMembers.updateWorkspaceMember(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `workspace_member` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `workspace_id` | `string` | Yes | — |
@@ -896,9 +797,6 @@ await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 
 
@@ -908,9 +806,6 @@ await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `archived_at` | `string` | No | — |
 | `compartment_id` | `string` | No | — |
@@ -961,9 +856,6 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Workspace name |
 | `data_residency` | `object` | No | — |
 | `external_key_id` | `string` | No | — |
@@ -994,9 +886,6 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `archived_at` | `string` | No | — |
 | `compartment_id` | `string` | No | — |
@@ -1047,9 +936,6 @@ await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 
 
@@ -1059,9 +945,6 @@ await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `archived_at` | `string` | No | — |
 | `compartment_id` | `string` | No | — |
@@ -1112,9 +995,6 @@ await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
@@ -1127,9 +1007,6 @@ await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
@@ -1178,9 +1055,6 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `data_residency` | `object` | No | — |
@@ -1212,9 +1086,6 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `archived_at` | `string` | No | — |
 | `compartment_id` | `string` | No | — |

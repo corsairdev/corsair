@@ -31,9 +31,6 @@ await corsair.exa.api.answer.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `text` | `boolean` | No | — |
 | `stream` | `boolean` | No | — |
@@ -45,9 +42,6 @@ await corsair.exa.api.answer.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `answer` | `string` | Yes | — |
 | `citations` | `object[]` | No | — |
 | `requestId` | `string` | No | — |
@@ -95,9 +89,6 @@ await corsair.exa.api.contents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 | `text` | `object` | No | — |
 | `highlights` | `object` | No | — |
@@ -142,9 +133,6 @@ await corsair.exa.api.contents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `requestId` | `string` | No | — |
 
@@ -191,9 +179,6 @@ await corsair.exa.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `eventId` | `string` | Yes | — |
 
@@ -204,9 +189,6 @@ await corsair.exa.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -234,9 +216,6 @@ await corsair.exa.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -248,9 +227,6 @@ await corsair.exa.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | No | — |
 | `nextCursor` | `string` | No | — |
@@ -293,9 +269,6 @@ await corsair.exa.api.imports.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `urls` | `string[]` | Yes | — |
 
@@ -306,9 +279,6 @@ await corsair.exa.api.imports.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `import` | Yes | — |
 | `websetId` | `string` | Yes | — |
@@ -338,9 +308,6 @@ await corsair.exa.api.imports.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `importId` | `string` | Yes | — |
 
@@ -351,9 +318,6 @@ await corsair.exa.api.imports.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
@@ -378,9 +342,6 @@ await corsair.exa.api.imports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -392,9 +353,6 @@ await corsair.exa.api.imports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | No | — |
 | `nextCursor` | `string` | No | — |
@@ -439,9 +397,6 @@ await corsair.exa.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `websetId` | `string` | Yes | — |
 | `cadence` | `object` | Yes | — |
 
@@ -463,9 +418,6 @@ await corsair.exa.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `monitor` | Yes | — |
 | `websetId` | `string` | Yes | — |
@@ -507,9 +459,6 @@ await corsair.exa.api.search.findSimilar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `numResults` | `number` | No | — |
 | `includeDomains` | `string[]` | No | — |
@@ -551,9 +500,6 @@ await corsair.exa.api.search.findSimilar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `requestId` | `string` | No | — |
 
@@ -598,9 +544,6 @@ await corsair.exa.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `numResults` | `number` | No | — |
 | `includeDomains` | `string[]` | No | — |
@@ -643,9 +586,6 @@ await corsair.exa.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | Yes | — |
 | `autopromptString` | `string` | No | — |
 | `requestId` | `string` | No | — |
@@ -693,9 +633,6 @@ await corsair.exa.api.webhooksApi.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -706,9 +643,6 @@ await corsair.exa.api.webhooksApi.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | No | — |
 | `nextCursor` | `string` | No | — |
@@ -753,9 +687,6 @@ await corsair.exa.api.websets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `searches` | `object[]` | No | — |
 | `enrichments` | `object[]` | No | — |
 | `externalId` | `string` | No | — |
@@ -797,9 +728,6 @@ await corsair.exa.api.websets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `webset` | Yes | — |
 | `status` | `idle \| running \| paused \| done` | Yes | — |
@@ -896,9 +824,6 @@ await corsair.exa.api.websets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -908,9 +833,6 @@ await corsair.exa.api.websets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `webset` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
@@ -936,9 +858,6 @@ await corsair.exa.api.websets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -948,9 +867,6 @@ await corsair.exa.api.websets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `webset` | Yes | — |
 | `status` | `idle \| running \| paused \| done` | Yes | — |

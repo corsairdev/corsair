@@ -31,9 +31,6 @@ await corsair.amcards.api.cards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `skip` | `number` | No | Rows to skip (sent as Tastypie/DRF `offset`) |
 | `limit` | `number` | No | Page size |
 
@@ -91,9 +88,6 @@ await corsair.amcards.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_id` | `number` | Yes | — |
 
 
@@ -103,9 +97,6 @@ await corsair.amcards.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number \| string` | Yes | — |
 | `title` | `string` | No | — |
 | `priority` | `number` | No | — |
@@ -133,9 +124,6 @@ await corsair.amcards.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `parent__id` | `number` | No | Filter sub-categories by parent id |
 | `title__icontains` | `string` | No | Case-insensitive title search |
 | `parent__title__icontains` | `string` | No | Case-insensitive parent title search |
@@ -206,9 +194,6 @@ await corsair.amcards.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `skip` | `number` | No | Rows to skip (sent as Tastypie/DRF `offset`) |
 | `limit` | `number` | No | Page size |
 | `email` | `string` | No | Filter by email |
@@ -284,9 +269,6 @@ await corsair.amcards.api.gifts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -296,9 +278,6 @@ await corsair.amcards.api.gifts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number \| string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -458,9 +437,6 @@ await corsair.amcards.api.templates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -470,9 +446,6 @@ await corsair.amcards.api.templates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number \| string` | Yes | — |
 | `name` | `string` | No | — |
 | `category` | `any` | No | — |
@@ -501,9 +474,6 @@ await corsair.amcards.api.templates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category__id` | `number` | No | Filter templates by category id |
 | `name__icontains` | `string` | No | Case-insensitive template name search |
 

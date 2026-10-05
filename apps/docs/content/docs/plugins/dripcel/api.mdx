@@ -34,9 +34,6 @@ await corsair.dripcel.api.balance.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `balance` | `number` | Yes | — |
 
 
@@ -65,9 +62,6 @@ await corsair.dripcel.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaigns` | `object[]` | Yes | — |
 
 
@@ -109,9 +103,6 @@ await corsair.dripcel.api.compliance.checkSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cells` | `string[]` | Yes | — |
 | `country` | `string` | Yes | — |
 | `campaign_id` | `string` | No | — |
@@ -123,9 +114,6 @@ await corsair.dripcel.api.compliance.checkSend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | No | — |
 | `credits_used` | `number` | Yes | — |
 | `results` | `object[]` | Yes | — |
@@ -165,9 +153,6 @@ await corsair.dripcel.api.contacts.addTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cell` | `string` | Yes | — |
 | `tag_ids` | `string[]` | No | — |
 | `tags` | `string[]` | No | — |
@@ -180,9 +165,6 @@ await corsair.dripcel.api.contacts.addTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matchedCount` | `number` | Yes | — |
 | `modifiedCount` | `number` | Yes | — |
 
@@ -207,9 +189,6 @@ await corsair.dripcel.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contacts` | `object[]` | Yes | — |
 | `country` | `ZA \| NA` | No | — |
 | `tag_ids` | `string[]` | No | — |
@@ -249,9 +228,6 @@ await corsair.dripcel.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `validContacts` | `number` | Yes | — |
 | `invalidContacts` | `any[]` | Yes | — |
 
@@ -276,9 +252,6 @@ await corsair.dripcel.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cell` | `string` | Yes | — |
 
 
@@ -288,9 +261,6 @@ await corsair.dripcel.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -314,9 +284,6 @@ await corsair.dripcel.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cell` | `string` | Yes | — |
 
 
@@ -326,9 +293,6 @@ await corsair.dripcel.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_id` | `string` | No | — |
 | `cell` | `string` | No | — |
 | `firstname` | `string` | No | — |
@@ -360,9 +324,6 @@ await corsair.dripcel.api.contacts.optOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cell` | `string` | Yes | — |
 | `campaign_ids` | `string[]` | No | — |
 | `all` | `boolean` | No | — |
@@ -375,9 +336,6 @@ await corsair.dripcel.api.contacts.optOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matchedCount` | `number` | Yes | — |
 | `modifiedCount` | `number` | Yes | — |
 
@@ -402,9 +360,6 @@ await corsair.dripcel.api.contacts.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contacts` | `object[]` | Yes | — |
 | `country` | `ZA \| NA` | No | — |
 | `tag_ids` | `string[]` | No | — |
@@ -444,9 +399,6 @@ await corsair.dripcel.api.contacts.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `validContacts` | `number` | Yes | — |
 | `invalidContacts` | `any[]` | Yes | — |
 
@@ -473,9 +425,6 @@ await corsair.dripcel.api.deliveries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cell` | `string` | No | — |
 | `customerId` | `string` | No | — |
 
@@ -486,9 +435,6 @@ await corsair.dripcel.api.deliveries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deliveries` | `object[]` | Yes | — |
 
 
@@ -531,9 +477,6 @@ await corsair.dripcel.api.emailTemplates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templates` | `object[]` | Yes | — |
 
 
@@ -573,9 +516,6 @@ await corsair.dripcel.api.replies.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_id` | `string \| string[]` | No | — |
 | `Message` | `string` | No | — |
 | `kind` | `string \| string[]` | No | — |
@@ -603,9 +543,6 @@ await corsair.dripcel.api.replies.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `replies` | `object[]` | Yes | — |
 
 
@@ -649,9 +586,6 @@ await corsair.dripcel.api.sales.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sales` | `object[]` | Yes | — |
 
 
@@ -678,9 +612,6 @@ await corsair.dripcel.api.sales.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -706,9 +637,6 @@ await corsair.dripcel.api.send.bulkEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `string` | Yes | — |
 | `template_id` | `string` | Yes | — |
 | `destinations` | `string[]` | Yes | — |
@@ -739,9 +667,6 @@ await corsair.dripcel.api.send.sms({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | — |
 | `cell` | `string` | Yes | — |
 | `skipNonContacts` | `boolean` | Yes | — |
@@ -768,9 +693,6 @@ await corsair.dripcel.api.send.sms({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 | `totalCost` | `number` | Yes | — |
 
@@ -797,9 +719,6 @@ await corsair.dripcel.api.sendLogs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `find` | `object` | No | — |
 | `options` | `object` | No | — |
 
@@ -835,9 +754,6 @@ await corsair.dripcel.api.sendLogs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `send_logs` | `object[]` | Yes | — |
 | `parsed` | `object` | No | — |
@@ -889,9 +805,6 @@ await corsair.dripcel.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `string` | Yes | — |
 
 
@@ -901,9 +814,6 @@ await corsair.dripcel.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -935,9 +845,6 @@ await corsair.dripcel.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tags` | `object[]` | Yes | — |
 
 

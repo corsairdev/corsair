@@ -31,9 +31,6 @@ await corsair.uploadcare.api.addons.clamavStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.uploadcare.api.addons.clamavStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `in_progress \| error \| done \| unknown` | Yes | — |
 
 
@@ -69,9 +63,6 @@ await corsair.uploadcare.api.addons.executeClamav({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `target` | `string` | Yes | — |
 | `params` | `object` | No | — |
 
@@ -92,9 +83,6 @@ await corsair.uploadcare.api.addons.executeClamav({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -118,9 +106,6 @@ await corsair.uploadcare.api.addons.rekognitionModerationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -130,9 +115,6 @@ await corsair.uploadcare.api.addons.rekognitionModerationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `in_progress \| error \| done \| unknown` | Yes | — |
 
 
@@ -156,9 +138,6 @@ await corsair.uploadcare.api.addons.rekognitionStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -168,9 +147,6 @@ await corsair.uploadcare.api.addons.rekognitionStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `in_progress \| error \| done \| unknown` | Yes | — |
 
 
@@ -194,9 +170,6 @@ await corsair.uploadcare.api.addons.removeBgStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -206,9 +179,6 @@ await corsair.uploadcare.api.addons.removeBgStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `in_progress \| error \| done \| unknown` | Yes | — |
 
 
@@ -234,9 +204,6 @@ await corsair.uploadcare.api.cdn.mirror({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -246,9 +213,6 @@ await corsair.uploadcare.api.cdn.mirror({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -272,9 +236,6 @@ await corsair.uploadcare.api.cdn.rotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `degrees` | `90 \| 180 \| 270` | Yes | — |
 
@@ -285,9 +246,6 @@ await corsair.uploadcare.api.cdn.rotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -313,9 +271,6 @@ await corsair.uploadcare.api.files.batchDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuids` | `string[]` | Yes | — |
 
 
@@ -325,9 +280,6 @@ await corsair.uploadcare.api.files.batchDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `problems` | `object` | No | — |
 | `result` | `object[]` | No | — |
@@ -391,9 +343,6 @@ await corsair.uploadcare.api.files.batchStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuids` | `string[]` | Yes | — |
 
 
@@ -403,9 +352,6 @@ await corsair.uploadcare.api.files.batchStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `problems` | `object` | No | — |
 | `result` | `object[]` | No | — |
@@ -469,9 +415,6 @@ await corsair.uploadcare.api.files.copyLocal({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `source` | `string` | Yes | — |
 | `store` | `boolean` | No | — |
 | `metadata` | `object` | No | — |
@@ -493,9 +436,6 @@ await corsair.uploadcare.api.files.copyLocal({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `result` | `object` | No | — |
 
@@ -550,9 +490,6 @@ await corsair.uploadcare.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `include` | `string` | No | — |
 
@@ -563,9 +500,6 @@ await corsair.uploadcare.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `datetime_removed` | `string` | No | — |
 | `datetime_stored` | `string` | No | — |
@@ -638,9 +572,6 @@ await corsair.uploadcare.api.files.deleteMetadataKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -651,9 +582,6 @@ await corsair.uploadcare.api.files.deleteMetadataKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -677,9 +605,6 @@ await corsair.uploadcare.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `include` | `string` | No | — |
 
@@ -690,9 +615,6 @@ await corsair.uploadcare.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `datetime_removed` | `string` | No | — |
 | `datetime_stored` | `string` | No | — |
@@ -765,9 +687,6 @@ await corsair.uploadcare.api.files.getMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -804,9 +723,6 @@ await corsair.uploadcare.api.files.getMetadataKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -834,9 +750,6 @@ await corsair.uploadcare.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `removed` | `boolean` | No | — |
 | `stored` | `boolean` | No | — |
 | `limit` | `number` | No | — |
@@ -851,9 +764,6 @@ await corsair.uploadcare.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `total` | `number` | No | — |
@@ -923,9 +833,6 @@ await corsair.uploadcare.api.files.store({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `include` | `string` | No | — |
 
@@ -936,9 +843,6 @@ await corsair.uploadcare.api.files.store({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `datetime_removed` | `string` | No | — |
 | `datetime_stored` | `string` | No | — |
@@ -1011,9 +915,6 @@ await corsair.uploadcare.api.files.updateMetadataKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -1044,9 +945,6 @@ await corsair.uploadcare.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -1056,9 +954,6 @@ await corsair.uploadcare.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1082,9 +977,6 @@ await corsair.uploadcare.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -1094,9 +986,6 @@ await corsair.uploadcare.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `datetime_created` | `string` | No | — |
 | `files_count` | `number` | No | — |
@@ -1125,9 +1014,6 @@ await corsair.uploadcare.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `ordering` | `datetime_created \| -datetime_created` | No | — |
@@ -1139,9 +1025,6 @@ await corsair.uploadcare.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `total` | `number` | No | — |
@@ -1190,9 +1073,6 @@ await corsair.uploadcare.api.project.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `pub_key` | `string` | No | — |
 | `collaborators` | `object[]` | No | — |
@@ -1232,9 +1112,6 @@ await corsair.uploadcare.api.upload.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `files` | `string[]` | Yes | — |
 
 
@@ -1244,9 +1121,6 @@ await corsair.uploadcare.api.upload.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `datetime_created` | `string` | No | — |
 | `files_count` | `number` | No | — |
@@ -1275,9 +1149,6 @@ await corsair.uploadcare.api.upload.fileInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -1287,9 +1158,6 @@ await corsair.uploadcare.api.upload.fileInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | No | — |
 | `file_id` | `string` | No | — |
 | `size` | `number` | No | — |
@@ -1320,9 +1188,6 @@ await corsair.uploadcare.api.upload.fromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `source_url` | `string` | Yes | — |
 | `store` | `0 \| 1 \| auto` | No | — |
 | `filename` | `string` | No | — |
@@ -1336,9 +1201,6 @@ await corsair.uploadcare.api.upload.fromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `token` | `string` | No | — |
 | `uuid` | `string` | No | — |
@@ -1365,9 +1227,6 @@ await corsair.uploadcare.api.upload.fromUrlStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | Yes | — |
 
 
@@ -1377,9 +1236,6 @@ await corsair.uploadcare.api.upload.fromUrlStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `uuid` | `string` | No | — |
 | `file_id` | `string` | No | — |
@@ -1406,9 +1262,6 @@ await corsair.uploadcare.api.upload.groupInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -1418,9 +1271,6 @@ await corsair.uploadcare.api.upload.groupInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `datetime_created` | `string` | No | — |
 | `files_count` | `number` | No | — |
@@ -1449,9 +1299,6 @@ await corsair.uploadcare.api.upload.startMultipart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filename` | `string` | Yes | — |
 | `size` | `number` | Yes | — |
 | `content_type` | `string` | Yes | — |
@@ -1464,9 +1311,6 @@ await corsair.uploadcare.api.upload.startMultipart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `parts` | `string[]` | Yes | — |
 
@@ -1493,9 +1337,6 @@ await corsair.uploadcare.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `target_url` | `string` | Yes | — |
 | `event` | `string` | Yes | — |
 | `is_active` | `boolean` | No | — |
@@ -1508,9 +1349,6 @@ await corsair.uploadcare.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
@@ -1541,9 +1379,6 @@ await corsair.uploadcare.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `number` | Yes | — |
 
 
@@ -1553,9 +1388,6 @@ await corsair.uploadcare.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1579,9 +1411,6 @@ await corsair.uploadcare.api.webhooks.deleteByUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `target_url` | `string` | Yes | — |
 
 
@@ -1591,9 +1420,6 @@ await corsair.uploadcare.api.webhooks.deleteByUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1655,9 +1481,6 @@ await corsair.uploadcare.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `number` | Yes | — |
 | `target_url` | `string` | No | — |
 | `event` | `string` | No | — |
@@ -1671,9 +1494,6 @@ await corsair.uploadcare.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |

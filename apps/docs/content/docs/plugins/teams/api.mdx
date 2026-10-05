@@ -31,9 +31,6 @@ await corsair.teams.api.channels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `displayName` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -47,9 +44,6 @@ await corsair.teams.api.channels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -80,9 +74,6 @@ await corsair.teams.api.channels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 
@@ -110,9 +101,6 @@ await corsair.teams.api.channels.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 
@@ -123,9 +111,6 @@ await corsair.teams.api.channels.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -156,9 +141,6 @@ await corsair.teams.api.channels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `filter` | `string` | No | — |
 
@@ -169,9 +151,6 @@ await corsair.teams.api.channels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -215,9 +194,6 @@ await corsair.teams.api.channels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
@@ -250,9 +226,6 @@ await corsair.teams.api.chats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chatType` | `oneOnOne \| group` | Yes | — |
 | `topic` | `string` | No | — |
 | `members` | `object[]` | Yes | — |
@@ -276,9 +249,6 @@ await corsair.teams.api.chats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `topic` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
@@ -308,9 +278,6 @@ await corsair.teams.api.chats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chatId` | `string` | Yes | — |
 
 
@@ -320,9 +287,6 @@ await corsair.teams.api.chats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `topic` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
@@ -352,9 +316,6 @@ await corsair.teams.api.chats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter` | `string` | No | — |
 | `top` | `number` | No | — |
 
@@ -365,9 +326,6 @@ await corsair.teams.api.chats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -410,9 +368,6 @@ await corsair.teams.api.chats.listMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chatId` | `string` | Yes | — |
 | `top` | `number` | No | — |
 | `skipToken` | `string` | No | — |
@@ -424,9 +379,6 @@ await corsair.teams.api.chats.listMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -500,9 +452,6 @@ await corsair.teams.api.chats.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chatId` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 | `importance` | `normal \| high \| urgent` | No | — |
@@ -526,9 +475,6 @@ await corsair.teams.api.chats.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `replyToId` | `string` | No | — |
 | `etag` | `string` | No | — |
@@ -635,9 +581,6 @@ await corsair.teams.api.members.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
 | `roles` | `owner \| member[]` | No | — |
@@ -649,9 +592,6 @@ await corsair.teams.api.members.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `userId` | `string` | No | — |
@@ -681,9 +621,6 @@ await corsair.teams.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `membershipId` | `string` | Yes | — |
 
@@ -694,9 +631,6 @@ await corsair.teams.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `userId` | `string` | No | — |
@@ -726,9 +660,6 @@ await corsair.teams.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `filter` | `string` | No | — |
 
@@ -739,9 +670,6 @@ await corsair.teams.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -784,9 +712,6 @@ await corsair.teams.api.members.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `membershipId` | `string` | Yes | — |
 
@@ -816,9 +741,6 @@ await corsair.teams.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -847,9 +769,6 @@ await corsair.teams.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -861,9 +780,6 @@ await corsair.teams.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `replyToId` | `string` | No | — |
 | `etag` | `string` | No | — |
@@ -968,9 +884,6 @@ await corsair.teams.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `top` | `number` | No | — |
@@ -983,9 +896,6 @@ await corsair.teams.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -1059,9 +969,6 @@ await corsair.teams.api.messages.listReplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -1074,9 +981,6 @@ await corsair.teams.api.messages.listReplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
 | `value` | `object[]` | Yes | — |
@@ -1150,9 +1054,6 @@ await corsair.teams.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
@@ -1178,9 +1079,6 @@ await corsair.teams.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `replyToId` | `string` | No | — |
 | `etag` | `string` | No | — |
@@ -1285,9 +1183,6 @@ await corsair.teams.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `channelId` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
@@ -1313,9 +1208,6 @@ await corsair.teams.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `replyToId` | `string` | No | — |
 | `etag` | `string` | No | — |
@@ -1422,9 +1314,6 @@ await corsair.teams.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `displayName` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `visibility` | `public \| private` | No | — |
@@ -1490,9 +1379,6 @@ await corsair.teams.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1518,9 +1404,6 @@ await corsair.teams.api.teams.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 
 
@@ -1547,9 +1430,6 @@ await corsair.teams.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 
 
@@ -1559,9 +1439,6 @@ await corsair.teams.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1647,9 +1524,6 @@ await corsair.teams.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter` | `string` | No | — |
 | `select` | `string` | No | — |
 | `top` | `number` | No | — |
@@ -1662,9 +1536,6 @@ await corsair.teams.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `@odata.count` | `number` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -1734,9 +1605,6 @@ await corsair.teams.api.teams.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |

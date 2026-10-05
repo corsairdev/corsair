@@ -510,9 +510,6 @@ Five tables, shared by every integration — Slack, GitHub, Linear, and the rest
 
 | Table | Purpose |
 |-------|---------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `corsair_integrations` | One row per enabled plugin (`slack`, `github`, …) |
 | `corsair_accounts` | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`) |
 | `corsair_entities` | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
@@ -590,9 +587,6 @@ Because Corsair updates `corsair_entities` on every API call and webhook, foreig
 
 | Use | When |
 |-----|------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `*.api.*` | Writes, deletes, or you need the latest value right now from the source |
 | `*.db.*` | UI lists, search, detail pages; fast reads, no rate limits |
 

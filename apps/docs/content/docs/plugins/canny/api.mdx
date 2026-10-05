@@ -34,9 +34,6 @@ await corsair.canny.api.boards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -78,9 +75,6 @@ await corsair.canny.api.boards.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -90,9 +84,6 @@ await corsair.canny.api.boards.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `created` | `string` | Yes | — |
 | `isPrivate` | `boolean` | Yes | — |
@@ -125,9 +116,6 @@ await corsair.canny.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorID` | `string` | Yes | — |
 | `postID` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -142,9 +130,6 @@ await corsair.canny.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -168,9 +153,6 @@ await corsair.canny.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commentID` | `string` | Yes | — |
 
 
@@ -197,9 +179,6 @@ await corsair.canny.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorID` | `string` | No | — |
 | `boardID` | `string` | No | — |
 | `companyID` | `string` | No | — |
@@ -214,9 +193,6 @@ await corsair.canny.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comments` | `object[]` | Yes | — |
 | `hasMore` | `boolean` | Yes | — |
 
@@ -338,9 +314,6 @@ await corsair.canny.api.posts.changeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `changerID` | `string` | Yes | — |
 | `commentValue` | `string` | No | — |
 | `postID` | `string` | Yes | — |
@@ -354,9 +327,6 @@ await corsair.canny.api.posts.changeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
 | `board` | `object` | Yes | — |
@@ -478,9 +448,6 @@ await corsair.canny.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorID` | `string` | Yes | — |
 | `boardID` | `string` | Yes | — |
 | `byID` | `string` | No | — |
@@ -511,9 +478,6 @@ await corsair.canny.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -537,9 +501,6 @@ await corsair.canny.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postID` | `string` | Yes | — |
 
 
@@ -566,9 +527,6 @@ await corsair.canny.api.posts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorID` | `string` | No | — |
 | `boardID` | `string` | No | — |
 | `categoryID` | `string` | No | — |
@@ -587,9 +545,6 @@ await corsair.canny.api.posts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hasMore` | `boolean` | Yes | — |
 | `posts` | `object[]` | Yes | — |
 
@@ -679,9 +634,6 @@ await corsair.canny.api.posts.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `boardID` | `string` | No | — |
 | `urlName` | `string` | No | — |
@@ -693,9 +645,6 @@ await corsair.canny.api.posts.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
 | `board` | `object` | Yes | — |
@@ -819,9 +768,6 @@ await corsair.canny.api.votes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postID` | `string` | Yes | — |
 | `voterID` | `string` | Yes | — |
 | `votePriority` | `0 \| 10 \| 20` | No | — |
@@ -850,9 +796,6 @@ await corsair.canny.api.votes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postID` | `string` | Yes | — |
 | `voterID` | `string` | Yes | — |
 
@@ -880,9 +823,6 @@ await corsair.canny.api.votes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardID` | `string` | No | — |
 | `companyID` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -897,9 +837,6 @@ await corsair.canny.api.votes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hasMore` | `boolean` | Yes | — |
 | `votes` | `object[]` | Yes | — |
 

@@ -31,9 +31,6 @@ await corsair.agencyzoom.api.auth.logTheUserIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `password` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -65,9 +62,6 @@ await corsair.agencyzoom.api.auth.logTheUserIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jwt` | `string` | Yes | — |
 | `ownerAgent` | `boolean` | No | — |
 
@@ -92,9 +86,6 @@ await corsair.agencyzoom.api.auth.logTheUserOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -151,9 +142,6 @@ await corsair.agencyzoom.api.auth.v4SsoLogTheUserIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `password` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -185,9 +173,6 @@ await corsair.agencyzoom.api.auth.v4SsoLogTheUserIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jwt` | `string` | Yes | — |
 | `ownerAgent` | `boolean` | No | — |
 
@@ -214,9 +199,6 @@ await corsair.agencyzoom.api.contact.batchCreateContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactDataRequests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -276,9 +258,6 @@ await corsair.agencyzoom.api.customers.createACustomerNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note` | `string` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -337,9 +316,6 @@ await corsair.agencyzoom.api.customers.deleteACustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -397,9 +373,6 @@ await corsair.agencyzoom.api.customers.deleteACustomerFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileId` | `number` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -458,9 +431,6 @@ await corsair.agencyzoom.api.customers.deleteACustomerPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policyId` | `number` | Yes | — |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -519,9 +489,6 @@ await corsair.agencyzoom.api.customers.getAmsPoliciesForACustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -579,9 +546,6 @@ await corsair.agencyzoom.api.customers.getPoliciesForACustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -639,9 +603,6 @@ await corsair.agencyzoom.api.customers.getTheCustomerDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -672,9 +633,6 @@ await corsair.agencyzoom.api.customers.getTheCustomerDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `businessName` | `string` | No | — |
 | `firstname` | `string` | No | — |
@@ -704,9 +662,6 @@ await corsair.agencyzoom.api.customers.getTheCustomerTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -764,9 +719,6 @@ await corsair.agencyzoom.api.customers.searchCustomers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -828,9 +780,6 @@ await corsair.agencyzoom.api.customers.updateCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zip` | `string` | No | — |
 | `city` | `string` | No | — |
 | `csrId` | `number` | No | — |
@@ -885,9 +834,6 @@ await corsair.agencyzoom.api.customers.updateCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `businessName` | `string` | No | — |
 | `firstname` | `string` | No | — |
@@ -919,9 +865,6 @@ await corsair.agencyzoom.api.emailThreads.deleteMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messageId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -984,9 +927,6 @@ await corsair.agencyzoom.api.emailThreads.deleteThread({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -1049,9 +989,6 @@ await corsair.agencyzoom.api.emailThreads.getThreadDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -1117,9 +1054,6 @@ await corsair.agencyzoom.api.emailThreads.markThreadAsUnreadApiEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `markUnread` | `boolean` | Yes | — |
 | `body` | `any` | No | — |
@@ -1178,9 +1112,6 @@ await corsair.agencyzoom.api.emailThreads.searchEmailThreads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -1244,9 +1175,6 @@ await corsair.agencyzoom.api.leads.batchCreateLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadDataRequests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1304,9 +1232,6 @@ await corsair.agencyzoom.api.leads.changeStatusForLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `leadId` | `number` | Yes | — |
 | `status` | `number` | Yes | — |
@@ -1375,9 +1300,6 @@ await corsair.agencyzoom.api.leads.createALeadNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note` | `string` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -1436,9 +1358,6 @@ await corsair.agencyzoom.api.leads.createALeadOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `number` | No | — |
 | `leadId` | `number` | Yes | — |
 | `premium` | `number` | Yes | — |
@@ -1501,9 +1420,6 @@ await corsair.agencyzoom.api.leads.createALeadQuote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `number` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `premium` | `number` | Yes | — |
@@ -1566,9 +1482,6 @@ await corsair.agencyzoom.api.leads.createBizLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dba` | `string` | No | — |
 | `fax` | `string` | No | — |
 | `zip` | `string` | No | — |
@@ -1667,9 +1580,6 @@ await corsair.agencyzoom.api.leads.createLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zip` | `string` | No | — |
 | `city` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1736,9 +1646,6 @@ await corsair.agencyzoom.api.leads.createLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `firstname` | `string` | No | — |
 | `middlename` | `string` | No | — |
@@ -1771,9 +1678,6 @@ await corsair.agencyzoom.api.leads.deleteALeadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileId` | `number` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -1832,9 +1736,6 @@ await corsair.agencyzoom.api.leads.deleteALeadOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -1893,9 +1794,6 @@ await corsair.agencyzoom.api.leads.deleteALeadQuote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `quoteId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -1954,9 +1852,6 @@ await corsair.agencyzoom.api.leads.getLeadFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -2021,9 +1916,6 @@ await corsair.agencyzoom.api.leads.getLeadNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2081,9 +1973,6 @@ await corsair.agencyzoom.api.leads.getLeadQuotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2141,9 +2030,6 @@ await corsair.agencyzoom.api.leads.getLeadTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2201,9 +2087,6 @@ await corsair.agencyzoom.api.leads.getTheLeadDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2234,9 +2117,6 @@ await corsair.agencyzoom.api.leads.getTheLeadDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `firstname` | `string` | No | — |
 | `middlename` | `string` | No | — |
@@ -2269,9 +2149,6 @@ await corsair.agencyzoom.api.leads.getTheOpportunitiesForALead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2329,9 +2206,6 @@ await corsair.agencyzoom.api.leads.moveLeadToSold({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `keepOpen` | `boolean` | No | — |
 | `soldProducts` | `any[]` | Yes | — |
@@ -2391,9 +2265,6 @@ await corsair.agencyzoom.api.leads.searchLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -2428,9 +2299,6 @@ await corsair.agencyzoom.api.leads.searchLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | No | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -2477,9 +2345,6 @@ await corsair.agencyzoom.api.leads.searchLeadsCount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -2541,9 +2406,6 @@ await corsair.agencyzoom.api.leads.updateALeadFileName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileId` | `number` | Yes | — |
 | `leadId` | `number` | Yes | — |
 | `newFileName` | `string` | Yes | — |
@@ -2604,9 +2466,6 @@ await corsair.agencyzoom.api.leads.updateALeadOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `items` | `number` | No | — |
 | `leadId` | `number` | Yes | — |
@@ -2670,9 +2529,6 @@ await corsair.agencyzoom.api.leads.updateALeadQuote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `items` | `number` | Yes | — |
 | `leadId` | `number` | Yes | — |
@@ -2736,9 +2592,6 @@ await corsair.agencyzoom.api.leads.updateBusinessLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dba` | `string` | No | — |
 | `fax` | `string` | No | — |
 | `zip` | `string` | No | — |
@@ -2838,9 +2691,6 @@ await corsair.agencyzoom.api.leads.updateLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zip` | `string` | No | — |
 | `city` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2908,9 +2758,6 @@ await corsair.agencyzoom.api.leads.updateLead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `firstname` | `string` | No | — |
 | `middlename` | `string` | No | — |
@@ -2943,9 +2790,6 @@ await corsair.agencyzoom.api.leads.updateLeadStatusById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `leadId` | `number` | Yes | — |
 | `status` | `number` | Yes | — |
@@ -3016,9 +2860,6 @@ await corsair.agencyzoom.api.life.searchLifeAndHealthLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -3082,9 +2923,6 @@ await corsair.agencyzoom.api.opportunities.createADriverForAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `gender` | `string` | No | — |
 | `birthday` | `string` | No | — |
 | `lastName` | `string` | Yes | — |
@@ -3151,9 +2989,6 @@ await corsair.agencyzoom.api.opportunities.createAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `number` | No | — |
 | `premium` | `number` | No | — |
 | `carrierId` | `number` | No | — |
@@ -3197,9 +3032,6 @@ await corsair.agencyzoom.api.opportunities.createAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `carrierId` | `number` | No | — |
 | `productLineId` | `number` | No | — |
@@ -3228,9 +3060,6 @@ await corsair.agencyzoom.api.opportunities.createAVehicleForAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vin` | `string` | No | — |
 | `make` | `string` | Yes | — |
 | `year` | `number` | No | — |
@@ -3293,9 +3122,6 @@ await corsair.agencyzoom.api.opportunities.deleteADriver({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `driverId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3353,9 +3179,6 @@ await corsair.agencyzoom.api.opportunities.deleteAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3413,9 +3236,6 @@ await corsair.agencyzoom.api.opportunities.deleteAVehicle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vehicleId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3473,9 +3293,6 @@ await corsair.agencyzoom.api.opportunities.getAListOfDriversForAnOpportunity({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3533,9 +3350,6 @@ await corsair.agencyzoom.api.opportunities.getAListOfVehiclesForAnOpportunity({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3593,9 +3407,6 @@ await corsair.agencyzoom.api.opportunities.getTheDriverDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `driverId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3653,9 +3464,6 @@ await corsair.agencyzoom.api.opportunities.getTheOpportunityDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3686,9 +3494,6 @@ await corsair.agencyzoom.api.opportunities.getTheOpportunityDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `carrierId` | `number` | No | — |
 | `productLineId` | `number` | No | — |
@@ -3717,9 +3522,6 @@ await corsair.agencyzoom.api.opportunities.getTheVehicleDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vehicleId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3777,9 +3579,6 @@ await corsair.agencyzoom.api.opportunities.linkADriverToOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `driverId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3838,9 +3637,6 @@ await corsair.agencyzoom.api.opportunities.linkAVehicleToOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vehicleId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3899,9 +3695,6 @@ await corsair.agencyzoom.api.opportunities.unlinkADriverFromOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `driverId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3960,9 +3753,6 @@ await corsair.agencyzoom.api.opportunities.unlinkAVehicleFromOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vehicleId` | `number` | Yes | — |
 | `opportunityId` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -4021,9 +3811,6 @@ await corsair.agencyzoom.api.opportunities.updateADriverSDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `gender` | `string` | No | — |
 | `birthday` | `string` | No | — |
 | `driverId` | `number` | Yes | — |
@@ -4090,9 +3877,6 @@ await corsair.agencyzoom.api.opportunities.updateAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `number` | No | — |
 | `premium` | `number` | No | — |
 | `carrierId` | `number` | No | — |
@@ -4136,9 +3920,6 @@ await corsair.agencyzoom.api.opportunities.updateAnOpportunity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `carrierId` | `number` | No | — |
 | `productLineId` | `number` | No | — |
@@ -4167,9 +3948,6 @@ await corsair.agencyzoom.api.opportunities.updateAVehicleSDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vin` | `string` | No | — |
 | `make` | `string` | No | — |
 | `year` | `number` | No | — |
@@ -4234,9 +4012,6 @@ await corsair.agencyzoom.api.policies.updateAPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `number` | No | — |
 | `agentId` | `number` | No | — |
 | `premium` | `number` | No | — |
@@ -4313,9 +4088,6 @@ await corsair.agencyzoom.api.policies.updateTagsForAPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policyId` | `number` | No | — |
 | `tagNames` | `string` | Yes | — |
 | `amsPolicyId` | `number` | No | — |
@@ -4377,9 +4149,6 @@ await corsair.agencyzoom.api.profile.updateMyProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `phone` | `string` | No | — |
 | `lastname` | `string` | Yes | — |
@@ -4442,9 +4211,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfAssignGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4501,9 +4267,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfCarriers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4560,9 +4323,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfCsrs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4619,9 +4379,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfCustomFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4678,9 +4435,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfEmployees({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4737,9 +4491,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfLeadSourceCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4796,9 +4547,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfLeadSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4855,9 +4603,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfLifeProfessionals({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4914,9 +4659,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfLocations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4973,9 +4715,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfLossReasons({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5032,9 +4771,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfPipelines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5091,9 +4827,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfProductLinesPolicyTypes({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5150,9 +4883,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfRecycleEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leadId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5183,9 +4913,6 @@ await corsair.agencyzoom.api.referenceData.getAListOfRecycleEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `existingXDate` | `any[]` | No | — |
 | `newXDate` | `any[]` | No | — |
 
@@ -5210,9 +4937,6 @@ await corsair.agencyzoom.api.referenceData.getDepartmentsGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agencyNumber` | `string` | No | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5270,9 +4994,6 @@ await corsair.agencyzoom.api.referenceData.getListOfEndStages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5329,9 +5050,6 @@ await corsair.agencyzoom.api.referenceData.listProductCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5388,9 +5106,6 @@ await corsair.agencyzoom.api.referenceData.searchBusinessClassifications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -5454,9 +5169,6 @@ await corsair.agencyzoom.api.serviceTickets.serviceTicketList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `status` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -5520,9 +5232,6 @@ await corsair.agencyzoom.api.tasks.batchDeleteTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskIds` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5580,9 +5289,6 @@ await corsair.agencyzoom.api.tasks.completeTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5640,9 +5346,6 @@ await corsair.agencyzoom.api.tasks.createTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `title` | `string` | No | — |
 | `leadId` | `number` | No | — |
@@ -5684,9 +5387,6 @@ await corsair.agencyzoom.api.tasks.createTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `title` | `string` | No | — |
 | `status` | `string \| number` | No | — |
@@ -5716,9 +5416,6 @@ await corsair.agencyzoom.api.tasks.deleteATask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5776,9 +5473,6 @@ await corsair.agencyzoom.api.tasks.getTheTaskDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5809,9 +5503,6 @@ await corsair.agencyzoom.api.tasks.getTheTaskDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `title` | `string` | No | — |
 | `status` | `string \| number` | No | — |
@@ -5841,9 +5532,6 @@ await corsair.agencyzoom.api.tasks.reopenATask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `comments` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -5902,9 +5590,6 @@ await corsair.agencyzoom.api.tasks.searchTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `sort` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -5975,9 +5660,6 @@ await corsair.agencyzoom.api.tasks.updateTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `title` | `string` | No | — |
 | `leadId` | `number` | No | — |
@@ -6020,9 +5702,6 @@ await corsair.agencyzoom.api.tasks.updateTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `title` | `string` | No | — |
 | `status` | `string \| number` | No | — |
@@ -6054,9 +5733,6 @@ await corsair.agencyzoom.api.textThreads.getAListOfProducer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -6113,9 +5789,6 @@ await corsair.agencyzoom.api.textThreads.removeTextThreadEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -6178,9 +5851,6 @@ await corsair.agencyzoom.api.textThreads.searchSmsThreads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -6242,9 +5912,6 @@ await corsair.agencyzoom.api.textThreads.textDetailThread({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -6310,9 +5977,6 @@ await corsair.agencyzoom.api.textThreads.unreadThread({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `markUnread` | `boolean` | Yes | — |
 | `body` | `any` | No | — |
@@ -6373,9 +6037,6 @@ await corsair.agencyzoom.api.v4sso.authenticateForJwtviaV4Sso({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -6406,9 +6067,6 @@ await corsair.agencyzoom.api.v4sso.authenticateForJwtviaV4Sso({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jwt` | `string` | Yes | — |
 | `ownerAgent` | `boolean` | No | — |
 
@@ -6433,9 +6091,6 @@ await corsair.agencyzoom.api.v4sso.getAuthUrlForV4Sso({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |

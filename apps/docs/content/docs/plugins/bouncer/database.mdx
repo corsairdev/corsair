@@ -28,9 +28,6 @@ const rows = await corsair.bouncer.db.batchVerifications.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `batchId` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -67,9 +64,6 @@ const rows = await corsair.bouncer.db.domainVerifications.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `domain` | `string` | equals, contains, startsWith, endsWith, in |
 | `dnsType` | `string` | equals, contains, startsWith, endsWith, in |
@@ -99,9 +93,6 @@ const rows = await corsair.bouncer.db.emailVerifications.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `domainName` | `string` | equals, contains, startsWith, endsWith, in |
@@ -137,9 +128,6 @@ const rows = await corsair.bouncer.db.toxicityJobs.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -166,9 +154,6 @@ const rows = await corsair.bouncer.db.toxicityResults.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |

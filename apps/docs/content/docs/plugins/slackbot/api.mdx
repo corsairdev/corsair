@@ -31,9 +31,6 @@ await corsair.slackbot.api.calls.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `external_unique_id` | `string` | Yes | — |
 | `join_url` | `string` | Yes | — |
 | `created_by` | `string` | No | — |
@@ -64,9 +61,6 @@ await corsair.slackbot.api.calls.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -113,9 +107,6 @@ await corsair.slackbot.api.calls.end({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `duration` | `number` | No | — |
 
@@ -126,9 +117,6 @@ await corsair.slackbot.api.calls.end({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -175,9 +163,6 @@ await corsair.slackbot.api.calls.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -187,9 +172,6 @@ await corsair.slackbot.api.calls.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -236,9 +218,6 @@ await corsair.slackbot.api.calls.participantsAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `users` | `object[]` | Yes | — |
 
@@ -263,9 +242,6 @@ await corsair.slackbot.api.calls.participantsAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -312,9 +288,6 @@ await corsair.slackbot.api.calls.participantsRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `users` | `object[]` | Yes | — |
 
@@ -339,9 +312,6 @@ await corsair.slackbot.api.calls.participantsRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -388,9 +358,6 @@ await corsair.slackbot.api.calls.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `join_url` | `string` | No | — |
@@ -403,9 +370,6 @@ await corsair.slackbot.api.calls.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -454,9 +418,6 @@ await corsair.slackbot.api.canvases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `document_content` | `object` | No | — |
 | `channel_id` | `string` | No | — |
@@ -480,9 +441,6 @@ await corsair.slackbot.api.canvases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -511,9 +469,6 @@ await corsair.slackbot.api.canvases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `canvas_id` | `string` | Yes | — |
 
 
@@ -523,9 +478,6 @@ await corsair.slackbot.api.canvases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -553,9 +505,6 @@ await corsair.slackbot.api.canvases.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `canvas_id` | `string` | Yes | — |
 | `changes` | `object[]` | Yes | — |
 
@@ -582,9 +531,6 @@ await corsair.slackbot.api.canvases.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -612,9 +558,6 @@ await corsair.slackbot.api.canvases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `canvas_id` | `string` | Yes | — |
 
 
@@ -624,9 +567,6 @@ await corsair.slackbot.api.canvases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -682,9 +622,6 @@ await corsair.slackbot.api.canvases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | No | — |
 | `user` | `string` | No | — |
 | `team_id` | `string` | No | — |
@@ -698,9 +635,6 @@ await corsair.slackbot.api.canvases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -776,9 +710,6 @@ await corsair.slackbot.api.canvases.sectionsLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `canvas_id` | `string` | Yes | — |
 | `criteria` | `object` | Yes | — |
 
@@ -801,9 +732,6 @@ await corsair.slackbot.api.canvases.sectionsLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -845,9 +773,6 @@ await corsair.slackbot.api.conversations.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -857,9 +782,6 @@ await corsair.slackbot.api.conversations.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -887,9 +809,6 @@ await corsair.slackbot.api.conversations.close({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -899,9 +818,6 @@ await corsair.slackbot.api.conversations.close({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -959,9 +875,6 @@ await corsair.slackbot.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `is_private` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
@@ -973,9 +886,6 @@ await corsair.slackbot.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1031,9 +941,6 @@ await corsair.slackbot.api.conversations.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `exclude_archived` | `boolean` | No | — |
 | `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
@@ -1049,9 +956,6 @@ await corsair.slackbot.api.conversations.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1109,9 +1013,6 @@ await corsair.slackbot.api.conversations.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `include_locale` | `boolean` | No | — |
 | `include_num_members` | `boolean` | No | — |
@@ -1123,9 +1024,6 @@ await corsair.slackbot.api.conversations.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1181,9 +1079,6 @@ await corsair.slackbot.api.conversations.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `users` | `string[]` | Yes | — |
 | `force` | `boolean` | No | — |
@@ -1195,9 +1090,6 @@ await corsair.slackbot.api.conversations.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1253,9 +1145,6 @@ await corsair.slackbot.api.conversations.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -1265,9 +1154,6 @@ await corsair.slackbot.api.conversations.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1323,9 +1209,6 @@ await corsair.slackbot.api.conversations.kick({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `user` | `string` | Yes | — |
 
@@ -1336,9 +1219,6 @@ await corsair.slackbot.api.conversations.kick({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1366,9 +1246,6 @@ await corsair.slackbot.api.conversations.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -1378,9 +1255,6 @@ await corsair.slackbot.api.conversations.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1408,9 +1282,6 @@ await corsair.slackbot.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exclude_archived` | `boolean` | No | — |
 | `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
 | `team_id` | `string` | No | — |
@@ -1424,9 +1295,6 @@ await corsair.slackbot.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1494,9 +1362,6 @@ await corsair.slackbot.api.conversations.listForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `exclude_archived` | `boolean` | No | — |
 | `types` | `public_channel \| private_channel \| mpim \| im[]` | No | — |
@@ -1511,9 +1376,6 @@ await corsair.slackbot.api.conversations.listForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1581,9 +1443,6 @@ await corsair.slackbot.api.conversations.mark({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 
@@ -1594,9 +1453,6 @@ await corsair.slackbot.api.conversations.mark({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1624,9 +1480,6 @@ await corsair.slackbot.api.conversations.members({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1638,9 +1491,6 @@ await corsair.slackbot.api.conversations.members({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1683,9 +1533,6 @@ await corsair.slackbot.api.conversations.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -1696,9 +1543,6 @@ await corsair.slackbot.api.conversations.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1754,9 +1598,6 @@ await corsair.slackbot.api.conversations.setPurpose({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `purpose` | `string` | Yes | — |
 
@@ -1767,9 +1608,6 @@ await corsair.slackbot.api.conversations.setPurpose({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1826,9 +1664,6 @@ await corsair.slackbot.api.conversations.setTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `topic` | `string` | Yes | — |
 
@@ -1839,9 +1674,6 @@ await corsair.slackbot.api.conversations.setTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1898,9 +1730,6 @@ await corsair.slackbot.api.conversations.unarchive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -1910,9 +1739,6 @@ await corsair.slackbot.api.conversations.unarchive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1942,9 +1768,6 @@ await corsair.slackbot.api.files.commentsDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -1955,9 +1778,6 @@ await corsair.slackbot.api.files.commentsDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -1985,9 +1805,6 @@ await corsair.slackbot.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 
 
@@ -1997,9 +1814,6 @@ await corsair.slackbot.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2027,9 +1841,6 @@ await corsair.slackbot.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 | `max_bytes` | `number` | No | — |
 
@@ -2040,9 +1851,6 @@ await corsair.slackbot.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2100,9 +1908,6 @@ await corsair.slackbot.api.files.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -2116,9 +1921,6 @@ await corsair.slackbot.api.files.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2195,9 +1997,6 @@ await corsair.slackbot.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | No | — |
 | `user` | `string` | No | — |
 | `ts_from` | `number` | No | — |
@@ -2215,9 +2014,6 @@ await corsair.slackbot.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2293,9 +2089,6 @@ await corsair.slackbot.api.files.remoteAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `external_id` | `string` | Yes | — |
 | `external_url` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -2310,9 +2103,6 @@ await corsair.slackbot.api.files.remoteAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2367,9 +2157,6 @@ await corsair.slackbot.api.files.remoteInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | No | — |
 | `external_id` | `string` | No | — |
 
@@ -2380,9 +2167,6 @@ await corsair.slackbot.api.files.remoteInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2437,9 +2221,6 @@ await corsair.slackbot.api.files.remoteList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | No | — |
 | `ts_from` | `number` | No | — |
 | `ts_to` | `number` | No | — |
@@ -2453,9 +2234,6 @@ await corsair.slackbot.api.files.remoteList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2522,9 +2300,6 @@ await corsair.slackbot.api.files.remoteRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | No | — |
 | `external_id` | `string` | No | — |
 
@@ -2535,9 +2310,6 @@ await corsair.slackbot.api.files.remoteRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2565,9 +2337,6 @@ await corsair.slackbot.api.files.remoteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channels` | `string` | Yes | — |
 | `file` | `string` | No | — |
 | `external_id` | `string` | No | — |
@@ -2579,9 +2348,6 @@ await corsair.slackbot.api.files.remoteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2636,9 +2402,6 @@ await corsair.slackbot.api.files.remoteUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | No | — |
 | `external_id` | `string` | No | — |
 | `external_url` | `string` | No | — |
@@ -2654,9 +2417,6 @@ await corsair.slackbot.api.files.remoteUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2711,9 +2471,6 @@ await corsair.slackbot.api.files.revokePublicUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 
 
@@ -2723,9 +2480,6 @@ await corsair.slackbot.api.files.revokePublicUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2780,9 +2534,6 @@ await corsair.slackbot.api.files.sharePublicUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | — |
 
 
@@ -2792,9 +2543,6 @@ await corsair.slackbot.api.files.sharePublicUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2849,9 +2597,6 @@ await corsair.slackbot.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filename` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -2868,9 +2613,6 @@ await corsair.slackbot.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2952,9 +2694,6 @@ await corsair.slackbot.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 | `as_user` | `boolean` | No | — |
@@ -2966,9 +2705,6 @@ await corsair.slackbot.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -2998,9 +2734,6 @@ await corsair.slackbot.api.messages.deleteScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `scheduled_message_id` | `string` | Yes | — |
 | `as_user` | `boolean` | No | — |
@@ -3012,9 +2745,6 @@ await corsair.slackbot.api.messages.deleteScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3042,9 +2772,6 @@ await corsair.slackbot.api.messages.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `latest` | `string` | No | — |
 | `oldest` | `string` | No | — |
@@ -3060,9 +2787,6 @@ await corsair.slackbot.api.messages.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3130,9 +2854,6 @@ await corsair.slackbot.api.messages.pinAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | — |
 
@@ -3143,9 +2864,6 @@ await corsair.slackbot.api.messages.pinAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3173,9 +2891,6 @@ await corsair.slackbot.api.messages.pinRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | — |
 
@@ -3186,9 +2901,6 @@ await corsair.slackbot.api.messages.pinRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3216,9 +2928,6 @@ await corsair.slackbot.api.messages.pinsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 
 
@@ -3228,9 +2937,6 @@ await corsair.slackbot.api.messages.pinsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3269,9 +2975,6 @@ await corsair.slackbot.api.messages.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `text` | `string` | No | — |
 | `blocks` | `object[]` | No | — |
@@ -3322,9 +3025,6 @@ await corsair.slackbot.api.messages.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3380,9 +3080,6 @@ await corsair.slackbot.api.messages.postEphemeral({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `user` | `string` | Yes | — |
 | `text` | `string` | No | — |
@@ -3433,9 +3130,6 @@ await corsair.slackbot.api.messages.postEphemeral({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3464,9 +3158,6 @@ await corsair.slackbot.api.messages.postMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 
@@ -3477,9 +3168,6 @@ await corsair.slackbot.api.messages.postMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3535,9 +3223,6 @@ await corsair.slackbot.api.messages.reactionAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `channel` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | — |
@@ -3549,9 +3234,6 @@ await corsair.slackbot.api.messages.reactionAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3579,9 +3261,6 @@ await corsair.slackbot.api.messages.reactionRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `channel` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | — |
@@ -3593,9 +3272,6 @@ await corsair.slackbot.api.messages.reactionRemove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3623,9 +3299,6 @@ await corsair.slackbot.api.messages.reactionsGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | No | — |
 | `timestamp` | `string` | No | — |
 | `file` | `string` | No | — |
@@ -3639,9 +3312,6 @@ await corsair.slackbot.api.messages.reactionsGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3722,9 +3392,6 @@ await corsair.slackbot.api.messages.reactionsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `full` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
@@ -3738,9 +3405,6 @@ await corsair.slackbot.api.messages.reactionsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3791,9 +3455,6 @@ await corsair.slackbot.api.messages.replies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 | `latest` | `string` | No | — |
@@ -3810,9 +3471,6 @@ await corsair.slackbot.api.messages.replies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3879,9 +3537,6 @@ await corsair.slackbot.api.messages.schedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `post_at` | `number` | Yes | — |
 | `text` | `string` | No | — |
@@ -3930,9 +3585,6 @@ await corsair.slackbot.api.messages.schedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -3989,9 +3641,6 @@ await corsair.slackbot.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 | `text` | `string` | No | — |
@@ -4037,9 +3686,6 @@ await corsair.slackbot.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4098,9 +3744,6 @@ await corsair.slackbot.api.reminders.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `time` | `number \| string` | Yes | — |
 | `user` | `string` | No | — |
@@ -4113,9 +3756,6 @@ await corsair.slackbot.api.reminders.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4161,9 +3801,6 @@ await corsair.slackbot.api.reminders.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reminder` | `string` | Yes | — |
 | `team_id` | `string` | No | — |
 
@@ -4174,9 +3811,6 @@ await corsair.slackbot.api.reminders.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4204,9 +3838,6 @@ await corsair.slackbot.api.reminders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reminder` | `string` | Yes | — |
 | `team_id` | `string` | No | — |
 
@@ -4217,9 +3848,6 @@ await corsair.slackbot.api.reminders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4247,9 +3875,6 @@ await corsair.slackbot.api.reminders.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reminder` | `string` | Yes | — |
 | `team_id` | `string` | No | — |
 
@@ -4260,9 +3885,6 @@ await corsair.slackbot.api.reminders.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4308,9 +3930,6 @@ await corsair.slackbot.api.reminders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_id` | `string` | No | — |
 
 
@@ -4320,9 +3939,6 @@ await corsair.slackbot.api.reminders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4370,9 +3986,6 @@ await corsair.slackbot.api.team.emojiList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include_categories` | `boolean` | No | — |
 
 
@@ -4382,9 +3995,6 @@ await corsair.slackbot.api.team.emojiList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4432,9 +4042,6 @@ await corsair.slackbot.api.team.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team` | `string` | No | — |
 | `domain` | `string` | No | — |
 
@@ -4445,9 +4052,6 @@ await corsair.slackbot.api.team.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4494,9 +4098,6 @@ await corsair.slackbot.api.team.openDm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | No | — |
 | `users` | `string[]` | No | — |
 | `prevent_creation` | `boolean` | No | — |
@@ -4509,9 +4110,6 @@ await corsair.slackbot.api.team.openDm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4569,9 +4167,6 @@ await corsair.slackbot.api.team.profileGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `visibility` | `all \| visible \| hidden` | No | — |
 
 
@@ -4581,9 +4176,6 @@ await corsair.slackbot.api.team.profileGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4622,9 +4214,6 @@ await corsair.slackbot.api.team.unfurl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `ts` | `string` | Yes | — |
 | `unfurls` | `object` | Yes | — |
@@ -4649,9 +4238,6 @@ await corsair.slackbot.api.team.unfurl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4681,9 +4267,6 @@ await corsair.slackbot.api.userGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `handle` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4698,9 +4281,6 @@ await corsair.slackbot.api.userGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4749,9 +4329,6 @@ await corsair.slackbot.api.userGroups.disable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `usergroup` | `string` | Yes | — |
 | `include_count` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
@@ -4763,9 +4340,6 @@ await corsair.slackbot.api.userGroups.disable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4814,9 +4388,6 @@ await corsair.slackbot.api.userGroups.enable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `usergroup` | `string` | Yes | — |
 | `include_count` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
@@ -4828,9 +4399,6 @@ await corsair.slackbot.api.userGroups.enable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4879,9 +4447,6 @@ await corsair.slackbot.api.userGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include_disabled` | `boolean` | No | — |
 | `include_count` | `boolean` | No | — |
 | `include_users` | `boolean` | No | — |
@@ -4894,9 +4459,6 @@ await corsair.slackbot.api.userGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -4945,9 +4507,6 @@ await corsair.slackbot.api.userGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `usergroup` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `handle` | `string` | No | — |
@@ -4963,9 +4522,6 @@ await corsair.slackbot.api.userGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5014,9 +4570,6 @@ await corsair.slackbot.api.userGroups.usersList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `usergroup` | `string` | Yes | — |
 | `include_disabled` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
@@ -5028,9 +4581,6 @@ await corsair.slackbot.api.userGroups.usersList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5059,9 +4609,6 @@ await corsair.slackbot.api.userGroups.usersUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `usergroup` | `string` | Yes | — |
 | `users` | `string[]` | Yes | — |
 | `include_count` | `boolean` | No | — |
@@ -5074,9 +4621,6 @@ await corsair.slackbot.api.userGroups.usersUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5127,9 +4671,6 @@ await corsair.slackbot.api.users.botsInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bot` | `string` | No | — |
 | `team_id` | `string` | No | — |
 
@@ -5140,9 +4681,6 @@ await corsair.slackbot.api.users.botsInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5189,9 +4727,6 @@ await corsair.slackbot.api.users.dndInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `team_id` | `string` | No | — |
 
@@ -5202,9 +4737,6 @@ await corsair.slackbot.api.users.dndInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5238,9 +4770,6 @@ await corsair.slackbot.api.users.dndTeamInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `string[]` | No | — |
 | `team_id` | `string` | No | — |
 
@@ -5251,9 +4780,6 @@ await corsair.slackbot.api.users.dndTeamInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5292,9 +4818,6 @@ await corsair.slackbot.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `include_deleted` | `boolean` | No | — |
 | `include_bots` | `boolean` | No | — |
@@ -5309,9 +4832,6 @@ await corsair.slackbot.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5365,9 +4885,6 @@ await corsair.slackbot.api.users.getPresence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 
 
@@ -5377,9 +4894,6 @@ await corsair.slackbot.api.users.getPresence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5413,9 +4927,6 @@ await corsair.slackbot.api.users.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `include_labels` | `boolean` | No | — |
 
@@ -5426,9 +4937,6 @@ await corsair.slackbot.api.users.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5467,9 +4975,6 @@ await corsair.slackbot.api.users.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 | `include_locale` | `boolean` | No | — |
 
@@ -5480,9 +4985,6 @@ await corsair.slackbot.api.users.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5534,9 +5036,6 @@ await corsair.slackbot.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include_locale` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
@@ -5549,9 +5048,6 @@ await corsair.slackbot.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5616,9 +5112,6 @@ await corsair.slackbot.api.users.lookupByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -5628,9 +5121,6 @@ await corsair.slackbot.api.users.lookupByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5685,9 +5175,6 @@ await corsair.slackbot.api.users.setActive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |
@@ -5715,9 +5202,6 @@ await corsair.slackbot.api.users.setPresence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `presence` | `auto \| away` | Yes | — |
 
 
@@ -5727,9 +5211,6 @@ await corsair.slackbot.api.users.setPresence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | Yes | — |
 | `error` | `string` | No | — |
 | `warning` | `string` | No | — |

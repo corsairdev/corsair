@@ -31,9 +31,6 @@ await corsair.groqcloud.api.audio.createTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `custom` | No | The audio data to transcribe |
 | `fileName` | `string` | No | File name for the uploaded audio; required with `file` |
 | `url` | `string` | No | Publicly reachable URL of the audio to transcribe |
@@ -50,9 +47,6 @@ await corsair.groqcloud.api.audio.createTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | The transcribed text |
 
 
@@ -76,9 +70,6 @@ await corsair.groqcloud.api.audio.createTranslation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `custom` | No | The audio data to translate |
 | `fileName` | `string` | No | File name for the uploaded audio; required with `file` |
 | `url` | `string` | No | Publicly reachable URL of the audio to translate |
@@ -94,9 +85,6 @@ await corsair.groqcloud.api.audio.createTranslation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | The translated text |
 
 
@@ -123,9 +111,6 @@ await corsair.groqcloud.api.audio.listVoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `english` | `string[]` | Yes | List of English TTS voices |
 | `arabic` | `string[]` | Yes | List of Arabic TTS voices |
 
@@ -152,9 +137,6 @@ await corsair.groqcloud.api.chat.createCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | The ID of the model to use |
 | `messages` | `object[]` | Yes | A list of messages comprising the conversation so far |
 | `temperature` | `number` | No | Sampling temperature |
@@ -196,9 +178,6 @@ await corsair.groqcloud.api.chat.createCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | Yes | — |
 | `created` | `number` | Yes | — |
@@ -245,9 +224,6 @@ await corsair.groqcloud.api.chat.createResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | The ID of the model to use |
 | `input` | `string \| any[]` | Yes | The input for the model response |
 | `instructions` | `string` | No | Optional instructions to guide the response |
@@ -261,9 +237,6 @@ await corsair.groqcloud.api.chat.createResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
@@ -341,9 +314,6 @@ await corsair.groqcloud.api.models.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -396,9 +366,6 @@ await corsair.groqcloud.api.models.retrieveModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | The ID of the model to use for this request |
 
 
@@ -408,9 +375,6 @@ await corsair.groqcloud.api.models.retrieveModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | Yes | — |
 | `created` | `number` | No | — |

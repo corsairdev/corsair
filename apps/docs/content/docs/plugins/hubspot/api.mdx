@@ -31,9 +31,6 @@ await corsair.hubspot.api.companies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `properties` | `object` | No | — |
 | `associations` | `object[]` | No | — |
 
@@ -69,9 +66,6 @@ await corsair.hubspot.api.companies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -118,9 +112,6 @@ await corsair.hubspot.api.companies.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `companyId` | `string` | Yes | — |
 
 
@@ -147,9 +138,6 @@ await corsair.hubspot.api.companies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `companyId` | `string` | Yes | — |
 | `properties` | `string[]` | No | — |
 | `propertiesWithHistory` | `string[]` | No | — |
@@ -164,9 +152,6 @@ await corsair.hubspot.api.companies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -213,9 +198,6 @@ await corsair.hubspot.api.companies.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `properties` | `string[]` | No | — |
@@ -230,9 +212,6 @@ await corsair.hubspot.api.companies.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -290,9 +269,6 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -304,9 +280,6 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -364,9 +337,6 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -378,9 +348,6 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -438,9 +405,6 @@ await corsair.hubspot.api.companies.searchByDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 | `properties` | `string[]` | No | — |
 
@@ -451,9 +415,6 @@ await corsair.hubspot.api.companies.searchByDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -511,9 +472,6 @@ await corsair.hubspot.api.companies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `companyId` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 
@@ -534,9 +492,6 @@ await corsair.hubspot.api.companies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -585,9 +540,6 @@ await corsair.hubspot.api.contactLists.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `emails` | `string[]` | No | — |
 | `vids` | `number[]` | No | — |
@@ -599,9 +551,6 @@ await corsair.hubspot.api.contactLists.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `updated` | `number[]` | No | — |
 | `discarded` | `number[]` | No | — |
 | `invalidVids` | `number[]` | No | — |
@@ -628,9 +577,6 @@ await corsair.hubspot.api.contactLists.removeContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `emails` | `string[]` | No | — |
 | `vids` | `number[]` | No | — |
@@ -642,9 +588,6 @@ await corsair.hubspot.api.contactLists.removeContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `updated` | `number[]` | No | — |
 | `discarded` | `number[]` | No | — |
 | `invalidVids` | `number[]` | No | — |
@@ -673,9 +616,6 @@ await corsair.hubspot.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `properties` | `object` | No | — |
 | `associations` | `object[]` | No | — |
 
@@ -711,9 +651,6 @@ await corsair.hubspot.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -760,9 +697,6 @@ await corsair.hubspot.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `string` | Yes | — |
 
 
@@ -789,9 +723,6 @@ await corsair.hubspot.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `string` | Yes | — |
 | `properties` | `string[]` | No | — |
 | `propertiesWithHistory` | `string[]` | No | — |
@@ -806,9 +737,6 @@ await corsair.hubspot.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -855,9 +783,6 @@ await corsair.hubspot.api.contacts.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `properties` | `string[]` | No | — |
@@ -872,9 +797,6 @@ await corsair.hubspot.api.contacts.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -932,9 +854,6 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -946,9 +865,6 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1006,9 +922,6 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -1020,9 +933,6 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1080,9 +990,6 @@ await corsair.hubspot.api.contacts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -1124,9 +1031,6 @@ await corsair.hubspot.api.contacts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1184,9 +1088,6 @@ await corsair.hubspot.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 
@@ -1207,9 +1108,6 @@ await corsair.hubspot.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -1258,9 +1156,6 @@ await corsair.hubspot.api.deals.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `properties` | `object` | No | — |
 | `associations` | `object[]` | No | — |
 
@@ -1296,9 +1191,6 @@ await corsair.hubspot.api.deals.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -1345,9 +1237,6 @@ await corsair.hubspot.api.deals.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dealId` | `string` | Yes | — |
 
 
@@ -1374,9 +1263,6 @@ await corsair.hubspot.api.deals.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dealId` | `string` | Yes | — |
 | `properties` | `string[]` | No | — |
 | `propertiesWithHistory` | `string[]` | No | — |
@@ -1391,9 +1277,6 @@ await corsair.hubspot.api.deals.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -1440,9 +1323,6 @@ await corsair.hubspot.api.deals.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `properties` | `string[]` | No | — |
@@ -1457,9 +1337,6 @@ await corsair.hubspot.api.deals.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1517,9 +1394,6 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -1531,9 +1405,6 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1591,9 +1462,6 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `after` | `string` | No | — |
 | `since` | `string` | No | — |
@@ -1605,9 +1473,6 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1665,9 +1530,6 @@ await corsair.hubspot.api.deals.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -1709,9 +1571,6 @@ await corsair.hubspot.api.deals.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
@@ -1769,9 +1628,6 @@ await corsair.hubspot.api.deals.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dealId` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 
@@ -1792,9 +1648,6 @@ await corsair.hubspot.api.deals.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -1843,9 +1696,6 @@ await corsair.hubspot.api.engagements.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `engagement` | `object` | Yes | — |
 | `associations` | `object` | No | — |
 | `metadata` | `object` | No | — |
@@ -1890,9 +1740,6 @@ await corsair.hubspot.api.engagements.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `engagement` | `object` | No | — |
 | `associations` | `object` | No | — |
@@ -1955,9 +1802,6 @@ await corsair.hubspot.api.engagements.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `engagementId` | `string` | Yes | — |
 
 
@@ -1984,9 +1828,6 @@ await corsair.hubspot.api.engagements.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `engagementId` | `string` | Yes | — |
 
 
@@ -1996,9 +1837,6 @@ await corsair.hubspot.api.engagements.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `engagement` | `object` | No | — |
 | `associations` | `object` | No | — |
@@ -2061,9 +1899,6 @@ await corsair.hubspot.api.engagements.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 
@@ -2074,9 +1909,6 @@ await corsair.hubspot.api.engagements.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -2144,9 +1976,6 @@ await corsair.hubspot.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `properties` | `object` | No | — |
 | `associations` | `object[]` | No | — |
 
@@ -2182,9 +2011,6 @@ await corsair.hubspot.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -2231,9 +2057,6 @@ await corsair.hubspot.api.tickets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticketId` | `string` | Yes | — |
 
 
@@ -2260,9 +2083,6 @@ await corsair.hubspot.api.tickets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticketId` | `string` | Yes | — |
 | `properties` | `string[]` | No | — |
 | `propertiesWithHistory` | `string[]` | No | — |
@@ -2277,9 +2097,6 @@ await corsair.hubspot.api.tickets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |
@@ -2326,9 +2143,6 @@ await corsair.hubspot.api.tickets.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `properties` | `string[]` | No | — |
@@ -2343,9 +2157,6 @@ await corsair.hubspot.api.tickets.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -2402,9 +2213,6 @@ await corsair.hubspot.api.tickets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticketId` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 
@@ -2425,9 +2233,6 @@ await corsair.hubspot.api.tickets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `properties` | `object` | No | — |
 | `createdAt` | `Date` | No | — |

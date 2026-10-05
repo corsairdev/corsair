@@ -34,9 +34,6 @@ await corsair.scrapegraphai.api.account.credits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `remaining_credits` | `number` | Yes | — |
 | `total_credits_used` | `number` | Yes | — |
 
@@ -61,9 +58,6 @@ await corsair.scrapegraphai.api.account.usageTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `days` | `7 \| 14 \| 30 \| all` | No | — |
 
 
@@ -73,9 +67,6 @@ await corsair.scrapegraphai.api.account.usageTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeline` | `object[]` | Yes | — |
 
 
@@ -133,9 +124,6 @@ await corsair.scrapegraphai.api.agenticScraper.getLiveSessionUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `timeout` | `number` | No | — |
 
@@ -146,9 +134,6 @@ await corsair.scrapegraphai.api.agenticScraper.getLiveSessionUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_url` | `string` | Yes | — |
 | `session_id` | `string` | Yes | — |
 
@@ -173,9 +158,6 @@ await corsair.scrapegraphai.api.agenticScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -186,9 +168,6 @@ await corsair.scrapegraphai.api.agenticScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -248,9 +227,6 @@ await corsair.scrapegraphai.api.endpoint.getSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `website_url` | `string` | Yes | — |
 | `prompt` | `string` | Yes | — |
 
@@ -261,9 +237,6 @@ await corsair.scrapegraphai.api.endpoint.getSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `suggestions` | `object[]` | Yes | — |
 | `html_with_markdowns` | `any` | Yes | — |
 
@@ -314,9 +287,6 @@ await corsair.scrapegraphai.api.endpoint.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `suggestions` | `object[]` | Yes | — |
 
 
@@ -371,9 +341,6 @@ await corsair.scrapegraphai.api.feedback.submit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 | `rating` | `number` | Yes | — |
 | `feedback_text` | `string` | No | — |
@@ -385,9 +352,6 @@ await corsair.scrapegraphai.api.feedback.submit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `feedback_id` | `string` | Yes | — |
 | `request_id` | `string` | Yes | — |
 | `message` | `string` | No | — |
@@ -414,9 +378,6 @@ await corsair.scrapegraphai.api.feedback.submitProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `feedback_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -442,9 +403,6 @@ await corsair.scrapegraphai.api.feedback.submitProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 
 
@@ -470,9 +428,6 @@ await corsair.scrapegraphai.api.markdownify.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -483,9 +438,6 @@ await corsair.scrapegraphai.api.markdownify.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -541,9 +493,6 @@ await corsair.scrapegraphai.api.markdownify.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `website_url` | `string` | Yes | — |
 | `render_heavy_js` | `boolean` | No | — |
 | `mock` | `boolean` | No | — |
@@ -573,9 +522,6 @@ await corsair.scrapegraphai.api.markdownify.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
 | `website_url` | `string` | Yes | — |
@@ -603,9 +549,6 @@ await corsair.scrapegraphai.api.markdownify.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -615,9 +558,6 @@ await corsair.scrapegraphai.api.markdownify.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
 | `website_url` | `string` | No | — |
@@ -647,9 +587,6 @@ await corsair.scrapegraphai.api.scheduledJobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `service_type` | `smartscraper \| searchscraper \| markdownify \| smartcrawler \| agenticscrapper \| site_monitor` | No | — |
@@ -662,9 +599,6 @@ await corsair.scrapegraphai.api.scheduledJobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `page` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
@@ -715,9 +649,6 @@ await corsair.scrapegraphai.api.schema.generate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_prompt` | `string` | Yes | — |
 | `existing_schema` | `object` | No | — |
 
@@ -738,9 +669,6 @@ await corsair.scrapegraphai.api.schema.generate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
 | `user_prompt` | `string` | Yes | — |
@@ -781,9 +709,6 @@ await corsair.scrapegraphai.api.scrape.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -794,9 +719,6 @@ await corsair.scrapegraphai.api.scrape.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -855,9 +777,6 @@ await corsair.scrapegraphai.api.searchScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -868,9 +787,6 @@ await corsair.scrapegraphai.api.searchScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -928,9 +844,6 @@ await corsair.scrapegraphai.api.searchScraper.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_prompt` | `string` | Yes | — |
 | `num_results` | `number` | No | — |
 | `headers` | `object` | No | — |
@@ -969,9 +882,6 @@ await corsair.scrapegraphai.api.searchScraper.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
 | `user_prompt` | `string` | Yes | — |
@@ -1002,9 +912,6 @@ await corsair.scrapegraphai.api.searchScraper.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -1014,9 +921,6 @@ await corsair.scrapegraphai.api.searchScraper.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
 | `user_prompt` | `string` | No | — |
@@ -1049,9 +953,6 @@ await corsair.scrapegraphai.api.sitemap.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1062,9 +963,6 @@ await corsair.scrapegraphai.api.sitemap.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -1119,9 +1017,6 @@ await corsair.scrapegraphai.api.smartCrawler.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1132,9 +1027,6 @@ await corsair.scrapegraphai.api.smartCrawler.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -1198,9 +1090,6 @@ await corsair.scrapegraphai.api.smartCrawler.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `depth` | `number` | No | — |
 | `breadth` | `number` | No | — |
@@ -1247,9 +1136,6 @@ await corsair.scrapegraphai.api.smartCrawler.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | No | — |
 | `request_id` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1306,9 +1192,6 @@ await corsair.scrapegraphai.api.smartCrawler.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 
 
@@ -1318,9 +1201,6 @@ await corsair.scrapegraphai.api.smartCrawler.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | No | — |
 | `request_id` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1377,9 +1257,6 @@ await corsair.scrapegraphai.api.smartCrawler.webhookLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `crawler_id` | `string` | Yes | — |
 
 
@@ -1389,9 +1266,6 @@ await corsair.scrapegraphai.api.smartCrawler.webhookLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `logs` | `object[]` | No | — |
 
 
@@ -1427,9 +1301,6 @@ await corsair.scrapegraphai.api.smartScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1440,9 +1311,6 @@ await corsair.scrapegraphai.api.smartScraper.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 | `next_key` | `object` | No | — |
 
@@ -1502,9 +1370,6 @@ await corsair.scrapegraphai.api.smartScraper.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_prompt` | `string` | Yes | — |
 | `website_url` | `string` | No | — |
 | `website_html` | `string` | No | — |
@@ -1560,9 +1425,6 @@ await corsair.scrapegraphai.api.smartScraper.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
 | `website_url` | `string` | No | — |
@@ -1601,9 +1463,6 @@ await corsair.scrapegraphai.api.smartScraper.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -1613,9 +1472,6 @@ await corsair.scrapegraphai.api.smartScraper.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
 | `website_url` | `string` | No | — |
@@ -1656,9 +1512,6 @@ await corsair.scrapegraphai.api.utilities.toonify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 

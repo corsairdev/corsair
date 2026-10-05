@@ -31,9 +31,6 @@ await corsair.brandfetch.api.brands.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
 | `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
 | `allowNsfw` | `boolean` | No | When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default. |
@@ -45,9 +42,6 @@ await corsair.brandfetch.api.brands.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `domain` | `string` | Yes | — |
@@ -209,9 +203,6 @@ await corsair.brandfetch.api.brands.getCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
 | `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
 | `allowNsfw` | `boolean` | No | When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default. |
@@ -223,9 +214,6 @@ await corsair.brandfetch.api.brands.getCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `employees` | `number` | No | — |
 | `financialIdentifiers` | `object` | No | — |
 | `foundedYear` | `number` | No | — |
@@ -304,9 +292,6 @@ await corsair.brandfetch.api.brands.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Brand name to search for |
 | `clientId` | `string` | No | Brandfetch client ID. Falls back to plugin options / stored key. |
 
@@ -354,9 +339,6 @@ await corsair.brandfetch.api.graphql.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `string` | Yes | — |
 
 
@@ -382,9 +364,6 @@ await corsair.brandfetch.api.logos.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
 | `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
 | `clientId` | `string` | No | — |
@@ -401,9 +380,6 @@ await corsair.brandfetch.api.logos.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -432,9 +408,6 @@ await corsair.brandfetch.api.taxonomy.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `industries` | `object[]` | Yes | — |
 | `countries` | `object[]` | Yes | — |
 | `geographicRegions` | `object[]` | Yes | — |
@@ -527,9 +500,6 @@ await corsair.brandfetch.api.transactions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `transactionLabel` | `string` | Yes | Raw transaction text from a credit-card statement |
 | `countryCode` | `string` | Yes | ISO 3166-1 alpha-2 country code where the transaction took place |
 
@@ -540,9 +510,6 @@ await corsair.brandfetch.api.transactions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `domain` | `string` | Yes | — |
@@ -706,9 +673,6 @@ await corsair.brandfetch.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `number` | No | Page size. GraphQL default is 10. |
 | `after` | `string` | No | Cursor from the previous pageInfo.endCursor |
 
@@ -719,9 +683,6 @@ await corsair.brandfetch.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nodes` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 
@@ -776,9 +737,6 @@ await corsair.brandfetch.api.webhooks.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subscribableEvents` | `object[]` | Yes | — |
 
 

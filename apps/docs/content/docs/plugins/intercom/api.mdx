@@ -31,9 +31,6 @@ await corsair.intercom.api.admins.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.intercom.api.admins.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -80,9 +74,6 @@ await corsair.intercom.api.admins.identify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -117,9 +108,6 @@ await corsair.intercom.api.admins.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `admins` | `object[]` | Yes | — |
 
@@ -163,9 +151,6 @@ await corsair.intercom.api.admins.listActivityLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `created_at_after` | `string` | Yes | — |
 | `created_at_before` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -178,9 +163,6 @@ await corsair.intercom.api.admins.listActivityLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `pages` | `object` | No | — |
 | `activity_logs` | `object[]` | Yes | — |
@@ -240,9 +222,6 @@ await corsair.intercom.api.admins.setAway({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `away_mode_enabled` | `boolean` | Yes | — |
 | `away_mode_reassign` | `boolean` | No | — |
@@ -254,9 +233,6 @@ await corsair.intercom.api.admins.setAway({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -290,9 +266,6 @@ await corsair.intercom.api.articles.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `author_id` | `number` | Yes | — |
 | `body` | `string` | No | — |
@@ -308,9 +281,6 @@ await corsair.intercom.api.articles.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -343,9 +313,6 @@ await corsair.intercom.api.articles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -355,9 +322,6 @@ await corsair.intercom.api.articles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | No | — |
@@ -383,9 +347,6 @@ await corsair.intercom.api.articles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -395,9 +356,6 @@ await corsair.intercom.api.articles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -430,9 +388,6 @@ await corsair.intercom.api.articles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `state` | `draft \| published` | No | — |
@@ -444,9 +399,6 @@ await corsair.intercom.api.articles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -506,9 +458,6 @@ await corsair.intercom.api.articles.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phrase` | `string` | Yes | — |
 | `help_center_id` | `number` | No | — |
 | `state` | `draft \| published` | No | — |
@@ -520,9 +469,6 @@ await corsair.intercom.api.articles.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -582,9 +528,6 @@ await corsair.intercom.api.articles.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `author_id` | `number` | No | — |
@@ -601,9 +544,6 @@ await corsair.intercom.api.articles.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -638,9 +578,6 @@ await corsair.intercom.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `help_center_id` | `number` | No | — |
@@ -653,9 +590,6 @@ await corsair.intercom.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -688,9 +622,6 @@ await corsair.intercom.api.collections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -700,9 +631,6 @@ await corsair.intercom.api.collections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | No | — |
@@ -728,9 +656,6 @@ await corsair.intercom.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -740,9 +665,6 @@ await corsair.intercom.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -775,9 +697,6 @@ await corsair.intercom.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `help_center_id` | `number` | No | — |
@@ -789,9 +708,6 @@ await corsair.intercom.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -851,9 +767,6 @@ await corsair.intercom.api.collections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -866,9 +779,6 @@ await corsair.intercom.api.collections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -903,9 +813,6 @@ await corsair.intercom.api.companies.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `company_id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `remote_created_at` | `number` | No | — |
@@ -933,9 +840,6 @@ await corsair.intercom.api.companies.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `company_id` | `string` | No | — |
@@ -970,9 +874,6 @@ await corsair.intercom.api.companies.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -982,9 +883,6 @@ await corsair.intercom.api.companies.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | No | — |
@@ -1010,9 +908,6 @@ await corsair.intercom.api.companies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1022,9 +917,6 @@ await corsair.intercom.api.companies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `company_id` | `string` | No | — |
@@ -1059,9 +951,6 @@ await corsair.intercom.api.companies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -1075,9 +964,6 @@ await corsair.intercom.api.companies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -1139,9 +1025,6 @@ await corsair.intercom.api.companies.listAttachedContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -1153,9 +1036,6 @@ await corsair.intercom.api.companies.listAttachedContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -1217,9 +1097,6 @@ await corsair.intercom.api.companies.listAttachedSegments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1229,9 +1106,6 @@ await corsair.intercom.api.companies.listAttachedSegments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1272,9 +1146,6 @@ await corsair.intercom.api.companies.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `company_id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -1285,9 +1156,6 @@ await corsair.intercom.api.companies.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `company_id` | `string` | No | — |
@@ -1322,9 +1190,6 @@ await corsair.intercom.api.companies.scroll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scroll_param` | `string` | No | — |
 
 
@@ -1334,9 +1199,6 @@ await corsair.intercom.api.companies.scroll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `scroll_param` | `string` | No | — |
@@ -1400,9 +1262,6 @@ await corsair.intercom.api.contacts.addSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `consent_type` | `opt_in \| opt_out` | Yes | — |
@@ -1414,9 +1273,6 @@ await corsair.intercom.api.contacts.addSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `state` | `string` | No | — |
@@ -1457,9 +1313,6 @@ await corsair.intercom.api.contacts.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `tag_id` | `string` | Yes | — |
 
@@ -1470,9 +1323,6 @@ await corsair.intercom.api.contacts.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -1498,9 +1348,6 @@ await corsair.intercom.api.contacts.attachToCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `company_id` | `string` | Yes | — |
 
@@ -1511,9 +1358,6 @@ await corsair.intercom.api.contacts.attachToCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `company_id` | `string` | No | — |
@@ -1548,9 +1392,6 @@ await corsair.intercom.api.contacts.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
 | `admin_id` | `string` | No | — |
@@ -1562,9 +1403,6 @@ await corsair.intercom.api.contacts.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `body` | `string` | No | — |
@@ -1616,9 +1454,6 @@ await corsair.intercom.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1628,9 +1463,6 @@ await corsair.intercom.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | No | — |
@@ -1656,9 +1488,6 @@ await corsair.intercom.api.contacts.detachFromCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `company_id` | `string` | Yes | — |
 
@@ -1669,9 +1498,6 @@ await corsair.intercom.api.contacts.detachFromCompany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `company_id` | `string` | No | — |
@@ -1706,9 +1532,6 @@ await corsair.intercom.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1718,9 +1541,6 @@ await corsair.intercom.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `external_id` | `string` | No | — |
@@ -1755,9 +1575,6 @@ await corsair.intercom.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `starting_after` | `string` | No | — |
@@ -1769,9 +1586,6 @@ await corsair.intercom.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -1833,9 +1647,6 @@ await corsair.intercom.api.contacts.listAttachedCompanies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -1847,9 +1658,6 @@ await corsair.intercom.api.contacts.listAttachedCompanies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -1911,9 +1719,6 @@ await corsair.intercom.api.contacts.listAttachedSegments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -1923,9 +1728,6 @@ await corsair.intercom.api.contacts.listAttachedSegments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1966,9 +1768,6 @@ await corsair.intercom.api.contacts.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -1980,9 +1779,6 @@ await corsair.intercom.api.contacts.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `pages` | `object` | No | — |
@@ -2045,9 +1841,6 @@ await corsair.intercom.api.contacts.listSubscriptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -2057,9 +1850,6 @@ await corsair.intercom.api.contacts.listSubscriptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -2103,9 +1893,6 @@ await corsair.intercom.api.contacts.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -2115,9 +1902,6 @@ await corsair.intercom.api.contacts.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -2155,9 +1939,6 @@ await corsair.intercom.api.contacts.merge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lead_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 
@@ -2168,9 +1949,6 @@ await corsair.intercom.api.contacts.merge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `external_id` | `string` | No | — |
@@ -2205,9 +1983,6 @@ await corsair.intercom.api.contacts.removeSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `subscription_id` | `string` | Yes | — |
 
@@ -2218,9 +1993,6 @@ await corsair.intercom.api.contacts.removeSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `state` | `string` | No | — |
@@ -2261,9 +2033,6 @@ await corsair.intercom.api.contacts.removeTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `tag_id` | `string` | Yes | — |
 
@@ -2274,9 +2043,6 @@ await corsair.intercom.api.contacts.removeTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -2302,9 +2068,6 @@ await corsair.intercom.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2331,9 +2094,6 @@ await corsair.intercom.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `external_id` | `string` | No | — |
@@ -2370,9 +2130,6 @@ await corsair.intercom.api.conversations.assign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `admin_id` | `string` | Yes | — |
 | `assignee_id` | `string` | Yes | — |
@@ -2387,9 +2144,6 @@ await corsair.intercom.api.conversations.assign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -2475,9 +2229,6 @@ await corsair.intercom.api.conversations.close({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `admin_id` | `string` | Yes | — |
 | `message_type` | `close` | No | — |
@@ -2490,9 +2241,6 @@ await corsair.intercom.api.conversations.close({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -2578,9 +2326,6 @@ await corsair.intercom.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `object` | Yes | — |
 | `body` | `string` | Yes | — |
 
@@ -2603,9 +2348,6 @@ await corsair.intercom.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -2691,9 +2433,6 @@ await corsair.intercom.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `display_as` | `plaintext \| html` | No | — |
 
@@ -2704,9 +2443,6 @@ await corsair.intercom.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -2792,9 +2528,6 @@ await corsair.intercom.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -2808,9 +2541,6 @@ await corsair.intercom.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `pages` | `object` | No | — |
 | `total_count` | `number` | No | — |
@@ -2900,9 +2630,6 @@ await corsair.intercom.api.conversations.reopen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `admin_id` | `string` | Yes | — |
 | `message_type` | `open` | No | — |
@@ -2915,9 +2642,6 @@ await corsair.intercom.api.conversations.reopen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -3003,9 +2727,6 @@ await corsair.intercom.api.conversations.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `admin_id` | `string` | No | — |
 | `intercom_user_id` | `string` | No | — |
@@ -3021,9 +2742,6 @@ await corsair.intercom.api.conversations.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -3109,9 +2827,6 @@ await corsair.intercom.api.conversations.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 | `sort` | `object` | No | — |
 | `pagination` | `object` | No | — |
@@ -3156,9 +2871,6 @@ await corsair.intercom.api.conversations.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `pages` | `object` | No | — |
 | `total_count` | `number` | No | — |
@@ -3250,9 +2962,6 @@ await corsair.intercom.api.helpCenters.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -3262,9 +2971,6 @@ await corsair.intercom.api.helpCenters.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `string` | No | — |
@@ -3296,9 +3002,6 @@ await corsair.intercom.api.helpCenters.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 

@@ -31,9 +31,6 @@ await corsair.asindataapi.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amazon_domain` | `string` | No | — |
 | `category_id` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -49,9 +46,6 @@ await corsair.asindataapi.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `request_parameters` | `object` | No | — |
 | `request_metadata` | `object` | No | — |
@@ -166,9 +160,6 @@ await corsair.asindataapi.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
 | `schedule_type` | `monthly \| weekly \| daily \| minutes \| manual` | No | — |
@@ -193,9 +184,6 @@ await corsair.asindataapi.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection` | `object` | Yes | — |
 
@@ -273,9 +261,6 @@ await corsair.asindataapi.api.collections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 
 
@@ -285,9 +270,6 @@ await corsair.asindataapi.api.collections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 
 
@@ -327,9 +309,6 @@ await corsair.asindataapi.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 
 
@@ -339,9 +318,6 @@ await corsair.asindataapi.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection` | `object` | Yes | — |
 
@@ -419,9 +395,6 @@ await corsair.asindataapi.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `only_with_results` | `boolean` | No | — |
 | `only_without_results` | `boolean` | No | — |
 | `search_term` | `string` | No | — |
@@ -444,9 +417,6 @@ await corsair.asindataapi.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `total_count` | `number` | No | — |
 | `total_pages` | `number` | No | — |
@@ -528,9 +498,6 @@ await corsair.asindataapi.api.collections.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 
 
@@ -540,9 +507,6 @@ await corsair.asindataapi.api.collections.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 
 
@@ -582,9 +546,6 @@ await corsair.asindataapi.api.collections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
 | `schedule_type` | `monthly \| weekly \| daily \| minutes \| manual` | No | — |
@@ -610,9 +571,6 @@ await corsair.asindataapi.api.collections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection` | `object` | Yes | — |
 
@@ -692,9 +650,6 @@ await corsair.asindataapi.api.destinations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `s3 \| gcs \| azure \| oss \| s3compatible` | Yes | — |
 | `enabled` | `boolean` | Yes | — |
@@ -725,9 +680,6 @@ await corsair.asindataapi.api.destinations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `usage` | `object` | No | — |
 | `destination` | `object` | No | — |
@@ -805,9 +757,6 @@ await corsair.asindataapi.api.destinations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `destination_id` | `string` | Yes | — |
 
 
@@ -817,9 +766,6 @@ await corsair.asindataapi.api.destinations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 
 
@@ -859,9 +805,6 @@ await corsair.asindataapi.api.destinations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `search_term` | `string` | No | — |
 | `sort_by` | `type \| name` | No | — |
@@ -874,9 +817,6 @@ await corsair.asindataapi.api.destinations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `usage` | `object` | No | — |
 | `destinations` | `object[]` | No | — |
@@ -954,9 +894,6 @@ await corsair.asindataapi.api.destinations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `destination_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
@@ -987,9 +924,6 @@ await corsair.asindataapi.api.destinations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `destination` | `object` | No | — |
 
@@ -1057,9 +991,6 @@ await corsair.asindataapi.api.identifiers.resolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `gtin` | `string` | Yes | — |
 | `amazon_domain` | `string` | No | — |
 | `skip_gtin_cache` | `boolean` | No | — |
@@ -1203,9 +1134,6 @@ await corsair.asindataapi.api.offers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amazon_domain` | `string` | No | — |
 | `asin` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -1223,9 +1151,6 @@ await corsair.asindataapi.api.offers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `request_parameters` | `object` | No | — |
 | `request_metadata` | `object` | No | — |
@@ -1344,9 +1269,6 @@ await corsair.asindataapi.api.products.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amazon_domain` | `string` | No | — |
 | `asin` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -1493,9 +1415,6 @@ await corsair.asindataapi.api.requests.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `requests` | `object[]` | Yes | — |
 
@@ -1533,9 +1452,6 @@ await corsair.asindataapi.api.requests.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection` | `object` | No | — |
 
@@ -1613,9 +1529,6 @@ await corsair.asindataapi.api.requests.clear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `request_ids` | `string[]` | Yes | — |
 
@@ -1626,9 +1539,6 @@ await corsair.asindataapi.api.requests.clear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 
 
@@ -1668,9 +1578,6 @@ await corsair.asindataapi.api.requests.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `request_id` | `string` | Yes | — |
 
@@ -1681,9 +1588,6 @@ await corsair.asindataapi.api.requests.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 
 
@@ -1723,9 +1627,6 @@ await corsair.asindataapi.api.requests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1736,9 +1637,6 @@ await corsair.asindataapi.api.requests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection_id` | `string` | No | — |
 | `requests_page_current` | `number` | No | — |
@@ -1809,9 +1707,6 @@ await corsair.asindataapi.api.requests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `request_id` | `string` | Yes | — |
 | `type` | `product \| offers \| category \| search \| reviews \| seller_profile \| autocomplete` | No | — |
@@ -1839,9 +1734,6 @@ await corsair.asindataapi.api.requests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `request` | `object` | No | — |
 
@@ -1909,9 +1801,6 @@ await corsair.asindataapi.api.resultSets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `result_set_id` | `number` | Yes | — |
 
@@ -1922,9 +1811,6 @@ await corsair.asindataapi.api.resultSets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection_id` | `string` | No | — |
 | `result` | `object` | Yes | — |
@@ -2001,9 +1887,6 @@ await corsair.asindataapi.api.resultSets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 
 
@@ -2013,9 +1896,6 @@ await corsair.asindataapi.api.resultSets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `collection_id` | `string` | No | — |
 | `collection` | `object` | No | — |
@@ -2133,9 +2013,6 @@ await corsair.asindataapi.api.search.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amazon_domain` | `string` | No | — |
 | `search_term` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2154,9 +2031,6 @@ await corsair.asindataapi.api.search.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_info` | `object` | Yes | — |
 | `request_parameters` | `object` | No | — |
 | `request_metadata` | `object` | No | — |

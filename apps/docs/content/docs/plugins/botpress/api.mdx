@@ -34,9 +34,6 @@ await corsair.botpress.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `displayName` | `string` | No | — |
@@ -64,9 +61,6 @@ await corsair.botpress.api.account.getPreference({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 
 
@@ -76,9 +70,6 @@ await corsair.botpress.api.account.getPreference({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `any` | No | — |
 
 
@@ -102,9 +93,6 @@ await corsair.botpress.api.account.setPreference({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 | `value` | `any` | Yes | — |
 
@@ -132,9 +120,6 @@ await corsair.botpress.api.account.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `displayName` | `string` | No | — |
 | `profilePicture` | `string` | No | — |
 | `refresh` | `boolean` | No | — |
@@ -146,9 +131,6 @@ await corsair.botpress.api.account.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `displayName` | `string` | No | — |
@@ -178,9 +160,6 @@ await corsair.botpress.api.billing.chargeUnpaidInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `invoiceIds` | `string[]` | Yes | — |
 
@@ -191,9 +170,6 @@ await corsair.botpress.api.billing.chargeUnpaidInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chargedInvoices` | `object[]` | No | — |
 | `failedInvoices` | `object[]` | No | — |
 
@@ -241,9 +217,6 @@ await corsair.botpress.api.billing.getUpcomingInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -253,9 +226,6 @@ await corsair.botpress.api.billing.getUpcomingInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `lineItems` | `object[]` | No | — |
 
@@ -299,9 +269,6 @@ await corsair.botpress.api.billing.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -351,9 +318,6 @@ await corsair.botpress.api.billing.listUsageHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes` | Yes | — |
 
@@ -398,9 +362,6 @@ await corsair.botpress.api.bots.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `tags` | `object` | No | — |
@@ -527,9 +488,6 @@ await corsair.botpress.api.bots.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -573,9 +531,6 @@ await corsair.botpress.api.bots.listActionRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `id` | `string` | Yes | — |
@@ -590,9 +545,6 @@ await corsair.botpress.api.bots.listActionRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -640,9 +592,6 @@ await corsair.botpress.api.bots.listIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `id` | `string` | Yes | — |
@@ -654,9 +603,6 @@ await corsair.botpress.api.bots.listIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issues` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -700,9 +646,6 @@ await corsair.botpress.api.bots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -851,9 +794,6 @@ await corsair.botpress.api.bots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -899,9 +839,6 @@ await corsair.botpress.api.chat.createConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `channel` | `string` | Yes | — |
 | `tags` | `object` | Yes | — |
@@ -932,9 +869,6 @@ await corsair.botpress.api.chat.createConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -983,9 +917,6 @@ await corsair.botpress.api.chat.listConversations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
@@ -1017,9 +948,6 @@ await corsair.botpress.api.chat.listConversations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `conversations` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1064,9 +992,6 @@ await corsair.botpress.api.chat.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `conversationId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
@@ -1111,9 +1036,6 @@ await corsair.botpress.api.chat.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -1164,9 +1086,6 @@ await corsair.botpress.api.chat.updateWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `status` | `completed \| cancelled \| listening \| paused \| failed \| in_progress` | No | — |
@@ -1202,9 +1121,6 @@ await corsair.botpress.api.chat.updateWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `pending \| in_progress \| failed \| completed \| listening \| paused \| timedout \| cancelled` | No | — |
@@ -1269,9 +1185,6 @@ await corsair.botpress.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -1299,9 +1212,6 @@ await corsair.botpress.api.files.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
@@ -1313,9 +1223,6 @@ await corsair.botpress.api.files.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tags` | `string[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1340,9 +1247,6 @@ await corsair.botpress.api.files.listTagValues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
@@ -1355,9 +1259,6 @@ await corsair.botpress.api.files.listTagValues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `values` | `string[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1384,9 +1285,6 @@ await corsair.botpress.api.hub.getDereferencedPluginById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `interfaces` | `object` | Yes | — |
 
@@ -1434,9 +1332,6 @@ await corsair.botpress.api.hub.getIntegration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -1447,9 +1342,6 @@ await corsair.botpress.api.hub.getIntegration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1498,9 +1390,6 @@ await corsair.botpress.api.hub.getIntegrationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1510,9 +1399,6 @@ await corsair.botpress.api.hub.getIntegrationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1561,9 +1447,6 @@ await corsair.botpress.api.hub.getInterface({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -1574,9 +1457,6 @@ await corsair.botpress.api.hub.getInterface({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1609,9 +1489,6 @@ await corsair.botpress.api.hub.getInterfaceById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1621,9 +1498,6 @@ await corsair.botpress.api.hub.getInterfaceById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1656,9 +1530,6 @@ await corsair.botpress.api.hub.getPlugin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -1669,9 +1540,6 @@ await corsair.botpress.api.hub.getPlugin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1705,9 +1573,6 @@ await corsair.botpress.api.hub.getPluginById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1717,9 +1582,6 @@ await corsair.botpress.api.hub.getPluginById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -1753,9 +1615,6 @@ await corsair.botpress.api.hub.getPluginCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `platform` | `node \| browser` | Yes | — |
 
@@ -1766,9 +1625,6 @@ await corsair.botpress.api.hub.getPluginCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 
 
@@ -1792,9 +1648,6 @@ await corsair.botpress.api.hub.listIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1815,9 +1668,6 @@ await corsair.botpress.api.hub.listIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integrations` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1869,9 +1719,6 @@ await corsair.botpress.api.hub.listInterfaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -1884,9 +1731,6 @@ await corsair.botpress.api.hub.listInterfaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interfaces` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1931,9 +1775,6 @@ await corsair.botpress.api.hub.listPlugins({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -1946,9 +1787,6 @@ await corsair.botpress.api.hub.listPlugins({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `plugins` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -1996,9 +1834,6 @@ await corsair.botpress.api.integrations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -2140,9 +1975,6 @@ await corsair.botpress.api.integrations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -2179,9 +2011,6 @@ await corsair.botpress.api.integrations.deleteShareableId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `integrationId` | `string` | Yes | — |
 | `integrationInstanceAlias` | `string` | No | — |
@@ -2210,9 +2039,6 @@ await corsair.botpress.api.integrations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -2223,9 +2049,6 @@ await corsair.botpress.api.integrations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -2262,9 +2085,6 @@ await corsair.botpress.api.integrations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2287,9 +2107,6 @@ await corsair.botpress.api.integrations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integrations` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -2338,9 +2155,6 @@ await corsair.botpress.api.integrations.listApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integrationId` | `string` | Yes | — |
 
 
@@ -2380,9 +2194,6 @@ await corsair.botpress.api.integrations.requestVerification({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integrationId` | `string` | Yes | — |
 
 
@@ -2409,9 +2220,6 @@ await corsair.botpress.api.integrations.validateUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `configuration` | `object` | No | — |
 | `configurations` | `object` | No | — |
@@ -2562,9 +2370,6 @@ await corsair.botpress.api.knowledgeBases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -2592,9 +2397,6 @@ await corsair.botpress.api.knowledgeBases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
@@ -2617,9 +2419,6 @@ await corsair.botpress.api.knowledgeBases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledgeBases` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -2662,9 +2461,6 @@ await corsair.botpress.api.plugins.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -2677,9 +2473,6 @@ await corsair.botpress.api.plugins.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `plugins` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -2727,9 +2520,6 @@ await corsair.botpress.api.tools.getTableRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `botId` | `string` | Yes | — |
 | `table` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
@@ -2741,9 +2531,6 @@ await corsair.botpress.api.tools.getTableRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -2769,9 +2556,6 @@ await corsair.botpress.api.tools.runVrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `script` | `string` | Yes | — |
 
@@ -2792,9 +2576,6 @@ await corsair.botpress.api.tools.runVrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `any` | Yes | — |
 | `result` | `any` | Yes | — |
 
@@ -2821,9 +2602,6 @@ await corsair.botpress.api.workspaces.breakDownUsageByBot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes` | Yes | — |
 | `period` | `string` | No | — |
@@ -2864,9 +2642,6 @@ await corsair.botpress.api.workspaces.checkHandleAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `handle` | `string` | Yes | — |
 
 
@@ -2876,9 +2651,6 @@ await corsair.botpress.api.workspaces.checkHandleAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `available` | `boolean` | Yes | — |
 | `suggestions` | `string[]` | No | — |
 | `usedBy` | `string` | No | — |
@@ -2904,9 +2676,6 @@ await corsair.botpress.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `billingVersion` | `string` | No | — |
 
@@ -2917,9 +2686,6 @@ await corsair.botpress.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `ownerId` | `string` | No | — |
@@ -2960,9 +2726,6 @@ await corsair.botpress.api.workspaces.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2989,9 +2752,6 @@ await corsair.botpress.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3001,9 +2761,6 @@ await corsair.botpress.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `ownerId` | `string` | No | — |
@@ -3074,9 +2831,6 @@ await corsair.botpress.api.workspaces.getQuota({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes` | Yes | — |
 | `period` | `string` | No | — |
@@ -3088,9 +2842,6 @@ await corsair.botpress.api.workspaces.getQuota({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `period` | `string` | No | — |
 | `value` | `number` | No | — |
 | `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes` | No | — |
@@ -3116,9 +2867,6 @@ await corsair.botpress.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `handle` | `string` | No | — |
@@ -3130,9 +2878,6 @@ await corsair.botpress.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaces` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -3185,9 +2930,6 @@ await corsair.botpress.api.workspaces.listPublic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `workspaceIds` | `string[]` | No | — |
@@ -3200,9 +2942,6 @@ await corsair.botpress.api.workspaces.listPublic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaces` | `object[]` | Yes | — |
 | `nextToken` | `string` | No | — |
 
@@ -3255,9 +2994,6 @@ await corsair.botpress.api.workspaces.setPreference({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 | `value` | `any` | Yes | — |
 
@@ -3285,9 +3021,6 @@ await corsair.botpress.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `spendingLimit` | `number` | No | — |
@@ -3306,9 +3039,6 @@ await corsair.botpress.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `ownerId` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.whoisfreaks.api.asnWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.whoisfreaks.api.asnWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `object` | No | — |
 
 
@@ -81,9 +75,6 @@ await corsair.whoisfreaks.api.availability.bulkCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | No | — |
 | `domainNames` | `string[]` | No | — |
 | `tld` | `string[]` | No | — |
@@ -95,9 +86,6 @@ await corsair.whoisfreaks.api.availability.bulkCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulk_domain_availability_response` | `object[]` | No | — |
 
 
@@ -134,9 +122,6 @@ await corsair.whoisfreaks.api.availability.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 | `sug` | `boolean` | Yes | — |
 | `count` | `number` | Yes | — |
@@ -148,9 +133,6 @@ await corsair.whoisfreaks.api.availability.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | No | — |
 | `availability` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -192,9 +174,6 @@ await corsair.whoisfreaks.api.bulkWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainNames` | `string[]` | Yes | — |
 
 
@@ -204,9 +183,6 @@ await corsair.whoisfreaks.api.bulkWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulk_whois_response` | `object[]` | No | — |
 
 
@@ -254,9 +230,6 @@ await corsair.whoisfreaks.api.dns.bulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainNames` | `string[]` | No | — |
 | `ipAddresses` | `string[]` | No | — |
 | `type` | `string` | Yes | — |
@@ -268,9 +241,6 @@ await corsair.whoisfreaks.api.dns.bulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulk_dns_info` | `object[]` | No | — |
 
 
@@ -310,9 +280,6 @@ await corsair.whoisfreaks.api.dns.historical({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `page` | `number` | Yes | — |
@@ -324,9 +291,6 @@ await corsair.whoisfreaks.api.dns.historical({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalPages` | `number` | No | — |
 | `currenPage` | `number` | No | — |
 | `totalRecords` | `number` | No | — |
@@ -369,9 +333,6 @@ await corsair.whoisfreaks.api.dns.live({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | No | — |
 | `ipAddress` | `string` | No | — |
 | `type` | `string` | Yes | — |
@@ -383,9 +344,6 @@ await corsair.whoisfreaks.api.dns.live({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | No | — |
 | `ipAddress` | `string` | No | — |
 | `queryTime` | `string` | No | — |
@@ -423,9 +381,6 @@ await corsair.whoisfreaks.api.dns.reverse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `string` | Yes | — |
 | `type` | `a \| mx \| cname \| ns \| aaaa \| txt \| soa` | Yes | — |
 | `exact` | `boolean` | Yes | — |
@@ -438,9 +393,6 @@ await corsair.whoisfreaks.api.dns.reverse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalRecords` | `number` | No | — |
 | `totalPages` | `number` | No | — |
 | `currentPage` | `number` | No | — |
@@ -488,9 +440,6 @@ await corsair.whoisfreaks.api.domainer.filesStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `newly` | `any` | No | — |
 | `expired` | `any` | No | — |
 | `cleaned_expired` | `any` | No | — |
@@ -521,9 +470,6 @@ await corsair.whoisfreaks.api.domainReputation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | Yes | — |
 
 
@@ -533,9 +479,6 @@ await corsair.whoisfreaks.api.domainReputation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assessed_at` | `string` | No | — |
 | `version` | `string` | No | — |
 | `processing_time_ms` | `number` | No | — |
@@ -583,9 +526,6 @@ await corsair.whoisfreaks.api.geolocation.bulkLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ips` | `string[]` | Yes | — |
 
 
@@ -631,9 +571,6 @@ await corsair.whoisfreaks.api.geolocation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -643,9 +580,6 @@ await corsair.whoisfreaks.api.geolocation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | No | — |
 | `location` | `object` | No | — |
 | `country_metadata` | `object` | No | — |
@@ -709,9 +643,6 @@ await corsair.whoisfreaks.api.ipReputation.bulkLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ips` | `string[]` | Yes | — |
 
 
@@ -757,9 +688,6 @@ await corsair.whoisfreaks.api.ipReputation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -769,9 +697,6 @@ await corsair.whoisfreaks.api.ipReputation.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | No | — |
 | `location` | `object` | No | — |
 | `network` | `object` | No | — |
@@ -835,9 +760,6 @@ await corsair.whoisfreaks.api.ipWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -847,9 +769,6 @@ await corsair.whoisfreaks.api.ipWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `ip_address` | `string` | No | — |
 | `as_number` | `string` | No | — |
@@ -880,9 +799,6 @@ await corsair.whoisfreaks.api.ssl.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | Yes | — |
 | `chain` | `boolean` | Yes | — |
 | `sslRaw` | `boolean` | Yes | — |
@@ -894,9 +810,6 @@ await corsair.whoisfreaks.api.ssl.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | No | — |
 | `queryTime` | `string` | No | — |
 | `sslCertificates` | `object[]` | No | — |
@@ -935,9 +848,6 @@ await corsair.whoisfreaks.api.subdomains.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -951,9 +861,6 @@ await corsair.whoisfreaks.api.subdomains.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | No | — |
 | `status` | `boolean` | No | — |
 | `current_page` | `number` | No | — |
@@ -995,9 +902,6 @@ await corsair.whoisfreaks.api.typosquatting.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keyword` | `string` | No | — |
 | `pattern` | `string` | No | — |
 | `pageToken` | `string` | No | — |
@@ -1009,9 +913,6 @@ await corsair.whoisfreaks.api.typosquatting.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `totalRecords` | `number` | No | — |
 | `currentPage` | `number` | No | — |
@@ -1042,9 +943,6 @@ await corsair.whoisfreaks.api.whoisHistory.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1055,9 +953,6 @@ await corsair.whoisfreaks.api.whoisHistory.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `whois` | `string` | No | — |
 | `total_records` | `string \| number` | No | — |
@@ -1111,9 +1006,6 @@ await corsair.whoisfreaks.api.whoisLive.lookupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainName` | `string` | Yes | — |
 
 
@@ -1123,9 +1015,6 @@ await corsair.whoisfreaks.api.whoisLive.lookupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `domain_name` | `string` | No | — |
 | `query_time` | `string` | No | — |
@@ -1162,9 +1051,6 @@ await corsair.whoisfreaks.api.whoisReverse.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keyword` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1175,9 +1061,6 @@ await corsair.whoisfreaks.api.whoisReverse.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Total_Result` | `number` | No | — |
 | `Total_Pages` | `number` | No | — |
 | `Current_Page` | `number` | No | — |

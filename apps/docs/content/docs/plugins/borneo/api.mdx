@@ -31,9 +31,6 @@ await corsair.borneo.api.accounts.getCloudAccountById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cloudAccountId` | `string` | Yes | The cloud-provider specific account ID, e.g. a 12-digit AWS account ID. |
 
 
@@ -43,9 +40,6 @@ await corsair.borneo.api.accounts.getCloudAccountById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -96,9 +90,6 @@ await corsair.borneo.api.accounts.postAccountsWithFilterAndSortOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Optional "nextToken" value from the last API response. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -117,9 +108,6 @@ await corsair.borneo.api.accounts.postAccountsWithFilterAndSortOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -179,9 +167,6 @@ await corsair.borneo.api.accounts.retrieveAccountDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | Yes | The unique Borneo account ID. |
 
 
@@ -191,9 +176,6 @@ await corsair.borneo.api.accounts.retrieveAccountDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -246,9 +228,6 @@ await corsair.borneo.api.assets.createNewAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the asset to create |
 | `type` | `applications \| cloudServices \| communications \| dataInformation \| externalStorage \| filingRoom \| furniture \| hardware \| hosting \| other \| paperDocumentation \| printer \| server \| shredder \| videoSurveillance` | Yes | Indicates the type of the asset. An asset can be one of the several options. |
 | `tomIds` | `string[]` | No | Tomids |
@@ -263,9 +242,6 @@ await corsair.borneo.api.assets.createNewAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -317,9 +293,6 @@ await corsair.borneo.api.assets.deleteAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | Yes | Identifier of the asset |
 
 
@@ -329,9 +302,6 @@ await corsair.borneo.api.assets.deleteAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -382,9 +352,6 @@ await corsair.borneo.api.assets.filterAndSortAssetsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `maxResults` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -399,9 +366,6 @@ await corsair.borneo.api.assets.filterAndSortAssetsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -457,9 +421,6 @@ await corsair.borneo.api.assets.retrieveAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | Yes | Identifier of the asset |
 
 
@@ -469,9 +430,6 @@ await corsair.borneo.api.assets.retrieveAssetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -522,9 +480,6 @@ await corsair.borneo.api.assets.updateAssetInformationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the asset |
 | `type` | `applications \| cloudServices \| communications \| dataInformation \| externalStorage \| filingRoom \| furniture \| hardware \| hosting \| other \| paperDocumentation \| printer \| server \| shredder \| videoSurveillance` | Yes | Indicates the type of the asset. An asset can be one of the several options. |
 | `tomIds` | `string[]` | No | Tomids |
@@ -539,9 +494,6 @@ await corsair.borneo.api.assets.updateAssetInformationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -595,9 +547,6 @@ await corsair.borneo.api.audit.listEventsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | Select |
 | `pageSize` | `number` | No | Pagesize |
 | `nextToken` | `string` | No | Nexttoken |
@@ -619,9 +568,6 @@ await corsair.borneo.api.audit.listEventsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -675,9 +621,6 @@ await corsair.borneo.api.audit.postFilteredAccessLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of logs to return per API call. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `filter__end` | `string` | No | List logs ending in between a specific timestamps with nonoseconds eg. 1715076399359944184. |
@@ -694,9 +637,6 @@ await corsair.borneo.api.audit.postFilteredAccessLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -755,9 +695,6 @@ await corsair.borneo.api.audit.postLogAuditRecordsWithFilterCriteria({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of logs to return per API call. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `filter__end` | `string` | No | List logs ending in between a specific timestamps with nonoseconds eg. 1715076399359944184. |
@@ -780,9 +717,6 @@ await corsair.borneo.api.audit.postLogAuditRecordsWithFilterCriteria({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -849,9 +783,6 @@ await corsair.borneo.api.breaches.deleteDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataBreachId` | `string` | Yes | Databreachid |
 
 
@@ -861,9 +792,6 @@ await corsair.borneo.api.breaches.deleteDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -914,9 +842,6 @@ await corsair.borneo.api.breaches.evaluateDataBreachImpact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor` | No | Role of the recipient. |
 | `evaluation` | `string` | No | Evaluation |
 | `saveAsDraft` | `boolean` | Yes | Saveasdraft |
@@ -937,9 +862,6 @@ await corsair.borneo.api.breaches.evaluateDataBreachImpact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -995,9 +917,6 @@ await corsair.borneo.api.breaches.fetchDataBreachEvaluation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataBreachId` | `string` | Yes | Identifier of the DataBreach |
 
 
@@ -1007,9 +926,6 @@ await corsair.borneo.api.breaches.fetchDataBreachEvaluation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1060,9 +976,6 @@ await corsair.borneo.api.breaches.listDataBreachesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -1079,9 +992,6 @@ await corsair.borneo.api.breaches.listDataBreachesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1137,9 +1047,6 @@ await corsair.borneo.api.breaches.listDataBreachFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filterType` | `owner \| status` | Yes | Filtertype |
 
 
@@ -1149,9 +1056,6 @@ await corsair.borneo.api.breaches.listDataBreachFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1203,9 +1107,6 @@ await corsair.borneo.api.breaches.postDataBreachInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `ar \| de \| en \| es \| es-EC \| es-MX \| fr \| hi \| it \| ja \| pt \| zh` | No | Language |
 | `createdAt` | `number` | No | Createdat |
 | `createdBy` | `string` | No | Createdby |
@@ -1236,9 +1137,6 @@ await corsair.borneo.api.breaches.postDataBreachInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1296,9 +1194,6 @@ await corsair.borneo.api.breaches.retrieveDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataBreachId` | `string` | Yes | Identifier of the DataBreach |
 
 
@@ -1308,9 +1203,6 @@ await corsair.borneo.api.breaches.retrieveDataBreachById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1361,9 +1253,6 @@ await corsair.borneo.api.breaches.updateDataBreachEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdBy` | `string` | No | Createdby |
 | `kindOfData` | `string` | No | Kindofdata |
 | `occurredAt` | `number` | No | Occurredat |
@@ -1393,9 +1282,6 @@ await corsair.borneo.api.breaches.updateDataBreachEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1454,9 +1340,6 @@ await corsair.borneo.api.categories.createNewInfotypeCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `infotypes` | `string[]` | Yes | The list of infotypes that belong to this category. |
 | `description` | `string` | No | Description of the infotype category. |
 | `categoryLabel` | `string` | Yes | The name of the infotype category. |
@@ -1468,9 +1351,6 @@ await corsair.borneo.api.categories.createNewInfotypeCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1522,9 +1402,6 @@ await corsair.borneo.api.categories.deleteCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `categoryLabel` | `string` | Yes | The name of the infotype category. |
 
 
@@ -1534,9 +1411,6 @@ await corsair.borneo.api.categories.deleteCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1587,9 +1461,6 @@ await corsair.borneo.api.categories.getCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `categoryLabel` | `string` | Yes | The name of the infotype category. |
 
 
@@ -1599,9 +1470,6 @@ await corsair.borneo.api.categories.getCategoryByLabel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1652,9 +1520,6 @@ await corsair.borneo.api.categories.updateCategoryInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `infotypes` | `string[]` | Yes | The list of infotypes that belong to this category. |
 | `description` | `string` | No | The description of the infotype category. |
 | `categoryLabel` | `string` | Yes | The name of the infotype category. |
@@ -1666,9 +1531,6 @@ await corsair.borneo.api.categories.updateCategoryInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1722,9 +1584,6 @@ await corsair.borneo.api.connectors.postConnectorWithFilteringOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Optional "nextToken" value from the last API response. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -1746,9 +1605,6 @@ await corsair.borneo.api.connectors.postConnectorWithFilteringOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1811,9 +1667,6 @@ await corsair.borneo.api.connectors.retrieveConnectorById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `connectorId` | `string` | Yes | The unique Borneo connector ID. |
 
 
@@ -1823,9 +1676,6 @@ await corsair.borneo.api.connectors.retrieveConnectorById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1878,9 +1728,6 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Name |
 | `email` | `string` | Yes | Email |
 | `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
@@ -1908,9 +1755,6 @@ await corsair.borneo.api.dashboard.createDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -1962,9 +1806,6 @@ await corsair.borneo.api.dashboard.deleteDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboardReportId` | `string` | Yes | Dashboardreportid |
 
 
@@ -1974,9 +1815,6 @@ await corsair.borneo.api.dashboard.deleteDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2027,9 +1865,6 @@ await corsair.borneo.api.dashboard.disableDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | Username |
 
 
@@ -2039,9 +1874,6 @@ await corsair.borneo.api.dashboard.disableDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2092,9 +1924,6 @@ await corsair.borneo.api.dashboard.downloadDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reportType` | `DATA_DISCOVERY_DASHBOARD \| PRIVACY_OPS_DASHBOARD \| PRIVACY_OPS_DATA_FLOW` | Yes | Reporttype |
 
 
@@ -2104,9 +1933,6 @@ await corsair.borneo.api.dashboard.downloadDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2157,9 +1983,6 @@ await corsair.borneo.api.dashboard.downloadDashboardReportEdition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reportEditionId` | `string` | Yes | Reporteditionid |
 
 
@@ -2169,9 +1992,6 @@ await corsair.borneo.api.dashboard.downloadDashboardReportEdition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2222,9 +2042,6 @@ await corsair.borneo.api.dashboard.enableDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | Username |
 
 
@@ -2234,9 +2051,6 @@ await corsair.borneo.api.dashboard.enableDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2287,9 +2101,6 @@ await corsair.borneo.api.dashboard.fetchDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboardReportId` | `string` | Yes | Dashboardreportid |
 
 
@@ -2299,9 +2110,6 @@ await corsair.borneo.api.dashboard.fetchDashboardReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2352,9 +2160,6 @@ await corsair.borneo.api.dashboard.getDashboardReportEditionById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reportEditionId` | `string` | Yes | Reporteditionid |
 
 
@@ -2364,9 +2169,6 @@ await corsair.borneo.api.dashboard.getDashboardReportEditionById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2417,9 +2219,6 @@ await corsair.borneo.api.dashboard.listDashboardReportEditions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Nexttoken |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -2433,9 +2232,6 @@ await corsair.borneo.api.dashboard.listDashboardReportEditions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2490,9 +2286,6 @@ await corsair.borneo.api.dashboard.listDashboardReportsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -2508,9 +2301,6 @@ await corsair.borneo.api.dashboard.listDashboardReportsWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2567,9 +2357,6 @@ await corsair.borneo.api.dashboard.listDashboardUsersWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter__roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
 | `filter__tenantId` | `string` | No | Tenantid |
 | `filter__departments` | `string[]` | No | Departments |
@@ -2582,9 +2369,6 @@ await corsair.borneo.api.dashboard.listDashboardUsersWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2642,9 +2426,6 @@ await corsair.borneo.api.dashboard.postCurrentDashboardUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2695,9 +2476,6 @@ await corsair.borneo.api.dashboard.postDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name |
 | `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
 | `status` | `DELETED \| ONCE \| SCHEDULED` | Yes | Status |
@@ -2715,9 +2493,6 @@ await corsair.borneo.api.dashboard.postDashboardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2771,9 +2546,6 @@ await corsair.borneo.api.dashboard.removeDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | Username |
 
 
@@ -2783,9 +2555,6 @@ await corsair.borneo.api.dashboard.removeDashboardUserByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2836,9 +2605,6 @@ await corsair.borneo.api.dashboard.resetDashboardUserPassword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | Username |
 
 
@@ -2848,9 +2614,6 @@ await corsair.borneo.api.dashboard.resetDashboardUserPassword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2901,9 +2664,6 @@ await corsair.borneo.api.dashboard.triggerDashboardReportByReportId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboardReportId` | `string` | Yes | Dashboardreportid |
 
 
@@ -2913,9 +2673,6 @@ await corsair.borneo.api.dashboard.triggerDashboardReportByReportId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -2966,9 +2723,6 @@ await corsair.borneo.api.dashboard.updateDashboardUserDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name |
 | `username` | `string` | Yes | Username |
 
@@ -2979,9 +2733,6 @@ await corsair.borneo.api.dashboard.updateDashboardUserDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3032,9 +2783,6 @@ await corsair.borneo.api.dashboard.updateDashboardUserRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | Username |
 | `organisations` | `object[]` | Yes | Organisations |
 
@@ -3058,9 +2806,6 @@ await corsair.borneo.api.dashboard.updateDashboardUserRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3113,9 +2858,6 @@ await corsair.borneo.api.departments.createDepartmentWithTranslations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Name |
 | `translations` | `object` | No | Translations |
 
@@ -3138,9 +2880,6 @@ await corsair.borneo.api.departments.createDepartmentWithTranslations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3191,9 +2930,6 @@ await corsair.borneo.api.departments.deleteDepartmentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `departmentId` | `string` | Yes | Identifier of the department. |
 
 
@@ -3203,9 +2939,6 @@ await corsair.borneo.api.departments.deleteDepartmentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3259,9 +2992,6 @@ await corsair.borneo.api.departments.getDepartmentFilterList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3313,9 +3043,6 @@ await corsair.borneo.api.departments.listDepartmentsWithSortAndPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -3329,9 +3056,6 @@ await corsair.borneo.api.departments.listDepartmentsWithSortAndPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3386,9 +3110,6 @@ await corsair.borneo.api.departments.retrieveDepartmentInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `departmentId` | `string` | Yes | Identifier of the department. |
 
 
@@ -3398,9 +3119,6 @@ await corsair.borneo.api.departments.retrieveDepartmentInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3451,9 +3169,6 @@ await corsair.borneo.api.departments.updateDepartmentName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Name |
 | `departmentId` | `string` | Yes | Identifier of the department. |
 
@@ -3464,9 +3179,6 @@ await corsair.borneo.api.departments.updateDepartmentName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3519,9 +3231,6 @@ await corsair.borneo.api.documents.createLegalDocumentEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name |
 | `type` | `DATA_PROCESSING \| PRIVACY_POLICY` | No | Type |
 | `region` | `string` | Yes | Region |
@@ -3537,9 +3246,6 @@ await corsair.borneo.api.documents.createLegalDocumentEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3591,9 +3297,6 @@ await corsair.borneo.api.documents.deleteLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | Documentid |
 
 
@@ -3603,9 +3306,6 @@ await corsair.borneo.api.documents.deleteLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3656,9 +3356,6 @@ await corsair.borneo.api.documents.listDiscoveredDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -3673,9 +3370,6 @@ await corsair.borneo.api.documents.listDiscoveredDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3731,9 +3425,6 @@ await corsair.borneo.api.documents.listLegalDocumentsWithPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -3748,9 +3439,6 @@ await corsair.borneo.api.documents.listLegalDocumentsWithPagination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3806,9 +3494,6 @@ await corsair.borneo.api.documents.retrieveDiscoveredDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredDocumentId` | `string` | Yes | Discovereddocumentid |
 
 
@@ -3818,9 +3503,6 @@ await corsair.borneo.api.documents.retrieveDiscoveredDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3871,9 +3553,6 @@ await corsair.borneo.api.documents.retrieveLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | Documentid |
 
 
@@ -3883,9 +3562,6 @@ await corsair.borneo.api.documents.retrieveLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -3936,9 +3612,6 @@ await corsair.borneo.api.documents.updateDiscoveredDocumentStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ADDED \| DELETED \| DOMAIN_DELETED \| IGNORED \| NEW` | Yes | Status |
 | `discoveredDocumentId` | `string` | Yes | Discovereddocumentid |
 
@@ -3949,9 +3622,6 @@ await corsair.borneo.api.documents.updateDiscoveredDocumentStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4004,9 +3674,6 @@ await corsair.borneo.api.domains.createDomainWithPollingFrequency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the domain. |
 | `frequency` | `12h \| 1d \| 1w \| 30d \| 6h \| manual` | Yes | Frequency of polling for a domain. Manual polling means that this domain will not be polled automatically. |
 
@@ -4017,9 +3684,6 @@ await corsair.borneo.api.domains.createDomainWithPollingFrequency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4070,9 +3734,6 @@ await corsair.borneo.api.domains.deleteDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainId` | `string` | Yes | Identifier of the domain. |
 
 
@@ -4082,9 +3743,6 @@ await corsair.borneo.api.domains.deleteDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4135,9 +3793,6 @@ await corsair.borneo.api.domains.getDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainId` | `string` | Yes | Identifier of the domain. |
 
 
@@ -4147,9 +3802,6 @@ await corsair.borneo.api.domains.getDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4200,9 +3852,6 @@ await corsair.borneo.api.domains.listDomainsWithPaginationAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -4215,9 +3864,6 @@ await corsair.borneo.api.domains.listDomainsWithPaginationAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4271,9 +3917,6 @@ await corsair.borneo.api.domains.pollDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domainId` | `string` | Yes | Identifier of the domain. |
 
 
@@ -4283,9 +3926,6 @@ await corsair.borneo.api.domains.pollDomainById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4336,9 +3976,6 @@ await corsair.borneo.api.domains.updateDomainDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the domain. |
 | `domainId` | `string` | Yes | Identifier of the domain. |
 | `frequency` | `12h \| 1d \| 1w \| 30d \| 6h \| manual` | Yes | Frequency of polling for a domain. Manual polling means that this domain will not be polled automatically. |
@@ -4350,9 +3987,6 @@ await corsair.borneo.api.domains.updateDomainDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4405,9 +4039,6 @@ await corsair.borneo.api.employees.createEmployeeWithJsonPayload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nif` | `string` | No | The NIF of the employee |
 | `name` | `string` | Yes | The name of the employee |
 | `email` | `string` | No | the email of the employee |
@@ -4427,9 +4058,6 @@ await corsair.borneo.api.employees.createEmployeeWithJsonPayload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4485,9 +4113,6 @@ await corsair.borneo.api.employees.deleteEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `employeeId` | `string` | Yes | Identifier of the employee |
 
 
@@ -4497,9 +4122,6 @@ await corsair.borneo.api.employees.deleteEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4550,9 +4172,6 @@ await corsair.borneo.api.employees.filterEmployeeList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -4567,9 +4186,6 @@ await corsair.borneo.api.employees.filterEmployeeList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4624,9 +4240,6 @@ await corsair.borneo.api.employees.listEmployeesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -4641,9 +4254,6 @@ await corsair.borneo.api.employees.listEmployeesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4698,9 +4308,6 @@ await corsair.borneo.api.employees.retrieveEmployeeDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `employeeId` | `string` | Yes | Identifier of the employee |
 
 
@@ -4710,9 +4317,6 @@ await corsair.borneo.api.employees.retrieveEmployeeDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4763,9 +4367,6 @@ await corsair.borneo.api.employees.updateEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nif` | `string` | No | The NIF (Spanish Tax Identification Number) of the employee |
 | `name` | `string` | No | The name of the employee |
 | `email` | `string` | No | The email of the employee. Has to be unique within the company. |
@@ -4784,9 +4385,6 @@ await corsair.borneo.api.employees.updateEmployeeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4844,9 +4442,6 @@ await corsair.borneo.api.headquarters.createHeadquarterEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `city` | `string` | Yes | The locality of the headquarter |
 | `name` | `string` | Yes | The name of the headquarter |
 | `tomIds` | `string[]` | No | Tomids |
@@ -4861,9 +4456,6 @@ await corsair.borneo.api.headquarters.createHeadquarterEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4914,9 +4506,6 @@ await corsair.borneo.api.headquarters.deleteHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `headquarterId` | `string` | Yes | The identifier of the headquarter |
 
 
@@ -4926,9 +4515,6 @@ await corsair.borneo.api.headquarters.deleteHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -4979,9 +4565,6 @@ await corsair.borneo.api.headquarters.getHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `headquarterId` | `string` | Yes | The identifier of the headquarter |
 
 
@@ -4991,9 +4574,6 @@ await corsair.borneo.api.headquarters.getHeadquartersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5044,9 +4624,6 @@ await corsair.borneo.api.headquarters.listHeadquartersWithSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -5059,9 +4636,6 @@ await corsair.borneo.api.headquarters.listHeadquartersWithSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5115,9 +4689,6 @@ await corsair.borneo.api.headquarters.updateHeadquarterDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `city` | `string` | Yes | The locality of the headquarter |
 | `name` | `string` | Yes | The name of the headquarter |
 | `tomIds` | `string[]` | No | Tomids |
@@ -5133,9 +4704,6 @@ await corsair.borneo.api.headquarters.updateHeadquarterDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5188,9 +4756,6 @@ await corsair.borneo.api.infotypes.listDiscoveredInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -5205,9 +4770,6 @@ await corsair.borneo.api.infotypes.listDiscoveredInfotypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5263,9 +4825,6 @@ await corsair.borneo.api.infotypes.retrieveDiscoveredInfotypeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredInfotypeId` | `string` | Yes | Discoveredinfotypeid |
 
 
@@ -5275,9 +4834,6 @@ await corsair.borneo.api.infotypes.retrieveDiscoveredInfotypeById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5328,9 +4884,6 @@ await corsair.borneo.api.infotypes.updateDiscoveredInfotypeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `APPROVED \| APPROVED_AUTOMATICALLY \| DELETED \| IGNORED \| NEW \| NOT_PRESENT \| REQUESTED` | Yes | Status |
 | `discoveredInfotypeId` | `string` | Yes | Discoveredinfotypeid |
 
@@ -5341,9 +4894,6 @@ await corsair.borneo.api.infotypes.updateDiscoveredInfotypeStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5396,9 +4946,6 @@ await corsair.borneo.api.misc.listFilteredSortedCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort__order` | `ASC \| DESC` | No | Order |
 | `sort__column` | `string` | No | The column name to sort on. |
 | `filter__categories` | `string[]` | No | Categories |
@@ -5410,9 +4957,6 @@ await corsair.borneo.api.misc.listFilteredSortedCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5465,9 +5009,6 @@ await corsair.borneo.api.misc.listIssuesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | List of column names to include in the response. |
 | `include` | `object` | No | The set of related resources that should be included in the response using a join-query. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
@@ -5501,9 +5042,6 @@ await corsair.borneo.api.misc.listIssuesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5567,9 +5105,6 @@ await corsair.borneo.api.misc.retrieveErrorDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `errorId` | `string` | Yes | The unique resource ID. |
 
 
@@ -5579,9 +5114,6 @@ await corsair.borneo.api.misc.retrieveErrorDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5632,9 +5164,6 @@ await corsair.borneo.api.misc.retrieveIssueById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issueId` | `string` | Yes | The unique issue ID. |
 
 
@@ -5644,9 +5173,6 @@ await corsair.borneo.api.misc.retrieveIssueById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5697,9 +5223,6 @@ await corsair.borneo.api.misc.submitChatFeedback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `postId` | `string` | No | Postid |
 | `rating` | `number` | No | Rating |
 
@@ -5710,9 +5233,6 @@ await corsair.borneo.api.misc.submitChatFeedback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -5765,9 +5285,6 @@ await corsair.borneo.api.processing.createDpiaForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `activated \| draft` | Yes | The status of the DPIA. If a DPIA is saved as activated, several fields are required |
 | `createdAt` | `number` | No | Createdat |
 | `updatedAt` | `number` | No | Updatedat |
@@ -5942,9 +5459,6 @@ await corsair.borneo.api.processing.createDpiaForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6056,9 +5570,6 @@ await corsair.borneo.api.processing.createProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the processing activity |
 | `owner` | `string` | No | Owner |
 | `active` | `boolean` | Yes | Flag to create the processing activity as activated or draft |
@@ -6160,9 +5671,6 @@ await corsair.borneo.api.processing.createProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6236,9 +5744,6 @@ await corsair.borneo.api.processing.createProcessingActivityThreshold({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `activated \| draft` | No | Status of the threshold. Can be draft or activated. |
 | `comment` | `string` | No | Additional information related to the Threshold |
 | `additionalComment` | `boolean` | No | Additionalcomment |
@@ -6260,9 +5765,6 @@ await corsair.borneo.api.processing.createProcessingActivityThreshold({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6324,9 +5826,6 @@ await corsair.borneo.api.processing.createThresholdForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `activated \| draft` | No | Status of the threshold. Can be draft or activated. |
 | `comment` | `string` | No | Additional information related to the Threshold |
 | `blacklist` | `boolean` | No | Indicates if the data processing is included in a black list |
@@ -6366,9 +5865,6 @@ await corsair.borneo.api.processing.createThresholdForProcessingActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6435,9 +5931,6 @@ await corsair.borneo.api.processing.deleteDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dpiaId` | `string` | Yes | Identifier of the DPIA |
 
 
@@ -6447,9 +5940,6 @@ await corsair.borneo.api.processing.deleteDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6500,9 +5990,6 @@ await corsair.borneo.api.processing.deleteLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lopdpThresholdId` | `string` | Yes | Identifier of the Threshold |
 
 
@@ -6512,9 +5999,6 @@ await corsair.borneo.api.processing.deleteLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6565,9 +6049,6 @@ await corsair.borneo.api.processing.deleteProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `processingActivityId` | `string` | Yes | Identifier of the Processing Activity |
 
 
@@ -6577,9 +6058,6 @@ await corsair.borneo.api.processing.deleteProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6630,9 +6108,6 @@ await corsair.borneo.api.processing.deleteThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thresholdId` | `string` | Yes | Identifier of the Threshold |
 
 
@@ -6642,9 +6117,6 @@ await corsair.borneo.api.processing.deleteThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6695,9 +6167,6 @@ await corsair.borneo.api.processing.exportProcessingActivitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `ar \| de \| en \| es \| es-EC \| es-MX \| fr \| hi \| it \| ja \| pt \| zh` | Yes | Language |
 | `exportTypes` | `csv \| doc \| pdf[]` | Yes | Exporttypes |
 | `filter__owners` | `string[]` | No | Owners |
@@ -6717,9 +6186,6 @@ await corsair.borneo.api.processing.exportProcessingActivitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6776,9 +6242,6 @@ await corsair.borneo.api.processing.getThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thresholdId` | `string` | Yes | Identifier of the Threshold |
 
 
@@ -6788,9 +6251,6 @@ await corsair.borneo.api.processing.getThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6841,9 +6301,6 @@ await corsair.borneo.api.processing.listProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -6871,9 +6328,6 @@ await corsair.borneo.api.processing.listProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -6934,9 +6388,6 @@ await corsair.borneo.api.processing.listProcessingActivitiesFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filterType` | `asset \| companyRole \| dataSubject \| department \| employee \| owner \| recipient \| status` | Yes | Type of filter to retrieve options for |
 
 
@@ -6946,9 +6397,6 @@ await corsair.borneo.api.processing.listProcessingActivitiesFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7001,9 +6449,6 @@ await corsair.borneo.api.processing.listTomsWithFilterAndPaginationOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -7023,9 +6468,6 @@ await corsair.borneo.api.processing.listTomsWithFilterAndPaginationOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7081,9 +6523,6 @@ await corsair.borneo.api.processing.putTomStatusAndNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note` | `string` | No | Note |
 | `tomId` | `string` | Yes | Tomid |
 | `status` | `available \| implemented \| pendingToImplement` | Yes | Status of the TOM, i.e. whether the TOM is already implemented, implementation is pending, or the TOM is not implemented. |
@@ -7096,9 +6535,6 @@ await corsair.borneo.api.processing.putTomStatusAndNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7150,9 +6586,6 @@ await corsair.borneo.api.processing.retrieveDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dpiaId` | `string` | Yes | Identifier of the DPIA |
 
 
@@ -7162,9 +6595,6 @@ await corsair.borneo.api.processing.retrieveDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7215,9 +6645,6 @@ await corsair.borneo.api.processing.retrieveLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lopdpThresholdId` | `string` | Yes | Identifier of the Threshold |
 
 
@@ -7227,9 +6654,6 @@ await corsair.borneo.api.processing.retrieveLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7280,9 +6704,6 @@ await corsair.borneo.api.processing.retrieveProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `processingActivityId` | `string` | Yes | Identifier of the Processing Activity |
 
 
@@ -7292,9 +6713,6 @@ await corsair.borneo.api.processing.retrieveProcessingActivityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7345,9 +6763,6 @@ await corsair.borneo.api.processing.retrieveTomById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tomId` | `string` | Yes | Identifier of the TOM |
 
 
@@ -7357,9 +6772,6 @@ await corsair.borneo.api.processing.retrieveTomById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7410,9 +6822,6 @@ await corsair.borneo.api.processing.updateDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dpiaId` | `string` | Yes | Identifier of the DPIA |
 | `status` | `activated \| draft` | Yes | The status of the DPIA. If a DPIA is saved as activated, several fields are required |
 | `translations` | `object` | No | Translations |
@@ -7585,9 +6994,6 @@ await corsair.borneo.api.processing.updateDpiaById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7698,9 +7104,6 @@ await corsair.borneo.api.processing.updateLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `activated \| draft` | No | Status of the threshold. Can be draft or activated. |
 | `comment` | `string` | No | Additional information related to the Threshold |
 | `lopdpThresholdId` | `string` | Yes | Identifier of the Threshold |
@@ -7722,9 +7125,6 @@ await corsair.borneo.api.processing.updateLopdpThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7785,9 +7185,6 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the processing activity |
 | `owner` | `string` | No | Owner |
 | `active` | `boolean` | Yes | Flag to create the processing activity as activated or draft |
@@ -7887,9 +7284,6 @@ await corsair.borneo.api.processing.updateProcessingActivityDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -7964,9 +7358,6 @@ await corsair.borneo.api.processing.updateThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `activated \| draft` | No | Status of the threshold. Can be draft or activated. |
 | `comment` | `string` | No | Additional information related to the Threshold |
 | `blacklist` | `boolean` | No | Indicates if the data processing is included in a black list |
@@ -8004,9 +7395,6 @@ await corsair.borneo.api.processing.updateThresholdById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8074,9 +7462,6 @@ await corsair.borneo.api.recipients.addDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredRecipientIds` | `string[]` | Yes | Identifiers of the discovered recipients to add as recipients. |
 
 
@@ -8086,9 +7471,6 @@ await corsair.borneo.api.recipients.addDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8139,9 +7521,6 @@ await corsair.borneo.api.recipients.archiveDiscoveredRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredRecipientId` | `string` | Yes | Identifier of the discovered recipient. |
 
 
@@ -8151,9 +7530,6 @@ await corsair.borneo.api.recipients.archiveDiscoveredRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8204,9 +7580,6 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dpa` | `string` | No | The url to the DPA of the recipient |
 | `name` | `string` | Yes | Name of the recipient. Has to be unique, 2 different recipients can"t have the same name. |
 | `role` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Role |
@@ -8233,9 +7606,6 @@ await corsair.borneo.api.recipients.createRecipientWithDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8301,9 +7671,6 @@ await corsair.borneo.api.recipients.deleteRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipientId` | `string` | Yes | Identifier of the Recipient |
 
 
@@ -8313,9 +7680,6 @@ await corsair.borneo.api.recipients.deleteRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8366,9 +7730,6 @@ await corsair.borneo.api.recipients.exportRecipientsListWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exportTypes` | `csv \| doc \| pdf[]` | Yes | Exporttypes |
 | `filter__role` | `string[]` | No | Role |
 | `filter__search` | `string` | No | Free-form text search to apply to the Recipient name. |
@@ -8401,9 +7762,6 @@ await corsair.borneo.api.recipients.exportRecipientsListWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8470,9 +7828,6 @@ await corsair.borneo.api.recipients.filterRecipientsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8524,9 +7879,6 @@ await corsair.borneo.api.recipients.listDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -8542,9 +7894,6 @@ await corsair.borneo.api.recipients.listDiscoveredRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8601,9 +7950,6 @@ await corsair.borneo.api.recipients.listFilterOptionsForRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filterType` | `categories \| role` | Yes | Filtertype |
 
 
@@ -8613,9 +7959,6 @@ await corsair.borneo.api.recipients.listFilterOptionsForRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8667,9 +8010,6 @@ await corsair.borneo.api.recipients.listOrFilterRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -8705,9 +8045,6 @@ await corsair.borneo.api.recipients.listOrFilterRecipients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8772,9 +8109,6 @@ await corsair.borneo.api.recipients.postDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredRecipientId` | `string` | Yes | Discoveredrecipientid |
 
 
@@ -8784,9 +8118,6 @@ await corsair.borneo.api.recipients.postDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8837,9 +8168,6 @@ await corsair.borneo.api.recipients.retrieveDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `discoveredRecipientId` | `string` | Yes | Identifier of the discovered recipient. |
 
 
@@ -8849,9 +8177,6 @@ await corsair.borneo.api.recipients.retrieveDiscoveredRecipientById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8902,9 +8227,6 @@ await corsair.borneo.api.recipients.retrieveRecipientDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipientId` | `string` | Yes | Identifier of the Recipient |
 
 
@@ -8914,9 +8236,6 @@ await corsair.borneo.api.recipients.retrieveRecipientDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -8967,9 +8286,6 @@ await corsair.borneo.api.recipients.retrieveRecipientProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
 | `recipientId` | `string` | Yes | Identifier of the Recipient |
@@ -8983,9 +8299,6 @@ await corsair.borneo.api.recipients.retrieveRecipientProcessingActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9038,9 +8351,6 @@ await corsair.borneo.api.recipients.updateDashboardReportFrequencyAndRecipients(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `roles` | `borneo_admin \| borneo_analyst \| borneo_engineer \| compliance_engineer \| data_engineer \| department_coordinator \| no_access_role \| privacy_supervisor[]` | No | Roles |
 | `frequency` | `*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *` | No | The cron schedule expression to use for a recurring scan. Only a fixed set of cron expressions can be used to run scans at 30 minute, 1 hour, 1 day, or 1 week intervals. |
 | `externalEmail` | `string[]` | No | Externalemail |
@@ -9054,9 +8364,6 @@ await corsair.borneo.api.recipients.updateDashboardReportFrequencyAndRecipients(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9109,9 +8416,6 @@ await corsair.borneo.api.recipients.updateRecipientDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dpa` | `string` | No | The url to the DPA of the recipient |
 | `name` | `string` | Yes | Name of the recipient. Has to be unique, 2 different recipients can"t have the same name. |
 | `role` | `controller \| independent_controller \| joint_controller \| processor \| sub_processor[]` | No | Role |
@@ -9136,9 +8440,6 @@ await corsair.borneo.api.recipients.updateRecipientDetailsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9203,9 +8504,6 @@ await corsair.borneo.api.recipients.updateRecipientStatusViaId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `archived \| validated` | No | The status of the recipient. Can be archived or validated. |
 | `recipientId` | `string` | Yes | Identifier of the Recipient |
 | `automationStatus` | `created \| ignored \| new` | No | Automationstatus |
@@ -9217,9 +8515,6 @@ await corsair.borneo.api.recipients.updateRecipientStatusViaId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9273,9 +8568,6 @@ await corsair.borneo.api.resources.deleteTagFromResource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tagKey` | `string` | Yes | Tagkey |
 | `tagValue` | `string` | No | Tagvalue |
 | `tagResources` | `object` | Yes | Tagresources |
@@ -9297,9 +8589,6 @@ await corsair.borneo.api.resources.deleteTagFromResource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9350,9 +8639,6 @@ await corsair.borneo.api.resources.exportFilteredLeafResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `detailed` | `boolean` | No | Set to `true` if the results exported to have detailed column level information of the detected infotypes. |
 | `sourceType` | `string` | No | Filter resource based on the source type. eg: "MYSQL", "RDS_MYSQL", "S3", "PRESTO", etc. |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -9413,9 +8699,6 @@ await corsair.borneo.api.resources.exportFilteredLeafResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9495,9 +8778,6 @@ await corsair.borneo.api.resources.exportInventoryResourceList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | A list of property names to return in the response. If not specified, all resource properties will be returned. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Optional "nextToken" value from the last API response. |
@@ -9555,9 +8835,6 @@ await corsair.borneo.api.resources.exportInventoryResourceList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9634,9 +8911,6 @@ await corsair.borneo.api.resources.getResourceInventoryById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resourceId` | `string` | Yes | The unique resource ID. |
 
 
@@ -9646,9 +8920,6 @@ await corsair.borneo.api.resources.getResourceInventoryById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9699,9 +8970,6 @@ await corsair.borneo.api.resources.listInventoryResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | A list of property names to return in the response. If not specified, all resource properties will be returned. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Optional "nextToken" value from the last API response. |
@@ -9759,9 +9027,6 @@ await corsair.borneo.api.resources.listInventoryResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9838,9 +9103,6 @@ await corsair.borneo.api.resources.listLeafResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Optional "nextToken" value from the last API response. |
 | `sourceType` | `string` | No | Filter resource based on the resource type. |
@@ -9904,9 +9166,6 @@ await corsair.borneo.api.resources.listLeafResourcesWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -9988,9 +9247,6 @@ await corsair.borneo.api.resources.postClassificationStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter__classification` | `string` | No | Classification |
 
 
@@ -10000,9 +9256,6 @@ await corsair.borneo.api.resources.postClassificationStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10053,9 +9306,6 @@ await corsair.borneo.api.resources.postResourceLineageFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter__resourceId` | `string` | No | Resourceid |
 | `filter__upstreamDepth` | `number` | No | Upstreamdepth |
 | `filter__downstreamDepth` | `number` | No | Downstreamdepth |
@@ -10067,9 +9317,6 @@ await corsair.borneo.api.resources.postResourceLineageFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10123,9 +9370,6 @@ await corsair.borneo.api.resources.postResourceStatsWithDeletedResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `includeDeletedResources` | `boolean` | No | Includedeletedresources |
 
 
@@ -10135,9 +9379,6 @@ await corsair.borneo.api.resources.postResourceStatsWithDeletedResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10188,9 +9429,6 @@ await corsair.borneo.api.resources.retrieveDataResourceStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sourceType` | `string` | No | Sourcetype |
 
 
@@ -10200,9 +9438,6 @@ await corsair.borneo.api.resources.retrieveDataResourceStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10253,9 +9488,6 @@ await corsair.borneo.api.resources.retrieveResourceCatalogById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resourceId` | `string` | Yes | The unique resource ID. |
 | `includeParentDetails` | `boolean` | No | Includeparentdetails |
 
@@ -10266,9 +9498,6 @@ await corsair.borneo.api.resources.retrieveResourceCatalogById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10319,9 +9548,6 @@ await corsair.borneo.api.resources.retrieveResourceColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataspace` | `string[]` | No | Dataspace |
 | `searchKey` | `string` | No | Searchkey |
 | `resourceId` | `string[]` | No | Resourceid |
@@ -10335,9 +9561,6 @@ await corsair.borneo.api.resources.retrieveResourceColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10390,9 +9613,6 @@ await corsair.borneo.api.scans.accessScanIterationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanIterationId` | `string` | Yes | The unique resource ID. |
 
 
@@ -10402,9 +9622,6 @@ await corsair.borneo.api.scans.accessScanIterationById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10455,9 +9672,6 @@ await corsair.borneo.api.scans.createAndScheduleCloudResourceScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cron` | `*/30 * * * * \| 0 */1 * * * \| 0 */12 * * * \| 0 */4 * * * \| 0 */6 * * * \| 0 */8 * * * \| 0 0 * * * \| 0 0 * * 0 \| 0 0 1 * * \| 0 0 1 1,4,7,10 * \| 0 0 1 1,7 *` | No | The cron schedule expression to use for a recurring scan. Only a fixed set of cron expressions can be used to run scans at 30 minute, 1 hour, 1 day, or 1 week intervals. |
 | `name` | `string` | No | The name of the scan. |
 | `scanType` | `full \| sample` | No | The type of scan to perform, i.e. either full scan or sample scan. |
@@ -10551,9 +9765,6 @@ await corsair.borneo.api.scans.createAndScheduleCloudResourceScan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10649,9 +9860,6 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 | `detailed` | `boolean` | No | Set to `true` if the results exported to have detailed column level information of the detected infotypes  with masked tokens if captured. |
 | `filter__pageId` | `string` | No | Unique page ID. Only applicable to page-level results. |
@@ -10675,9 +9883,6 @@ await corsair.borneo.api.scans.exportInsightPageUsingScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10740,9 +9945,6 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `page \| scan` | Yes | Type of inspection result, i.e. scan-level or page-level results. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
@@ -10769,9 +9971,6 @@ await corsair.borneo.api.scans.filterAndListInspectionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10836,9 +10035,6 @@ await corsair.borneo.api.scans.getInsightByTypeAndId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique ID of the inspection result to fetch. |
 | `type` | `page \| scan` | Yes | The type of inspection result to fetch. |
 
@@ -10849,9 +10045,6 @@ await corsair.borneo.api.scans.getInsightByTypeAndId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10903,9 +10096,6 @@ await corsair.borneo.api.scans.getScanByScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | Scanid |
 
 
@@ -10915,9 +10105,6 @@ await corsair.borneo.api.scans.getScanByScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -10968,9 +10155,6 @@ await corsair.borneo.api.scans.listErrorDetailsFromFilteredScanIterations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | List of column names to include in the response. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
@@ -10989,9 +10173,6 @@ await corsair.borneo.api.scans.listErrorDetailsFromFilteredScanIterations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11048,9 +10229,6 @@ await corsair.borneo.api.scans.listInsightFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | No | Scanid |
 | `filterType` | `fileExtension` | No | Filtertype |
 
@@ -11061,9 +10239,6 @@ await corsair.borneo.api.scans.listInsightFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11115,9 +10290,6 @@ await corsair.borneo.api.scans.listScanExecutionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | Nexttoken |
 | `sort__order` | `ASC \| DESC` | No | Order |
@@ -11138,9 +10310,6 @@ await corsair.borneo.api.scans.listScanExecutionResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11200,9 +10369,6 @@ await corsair.borneo.api.scans.listScanIterationsWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | List of column names to include in the response. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
@@ -11219,9 +10385,6 @@ await corsair.borneo.api.scans.listScanIterationsWithFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11277,9 +10440,6 @@ await corsair.borneo.api.scans.listScansWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | List of column names to include in the response. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
@@ -11306,9 +10466,6 @@ await corsair.borneo.api.scans.listScansWithFilters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11375,9 +10532,6 @@ await corsair.borneo.api.scans.markScanFalsePositivesById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 | `reports` | `string[]` | No | Reports |
 
@@ -11388,9 +10542,6 @@ await corsair.borneo.api.scans.markScanFalsePositivesById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11441,9 +10592,6 @@ await corsair.borneo.api.scans.pauseScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 
 
@@ -11453,9 +10601,6 @@ await corsair.borneo.api.scans.pauseScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11506,9 +10651,6 @@ await corsair.borneo.api.scans.postScanResourceStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 | `pageSize` | `number` | No | The maximum number of records to return per API call. If more records are available, the response will be truncated and will contain a "nextToken" value, which can be used to return additional records. |
 | `nextToken` | `string` | No | The `nextToken` from the last page of results to retrieve the next page of results. |
@@ -11521,9 +10663,6 @@ await corsair.borneo.api.scans.postScanResourceStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11575,9 +10714,6 @@ await corsair.borneo.api.scans.resumeScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 
 
@@ -11587,9 +10723,6 @@ await corsair.borneo.api.scans.resumeScanById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11640,9 +10773,6 @@ await corsair.borneo.api.scans.scanLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | Documentid |
 
 
@@ -11652,9 +10782,6 @@ await corsair.borneo.api.scans.scanLegalDocumentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11705,9 +10832,6 @@ await corsair.borneo.api.scans.stopScanViaScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scanId` | `string` | Yes | The unique scan ID. |
 
 
@@ -11717,9 +10841,6 @@ await corsair.borneo.api.scans.stopScanViaScanId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11770,9 +10891,6 @@ await corsair.borneo.api.scans.submitDetailedScanResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageId` | `string` | No | Page ID for one of the pages produced by the scan. |
 | `scanId` | `string` | Yes | Scan ID of the scan that produced the inspection result. |
 | `resourceId` | `string` | Yes | Resource ID for the resource for which the page was produced. |
@@ -11785,9 +10903,6 @@ await corsair.borneo.api.scans.submitDetailedScanResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11843,9 +10958,6 @@ await corsair.borneo.api.support.postSupportChatQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | Query |
 | `sessionId` | `string` | No | Sessionid |
 
@@ -11856,9 +10968,6 @@ await corsair.borneo.api.support.postSupportChatQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11911,9 +11020,6 @@ await corsair.borneo.api.users.getUserProfileById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | Userid |
 
 
@@ -11923,9 +11029,6 @@ await corsair.borneo.api.users.getUserProfileById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -11976,9 +11079,6 @@ await corsair.borneo.api.users.listUserProfileWithFiltersAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `select` | `string[]` | No | Select |
 | `pageSize` | `number` | No | Pagesize |
 | `nextToken` | `string` | No | Nexttoken |
@@ -11993,9 +11093,6 @@ await corsair.borneo.api.users.listUserProfileWithFiltersAndSorting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |
@@ -12048,9 +11145,6 @@ await corsair.borneo.api.users.verifyEmailWithIdAndToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | Yes | Token |
 | `verificationId` | `string` | Yes | Verificationid |
 
@@ -12061,9 +11155,6 @@ await corsair.borneo.api.users.verifyEmailWithIdAndToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `error` | `object` | No | — |
 | `successful` | `true` | Yes | — |

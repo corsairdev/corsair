@@ -31,9 +31,6 @@ await corsair.googlemaps.api.aerial.lookupAerialVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | No | US postal address. |
 | `videoId` | `string` | No | Video ID. |
 
@@ -44,9 +41,6 @@ await corsair.googlemaps.api.aerial.lookupAerialVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `state` | `string` | No | PROCESSING, ACTIVE, FAILED. |
 | `uris` | `object` | No | — |
@@ -82,9 +76,6 @@ await corsair.googlemaps.api.aerial.renderAerialVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | Yes | US postal address to render aerial view video for. |
 
 
@@ -94,9 +85,6 @@ await corsair.googlemaps.api.aerial.renderAerialVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `state` | `string` | No | — |
 | `metadata` | `object` | No | — |
 
@@ -134,9 +122,6 @@ await corsair.googlemaps.api.geocoding.geocodeAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | Yes | Street address to geocode. |
 | `bounds` | `string` | No | Bounding box bias. |
 | `language` | `string` | No | Language code. |
@@ -150,9 +135,6 @@ await corsair.googlemaps.api.geocoding.geocodeAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -187,9 +169,6 @@ await corsair.googlemaps.api.geocoding.geocodeAddressWithQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | Yes | Address to geocode or validate. |
 | `regionCode` | `string` | No | Two-character region code. |
 | `locality` | `string` | No | Locality/City. |
@@ -201,9 +180,6 @@ await corsair.googlemaps.api.geocoding.geocodeAddressWithQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -237,9 +213,6 @@ await corsair.googlemaps.api.geocoding.geocodeDestinations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | No | Street address query. |
 | `placeId` | `string` | No | Place ID query. |
 | `latlng` | `string` | No | Latitude,longitude query. |
@@ -251,9 +224,6 @@ await corsair.googlemaps.api.geocoding.geocodeDestinations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -288,9 +258,6 @@ await corsair.googlemaps.api.geocoding.geocodePlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place_id` | `string` | Yes | Google Place ID. |
 | `language` | `string` | No | Language code. |
 
@@ -301,9 +268,6 @@ await corsair.googlemaps.api.geocoding.geocodePlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -338,9 +302,6 @@ await corsair.googlemaps.api.geocoding.geocodingApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `address` | `string` | No | Street address to geocode. |
 | `latlng` | `string` | No | Coordinates for reverse geocoding. |
 | `place_id` | `string` | No | Place ID. |
@@ -353,9 +314,6 @@ await corsair.googlemaps.api.geocoding.geocodingApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -390,9 +348,6 @@ await corsair.googlemaps.api.geocoding.reverseGeocodeLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `latlng` | `string` | Yes | Latitude and longitude string (e.g. "37.422,-122.084"). |
 | `language` | `string` | No | Language code. |
 | `result_type` | `string` | No | Filter by result types. |
@@ -404,9 +359,6 @@ await corsair.googlemaps.api.geocoding.reverseGeocodeLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -443,9 +395,6 @@ await corsair.googlemaps.api.geolocation.geolocate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `homeMobileCountryCode` | `number` | No | MCC for home network. |
 | `homeMobileNetworkCode` | `number` | No | MNC for home network. |
 | `radioType` | `string` | No | lte, gsm, cdma, wcdma. |
@@ -478,9 +427,6 @@ await corsair.googlemaps.api.geolocation.geolocate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `location` | `object` | Yes | — |
 | `accuracy` | `number` | Yes | — |
 
@@ -519,9 +465,6 @@ await corsair.googlemaps.api.places.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `input` | `string` | Yes | Text query to get predictions for. |
 | `locationBias` | `object` | No | Location bias area. |
 | `includedPrimaryTypes` | `string[]` | No | Primary place types. |
@@ -545,9 +488,6 @@ await corsair.googlemaps.api.places.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `suggestions` | `object[]` | No | — |
 
 
@@ -581,9 +521,6 @@ await corsair.googlemaps.api.places.getPlaceDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place_id` | `string` | Yes | Place ID (or resource name places/{place_id}). |
 | `fields` | `string` | No | Field mask for response fields. |
 | `languageCode` | `string` | No | Language code. |
@@ -595,9 +532,6 @@ await corsair.googlemaps.api.places.getPlaceDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `formattedAddress` | `string` | No | — |
@@ -636,9 +570,6 @@ await corsair.googlemaps.api.places.getPlacePhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `photo_reference` | `string` | Yes | Photo reference identifier. |
 | `maxwidth` | `number` | No | Max width in pixels. |
 | `maxheight` | `number` | No | Max height in pixels. |
@@ -650,9 +581,6 @@ await corsair.googlemaps.api.places.getPlacePhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `photoUrl` | `string` | Yes | Public photo URL or image resource link. |
 
 
@@ -676,9 +604,6 @@ await corsair.googlemaps.api.places.nearbySearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `includedTypes` | `string[]` | No | Included place types. |
 | `excludedTypes` | `string[]` | No | Excluded place types. |
 | `maxResultCount` | `number` | No | Max results (1-20). |
@@ -701,9 +626,6 @@ await corsair.googlemaps.api.places.nearbySearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -737,9 +659,6 @@ await corsair.googlemaps.api.places.textSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `textQuery` | `string` | Yes | Text search query string. |
 | `includedType` | `string` | No | Primary place type filter. |
 | `locationBias` | `object` | No | Location bias circle or rectangle. |
@@ -764,9 +683,6 @@ await corsair.googlemaps.api.places.textSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -802,9 +718,6 @@ await corsair.googlemaps.api.routes.computeRouteMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origins` | `object[]` | Yes | List of origin waypoints. |
 | `destinations` | `object[]` | Yes | List of destination waypoints. |
 | `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
@@ -836,9 +749,6 @@ await corsair.googlemaps.api.routes.computeRouteMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `originIndex` | `number` | No | — |
 | `destinationIndex` | `number` | No | — |
 | `status` | `object` | No | — |
@@ -877,9 +787,6 @@ await corsair.googlemaps.api.routes.distanceMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origins` | `string \| string[]` | Yes | Origins addresses or coordinates. |
 | `destinations` | `string \| string[]` | Yes | Destinations addresses or coordinates. |
 | `mode` | `string` | No | driving, walking, bicycling, transit. |
@@ -893,9 +800,6 @@ await corsair.googlemaps.api.routes.distanceMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin_addresses` | `string[]` | No | — |
 | `destination_addresses` | `string[]` | No | — |
 | `rows` | `object[]` | No | — |
@@ -932,9 +836,6 @@ await corsair.googlemaps.api.routes.getDirection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | Yes | Origin location address or lat,lng. |
 | `destination` | `string` | Yes | Destination location address or lat,lng. |
 | `mode` | `string` | No | driving, walking, bicycling, transit. |
@@ -948,9 +849,6 @@ await corsair.googlemaps.api.routes.getDirection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routes` | `object[]` | No | — |
 | `status` | `string` | No | — |
 
@@ -985,9 +883,6 @@ await corsair.googlemaps.api.routes.getRoute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `object` | Yes | Origin waypoint object. |
 | `destination` | `object` | Yes | Destination waypoint object. |
 | `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
@@ -1018,9 +913,6 @@ await corsair.googlemaps.api.routes.getRoute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routes` | `object[]` | No | — |
 
 
@@ -1056,9 +948,6 @@ await corsair.googlemaps.api.tiles.createTilesSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mapType` | `string` | Yes | roadmap, satellite, terrain, or streetview. |
 | `language` | `string` | No | BCP-47 language tag. |
 | `region` | `string` | No | ccTLD two-character region code. |
@@ -1072,9 +961,6 @@ await corsair.googlemaps.api.tiles.createTilesSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session` | `string` | Yes | Session token for subsequent tile requests. |
 | `expiry` | `string` | No | Expiration timestamp. |
 | `tileWidth` | `number` | No | — |
@@ -1102,9 +988,6 @@ await corsair.googlemaps.api.tiles.embedMap({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mode` | `place \| view \| directions \| streetview \| search` | Yes | Map embed mode. |
 | `q` | `string` | No | Location or search query. |
 | `origin` | `string` | No | Origin for directions mode. |
@@ -1122,9 +1005,6 @@ await corsair.googlemaps.api.tiles.embedMap({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `embedUrl` | `string` | Yes | Embeddable map URL. |
 | `iframeHtml` | `string` | Yes | HTML iframe code snippet for embedding. |
 
@@ -1149,9 +1029,6 @@ await corsair.googlemaps.api.tiles.get2dTile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session` | `string` | Yes | Valid session token from CreateTilesSession. |
 | `z` | `number` | Yes | Zoom level. |
 | `x` | `number` | Yes | X coordinate. |
@@ -1164,9 +1041,6 @@ await corsair.googlemaps.api.tiles.get2dTile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tileUrl` | `string` | Yes | URL to fetch 2D tile image. |
 | `content` | `string` | No | Base64 tile data if requested. |
 
@@ -1191,9 +1065,6 @@ await corsair.googlemaps.api.tiles.get3dTilesRoot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | No | Optional API key override. |
 
 
@@ -1203,9 +1074,6 @@ await corsair.googlemaps.api.tiles.get3dTilesRoot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset` | `object` | No | — |
 | `geometricError` | `number` | No | — |
 | `root` | `object` | No | — |

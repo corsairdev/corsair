@@ -31,9 +31,6 @@ await corsair.cloudflareapikey.api.cache.getRegionalTieredCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.cloudflareapikey.api.cache.getRegionalTieredCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `tc_regional \| string` | Yes | — |
 | `editable` | `boolean` | No | — |
 | `value` | `on \| off` | Yes | — |
@@ -74,9 +68,6 @@ await corsair.cloudflareapikey.api.dns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -94,9 +85,6 @@ await corsair.cloudflareapikey.api.dns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `zone_id` | `string` | No | — |
 | `zone_name` | `string` | No | — |
@@ -132,9 +120,6 @@ await corsair.cloudflareapikey.api.dns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `dns_record_id` | `string` | Yes | — |
 
@@ -145,9 +130,6 @@ await corsair.cloudflareapikey.api.dns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -171,9 +153,6 @@ await corsair.cloudflareapikey.api.dns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `zone_id` | `string` | Yes | — |
@@ -233,9 +212,6 @@ await corsair.cloudflareapikey.api.dns.overwrite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `dns_record_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -254,9 +230,6 @@ await corsair.cloudflareapikey.api.dns.overwrite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `zone_id` | `string` | No | — |
 | `zone_name` | `string` | No | — |
@@ -294,9 +267,6 @@ await corsair.cloudflareapikey.api.dnssec.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -323,9 +293,6 @@ await corsair.cloudflareapikey.api.dnssec.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `status` | `active \| disabled` | No | — |
 | `dnssec_multi_signer` | `boolean` | No | — |
@@ -339,9 +306,6 @@ await corsair.cloudflareapikey.api.dnssec.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `algorithm` | `string` | No | — |
 | `digest` | `string` | No | — |
@@ -380,9 +344,6 @@ await corsair.cloudflareapikey.api.ips.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `networks` | `string` | No | — |
 
 
@@ -392,9 +353,6 @@ await corsair.cloudflareapikey.api.ips.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `ipv4_cidrs` | `string[]` | No | — |
 | `ipv6_cidrs` | `string[]` | No | — |
@@ -423,9 +381,6 @@ await corsair.cloudflareapikey.api.lockdowns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `urls` | `string[]` | Yes | — |
 | `configurations` | `object[]` | Yes | — |
@@ -452,9 +407,6 @@ await corsair.cloudflareapikey.api.lockdowns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `urls` | `string[]` | Yes | — |
 | `configurations` | `object[]` | Yes | — |
@@ -497,9 +449,6 @@ await corsair.cloudflareapikey.api.lockdowns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `lockdown_id` | `string` | Yes | — |
 
@@ -510,9 +459,6 @@ await corsair.cloudflareapikey.api.lockdowns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `urls` | `string[]` | Yes | — |
 | `configurations` | `object[]` | Yes | — |
@@ -555,9 +501,6 @@ await corsair.cloudflareapikey.api.lockdowns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `lockdown_id` | `string` | Yes | — |
 | `urls` | `string[]` | No | — |
@@ -585,9 +528,6 @@ await corsair.cloudflareapikey.api.lockdowns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `urls` | `string[]` | Yes | — |
 | `configurations` | `object[]` | Yes | — |
@@ -654,9 +594,6 @@ await corsair.cloudflareapikey.api.rulesets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -725,9 +662,6 @@ await corsair.cloudflareapikey.api.rulesets.createRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -820,9 +754,6 @@ await corsair.cloudflareapikey.api.rulesets.deleteRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -880,9 +811,6 @@ await corsair.cloudflareapikey.api.rulesets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -941,9 +869,6 @@ await corsair.cloudflareapikey.api.rulesets.getEntrypointVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1005,9 +930,6 @@ await corsair.cloudflareapikey.api.rulesets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1077,9 +999,6 @@ await corsair.cloudflareapikey.api.rulesets.updateRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1122,9 +1041,6 @@ await corsair.cloudflareapikey.api.s3.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `bucket_name` | `string` | Yes | — |
 | `object_key` | `string` | Yes | — |
@@ -1138,9 +1054,6 @@ await corsair.cloudflareapikey.api.s3.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `key` | `string` | No | — |
 | `size` | `string \| number` | No | — |
@@ -1171,9 +1084,6 @@ await corsair.cloudflareapikey.api.zones.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -1183,9 +1093,6 @@ await corsair.cloudflareapikey.api.zones.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1209,9 +1116,6 @@ await corsair.cloudflareapikey.api.zones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -1221,9 +1125,6 @@ await corsair.cloudflareapikey.api.zones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
@@ -1269,9 +1170,6 @@ await corsair.cloudflareapikey.api.zones.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -1329,9 +1227,6 @@ await corsair.cloudflareapikey.api.zones.rerunActivationCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -1341,9 +1236,6 @@ await corsair.cloudflareapikey.api.zones.rerunActivationCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
@@ -1389,9 +1281,6 @@ await corsair.cloudflareapikey.api.zones.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `paused` | `boolean` | No | — |
 | `type` | `string` | No | — |
@@ -1404,9 +1293,6 @@ await corsair.cloudflareapikey.api.zones.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |

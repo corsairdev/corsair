@@ -28,9 +28,6 @@ const rows = await corsair.clickhouse.db.column.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `database` | `string` | equals, contains, startsWith, endsWith, in |
 | `table` | `string` | equals, contains, startsWith, endsWith, in |
@@ -62,9 +59,6 @@ const rows = await corsair.clickhouse.db.database.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `engine` | `string` | equals, contains, startsWith, endsWith, in |
@@ -95,9 +89,6 @@ const rows = await corsair.clickhouse.db.queryResult.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 
 
@@ -121,9 +112,6 @@ const rows = await corsair.clickhouse.db.table.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `database` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |

@@ -31,9 +31,6 @@ await corsair.clientary.api.clients.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Client name |
 | `number` | `string` | No | Client number (unique) |
 | `city` | `string` | No | — |
@@ -53,9 +50,6 @@ await corsair.clientary.api.clients.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -90,9 +84,6 @@ await corsair.clientary.api.clients.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Client ID |
 
 
@@ -102,9 +93,6 @@ await corsair.clientary.api.clients.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -129,9 +117,6 @@ await corsair.clientary.api.clients.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Client ID |
 
 
@@ -141,9 +126,6 @@ await corsair.clientary.api.clients.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -178,9 +160,6 @@ await corsair.clientary.api.clients.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 | `updated_since` | `string` | No | Only return clients updated since this date (YYYY-MM-DD) |
@@ -193,9 +172,6 @@ await corsair.clientary.api.clients.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -244,9 +220,6 @@ await corsair.clientary.api.clients.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Client ID |
 | `name` | `string` | No | Client name |
 | `number` | `string` | No | Client number (unique) |
@@ -267,9 +240,6 @@ await corsair.clientary.api.clients.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -306,9 +276,6 @@ await corsair.clientary.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client the contact belongs to |
 | `name` | `string` | Yes | Contact name |
 | `email` | `string` | Yes | Contact email |
@@ -324,9 +291,6 @@ await corsair.clientary.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -358,9 +322,6 @@ await corsair.clientary.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Contact ID |
 
 
@@ -370,9 +331,6 @@ await corsair.clientary.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -397,9 +355,6 @@ await corsair.clientary.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Contact ID |
 
 
@@ -409,9 +364,6 @@ await corsair.clientary.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -443,9 +395,6 @@ await corsair.clientary.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 
@@ -456,9 +405,6 @@ await corsair.clientary.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -504,9 +450,6 @@ await corsair.clientary.api.contacts.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope contacts by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -518,9 +461,6 @@ await corsair.clientary.api.contacts.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -566,9 +506,6 @@ await corsair.clientary.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Contact ID |
 | `name` | `string` | No | Contact name |
 | `email` | `string` | No | Contact email |
@@ -584,9 +521,6 @@ await corsair.clientary.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -620,9 +554,6 @@ await corsair.clientary.api.estimates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `number` | `number` | No | Estimate number (autoincrements) |
 | `date` | `string` | Yes | Estimate date (YYYY-MM-DD) |
 | `currency_code` | `string` | Yes | ISO currency code, e.g. USD |
@@ -663,9 +594,6 @@ await corsair.clientary.api.estimates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -722,9 +650,6 @@ await corsair.clientary.api.estimates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Estimate ID |
 
 
@@ -734,9 +659,6 @@ await corsair.clientary.api.estimates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -761,9 +683,6 @@ await corsair.clientary.api.estimates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Estimate ID |
 
 
@@ -773,9 +692,6 @@ await corsair.clientary.api.estimates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -832,9 +748,6 @@ await corsair.clientary.api.estimates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 
 
@@ -844,9 +757,6 @@ await corsair.clientary.api.estimates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -908,9 +818,6 @@ await corsair.clientary.api.estimates.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope estimates by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -922,9 +829,6 @@ await corsair.clientary.api.estimates.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -986,9 +890,6 @@ await corsair.clientary.api.estimates.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project ID to scope estimates by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -1000,9 +901,6 @@ await corsair.clientary.api.estimates.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -1064,9 +962,6 @@ await corsair.clientary.api.estimates.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Estimate ID to send |
 | `recipients` | `string[]` | Yes | Recipient email addresses |
 | `subject` | `string` | No | Email subject line |
@@ -1081,9 +976,6 @@ await corsair.clientary.api.estimates.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1108,9 +1000,6 @@ await corsair.clientary.api.estimates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Estimate ID |
 | `number` | `number` | No | Estimate number (autoincrements) |
 | `date` | `string` | No | Estimate date (YYYY-MM-DD) |
@@ -1152,9 +1041,6 @@ await corsair.clientary.api.estimates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -1213,9 +1099,6 @@ await corsair.clientary.api.expenses.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `number` | Yes | Expense amount |
 | `description` | `string` | No | — |
 | `incurred_on` | `string` | No | Date incurred (YYYY-MM-DD) |
@@ -1229,9 +1112,6 @@ await corsair.clientary.api.expenses.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -1263,9 +1143,6 @@ await corsair.clientary.api.expenses.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Expense ID |
 
 
@@ -1275,9 +1152,6 @@ await corsair.clientary.api.expenses.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1302,9 +1176,6 @@ await corsair.clientary.api.expenses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Expense ID |
 
 
@@ -1314,9 +1185,6 @@ await corsair.clientary.api.expenses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -1348,9 +1216,6 @@ await corsair.clientary.api.expenses.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_date` | `string` | No | Start of date range (YYYY-MM-DD) |
 | `to_date` | `string` | No | End of date range (YYYY-MM-DD) |
 
@@ -1361,9 +1226,6 @@ await corsair.clientary.api.expenses.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | Yes | — |
 | `from_date` | `string` | Yes | — |
 | `to_date` | `string` | Yes | — |
@@ -1409,9 +1271,6 @@ await corsair.clientary.api.expenses.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope expenses by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -1423,9 +1282,6 @@ await corsair.clientary.api.expenses.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | Yes | — |
 | `from_date` | `string` | Yes | — |
 | `to_date` | `string` | Yes | — |
@@ -1471,9 +1327,6 @@ await corsair.clientary.api.expenses.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project ID to scope expenses by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -1485,9 +1338,6 @@ await corsair.clientary.api.expenses.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | Yes | — |
 | `from_date` | `string` | Yes | — |
 | `to_date` | `string` | Yes | — |
@@ -1533,9 +1383,6 @@ await corsair.clientary.api.expenses.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Expense ID |
 | `amount` | `number` | No | Expense amount |
 | `description` | `string` | No | — |
@@ -1550,9 +1397,6 @@ await corsair.clientary.api.expenses.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -1586,9 +1430,6 @@ await corsair.clientary.api.hours.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project to log hours against |
 | `hours` | `number` | Yes | Number of hours logged |
 | `title` | `string` | Yes | Title of the logged work |
@@ -1602,9 +1443,6 @@ await corsair.clientary.api.hours.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `user_id` | `number` | No | — |
@@ -1637,9 +1475,6 @@ await corsair.clientary.api.hours.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Hours entry ID |
 
 
@@ -1649,9 +1484,6 @@ await corsair.clientary.api.hours.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1676,9 +1508,6 @@ await corsair.clientary.api.hours.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Hours entry ID |
 
 
@@ -1688,9 +1517,6 @@ await corsair.clientary.api.hours.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `user_id` | `number` | No | — |
@@ -1723,9 +1549,6 @@ await corsair.clientary.api.hours.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project ID to scope hours by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -1738,9 +1561,6 @@ await corsair.clientary.api.hours.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hours` | `object[]` | Yes | — |
 
 
@@ -1784,9 +1604,6 @@ await corsair.clientary.api.hours.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Hours entry ID |
 | `hours` | `number` | No | Number of hours logged |
 | `title` | `string` | No | Title of the logged work |
@@ -1800,9 +1617,6 @@ await corsair.clientary.api.hours.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `user_id` | `number` | No | — |
@@ -1837,9 +1651,6 @@ await corsair.clientary.api.invoices.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `number` | `number` | No | Invoice number (autoincrements) |
 | `date` | `string` | Yes | Invoice date (YYYY-MM-DD) |
 | `due_date` | `string` | Yes | Invoice due date (YYYY-MM-DD) |
@@ -1882,9 +1693,6 @@ await corsair.clientary.api.invoices.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -1970,9 +1778,6 @@ await corsair.clientary.api.invoices.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Invoice ID |
 
 
@@ -1982,9 +1787,6 @@ await corsair.clientary.api.invoices.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2009,9 +1811,6 @@ await corsair.clientary.api.invoices.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Invoice ID |
 
 
@@ -2021,9 +1820,6 @@ await corsair.clientary.api.invoices.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -2109,9 +1905,6 @@ await corsair.clientary.api.invoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 | `updated_since` | `string` | No | Only return invoices updated since this date (YYYY-MM-DD) |
@@ -2123,9 +1916,6 @@ await corsair.clientary.api.invoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -2202,9 +1992,6 @@ await corsair.clientary.api.invoices.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope invoices by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -2216,9 +2003,6 @@ await corsair.clientary.api.invoices.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -2295,9 +2079,6 @@ await corsair.clientary.api.invoices.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project ID to scope invoices by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -2309,9 +2090,6 @@ await corsair.clientary.api.invoices.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -2388,9 +2166,6 @@ await corsair.clientary.api.invoices.listForRecurring({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recurring_id` | `number` | Yes | Recurring schedule ID to scope invoices by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -2402,9 +2177,6 @@ await corsair.clientary.api.invoices.listForRecurring({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -2481,9 +2253,6 @@ await corsair.clientary.api.invoices.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Estimate ID to send |
 | `recipients` | `string[]` | Yes | Recipient email addresses |
 | `subject` | `string` | No | Email subject line |
@@ -2498,9 +2267,6 @@ await corsair.clientary.api.invoices.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2525,9 +2291,6 @@ await corsair.clientary.api.invoices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Invoice ID |
 | `number` | `number` | No | Invoice number (autoincrements) |
 | `date` | `string` | No | Invoice date (YYYY-MM-DD) |
@@ -2571,9 +2334,6 @@ await corsair.clientary.api.invoices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -2661,9 +2421,6 @@ await corsair.clientary.api.leads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Client name |
 | `number` | `string` | No | Client number (unique) |
 | `city` | `string` | No | — |
@@ -2683,9 +2440,6 @@ await corsair.clientary.api.leads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -2720,9 +2474,6 @@ await corsair.clientary.api.leads.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Lead ID |
 
 
@@ -2732,9 +2483,6 @@ await corsair.clientary.api.leads.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2759,9 +2507,6 @@ await corsair.clientary.api.leads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Lead ID |
 
 
@@ -2771,9 +2516,6 @@ await corsair.clientary.api.leads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -2808,9 +2550,6 @@ await corsair.clientary.api.leads.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 | `sort` | `name \| oldest` | No | Sort by name or oldest first |
@@ -2822,9 +2561,6 @@ await corsair.clientary.api.leads.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -2873,9 +2609,6 @@ await corsair.clientary.api.leads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Lead ID |
 | `name` | `string` | No | Client name |
 | `number` | `string` | No | Client number (unique) |
@@ -2896,9 +2629,6 @@ await corsair.clientary.api.leads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -2935,9 +2665,6 @@ await corsair.clientary.api.paymentProfiles.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client to attach the payment profile to |
 | `stripe_customer_id` | `string` | Yes | Stripe customer ID |
 | `stripe_source_id` | `string` | Yes | Stripe source ID |
@@ -2958,9 +2685,6 @@ await corsair.clientary.api.paymentProfiles.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -2996,9 +2720,6 @@ await corsair.clientary.api.paymentProfiles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client the payment profile belongs to |
 | `id` | `number` | Yes | Payment profile ID |
 
@@ -3009,9 +2730,6 @@ await corsair.clientary.api.paymentProfiles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -3036,9 +2754,6 @@ await corsair.clientary.api.paymentProfiles.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope payment profiles by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -3050,9 +2765,6 @@ await corsair.clientary.api.paymentProfiles.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -3104,9 +2816,6 @@ await corsair.clientary.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoice_id` | `number` | Yes | Invoice to apply the payment to |
 | `amount` | `number` | No | Payment amount |
 | `note` | `string` | No | Payment note |
@@ -3119,9 +2828,6 @@ await corsair.clientary.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `invoice_id` | `number` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -3151,9 +2857,6 @@ await corsair.clientary.api.payments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoice_id` | `number` | Yes | Invoice the payment belongs to |
 | `id` | `number` | Yes | Payment ID |
 
@@ -3164,9 +2867,6 @@ await corsair.clientary.api.payments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -3191,9 +2891,6 @@ await corsair.clientary.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 | `sort` | `created_at` | No | Sort by record creation time |
@@ -3205,9 +2902,6 @@ await corsair.clientary.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_size` | `number` | Yes | — |
 | `page_count` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -3253,9 +2947,6 @@ await corsair.clientary.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Project name |
 | `number` | `string` | No | Project number (unique) |
 | `rate` | `number` | Yes | Hourly rate (or total cost for fixed amount) |
@@ -3276,9 +2967,6 @@ await corsair.clientary.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -3339,9 +3027,6 @@ await corsair.clientary.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Project ID |
 
 
@@ -3351,9 +3036,6 @@ await corsair.clientary.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -3378,9 +3060,6 @@ await corsair.clientary.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Project ID |
 
 
@@ -3390,9 +3069,6 @@ await corsair.clientary.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -3453,9 +3129,6 @@ await corsair.clientary.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 | `filter` | `all` | No | Include closed projects (default: active/billable only) |
@@ -3467,9 +3140,6 @@ await corsair.clientary.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -3535,9 +3205,6 @@ await corsair.clientary.api.projects.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `client_id` | `number` | Yes | Client ID to scope projects by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -3549,9 +3216,6 @@ await corsair.clientary.api.projects.listForClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -3617,9 +3281,6 @@ await corsair.clientary.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Project ID |
 | `name` | `string` | No | Project name |
 | `number` | `string` | No | Project number (unique) |
@@ -3641,9 +3302,6 @@ await corsair.clientary.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `number` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -3706,9 +3364,6 @@ await corsair.clientary.api.recurring.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `number` | `number` | No | Schedule number (autoincrements) |
 | `next_date` | `string` | Yes | Next invoice date (YYYY-MM-DD) |
 | `due_period` | `number` | Yes | Due in N days |
@@ -3755,9 +3410,6 @@ await corsair.clientary.api.recurring.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 | `number` | `string` | No | — |
@@ -3828,9 +3480,6 @@ await corsair.clientary.api.recurring.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Recurring schedule ID |
 
 
@@ -3840,9 +3489,6 @@ await corsair.clientary.api.recurring.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -3867,9 +3513,6 @@ await corsair.clientary.api.recurring.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Recurring schedule ID |
 
 
@@ -3879,9 +3522,6 @@ await corsair.clientary.api.recurring.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 | `number` | `string` | No | — |
@@ -3952,9 +3592,6 @@ await corsair.clientary.api.recurring.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 
 
@@ -3964,9 +3601,6 @@ await corsair.clientary.api.recurring.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_size` | `number` | Yes | — |
 | `page_count` | `number` | Yes | — |
 | `total_count` | `number` | Yes | — |
@@ -4042,9 +3676,6 @@ await corsair.clientary.api.recurring.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Recurring schedule ID |
 | `number` | `number` | No | Schedule number (autoincrements) |
 | `next_date` | `string` | No | Next invoice date (YYYY-MM-DD) |
@@ -4092,9 +3723,6 @@ await corsair.clientary.api.recurring.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 | `number` | `string` | No | — |
@@ -4167,9 +3795,6 @@ await corsair.clientary.api.staff.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Staff user ID |
 
 
@@ -4179,9 +3804,6 @@ await corsair.clientary.api.staff.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -4216,9 +3838,6 @@ await corsair.clientary.api.staff.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `staff` | `object[]` | Yes | — |
 
 
@@ -4263,9 +3882,6 @@ await corsair.clientary.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | Task title |
 | `description` | `string` | No | — |
 | `project_id` | `number` | No | — |
@@ -4279,9 +3895,6 @@ await corsair.clientary.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -4316,9 +3929,6 @@ await corsair.clientary.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Task ID |
 
 
@@ -4328,9 +3938,6 @@ await corsair.clientary.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -4355,9 +3962,6 @@ await corsair.clientary.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Task ID |
 
 
@@ -4367,9 +3971,6 @@ await corsair.clientary.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -4404,9 +4005,6 @@ await corsair.clientary.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
 
@@ -4417,9 +4015,6 @@ await corsair.clientary.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | Yes | — |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
@@ -4468,9 +4063,6 @@ await corsair.clientary.api.tasks.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | Project ID to scope tasks by |
 | `page` | `number` | No | Page number (starts at 1) |
 | `page_size` | `number` | No | Results per page (max 100) |
@@ -4482,9 +4074,6 @@ await corsair.clientary.api.tasks.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | Yes | — |
 | `page_count` | `number` | Yes | — |
 | `page_size` | `number` | Yes | — |
@@ -4533,9 +4122,6 @@ await corsair.clientary.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | Task ID |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4551,9 +4137,6 @@ await corsair.clientary.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | No | — |
 | `project_id` | `number` | No | — |

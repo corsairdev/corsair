@@ -31,9 +31,6 @@ await corsair.gemini.api.content.countTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro |
 | `contents` | `object[]` | Yes | The content to count tokens for |
 
@@ -62,9 +59,6 @@ await corsair.gemini.api.content.countTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalTokens` | `number` | Yes | — |
 | `cachedContentTokenCount` | `number` | No | — |
 
@@ -89,9 +83,6 @@ await corsair.gemini.api.content.embedContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Gemini embedding model, e.g. gemini-embedding-001 |
 | `content` | `object` | Yes | The content to embed |
 | `taskType` | `string` | No | Optional task type hint, e.g. SEMANTIC_SIMILARITY, RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, CLASSIFICATION, CLUSTERING |
@@ -122,9 +113,6 @@ await corsair.gemini.api.content.embedContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `embedding` | `object` | Yes | — |
 
 
@@ -159,9 +147,6 @@ await corsair.gemini.api.content.generateContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro |
 | `contents` | `object[]` | Yes | Conversation contents to generate a response for |
 | `generationConfig` | `object` | No | — |
@@ -234,9 +219,6 @@ await corsair.gemini.api.content.generateContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidates` | `object[]` | No | — |
 | `usageMetadata` | `object` | No | — |
 | `text` | `string` | No | Convenience field: first candidate text with markdown code fences stripped |
@@ -299,9 +281,6 @@ await corsair.gemini.api.images.generateImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation |
 | `prompt` | `string` | Yes | Text prompt describing the image to generate |
 | `referenceImages` | `object[]` | No | Optional reference/input images for image editing or composition |
@@ -341,9 +320,6 @@ await corsair.gemini.api.images.generateImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `images` | `object[]` | Yes | — |
 | `candidates` | `object[]` | No | — |
 | `usageMetadata` | `object` | No | — |
@@ -416,9 +392,6 @@ await corsair.gemini.api.models.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageToken` | `string` | No | — |
 
@@ -429,9 +402,6 @@ await corsair.gemini.api.models.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `models` | `object[]` | Yes | — |
 | `nextPageToken` | `string` | No | — |
 
@@ -479,9 +449,6 @@ await corsair.gemini.api.videos.generateVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Veo video model, e.g. veo-2.0-generate-001 |
 | `prompt` | `string` | Yes | Text prompt describing the video to generate |
 | `image` | `object` | No | — |
@@ -519,9 +486,6 @@ await corsair.gemini.api.videos.generateVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `operationName` | `string` | Yes | Pass to GEMINI_GET_VIDEOS_OPERATION or GEMINI_WAIT_FOR_VIDEO |
 | `done` | `boolean` | No | — |
 
@@ -546,9 +510,6 @@ await corsair.gemini.api.videos.getVideosOperation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `operationName` | `string` | Yes | The operation name returned by GEMINI_GENERATE_VIDEOS |
 
 
@@ -558,9 +519,6 @@ await corsair.gemini.api.videos.getVideosOperation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `done` | `boolean` | No | — |
 | `metadata` | `any` | No | — |
@@ -615,9 +573,6 @@ await corsair.gemini.api.videos.waitForVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `operationName` | `string` | Yes | The operation name returned by GEMINI_GENERATE_VIDEOS |
 | `pollIntervalMs` | `number` | Yes | Delay between status checks |
 | `timeoutMs` | `number` | Yes | Give up and return done=false after this long |
@@ -629,9 +584,6 @@ await corsair.gemini.api.videos.waitForVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `operationName` | `string` | Yes | — |
 | `done` | `boolean` | Yes | — |
 | `data` | `object` | No | — |

@@ -31,9 +31,6 @@ await corsair.bestbuy.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the category to retrieve |
 | `show` | `string` | No | Comma-delimited list of fields to include |
 
@@ -44,9 +41,6 @@ await corsair.bestbuy.api.categories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -96,9 +90,6 @@ await corsair.bestbuy.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | Filter by category ID(s), pipe- or comma-separated |
 | `name` | `string` | No | Filter by category name(s), pipe- or comma-separated |
 | `page` | `number` | No | Page number to retrieve (1-based) |
@@ -113,9 +104,6 @@ await corsair.bestbuy.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -171,9 +159,6 @@ await corsair.bestbuy.api.products.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sku` | `string \| number` | Yes | The SKU of the product to retrieve |
 | `show` | `string` | No | Comma-separated attributes to include, or all |
 
@@ -184,9 +169,6 @@ await corsair.bestbuy.api.products.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sku` | `string \| number` | No | — |
 | `name` | `string` | No | — |
 | `upc` | `string` | No | — |
@@ -431,9 +413,6 @@ await corsair.bestbuy.api.products.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sku` | `string \| number` | No | Filter for a specific SKU |
 | `upc` | `string` | No | Filter for a specific UPC |
 | `name` | `string` | No | Filter by product name with wildcard, e.g. iPad* |
@@ -451,9 +430,6 @@ await corsair.bestbuy.api.products.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -627,9 +603,6 @@ await corsair.bestbuy.api.reviews.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique identifier of the review to retrieve |
 | `show` | `string` | No | Comma-separated fields to include |
 
@@ -640,9 +613,6 @@ await corsair.bestbuy.api.reviews.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `sku` | `string \| number` | No | — |
 | `title` | `string` | No | — |
@@ -689,9 +659,6 @@ await corsair.bestbuy.api.reviews.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sku` | `string \| number` | No | Filter reviews by product SKU |
 | `reviewer` | `string` | No | Filter reviews by reviewer name |
 | `minScore` | `number` | No | Minimum rating score (1-5) |
@@ -708,9 +675,6 @@ await corsair.bestbuy.api.reviews.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -770,9 +734,6 @@ await corsair.bestbuy.api.stores.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `storeId` | `string` | Yes | Unique identifier for the Best Buy store |
 | `show` | `string` | No | Comma-separated fields to include, or all for detailedHours |
 
@@ -783,9 +744,6 @@ await corsair.bestbuy.api.stores.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `storeId` | `number` | No | — |
 | `name` | `string` | No | — |
 | `longName` | `string` | No | — |
@@ -853,9 +811,6 @@ await corsair.bestbuy.api.stores.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `geo` | `object` | No | Remix area(location,distance): postalCode or lat+lng; distance defaults to 10 miles |
 | `city` | `string` | No | Filter stores by city name |
 | `state` | `string` | No | Two-letter state code (maps to region) |
@@ -890,9 +845,6 @@ await corsair.bestbuy.api.stores.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `total` | `number` | No | — |

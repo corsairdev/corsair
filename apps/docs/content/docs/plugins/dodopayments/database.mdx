@@ -28,9 +28,6 @@ const rows = await corsair.dodopayments.db.customers.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -60,9 +57,6 @@ const rows = await corsair.dodopayments.db.payments.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `amount` | `number` | equals, gt, gte, lt, lte, in |
@@ -95,9 +89,6 @@ const rows = await corsair.dodopayments.db.refunds.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `payment_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -128,9 +119,6 @@ const rows = await corsair.dodopayments.db.subscriptions.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `customer_id` | `string` | equals, contains, startsWith, endsWith, in |

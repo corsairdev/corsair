@@ -31,9 +31,6 @@ await corsair.linkedin.api.ads.getAudienceCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `target` | `object` | Yes | Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. `{ and: [ { or: [...] } ] }`). |
 
 
@@ -53,9 +50,6 @@ await corsair.linkedin.api.ads.getAudienceCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | No | Audience size entries for the given targeting criteria. |
 | `paging` | `object` | No | — |
 
@@ -106,9 +100,6 @@ await corsair.linkedin.api.ads.getTargetingFacets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `facets` | `object[]` | No | Available targeting facets. |
 | `elements` | `object[]` | No | — |
 
@@ -151,9 +142,6 @@ await corsair.linkedin.api.ads.searchTargetingEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | Typeahead search query for targeting entities. |
 | `type` | `string` | No | Optional facet type to scope the search (e.g. locations, titles, industries). |
 
@@ -164,9 +152,6 @@ await corsair.linkedin.api.ads.searchTargetingEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | No | Matching targeting entities. |
 | `paging` | `object` | No | — |
 
@@ -216,9 +201,6 @@ await corsair.linkedin.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commented_on_urn` | `string` | Yes | URN of the object being commented on: a share, UGC post, or parent comment. |
 | `actor` | `string` | Yes | URN of the member or organization posting the comment, e.g. urn:li:person:... or urn:li:organization:.... |
 | `message` | `string` | Yes | The text of the comment (max 3000 characters). |
@@ -230,9 +212,6 @@ await corsair.linkedin.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | The URN of the created comment. |
 | `message` | `string` | No | The comment text. |
 | `object` | `string` | No | The URN the comment was posted on. |
@@ -271,9 +250,6 @@ await corsair.linkedin.api.images.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `image_urn` | `string` | Yes | The image URN (e.g. urn:li:image:C4D22...) whose details to retrieve. |
 
 
@@ -283,9 +259,6 @@ await corsair.linkedin.api.images.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The image URN. |
 | `owner` | `string` | No | — |
 | `status` | `string` | No | UPLOADING, AVAILABLE, WAITING_UPLOAD, etc. |
@@ -326,9 +299,6 @@ await corsair.linkedin.api.images.initializeUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | Owner URN that will own the uploaded image, e.g. urn:li:person:... or urn:li:organization:.... |
 
 
@@ -338,9 +308,6 @@ await corsair.linkedin.api.images.initializeUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object` | Yes | — |
 
 
@@ -377,9 +344,6 @@ await corsair.linkedin.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | No | Owner URN. Returns images owned by this member/org. |
 | `urns` | `string[]` | No | Specific image URNs to fetch in a single batch request. |
 | `start` | `number` | No | Pagination start index. |
@@ -392,9 +356,6 @@ await corsair.linkedin.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -451,9 +412,6 @@ await corsair.linkedin.api.images.registerUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | Owner URN for the media asset, e.g. urn:li:person:... or urn:li:organization:.... |
 
 
@@ -463,9 +421,6 @@ await corsair.linkedin.api.images.registerUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object` | Yes | — |
 
 
@@ -505,9 +460,6 @@ await corsair.linkedin.api.organizations.getCompanyInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role_assignee` | `string` | No | Person URN whose organization roles to list. Defaults to the authenticated member. |
 | `role` | `ADMINISTRATOR \| DIRECT_SPONSORED_CONTENT_POSTER \| RECRUITING_POSTER \| LEAD_GEN_FORMS_MANAGER \| CONTENT_ADMIN \| ANALYTICS_ROLE[]` | No | Filter to specific organization roles. |
 | `state` | `APPROVED \| PENDING \| REVOKED` | No | Filter to ACLs in a given state. Defaults to APPROVED. |
@@ -521,9 +473,6 @@ await corsair.linkedin.api.organizations.getCompanyInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -575,9 +524,6 @@ await corsair.linkedin.api.organizations.getNetworkSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_urn` | `string` | Yes | The organization URN (e.g. urn:li:organization:2414183) whose follower count to retrieve. |
 
 
@@ -587,9 +533,6 @@ await corsair.linkedin.api.organizations.getNetworkSize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalFollowerCount` | `number` | No | Total followers of the organization. |
 | `organizationFollowerCount` | `number` | No | — |
 | `elements` | `object[]` | No | — |
@@ -639,9 +582,6 @@ await corsair.linkedin.api.organizations.getPageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_urn` | `string` | Yes | The organization URN whose page statistics to retrieve. |
 | `time_integrated` | `object` | No | Optional time range for time-bound (aggregate) statistics. |
 | `start` | `number` | No | Pagination start index. |
@@ -666,9 +606,6 @@ await corsair.linkedin.api.organizations.getPageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | Page statistics entries. |
 | `paging` | `object` | No | — |
 
@@ -716,9 +653,6 @@ await corsair.linkedin.api.organizations.getShareStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_urn` | `string` | Yes | The organization URN whose share statistics to retrieve. |
 | `time_integrated` | `object` | No | Optional time range to filter statistics. |
 | `start` | `number` | No | Pagination start index. |
@@ -743,9 +677,6 @@ await corsair.linkedin.api.organizations.getShareStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | Share statistics entries. |
 | `paging` | `object` | No | — |
 
@@ -795,9 +726,6 @@ await corsair.linkedin.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `author` | `string` | Yes | Author URN. Use urn:li:person:... to post as a person (w_member_social) or urn:li:organization:... to post as an organization (w_organization_social). |
 | `commentary` | `string` | Yes | The text commentary (body) of the post. |
 | `visibility` | `PUBLIC \| CONNECTIONS \| LOGGED_IN_MEMBERS` | No | Who can see the post. Defaults to PUBLIC. |
@@ -815,9 +743,6 @@ await corsair.linkedin.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The URN of the newly created post. |
 
 
@@ -841,9 +766,6 @@ await corsair.linkedin.api.posts.createArticleShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorUrn` | `string` | Yes | Author URN, e.g. urn:li:person:... or urn:li:organization:.... |
 | `text` | `string` | No | Optional commentary to include alongside the shared URL. |
 | `article_url` | `string` | Yes | The URL to share as an article. |
@@ -860,9 +782,6 @@ await corsair.linkedin.api.posts.createArticleShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The URN of the newly created UGC post. |
 | `activity` | `string` | No | — |
 
@@ -887,9 +806,6 @@ await corsair.linkedin.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | The post URN or ID to delete via the Posts API (idempotent, returns 204). |
 
 
@@ -899,9 +815,6 @@ await corsair.linkedin.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Whether the delete operation completed. |
 
 
@@ -925,9 +838,6 @@ await corsair.linkedin.api.posts.deleteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `share_id` | `string` | Yes | The share ID of the LinkedIn share to delete. |
 
 
@@ -937,9 +847,6 @@ await corsair.linkedin.api.posts.deleteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Whether the delete operation completed. |
 
 
@@ -963,9 +870,6 @@ await corsair.linkedin.api.posts.deleteUgc({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ugc_post_urn` | `string` | Yes | The UGC post URN (e.g. urn:li:ugcPost:12345) to delete. |
 
 
@@ -975,9 +879,6 @@ await corsair.linkedin.api.posts.deleteUgc({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Whether the delete operation completed. |
 
 
@@ -1001,9 +902,6 @@ await corsair.linkedin.api.posts.getContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_urn` | `string` | Yes | The post URN (e.g. urn:li:post:1234567890) whose content to retrieve. |
 
 
@@ -1013,9 +911,6 @@ await corsair.linkedin.api.posts.getContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `author` | `string` | No | — |
 | `commentary` | `string` | No | — |
@@ -1075,9 +970,6 @@ await corsair.linkedin.api.profile.getMyInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projection` | `string` | No | Optional projection of profile fields to return (e.g. "(sub,name,email)"). |
 
 
@@ -1087,9 +979,6 @@ await corsair.linkedin.api.profile.getMyInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sub` | `string` | No | — |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1122,9 +1011,6 @@ await corsair.linkedin.api.profile.getPerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `person_id` | `string` | Yes | The LinkedIn member ID of the person whose profile to retrieve. |
 | `projection` | `string` | No | Optional projection of fields. Defaults to the lite profile; add headline and vanityName for the basic profile (requires r_basicprofile). |
 
@@ -1135,9 +1021,6 @@ await corsair.linkedin.api.profile.getPerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The member ID. |
 | `localizedFirstName` | `string` | No | — |
 | `localizedLastName` | `string` | No | — |
@@ -1208,9 +1091,6 @@ await corsair.linkedin.api.reactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_urn` | `string` | Yes | URN of the entity (share, post, or comment) whose reactions to list. |
 | `start` | `number` | No | Pagination start index. Defaults to 0. |
 | `count` | `number` | No | Number of reactions to return per page. |
@@ -1222,9 +1102,6 @@ await corsair.linkedin.api.reactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | The reactions on the entity. |
 | `paging` | `object` | No | — |
 
@@ -1278,9 +1155,6 @@ await corsair.linkedin.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_urn` | `string` | No | A single video URN to retrieve. |
 | `owner` | `string` | No | Owner URN. Returns videos owned by this account. |
 | `urns` | `string[]` | No | Specific video URNs to fetch in a batch. |
@@ -1294,9 +1168,6 @@ await corsair.linkedin.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `elements` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 

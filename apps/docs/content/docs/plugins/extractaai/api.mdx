@@ -31,9 +31,6 @@ await corsair.extractaai.api.classification.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `classificationDetails` | `object` | Yes | — |
 
 
@@ -61,9 +58,6 @@ await corsair.extractaai.api.classification.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `created` | Yes | — |
 | `createdAt` | `number` | Yes | — |
 | `classificationId` | `string` | Yes | — |
@@ -89,9 +83,6 @@ await corsair.extractaai.api.classification.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `classificationId` | `string` | Yes | — |
 
 
@@ -101,9 +92,6 @@ await corsair.extractaai.api.classification.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -128,9 +116,6 @@ await corsair.extractaai.api.classification.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `classificationId` | `string` | Yes | — |
 | `classificationDetails` | `object` | Yes | — |
 
@@ -159,9 +144,6 @@ await corsair.extractaai.api.classification.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `updated` | Yes | — |
 | `updatedAt` | `number` | Yes | — |
 | `classificationId` | `string` | Yes | — |
@@ -187,9 +169,6 @@ await corsair.extractaai.api.classification.view({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `classificationId` | `string` | Yes | — |
 
 
@@ -199,9 +178,6 @@ await corsair.extractaai.api.classification.view({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success` | Yes | — |
 | `classificationId` | `string` | Yes | — |
 | `classificationDetails` | `object` | Yes | — |
@@ -251,9 +227,6 @@ await corsair.extractaai.api.credits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `ok` | Yes | — |
 | `credits` | `number` | Yes | — |
 
@@ -280,9 +253,6 @@ await corsair.extractaai.api.extraction.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionDetails` | `object` | Yes | — |
 
 
@@ -330,9 +300,6 @@ await corsair.extractaai.api.extraction.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `created` | Yes | — |
 | `createdAt` | `number` | Yes | — |
 | `extractionId` | `string` | Yes | — |
@@ -358,9 +325,6 @@ await corsair.extractaai.api.extraction.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionId` | `string` | Yes | — |
 | `batchId` | `string` | No | — |
 | `fileId` | `string` | No | — |
@@ -372,9 +336,6 @@ await corsair.extractaai.api.extraction.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `deleted` | Yes | — |
 | `deletedAt` | `number` | Yes | — |
 
@@ -399,9 +360,6 @@ await corsair.extractaai.api.extraction.getBatchResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionId` | `string` | Yes | — |
 | `batchId` | `string` | Yes | — |
 | `fileId` | `string` | No | — |
@@ -455,9 +413,6 @@ await corsair.extractaai.api.extraction.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionId` | `string` | Yes | — |
 | `extractionDetails` | `object` | Yes | — |
 
@@ -506,9 +461,6 @@ await corsair.extractaai.api.extraction.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `updated` | Yes | — |
 | `updatedAt` | `number` | Yes | — |
 | `extractionId` | `string` | Yes | — |
@@ -534,9 +486,6 @@ await corsair.extractaai.api.extraction.view({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionId` | `string` | Yes | — |
 
 
@@ -546,9 +495,6 @@ await corsair.extractaai.api.extraction.view({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `extractionId` | `string` | Yes | — |
 | `extractionDetails` | `object` | Yes | — |
 

@@ -31,9 +31,6 @@ await corsair.twitter.api.tweets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | Tweet text content (max 280 weighted characters) |
 | `quoteTweetId` | `string` | No | ID of the tweet to quote |
 | `mediaIds` | `string[]` | No | Up to 4 media IDs to attach |
@@ -46,9 +43,6 @@ await corsair.twitter.api.tweets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -84,9 +78,6 @@ await corsair.twitter.api.tweets.createReply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | Reply text content (max 280 weighted characters) |
 | `inReplyToTweetId` | `string` | Yes | ID of the tweet to reply to |
 | `excludeReplyUserIds` | `string[]` | No | User IDs to exclude from @mentioning in the reply |
@@ -98,9 +89,6 @@ await corsair.twitter.api.tweets.createReply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 

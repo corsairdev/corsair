@@ -30,9 +30,6 @@ await corsair.dockerhub.api.images.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `digest` | `string` | Yes | — |
@@ -62,9 +59,6 @@ await corsair.dockerhub.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -96,9 +90,6 @@ await corsair.dockerhub.api.organizations.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `member` | `string` | Yes | — |
 | `role` | `member \| owner \| editor` | No | — |
@@ -128,9 +119,6 @@ await corsair.dockerhub.api.organizations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `fullName` | `string` | No | — |
 | `company` | `string` | No | — |
@@ -162,9 +150,6 @@ await corsair.dockerhub.api.organizations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 
 
@@ -191,9 +176,6 @@ await corsair.dockerhub.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 
@@ -221,9 +203,6 @@ await corsair.dockerhub.api.organizations.listAccessTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -252,9 +231,6 @@ await corsair.dockerhub.api.organizations.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -283,9 +259,6 @@ await corsair.dockerhub.api.organizations.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 
@@ -315,9 +288,6 @@ await corsair.dockerhub.api.repositories.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -348,9 +318,6 @@ await corsair.dockerhub.api.repositories.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -378,9 +345,6 @@ await corsair.dockerhub.api.repositories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -408,9 +372,6 @@ await corsair.dockerhub.api.repositories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -441,9 +402,6 @@ await corsair.dockerhub.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
@@ -472,9 +430,6 @@ await corsair.dockerhub.api.tags.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
@@ -503,9 +458,6 @@ await corsair.dockerhub.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -537,9 +489,6 @@ await corsair.dockerhub.api.teams.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `teamname` | `string` | Yes | — |
 
@@ -567,9 +516,6 @@ await corsair.dockerhub.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `teamname` | `string` | Yes | — |
 
@@ -597,9 +543,6 @@ await corsair.dockerhub.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -628,9 +571,6 @@ await corsair.dockerhub.api.teams.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `teamname` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -660,9 +600,6 @@ await corsair.dockerhub.api.teams.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgname` | `string` | Yes | — |
 | `teamname` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
@@ -693,9 +630,6 @@ await corsair.dockerhub.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `webhookName` | `string` | Yes | — |
@@ -725,9 +659,6 @@ await corsair.dockerhub.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `webhookId` | `string \| number` | Yes | — |
@@ -756,9 +687,6 @@ await corsair.dockerhub.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `webhookId` | `string \| number` | Yes | — |
@@ -787,9 +715,6 @@ await corsair.dockerhub.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `page` | `number` | No | — |

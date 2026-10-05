@@ -31,9 +31,6 @@ await corsair.cloudflare.api.dns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -49,9 +46,6 @@ await corsair.cloudflare.api.dns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `zone_id` | `string` | No | — |
 | `zone_name` | `string` | No | — |
@@ -86,9 +80,6 @@ await corsair.cloudflare.api.dns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `dns_record_id` | `string` | Yes | — |
 
@@ -99,9 +90,6 @@ await corsair.cloudflare.api.dns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -125,9 +113,6 @@ await corsair.cloudflare.api.dns.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `dns_record_id` | `string` | Yes | — |
 | `type` | `string` | No | — |
@@ -144,9 +129,6 @@ await corsair.cloudflare.api.dns.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `zone_id` | `string` | No | — |
 | `zone_name` | `string` | No | — |
@@ -181,9 +163,6 @@ await corsair.cloudflare.api.dns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `dns_record_id` | `string` | Yes | — |
 
@@ -194,9 +173,6 @@ await corsair.cloudflare.api.dns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `zone_id` | `string` | No | — |
 | `zone_name` | `string` | No | — |
@@ -231,9 +207,6 @@ await corsair.cloudflare.api.dns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `zone_id` | `string` | Yes | — |
@@ -289,9 +262,6 @@ await corsair.cloudflare.api.rulesets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `kind` | `string` | Yes | — |
@@ -316,9 +286,6 @@ await corsair.cloudflare.api.rulesets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -359,9 +326,6 @@ await corsair.cloudflare.api.rulesets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `ruleset_id` | `string` | Yes | — |
 
@@ -389,9 +353,6 @@ await corsair.cloudflare.api.rulesets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `ruleset_id` | `string` | Yes | — |
 
@@ -402,9 +363,6 @@ await corsair.cloudflare.api.rulesets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -445,9 +403,6 @@ await corsair.cloudflare.api.rulesets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -493,9 +448,6 @@ await corsair.cloudflare.api.rulesets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `ruleset_id` | `string` | Yes | — |
 | `rules` | `object[]` | Yes | — |
@@ -518,9 +470,6 @@ await corsair.cloudflare.api.rulesets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -563,9 +512,6 @@ await corsair.cloudflare.api.workers.routes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `pattern` | `string` | Yes | — |
 | `script` | `string` | No | — |
@@ -577,9 +523,6 @@ await corsair.cloudflare.api.workers.routes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `pattern` | `string` | Yes | — |
 | `script` | `string` | No | — |
@@ -605,9 +548,6 @@ await corsair.cloudflare.api.workers.routes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `route_id` | `string` | Yes | — |
 
@@ -618,9 +558,6 @@ await corsair.cloudflare.api.workers.routes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -644,9 +581,6 @@ await corsair.cloudflare.api.workers.routes.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `route_id` | `string` | Yes | — |
 | `pattern` | `string` | No | — |
@@ -659,9 +593,6 @@ await corsair.cloudflare.api.workers.routes.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `pattern` | `string` | Yes | — |
 | `script` | `string` | No | — |
@@ -687,9 +618,6 @@ await corsair.cloudflare.api.workers.routes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `route_id` | `string` | Yes | — |
 
@@ -700,9 +628,6 @@ await corsair.cloudflare.api.workers.routes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `pattern` | `string` | Yes | — |
 | `script` | `string` | No | — |
@@ -728,9 +653,6 @@ await corsair.cloudflare.api.workers.routes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -770,9 +692,6 @@ await corsair.cloudflare.api.workers.scripts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `script_name` | `string` | Yes | — |
 
@@ -800,9 +719,6 @@ await corsair.cloudflare.api.workers.scripts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `script_name` | `string` | Yes | — |
 
@@ -830,9 +746,6 @@ await corsair.cloudflare.api.workers.scripts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 
 
@@ -872,9 +785,6 @@ await corsair.cloudflare.api.workers.scripts.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `script_name` | `string` | Yes | — |
 | `script_content` | `string` | Yes | — |
@@ -898,9 +808,6 @@ await corsair.cloudflare.api.workers.scripts.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `created_on` | `string` | No | — |
 | `modified_on` | `string` | No | — |
@@ -928,9 +835,6 @@ await corsair.cloudflare.api.zones.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `account` | `object` | Yes | — |
 | `jump_start` | `boolean` | No | — |
@@ -953,9 +857,6 @@ await corsair.cloudflare.api.zones.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
@@ -1002,9 +903,6 @@ await corsair.cloudflare.api.zones.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -1014,9 +912,6 @@ await corsair.cloudflare.api.zones.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1040,9 +935,6 @@ await corsair.cloudflare.api.zones.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 | `paused` | `boolean` | No | — |
 | `plan` | `object` | No | — |
@@ -1066,9 +958,6 @@ await corsair.cloudflare.api.zones.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
@@ -1115,9 +1004,6 @@ await corsair.cloudflare.api.zones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_id` | `string` | Yes | — |
 
 
@@ -1127,9 +1013,6 @@ await corsair.cloudflare.api.zones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
@@ -1176,9 +1059,6 @@ await corsair.cloudflare.api.zones.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `name` | `string` | No | — |

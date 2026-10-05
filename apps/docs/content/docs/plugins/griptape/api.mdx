@@ -31,9 +31,6 @@ await corsair.griptape.api.assistant.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -70,9 +67,6 @@ await corsair.griptape.api.assistant.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 
 
@@ -99,9 +93,6 @@ await corsair.griptape.api.assistant.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 
 
@@ -111,9 +102,6 @@ await corsair.griptape.api.assistant.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `created_by` | `string` | Yes | — |
@@ -150,9 +138,6 @@ await corsair.griptape.api.assistant.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -163,9 +148,6 @@ await corsair.griptape.api.assistant.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistants` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -228,9 +210,6 @@ await corsair.griptape.api.assistant.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `body` | `object` | No | — |
 
@@ -270,9 +249,6 @@ await corsair.griptape.api.assistantRun.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_run_id` | `string` | Yes | — |
 
 
@@ -299,9 +275,6 @@ await corsair.griptape.api.assistantRun.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `additional_knowledge_base_ids` | `string[]` | No | — |
 | `additional_retriever_ids` | `string[]` | No | — |
@@ -344,9 +317,6 @@ await corsair.griptape.api.assistantRun.events({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_run_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -358,9 +328,6 @@ await corsair.griptape.api.assistantRun.events({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -400,9 +367,6 @@ await corsair.griptape.api.assistantRun.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_run_id` | `string` | Yes | — |
 
 
@@ -429,9 +393,6 @@ await corsair.griptape.api.assistantRun.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -443,9 +404,6 @@ await corsair.griptape.api.assistantRun.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -509,9 +467,6 @@ await corsair.griptape.api.bucket.assetUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `bucket_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -550,9 +505,6 @@ await corsair.griptape.api.bucket.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -589,9 +541,6 @@ await corsair.griptape.api.bucket.createAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `bucket_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -630,9 +579,6 @@ await corsair.griptape.api.bucket.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bucket_id` | `string` | Yes | — |
 
 
@@ -659,9 +605,6 @@ await corsair.griptape.api.bucket.deleteAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bucket_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -689,9 +632,6 @@ await corsair.griptape.api.bucket.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bucket_id` | `string` | Yes | — |
 
 
@@ -718,9 +658,6 @@ await corsair.griptape.api.bucket.getAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bucket_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -748,9 +685,6 @@ await corsair.griptape.api.bucket.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -761,9 +695,6 @@ await corsair.griptape.api.bucket.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -803,9 +734,6 @@ await corsair.griptape.api.bucket.listAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bucket_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -819,9 +747,6 @@ await corsair.griptape.api.bucket.listAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -861,9 +786,6 @@ await corsair.griptape.api.bucket.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `bucket_id` | `string` | Yes | — |
 
@@ -925,9 +847,6 @@ await corsair.griptape.api.connection.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `type` | `string` | No | — |
@@ -939,9 +858,6 @@ await corsair.griptape.api.connection.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1005,9 +921,6 @@ await corsair.griptape.api.dataConnector.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -1044,9 +957,6 @@ await corsair.griptape.api.dataConnector.createJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `data_connector_id` | `string` | Yes | — |
 
@@ -1084,9 +994,6 @@ await corsair.griptape.api.dataConnector.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_connector_id` | `string` | Yes | — |
 
 
@@ -1113,9 +1020,6 @@ await corsair.griptape.api.dataConnector.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_connector_id` | `string` | Yes | — |
 
 
@@ -1142,9 +1046,6 @@ await corsair.griptape.api.dataConnector.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1155,9 +1056,6 @@ await corsair.griptape.api.dataConnector.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1197,9 +1095,6 @@ await corsair.griptape.api.dataConnector.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `data_connector_id` | `string` | Yes | — |
 
@@ -1239,9 +1134,6 @@ await corsair.griptape.api.dataJob.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_job_id` | `string` | Yes | — |
 
 
@@ -1268,9 +1160,6 @@ await corsair.griptape.api.dataJob.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_job_id` | `string` | Yes | — |
 
 
@@ -1299,9 +1188,6 @@ await corsair.griptape.api.exportJob.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -1338,9 +1224,6 @@ await corsair.griptape.api.exportJob.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `export_job_id` | `string` | Yes | — |
 
 
@@ -1367,9 +1250,6 @@ await corsair.griptape.api.exportJob.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1380,9 +1260,6 @@ await corsair.griptape.api.exportJob.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1424,9 +1301,6 @@ await corsair.griptape.api.function.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -1463,9 +1337,6 @@ await corsair.griptape.api.function.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `function_id` | `string` | Yes | — |
 
@@ -1503,9 +1374,6 @@ await corsair.griptape.api.function.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `function_id` | `string` | Yes | — |
 
 
@@ -1532,9 +1400,6 @@ await corsair.griptape.api.function.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `function_id` | `string` | Yes | — |
 
 
@@ -1561,9 +1426,6 @@ await corsair.griptape.api.function.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1574,9 +1436,6 @@ await corsair.griptape.api.function.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1616,9 +1475,6 @@ await corsair.griptape.api.function.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `function_id` | `string` | Yes | — |
 
 
@@ -1628,9 +1484,6 @@ await corsair.griptape.api.function.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1670,9 +1523,6 @@ await corsair.griptape.api.function.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `function_id` | `string` | Yes | — |
 
@@ -1712,9 +1562,6 @@ await corsair.griptape.api.importJob.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -1751,9 +1598,6 @@ await corsair.griptape.api.importJob.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `import_job_id` | `string` | Yes | — |
 
 
@@ -1780,9 +1624,6 @@ await corsair.griptape.api.importJob.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1793,9 +1634,6 @@ await corsair.griptape.api.importJob.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1837,9 +1675,6 @@ await corsair.griptape.api.integration.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -1876,9 +1711,6 @@ await corsair.griptape.api.integration.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integration_id` | `string` | Yes | — |
 
 
@@ -1905,9 +1737,6 @@ await corsair.griptape.api.integration.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integration_id` | `string` | Yes | — |
 
 
@@ -1934,9 +1763,6 @@ await corsair.griptape.api.integration.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1947,9 +1773,6 @@ await corsair.griptape.api.integration.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -1989,9 +1812,6 @@ await corsair.griptape.api.integration.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `integration_id` | `string` | Yes | — |
 
@@ -2031,9 +1851,6 @@ await corsair.griptape.api.knowledgeBase.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -2070,9 +1887,6 @@ await corsair.griptape.api.knowledgeBase.createJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `knowledge_base_id` | `string` | Yes | — |
 
@@ -2110,9 +1924,6 @@ await corsair.griptape.api.knowledgeBase.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -2139,9 +1950,6 @@ await corsair.griptape.api.knowledgeBase.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -2168,9 +1976,6 @@ await corsair.griptape.api.knowledgeBase.getJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_job_id` | `string` | Yes | — |
 
 
@@ -2197,9 +2002,6 @@ await corsair.griptape.api.knowledgeBase.getSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_search_id` | `string` | Yes | — |
 
 
@@ -2226,9 +2028,6 @@ await corsair.griptape.api.knowledgeBase.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -2239,9 +2038,6 @@ await corsair.griptape.api.knowledgeBase.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -2281,9 +2077,6 @@ await corsair.griptape.api.knowledgeBase.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -2293,9 +2086,6 @@ await corsair.griptape.api.knowledgeBase.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -2335,9 +2125,6 @@ await corsair.griptape.api.knowledgeBase.listQueries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -2347,9 +2134,6 @@ await corsair.griptape.api.knowledgeBase.listQueries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -2389,9 +2173,6 @@ await corsair.griptape.api.knowledgeBase.listSearches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -2401,9 +2182,6 @@ await corsair.griptape.api.knowledgeBase.listSearches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -2443,9 +2221,6 @@ await corsair.griptape.api.knowledgeBase.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `query_args` | `any` | No | — |
@@ -2474,9 +2249,6 @@ await corsair.griptape.api.knowledgeBase.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `query_args` | `any` | No | — |
@@ -2505,9 +2277,6 @@ await corsair.griptape.api.knowledgeBase.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `knowledge_base_id` | `string` | Yes | — |
 
@@ -2547,9 +2316,6 @@ await corsair.griptape.api.library.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -2586,9 +2352,6 @@ await corsair.griptape.api.library.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `library_id` | `string` | Yes | — |
 
 
@@ -2615,9 +2378,6 @@ await corsair.griptape.api.library.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `library_id` | `string` | Yes | — |
 
 
@@ -2644,9 +2404,6 @@ await corsair.griptape.api.library.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -2657,9 +2414,6 @@ await corsair.griptape.api.library.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -2699,9 +2453,6 @@ await corsair.griptape.api.library.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `library_id` | `string` | Yes | — |
 
@@ -2741,9 +2492,6 @@ await corsair.griptape.api.message.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 
 
@@ -2770,9 +2518,6 @@ await corsair.griptape.api.message.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 
 
@@ -2799,9 +2544,6 @@ await corsair.griptape.api.message.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `message_id` | `string` | Yes | — |
 
@@ -2841,9 +2583,6 @@ await corsair.griptape.api.model.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -2880,9 +2619,6 @@ await corsair.griptape.api.model.createAuthConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -2919,9 +2655,6 @@ await corsair.griptape.api.model.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_config_id` | `string` | Yes | — |
 
 
@@ -2948,9 +2681,6 @@ await corsair.griptape.api.model.deleteAuthConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `auth_config_id` | `string` | Yes | — |
 
 
@@ -2977,9 +2707,6 @@ await corsair.griptape.api.model.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_config_id` | `string` | Yes | — |
 
 
@@ -3006,9 +2733,6 @@ await corsair.griptape.api.model.getAuthConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `auth_config_id` | `string` | Yes | — |
 
 
@@ -3035,9 +2759,6 @@ await corsair.griptape.api.model.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3048,9 +2769,6 @@ await corsair.griptape.api.model.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3090,9 +2808,6 @@ await corsair.griptape.api.model.listAuthConfigs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3103,9 +2818,6 @@ await corsair.griptape.api.model.listAuthConfigs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3145,9 +2857,6 @@ await corsair.griptape.api.model.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `model_config_id` | `string` | Yes | — |
 
@@ -3185,9 +2894,6 @@ await corsair.griptape.api.model.updateAuthConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `auth_config_id` | `string` | Yes | — |
 | `body` | `object` | No | — |
 
@@ -3227,9 +2933,6 @@ await corsair.griptape.api.organization.createApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `organization_id` | `string` | Yes | — |
 
@@ -3267,9 +2970,6 @@ await corsair.griptape.api.organization.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 
 
@@ -3296,9 +2996,6 @@ await corsair.griptape.api.organization.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3309,9 +3006,6 @@ await corsair.griptape.api.organization.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3351,9 +3045,6 @@ await corsair.griptape.api.organization.listApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 
 
@@ -3363,9 +3054,6 @@ await corsair.griptape.api.organization.listApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3405,9 +3093,6 @@ await corsair.griptape.api.organization.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `organization_id` | `string` | Yes | — |
 
@@ -3447,9 +3132,6 @@ await corsair.griptape.api.retriever.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -3486,9 +3168,6 @@ await corsair.griptape.api.retriever.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `retriever_id` | `string` | Yes | — |
 
 
@@ -3515,9 +3194,6 @@ await corsair.griptape.api.retriever.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3528,9 +3204,6 @@ await corsair.griptape.api.retriever.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3570,9 +3243,6 @@ await corsair.griptape.api.retriever.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `retriever_components_query_args` | `any` | No | — |
 | `retriever_id` | `string` | Yes | — |
@@ -3601,9 +3271,6 @@ await corsair.griptape.api.retriever.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `retriever_id` | `string` | Yes | — |
 
@@ -3643,9 +3310,6 @@ await corsair.griptape.api.retrieverComponent.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -3682,9 +3346,6 @@ await corsair.griptape.api.retrieverComponent.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `retriever_component_id` | `string` | Yes | — |
 
 
@@ -3711,9 +3372,6 @@ await corsair.griptape.api.retrieverComponent.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3724,9 +3382,6 @@ await corsair.griptape.api.retrieverComponent.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3766,9 +3421,6 @@ await corsair.griptape.api.retrieverComponent.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `retriever_component_id` | `string` | Yes | — |
 
@@ -3808,9 +3460,6 @@ await corsair.griptape.api.rule.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -3847,9 +3496,6 @@ await corsair.griptape.api.rule.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_id` | `string` | Yes | — |
 
 
@@ -3876,9 +3522,6 @@ await corsair.griptape.api.rule.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_id` | `string` | Yes | — |
 
 
@@ -3905,9 +3548,6 @@ await corsair.griptape.api.rule.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -3918,9 +3558,6 @@ await corsair.griptape.api.rule.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -3960,9 +3597,6 @@ await corsair.griptape.api.rule.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `rule_id` | `string` | Yes | — |
 
@@ -4002,9 +3636,6 @@ await corsair.griptape.api.ruleset.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -4041,9 +3672,6 @@ await corsair.griptape.api.ruleset.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ruleset_id` | `string` | Yes | — |
 
 
@@ -4070,9 +3698,6 @@ await corsair.griptape.api.ruleset.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ruleset_id` | `string` | Yes | — |
 
 
@@ -4099,9 +3724,6 @@ await corsair.griptape.api.ruleset.getByAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `alias` | `string` | Yes | — |
 
 
@@ -4111,9 +3733,6 @@ await corsair.griptape.api.ruleset.getByAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4153,9 +3772,6 @@ await corsair.griptape.api.ruleset.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `ruleset_id` | `string` | Yes | — |
 
@@ -4195,9 +3811,6 @@ await corsair.griptape.api.secret.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -4234,9 +3847,6 @@ await corsair.griptape.api.secret.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret_id` | `string` | Yes | — |
 
 
@@ -4263,9 +3873,6 @@ await corsair.griptape.api.secret.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret_id` | `string` | Yes | — |
 
 
@@ -4292,9 +3899,6 @@ await corsair.griptape.api.secret.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -4305,9 +3909,6 @@ await corsair.griptape.api.secret.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4347,9 +3948,6 @@ await corsair.griptape.api.secret.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `secret_id` | `string` | Yes | — |
 
@@ -4389,9 +3987,6 @@ await corsair.griptape.api.structure.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -4428,9 +4023,6 @@ await corsair.griptape.api.structure.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `structure_id` | `string` | Yes | — |
 
@@ -4468,9 +4060,6 @@ await corsair.griptape.api.structure.dashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `end_time` | `string` | No | — |
 | `period` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -4500,9 +4089,6 @@ await corsair.griptape.api.structure.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `structure_id` | `string` | Yes | — |
 
 
@@ -4529,9 +4115,6 @@ await corsair.griptape.api.structure.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `structure_id` | `string` | Yes | — |
 
 
@@ -4558,9 +4141,6 @@ await corsair.griptape.api.structure.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -4571,9 +4151,6 @@ await corsair.griptape.api.structure.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4613,9 +4190,6 @@ await corsair.griptape.api.structure.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `structure_id` | `string` | Yes | — |
 
 
@@ -4625,9 +4199,6 @@ await corsair.griptape.api.structure.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4667,9 +4238,6 @@ await corsair.griptape.api.structure.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `structure_id` | `string` | Yes | — |
 
 
@@ -4679,9 +4247,6 @@ await corsair.griptape.api.structure.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4721,9 +4286,6 @@ await corsair.griptape.api.structure.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `structure_id` | `string` | Yes | — |
 
@@ -4763,9 +4325,6 @@ await corsair.griptape.api.thread.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -4802,9 +4361,6 @@ await corsair.griptape.api.thread.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thread_id` | `string` | Yes | — |
 
 
@@ -4831,9 +4387,6 @@ await corsair.griptape.api.thread.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thread_id` | `string` | Yes | — |
 
 
@@ -4860,9 +4413,6 @@ await corsair.griptape.api.thread.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `alias` | `string` | No | — |
 | `created_by` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -4876,9 +4426,6 @@ await corsair.griptape.api.thread.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -4918,9 +4465,6 @@ await corsair.griptape.api.thread.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `thread_id` | `string` | Yes | — |
 
@@ -4960,9 +4504,6 @@ await corsair.griptape.api.threadMessage.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `input` | `string` | Yes | — |
 | `metadata` | `object` | No | — |
 | `output` | `string` | Yes | — |
@@ -5002,9 +4543,6 @@ await corsair.griptape.api.threadMessage.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `thread_id` | `string` | Yes | — |
@@ -5016,9 +4554,6 @@ await corsair.griptape.api.threadMessage.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -5060,9 +4595,6 @@ await corsair.griptape.api.tool.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -5099,9 +4631,6 @@ await corsair.griptape.api.tool.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `tool_id` | `string` | Yes | — |
 
@@ -5139,9 +4668,6 @@ await corsair.griptape.api.tool.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 
 
@@ -5168,9 +4694,6 @@ await corsair.griptape.api.tool.deploymentStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deployment_id` | `string` | Yes | — |
 
 
@@ -5197,9 +4720,6 @@ await corsair.griptape.api.tool.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 
 
@@ -5226,9 +4746,6 @@ await corsair.griptape.api.tool.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -5239,9 +4756,6 @@ await corsair.griptape.api.tool.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -5281,9 +4795,6 @@ await corsair.griptape.api.tool.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 
 
@@ -5293,9 +4804,6 @@ await corsair.griptape.api.tool.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -5335,9 +4843,6 @@ await corsair.griptape.api.tool.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 
 
@@ -5347,9 +4852,6 @@ await corsair.griptape.api.tool.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 
@@ -5389,9 +4891,6 @@ await corsair.griptape.api.tool.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 | `tool_id` | `string` | Yes | — |
 
@@ -5453,9 +4952,6 @@ await corsair.griptape.api.user.deleteApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key_id` | `string` | Yes | — |
 
 
@@ -5482,9 +4978,6 @@ await corsair.griptape.api.user.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -5511,9 +5004,6 @@ await corsair.griptape.api.user.getApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key_id` | `string` | Yes | — |
 
 
@@ -5540,9 +5030,6 @@ await corsair.griptape.api.user.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -5553,9 +5040,6 @@ await corsair.griptape.api.user.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 
 

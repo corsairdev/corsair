@@ -34,9 +34,6 @@ await corsair.supadata.api.account.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 | `plan` | `string` | Yes | — |
 | `maxCredits` | `number` | Yes | — |
@@ -65,9 +62,6 @@ await corsair.supadata.api.metadata.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -77,9 +71,6 @@ await corsair.supadata.api.metadata.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `platform` | `youtube \| tiktok \| instagram \| twitter \| facebook` | Yes | — |
 | `type` | `video \| image \| carousel \| post` | Yes | — |
 | `id` | `string` | Yes | — |
@@ -163,9 +154,6 @@ await corsair.supadata.api.transcript.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `lang` | `string` | No | — |
 | `text` | `boolean` | No | — |
@@ -216,9 +204,6 @@ await corsair.supadata.api.transcript.getJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -228,9 +213,6 @@ await corsair.supadata.api.transcript.getJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `queued \| active \| completed \| failed` | Yes | — |
 | `error` | `object` | No | — |
 | `content` | `object[]` | No | — |
@@ -286,9 +268,6 @@ await corsair.supadata.api.web.map({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -298,9 +277,6 @@ await corsair.supadata.api.web.map({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urls` | `string[]` | Yes | — |
 
 
@@ -324,9 +300,6 @@ await corsair.supadata.api.web.scrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `noLinks` | `boolean` | No | — |
 | `lang` | `string` | No | — |
@@ -338,9 +311,6 @@ await corsair.supadata.api.web.scrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
 | `countCharacters` | `number` | Yes | — |
@@ -372,9 +342,6 @@ await corsair.supadata.api.youtube.channel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -384,9 +351,6 @@ await corsair.supadata.api.youtube.channel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `handle` | `string` | No | — |
@@ -418,9 +382,6 @@ await corsair.supadata.api.youtube.channelVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `type` | `all \| video \| short \| live` | No | — |
@@ -432,9 +393,6 @@ await corsair.supadata.api.youtube.channelVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoIds` | `string[]` | Yes | — |
 | `shortIds` | `string[]` | Yes | — |
 | `liveIds` | `string[]` | Yes | — |
@@ -460,9 +418,6 @@ await corsair.supadata.api.youtube.playlist({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -472,9 +427,6 @@ await corsair.supadata.api.youtube.playlist({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `videoCount` | `number` | Yes | — |
@@ -517,9 +469,6 @@ await corsair.supadata.api.youtube.playlistVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 
@@ -530,9 +479,6 @@ await corsair.supadata.api.youtube.playlistVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoIds` | `string[]` | Yes | — |
 | `shortIds` | `string[]` | Yes | — |
 | `liveIds` | `string[]` | Yes | — |
@@ -558,9 +504,6 @@ await corsair.supadata.api.youtube.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `type` | `all \| video \| channel \| playlist \| movie` | No | — |
 | `limit` | `number` | No | — |
@@ -577,9 +520,6 @@ await corsair.supadata.api.youtube.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `totalResults` | `number` | No | — |
@@ -631,9 +571,6 @@ await corsair.supadata.api.youtube.video({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -643,9 +580,6 @@ await corsair.supadata.api.youtube.video({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | Yes | — |

@@ -31,9 +31,6 @@ await corsair.jira.api.comments.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `comment` | `string` | Yes | — |
 | `visibility_type` | `string` | No | — |
@@ -46,9 +43,6 @@ await corsair.jira.api.comments.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `self` | `string` | No | — |
 | `author` | `object` | No | — |
@@ -91,9 +85,6 @@ await corsair.jira.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 
@@ -104,9 +95,6 @@ await corsair.jira.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -130,9 +118,6 @@ await corsair.jira.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 
@@ -143,9 +128,6 @@ await corsair.jira.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `self` | `string` | No | — |
 | `author` | `object` | No | — |
@@ -191,9 +173,6 @@ await corsair.jira.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
@@ -206,9 +185,6 @@ await corsair.jira.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `maxResults` | `number` | No | — |
@@ -259,9 +235,6 @@ await corsair.jira.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 | `comment` | `string` | Yes | — |
@@ -273,9 +246,6 @@ await corsair.jira.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `self` | `string` | No | — |
 | `author` | `object` | No | — |
@@ -323,9 +293,6 @@ await corsair.jira.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -335,9 +302,6 @@ await corsair.jira.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | No | — |
 | `name` | `string` | No | — |
 | `self` | `string` | No | — |
@@ -363,9 +327,6 @@ await corsair.jira.api.groups.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
 
@@ -376,9 +337,6 @@ await corsair.jira.api.groups.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `header` | `string` | No | — |
 | `groups` | `object[]` | No | — |
@@ -419,9 +377,6 @@ await corsair.jira.api.issues.addAttachment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `file_name` | `string` | Yes | — |
 | `file_content` | `string` | No | — |
@@ -469,9 +424,6 @@ await corsair.jira.api.issues.addWatcher({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `account_id` | `string` | Yes | — |
 
@@ -482,9 +434,6 @@ await corsair.jira.api.issues.addWatcher({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -508,9 +457,6 @@ await corsair.jira.api.issues.assign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `account_id` | `string` | No | — |
 
@@ -521,9 +467,6 @@ await corsair.jira.api.issues.assign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -547,9 +490,6 @@ await corsair.jira.api.issues.bulkCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issues` | `object[]` | Yes | — |
 
 
@@ -575,9 +515,6 @@ await corsair.jira.api.issues.bulkCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issues` | `object[]` | No | — |
 | `errors` | `any[]` | No | — |
 
@@ -615,9 +552,6 @@ await corsair.jira.api.issues.bulkFetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_ids_or_keys` | `string[]` | Yes | — |
 | `fields` | `string[]` | No | — |
 | `expand` | `string` | No | — |
@@ -629,9 +563,6 @@ await corsair.jira.api.issues.bulkFetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issues` | `object[]` | No | — |
 | `issueErrors` | `any[]` | No | — |
 
@@ -721,9 +652,6 @@ await corsair.jira.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_key` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
 | `issue_type` | `string` | No | — |
@@ -741,9 +669,6 @@ await corsair.jira.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `key` | `string` | No | — |
 | `self` | `string` | No | — |
@@ -769,9 +694,6 @@ await corsair.jira.api.issues.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `delete_subtasks` | `boolean` | No | — |
 
@@ -782,9 +704,6 @@ await corsair.jira.api.issues.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -809,9 +728,6 @@ await corsair.jira.api.issues.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `summary` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -828,9 +744,6 @@ await corsair.jira.api.issues.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `issue_key` | `string` | No | — |
 
@@ -855,9 +768,6 @@ await corsair.jira.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 | `expand` | `string` | No | — |
@@ -869,9 +779,6 @@ await corsair.jira.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `key` | `string` | No | — |
 | `self` | `string` | No | — |
@@ -958,9 +865,6 @@ await corsair.jira.api.issues.getTransitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 
 
@@ -970,9 +874,6 @@ await corsair.jira.api.issues.getTransitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `transitions` | `object[]` | No | — |
 
 
@@ -1017,9 +918,6 @@ await corsair.jira.api.issues.linkIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `link_type` | `string` | Yes | — |
 | `inward_issue_key` | `string` | Yes | — |
 | `outward_issue_key` | `string` | Yes | — |
@@ -1032,9 +930,6 @@ await corsair.jira.api.issues.linkIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1058,9 +953,6 @@ await corsair.jira.api.issues.removeWatcher({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `account_id` | `string` | Yes | — |
 
@@ -1071,9 +963,6 @@ await corsair.jira.api.issues.removeWatcher({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1097,9 +986,6 @@ await corsair.jira.api.issues.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jql` | `string` | Yes | — |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
@@ -1113,9 +999,6 @@ await corsair.jira.api.issues.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `maxResults` | `number` | No | — |
@@ -1207,9 +1090,6 @@ await corsair.jira.api.issues.transition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id_or_key` | `string` | Yes | — |
 | `transition_id` | `string` | Yes | — |
 | `comment` | `string` | No | — |
@@ -1221,9 +1101,6 @@ await corsair.jira.api.issues.transition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1249,9 +1126,6 @@ await corsair.jira.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `project_type_key` | `string` | No | — |
@@ -1266,9 +1140,6 @@ await corsair.jira.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `key` | `string` | No | — |
 | `self` | `string` | No | — |
@@ -1294,9 +1165,6 @@ await corsair.jira.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id_or_key` | `string` | Yes | — |
 | `expand` | `string` | No | — |
 
@@ -1307,9 +1175,6 @@ await corsair.jira.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `key` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1355,9 +1220,6 @@ await corsair.jira.api.projects.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id_or_key` | `string` | Yes | — |
 
 
@@ -1394,9 +1256,6 @@ await corsair.jira.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `order_by` | `string` | No | — |
 | `start_at` | `number` | No | — |
@@ -1410,9 +1269,6 @@ await corsair.jira.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `maxResults` | `number` | No | — |
@@ -1466,9 +1322,6 @@ await corsair.jira.api.sprints.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin_board_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `goal` | `string` | No | — |
@@ -1482,9 +1335,6 @@ await corsair.jira.api.sprints.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `state` | `string` | No | — |
@@ -1517,9 +1367,6 @@ await corsair.jira.api.sprints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `number` | Yes | — |
 | `state` | `string` | No | — |
 | `start_at` | `number` | No | — |
@@ -1532,9 +1379,6 @@ await corsair.jira.api.sprints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `maxResults` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `isLast` | `boolean` | No | — |
@@ -1581,9 +1425,6 @@ await corsair.jira.api.sprints.listBoards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_key_or_id` | `string` | No | — |
 | `type` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1597,9 +1438,6 @@ await corsair.jira.api.sprints.listBoards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `maxResults` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `isLast` | `boolean` | No | — |
@@ -1646,9 +1484,6 @@ await corsair.jira.api.sprints.moveIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sprint_id` | `number` | Yes | — |
 | `issue_keys` | `string[]` | Yes | — |
 
@@ -1659,9 +1494,6 @@ await corsair.jira.api.sprints.moveIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1687,9 +1519,6 @@ await corsair.jira.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `account_id` | `string` | No | — |
 | `start_at` | `number` | No | — |
@@ -1735,9 +1564,6 @@ await corsair.jira.api.users.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
 
@@ -1784,9 +1610,6 @@ await corsair.jira.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `emailAddress` | `string` | No | — |

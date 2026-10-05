@@ -31,9 +31,6 @@ await corsair.facebook.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_id` | `string` | Yes | Post ID, photo ID, or other commentable object ID. |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
 | `message` | `string` | Yes | — |
@@ -45,9 +42,6 @@ await corsair.facebook.api.comments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -71,9 +65,6 @@ await corsair.facebook.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | — |
 | `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
 
@@ -84,9 +75,6 @@ await corsair.facebook.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -110,9 +98,6 @@ await corsair.facebook.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when comment_id embeds the page id. |
 | `fields` | `string` | No | — |
@@ -124,9 +109,6 @@ await corsair.facebook.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `created_time` | `string` | No | — |
@@ -168,9 +150,6 @@ await corsair.facebook.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_id` | `string` | Yes | Object ID whose comments should be listed. |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
 | `fields` | `string` | No | — |
@@ -186,9 +165,6 @@ await corsair.facebook.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -247,9 +223,6 @@ await corsair.facebook.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | — |
 | `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
 | `message` | `string` | No | — |
@@ -262,9 +235,6 @@ await corsair.facebook.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -290,9 +260,6 @@ await corsair.facebook.api.conversations.getMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `conversation_id` | `string` | Yes | — |
 | `fields` | `string` | No | — |
@@ -307,9 +274,6 @@ await corsair.facebook.api.conversations.getMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -377,9 +341,6 @@ await corsair.facebook.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -394,9 +355,6 @@ await corsair.facebook.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -460,9 +418,6 @@ await corsair.facebook.api.messages.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `fields` | `string` | No | — |
@@ -474,9 +429,6 @@ await corsair.facebook.api.messages.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `created_time` | `string` | No | — |
@@ -541,9 +493,6 @@ await corsair.facebook.api.messages.markSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `recipient_id` | `string` | Yes | — |
 
@@ -554,9 +503,6 @@ await corsair.facebook.api.messages.markSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_id` | `string` | No | — |
 | `message_id` | `string` | No | — |
 
@@ -581,9 +527,6 @@ await corsair.facebook.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `recipient_id` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
@@ -597,9 +540,6 @@ await corsair.facebook.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_id` | `string` | No | — |
 | `message_id` | `string` | No | — |
 
@@ -624,9 +564,6 @@ await corsair.facebook.api.messages.sendMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `recipient_id` | `string` | Yes | — |
 | `attachment_type` | `image \| video \| audio \| file` | Yes | — |
@@ -641,9 +578,6 @@ await corsair.facebook.api.messages.sendMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_id` | `string` | No | — |
 | `message_id` | `string` | No | — |
 
@@ -668,9 +602,6 @@ await corsair.facebook.api.messages.toggleTyping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `recipient_id` | `string` | Yes | — |
 | `action` | `typing_on \| typing_off` | Yes | — |
@@ -682,9 +613,6 @@ await corsair.facebook.api.messages.toggleTyping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_id` | `string` | No | — |
 | `message_id` | `string` | No | — |
 
@@ -711,9 +639,6 @@ await corsair.facebook.api.pages.assignTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `user` | `string` | Yes | Business user or system user ID to assign tasks to. |
 | `tasks` | `string[]` | Yes | Page tasks such as MANAGE, CREATE_CONTENT, MODERATE, ADVERTISE, ANALYZE. |
@@ -726,9 +651,6 @@ await corsair.facebook.api.pages.assignTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -752,9 +674,6 @@ await corsair.facebook.api.pages.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 
@@ -765,9 +684,6 @@ await corsair.facebook.api.pages.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `access_token` | `string` | No | — |
@@ -825,9 +741,6 @@ await corsair.facebook.api.pages.getInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `metric` | `string \| string[]` | Yes | Insight metric name(s), e.g. page_follows, page_views_total. |
 | `period` | `day \| week \| days_28 \| month \| lifetime` | No | — |
@@ -841,9 +754,6 @@ await corsair.facebook.api.pages.getInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -902,9 +812,6 @@ await corsair.facebook.api.pages.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -918,9 +825,6 @@ await corsair.facebook.api.pages.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -973,9 +877,6 @@ await corsair.facebook.api.pages.listManaged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -988,9 +889,6 @@ await corsair.facebook.api.pages.listManaged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1058,9 +956,6 @@ await corsair.facebook.api.pages.removeTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `user` | `string` | Yes | Business user or system user ID to remove from Page tasks. |
 | `business` | `string` | No | Business ID. Required for many Business Manager assigned_users flows. |
@@ -1072,9 +967,6 @@ await corsair.facebook.api.pages.removeTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1098,9 +990,6 @@ await corsair.facebook.api.pages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Search query for page names. |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1113,9 +1002,6 @@ await corsair.facebook.api.pages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1183,9 +1069,6 @@ await corsair.facebook.api.pages.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `about` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1201,9 +1084,6 @@ await corsair.facebook.api.pages.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1229,9 +1109,6 @@ await corsair.facebook.api.photos.addToAlbum({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `album_id` | `string` | Yes | — |
 | `page_id` | `string` | Yes | Page ID used to resolve the Page access token. |
 | `url` | `string` | Yes | Publicly accessible image URL. |
@@ -1245,9 +1122,6 @@ await corsair.facebook.api.photos.addToAlbum({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1271,9 +1145,6 @@ await corsair.facebook.api.photos.createAlbum({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `message` | `string` | No | — |
@@ -1286,9 +1157,6 @@ await corsair.facebook.api.photos.createAlbum({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1312,9 +1180,6 @@ await corsair.facebook.api.photos.createPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `caption` | `string` | No | Preferred photo caption field per Graph docs. |
@@ -1329,9 +1194,6 @@ await corsair.facebook.api.photos.createPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1355,9 +1217,6 @@ await corsair.facebook.api.photos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1372,9 +1231,6 @@ await corsair.facebook.api.photos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1433,9 +1289,6 @@ await corsair.facebook.api.photos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `url` | `string` | Yes | Publicly accessible image URL. |
 | `caption` | `string` | No | — |
@@ -1450,9 +1303,6 @@ await corsair.facebook.api.photos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1476,9 +1326,6 @@ await corsair.facebook.api.photos.uploadBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `photos` | `object[]` | Yes | — |
 
@@ -1537,9 +1384,6 @@ await corsair.facebook.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `link` | `string` | No | — |
@@ -1575,9 +1419,6 @@ await corsair.facebook.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1601,9 +1442,6 @@ await corsair.facebook.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 
@@ -1614,9 +1452,6 @@ await corsair.facebook.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1640,9 +1475,6 @@ await corsair.facebook.api.posts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 | `fields` | `string` | No | — |
@@ -1654,9 +1486,6 @@ await corsair.facebook.api.posts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `created_time` | `string` | No | — |
@@ -1688,9 +1517,6 @@ await corsair.facebook.api.posts.getInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 | `metric` | `string \| string[]` | Yes | — |
@@ -1702,9 +1528,6 @@ await corsair.facebook.api.posts.getInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1763,9 +1586,6 @@ await corsair.facebook.api.posts.getReactions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 | `type` | `LIKE \| LOVE \| WOW \| HAHA \| SAD \| ANGRY \| CARE` | No | — |
@@ -1780,9 +1600,6 @@ await corsair.facebook.api.posts.getReactions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1834,9 +1651,6 @@ await corsair.facebook.api.posts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1850,9 +1664,6 @@ await corsair.facebook.api.posts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1910,9 +1721,6 @@ await corsair.facebook.api.posts.listScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1926,9 +1734,6 @@ await corsair.facebook.api.posts.listScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -1986,9 +1791,6 @@ await corsair.facebook.api.posts.listTagged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -2002,9 +1804,6 @@ await corsair.facebook.api.posts.listTagged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -2062,9 +1861,6 @@ await corsair.facebook.api.posts.publishScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 
@@ -2075,9 +1871,6 @@ await corsair.facebook.api.posts.publishScheduled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2101,9 +1894,6 @@ await corsair.facebook.api.posts.reschedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 | `scheduled_publish_time` | `number` | Yes | Unix timestamp for the new scheduled publish time. |
@@ -2115,9 +1905,6 @@ await corsair.facebook.api.posts.reschedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2141,9 +1928,6 @@ await corsair.facebook.api.posts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `post_id` | `string` | Yes | — |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when post_id is composite PageID_PostID. |
 | `message` | `string` | No | — |
@@ -2156,9 +1940,6 @@ await corsair.facebook.api.posts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2184,9 +1965,6 @@ await corsair.facebook.api.reactions.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_id` | `string` | Yes | Post ID, comment ID, or other reactable object ID. |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
 | `type` | `LIKE` | No | Only LIKE is supported by the Graph API for programmatic reactions. |
@@ -2198,9 +1976,6 @@ await corsair.facebook.api.reactions.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2224,9 +1999,6 @@ await corsair.facebook.api.reactions.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_id` | `string` | Yes | Post ID or comment ID to remove a like/reaction from. |
 | `page_id` | `string` | No | Page ID for Page-token auth. Optional when object_id is composite PageID_PostID. |
 
@@ -2237,9 +2009,6 @@ await corsair.facebook.api.reactions.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2265,9 +2034,6 @@ await corsair.facebook.api.users.getCurrentUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fields` | `string` | No | — |
 
 
@@ -2277,9 +2043,6 @@ await corsair.facebook.api.users.getCurrentUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -2305,9 +2068,6 @@ await corsair.facebook.api.users.getUserPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -2320,9 +2080,6 @@ await corsair.facebook.api.users.getUserPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -2392,9 +2149,6 @@ await corsair.facebook.api.videos.createPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `file_url` | `string` | Yes | Publicly accessible video URL. |
 | `title` | `string` | No | — |
@@ -2409,9 +2163,6 @@ await corsair.facebook.api.videos.createPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2435,9 +2186,6 @@ await corsair.facebook.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | Facebook Page ID |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -2451,9 +2199,6 @@ await corsair.facebook.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `paging` | `object` | No | — |
 
@@ -2513,9 +2258,6 @@ await corsair.facebook.api.videos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | — |
 | `file_url` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -2530,9 +2272,6 @@ await corsair.facebook.api.videos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 

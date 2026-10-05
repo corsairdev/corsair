@@ -34,9 +34,6 @@ await corsair.mailchimp.api.account.ping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `health_status` | `string` | Yes | — |
 
 
@@ -60,9 +57,6 @@ await corsair.mailchimp.api.account.root({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fields` | `string[]` | No | — |
 | `exclude_fields` | `string[]` | No | — |
 
@@ -73,9 +67,6 @@ await corsair.mailchimp.api.account.root({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 
 
@@ -101,9 +92,6 @@ await corsair.mailchimp.api.campaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `regular \| plaintext \| absplit \| rss \| variate` | Yes | — |
 | `recipients` | `object` | No | — |
 | `settings` | `object` | No | — |
@@ -143,9 +131,6 @@ await corsair.mailchimp.api.campaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -169,9 +154,6 @@ await corsair.mailchimp.api.campaigns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 
 
@@ -181,9 +163,6 @@ await corsair.mailchimp.api.campaigns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -207,9 +186,6 @@ await corsair.mailchimp.api.campaigns.getContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 
 
@@ -219,9 +195,6 @@ await corsair.mailchimp.api.campaigns.getContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `plain_text` | `string` | No | — |
 | `html` | `string` | No | — |
 
@@ -246,9 +219,6 @@ await corsair.mailchimp.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `regular \| plaintext \| absplit \| rss \| variate` | No | — |
 | `status` | `save \| paused \| schedule \| sending \| sent` | No | — |
 | `count` | `number` | No | — |
@@ -263,9 +233,6 @@ await corsair.mailchimp.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaigns` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -301,9 +268,6 @@ await corsair.mailchimp.api.campaigns.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 
 
@@ -330,9 +294,6 @@ await corsair.mailchimp.api.campaigns.schedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 | `schedule_time` | `string` | Yes | — |
 | `timewarp` | `boolean` | No | — |
@@ -372,9 +333,6 @@ await corsair.mailchimp.api.campaigns.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 
 
@@ -401,9 +359,6 @@ await corsair.mailchimp.api.campaigns.sendTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 | `test_emails` | `string[]` | Yes | — |
 | `send_type` | `html \| plaintext` | Yes | — |
@@ -432,9 +387,6 @@ await corsair.mailchimp.api.campaigns.setContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 | `html` | `string` | No | — |
 | `plain_text` | `string` | No | — |
@@ -457,9 +409,6 @@ await corsair.mailchimp.api.campaigns.setContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `plain_text` | `string` | No | — |
 | `html` | `string` | No | — |
 
@@ -484,9 +433,6 @@ await corsair.mailchimp.api.campaigns.unschedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 
 
@@ -513,9 +459,6 @@ await corsair.mailchimp.api.campaigns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | — |
 | `recipients` | `object` | No | — |
 | `settings` | `object` | No | — |
@@ -555,9 +498,6 @@ await corsair.mailchimp.api.campaigns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -583,9 +523,6 @@ await corsair.mailchimp.api.interestCategories.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `type` | `checkboxes \| dropdown \| radio \| hidden` | Yes | — |
@@ -598,9 +535,6 @@ await corsair.mailchimp.api.interestCategories.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -626,9 +560,6 @@ await corsair.mailchimp.api.interestCategories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 
@@ -639,9 +570,6 @@ await corsair.mailchimp.api.interestCategories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -667,9 +595,6 @@ await corsair.mailchimp.api.interestCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -681,9 +606,6 @@ await corsair.mailchimp.api.interestCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `categories` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -721,9 +643,6 @@ await corsair.mailchimp.api.interestCategories.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 
@@ -751,9 +670,6 @@ await corsair.mailchimp.api.interestCategories.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
@@ -767,9 +683,6 @@ await corsair.mailchimp.api.interestCategories.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -797,9 +710,6 @@ await corsair.mailchimp.api.interests.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -812,9 +722,6 @@ await corsair.mailchimp.api.interests.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -840,9 +747,6 @@ await corsair.mailchimp.api.interests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `interest_id` | `string` | Yes | — |
@@ -854,9 +758,6 @@ await corsair.mailchimp.api.interests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -882,9 +783,6 @@ await corsair.mailchimp.api.interests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `count` | `number` | No | — |
@@ -897,9 +795,6 @@ await corsair.mailchimp.api.interests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interests` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -937,9 +832,6 @@ await corsair.mailchimp.api.interests.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `interest_id` | `string` | Yes | — |
@@ -968,9 +860,6 @@ await corsair.mailchimp.api.interests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `interest_category_id` | `string` | Yes | — |
 | `interest_id` | `string` | Yes | — |
@@ -984,9 +873,6 @@ await corsair.mailchimp.api.interests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -1014,9 +900,6 @@ await corsair.mailchimp.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `contact` | `object` | Yes | — |
 | `permission_reminder` | `string` | Yes | — |
@@ -1063,9 +946,6 @@ await corsair.mailchimp.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `web_id` | `number` | No | — |
@@ -1091,9 +971,6 @@ await corsair.mailchimp.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `fields` | `string[]` | No | — |
 | `exclude_fields` | `string[]` | No | — |
@@ -1105,9 +982,6 @@ await corsair.mailchimp.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `web_id` | `number` | No | — |
@@ -1133,9 +1007,6 @@ await corsair.mailchimp.api.lists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `fields` | `string[]` | No | — |
@@ -1148,9 +1019,6 @@ await corsair.mailchimp.api.lists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lists` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -1188,9 +1056,6 @@ await corsair.mailchimp.api.lists.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 
 
@@ -1217,9 +1082,6 @@ await corsair.mailchimp.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `contact` | `object` | No | — |
@@ -1264,9 +1126,6 @@ await corsair.mailchimp.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `web_id` | `number` | No | — |
@@ -1294,9 +1153,6 @@ await corsair.mailchimp.api.members.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | Yes | — |
@@ -1330,9 +1186,6 @@ await corsair.mailchimp.api.members.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -1359,9 +1212,6 @@ await corsair.mailchimp.api.members.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 
@@ -1389,9 +1239,6 @@ await corsair.mailchimp.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 
@@ -1402,9 +1249,6 @@ await corsair.mailchimp.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -1431,9 +1275,6 @@ await corsair.mailchimp.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `status` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
 | `count` | `number` | No | — |
@@ -1448,9 +1289,6 @@ await corsair.mailchimp.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `members` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -1489,9 +1327,6 @@ await corsair.mailchimp.api.members.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 | `count` | `number` | No | — |
@@ -1504,9 +1339,6 @@ await corsair.mailchimp.api.members.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tags` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -1542,9 +1374,6 @@ await corsair.mailchimp.api.members.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 
@@ -1572,9 +1401,6 @@ await corsair.mailchimp.api.members.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
 
@@ -1585,9 +1411,6 @@ await corsair.mailchimp.api.members.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exact_matches` | `any` | Yes | — |
 | `full_search` | `any` | Yes | — |
 
@@ -1612,9 +1435,6 @@ await corsair.mailchimp.api.members.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 | `email_address` | `string` | No | — |
@@ -1647,9 +1467,6 @@ await corsair.mailchimp.api.members.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -1676,9 +1493,6 @@ await corsair.mailchimp.api.members.updateTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
 | `tags` | `object[]` | Yes | — |
@@ -1719,9 +1533,6 @@ await corsair.mailchimp.api.members.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status_if_new` | `subscribed \| unsubscribed \| cleaned \| pending \| transactional` | No | — |
@@ -1756,9 +1567,6 @@ await corsair.mailchimp.api.members.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -1787,9 +1595,6 @@ await corsair.mailchimp.api.mergeFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `text \| number \| address \| phone \| date \| url \| imageurl \| radio \| dropdown \| birthday \| zip` | Yes | — |
@@ -1816,9 +1621,6 @@ await corsair.mailchimp.api.mergeFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `merge_id` | `number` | Yes | — |
 | `tag` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1844,9 +1646,6 @@ await corsair.mailchimp.api.mergeFields.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `merge_id` | `number` | Yes | — |
 
@@ -1857,9 +1656,6 @@ await corsair.mailchimp.api.mergeFields.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `merge_id` | `number` | Yes | — |
 | `tag` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1885,9 +1681,6 @@ await corsair.mailchimp.api.mergeFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -1899,9 +1692,6 @@ await corsair.mailchimp.api.mergeFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `merge_fields` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -1939,9 +1729,6 @@ await corsair.mailchimp.api.mergeFields.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `merge_id` | `number` | Yes | — |
 
@@ -1969,9 +1756,6 @@ await corsair.mailchimp.api.mergeFields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `merge_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
@@ -1997,9 +1781,6 @@ await corsair.mailchimp.api.mergeFields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `merge_id` | `number` | Yes | — |
 | `tag` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -2027,9 +1808,6 @@ await corsair.mailchimp.api.segments.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 | `email_address` | `string` | Yes | — |
@@ -2041,9 +1819,6 @@ await corsair.mailchimp.api.segments.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email_address` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -2070,9 +1845,6 @@ await corsair.mailchimp.api.segments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `static_segment` | `string[]` | No | — |
@@ -2095,9 +1867,6 @@ await corsair.mailchimp.api.segments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -2123,9 +1892,6 @@ await corsair.mailchimp.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 
@@ -2136,9 +1902,6 @@ await corsair.mailchimp.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -2164,9 +1927,6 @@ await corsair.mailchimp.api.segments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -2178,9 +1938,6 @@ await corsair.mailchimp.api.segments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segments` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -2218,9 +1975,6 @@ await corsair.mailchimp.api.segments.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 | `count` | `number` | No | — |
@@ -2233,9 +1987,6 @@ await corsair.mailchimp.api.segments.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `members` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -2274,9 +2025,6 @@ await corsair.mailchimp.api.segments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 
@@ -2304,9 +2052,6 @@ await corsair.mailchimp.api.segments.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 | `subscriber_hash` | `string` | Yes | — |
@@ -2335,9 +2080,6 @@ await corsair.mailchimp.api.segments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `segment_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
@@ -2361,9 +2103,6 @@ await corsair.mailchimp.api.segments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `list_id` | `string` | No | — |
@@ -2391,9 +2130,6 @@ await corsair.mailchimp.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `events` | `object` | No | — |
@@ -2433,9 +2169,6 @@ await corsair.mailchimp.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 
@@ -2460,9 +2193,6 @@ await corsair.mailchimp.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `webhook_id` | `string` | Yes | — |
 
@@ -2473,9 +2203,6 @@ await corsair.mailchimp.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 
@@ -2500,9 +2227,6 @@ await corsair.mailchimp.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 
 
@@ -2512,9 +2236,6 @@ await corsair.mailchimp.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | Yes | — |
 | `total_items` | `number` | No | — |
 
@@ -2551,9 +2272,6 @@ await corsair.mailchimp.api.webhooks.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `webhook_id` | `string` | Yes | — |
 
@@ -2581,9 +2299,6 @@ await corsair.mailchimp.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `webhook_id` | `string` | Yes | — |
 | `url` | `string` | No | — |
@@ -2624,9 +2339,6 @@ await corsair.mailchimp.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 

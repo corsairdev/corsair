@@ -31,9 +31,6 @@ await corsair.scaleai.api.audits.getFixlessAudits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | No | — |
 | `id` | `string` | No | — |
 
@@ -63,9 +60,6 @@ await corsair.scaleai.api.batches.createBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `callback` | `string` | No | — |
@@ -90,9 +84,6 @@ await corsair.scaleai.api.batches.createBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `project` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -132,9 +123,6 @@ await corsair.scaleai.api.batches.finalizeBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchName` | `string` | Yes | — |
 
 
@@ -144,9 +132,6 @@ await corsair.scaleai.api.batches.finalizeBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `project` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -186,9 +171,6 @@ await corsair.scaleai.api.batches.getBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchName` | `string` | Yes | — |
 
 
@@ -198,9 +180,6 @@ await corsair.scaleai.api.batches.getBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `project` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -240,9 +219,6 @@ await corsair.scaleai.api.batches.getBatchStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchName` | `string` | Yes | — |
 
 
@@ -252,9 +228,6 @@ await corsair.scaleai.api.batches.getBatchStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `tasks_pending` | `number` | No | — |
 | `tasks_completed` | `number` | No | — |
@@ -282,9 +255,6 @@ await corsair.scaleai.api.batches.listBatches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `status` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -301,9 +271,6 @@ await corsair.scaleai.api.batches.listBatches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docs` | `object[]` | Yes | — |
 | `totalDocs` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -351,9 +318,6 @@ await corsair.scaleai.api.files.getAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `metadata` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -376,9 +340,6 @@ await corsair.scaleai.api.files.getAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docs` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 | `next_token` | `string` | No | — |
@@ -418,9 +379,6 @@ await corsair.scaleai.api.files.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_url` | `string` | Yes | — |
 | `project_name` | `string` | No | — |
 | `reference_id` | `string` | No | — |
@@ -444,9 +402,6 @@ await corsair.scaleai.api.files.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `attachment_url` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -472,9 +427,6 @@ await corsair.scaleai.api.files.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_base64` | `string` | Yes | — |
 | `file_name` | `string` | Yes | — |
 | `mime_type` | `string` | No | — |
@@ -499,9 +451,6 @@ await corsair.scaleai.api.files.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `attachment_url` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -529,9 +478,6 @@ await corsair.scaleai.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -541,9 +487,6 @@ await corsair.scaleai.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `param_history` | `object[]` | No | — |
@@ -581,9 +524,6 @@ await corsair.scaleai.api.projects.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `archived` | `boolean` | No | — |
 
 
@@ -626,9 +566,6 @@ await corsair.scaleai.api.projects.setProjectOntology({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `ontology` | `object` | No | — |
 
@@ -649,9 +586,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `param_history` | `object[]` | No | — |
@@ -689,9 +623,6 @@ await corsair.scaleai.api.projects.setProjectParams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `patch` | `boolean` | No | — |
 | `instruction` | `string` | No | — |
@@ -703,9 +634,6 @@ await corsair.scaleai.api.projects.setProjectParams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `param_history` | `object[]` | No | — |
@@ -745,9 +673,6 @@ await corsair.scaleai.api.quality.getQualityLabelers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `quality_task_ids` | `string[]` | No | — |
 | `labeler_emails` | `string[]` | No | — |
 
@@ -777,9 +702,6 @@ await corsair.scaleai.api.studio.addStudioAssignments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 | `projects` | `string[]` | Yes | — |
 
@@ -877,9 +799,6 @@ await corsair.scaleai.api.studio.removeStudioAssignments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 | `projects` | `string[]` | Yes | — |
 
@@ -947,9 +866,6 @@ await corsair.scaleai.api.studio.setBatchPriorities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch_names` | `string[]` | Yes | — |
 
 
@@ -988,9 +904,6 @@ await corsair.scaleai.api.tasks.addTaskTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `tags` | `string[]` | Yes | — |
 
@@ -1001,9 +914,6 @@ await corsair.scaleai.api.tasks.addTaskTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1077,9 +987,6 @@ await corsair.scaleai.api.tasks.createDocumentTranscriptionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1120,9 +1027,6 @@ await corsair.scaleai.api.tasks.createDocumentTranscriptionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1196,9 +1100,6 @@ await corsair.scaleai.api.tasks.createImageAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1246,9 +1147,6 @@ await corsair.scaleai.api.tasks.createImageAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1322,9 +1220,6 @@ await corsair.scaleai.api.tasks.createLidarAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1374,9 +1269,6 @@ await corsair.scaleai.api.tasks.createLidarAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1450,9 +1342,6 @@ await corsair.scaleai.api.tasks.createLidarSegmentationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1493,9 +1382,6 @@ await corsair.scaleai.api.tasks.createLidarSegmentationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1569,9 +1455,6 @@ await corsair.scaleai.api.tasks.createNamedEntityRecognitionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1622,9 +1505,6 @@ await corsair.scaleai.api.tasks.createNamedEntityRecognitionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1698,9 +1578,6 @@ await corsair.scaleai.api.tasks.createSegmentationAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1741,9 +1618,6 @@ await corsair.scaleai.api.tasks.createSegmentationAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1817,9 +1691,6 @@ await corsair.scaleai.api.tasks.createTextCollectionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1866,9 +1737,6 @@ await corsair.scaleai.api.tasks.createTextCollectionTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -1942,9 +1810,6 @@ await corsair.scaleai.api.tasks.createVideoAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -1994,9 +1859,6 @@ await corsair.scaleai.api.tasks.createVideoAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2070,9 +1932,6 @@ await corsair.scaleai.api.tasks.createVideoPlaybackAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `callback_url` | `string` | No | — |
@@ -2120,9 +1979,6 @@ await corsair.scaleai.api.tasks.createVideoPlaybackAnnotationTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2196,9 +2052,6 @@ await corsair.scaleai.api.tasks.deleteTaskTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `tags` | `string[]` | Yes | — |
 
@@ -2209,9 +2062,6 @@ await corsair.scaleai.api.tasks.deleteTaskTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2285,9 +2135,6 @@ await corsair.scaleai.api.tasks.deleteTaskUniqueId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -2297,9 +2144,6 @@ await corsair.scaleai.api.tasks.deleteTaskUniqueId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2373,9 +2217,6 @@ await corsair.scaleai.api.tasks.getTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -2385,9 +2226,6 @@ await corsair.scaleai.api.tasks.getTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2461,9 +2299,6 @@ await corsair.scaleai.api.tasks.getTaskResponseUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `uuid` | `string` | Yes | — |
 
@@ -2491,9 +2326,6 @@ await corsair.scaleai.api.tasks.listTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
 | `type` | `imageannotation \| segmentannotation \| videoannotation \| videoplaybackannotation \| lidarannotation \| lidarsegmentation \| lidartopdown \| namedentityrecognition \| textcollection \| documenttranscription \| categorization \| transcription \| comparison` | No | — |
@@ -2519,9 +2351,6 @@ await corsair.scaleai.api.tasks.listTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docs` | `object[]` | Yes | — |
 | `total` | `number` | No | — |
 | `count` | `number` | No | — |
@@ -2582,9 +2411,6 @@ await corsair.scaleai.api.tasks.sendTaskCallback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -2594,9 +2420,6 @@ await corsair.scaleai.api.tasks.sendTaskCallback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -2620,9 +2443,6 @@ await corsair.scaleai.api.tasks.setTaskMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `metadata` | `object` | Yes | — |
 
@@ -2643,9 +2463,6 @@ await corsair.scaleai.api.tasks.setTaskMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2719,9 +2536,6 @@ await corsair.scaleai.api.tasks.updateTaskUniqueId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `unique_id` | `string` | Yes | — |
 
@@ -2732,9 +2546,6 @@ await corsair.scaleai.api.tasks.updateTaskUniqueId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
@@ -2846,9 +2657,6 @@ await corsair.scaleai.api.teams.inviteTeamMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 | `role` | `labeler \| member \| manager` | Yes | — |
 

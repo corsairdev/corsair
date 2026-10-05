@@ -31,9 +31,6 @@ await corsair.abuseipdb.api.address.clear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to clear reports for |
 
 
@@ -43,9 +40,6 @@ await corsair.abuseipdb.api.address.clear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `numReportsDeleted` | `number` | Yes | — |
 
 
@@ -71,9 +65,6 @@ await corsair.abuseipdb.api.blacklist.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `confidenceMinimum` | `number` | No | Minimum abuse confidence score (25–100) |
 | `limit` | `number` | No | Maximum number of entries to return |
 | `onlyCountries` | `string[]` | No | Only include IPs from these ISO 3166 alpha-2 country codes |
@@ -87,9 +78,6 @@ await corsair.abuseipdb.api.blacklist.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generatedAt` | `string` | Yes | — |
 | `entries` | `object[]` | Yes | — |
 
@@ -130,9 +118,6 @@ await corsair.abuseipdb.api.block.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `network` | `string \| string` | Yes | CIDR notation network block, e.g. "127.0.0.1/24" |
 | `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
 
@@ -143,9 +128,6 @@ await corsair.abuseipdb.api.block.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `networkAddress` | `string` | Yes | — |
 | `netmask` | `string` | Yes | — |
 | `minAddress` | `string` | Yes | — |
@@ -192,9 +174,6 @@ await corsair.abuseipdb.api.check.ip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to check |
 | `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
 | `verbose` | `boolean` | No | Include the full reports array |
@@ -206,9 +185,6 @@ await corsair.abuseipdb.api.check.ip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ipAddress` | `string` | Yes | — |
 | `isPublic` | `boolean` | Yes | — |
 | `ipVersion` | `number` | Yes | — |
@@ -265,9 +241,6 @@ await corsair.abuseipdb.api.report.ip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string \| string` | Yes | IPv4 or IPv6 address being reported |
 | `categories` | `number[]` | Yes | Abuse category IDs (integers 1–30) |
 | `comment` | `string` | No | Descriptive text of the attack; avoid any PII |
@@ -280,9 +253,6 @@ await corsair.abuseipdb.api.report.ip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ipAddress` | `string` | Yes | — |
 | `abuseConfidenceScore` | `number` | Yes | — |
 
@@ -309,9 +279,6 @@ await corsair.abuseipdb.api.reports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to fetch reports for |
 | `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
 | `page` | `number` | No | Page number (starts at 1) |
@@ -324,9 +291,6 @@ await corsair.abuseipdb.api.reports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `page` | `number` | Yes | — |
 | `count` | `number` | Yes | — |

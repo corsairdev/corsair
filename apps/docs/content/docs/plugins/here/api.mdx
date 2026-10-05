@@ -31,9 +31,6 @@ await corsair.here.api.maps.coordinatesToTileIndices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lng` | `number` | Yes | — |
 | `zoom` | `number` | Yes | — |
@@ -45,9 +42,6 @@ await corsair.here.api.maps.coordinatesToTileIndices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `z` | `number` | Yes | — |
@@ -73,9 +67,6 @@ await corsair.here.api.maps.getMapImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lng` | `number` | Yes | — |
 | `zoom` | `number` | Yes | — |
@@ -91,9 +82,6 @@ await corsair.here.api.maps.getMapImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contentType` | `string` | Yes | — |
 | `imageBase64` | `string` | Yes | — |
 
@@ -120,9 +108,6 @@ await corsair.here.api.routing.computeMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origins` | `object[]` | Yes | — |
 | `destinations` | `object[]` | Yes | — |
 | `regionDefinition` | `object` | No | Defaults to \{ type: "world" \}. |
@@ -168,9 +153,6 @@ await corsair.here.api.routing.computeMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matrixId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `matrix` | `object` | No | — |
@@ -206,9 +188,6 @@ await corsair.here.api.routing.decodeRouteHandle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routeHandle` | `string` | Yes | — |
 | `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
 | `return` | `string` | No | — |
@@ -220,9 +199,6 @@ await corsair.here.api.routing.decodeRouteHandle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routes` | `object[]` | No | — |
 | `notices` | `object[]` | No | — |
 
@@ -268,9 +244,6 @@ await corsair.here.api.routing.findWaypointSequence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start` | `string` | Yes | start=name;lat,lng or lat,lng. |
 | `destination` | `string` | Yes | Fixed end waypoint. |
 | `destination1` | `string` | No | — |
@@ -288,9 +261,6 @@ await corsair.here.api.routing.findWaypointSequence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 
 
@@ -324,9 +294,6 @@ await corsair.here.api.routing.getIsolines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | Yes | Center lat,lng. |
 | `transportMode` | `car \| truck \| pedestrian \| bicycle` | Yes | — |
 | `rangeType` | `time \| distance \| consumption` | Yes | — |
@@ -340,9 +307,6 @@ await corsair.here.api.routing.getIsolines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isolines` | `object[]` | No | — |
 
 
@@ -376,9 +340,6 @@ await corsair.here.api.routing.getMatrixProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `profileId` | `string` | Yes | — |
 
 
@@ -388,9 +349,6 @@ await corsair.here.api.routing.getMatrixProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `type` | `string` | No | — |
 
@@ -415,9 +373,6 @@ await corsair.here.api.routing.getMatrixResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matrixId` | `string` | Yes | — |
 
 
@@ -427,9 +382,6 @@ await corsair.here.api.routing.getMatrixResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matrixId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `matrix` | `object` | No | — |
@@ -465,9 +417,6 @@ await corsair.here.api.routing.getRoutes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | Yes | Origin lat,lng. |
 | `destination` | `string` | Yes | Destination lat,lng. |
 | `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
@@ -484,9 +433,6 @@ await corsair.here.api.routing.getRoutes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routes` | `object[]` | No | — |
 | `notices` | `object[]` | No | — |
 
@@ -535,9 +481,6 @@ await corsair.here.api.routing.listMatrixProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `profiles` | `object[]` | No | — |
 
 
@@ -571,9 +514,6 @@ await corsair.here.api.routing.postRoutes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | Yes | Origin lat,lng. |
 | `destination` | `string` | Yes | Destination lat,lng. |
 | `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
@@ -601,9 +541,6 @@ await corsair.here.api.routing.postRoutes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `routes` | `object[]` | No | — |
 | `notices` | `object[]` | No | — |
 
@@ -651,9 +588,6 @@ await corsair.here.api.search.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Partial address. |
 | `at` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -667,9 +601,6 @@ await corsair.here.api.search.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -728,9 +659,6 @@ await corsair.here.api.search.autosuggest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Partial search term. |
 | `at` | `string` | Yes | Proximity lat,lng. |
 | `limit` | `number` | No | — |
@@ -744,9 +672,6 @@ await corsair.here.api.search.autosuggest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -805,9 +730,6 @@ await corsair.here.api.search.browse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `at` | `string` | Yes | Center lat,lng. |
 | `categories` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -823,9 +745,6 @@ await corsair.here.api.search.browse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -884,9 +803,6 @@ await corsair.here.api.search.discover({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Free-form place or address query. |
 | `at` | `string` | Yes | Proximity lat,lng. |
 | `limit` | `number` | No | — |
@@ -900,9 +816,6 @@ await corsair.here.api.search.discover({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -961,9 +874,6 @@ await corsair.here.api.search.geocode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Free-form or qualified address. |
 | `at` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -978,9 +888,6 @@ await corsair.here.api.search.geocode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -1039,9 +946,6 @@ await corsair.here.api.search.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | HERE place or address id from a prior search. |
 | `lang` | `string` | No | — |
 
@@ -1052,9 +956,6 @@ await corsair.here.api.search.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `id` | `string` | No | — |
 | `resultType` | `string` | No | — |
@@ -1125,9 +1026,6 @@ await corsair.here.api.search.reverseGeocode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `at` | `string` | Yes | Coordinates lat,lng. |
 | `limit` | `number` | No | — |
 | `lang` | `string` | No | — |
@@ -1139,9 +1037,6 @@ await corsair.here.api.search.reverseGeocode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -1202,9 +1097,6 @@ await corsair.here.api.traffic.getIncidentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `locationReferencing` | `string` | No | — |
 
@@ -1215,9 +1107,6 @@ await corsair.here.api.traffic.getIncidentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `object` | No | — |
 | `results` | `object[]` | No | — |
 
@@ -1260,9 +1149,6 @@ await corsair.here.api.traffic.getTrafficFlow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `in` | `string` | Yes | Geospatial filter, e.g. bbox:west,south,east,north. |
 | `locationReferencing` | `string` | No | Defaults to shape. |
 | `minJamFactor` | `number` | No | — |
@@ -1275,9 +1161,6 @@ await corsair.here.api.traffic.getTrafficFlow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `sourceUpdated` | `string` | No | — |
 
@@ -1312,9 +1195,6 @@ await corsair.here.api.traffic.getTrafficIncidents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `in` | `string` | Yes | Geospatial filter, e.g. bbox:west,south,east,north. |
 | `locationReferencing` | `string` | No | Defaults to shape. |
 
@@ -1325,9 +1205,6 @@ await corsair.here.api.traffic.getTrafficIncidents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `object[]` | No | — |
 | `sourceUpdated` | `string` | No | — |
 
@@ -1364,9 +1241,6 @@ await corsair.here.api.transit.getDepartures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string` | No | Comma-separated station ids. |
 | `in` | `string` | No | lat,lng;r=meters when ids is omitted. |
 | `maxPerBoard` | `number` | No | — |
@@ -1378,9 +1252,6 @@ await corsair.here.api.transit.getDepartures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | No | — |
 
 
@@ -1414,9 +1285,6 @@ await corsair.here.api.transit.getStations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `in` | `string` | Yes | lat,lng or lat,lng;r=meters. |
 | `name` | `string` | No | — |
 | `maxPlaces` | `number` | No | — |
@@ -1428,9 +1296,6 @@ await corsair.here.api.transit.getStations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stations` | `object[]` | No | — |
 | `boards` | `object[]` | No | — |
 
@@ -1475,9 +1340,6 @@ await corsair.here.api.weather.getAstronomyForecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, e.g. Berlin, Germany. |
 | `location` | `string` | No | lat,lng. |
 | `zipCode` | `string` | No | — |
@@ -1491,9 +1353,6 @@ await corsair.here.api.weather.getAstronomyForecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -1530,9 +1389,6 @@ await corsair.here.api.weather.getWeatherAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, e.g. Berlin, Germany. |
 | `location` | `string` | No | lat,lng. |
 | `zipCode` | `string` | No | — |
@@ -1546,9 +1402,6 @@ await corsair.here.api.weather.getWeatherAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -1585,9 +1438,6 @@ await corsair.here.api.weather.getWeatherForecastDaily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, e.g. Berlin, Germany. |
 | `location` | `string` | No | lat,lng. |
 | `zipCode` | `string` | No | — |
@@ -1602,9 +1452,6 @@ await corsair.here.api.weather.getWeatherForecastDaily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -1641,9 +1488,6 @@ await corsair.here.api.weather.getWeatherForecastHourly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, e.g. Berlin, Germany. |
 | `location` | `string` | No | lat,lng. |
 | `zipCode` | `string` | No | — |
@@ -1657,9 +1501,6 @@ await corsair.here.api.weather.getWeatherForecastHourly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 
@@ -1696,9 +1537,6 @@ await corsair.here.api.weather.getWeatherObservation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, e.g. Berlin, Germany. |
 | `location` | `string` | No | lat,lng. |
 | `zipCode` | `string` | No | — |
@@ -1713,9 +1551,6 @@ await corsair.here.api.weather.getWeatherObservation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `places` | `object[]` | No | — |
 
 

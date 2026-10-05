@@ -31,9 +31,6 @@ await corsair.chmeetings.api.attendance.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `occurrence_id` | `string` | Yes | — |
 | `status` | `absent \| attended` | No | — |
 | `group_id` | `string \| number` | No | — |
@@ -48,9 +45,6 @@ await corsair.chmeetings.api.attendance.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -110,9 +104,6 @@ await corsair.chmeetings.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string \| number` | Yes | — |
 
 
@@ -122,9 +113,6 @@ await corsair.chmeetings.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -190,9 +178,6 @@ await corsair.chmeetings.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -205,9 +190,6 @@ await corsair.chmeetings.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -273,9 +255,6 @@ await corsair.chmeetings.api.events.listOccurrences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string \| number` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -289,9 +268,6 @@ await corsair.chmeetings.api.events.listOccurrences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -347,9 +323,6 @@ await corsair.chmeetings.api.families.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `members` | `object[]` | Yes | — |
 
 
@@ -371,9 +344,6 @@ await corsair.chmeetings.api.families.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `family_id` | `string \| number` | No | — |
 | `members` | `object[]` | No | — |
 
@@ -414,9 +384,6 @@ await corsair.chmeetings.api.families.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -426,9 +393,6 @@ await corsair.chmeetings.api.families.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -452,9 +416,6 @@ await corsair.chmeetings.api.families.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -464,9 +425,6 @@ await corsair.chmeetings.api.families.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `family_id` | `string \| number` | No | — |
 | `members` | `object[]` | No | — |
 
@@ -507,9 +465,6 @@ await corsair.chmeetings.api.families.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_text` | `string` | No | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -521,9 +476,6 @@ await corsair.chmeetings.api.families.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -580,9 +532,6 @@ await corsair.chmeetings.api.groups.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string \| number` | Yes | — |
 | `person_id` | `string \| number` | Yes | — |
 
@@ -593,9 +542,6 @@ await corsair.chmeetings.api.groups.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -619,9 +565,6 @@ await corsair.chmeetings.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `privacy` | `internal \| members \| public` | No | — |
@@ -638,9 +581,6 @@ await corsair.chmeetings.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -673,9 +613,6 @@ await corsair.chmeetings.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string \| number` | Yes | — |
 
 
@@ -685,9 +622,6 @@ await corsair.chmeetings.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -711,9 +645,6 @@ await corsair.chmeetings.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string \| number` | Yes | — |
 
 
@@ -723,9 +654,6 @@ await corsair.chmeetings.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -758,9 +686,6 @@ await corsair.chmeetings.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_text` | `string` | No | — |
 
 
@@ -807,9 +732,6 @@ await corsair.chmeetings.api.groups.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string \| number` | Yes | — |
 | `person_id` | `string \| number` | Yes | — |
 
@@ -820,9 +742,6 @@ await corsair.chmeetings.api.groups.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -846,9 +765,6 @@ await corsair.chmeetings.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `privacy` | `internal \| members \| public` | No | — |
@@ -866,9 +782,6 @@ await corsair.chmeetings.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -903,9 +816,6 @@ await corsair.chmeetings.api.notes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `person_id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -917,9 +827,6 @@ await corsair.chmeetings.api.notes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -972,9 +879,6 @@ await corsair.chmeetings.api.organizations.addPerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `person_id` | `string \| number` | Yes | — |
 
@@ -985,9 +889,6 @@ await corsair.chmeetings.api.organizations.addPerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1011,9 +912,6 @@ await corsair.chmeetings.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 
 
@@ -1023,9 +921,6 @@ await corsair.chmeetings.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `type` | `diocese \| church \| ministry` | No | — |
 | `name` | `string` | No | — |
@@ -1054,9 +949,6 @@ await corsair.chmeetings.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_text` | `string` | No | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -1068,9 +960,6 @@ await corsair.chmeetings.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1122,9 +1011,6 @@ await corsair.chmeetings.api.organizations.listPeople({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `include_family_members` | `boolean` | No | — |
 | `include_additional_fields` | `boolean` | No | — |
@@ -1140,9 +1026,6 @@ await corsair.chmeetings.api.organizations.listPeople({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1249,9 +1132,6 @@ await corsair.chmeetings.api.organizations.removePerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `person_id` | `string \| number` | Yes | — |
 
@@ -1262,9 +1142,6 @@ await corsair.chmeetings.api.organizations.removePerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1290,9 +1167,6 @@ await corsair.chmeetings.api.people.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
 | `middle_name` | `string` | No | — |
@@ -1362,9 +1236,6 @@ await corsair.chmeetings.api.people.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `first_name` | `string` | No | — |
 | `middle_name` | `string` | No | — |
@@ -1471,9 +1342,6 @@ await corsair.chmeetings.api.people.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1483,9 +1351,6 @@ await corsair.chmeetings.api.people.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1509,9 +1374,6 @@ await corsair.chmeetings.api.people.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1521,9 +1383,6 @@ await corsair.chmeetings.api.people.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `first_name` | `string` | No | — |
 | `middle_name` | `string` | No | — |
@@ -1630,9 +1489,6 @@ await corsair.chmeetings.api.people.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include_family_members` | `boolean` | No | — |
 | `include_additional_fields` | `boolean` | No | — |
 | `include_organizations` | `boolean` | No | — |
@@ -1649,9 +1505,6 @@ await corsair.chmeetings.api.people.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1758,9 +1611,6 @@ await corsair.chmeetings.api.people.listOrganizations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `person_id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -1772,9 +1622,6 @@ await corsair.chmeetings.api.people.listOrganizations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paging` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1826,9 +1673,6 @@ await corsair.chmeetings.api.people.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
 | `middle_name` | `string` | No | — |
@@ -1899,9 +1743,6 @@ await corsair.chmeetings.api.people.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1930,9 +1771,6 @@ await corsair.chmeetings.api.settings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `genders` | `unknown[]` | Yes | — |
 | `social_statuses` | `unknown[]` | Yes | — |
 | `grade_values` | `unknown[]` | Yes | — |

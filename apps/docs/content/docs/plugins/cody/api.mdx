@@ -31,9 +31,6 @@ await corsair.cody.api.bots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Keyword to filter bots by name |
 | `keyword` | `string` | No | Keyword to filter bots by name |
 | `page` | `number` | No | Page number for pagination |
@@ -46,9 +43,6 @@ await corsair.cody.api.bots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -107,9 +101,6 @@ await corsair.cody.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the conversation |
 | `bot_id` | `string` | Yes | Bot ID to create the conversation with |
 | `document_ids` | `string[]` | No | Optional document IDs to limit bot focus to specific knowledge |
@@ -121,9 +112,6 @@ await corsair.cody.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -162,9 +150,6 @@ await corsair.cody.api.conversations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the conversation to delete |
 
 
@@ -174,9 +159,6 @@ await corsair.cody.api.conversations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `boolean \| null` | No | — |
 | `success` | `boolean` | No | — |
 
@@ -201,9 +183,6 @@ await corsair.cody.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the conversation |
 | `includes` | `string` | No | Extra attributes to include (e.g. document_ids) |
 
@@ -214,9 +193,6 @@ await corsair.cody.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -255,9 +231,6 @@ await corsair.cody.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Keyword to filter conversations by name |
 | `keyword` | `string` | No | Keyword to filter conversations by name |
 | `bot_id` | `string` | No | Filter conversations by bot ID |
@@ -272,9 +245,6 @@ await corsair.cody.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -331,9 +301,6 @@ await corsair.cody.api.conversations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the conversation |
 | `name` | `string` | No | Updated name for the conversation |
 | `bot_id` | `string` | No | Updated bot ID for the conversation |
@@ -346,9 +313,6 @@ await corsair.cody.api.conversations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -389,9 +353,6 @@ await corsair.cody.api.documents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the document |
 | `content` | `string` | Yes | Text or HTML content of the document (up to 768 KB) |
 | `content_type` | `text/plain \| text/html` | Yes | MIME content type of the content body |
@@ -404,9 +365,6 @@ await corsair.cody.api.documents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -446,9 +404,6 @@ await corsair.cody.api.documents.createFromFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | S3 storage key obtained from uploads.getSignedUrl |
 | `folder_id` | `string` | No | Folder ID where the document should be stored |
 
@@ -459,9 +414,6 @@ await corsair.cody.api.documents.createFromFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -501,9 +453,6 @@ await corsair.cody.api.documents.createFromWebpage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Publicly accessible webpage URL to import |
 | `folder_id` | `string` | No | Folder ID where the document should be stored |
 
@@ -514,9 +463,6 @@ await corsair.cody.api.documents.createFromWebpage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -556,9 +502,6 @@ await corsair.cody.api.documents.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the document to delete |
 
 
@@ -568,9 +511,6 @@ await corsair.cody.api.documents.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `boolean \| null` | No | — |
 | `success` | `boolean` | No | — |
 
@@ -595,9 +535,6 @@ await corsair.cody.api.documents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the document |
 
 
@@ -607,9 +544,6 @@ await corsair.cody.api.documents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -649,9 +583,6 @@ await corsair.cody.api.documents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Keyword to filter documents by name |
 | `keyword` | `string` | No | Keyword to filter documents by name |
 | `folder_id` | `string` | No | Filter documents by folder ID |
@@ -666,9 +597,6 @@ await corsair.cody.api.documents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -728,9 +656,6 @@ await corsair.cody.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the folder |
 
 
@@ -740,9 +665,6 @@ await corsair.cody.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -779,9 +701,6 @@ await corsair.cody.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the folder |
 
 
@@ -791,9 +710,6 @@ await corsair.cody.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -830,9 +746,6 @@ await corsair.cody.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Keyword to filter folders by name |
 | `keyword` | `string` | No | Keyword to filter folders by name |
 | `page` | `number` | No | Page number for pagination |
@@ -845,9 +758,6 @@ await corsair.cody.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -902,9 +812,6 @@ await corsair.cody.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the folder to update |
 | `name` | `string` | Yes | New name for the folder |
 
@@ -915,9 +822,6 @@ await corsair.cody.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -956,9 +860,6 @@ await corsair.cody.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the message |
 | `includes` | `string` | No | Extra message attributes to include (sources, usage) |
 
@@ -969,9 +870,6 @@ await corsair.cody.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1020,9 +918,6 @@ await corsair.cody.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `conversation_id` | `string` | Yes | Conversation ID to retrieve messages for |
 | `includes` | `string` | No | Extra message attributes to include (sources, usage) |
 | `page` | `number` | No | Page number for pagination |
@@ -1035,9 +930,6 @@ await corsair.cody.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1104,9 +996,6 @@ await corsair.cody.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `conversation_id` | `string` | Yes | Conversation ID to send the message in |
 | `content` | `string` | Yes | Text content of the message (up to 2000 characters) |
 
@@ -1117,9 +1006,6 @@ await corsair.cody.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1168,9 +1054,6 @@ await corsair.cody.api.messages.sendForStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `conversation_id` | `string` | Yes | Conversation ID to send the streaming message in |
 | `content` | `string` | Yes | Text content of the message (up to 2000 characters) |
 
@@ -1181,9 +1064,6 @@ await corsair.cody.api.messages.sendForStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1220,9 +1100,6 @@ await corsair.cody.api.uploads.getSignedUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_name` | `string` | Yes | Original file name with extension to upload (e.g. document.pdf) |
 | `content_type` | `string` | Yes | MIME content type of the file (e.g. application/pdf) |
 
@@ -1233,9 +1110,6 @@ await corsair.cody.api.uploads.getSignedUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 

@@ -31,9 +31,6 @@ await corsair.figma.api.activityLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `number` | No | — |
 | `end_time` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -47,9 +44,6 @@ await corsair.figma.api.activityLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `activity_logs` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -77,9 +71,6 @@ await corsair.figma.api.comments.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | — |
 | `file_key` | `string` | Yes | — |
 | `comment_id` | `string` | No | — |
@@ -92,9 +83,6 @@ await corsair.figma.api.comments.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `uuid` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -156,9 +144,6 @@ await corsair.figma.api.comments.addReaction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 | `emoji` | `string` | Yes | — |
@@ -170,9 +155,6 @@ await corsair.figma.api.comments.addReaction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
 
@@ -197,9 +179,6 @@ await corsair.figma.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 
@@ -210,9 +189,6 @@ await corsair.figma.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
 
@@ -237,9 +213,6 @@ await corsair.figma.api.comments.deleteReaction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 | `emoji` | `string` | Yes | — |
@@ -251,9 +224,6 @@ await corsair.figma.api.comments.deleteReaction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
 
@@ -278,9 +248,6 @@ await corsair.figma.api.comments.getReactions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `comment_id` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
@@ -292,9 +259,6 @@ await corsair.figma.api.comments.getReactions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reactions` | `object[]` | No | — |
 | `pagination` | `object` | No | — |
 
@@ -345,9 +309,6 @@ await corsair.figma.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `as_md` | `boolean` | No | — |
 
@@ -358,9 +319,6 @@ await corsair.figma.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comments` | `object[]` | No | — |
 
 
@@ -419,9 +377,6 @@ await corsair.figma.api.components.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 
 
@@ -431,9 +386,6 @@ await corsair.figma.api.components.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 
@@ -487,9 +439,6 @@ await corsair.figma.api.components.getComponentSet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 
 
@@ -499,9 +448,6 @@ await corsair.figma.api.components.getComponentSet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 
@@ -542,9 +488,6 @@ await corsair.figma.api.components.getComponentSetsForFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -554,9 +497,6 @@ await corsair.figma.api.components.getComponentSetsForFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 
 
@@ -594,9 +534,6 @@ await corsair.figma.api.components.getComponentSetsForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_id` | `string` | Yes | — |
 | `page_size` | `number` | No | — |
 | `after` | `number` | No | — |
@@ -609,9 +546,6 @@ await corsair.figma.api.components.getComponentSetsForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `cursor` | `string` | No | — |
 
@@ -650,9 +584,6 @@ await corsair.figma.api.components.getForFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -662,9 +593,6 @@ await corsair.figma.api.components.getForFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 
@@ -718,9 +646,6 @@ await corsair.figma.api.components.getForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_id` | `string` | Yes | — |
 | `page_size` | `number` | No | — |
 | `after` | `number` | No | — |
@@ -733,9 +658,6 @@ await corsair.figma.api.components.getForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `cursor` | `string` | No | — |
 
@@ -791,9 +713,6 @@ await corsair.figma.api.designTools.designTokensToTailwind({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tokens` | `object` | Yes | — |
 | `prefix` | `string` | No | — |
 | `config_format` | `string` | No | — |
@@ -816,9 +735,6 @@ await corsair.figma.api.designTools.designTokensToTailwind({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `config` | `string` | No | — |
 | `css` | `string` | No | — |
 
@@ -843,9 +759,6 @@ await corsair.figma.api.designTools.discoverResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `figma_url` | `string` | No | — |
 | `file_key` | `string` | No | — |
 | `team_id` | `string` | No | — |
@@ -859,9 +772,6 @@ await corsair.figma.api.designTools.discoverResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `files` | `any[]` | No | — |
 | `projects` | `any[]` | No | — |
 | `teams` | `any[]` | No | — |
@@ -887,9 +797,6 @@ await corsair.figma.api.designTools.downloadImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `images` | `object[]` | Yes | — |
 | `scale` | `number` | No | — |
@@ -915,9 +822,6 @@ await corsair.figma.api.designTools.downloadImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `images` | `object` | No | — |
 
 
@@ -951,9 +855,6 @@ await corsair.figma.api.designTools.extractDesignTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `include_variables` | `boolean` | No | — |
 | `include_local_styles` | `boolean` | No | — |
@@ -966,9 +867,6 @@ await corsair.figma.api.designTools.extractDesignTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tokens` | `object` | No | — |
 
 
@@ -1002,9 +900,6 @@ await corsair.figma.api.designTools.extractPrototypeInteractions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `analyze_components` | `boolean` | No | — |
 | `include_animations` | `boolean` | No | — |
@@ -1016,9 +911,6 @@ await corsair.figma.api.designTools.extractPrototypeInteractions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interactions` | `any[]` | No | — |
 | `flows` | `any[]` | No | — |
 
@@ -1045,9 +937,6 @@ await corsair.figma.api.devResources.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dev_resources` | `object[]` | Yes | — |
 
 
@@ -1071,9 +960,6 @@ await corsair.figma.api.devResources.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `links_created` | `object[]` | No | — |
 | `errors` | `object[]` | No | — |
 
@@ -1124,9 +1010,6 @@ await corsair.figma.api.devResources.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `dev_resource_id` | `string` | Yes | — |
 
@@ -1154,9 +1037,6 @@ await corsair.figma.api.devResources.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `node_ids` | `string` | No | — |
 
@@ -1167,9 +1047,6 @@ await corsair.figma.api.devResources.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dev_resources` | `object[]` | No | — |
 
 
@@ -1208,9 +1085,6 @@ await corsair.figma.api.devResources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dev_resources` | `object[]` | Yes | — |
 
 
@@ -1233,9 +1107,6 @@ await corsair.figma.api.devResources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `links_updated` | `object[]` | No | — |
 | `errors` | `object[]` | No | — |
 
@@ -1285,9 +1156,6 @@ await corsair.figma.api.files.getImageFills({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -1297,9 +1165,6 @@ await corsair.figma.api.files.getImageFills({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `error` | `boolean` | No | — |
 
@@ -1336,9 +1201,6 @@ await corsair.figma.api.files.getJSON({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `version` | `string` | No | — |
 | `ids` | `string` | No | — |
@@ -1356,9 +1218,6 @@ await corsair.figma.api.files.getJSON({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `role` | `string` | No | — |
 | `lastModified` | `string` | No | — |
@@ -1408,9 +1267,6 @@ await corsair.figma.api.files.getMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -1420,9 +1276,6 @@ await corsair.figma.api.files.getMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `role` | `string` | No | — |
 | `last_modified` | `string` | No | — |
@@ -1451,9 +1304,6 @@ await corsair.figma.api.files.getNodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `ids` | `string` | Yes | — |
 | `version` | `string` | No | — |
@@ -1468,9 +1318,6 @@ await corsair.figma.api.files.getNodes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `nodes` | `object` | No | — |
 
@@ -1505,9 +1352,6 @@ await corsair.figma.api.files.getProjectFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `branch_data` | `boolean` | No | — |
 
@@ -1518,9 +1362,6 @@ await corsair.figma.api.files.getProjectFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `files` | `object[]` | No | — |
 
@@ -1559,9 +1400,6 @@ await corsair.figma.api.files.getStyles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -1571,9 +1409,6 @@ await corsair.figma.api.files.getStyles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 
 
@@ -1615,9 +1450,6 @@ await corsair.figma.api.files.getVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `page_size` | `number` | No | — |
 | `before` | `number` | No | — |
@@ -1630,9 +1462,6 @@ await corsair.figma.api.files.getVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `versions` | `object[]` | No | — |
 | `pagination` | `object` | No | — |
 
@@ -1685,9 +1514,6 @@ await corsair.figma.api.files.renderImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `ids` | `string` | Yes | — |
 | `scale` | `number` | No | — |
@@ -1707,9 +1533,6 @@ await corsair.figma.api.files.renderImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `images` | `object` | No | — |
 | `err` | `string` | No | — |
 
@@ -1746,9 +1569,6 @@ await corsair.figma.api.libraryAnalytics.componentActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
@@ -1762,9 +1582,6 @@ await corsair.figma.api.libraryAnalytics.componentActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -1790,9 +1607,6 @@ await corsair.figma.api.libraryAnalytics.componentUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `group_by` | `string` | No | — |
 | `cursor` | `string` | No | — |
@@ -1804,9 +1618,6 @@ await corsair.figma.api.libraryAnalytics.componentUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -1832,9 +1643,6 @@ await corsair.figma.api.libraryAnalytics.styleActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
@@ -1848,9 +1656,6 @@ await corsair.figma.api.libraryAnalytics.styleActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -1876,9 +1681,6 @@ await corsair.figma.api.libraryAnalytics.styleUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `group_by` | `string` | No | — |
 | `cursor` | `string` | No | — |
@@ -1890,9 +1692,6 @@ await corsair.figma.api.libraryAnalytics.styleUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -1918,9 +1717,6 @@ await corsair.figma.api.libraryAnalytics.variableActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
@@ -1934,9 +1730,6 @@ await corsair.figma.api.libraryAnalytics.variableActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -1962,9 +1755,6 @@ await corsair.figma.api.libraryAnalytics.variableUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `group_by` | `string` | No | — |
 | `cursor` | `string` | No | — |
@@ -1976,9 +1766,6 @@ await corsair.figma.api.libraryAnalytics.variableUsages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | No | — |
 | `cursor` | `string` | No | — |
 | `next_page` | `boolean` | No | — |
@@ -2006,9 +1793,6 @@ await corsair.figma.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `plugin_id` | `string` | No | — |
 | `widget_id` | `string` | No | — |
@@ -2022,9 +1806,6 @@ await corsair.figma.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 
@@ -2062,9 +1843,6 @@ await corsair.figma.api.projects.getTeamProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_id` | `string` | Yes | — |
 
 
@@ -2074,9 +1852,6 @@ await corsair.figma.api.projects.getTeamProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `projects` | `object[]` | No | — |
 
@@ -2115,9 +1890,6 @@ await corsair.figma.api.styles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 
 
@@ -2127,9 +1899,6 @@ await corsair.figma.api.styles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 
 
@@ -2171,9 +1940,6 @@ await corsair.figma.api.styles.getForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_id` | `string` | Yes | — |
 | `page_size` | `number` | No | — |
 | `after` | `number` | No | — |
@@ -2186,9 +1952,6 @@ await corsair.figma.api.styles.getForTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 
 
@@ -2232,9 +1995,6 @@ await corsair.figma.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `handle` | `string` | No | — |
 | `img_url` | `string` | No | — |
@@ -2263,9 +2023,6 @@ await corsair.figma.api.variables.createModifyDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 | `variables` | `any[]` | No | — |
 | `variableModes` | `any[]` | No | — |
@@ -2279,9 +2036,6 @@ await corsair.figma.api.variables.createModifyDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
@@ -2319,9 +2073,6 @@ await corsair.figma.api.variables.getLocal({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -2331,9 +2082,6 @@ await corsair.figma.api.variables.getLocal({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
@@ -2373,9 +2121,6 @@ await corsair.figma.api.variables.getPublished({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_key` | `string` | Yes | — |
 
 
@@ -2385,9 +2130,6 @@ await corsair.figma.api.variables.getPublished({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `status` | `number` | No | — |
 | `error` | `boolean` | No | — |
@@ -2429,9 +2171,6 @@ await corsair.figma.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `string` | Yes | — |
 | `endpoint` | `string` | Yes | — |
 | `passcode` | `string` | Yes | — |
@@ -2448,9 +2187,6 @@ await corsair.figma.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `context` | `team \| project \| file` | No | — |
@@ -2483,9 +2219,6 @@ await corsair.figma.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -2495,9 +2228,6 @@ await corsair.figma.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `context` | `team \| project \| file` | No | — |
@@ -2530,9 +2260,6 @@ await corsair.figma.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -2542,9 +2269,6 @@ await corsair.figma.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `context` | `team \| project \| file` | No | — |
@@ -2577,9 +2301,6 @@ await corsair.figma.api.webhooks.getRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -2589,9 +2310,6 @@ await corsair.figma.api.webhooks.getRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | No | — |
 
 
@@ -2631,9 +2349,6 @@ await corsair.figma.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `context` | `string` | No | — |
 | `context_id` | `string` | No | — |
 
@@ -2644,9 +2359,6 @@ await corsair.figma.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | No | — |
 
 
@@ -2690,9 +2402,6 @@ await corsair.figma.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 | `event_type` | `string` | No | — |
 | `endpoint` | `string` | No | — |
@@ -2707,9 +2416,6 @@ await corsair.figma.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `context` | `team \| project \| file` | No | — |

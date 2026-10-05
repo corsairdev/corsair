@@ -31,9 +31,6 @@ await corsair.pushbullet.api.chats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.pushbullet.api.chats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `muted` | `boolean` | No | — |
@@ -89,9 +83,6 @@ await corsair.pushbullet.api.chats.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 
 
@@ -118,9 +109,6 @@ await corsair.pushbullet.api.chats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `active` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -132,9 +120,6 @@ await corsair.pushbullet.api.chats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chats` | `object[]` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -181,9 +166,6 @@ await corsair.pushbullet.api.chats.setMuted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `muted` | `boolean` | Yes | — |
 
@@ -194,9 +176,6 @@ await corsair.pushbullet.api.chats.setMuted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `muted` | `boolean` | No | — |
@@ -242,9 +221,6 @@ await corsair.pushbullet.api.devices.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 
 
@@ -271,9 +247,6 @@ await corsair.pushbullet.api.devices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `active` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -285,9 +258,6 @@ await corsair.pushbullet.api.devices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `devices` | `object[]` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -333,9 +303,6 @@ await corsair.pushbullet.api.devices.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nickname` | `string` | No | — |
 | `model` | `string` | No | — |
 | `manufacturer` | `string` | No | — |
@@ -351,9 +318,6 @@ await corsair.pushbullet.api.devices.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `nickname` | `string` | No | — |
@@ -387,9 +351,6 @@ await corsair.pushbullet.api.devices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `nickname` | `string` | No | — |
 | `model` | `string` | No | — |
@@ -406,9 +367,6 @@ await corsair.pushbullet.api.devices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `nickname` | `string` | No | — |
@@ -444,9 +402,6 @@ await corsair.pushbullet.api.files.uploadRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_name` | `string` | Yes | — |
 | `file_type` | `string` | Yes | — |
 
@@ -457,9 +412,6 @@ await corsair.pushbullet.api.files.uploadRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_name` | `string` | Yes | — |
 | `file_type` | `string` | Yes | — |
 | `upload_url` | `string` | Yes | — |
@@ -488,9 +440,6 @@ await corsair.pushbullet.api.pushes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `note \| link \| file` | Yes | — |
 | `title` | `string` | No | — |
 | `body` | `string` | No | — |
@@ -512,9 +461,6 @@ await corsair.pushbullet.api.pushes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `type` | `string` | No | — |
@@ -556,9 +502,6 @@ await corsair.pushbullet.api.pushes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 
 
@@ -605,9 +548,6 @@ await corsair.pushbullet.api.pushes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `modified_after` | `number` | No | — |
 | `active` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
@@ -620,9 +560,6 @@ await corsair.pushbullet.api.pushes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pushes` | `object[]` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -676,9 +613,6 @@ await corsair.pushbullet.api.pushes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `dismissed` | `boolean` | Yes | — |
 
@@ -689,9 +623,6 @@ await corsair.pushbullet.api.pushes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `active` | `boolean` | No | — |
 | `type` | `string` | No | — |
@@ -738,9 +669,6 @@ await corsair.pushbullet.api.users.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iden` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `email_normalized` | `string` | No | — |

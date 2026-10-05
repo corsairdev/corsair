@@ -31,9 +31,6 @@ await corsair.youtube.api.captions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | The YouTube video ID to list captions for |
 | `part` | `string` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.youtube.api.captions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -101,9 +95,6 @@ await corsair.youtube.api.captions.load({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The caption track ID to download |
 | `tfmt` | `string` | No | Caption format (srt, vtt, etc.) |
 
@@ -114,9 +105,6 @@ await corsair.youtube.api.captions.load({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `captions_text` | `string` | No | — |
 
 
@@ -140,9 +128,6 @@ await corsair.youtube.api.captions.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The caption track ID to update |
 | `snippet` | `object` | Yes | Updated caption snippet |
 
@@ -164,9 +149,6 @@ await corsair.youtube.api.captions.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -217,9 +199,6 @@ await corsair.youtube.api.channels.getActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channelId` | `string` | Yes | The channel ID to get activities for |
 | `part` | `string` | No | — |
 | `pageToken` | `string` | No | — |
@@ -234,9 +213,6 @@ await corsair.youtube.api.channels.getActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -324,9 +300,6 @@ await corsair.youtube.api.channels.getIdByHandle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_handle` | `string` | Yes | YouTube channel handle (e.g. @channelname) |
 
 
@@ -336,9 +309,6 @@ await corsair.youtube.api.channels.getIdByHandle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -508,9 +478,6 @@ await corsair.youtube.api.channels.getStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | Channel ID(s), comma-separated |
 | `mine` | `boolean` | No | Get statistics for the authenticated user's channel |
 | `part` | `string` | No | — |
@@ -524,9 +491,6 @@ await corsair.youtube.api.channels.getStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -696,9 +660,6 @@ await corsair.youtube.api.channels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The channel ID to update |
 | `part` | `string` | No | — |
 | `brandingSettings` | `object` | No | — |
@@ -736,9 +697,6 @@ await corsair.youtube.api.channels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -839,9 +797,6 @@ await corsair.youtube.api.channelSections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snippet` | `object` | Yes | Section snippet |
 | `contentDetails` | `object` | No | — |
 
@@ -875,9 +830,6 @@ await corsair.youtube.api.channelSections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -929,9 +881,6 @@ await corsair.youtube.api.channelSections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the channel section to delete |
 | `onBehalfOfContentOwner` | `string` | No | — |
 
@@ -942,9 +891,6 @@ await corsair.youtube.api.channelSections.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 | `channel_section_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -971,9 +917,6 @@ await corsair.youtube.api.channelSections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `part` | `string` | Yes | Comma-separated list of parts (snippet,contentDetails) |
 | `hl` | `string` | No | — |
 | `id` | `string` | No | Section ID(s), comma-separated |
@@ -988,9 +931,6 @@ await corsair.youtube.api.channelSections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1041,9 +981,6 @@ await corsair.youtube.api.channelSections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the channel section to update |
 | `snippet` | `object` | No | — |
 | `contentDetails` | `object` | No | — |
@@ -1078,9 +1015,6 @@ await corsair.youtube.api.channelSections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -1134,9 +1068,6 @@ await corsair.youtube.api.comments.createReply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `parentId` | `string` | Yes | The ID of the parent comment thread to reply to |
 | `textOriginal` | `string` | Yes | The reply text |
 
@@ -1147,9 +1078,6 @@ await corsair.youtube.api.comments.createReply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -1201,9 +1129,6 @@ await corsair.youtube.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the comment to delete |
 
 
@@ -1213,9 +1138,6 @@ await corsair.youtube.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 | `comment_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -1242,9 +1164,6 @@ await corsair.youtube.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | Comment ID(s), comma-separated |
 | `part` | `string` | No | — |
 | `parentId` | `string` | No | Parent comment thread ID to list replies for |
@@ -1259,9 +1178,6 @@ await corsair.youtube.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1329,9 +1245,6 @@ await corsair.youtube.api.comments.markSpam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the comment to mark as spam |
 
 
@@ -1341,9 +1254,6 @@ await corsair.youtube.api.comments.markSpam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `comment_ids` | `string[]` | No | — |
 | `http_status` | `number` | No | — |
@@ -1369,9 +1279,6 @@ await corsair.youtube.api.comments.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoId` | `string` | Yes | The ID of the video to comment on |
 | `channelId` | `string` | Yes | The channel ID that owns the video |
 | `textOriginal` | `string` | Yes | The comment text |
@@ -1383,9 +1290,6 @@ await corsair.youtube.api.comments.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -1448,9 +1352,6 @@ await corsair.youtube.api.comments.setModerationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the comment to moderate |
 | `moderationStatus` | `heldForReview \| published \| rejected` | Yes | The moderation status to set |
 | `banAuthor` | `boolean` | No | Ban the author from the channel |
@@ -1462,9 +1363,6 @@ await corsair.youtube.api.comments.setModerationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -1489,9 +1387,6 @@ await corsair.youtube.api.comments.threadsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `part` | `string` | No | — |
 | `order` | `time \| relevance` | No | — |
@@ -1509,9 +1404,6 @@ await corsair.youtube.api.comments.threadsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1614,9 +1506,6 @@ await corsair.youtube.api.comments.threadsList2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `part` | `string` | Yes | Comma-separated list of parts |
 | `order` | `time \| relevance` | No | — |
@@ -1636,9 +1525,6 @@ await corsair.youtube.api.comments.threadsList2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1741,9 +1627,6 @@ await corsair.youtube.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the comment to update |
 | `textOriginal` | `string` | Yes | The updated comment text |
 
@@ -1754,9 +1637,6 @@ await corsair.youtube.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -1810,9 +1690,6 @@ await corsair.youtube.api.i18n.listLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hl` | `string` | No | Language to use for the response |
 | `part` | `string` | No | — |
 
@@ -1823,9 +1700,6 @@ await corsair.youtube.api.i18n.listLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1868,9 +1742,6 @@ await corsair.youtube.api.i18n.listRegions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hl` | `string` | No | — |
 | `part` | `string` | No | — |
 
@@ -1881,9 +1752,6 @@ await corsair.youtube.api.i18n.listRegions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -1928,9 +1796,6 @@ await corsair.youtube.api.liveChat.listMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `liveChatId` | `string` | Yes | The ID of the live chat to list messages for |
 | `hl` | `string` | No | — |
 | `part` | `string` | No | — |
@@ -1945,9 +1810,6 @@ await corsair.youtube.api.liveChat.listMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -2021,9 +1883,6 @@ await corsair.youtube.api.liveChat.listSuperChatEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hl` | `string` | No | — |
 | `part` | `string` | No | — |
 | `pageToken` | `string` | No | — |
@@ -2036,9 +1895,6 @@ await corsair.youtube.api.liveChat.listSuperChatEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -2096,9 +1952,6 @@ await corsair.youtube.api.playlistImages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `part` | `string` | No | — |
 | `parent` | `string` | No | The parent playlist ID |
@@ -2114,9 +1967,6 @@ await corsair.youtube.api.playlistImages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
 | `pageInfo` | `object` | No | — |
@@ -2174,9 +2024,6 @@ await corsair.youtube.api.playlistItems.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoId` | `string` | Yes | The YouTube video ID to add to the playlist |
 | `playlistId` | `string` | Yes | The ID of the playlist to add the video to |
 | `position` | `number` | No | Zero-based position to insert the video |
@@ -2188,9 +2035,6 @@ await corsair.youtube.api.playlistItems.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -2293,9 +2137,6 @@ await corsair.youtube.api.playlistItems.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the playlist item to delete |
 
 
@@ -2305,9 +2146,6 @@ await corsair.youtube.api.playlistItems.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 | `playlist_item_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -2334,9 +2172,6 @@ await corsair.youtube.api.playlistItems.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `playlistId` | `string` | Yes | The ID of the playlist to list items for |
 | `part` | `string` | No | — |
 | `fields` | `string` | No | — |
@@ -2352,9 +2187,6 @@ await corsair.youtube.api.playlistItems.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -2462,9 +2294,6 @@ await corsair.youtube.api.playlistItems.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the playlist item to update |
 | `snippet` | `object` | Yes | Updated snippet |
 | `part` | `string` | No | — |
@@ -2507,9 +2336,6 @@ await corsair.youtube.api.playlistItems.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -2614,9 +2440,6 @@ await corsair.youtube.api.playlists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | Playlist title (max 150 characters) |
 | `description` | `string` | No | Playlist description |
 | `privacyStatus` | `public \| private \| unlisted` | No | Privacy status of the playlist |
@@ -2628,9 +2451,6 @@ await corsair.youtube.api.playlists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -2723,9 +2543,6 @@ await corsair.youtube.api.playlists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the playlist to delete |
 | `confirmDelete` | `boolean` | Yes | Confirm that you want to delete the playlist |
 | `onBehalfOfContentOwner` | `string` | No | — |
@@ -2737,9 +2554,6 @@ await corsair.youtube.api.playlists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 | `playlist_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -2766,9 +2580,6 @@ await corsair.youtube.api.playlists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `part` | `string` | No | Comma-separated list of resource parts (snippet,status,contentDetails) |
 | `pageToken` | `string` | No | Token for the next page of results |
 | `maxResults` | `number` | No | Maximum number of results to return (1-50) |
@@ -2780,9 +2591,6 @@ await corsair.youtube.api.playlists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -2878,9 +2686,6 @@ await corsair.youtube.api.playlists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of the playlist to update |
 | `snippet` | `object` | Yes | Updated snippet fields |
 | `part` | `string` | No | Comma-separated list of parts to update |
@@ -2915,9 +2720,6 @@ await corsair.youtube.api.playlists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -3012,9 +2814,6 @@ await corsair.youtube.api.search.youtube({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Search query |
 | `part` | `string` | No | — |
 | `type` | `string` | No | Resource type to search (video, channel, playlist) |
@@ -3028,9 +2827,6 @@ await corsair.youtube.api.search.youtube({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3125,9 +2921,6 @@ await corsair.youtube.api.subscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `part` | `string` | No | — |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
@@ -3139,9 +2932,6 @@ await corsair.youtube.api.subscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3270,9 +3060,6 @@ await corsair.youtube.api.subscriptions.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channelId` | `string` | Yes | The ID of the channel to subscribe to |
 
 
@@ -3282,9 +3069,6 @@ await corsair.youtube.api.subscriptions.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -3382,9 +3166,6 @@ await corsair.youtube.api.subscriptions.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subscriptionId` | `string` | Yes | The ID of the subscription to remove |
 
 
@@ -3394,9 +3175,6 @@ await corsair.youtube.api.subscriptions.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `unsubscribed` | `boolean` | No | — |
 | `subscription_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -3425,9 +3203,6 @@ await corsair.youtube.api.videoActions.getRating({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The YouTube video ID to get the rating for |
 | `onBehalfOfContentOwner` | `string` | No | — |
 
@@ -3438,9 +3213,6 @@ await corsair.youtube.api.videoActions.getRating({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3478,9 +3250,6 @@ await corsair.youtube.api.videoActions.listAbuseReasons({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hl` | `string` | No | Language for the response |
 | `part` | `string` | No | — |
 
@@ -3491,9 +3260,6 @@ await corsair.youtube.api.videoActions.listAbuseReasons({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3537,9 +3303,6 @@ await corsair.youtube.api.videoActions.rate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The YouTube video ID to rate |
 | `rating` | `like \| dislike \| none` | Yes | The rating to apply |
 
@@ -3550,9 +3313,6 @@ await corsair.youtube.api.videoActions.rate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rating` | `string` | No | — |
 | `success` | `boolean` | No | — |
 | `video_id` | `string` | No | — |
@@ -3579,9 +3339,6 @@ await corsair.youtube.api.videoActions.reportAbuse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoId` | `string` | Yes | The YouTube video ID to report |
 | `reasonId` | `string` | Yes | The ID of the abuse reason |
 | `comments` | `string` | No | Additional comments about the abuse |
@@ -3595,9 +3352,6 @@ await corsair.youtube.api.videoActions.reportAbuse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -3623,9 +3377,6 @@ await corsair.youtube.api.videoActions.updateThumbnail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoId` | `string` | Yes | The ID of the video to update the thumbnail for |
 | `thumbnailUrl` | `string` | Yes | URL of the new thumbnail image |
 
@@ -3636,9 +3387,6 @@ await corsair.youtube.api.videoActions.updateThumbnail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3681,9 +3429,6 @@ await corsair.youtube.api.videoCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hl` | `string` | No | — |
 | `id` | `string` | No | Category ID(s), comma-separated |
 | `part` | `string` | No | — |
@@ -3696,9 +3441,6 @@ await corsair.youtube.api.videoCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3757,9 +3499,6 @@ await corsair.youtube.api.videos.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `videoId` | `string` | Yes | The ID of the video to delete |
 | `confirmDelete` | `boolean` | Yes | Confirm that you want to delete the video |
 | `onBehalfOfContentOwner` | `string` | No | — |
@@ -3771,9 +3510,6 @@ await corsair.youtube.api.videos.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 | `video_id` | `string` | No | — |
 | `http_status` | `number` | No | — |
@@ -3800,9 +3536,6 @@ await corsair.youtube.api.videos.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | The YouTube video ID |
 | `part` | `string` | No | Comma-separated list of resource parts |
 
@@ -3813,9 +3546,6 @@ await corsair.youtube.api.videos.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -3927,9 +3657,6 @@ await corsair.youtube.api.videos.getBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string[]` | Yes | Array of YouTube video IDs to retrieve (max 50) |
 | `hl` | `string` | No | Language for localized metadata |
 | `parts` | `string[]` | No | Resource parts to include |
@@ -3941,9 +3668,6 @@ await corsair.youtube.api.videos.getBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -4061,9 +3785,6 @@ await corsair.youtube.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mine` | `boolean` | No | List videos for the authenticated user |
 | `channelId` | `string` | No | Filter by channel ID |
 | `part` | `string` | No | — |
@@ -4077,9 +3798,6 @@ await corsair.youtube.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -4192,9 +3910,6 @@ await corsair.youtube.api.videos.listMostPopular({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `part` | `string` | No | — |
 | `chart` | `string` | No | Chart to use (mostPopular) |
 | `pageToken` | `string` | No | — |
@@ -4209,9 +3924,6 @@ await corsair.youtube.api.videos.listMostPopular({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `items` | `object[]` | No | — |
@@ -4324,9 +4036,6 @@ await corsair.youtube.api.videos.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | The ID of the video to update |
 | `title` | `string` | No | Updated video title |
 | `description` | `string` | No | Updated video description |
@@ -4341,9 +4050,6 @@ await corsair.youtube.api.videos.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `kind` | `string` | No | — |
@@ -4438,9 +4144,6 @@ await corsair.youtube.api.videos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | Video title |
 | `categoryId` | `string` | Yes | Video category ID |
 | `description` | `string` | Yes | Video description |
@@ -4471,9 +4174,6 @@ await corsair.youtube.api.videos.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response_data` | `any` | No | — |
 
 
@@ -4497,9 +4197,6 @@ await corsair.youtube.api.videos.uploadMultipart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | Video title |
 | `videoFile` | `object` | Yes | Video file reference |
 | `categoryId` | `string` | Yes | Video category ID |
@@ -4530,9 +4227,6 @@ await corsair.youtube.api.videos.uploadMultipart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video` | `object` | No | — |
 
 

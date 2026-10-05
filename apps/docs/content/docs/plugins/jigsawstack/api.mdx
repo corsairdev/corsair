@@ -31,9 +31,6 @@ await corsair.jigsawstack.api.ai.imageGeneration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt` | `string` | Yes | — |
 | `aspect_ratio` | `string` | No | — |
 | `width` | `number` | No | — |
@@ -106,9 +103,6 @@ await corsair.jigsawstack.api.ai.prediction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `object[]` | Yes | — |
 | `steps` | `number` | No | — |
 
@@ -131,9 +125,6 @@ await corsair.jigsawstack.api.ai.prediction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -184,9 +175,6 @@ await corsair.jigsawstack.api.ai.sentiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 
 
@@ -196,9 +184,6 @@ await corsair.jigsawstack.api.ai.sentiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -256,9 +241,6 @@ await corsair.jigsawstack.api.ai.summary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
@@ -273,9 +255,6 @@ await corsair.jigsawstack.api.ai.summary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -316,9 +295,6 @@ await corsair.jigsawstack.api.ai.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string \| string[]` | Yes | — |
 | `target_language` | `string` | Yes | — |
 | `current_language` | `string` | No | — |
@@ -330,9 +306,6 @@ await corsair.jigsawstack.api.ai.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -375,9 +348,6 @@ await corsair.jigsawstack.api.audio.createVoiceClone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
@@ -389,9 +359,6 @@ await corsair.jigsawstack.api.audio.createVoiceClone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -432,9 +399,6 @@ await corsair.jigsawstack.api.audio.speechToText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
 | `language` | `string` | No | — |
@@ -452,9 +416,6 @@ await corsair.jigsawstack.api.audio.speechToText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -499,9 +460,6 @@ await corsair.jigsawstack.api.audio.textToSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `accent` | `string` | No | — |
 | `voice_clone_id` | `string` | No | — |
@@ -515,9 +473,6 @@ await corsair.jigsawstack.api.audio.textToSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `content_type` | `string` | Yes | — |
 | `base64` | `string` | Yes | — |
@@ -545,9 +500,6 @@ await corsair.jigsawstack.api.classification.classify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset` | `object[]` | Yes | — |
 | `labels` | `object[]` | Yes | — |
 | `multiple_labels` | `boolean` | No | — |
@@ -582,9 +534,6 @@ await corsair.jigsawstack.api.classification.classify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -627,9 +576,6 @@ await corsair.jigsawstack.api.embedding.createV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
@@ -647,9 +593,6 @@ await corsair.jigsawstack.api.embedding.createV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -694,9 +637,6 @@ await corsair.jigsawstack.api.promptEngine.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `return_prompt` | `any` | No | — |
@@ -725,9 +665,6 @@ await corsair.jigsawstack.api.promptEngine.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -768,9 +705,6 @@ await corsair.jigsawstack.api.promptEngine.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -781,9 +715,6 @@ await corsair.jigsawstack.api.promptEngine.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -827,9 +758,6 @@ await corsair.jigsawstack.api.promptEngine.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `input_values` | `object` | No | — |
 | `stream` | `boolean` | No | — |
@@ -851,9 +779,6 @@ await corsair.jigsawstack.api.promptEngine.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -897,9 +822,6 @@ await corsair.jigsawstack.api.validate.nsfw({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
 
@@ -910,9 +832,6 @@ await corsair.jigsawstack.api.validate.nsfw({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -958,9 +877,6 @@ await corsair.jigsawstack.api.validate.profanity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `censor_replacement` | `string` | No | — |
 
@@ -971,9 +887,6 @@ await corsair.jigsawstack.api.validate.profanity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1028,9 +941,6 @@ await corsair.jigsawstack.api.validate.spamCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string \| string[]` | Yes | — |
 
 
@@ -1040,9 +950,6 @@ await corsair.jigsawstack.api.validate.spamCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1096,9 +1003,6 @@ await corsair.jigsawstack.api.validate.spellCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `language_code` | `string` | No | — |
 
@@ -1109,9 +1013,6 @@ await corsair.jigsawstack.api.validate.spellCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1169,9 +1070,6 @@ await corsair.jigsawstack.api.vision.detectObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
 | `prompts` | `string[]` | No | — |
@@ -1189,9 +1087,6 @@ await corsair.jigsawstack.api.vision.detectObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1235,9 +1130,6 @@ await corsair.jigsawstack.api.vision.vocr({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
 | `prompt` | `object` | No | — |
@@ -1262,9 +1154,6 @@ string | string[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1313,9 +1202,6 @@ await corsair.jigsawstack.api.web.htmlToAny({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `html` | `string` | No | — |
 | `url` | `string` | No | — |
 | `type` | `pdf \| png \| jpeg \| webp` | No | — |
@@ -1376,9 +1262,6 @@ await corsair.jigsawstack.api.web.scrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `html` | `string` | No | — |
 | `element_prompts` | `object` | No | — |
@@ -1405,9 +1288,6 @@ string[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1462,9 +1342,6 @@ await corsair.jigsawstack.api.web.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `spell_check` | `boolean` | No | — |
 | `max_results` | `number` | No | — |
@@ -1481,9 +1358,6 @@ await corsair.jigsawstack.api.web.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
@@ -1531,9 +1405,6 @@ await corsair.jigsawstack.api.web.searchSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 
 
@@ -1543,9 +1414,6 @@ await corsair.jigsawstack.api.web.searchSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |

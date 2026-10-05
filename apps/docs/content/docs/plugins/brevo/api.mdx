@@ -34,9 +34,6 @@ await corsair.brevo.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -109,9 +106,6 @@ await corsair.brevo.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 | `ext_id` | `string` | No | — |
 | `attributes` | `object` | No | — |
@@ -138,9 +132,6 @@ await corsair.brevo.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -164,9 +155,6 @@ await corsair.brevo.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string \| number` | Yes | — |
 
 
@@ -176,9 +164,6 @@ await corsair.brevo.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -202,9 +187,6 @@ await corsair.brevo.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string \| number` | Yes | — |
 
 
@@ -214,9 +196,6 @@ await corsair.brevo.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | No | — |
 | `emailBlacklisted` | `boolean` | No | — |
@@ -258,9 +237,6 @@ await corsair.brevo.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `modifiedSince` | `string` | No | — |
@@ -275,9 +251,6 @@ await corsair.brevo.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contacts` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 
@@ -322,9 +295,6 @@ await corsair.brevo.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string \| number` | Yes | — |
 | `attributes` | `object` | No | — |
 | `emailBlacklisted` | `boolean` | No | — |
@@ -350,9 +320,6 @@ await corsair.brevo.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -378,9 +345,6 @@ await corsair.brevo.api.emailCampaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `subject` | `string` | Yes | — |
 | `sender` | `object` | Yes | — |
@@ -435,9 +399,6 @@ await corsair.brevo.api.emailCampaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -461,9 +422,6 @@ await corsair.brevo.api.emailCampaigns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `number` | Yes | — |
 
 
@@ -473,9 +431,6 @@ await corsair.brevo.api.emailCampaigns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -499,9 +454,6 @@ await corsair.brevo.api.emailCampaigns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `number` | Yes | — |
 
 
@@ -511,9 +463,6 @@ await corsair.brevo.api.emailCampaigns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `subject` | `string` | No | — |
@@ -584,9 +533,6 @@ await corsair.brevo.api.emailCampaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `classic \| trigger` | No | — |
 | `status` | `suspended \| archive \| sent \| queued \| draft \| in_process` | No | — |
 | `limit` | `number` | No | — |
@@ -600,9 +546,6 @@ await corsair.brevo.api.emailCampaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaigns` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
 
@@ -650,9 +593,6 @@ await corsair.brevo.api.emailCampaigns.sendNow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `number` | Yes | — |
 
 
@@ -662,9 +602,6 @@ await corsair.brevo.api.emailCampaigns.sendNow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -688,9 +625,6 @@ await corsair.brevo.api.emailCampaigns.sendTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `number` | Yes | — |
 | `emailTo` | `string[]` | Yes | — |
 
@@ -701,9 +635,6 @@ await corsair.brevo.api.emailCampaigns.sendTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -727,9 +658,6 @@ await corsair.brevo.api.emailCampaigns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `subject` | `string` | No | — |
@@ -785,9 +713,6 @@ await corsair.brevo.api.emailCampaigns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 

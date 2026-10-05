@@ -34,9 +34,6 @@ await corsair.replicate.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `type` | `user \| organization` | Yes | — |
@@ -66,9 +63,6 @@ await corsair.replicate.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionSlug` | `string` | Yes | — |
 
 
@@ -78,9 +72,6 @@ await corsair.replicate.api.collections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
@@ -131,9 +122,6 @@ await corsair.replicate.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 
 
@@ -143,9 +131,6 @@ await corsair.replicate.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -186,9 +171,6 @@ await corsair.replicate.api.deployments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
@@ -203,9 +185,6 @@ await corsair.replicate.api.deployments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `current_release` | `object` | No | — |
@@ -250,9 +229,6 @@ await corsair.replicate.api.deployments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -263,9 +239,6 @@ await corsair.replicate.api.deployments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -289,9 +262,6 @@ await corsair.replicate.api.deployments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -302,9 +272,6 @@ await corsair.replicate.api.deployments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `current_release` | `object` | No | — |
@@ -349,9 +316,6 @@ await corsair.replicate.api.deployments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 
 
@@ -361,9 +325,6 @@ await corsair.replicate.api.deployments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -412,9 +373,6 @@ await corsair.replicate.api.deployments.predictionsCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `input` | `object` | Yes | — |
@@ -441,9 +399,6 @@ await corsair.replicate.api.deployments.predictionsCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -515,9 +470,6 @@ await corsair.replicate.api.files.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `any` | Yes | — |
 | `filename` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -540,9 +492,6 @@ await corsair.replicate.api.files.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `content_type` | `string` | Yes | — |
 | `size` | `number` | Yes | — |
@@ -601,9 +550,6 @@ await corsair.replicate.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileId` | `string` | Yes | — |
 
 
@@ -613,9 +559,6 @@ await corsair.replicate.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -639,9 +582,6 @@ await corsair.replicate.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileId` | `string` | Yes | — |
 
 
@@ -651,9 +591,6 @@ await corsair.replicate.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `content_type` | `string` | Yes | — |
 | `size` | `number` | Yes | — |
@@ -712,9 +649,6 @@ await corsair.replicate.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 
 
@@ -724,9 +658,6 @@ await corsair.replicate.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -811,9 +742,6 @@ await corsair.replicate.api.models.examplesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
@@ -825,9 +753,6 @@ await corsair.replicate.api.models.examplesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -887,9 +812,6 @@ await corsair.replicate.api.models.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -900,9 +822,6 @@ await corsair.replicate.api.models.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -938,9 +857,6 @@ await corsair.replicate.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `sort_by` | `model_created_at \| latest_version_created_at` | No | — |
 | `sort_direction` | `asc \| desc` | No | — |
@@ -952,9 +868,6 @@ await corsair.replicate.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1003,9 +916,6 @@ await corsair.replicate.api.models.predictionsCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `input` | `object` | Yes | — |
@@ -1032,9 +942,6 @@ await corsair.replicate.api.models.predictionsCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1104,9 +1011,6 @@ await corsair.replicate.api.models.readmeGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -1134,9 +1038,6 @@ await corsair.replicate.api.models.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1153,9 +1054,6 @@ await corsair.replicate.api.models.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1191,9 +1089,6 @@ await corsair.replicate.api.models.versionsGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
@@ -1205,9 +1100,6 @@ await corsair.replicate.api.models.versionsGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `created_at` | `string \| string` | Yes | — |
 | `cog_version` | `string` | No | — |
@@ -1234,9 +1126,6 @@ await corsair.replicate.api.models.versionsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
@@ -1248,9 +1137,6 @@ await corsair.replicate.api.models.versionsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1292,9 +1178,6 @@ await corsair.replicate.api.predictions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `predictionId` | `string` | Yes | — |
 
 
@@ -1304,9 +1187,6 @@ await corsair.replicate.api.predictions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1376,9 +1256,6 @@ await corsair.replicate.api.predictions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `input` | `object` | Yes | — |
 | `stream` | `boolean` | No | — |
 | `webhook` | `string` | No | — |
@@ -1404,9 +1281,6 @@ await corsair.replicate.api.predictions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1476,9 +1350,6 @@ await corsair.replicate.api.predictions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `predictionId` | `string` | Yes | — |
 
 
@@ -1488,9 +1359,6 @@ await corsair.replicate.api.predictions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1560,9 +1428,6 @@ await corsair.replicate.api.predictions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `created_after` | `string` | No | — |
 | `created_before` | `string` | No | — |
@@ -1575,9 +1440,6 @@ await corsair.replicate.api.predictions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1639,9 +1501,6 @@ await corsair.replicate.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 
@@ -1652,9 +1511,6 @@ await corsair.replicate.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `models` | `object[]` | Yes | — |
 | `collections` | `object[]` | Yes | — |
@@ -1729,9 +1585,6 @@ await corsair.replicate.api.trainings.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trainingId` | `string` | Yes | — |
 
 
@@ -1741,9 +1594,6 @@ await corsair.replicate.api.trainings.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1820,9 +1670,6 @@ await corsair.replicate.api.trainings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
@@ -1848,9 +1695,6 @@ await corsair.replicate.api.trainings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -1927,9 +1771,6 @@ await corsair.replicate.api.trainings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trainingId` | `string` | Yes | — |
 
 
@@ -1939,9 +1780,6 @@ await corsair.replicate.api.trainings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
 | `model` | `string` | No | — |
@@ -2018,9 +1856,6 @@ await corsair.replicate.api.trainings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 
 
@@ -2030,9 +1865,6 @@ await corsair.replicate.api.trainings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -2097,9 +1929,6 @@ await corsair.replicate.api.webhooks.defaultSecretGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 
 

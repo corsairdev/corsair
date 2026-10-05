@@ -31,9 +31,6 @@ await corsair.browseai.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `inputParameters` | `object` | Yes | — |
@@ -70,9 +67,6 @@ await corsair.browseai.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `monitor` | `object` | No | — |
@@ -125,9 +119,6 @@ await corsair.browseai.api.monitors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `monitorId` | `string` | Yes | — |
 
@@ -138,9 +129,6 @@ await corsair.browseai.api.monitors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 
@@ -167,9 +155,6 @@ await corsair.browseai.api.robots.bulkRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `inputParameters` | `object[]` | Yes | — |
@@ -191,9 +176,6 @@ await corsair.browseai.api.robots.bulkRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `result` | `object` | No | — |
@@ -242,9 +224,6 @@ await corsair.browseai.api.robots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `robots` | `object` | No | — |
@@ -302,9 +281,6 @@ await corsair.browseai.api.robots.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `recordVideo` | `boolean` | No | — |
 | `inputParameters` | `object` | No | — |
@@ -326,9 +302,6 @@ await corsair.browseai.api.robots.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `result` | `object` | No | — |
@@ -395,9 +368,6 @@ await corsair.browseai.api.system.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `tasksQueueStatus` | `string` | No | — |
@@ -425,9 +395,6 @@ await corsair.browseai.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 
@@ -438,9 +405,6 @@ await corsair.browseai.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `result` | `object` | No | — |
@@ -502,9 +466,6 @@ await corsair.browseai.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
@@ -522,9 +483,6 @@ await corsair.browseai.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `result` | `object` | No | — |
@@ -595,9 +553,6 @@ await corsair.browseai.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 | `hookUrl` | `string` | Yes | — |
 | `eventType` | `taskCapturedDataChanged \| taskFinished \| taskFinishedSuccessfully \| taskFinishedWithError \| tableExportFinishedSuccessfully` | Yes | — |
@@ -609,9 +564,6 @@ await corsair.browseai.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `webhook` | `object` | No | — |
@@ -651,9 +603,6 @@ await corsair.browseai.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `robotId` | `string` | Yes | — |
 
 
@@ -663,9 +612,6 @@ await corsair.browseai.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusCode` | `number` | No | — |
 | `messageCode` | `string` | No | — |
 | `webhooks` | `object` | No | — |

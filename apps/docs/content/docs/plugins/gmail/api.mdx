@@ -31,9 +31,6 @@ await corsair.gmail.api.drafts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `draft` | `object` | No | Draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text. |
 
@@ -58,9 +55,6 @@ await corsair.gmail.api.drafts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `message` | `object` | No | — |
 
@@ -118,9 +112,6 @@ await corsair.gmail.api.drafts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -148,9 +139,6 @@ await corsair.gmail.api.drafts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `format` | `minimal \| full \| raw \| metadata` | No | — |
@@ -162,9 +150,6 @@ await corsair.gmail.api.drafts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `message` | `object` | No | — |
 
@@ -222,9 +207,6 @@ await corsair.gmail.api.drafts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 | `pageToken` | `string` | No | — |
@@ -237,9 +219,6 @@ await corsair.gmail.api.drafts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `drafts` | `object[]` | No | — |
 | `nextPageToken` | `string` | No | — |
 | `resultSizeEstimate` | `number` | No | — |
@@ -301,9 +280,6 @@ await corsair.gmail.api.drafts.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | No | — |
 | `message` | `object` | No | Optional message body when sending without a draft id. raw must be base64url-encoded RFC 2822, not plain text. |
@@ -327,9 +303,6 @@ await corsair.gmail.api.drafts.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -384,9 +357,6 @@ await corsair.gmail.api.drafts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `draft` | `object` | No | Updated draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text. |
@@ -412,9 +382,6 @@ await corsair.gmail.api.drafts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `message` | `object` | No | — |
 
@@ -474,9 +441,6 @@ await corsair.gmail.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `label` | `object` | Yes | — |
 
@@ -504,9 +468,6 @@ await corsair.gmail.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `messageListVisibility` | `show \| hide` | No | — |
@@ -551,9 +512,6 @@ await corsair.gmail.api.labels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -581,9 +539,6 @@ await corsair.gmail.api.labels.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -594,9 +549,6 @@ await corsair.gmail.api.labels.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `messageListVisibility` | `show \| hide` | No | — |
@@ -641,9 +593,6 @@ await corsair.gmail.api.labels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 
 
@@ -653,9 +602,6 @@ await corsair.gmail.api.labels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `labels` | `object[]` | No | — |
 
 
@@ -702,9 +648,6 @@ await corsair.gmail.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `label` | `object` | Yes | — |
@@ -733,9 +676,6 @@ await corsair.gmail.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `messageListVisibility` | `show \| hide` | No | — |
@@ -782,9 +722,6 @@ await corsair.gmail.api.messages.batchModify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `ids` | `string[]` | No | — |
 | `addLabelIds` | `string[]` | No | — |
@@ -814,9 +751,6 @@ await corsair.gmail.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -844,9 +778,6 @@ await corsair.gmail.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `format` | `minimal \| full \| raw \| metadata` | No | — |
@@ -859,9 +790,6 @@ await corsair.gmail.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -916,9 +844,6 @@ await corsair.gmail.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `q` | `string` | No | — |
 | `maxResults` | `number` | No | — |
@@ -933,9 +858,6 @@ await corsair.gmail.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | No | — |
 | `nextPageToken` | `string` | No | — |
 | `resultSizeEstimate` | `number` | No | — |
@@ -994,9 +916,6 @@ await corsair.gmail.api.messages.modify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `addLabelIds` | `string[]` | No | — |
@@ -1009,9 +928,6 @@ await corsair.gmail.api.messages.modify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -1066,9 +982,6 @@ await corsair.gmail.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `raw` | `string` | Yes | Base64url-encoded RFC 2822 email — do NOT pass plain email text. Build the MIME message (From, To, Subject, Content-Type headers, blank line, body; lines separated by \\r\\n), then base64url-encode: standard base64, replace + with -, / with _, remove trailing =. |
 | `threadId` | `string` | No | — |
@@ -1080,9 +993,6 @@ await corsair.gmail.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -1137,9 +1047,6 @@ await corsair.gmail.api.messages.trash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1150,9 +1057,6 @@ await corsair.gmail.api.messages.trash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -1207,9 +1111,6 @@ await corsair.gmail.api.messages.untrash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1220,9 +1121,6 @@ await corsair.gmail.api.messages.untrash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `threadId` | `string` | No | — |
 | `labelIds` | `string[]` | No | — |
@@ -1279,9 +1177,6 @@ await corsair.gmail.api.threads.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1309,9 +1204,6 @@ await corsair.gmail.api.threads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `format` | `minimal \| full \| metadata` | No | — |
@@ -1324,9 +1216,6 @@ await corsair.gmail.api.threads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
@@ -1386,9 +1275,6 @@ await corsair.gmail.api.threads.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `q` | `string` | No | — |
 | `maxResults` | `number` | No | — |
@@ -1403,9 +1289,6 @@ await corsair.gmail.api.threads.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threads` | `object[]` | No | — |
 | `nextPageToken` | `string` | No | — |
 | `resultSizeEstimate` | `number` | No | — |
@@ -1469,9 +1352,6 @@ await corsair.gmail.api.threads.modify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `addLabelIds` | `string[]` | No | — |
@@ -1484,9 +1364,6 @@ await corsair.gmail.api.threads.modify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
@@ -1546,9 +1423,6 @@ await corsair.gmail.api.threads.trash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1559,9 +1433,6 @@ await corsair.gmail.api.threads.trash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
@@ -1621,9 +1492,6 @@ await corsair.gmail.api.threads.untrash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1634,9 +1502,6 @@ await corsair.gmail.api.threads.untrash({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |

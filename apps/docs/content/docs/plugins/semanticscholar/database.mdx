@@ -28,9 +28,6 @@ const rows = await corsair.semanticscholar.db.author.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `authorId` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
@@ -61,9 +58,6 @@ const rows = await corsair.semanticscholar.db.authorSummary.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `authorId` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -89,9 +83,6 @@ const rows = await corsair.semanticscholar.db.autocompleteMatch.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -118,9 +109,6 @@ const rows = await corsair.semanticscholar.db.citation.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `isInfluential` | `boolean` | equals |
 
@@ -145,9 +133,6 @@ const rows = await corsair.semanticscholar.db.dataset.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
@@ -174,9 +159,6 @@ const rows = await corsair.semanticscholar.db.datasetDiff.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `fromRelease` | `string` | equals, contains, startsWith, endsWith, in |
 | `toRelease` | `string` | equals, contains, startsWith, endsWith, in |
@@ -202,9 +184,6 @@ const rows = await corsair.semanticscholar.db.datasetRelease.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `release_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `releaseId` | `string` | equals, contains, startsWith, endsWith, in |
@@ -230,9 +209,6 @@ const rows = await corsair.semanticscholar.db.paper.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `paperId` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
@@ -267,9 +243,6 @@ const rows = await corsair.semanticscholar.db.reference.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `isInfluential` | `boolean` | equals |
 
@@ -294,9 +267,6 @@ const rows = await corsair.semanticscholar.db.snippet.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `score` | `number` | equals, gt, gte, lt, lte, in |
 

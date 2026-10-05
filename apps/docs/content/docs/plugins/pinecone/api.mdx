@@ -31,9 +31,6 @@ await corsair.pinecone.api.assistantChat.chat({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
@@ -80,9 +77,6 @@ await corsair.pinecone.api.assistantChat.chat({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `message` | `object` | No | — |
 | `citations` | `object[]` | No | — |
@@ -137,9 +131,6 @@ await corsair.pinecone.api.assistantChat.completion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
@@ -175,9 +166,6 @@ await corsair.pinecone.api.assistantChat.completion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `choices` | `object[]` | No | — |
 | `model` | `string` | No | — |
@@ -222,9 +210,6 @@ await corsair.pinecone.api.assistantChat.context({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `query` | `string` | No | — |
@@ -262,9 +247,6 @@ await corsair.pinecone.api.assistantChat.context({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snippets` | `object[]` | Yes | — |
 | `usage` | `object` | Yes | — |
 
@@ -309,9 +291,6 @@ await corsair.pinecone.api.assistantFiles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
@@ -323,9 +302,6 @@ await corsair.pinecone.api.assistantFiles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `operation_type` | `upload_file \| upsert_file \| update_file_metadata \| delete_file` | Yes | — |
 | `status` | `Processing \| Completed \| Failed` | Yes | — |
@@ -355,9 +331,6 @@ await corsair.pinecone.api.assistantFiles.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
@@ -370,9 +343,6 @@ await corsair.pinecone.api.assistantFiles.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `size` | `number` | No | — |
@@ -414,9 +384,6 @@ await corsair.pinecone.api.assistantFiles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `filter` | `string` | No | — |
@@ -430,9 +397,6 @@ await corsair.pinecone.api.assistantFiles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `files` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -485,9 +449,6 @@ await corsair.pinecone.api.assistantFiles.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `fileName` | `string` | Yes | — |
@@ -513,9 +474,6 @@ await corsair.pinecone.api.assistantFiles.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `operation_type` | `upload_file \| upsert_file \| update_file_metadata \| delete_file` | Yes | — |
 | `status` | `Processing \| Completed \| Failed` | Yes | — |
@@ -547,9 +505,6 @@ await corsair.pinecone.api.assistants.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `metadata` | `object` | No | — |
@@ -572,9 +527,6 @@ await corsair.pinecone.api.assistants.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
@@ -615,9 +567,6 @@ await corsair.pinecone.api.assistants.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantName` | `string` | Yes | — |
 
 
@@ -654,9 +603,6 @@ await corsair.pinecone.api.assistants.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantName` | `string` | Yes | — |
 
 
@@ -666,9 +612,6 @@ await corsair.pinecone.api.assistants.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
@@ -709,9 +652,6 @@ await corsair.pinecone.api.assistants.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `paginationToken` | `string` | No | — |
 
@@ -722,9 +662,6 @@ await corsair.pinecone.api.assistants.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistants` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -776,9 +713,6 @@ await corsair.pinecone.api.assistants.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantName` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `metadata` | `object` | No | — |
@@ -800,9 +734,6 @@ await corsair.pinecone.api.assistants.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
@@ -845,9 +776,6 @@ await corsair.pinecone.api.backups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexName` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -859,9 +787,6 @@ await corsair.pinecone.api.backups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `backup_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `source_index_name` | `string` | No | — |
@@ -898,9 +823,6 @@ await corsair.pinecone.api.backups.createIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `backupId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
@@ -923,9 +845,6 @@ await corsair.pinecone.api.backups.createIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `restore_job_id` | `string` | Yes | — |
 | `index_id` | `string` | No | — |
 
@@ -950,9 +869,6 @@ await corsair.pinecone.api.backups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `backupId` | `string` | Yes | — |
 
 
@@ -989,9 +905,6 @@ await corsair.pinecone.api.backups.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `backupId` | `string` | Yes | — |
 
 
@@ -1001,9 +914,6 @@ await corsair.pinecone.api.backups.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `backup_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `source_index_name` | `string` | No | — |
@@ -1040,9 +950,6 @@ await corsair.pinecone.api.backups.listForIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexName` | `string` | Yes | — |
 | `includeDeleted` | `boolean` | No | — |
 | `limit` | `number` | No | — |
@@ -1055,9 +962,6 @@ await corsair.pinecone.api.backups.listForIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1114,9 +1018,6 @@ await corsair.pinecone.api.backups.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `paginationToken` | `string` | No | — |
 
@@ -1127,9 +1028,6 @@ await corsair.pinecone.api.backups.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1188,9 +1086,6 @@ await corsair.pinecone.api.bulkImports.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `importId` | `string` | Yes | — |
 
@@ -1228,9 +1123,6 @@ await corsair.pinecone.api.bulkImports.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `importId` | `string` | Yes | — |
 
@@ -1241,9 +1133,6 @@ await corsair.pinecone.api.bulkImports.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `uri` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1274,9 +1163,6 @@ await corsair.pinecone.api.bulkImports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `paginationToken` | `string` | No | — |
@@ -1288,9 +1174,6 @@ await corsair.pinecone.api.bulkImports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1341,9 +1224,6 @@ await corsair.pinecone.api.bulkImports.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `uri` | `string` | Yes | — |
 | `integrationId` | `string` | No | — |
@@ -1367,9 +1247,6 @@ await corsair.pinecone.api.bulkImports.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1398,9 +1275,6 @@ await corsair.pinecone.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collections` | `object[]` | Yes | — |
 
 
@@ -1442,9 +1316,6 @@ await corsair.pinecone.api.indexes.configure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexName` | `string` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
 | `tags` | `object` | No | — |
@@ -1484,9 +1355,6 @@ await corsair.pinecone.api.indexes.configure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
@@ -1546,9 +1414,6 @@ await corsair.pinecone.api.indexes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `dimension` | `number` | No | — |
 | `metric` | `cosine \| euclidean \| dotproduct` | No | — |
@@ -1586,9 +1451,6 @@ await corsair.pinecone.api.indexes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
@@ -1648,9 +1510,6 @@ await corsair.pinecone.api.indexes.createForModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `cloud` | `aws \| gcp \| azure` | Yes | — |
 | `region` | `string` | Yes | — |
@@ -1691,9 +1550,6 @@ await corsair.pinecone.api.indexes.createForModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
@@ -1753,9 +1609,6 @@ await corsair.pinecone.api.indexes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexName` | `string` | Yes | — |
 
 
@@ -1792,9 +1645,6 @@ await corsair.pinecone.api.indexes.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexName` | `string` | Yes | — |
 
 
@@ -1804,9 +1654,6 @@ await corsair.pinecone.api.indexes.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
@@ -1869,9 +1716,6 @@ await corsair.pinecone.api.indexes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexes` | `object[]` | Yes | — |
 
 
@@ -1921,9 +1765,6 @@ await corsair.pinecone.api.inference.embed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `inputs` | `object[]` | Yes | — |
 | `parameters` | `object` | No | — |
@@ -1954,9 +1795,6 @@ await corsair.pinecone.api.inference.embed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | No | — |
 | `vector_type` | `dense \| sparse` | No | — |
 | `data` | `object[]` | Yes | — |
@@ -2001,9 +1839,6 @@ await corsair.pinecone.api.inference.getModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `modelName` | `string` | Yes | — |
 
 
@@ -2013,9 +1848,6 @@ await corsair.pinecone.api.inference.getModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `short_description` | `string` | No | — |
 | `type` | `embed \| rerank` | No | — |
@@ -2044,9 +1876,6 @@ await corsair.pinecone.api.inference.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `embed \| rerank` | No | — |
 | `vectorType` | `dense \| sparse` | No | — |
 
@@ -2057,9 +1886,6 @@ await corsair.pinecone.api.inference.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `models` | `object[]` | Yes | — |
 
 
@@ -2099,9 +1925,6 @@ await corsair.pinecone.api.inference.rerank({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `documents` | `object[]` | Yes | — |
@@ -2135,9 +1958,6 @@ await corsair.pinecone.api.inference.rerank({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | No | — |
 | `data` | `object[]` | Yes | — |
 | `usage` | `object` | No | — |
@@ -2187,9 +2007,6 @@ await corsair.pinecone.api.namespaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 | `schema` | `object` | No | — |
@@ -2213,9 +2030,6 @@ await corsair.pinecone.api.namespaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `record_count` | `number` | No | — |
 
@@ -2240,9 +2054,6 @@ await corsair.pinecone.api.namespaces.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 
@@ -2280,9 +2091,6 @@ await corsair.pinecone.api.namespaces.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 
@@ -2293,9 +2101,6 @@ await corsair.pinecone.api.namespaces.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `record_count` | `number` | No | — |
 
@@ -2320,9 +2125,6 @@ await corsair.pinecone.api.namespaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `paginationToken` | `string` | No | — |
@@ -2335,9 +2137,6 @@ await corsair.pinecone.api.namespaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespaces` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2384,9 +2183,6 @@ await corsair.pinecone.api.records.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 | `query` | `object` | Yes | — |
@@ -2417,9 +2213,6 @@ await corsair.pinecone.api.records.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `object` | Yes | — |
 | `usage` | `object` | No | — |
 
@@ -2464,9 +2257,6 @@ await corsair.pinecone.api.records.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | Yes | — |
 | `records` | `object[]` | Yes | — |
@@ -2518,9 +2308,6 @@ await corsair.pinecone.api.restoreJobs.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `restoreJobId` | `string` | Yes | — |
 
 
@@ -2530,9 +2317,6 @@ await corsair.pinecone.api.restoreJobs.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `restore_job_id` | `string` | Yes | — |
 | `backup_id` | `string` | No | — |
 | `target_index_name` | `string` | No | — |
@@ -2563,9 +2347,6 @@ await corsair.pinecone.api.restoreJobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `paginationToken` | `string` | No | — |
 
@@ -2576,9 +2357,6 @@ await corsair.pinecone.api.restoreJobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2631,9 +2409,6 @@ await corsair.pinecone.api.vectors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `ids` | `string[]` | No | — |
 | `deleteAll` | `boolean` | No | — |
@@ -2684,9 +2459,6 @@ await corsair.pinecone.api.vectors.describeIndexStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `filter` | `object` | No | — |
 
@@ -2707,9 +2479,6 @@ await corsair.pinecone.api.vectors.describeIndexStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dimension` | `number` | No | — |
 | `indexFullness` | `number` | No | — |
 | `totalVectorCount` | `number` | No | — |
@@ -2746,9 +2515,6 @@ await corsair.pinecone.api.vectors.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `ids` | `string[]` | Yes | — |
 | `namespace` | `string` | No | — |
@@ -2760,9 +2526,6 @@ await corsair.pinecone.api.vectors.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vectors` | `object` | Yes | — |
 | `namespace` | `string` | No | — |
 
@@ -2797,9 +2560,6 @@ await corsair.pinecone.api.vectors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `prefix` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -2813,9 +2573,6 @@ await corsair.pinecone.api.vectors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vectors` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2859,9 +2616,6 @@ await corsair.pinecone.api.vectors.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `namespace` | `string` | No | — |
 | `topK` | `number` | Yes | — |
@@ -2899,9 +2653,6 @@ await corsair.pinecone.api.vectors.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matches` | `object[]` | Yes | — |
 | `namespace` | `string` | No | — |
 | `usage` | `object` | No | — |
@@ -2950,9 +2701,6 @@ await corsair.pinecone.api.vectors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `values` | `number[]` | No | — |
@@ -3014,9 +2762,6 @@ await corsair.pinecone.api.vectors.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | Yes | — |
 | `vectors` | `object[]` | Yes | — |
 | `namespace` | `string` | No | — |
@@ -3046,9 +2791,6 @@ await corsair.pinecone.api.vectors.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `upsertedCount` | `number` | Yes | — |
 
 

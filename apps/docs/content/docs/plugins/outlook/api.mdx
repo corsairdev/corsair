@@ -31,9 +31,6 @@ await corsair.outlook.api.calendars.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -46,9 +43,6 @@ await corsair.outlook.api.calendars.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -97,9 +91,6 @@ await corsair.outlook.api.calendars.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendar_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -110,9 +101,6 @@ await corsair.outlook.api.calendars.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -136,9 +124,6 @@ await corsair.outlook.api.calendars.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendar_id` | `string` | Yes | — |
 
 
@@ -148,9 +133,6 @@ await corsair.outlook.api.calendars.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -199,9 +181,6 @@ await corsair.outlook.api.calendars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `filter` | `string` | No | — |
 | `select` | `string[]` | No | — |
@@ -216,9 +195,6 @@ await corsair.outlook.api.calendars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -274,9 +250,6 @@ await corsair.outlook.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `givenName` | `string` | No | — |
 | `surname` | `string` | No | — |
@@ -312,9 +285,6 @@ await corsair.outlook.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `givenName` | `string` | No | — |
@@ -370,9 +340,6 @@ await corsair.outlook.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -383,9 +350,6 @@ await corsair.outlook.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -409,9 +373,6 @@ await corsair.outlook.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `contact_folder_id` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -427,9 +388,6 @@ await corsair.outlook.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -489,9 +447,6 @@ await corsair.outlook.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `givenName` | `string` | No | — |
@@ -528,9 +483,6 @@ await corsair.outlook.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `givenName` | `string` | No | — |
@@ -588,9 +540,6 @@ await corsair.outlook.api.events.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 | `calendar_id` | `string` | Yes | — |
@@ -603,9 +552,6 @@ await corsair.outlook.api.events.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `user_id` | `string` | No | — |
@@ -633,9 +579,6 @@ await corsair.outlook.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subject` | `string` | Yes | — |
 | `start_datetime` | `string` | Yes | — |
 | `end_datetime` | `string` | Yes | — |
@@ -672,9 +615,6 @@ await corsair.outlook.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -841,9 +781,6 @@ await corsair.outlook.api.events.decline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string` | Yes | — |
 | `comment` | `string` | No | — |
 | `user_id` | `string` | No | — |
@@ -867,9 +804,6 @@ await corsair.outlook.api.events.decline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -894,9 +828,6 @@ await corsair.outlook.api.events.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -907,9 +838,6 @@ await corsair.outlook.api.events.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -933,9 +861,6 @@ await corsair.outlook.api.events.findMeetingTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `attendees` | `object[]` | No | — |
 | `timeConstraint` | `object` | No | — |
@@ -980,9 +905,6 @@ await corsair.outlook.api.events.findMeetingTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `@odata.context` | `string` | No | — |
 | `meetingTimeSuggestions` | `object[]` | No | — |
 | `emptySuggestionsReason` | `string` | No | — |
@@ -1048,9 +970,6 @@ await corsair.outlook.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `calendar_id` | `string` | No | — |
@@ -1062,9 +981,6 @@ await corsair.outlook.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -1231,9 +1147,6 @@ await corsair.outlook.api.events.getSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendar_id` | `string` | Yes | — |
 | `schedules` | `string[]` | Yes | — |
 | `startTime` | `object` | Yes | — |
@@ -1269,9 +1182,6 @@ await corsair.outlook.api.events.getSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 
@@ -1306,9 +1216,6 @@ await corsair.outlook.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `calendar_id` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -1326,9 +1233,6 @@ await corsair.outlook.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -1436,9 +1340,6 @@ await corsair.outlook.api.events.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `subject` | `string` | No | — |
@@ -1476,9 +1377,6 @@ await corsair.outlook.api.events.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -1647,9 +1545,6 @@ await corsair.outlook.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `displayName` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `isHidden` | `boolean` | No | — |
@@ -1662,9 +1557,6 @@ await corsair.outlook.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `parentFolderId` | `string` | No | — |
@@ -1695,9 +1587,6 @@ await corsair.outlook.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -1708,9 +1597,6 @@ await corsair.outlook.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1734,9 +1620,6 @@ await corsair.outlook.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mail_folder_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `select` | `string` | No | — |
@@ -1748,9 +1631,6 @@ await corsair.outlook.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `parentFolderId` | `string` | No | — |
@@ -1781,9 +1661,6 @@ await corsair.outlook.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `filter` | `string` | No | — |
 | `select` | `string` | No | — |
@@ -1800,9 +1677,6 @@ await corsair.outlook.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.count` | `number` | No | — |
 | `@odata.context` | `string` | No | — |
@@ -1847,9 +1721,6 @@ await corsair.outlook.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mail_folder_id` | `string` | Yes | — |
 | `displayName` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
@@ -1861,9 +1732,6 @@ await corsair.outlook.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `parentFolderId` | `string` | No | — |
@@ -1896,9 +1764,6 @@ await corsair.outlook.api.messages.addAttachment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `user_id` | `string` | No | — |
@@ -1939,9 +1804,6 @@ await corsair.outlook.api.messages.addAttachment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `contentType` | `string` | No | — |
@@ -1974,9 +1836,6 @@ await corsair.outlook.api.messages.batchMove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_ids` | `string[]` | Yes | — |
 | `destination_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
@@ -1988,9 +1847,6 @@ await corsair.outlook.api.messages.batchMove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_requested` | `number` | Yes | — |
 | `total_succeeded` | `number` | Yes | — |
 | `total_failed` | `number` | Yes | — |
@@ -2032,9 +1888,6 @@ await corsair.outlook.api.messages.batchUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `updates` | `object[]` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -2058,9 +1911,6 @@ await corsair.outlook.api.messages.batchUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_requested` | `number` | Yes | — |
 | `total_succeeded` | `number` | Yes | — |
 | `total_failed` | `number` | Yes | — |
@@ -2101,9 +1951,6 @@ await corsair.outlook.api.messages.createDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subject` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
 | `is_html` | `boolean` | No | — |
@@ -2129,9 +1976,6 @@ await corsair.outlook.api.messages.createDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -2263,9 +2107,6 @@ await corsair.outlook.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -2276,9 +2117,6 @@ await corsair.outlook.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -2302,9 +2140,6 @@ await corsair.outlook.api.messages.forward({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `to_recipients` | `string[]` | Yes | — |
 | `comment` | `string` | No | — |
@@ -2317,9 +2152,6 @@ await corsair.outlook.api.messages.forward({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -2343,9 +2175,6 @@ await corsair.outlook.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `select` | `string[]` | No | — |
@@ -2357,9 +2186,6 @@ await corsair.outlook.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -2491,9 +2317,6 @@ await corsair.outlook.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `folder` | `string` | No | — |
 | `top` | `number` | No | — |
@@ -2524,9 +2347,6 @@ await corsair.outlook.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -2613,9 +2433,6 @@ await corsair.outlook.api.messages.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `destination_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
@@ -2627,9 +2444,6 @@ await corsair.outlook.api.messages.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |
@@ -2761,9 +2575,6 @@ await corsair.outlook.api.messages.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `folder` | `string` | No | — |
 | `filter` | `string` | No | — |
@@ -2779,9 +2590,6 @@ await corsair.outlook.api.messages.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.count` | `number` | No | — |
 | `@odata.context` | `string` | No | — |
@@ -2869,9 +2677,6 @@ await corsair.outlook.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `comment` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
@@ -2885,9 +2690,6 @@ await corsair.outlook.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_code` | `number` | No | — |
 | `response_body` | `object` | No | — |
 
@@ -2922,9 +2724,6 @@ await corsair.outlook.api.messages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `fromEmail` | `string` | No | — |
@@ -2940,9 +2739,6 @@ await corsair.outlook.api.messages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.context` | `string` | No | — |
 
@@ -3028,9 +2824,6 @@ await corsair.outlook.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `to` | `string` | Yes | — |
 | `subject` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -3060,9 +2853,6 @@ await corsair.outlook.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_code` | `number` | No | — |
 | `body` | `object` | No | — |
 
@@ -3097,9 +2887,6 @@ await corsair.outlook.api.messages.sendDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 
@@ -3110,9 +2897,6 @@ await corsair.outlook.api.messages.sendDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -3136,9 +2920,6 @@ await corsair.outlook.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `is_read` | `boolean` | No | — |
@@ -3203,9 +2984,6 @@ await corsair.outlook.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `subject` | `string` | No | — |
 | `body` | `object` | No | — |

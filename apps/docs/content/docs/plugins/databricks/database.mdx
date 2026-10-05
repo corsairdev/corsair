@@ -28,9 +28,6 @@ const rows = await corsair.databricks.db.catalog.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `metastore_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -58,9 +55,6 @@ const rows = await corsair.databricks.db.cluster.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `cluster_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `cluster_name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -91,9 +85,6 @@ const rows = await corsair.databricks.db.job.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `job_id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -121,9 +112,6 @@ const rows = await corsair.databricks.db.warehouse.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |

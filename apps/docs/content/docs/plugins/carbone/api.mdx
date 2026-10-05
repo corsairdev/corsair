@@ -35,9 +35,6 @@ await corsair.carbone.api.render.generateReport({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateId` | `string` | Yes | 64-character hexadecimal template ID or version ID to render |
 | `data` | `object[]` | No | JSON dataset to merge into the document template placeholders |
 | `convertTo` | `object` | No | Target file format extension to convert output document into (e.g. pdf, docx, xlsx, html) |
@@ -111,9 +108,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if report generation succeeded |
 | `data` | `object` | Yes | Render result payload containing the render ID |
 
@@ -153,9 +147,6 @@ await corsair.carbone.api.render.renderDirect({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template` | `string` | Yes | Base64-encoded document template content |
 | `data` | `object[]` | No | JSON dataset to merge into the template placeholders |
 | `convertTo` | `object` | No | Target output document format extension (e.g. pdf, docx, xlsx, html) |
@@ -229,9 +220,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if direct template rendering succeeded |
 | `data` | `object` | Yes | Render result payload |
 
@@ -272,9 +260,6 @@ await corsair.carbone.api.status.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if the status check request succeeded |
 | `code` | `number` | No | HTTP status code returned by API |
 | `message` | `string` | Yes | Status message from Carbone server |
@@ -303,9 +288,6 @@ await corsair.carbone.api.templates.delete({ templateId: 'tmpl_1234567890abcdef'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateId` | `string` | Yes | 64-character hexadecimal template ID to permanently delete |
 
 
@@ -315,9 +297,6 @@ await corsair.carbone.api.templates.delete({ templateId: 'tmpl_1234567890abcdef'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if template was successfully deleted |
 | `message` | `string` | No | Confirmation message from Carbone server |
 
@@ -342,9 +321,6 @@ await corsair.carbone.api.templates.download({ templateId: 'tmpl_1234567890abcde
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateId` | `string` | Yes | 64-character hexadecimal template ID to download |
 
 
@@ -354,9 +330,6 @@ await corsair.carbone.api.templates.download({ templateId: 'tmpl_1234567890abcde
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateId` | `string` | Yes | ID of the downloaded template |
 | `content` | `string` | Yes | Base64-encoded binary content of the retrieved template file |
 | `success` | `boolean` | Yes | Indicates if template download was successful |
@@ -382,9 +355,6 @@ await corsair.carbone.api.templates.list({ id: 'tmpl_1234567890abcdef', cursor: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | Filter templates by exact template ID match |
 | `templateId` | `string` | No | Alias for id; filter templates by exact template ID match |
 | `versionId` | `string` | No | Filter templates by exact version ID match |
@@ -399,9 +369,6 @@ await corsair.carbone.api.templates.list({ id: 'tmpl_1234567890abcdef', cursor: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if listing templates succeeded |
 | `data` | `object[]` | Yes | Array of deployed Carbone template metadata records |
 | `hasMore` | `boolean` | No | Whether more template records are available on next page |
@@ -453,9 +420,6 @@ await corsair.carbone.api.templates.listCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if listing categories succeeded |
 | `data` | `object[]` | Yes | List of category folder names used across templates |
 
@@ -494,9 +458,6 @@ await corsair.carbone.api.templates.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if listing tags succeeded |
 | `data` | `object[]` | Yes | List of tag names used across templates |
 
@@ -537,9 +498,6 @@ await corsair.carbone.api.templates.update({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateId` | `string` | Yes | 64-character hexadecimal template ID to update |
 | `name` | `string` | No | Updated human-readable name of the template |
 | `category` | `string` | No | Updated category folder for organizing the template |
@@ -555,9 +513,6 @@ await corsair.carbone.api.templates.update({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if template metadata update succeeded |
 | `data` | `object` | No | Updated metadata values of the template |
 
@@ -599,9 +554,6 @@ await corsair.carbone.api.templates.upload({ template: 'UEsDBBQAAAAIAAAAIQAAAAAA
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template` | `string` | Yes | Base64-encoded document template payload |
 
 
@@ -611,9 +563,6 @@ await corsair.carbone.api.templates.upload({ template: 'UEsDBBQAAAAIAAAAIQAAAAAA
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if template upload succeeded |
 | `data` | `object` | Yes | Metadata of the newly uploaded template |
 
@@ -657,9 +606,6 @@ await corsair.carbone.api.version.set({ version: '5' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `string` | Yes | Carbone API major version string to use for subsequent requests (e.g. "5") |
 
 
@@ -669,9 +615,6 @@ await corsair.carbone.api.version.set({ version: '5' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates if setting API version was successful |
 | `version` | `string` | Yes | The active Carbone API version now configured |
 | `message` | `string` | Yes | Confirmation message |

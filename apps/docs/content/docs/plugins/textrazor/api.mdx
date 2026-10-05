@@ -34,9 +34,6 @@ await corsair.textrazor.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -81,9 +78,6 @@ await corsair.textrazor.api.analysis.analyzeContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
 | `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
@@ -112,9 +106,6 @@ await corsair.textrazor.api.analysis.analyzeContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -241,9 +232,6 @@ await corsair.textrazor.api.analysis.classifyText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
 | `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
@@ -272,9 +260,6 @@ await corsair.textrazor.api.analysis.classifyText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -401,9 +386,6 @@ await corsair.textrazor.api.analysis.extractEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
 | `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
@@ -434,9 +416,6 @@ await corsair.textrazor.api.analysis.extractEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -565,9 +544,6 @@ await corsair.textrazor.api.classifiers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -577,9 +553,6 @@ await corsair.textrazor.api.classifiers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -606,9 +579,6 @@ await corsair.textrazor.api.classifiers.deleteCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `categoryId` | `string` | Yes | — |
 
@@ -619,9 +589,6 @@ await corsair.textrazor.api.classifiers.deleteCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -648,9 +615,6 @@ await corsair.textrazor.api.classifiers.getCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `categoryId` | `string` | Yes | — |
 
@@ -661,9 +625,6 @@ await corsair.textrazor.api.classifiers.getCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -704,9 +665,6 @@ await corsair.textrazor.api.classifiers.listCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -718,9 +676,6 @@ await corsair.textrazor.api.classifiers.listCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -770,9 +725,6 @@ await corsair.textrazor.api.classifiers.put({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `categories` | `object[]` | Yes | — |
 
@@ -796,9 +748,6 @@ await corsair.textrazor.api.classifiers.put({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -827,9 +776,6 @@ await corsair.textrazor.api.dictionaries.addEntries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entries` | `object[]` | Yes | — |
 
@@ -854,9 +800,6 @@ await corsair.textrazor.api.dictionaries.addEntries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -883,9 +826,6 @@ await corsair.textrazor.api.dictionaries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `matchType` | `token \| stem` | No | — |
 | `caseInsensitive` | `boolean` | No | — |
@@ -898,9 +838,6 @@ await corsair.textrazor.api.dictionaries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -942,9 +879,6 @@ await corsair.textrazor.api.dictionaries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -954,9 +888,6 @@ await corsair.textrazor.api.dictionaries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -983,9 +914,6 @@ await corsair.textrazor.api.dictionaries.deleteEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entryId` | `string` | Yes | — |
 
@@ -996,9 +924,6 @@ await corsair.textrazor.api.dictionaries.deleteEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -1025,9 +950,6 @@ await corsair.textrazor.api.dictionaries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1037,9 +959,6 @@ await corsair.textrazor.api.dictionaries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -1081,9 +1000,6 @@ await corsair.textrazor.api.dictionaries.getEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entryId` | `string` | Yes | — |
 
@@ -1094,9 +1010,6 @@ await corsair.textrazor.api.dictionaries.getEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -1141,9 +1054,6 @@ await corsair.textrazor.api.dictionaries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |
@@ -1205,9 +1115,6 @@ await corsair.textrazor.api.dictionaries.listEntries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -1219,9 +1126,6 @@ await corsair.textrazor.api.dictionaries.listEntries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `boolean` | No | — |
 | `time` | `number \| string` | No | — |
 | `error` | `string` | No | — |

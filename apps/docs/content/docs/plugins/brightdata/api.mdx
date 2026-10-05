@@ -31,9 +31,6 @@ await corsair.brightdata.api.crawlApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset_id` | `string` | Yes | Official query: ?dataset_id= |
 | `items` | `object[]` | Yes | — |
 | `include_errors` | `boolean` | No | — |
@@ -56,9 +53,6 @@ await corsair.brightdata.api.crawlApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snapshot_id` | `string` | Yes | — |
 
 
@@ -84,9 +78,6 @@ await corsair.brightdata.api.filterDataset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dataset_id` | `string` | Yes | — |
 | `filter` | `object` | Yes | — |
 | `records_limit` | `number` | No | — |
@@ -108,9 +99,6 @@ await corsair.brightdata.api.filterDataset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snapshot_id` | `string` | Yes | — |
 
 
@@ -136,9 +124,6 @@ await corsair.brightdata.api.getAvailableCities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country` | `string` | Yes | Official query: ?country= |
 | `pool_ip_type` | `dc \| static_res` | No | — |
 
@@ -171,9 +156,6 @@ await corsair.brightdata.api.getAvailableCountries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone_types` | `object` | No | — |
 
 
@@ -209,9 +191,6 @@ await corsair.brightdata.api.getSnapshotResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/snapshot/{snapshot_id} |
 | `format` | `json \| ndjson \| jsonl \| csv` | No | — |
 | `compress` | `boolean` | No | — |
@@ -254,9 +233,6 @@ await corsair.brightdata.api.getSnapshotStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/progress/{snapshot_id} |
 
 
@@ -266,9 +242,6 @@ await corsair.brightdata.api.getSnapshotStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snapshot_id` | `string` | No | — |
 | `dataset_id` | `string` | No | — |
 | `status` | `starting \| running \| ready \| failed \| canceled` | Yes | — |
@@ -365,9 +338,6 @@ await corsair.brightdata.api.serpSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zone` | `string` | Yes | — |
 | `q_keywords` | `string` | Yes | — |
 | `search_engine` | `google \| bing \| yahoo \| yandex \| duckduckgo` | No | — |
@@ -418,9 +388,6 @@ await corsair.brightdata.api.webUnlocker({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `zone` | `string` | Yes | — |
 | `format` | `json \| raw` | No | — |

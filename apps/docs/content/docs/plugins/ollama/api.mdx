@@ -31,9 +31,6 @@ await corsair.ollama.api.chat.chat({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Name of the model to use for chat |
 | `messages` | `object[]` | Yes | Conversation history |
 | `tools` | `any[]` | No | List of tools/functions available to the model |
@@ -79,9 +76,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `message` | `object` | Yes | — |
@@ -128,9 +122,6 @@ await corsair.ollama.api.chat.generate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Name of the model to generate text with |
 | `prompt` | `string` | No | The prompt to generate a response for |
 | `suffix` | `string` | No | Text after the insertion point |
@@ -168,9 +159,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `response` | `string` | Yes | — |
@@ -209,9 +197,6 @@ await corsair.ollama.api.models.listModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `models` | `object[]` | Yes | — |
 
 
@@ -258,9 +243,6 @@ await corsair.ollama.api.models.showModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | Name of the model to show information for |
 | `system` | `string` | No | System prompt override |
 | `template` | `string` | No | Template override |
@@ -283,9 +265,6 @@ await corsair.ollama.api.models.showModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `modelfile` | `string` | No | — |
 | `parameters` | `string` | No | — |
 | `template` | `string` | No | — |
@@ -342,9 +321,6 @@ await corsair.ollama.api.models.version({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `string` | Yes | — |
 
 
@@ -370,9 +346,6 @@ await corsair.ollama.api.openai.createOpenAiChatCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | ID of the model to use |
 | `messages` | `object[]` | Yes | Messages in the conversation |
 | `temperature` | `number` | No | Sampling temperature |
@@ -404,9 +377,6 @@ await corsair.ollama.api.openai.createOpenAiChatCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | Yes | — |
 | `created` | `number` | Yes | — |
@@ -462,9 +432,6 @@ await corsair.ollama.api.openai.createOpenAiCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | ID of the model to use |
 | `prompt` | `string \| string[]` | Yes | Prompt text to complete |
 | `suffix` | `string` | No | Suffix to insert |
@@ -488,9 +455,6 @@ await corsair.ollama.api.openai.createOpenAiCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | Yes | — |
 | `created` | `number` | Yes | — |
@@ -547,9 +511,6 @@ await corsair.ollama.api.openai.listOpenAiModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
 

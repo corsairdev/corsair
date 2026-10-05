@@ -34,9 +34,6 @@ await corsair.abyssale.api.auth.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `company` | `string` | Yes | — |
 | `version` | `string` | No | — |
 
@@ -63,9 +60,6 @@ await corsair.abyssale.api.designs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | No | — |
 | `type` | `static \| animated \| printer \| printer_multipage` | No | — |
 
@@ -117,9 +111,6 @@ await corsair.abyssale.api.fonts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `google \| custom` | No | — |
 
 
@@ -164,9 +155,6 @@ await corsair.abyssale.api.generation.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `designId` | `string` | Yes | — |
 | `elements` | `object` | No | — |
 | `template_format_names` | `string[]` | No | — |
@@ -247,9 +235,6 @@ await corsair.abyssale.api.generation.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generation_request_id` | `string` | Yes | — |
 
 
@@ -273,9 +258,6 @@ await corsair.abyssale.api.generation.image({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `designId` | `string` | Yes | — |
 | `elements` | `object` | No | — |
 | `template_format_name` | `string` | No | — |
@@ -300,9 +282,6 @@ await corsair.abyssale.api.generation.image({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `version` | `number` | No | — |
 | `sharing_id` | `string` | No | — |
@@ -381,9 +360,6 @@ await corsair.abyssale.api.generation.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generationRequestId` | `string` | Yes | — |
 
 
@@ -393,9 +369,6 @@ await corsair.abyssale.api.generation.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `is_finalized` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `banners` | `object[]` | Yes | — |
@@ -470,9 +443,6 @@ await corsair.abyssale.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -482,9 +452,6 @@ await corsair.abyssale.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `created_at_ts` | `number` | Yes | — |

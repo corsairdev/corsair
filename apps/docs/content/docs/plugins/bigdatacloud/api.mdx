@@ -31,9 +31,6 @@ await corsair.bigdatacloud.api.asn.asnExtendedReceivingFromInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 | `batchSize` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -46,9 +43,6 @@ await corsair.bigdatacloud.api.asn.asnExtendedReceivingFromInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 | `asnNumeric` | `number` | Yes | — |
 | `organisation` | `string` | No | — |
@@ -103,9 +97,6 @@ await corsair.bigdatacloud.api.asn.asnExtendedTransitToInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 | `batchSize` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -118,9 +109,6 @@ await corsair.bigdatacloud.api.asn.asnExtendedTransitToInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 | `asnNumeric` | `number` | Yes | — |
 | `organisation` | `string` | No | — |
@@ -175,9 +163,6 @@ await corsair.bigdatacloud.api.asn.asnRankList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchSize` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sort` | `rank \| asn \| asnNumeric \| organisation \| countryCode` | No | — |
@@ -191,9 +176,6 @@ await corsair.bigdatacloud.api.asn.asnRankList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `offset` | `number` | Yes | — |
 | `batch` | `number` | Yes | — |
@@ -246,9 +228,6 @@ await corsair.bigdatacloud.api.asn.bgpActivePrefixes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asn` | `string` | Yes | — |
 | `isv4` | `boolean` | No | — |
 | `bogonsOnly` | `boolean` | No | — |
@@ -265,9 +244,6 @@ await corsair.bigdatacloud.api.asn.bgpActivePrefixes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `offset` | `number` | Yes | — |
 | `batch` | `number` | Yes | — |
@@ -330,9 +306,6 @@ await corsair.bigdatacloud.api.location.amIRoaming({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `latitude` | `number` | Yes | — |
 | `longitude` | `number` | Yes | — |
 | `ip` | `string` | Yes | — |
@@ -345,9 +318,6 @@ await corsair.bigdatacloud.api.location.amIRoaming({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isRoaming` | `boolean` | Yes | — |
 
 
@@ -371,9 +341,6 @@ await corsair.bigdatacloud.api.location.countryByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 | `localityLanguage` | `string` | No | — |
 
@@ -384,9 +351,6 @@ await corsair.bigdatacloud.api.location.countryByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 | `localityLanguageRequested` | `string` | No | — |
 | `isReachableGlobally` | `boolean` | No | — |
@@ -458,9 +422,6 @@ await corsair.bigdatacloud.api.location.countryInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 | `localityLanguage` | `string` | No | — |
 
@@ -471,9 +432,6 @@ await corsair.bigdatacloud.api.location.countryInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isoAlpha2` | `string` | Yes | — |
 | `isoAlpha3` | `string` | No | — |
 | `m49Code` | `number` | No | — |
@@ -560,9 +518,6 @@ await corsair.bigdatacloud.api.location.reverseGeocodingWithTimezone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `latitude` | `number` | Yes | — |
 | `longitude` | `number` | Yes | — |
 | `localityLanguage` | `string` | No | — |
@@ -574,9 +529,6 @@ await corsair.bigdatacloud.api.location.reverseGeocodingWithTimezone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `latitude` | `number` | Yes | — |
 | `longitude` | `number` | Yes | — |
 | `localityLanguageRequested` | `string` | No | — |
@@ -659,9 +611,6 @@ await corsair.bigdatacloud.api.location.timeZoneByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 | `utcReference` | `string` | No | — |
 
@@ -672,9 +621,6 @@ await corsair.bigdatacloud.api.location.timeZoneByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ianaTimeId` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `effectiveTimeZoneFull` | `string` | No | — |
@@ -707,9 +653,6 @@ await corsair.bigdatacloud.api.network.networkByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 | `localityLanguage` | `string` | No | — |
 
@@ -720,9 +663,6 @@ await corsair.bigdatacloud.api.network.networkByIpAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 | `registry` | `string` | No | — |
 | `registryStatus` | `string` | No | — |
@@ -809,9 +749,6 @@ await corsair.bigdatacloud.api.network.networksByCidr({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cidr` | `string` | Yes | — |
 | `localityLanguage` | `string` | No | — |
 
@@ -822,9 +759,6 @@ await corsair.bigdatacloud.api.network.networksByCidr({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cidr` | `string` | Yes | — |
 | `parent` | `string` | No | — |
 | `network` | `object` | No | — |
@@ -908,9 +842,6 @@ await corsair.bigdatacloud.api.security.hazardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -920,9 +851,6 @@ await corsair.bigdatacloud.api.security.hazardReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isKnownAsTorServer` | `boolean` | No | — |
 | `isKnownAsVpn` | `boolean` | No | — |
 | `isKnownAsProxy` | `boolean` | No | — |
@@ -961,9 +889,6 @@ await corsair.bigdatacloud.api.security.torExitNodesGeolocated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchSize` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `localityLanguage` | `string` | No | — |
@@ -975,9 +900,6 @@ await corsair.bigdatacloud.api.security.torExitNodesGeolocated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total` | `number` | Yes | — |
 | `offset` | `number` | Yes | — |
 | `batch` | `number` | Yes | — |
@@ -1035,9 +957,6 @@ await corsair.bigdatacloud.api.security.userRisk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -1047,9 +966,6 @@ await corsair.bigdatacloud.api.security.userRisk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `risk` | `string` | Yes | — |
 | `description` | `string` | No | — |
 
@@ -1076,9 +992,6 @@ await corsair.bigdatacloud.api.validation.emailAddressVerification({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emailAddress` | `string` | Yes | — |
 
 
@@ -1088,9 +1001,6 @@ await corsair.bigdatacloud.api.validation.emailAddressVerification({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inputData` | `string` | Yes | — |
 | `isValid` | `boolean` | Yes | — |
 | `isSyntaxValid` | `boolean` | No | — |
@@ -1119,9 +1029,6 @@ await corsair.bigdatacloud.api.validation.phoneNumberValidationByIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `number` | `string` | No | — |
 | `phoneNumber` | `string` | No | — |
 | `ip` | `string` | No | — |
@@ -1134,9 +1041,6 @@ await corsair.bigdatacloud.api.validation.phoneNumberValidationByIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isValid` | `boolean` | Yes | — |
 | `e164Format` | `string` | No | — |
 | `internationalFormat` | `string` | No | — |
@@ -1210,9 +1114,6 @@ await corsair.bigdatacloud.api.validation.userAgentParser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userAgentRaw` | `string` | No | — |
 | `userAgent` | `string` | No | — |
 
@@ -1223,9 +1124,6 @@ await corsair.bigdatacloud.api.validation.userAgentParser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `device` | `string` | No | — |
 | `os` | `string` | No | — |
 | `userAgent` | `string` | No | — |

@@ -34,9 +34,6 @@ await corsair.runpod.api.account.myself({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `multiFactorEnabled` | `boolean` | No | — |
@@ -63,9 +60,6 @@ await corsair.runpod.api.account.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pubKey` | `string` | Yes | — |
 
 
@@ -75,9 +69,6 @@ await corsair.runpod.api.account.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `pubKey` | `string` | No | — |
 | `keys` | `string[]` | No | — |
@@ -105,9 +96,6 @@ await corsair.runpod.api.catalog.cpuTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include` | `AVAILABILITY` | No | — |
 | `product` | `POD \| SERVERLESS` | No | — |
 | `vcpuCount` | `number` | No | — |
@@ -119,9 +107,6 @@ await corsair.runpod.api.catalog.cpuTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cpus` | `object[]` | Yes | — |
 
 
@@ -168,9 +153,6 @@ await corsair.runpod.api.catalog.gpuTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `gpuCount` | `number` | No | — |
 
@@ -220,9 +202,6 @@ await corsair.runpod.api.clusters.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `APPLICATION \| TRAINING \| SLURM \| RAY` | Yes | — |
 | `compute` | `object` | Yes | — |
@@ -263,9 +242,6 @@ await corsair.runpod.api.clusters.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `APPLICATION \| TRAINING \| SLURM \| RAY` | Yes | — |
@@ -308,9 +284,6 @@ await corsair.runpod.api.endpoints.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `templateId` | `string` | Yes | — |
@@ -332,9 +305,6 @@ await corsair.runpod.api.endpoints.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `gpuIds` | `string` | No | — |
@@ -370,9 +340,6 @@ await corsair.runpod.api.pods.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `podId` | `string` | Yes | — |
 | `includeMachine` | `boolean` | No | — |
 | `includeNetworkVolume` | `boolean` | No | — |
@@ -387,9 +354,6 @@ await corsair.runpod.api.pods.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `image` | `string` | No | — |
@@ -433,9 +397,6 @@ await corsair.runpod.api.pods.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `computeType` | `GPU \| CPU` | No | — |
 | `cpuFlavorId` | `string \| string[]` | No | — |
 | `dataCenterId` | `string \| string[]` | No | — |
@@ -501,9 +462,6 @@ await corsair.runpod.api.registries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `containerRegistryAuthId` | `string` | Yes | — |
 
 
@@ -513,9 +471,6 @@ await corsair.runpod.api.registries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -540,9 +495,6 @@ await corsair.runpod.api.registries.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
@@ -554,9 +506,6 @@ await corsair.runpod.api.registries.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -581,9 +530,6 @@ await corsair.runpod.api.registries.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `username` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
@@ -595,9 +541,6 @@ await corsair.runpod.api.registries.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -624,9 +567,6 @@ await corsair.runpod.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -638,9 +578,6 @@ await corsair.runpod.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -668,9 +605,6 @@ await corsair.runpod.api.templates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `templateName` | `string` | Yes | — |
 
 
@@ -680,9 +614,6 @@ await corsair.runpod.api.templates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -706,9 +637,6 @@ await corsair.runpod.api.templates.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `imageName` | `string` | Yes | — |
@@ -741,9 +669,6 @@ await corsair.runpod.api.templates.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `imageName` | `string` | No | — |

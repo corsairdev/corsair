@@ -31,9 +31,6 @@ await corsair.databricks.api.apps.createDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `spec` | `object` | No | — |
 
@@ -54,9 +51,6 @@ await corsair.databricks.api.apps.createDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -80,9 +74,6 @@ await corsair.databricks.api.apps.deleteDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -92,9 +83,6 @@ await corsair.databricks.api.apps.deleteDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -118,9 +106,6 @@ await corsair.databricks.api.apps.deployDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `source_code_path` | `string` | Yes | — |
 
@@ -131,9 +116,6 @@ await corsair.databricks.api.apps.deployDatabricksApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deployment_id` | `string` | No | — |
 
 
@@ -159,9 +141,6 @@ await corsair.databricks.api.catalog.assignMetastoreToWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metastore_id` | `string` | Yes | — |
 | `workspace_id` | `number` | Yes | — |
 | `default_catalog_name` | `string` | No | — |
@@ -173,9 +152,6 @@ await corsair.databricks.api.catalog.assignMetastoreToWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -199,9 +175,6 @@ await corsair.databricks.api.catalog.batchCreateAccessRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requests` | `object[]` | Yes | — |
 
 
@@ -224,9 +197,6 @@ await corsair.databricks.api.catalog.batchCreateAccessRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responses` | `any[]` | No | — |
 
 
@@ -250,9 +220,6 @@ await corsair.databricks.api.catalog.checkTableExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_name` | `string` | Yes | — |
 | `schema_name` | `string` | Yes | — |
 | `table_name` | `string` | Yes | — |
@@ -264,9 +231,6 @@ await corsair.databricks.api.catalog.checkTableExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exists` | `boolean` | Yes | — |
 
 
@@ -290,9 +254,6 @@ await corsair.databricks.api.catalog.createCatalogConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `connection_type` | `string` | Yes | — |
 | `options` | `object` | Yes | — |
@@ -314,9 +275,6 @@ await corsair.databricks.api.catalog.createCatalogConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -340,9 +298,6 @@ await corsair.databricks.api.catalog.createCatalogCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `credential_type` | `string` | No | — |
 | `aws_iam_role` | `object` | No | — |
@@ -388,9 +343,6 @@ await corsair.databricks.api.catalog.createCatalogCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -414,9 +366,6 @@ await corsair.databricks.api.catalog.createExternalLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `credential_name` | `string` | Yes | — |
@@ -428,9 +377,6 @@ await corsair.databricks.api.catalog.createExternalLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -454,9 +400,6 @@ await corsair.databricks.api.catalog.createMetastore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `storage_root` | `string` | Yes | — |
 | `owner` | `string` | No | — |
@@ -468,9 +411,6 @@ await corsair.databricks.api.catalog.createMetastore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metastore_id` | `string` | Yes | — |
 
 
@@ -494,9 +434,6 @@ await corsair.databricks.api.catalog.createStorageCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `aws_iam_role` | `object` | No | — |
 | `azure_service_principal` | `object` | No | — |
@@ -530,9 +467,6 @@ await corsair.databricks.api.catalog.createStorageCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -556,9 +490,6 @@ await corsair.databricks.api.catalog.deleteCatalog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `force` | `boolean` | No | — |
 
@@ -569,9 +500,6 @@ await corsair.databricks.api.catalog.deleteCatalog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -595,9 +523,6 @@ await corsair.databricks.api.catalog.deleteCatalogConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -607,9 +532,6 @@ await corsair.databricks.api.catalog.deleteCatalogConnection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -633,9 +555,6 @@ await corsair.databricks.api.catalog.deleteCatalogCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `force` | `boolean` | No | — |
 
@@ -646,9 +565,6 @@ await corsair.databricks.api.catalog.deleteCatalogCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -672,9 +588,6 @@ await corsair.databricks.api.catalog.deleteCatalogTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `full_name` | `string` | Yes | — |
 
 
@@ -684,9 +597,6 @@ await corsair.databricks.api.catalog.deleteCatalogTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -710,9 +620,6 @@ await corsair.databricks.api.catalog.deleteExternalLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `force` | `boolean` | No | — |
 
@@ -723,9 +630,6 @@ await corsair.databricks.api.catalog.deleteExternalLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -749,9 +653,6 @@ await corsair.databricks.api.catalog.deleteMetastore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `force` | `boolean` | No | — |
 
@@ -762,9 +663,6 @@ await corsair.databricks.api.catalog.deleteMetastore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -788,9 +686,6 @@ await corsair.databricks.api.catalog.deleteOnlineTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -800,9 +695,6 @@ await corsair.databricks.api.catalog.deleteOnlineTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -826,9 +718,6 @@ await corsair.databricks.api.catalog.deleteStorageCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `force` | `boolean` | No | — |
 
@@ -839,9 +728,6 @@ await corsair.databricks.api.catalog.deleteStorageCredential({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -865,9 +751,6 @@ await corsair.databricks.api.catalog.disableSystemSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metastore_id` | `string` | Yes | — |
 | `schema_name` | `string` | Yes | — |
 
@@ -878,9 +761,6 @@ await corsair.databricks.api.catalog.disableSystemSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -906,9 +786,6 @@ await corsair.databricks.api.cleanrooms.createCleanRoom({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `collaborators` | `object[]` | Yes | — |
 
@@ -930,9 +807,6 @@ await corsair.databricks.api.cleanrooms.createCleanRoom({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
 
@@ -957,9 +831,6 @@ await corsair.databricks.api.cleanrooms.createCleanRoomAutoApprovalRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clean_room_name` | `string` | Yes | — |
 | `author_collaborator_alias` | `string` | No | — |
 | `author_scope` | `string` | No | — |
@@ -971,9 +842,6 @@ await corsair.databricks.api.cleanrooms.createCleanRoomAutoApprovalRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_id` | `string` | No | — |
 
 
@@ -999,9 +867,6 @@ await corsair.databricks.api.compute.addComputeInstanceProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instance_profile_arn` | `string` | Yes | — |
 | `iam_role_arn` | `string` | No | — |
 | `is_meta_instance_profile` | `boolean` | No | — |
@@ -1013,9 +878,6 @@ await corsair.databricks.api.compute.addComputeInstanceProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1039,9 +901,6 @@ await corsair.databricks.api.compute.createComputeClusterPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `definition` | `string` | No | — |
 | `policy_family_id` | `string` | No | — |
@@ -1053,9 +912,6 @@ await corsair.databricks.api.compute.createComputeClusterPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_id` | `string` | Yes | — |
 
 
@@ -1079,9 +935,6 @@ await corsair.databricks.api.compute.createComputeInstancePool({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instance_pool_name` | `string` | Yes | — |
 | `node_type_id` | `string` | Yes | — |
 | `min_idle_instances` | `number` | No | — |
@@ -1095,9 +948,6 @@ await corsair.databricks.api.compute.createComputeInstancePool({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instance_pool_id` | `string` | Yes | — |
 
 
@@ -1121,9 +971,6 @@ await corsair.databricks.api.compute.createDatabricksCluster({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cluster_name` | `string` | Yes | — |
 | `spark_version` | `string` | Yes | — |
 | `node_type_id` | `string` | Yes | — |
@@ -1150,9 +997,6 @@ await corsair.databricks.api.compute.createDatabricksCluster({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cluster_id` | `string` | Yes | — |
 
 
@@ -1176,9 +1020,6 @@ await corsair.databricks.api.compute.createGlobalInitScript({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `script` | `string` | Yes | Base64 encoded script |
 | `position` | `number` | No | — |
@@ -1191,9 +1032,6 @@ await corsair.databricks.api.compute.createGlobalInitScript({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `script_id` | `string` | Yes | — |
 
 
@@ -1217,9 +1055,6 @@ await corsair.databricks.api.compute.deleteComputeClusterPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_id` | `string` | Yes | — |
 
 
@@ -1229,9 +1064,6 @@ await corsair.databricks.api.compute.deleteComputeClusterPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1255,9 +1087,6 @@ await corsair.databricks.api.compute.deleteComputeInstancePool({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instance_pool_id` | `string` | Yes | — |
 
 
@@ -1267,9 +1096,6 @@ await corsair.databricks.api.compute.deleteComputeInstancePool({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1293,9 +1119,6 @@ await corsair.databricks.api.compute.deleteDatabricksCluster({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cluster_id` | `string` | Yes | — |
 
 
@@ -1305,9 +1128,6 @@ await corsair.databricks.api.compute.deleteDatabricksCluster({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1331,9 +1151,6 @@ await corsair.databricks.api.compute.deleteGlobalInitScript({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `script_id` | `string` | Yes | — |
 
 
@@ -1343,9 +1160,6 @@ await corsair.databricks.api.compute.deleteGlobalInitScript({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1371,9 +1185,6 @@ await corsair.databricks.api.dashboards.createGenieMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `space_id` | `string` | Yes | — |
 | `conversation_id` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
@@ -1385,9 +1196,6 @@ await corsair.databricks.api.dashboards.createGenieMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | No | — |
 | `status` | `string` | No | — |
 
@@ -1412,9 +1220,6 @@ await corsair.databricks.api.dashboards.createGenieSpace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `string` | Yes | — |
 | `serialized_space` | `string` | Yes | — |
 
@@ -1425,9 +1230,6 @@ await corsair.databricks.api.dashboards.createGenieSpace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `space_id` | `string` | Yes | — |
 
 
@@ -1451,9 +1253,6 @@ await corsair.databricks.api.dashboards.createLakeviewDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `display_name` | `string` | Yes | — |
 | `serialized_dashboard` | `string` | Yes | — |
 
@@ -1464,9 +1263,6 @@ await corsair.databricks.api.dashboards.createLakeviewDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboard_id` | `string` | No | — |
 
 
@@ -1490,9 +1286,6 @@ await corsair.databricks.api.dashboards.deleteGenieConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `space_id` | `string` | Yes | — |
 | `conversation_id` | `string` | Yes | — |
 
@@ -1503,9 +1296,6 @@ await corsair.databricks.api.dashboards.deleteGenieConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1529,9 +1319,6 @@ await corsair.databricks.api.dashboards.deleteGenieConversationMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `space_id` | `string` | Yes | — |
 | `conversation_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
@@ -1543,9 +1330,6 @@ await corsair.databricks.api.dashboards.deleteGenieConversationMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1569,9 +1353,6 @@ await corsair.databricks.api.dashboards.deleteLakeviewDashboardSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboard_id` | `string` | Yes | — |
 | `schedule_id` | `string` | Yes | — |
 
@@ -1582,9 +1363,6 @@ await corsair.databricks.api.dashboards.deleteLakeviewDashboardSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1610,9 +1388,6 @@ await corsair.databricks.api.database.createDatabaseInstance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `capacity` | `string` | No | — |
 
@@ -1623,9 +1398,6 @@ await corsair.databricks.api.database.createDatabaseInstance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `status` | `string` | No | — |
 
@@ -1650,9 +1422,6 @@ await corsair.databricks.api.database.deleteDatabaseInstance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1662,9 +1431,6 @@ await corsair.databricks.api.database.deleteDatabaseInstance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1688,9 +1454,6 @@ await corsair.databricks.api.database.deleteSyncedDatabaseTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1700,9 +1463,6 @@ await corsair.databricks.api.database.deleteSyncedDatabaseTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1728,9 +1488,6 @@ await corsair.databricks.api.dataquality.createDataQualityMonitor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `table_name` | `string` | Yes | — |
 | `assets_dir` | `string` | Yes | — |
 | `output_schema_name` | `string` | Yes | — |
@@ -1742,9 +1499,6 @@ await corsair.databricks.api.dataquality.createDataQualityMonitor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string` | No | — |
 
 
@@ -1768,9 +1522,6 @@ await corsair.databricks.api.dataquality.createQualityMonitorV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `table_name` | `string` | Yes | — |
 | `assets_dir` | `string` | Yes | — |
 | `output_schema_name` | `string` | Yes | — |
@@ -1782,9 +1533,6 @@ await corsair.databricks.api.dataquality.createQualityMonitorV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string` | No | — |
 
 
@@ -1810,9 +1558,6 @@ await corsair.databricks.api.dbfs.addBlockToDbfsStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `handle` | `number` | Yes | — |
 | `data` | `string` | Yes | Base64-encoded string block (max 1MB) |
 
@@ -1823,9 +1568,6 @@ await corsair.databricks.api.dbfs.addBlockToDbfsStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1849,9 +1591,6 @@ await corsair.databricks.api.dbfs.createDbfsFileStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `overwrite` | `boolean` | No | — |
 
@@ -1862,9 +1601,6 @@ await corsair.databricks.api.dbfs.createDbfsFileStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `handle` | `number` | Yes | — |
 
 
@@ -1888,9 +1624,6 @@ await corsair.databricks.api.dbfs.deleteDbfsFileOrDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `recursive` | `boolean` | No | — |
 
@@ -1901,9 +1634,6 @@ await corsair.databricks.api.dbfs.deleteDbfsFileOrDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1929,9 +1659,6 @@ await corsair.databricks.api.iam.addMemberToSecurityGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 | `member_id` | `string` | Yes | — |
 
@@ -1942,9 +1669,6 @@ await corsair.databricks.api.iam.addMemberToSecurityGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1968,9 +1692,6 @@ await corsair.databricks.api.iam.createIamGroupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `displayName` | `string` | Yes | — |
 | `members` | `object[]` | No | — |
 
@@ -1992,9 +1713,6 @@ await corsair.databricks.api.iam.createIamGroupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `displayName` | `string` | Yes | — |
 
@@ -2019,9 +1737,6 @@ await corsair.databricks.api.iam.createIamServicePrincipalV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 
@@ -2032,9 +1747,6 @@ await corsair.databricks.api.iam.createIamServicePrincipalV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `applicationId` | `string` | Yes | — |
 
@@ -2059,9 +1771,6 @@ await corsair.databricks.api.iam.createIamUserV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `displayName` | `string` | No | — |
 | `active` | `boolean` | No | — |
@@ -2073,9 +1782,6 @@ await corsair.databricks.api.iam.createIamUserV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `userName` | `string` | Yes | — |
 
@@ -2100,9 +1806,6 @@ await corsair.databricks.api.iam.createIpAccessList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | Yes | — |
 | `list_type` | `ALLOW \| BLOCK` | Yes | — |
 | `ip_addresses` | `string[]` | Yes | — |
@@ -2114,9 +1817,6 @@ await corsair.databricks.api.iam.createIpAccessList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip_access_list` | `object` | Yes | — |
 
 
@@ -2151,9 +1851,6 @@ await corsair.databricks.api.iam.deleteIamGroupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2163,9 +1860,6 @@ await corsair.databricks.api.iam.deleteIamGroupV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2189,9 +1883,6 @@ await corsair.databricks.api.iam.deleteIamServicePrincipalV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2201,9 +1892,6 @@ await corsair.databricks.api.iam.deleteIamServicePrincipalV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2227,9 +1915,6 @@ await corsair.databricks.api.iam.deleteIamUserV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2239,9 +1924,6 @@ await corsair.databricks.api.iam.deleteIamUserV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2267,9 +1949,6 @@ await corsair.databricks.api.jobs.cancelAllJobRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `number` | No | — |
 | `all_queued_runs` | `boolean` | No | — |
 
@@ -2280,9 +1959,6 @@ await corsair.databricks.api.jobs.cancelAllJobRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2306,9 +1982,6 @@ await corsair.databricks.api.jobs.cancelJobRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run_id` | `number` | Yes | — |
 
 
@@ -2318,9 +1991,6 @@ await corsair.databricks.api.jobs.cancelJobRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2344,9 +2014,6 @@ await corsair.databricks.api.jobs.deleteDatabricksJobRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run_id` | `number` | Yes | — |
 
 
@@ -2356,9 +2023,6 @@ await corsair.databricks.api.jobs.deleteDatabricksJobRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2384,9 +2048,6 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerListings({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 
 
@@ -2396,9 +2057,6 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerListings({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listings` | `object[]` | Yes | — |
 
 
@@ -2432,9 +2090,6 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 
 
@@ -2444,9 +2099,6 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `providers` | `object[]` | Yes | — |
 
 
@@ -2480,9 +2132,6 @@ await corsair.databricks.api.marketplace.createMarketplaceConsumerInstallation({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listing_id` | `string` | Yes | — |
 | `catalog_name` | `string` | No | — |
 
@@ -2493,9 +2142,6 @@ await corsair.databricks.api.marketplace.createMarketplaceConsumerInstallation({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2519,9 +2165,6 @@ await corsair.databricks.api.marketplace.createMarketplaceProviderListing({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `summary` | `string` | Yes | — |
 | `listing_type` | `string` | Yes | — |
@@ -2533,9 +2176,6 @@ await corsair.databricks.api.marketplace.createMarketplaceProviderListing({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2559,9 +2199,6 @@ await corsair.databricks.api.marketplace.createProviderAnalyticsDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 
 
@@ -2571,9 +2208,6 @@ await corsair.databricks.api.marketplace.createProviderAnalyticsDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboard_id` | `string` | No | — |
 
 
@@ -2597,9 +2231,6 @@ await corsair.databricks.api.marketplace.deleteListingFromExchange({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exchange_id` | `string` | Yes | — |
 | `listing_id` | `string` | Yes | — |
 
@@ -2610,9 +2241,6 @@ await corsair.databricks.api.marketplace.deleteListingFromExchange({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2636,9 +2264,6 @@ await corsair.databricks.api.marketplace.deleteMarketplaceConsumerInstallation({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2648,9 +2273,6 @@ await corsair.databricks.api.marketplace.deleteMarketplaceConsumerInstallation({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2676,9 +2298,6 @@ await corsair.databricks.api.ml.createLoggedModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `experiment_id` | `string` | Yes | — |
 
@@ -2689,9 +2308,6 @@ await corsair.databricks.api.ml.createLoggedModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | Yes | — |
 
 
@@ -2715,9 +2331,6 @@ await corsair.databricks.api.ml.createMlExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `artifact_location` | `string` | No | — |
 
@@ -2728,9 +2341,6 @@ await corsair.databricks.api.ml.createMlExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `experiment_id` | `string` | Yes | — |
 
 
@@ -2754,9 +2364,6 @@ await corsair.databricks.api.ml.createMlFeatureStoreOnlineStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `store_type` | `string` | Yes | — |
 
@@ -2767,9 +2374,6 @@ await corsair.databricks.api.ml.createMlFeatureStoreOnlineStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -2793,9 +2397,6 @@ await corsair.databricks.api.ml.createMlflowExperimentRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `experiment_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 
@@ -2806,9 +2407,6 @@ await corsair.databricks.api.ml.createMlflowExperimentRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run_id` | `string` | Yes | — |
 
 
@@ -2832,9 +2430,6 @@ await corsair.databricks.api.ml.createMlForecastingExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `target_col` | `string` | Yes | — |
 
@@ -2845,9 +2440,6 @@ await corsair.databricks.api.ml.createMlForecastingExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `experiment_id` | `string` | Yes | — |
 
 
@@ -2871,9 +2463,6 @@ await corsair.databricks.api.ml.deleteLoggedModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | Yes | — |
 
 
@@ -2883,9 +2472,6 @@ await corsair.databricks.api.ml.deleteLoggedModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2909,9 +2495,6 @@ await corsair.databricks.api.ml.deleteLoggedModelTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -2922,9 +2505,6 @@ await corsair.databricks.api.ml.deleteLoggedModelTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2948,9 +2528,6 @@ await corsair.databricks.api.ml.deleteMlExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `experiment_id` | `string` | Yes | — |
 
 
@@ -2960,9 +2537,6 @@ await corsair.databricks.api.ml.deleteMlExperiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2986,9 +2560,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run_id` | `string` | Yes | — |
 
 
@@ -2998,9 +2569,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3024,9 +2592,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `experiment_id` | `string` | Yes | — |
 | `max_timestamp_millis` | `number` | Yes | — |
 
@@ -3037,9 +2602,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3063,9 +2625,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRunTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run_id` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -3076,9 +2635,6 @@ await corsair.databricks.api.ml.deleteMlExperimentRunTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3102,9 +2658,6 @@ await corsair.databricks.api.ml.deleteMlFeatureEngKafkaConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `config_id` | `string` | Yes | — |
 
 
@@ -3114,9 +2667,6 @@ await corsair.databricks.api.ml.deleteMlFeatureEngKafkaConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3140,9 +2690,6 @@ await corsair.databricks.api.ml.deleteMlFeatureStoreOnlineStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3152,9 +2699,6 @@ await corsair.databricks.api.ml.deleteMlFeatureStoreOnlineStore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3178,9 +2722,6 @@ await corsair.databricks.api.ml.deleteMlFeatureTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `feature_table_name` | `string` | Yes | — |
 | `feature_name` | `string` | Yes | — |
 | `tag_key` | `string` | Yes | — |
@@ -3192,9 +2733,6 @@ await corsair.databricks.api.ml.deleteMlFeatureTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3220,9 +2758,6 @@ await corsair.databricks.api.security.createNotificationDestination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `display_name` | `string` | Yes | — |
 | `config` | `object` | Yes | — |
 
@@ -3243,9 +2778,6 @@ await corsair.databricks.api.security.createNotificationDestination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3269,9 +2801,6 @@ await corsair.databricks.api.security.createOAuthServicePrincipalSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `service_principal_id` | `string` | Yes | — |
 
@@ -3282,9 +2811,6 @@ await corsair.databricks.api.security.createOAuthServicePrincipalSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret_id` | `string` | Yes | — |
 | `secret_value` | `string` | No | — |
 
@@ -3309,9 +2835,6 @@ await corsair.databricks.api.security.createPersonalAccessToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment` | `string` | No | — |
 | `lifetime_seconds` | `number` | No | — |
 
@@ -3322,9 +2845,6 @@ await corsair.databricks.api.security.createPersonalAccessToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token_value` | `string` | No | — |
 | `token_info` | `object` | No | — |
 
@@ -3359,9 +2879,6 @@ await corsair.databricks.api.security.deleteNotificationDestination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3371,9 +2888,6 @@ await corsair.databricks.api.security.deleteNotificationDestination({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3397,9 +2911,6 @@ await corsair.databricks.api.security.deleteOAuth2ServicePrincipalSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `service_principal_id` | `string` | Yes | — |
 | `secret_id` | `string` | Yes | — |
@@ -3411,9 +2922,6 @@ await corsair.databricks.api.security.deleteOAuth2ServicePrincipalSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3437,9 +2945,6 @@ await corsair.databricks.api.security.deleteTokenManagement({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token_id` | `string` | Yes | — |
 
 
@@ -3449,9 +2954,6 @@ await corsair.databricks.api.security.deleteTokenManagement({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3477,9 +2979,6 @@ await corsair.databricks.api.serving.createProvisionedThroughputEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `config` | `object` | Yes | — |
 
@@ -3500,9 +2999,6 @@ await corsair.databricks.api.serving.createProvisionedThroughputEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3526,9 +3022,6 @@ await corsair.databricks.api.serving.createVectorSearchEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `endpoint_type` | `string` | Yes | — |
 
@@ -3539,9 +3032,6 @@ await corsair.databricks.api.serving.createVectorSearchEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3565,9 +3055,6 @@ await corsair.databricks.api.serving.deleteServingEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3577,9 +3064,6 @@ await corsair.databricks.api.serving.deleteServingEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3603,9 +3087,6 @@ await corsair.databricks.api.serving.deleteVectorSearchIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3615,9 +3096,6 @@ await corsair.databricks.api.serving.deleteVectorSearchIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3643,9 +3121,6 @@ await corsair.databricks.api.sharing.createShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3655,9 +3130,6 @@ await corsair.databricks.api.sharing.createShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3681,9 +3153,6 @@ await corsair.databricks.api.sharing.createSharingProvider({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `authentication_type` | `string` | Yes | — |
 
@@ -3694,9 +3163,6 @@ await corsair.databricks.api.sharing.createSharingProvider({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3720,9 +3186,6 @@ await corsair.databricks.api.sharing.createSharingRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `authentication_type` | `string` | Yes | — |
 
@@ -3733,9 +3196,6 @@ await corsair.databricks.api.sharing.createSharingRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3759,9 +3219,6 @@ await corsair.databricks.api.sharing.deleteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3771,9 +3228,6 @@ await corsair.databricks.api.sharing.deleteShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3797,9 +3251,6 @@ await corsair.databricks.api.sharing.deleteSharingRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -3809,9 +3260,6 @@ await corsair.databricks.api.sharing.deleteSharingRecipient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3837,9 +3285,6 @@ await corsair.databricks.api.sql.cancelSqlStatementExecution({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statement_id` | `string` | Yes | — |
 
 
@@ -3849,9 +3294,6 @@ await corsair.databricks.api.sql.cancelSqlStatementExecution({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 
 
@@ -3875,9 +3317,6 @@ await corsair.databricks.api.sql.createLegacySqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `query_id` | `string` | Yes | — |
 | `options` | `object` | No | — |
@@ -3899,9 +3338,6 @@ await corsair.databricks.api.sql.createLegacySqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3925,9 +3361,6 @@ await corsair.databricks.api.sql.createLegacySqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `data_source_id` | `string` | Yes | — |
@@ -3939,9 +3372,6 @@ await corsair.databricks.api.sql.createLegacySqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -3965,9 +3395,6 @@ await corsair.databricks.api.sql.createLegacySqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -3990,9 +3417,6 @@ await corsair.databricks.api.sql.createLegacySqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4016,9 +3440,6 @@ await corsair.databricks.api.sql.createSqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `query_id` | `string` | Yes | — |
 | `options` | `object` | No | — |
@@ -4040,9 +3461,6 @@ await corsair.databricks.api.sql.createSqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4066,9 +3484,6 @@ await corsair.databricks.api.sql.createSqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `warehouse_id` | `string` | Yes | — |
@@ -4080,9 +3495,6 @@ await corsair.databricks.api.sql.createSqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4106,9 +3518,6 @@ await corsair.databricks.api.sql.createSqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -4131,9 +3540,6 @@ await corsair.databricks.api.sql.createSqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4157,9 +3563,6 @@ await corsair.databricks.api.sql.deleteLegacySqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4169,9 +3572,6 @@ await corsair.databricks.api.sql.deleteLegacySqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4195,9 +3595,6 @@ await corsair.databricks.api.sql.deleteLegacySqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4207,9 +3604,6 @@ await corsair.databricks.api.sql.deleteLegacySqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4233,9 +3627,6 @@ await corsair.databricks.api.sql.deleteLegacySqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4245,9 +3636,6 @@ await corsair.databricks.api.sql.deleteLegacySqlQueryVisualization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4271,9 +3659,6 @@ await corsair.databricks.api.sql.deleteSqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4283,9 +3668,6 @@ await corsair.databricks.api.sql.deleteSqlAlert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4309,9 +3691,6 @@ await corsair.databricks.api.sql.deleteSqlDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4321,9 +3700,6 @@ await corsair.databricks.api.sql.deleteSqlDashboard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4347,9 +3723,6 @@ await corsair.databricks.api.sql.deleteSqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4359,9 +3732,6 @@ await corsair.databricks.api.sql.deleteSqlQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4385,9 +3755,6 @@ await corsair.databricks.api.sql.deleteSqlWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4397,9 +3764,6 @@ await corsair.databricks.api.sql.deleteSqlWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4425,9 +3789,6 @@ await corsair.databricks.api.workspace.createSecretScope({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scope` | `string` | Yes | — |
 | `initial_manage_principal` | `string` | No | — |
 
@@ -4438,9 +3799,6 @@ await corsair.databricks.api.workspace.createSecretScope({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4464,9 +3822,6 @@ await corsair.databricks.api.workspace.createTagPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_key` | `string` | Yes | — |
 | `values` | `string[]` | No | — |
 
@@ -4477,9 +3832,6 @@ await corsair.databricks.api.workspace.createTagPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_key` | `string` | Yes | — |
 
 
@@ -4503,9 +3855,6 @@ await corsair.databricks.api.workspace.createWorkspaceDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -4515,9 +3864,6 @@ await corsair.databricks.api.workspace.createWorkspaceDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4541,9 +3887,6 @@ await corsair.databricks.api.workspace.createWorkspaceGitCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `git_username` | `string` | Yes | — |
 | `git_provider` | `string` | Yes | — |
 | `personal_access_token` | `string` | Yes | — |
@@ -4555,9 +3898,6 @@ await corsair.databricks.api.workspace.createWorkspaceGitCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `credential_id` | `number` | No | — |
 
 
@@ -4581,9 +3921,6 @@ await corsair.databricks.api.workspace.createWorkspaceRepo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `provider` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -4595,9 +3932,6 @@ await corsair.databricks.api.workspace.createWorkspaceRepo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 
 
@@ -4624,9 +3958,6 @@ await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingAccessPolicy(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4653,9 +3984,6 @@ await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingApprovedDomai
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4679,9 +4007,6 @@ await corsair.databricks.api.workspace.deleteCustomLlmAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 
 
@@ -4691,9 +4016,6 @@ await corsair.databricks.api.workspace.deleteCustomLlmAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4720,9 +4042,6 @@ await corsair.databricks.api.workspace.deleteDashboardEmailSubscriptionsSetting(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4746,9 +4065,6 @@ await corsair.databricks.api.workspace.deleteDatabricksPipeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pipeline_id` | `string` | Yes | — |
 
 
@@ -4758,9 +4074,6 @@ await corsair.databricks.api.workspace.deleteDatabricksPipeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4787,9 +4100,6 @@ await corsair.databricks.api.workspace.deleteDefaultNamespaceSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4816,9 +4126,6 @@ await corsair.databricks.api.workspace.deleteDefaultWarehouseIdSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4845,9 +4152,6 @@ await corsair.databricks.api.workspace.deleteDisableLegacyAccessSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4874,9 +4178,6 @@ await corsair.databricks.api.workspace.deleteDisableLegacyDbfsSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4903,9 +4204,6 @@ await corsair.databricks.api.workspace.deleteLlmProxyPartnerSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4932,9 +4230,6 @@ await corsair.databricks.api.workspace.deleteRestrictWorkspaceAdminsSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4958,9 +4253,6 @@ await corsair.databricks.api.workspace.deleteSecretsAcl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scope` | `string` | Yes | — |
 | `principal` | `string` | Yes | — |
 
@@ -4971,9 +4263,6 @@ await corsair.databricks.api.workspace.deleteSecretsAcl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4997,9 +4286,6 @@ await corsair.databricks.api.workspace.deleteSecretScope({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scope` | `string` | Yes | — |
 
 
@@ -5009,9 +4295,6 @@ await corsair.databricks.api.workspace.deleteSecretScope({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5038,9 +4321,6 @@ await corsair.databricks.api.workspace.deleteSqlResultsDownloadSetting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5064,9 +4344,6 @@ await corsair.databricks.api.workspace.deleteTagPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_key` | `string` | Yes | — |
 
 
@@ -5076,9 +4353,6 @@ await corsair.databricks.api.workspace.deleteTagPolicy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5102,9 +4376,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceGitCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `credential_id` | `number` | Yes | — |
 
 
@@ -5114,9 +4385,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceGitCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5140,9 +4408,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `recursive` | `boolean` | No | — |
 
@@ -5153,9 +4418,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5179,9 +4441,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceRepo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_id` | `number` | Yes | — |
 
 
@@ -5191,9 +4450,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceRepo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -5217,9 +4473,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scope` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -5230,9 +4483,6 @@ await corsair.databricks.api.workspace.deleteWorkspaceSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 

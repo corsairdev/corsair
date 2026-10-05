@@ -31,9 +31,6 @@ await corsair.amplitude.api.annotations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | Yes | — |
 | `label` | `string` | Yes | — |
 | `details` | `string` | No | — |
@@ -46,9 +43,6 @@ await corsair.amplitude.api.annotations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -87,9 +81,6 @@ await corsair.amplitude.api.annotations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `number` | No | — |
 
 
@@ -99,9 +90,6 @@ await corsair.amplitude.api.annotations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -143,9 +131,6 @@ await corsair.amplitude.api.charts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chart_id` | `string` | Yes | — |
 
 
@@ -155,9 +140,6 @@ await corsair.amplitude.api.charts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `seriesLabels` | `string[]` | No | — |
 | `title` | `string` | No | — |
@@ -200,9 +182,6 @@ await corsair.amplitude.api.cohorts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `app_id` | `number` | Yes | — |
 | `id_type` | `BY_AMP_ID \| BY_USER_ID \| BY_DEVICE_ID` | Yes | — |
@@ -218,9 +197,6 @@ await corsair.amplitude.api.cohorts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cohort` | `object` | No | — |
 
 
@@ -258,9 +234,6 @@ await corsair.amplitude.api.cohorts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cohort_id` | `string` | Yes | — |
 
 
@@ -270,9 +243,6 @@ await corsair.amplitude.api.cohorts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cohort` | `object` | No | — |
 
 
@@ -318,9 +288,6 @@ await corsair.amplitude.api.cohorts.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request_id` | `string` | Yes | — |
 
 
@@ -330,9 +297,6 @@ await corsair.amplitude.api.cohorts.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `zip_url` | `string` | No | — |
 
@@ -360,9 +324,6 @@ await corsair.amplitude.api.cohorts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cohorts` | `object[]` | No | — |
 
 
@@ -410,9 +371,6 @@ await corsair.amplitude.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboard_id` | `number` | Yes | — |
 
 
@@ -422,9 +380,6 @@ await corsair.amplitude.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboard` | `object` | No | — |
 
 
@@ -472,9 +427,6 @@ await corsair.amplitude.api.dashboards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboards` | `object[]` | No | — |
 
 
@@ -520,9 +472,6 @@ await corsair.amplitude.api.events.getList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -563,9 +512,6 @@ await corsair.amplitude.api.events.identifyUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key` | `string` | Yes | — |
 | `identification` | `object[]` | Yes | — |
 
@@ -590,9 +536,6 @@ await corsair.amplitude.api.events.identifyUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `number` | Yes | — |
 | `error` | `string` | No | — |
 
@@ -617,9 +560,6 @@ await corsair.amplitude.api.events.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key` | `string` | Yes | — |
 | `events` | `object[]` | Yes | — |
 | `options` | `object` | No | — |
@@ -673,9 +613,6 @@ await corsair.amplitude.api.events.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `number` | Yes | — |
 | `events_ingested` | `number` | No | — |
 | `payload_size_bytes` | `number` | No | — |
@@ -702,9 +639,6 @@ await corsair.amplitude.api.events.uploadBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key` | `string` | Yes | — |
 | `events` | `object[]` | Yes | — |
 | `options` | `object` | No | — |
@@ -758,9 +692,6 @@ await corsair.amplitude.api.events.uploadBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `number` | Yes | — |
 | `events_ingested` | `number` | No | — |
 | `payload_size_bytes` | `number` | No | — |
@@ -789,9 +720,6 @@ await corsair.amplitude.api.exports.getData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start` | `string` | Yes | — |
 | `end` | `string` | Yes | — |
 
@@ -802,9 +730,6 @@ await corsair.amplitude.api.exports.getData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `url` | `string` | No | — |
 
@@ -831,9 +756,6 @@ await corsair.amplitude.api.users.getActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `number` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -845,9 +767,6 @@ await corsair.amplitude.api.users.getActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `events` | `object[]` | No | — |
 | `userData` | `object` | No | — |
 
@@ -901,9 +820,6 @@ await corsair.amplitude.api.users.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | No | — |
 | `amplitude_id` | `number` | No | — |
 
@@ -914,9 +830,6 @@ await corsair.amplitude.api.users.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userData` | `object` | No | — |
 
 
@@ -965,9 +878,6 @@ await corsair.amplitude.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -979,9 +889,6 @@ await corsair.amplitude.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matches` | `object[]` | No | — |
 | `next` | `string` | No | — |
 

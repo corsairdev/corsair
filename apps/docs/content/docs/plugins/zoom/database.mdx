@@ -28,9 +28,6 @@ const rows = await corsair.zoom.db.archiveFiles.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `meeting_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -62,9 +59,6 @@ const rows = await corsair.zoom.db.devices.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `device_name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -99,9 +93,6 @@ const rows = await corsair.zoom.db.meetings.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `uuid` | `string` | equals, contains, startsWith, endsWith, in |
@@ -138,9 +129,6 @@ const rows = await corsair.zoom.db.participants.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `user_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -183,9 +171,6 @@ const rows = await corsair.zoom.db.recordings.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `meeting_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -219,9 +204,6 @@ const rows = await corsair.zoom.db.webinars.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `uuid` | `string` | equals, contains, startsWith, endsWith, in |

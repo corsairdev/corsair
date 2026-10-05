@@ -34,9 +34,6 @@ await corsair.ayrshare.api.autoSchedule.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `schedules` | `object` | Yes | — |
 
@@ -71,9 +68,6 @@ await corsair.ayrshare.api.autoSchedule.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `schedule` | `string[]` | No | UTC times; required unless setStartDate is provided |
 | `title` | `string` | No | Case-sensitive schedule name and join key for publish autoSchedule.title |
 | `setStartDate` | `string` | No | ISO-8601 UTC date-time to begin the schedule |
@@ -87,9 +81,6 @@ await corsair.ayrshare.api.autoSchedule.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `title` | `string` | Yes | — |
@@ -120,9 +111,6 @@ await corsair.ayrshare.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Ayrshare top-level Post ID |
 | `markManualDeleted` | `boolean` | No | Mark deleted in Ayrshare without deleting on the network. Instagram and TikTok published posts cannot be deleted via API. |
 
@@ -133,9 +121,6 @@ await corsair.ayrshare.api.posts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `id` | `string` | No | — |
 
@@ -160,9 +145,6 @@ await corsair.ayrshare.api.posts.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | Number of recent posts. Default 25, max 1000. |
 | `lastDays` | `number` | No | Last n days by publish date. Default 30. 0 returns the full history (up to limit). Ignored when startDate and endDate are set. |
 | `startDate` | `string` | No | ISO-8601 start date (inclusive) |
@@ -178,9 +160,6 @@ await corsair.ayrshare.api.posts.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `history` | `object[]` | Yes | — |
 | `count` | `number` | No | — |
 | `refId` | `string` | No | — |

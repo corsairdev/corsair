@@ -31,9 +31,6 @@ await corsair.beaconstac.api.analytics.periodOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `number` | Yes | — |
 | `product_type` | `beacon \| nfc \| qr \| geofence` | Yes | — |
 | `from_timestamp` | `number` | Yes | — |
@@ -46,9 +43,6 @@ await corsair.beaconstac.api.analytics.periodOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `points` | `any[]` | No | — |
 | `columns` | `any[]` | No | — |
 
@@ -73,9 +67,6 @@ await corsair.beaconstac.api.analytics.productOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `number` | Yes | — |
 | `product_type` | `beacon \| nfc \| qr \| geofence` | Yes | — |
 | `from_timestamp` | `number` | Yes | — |
@@ -88,9 +79,6 @@ await corsair.beaconstac.api.analytics.productOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `points` | `any[]` | No | — |
 | `columns` | `any[]` | No | — |
 
@@ -117,9 +105,6 @@ await corsair.beaconstac.api.bulkQrcodes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -134,9 +119,6 @@ await corsair.beaconstac.api.bulkQrcodes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -187,9 +169,6 @@ await corsair.beaconstac.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -200,9 +179,6 @@ await corsair.beaconstac.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -255,9 +231,6 @@ await corsair.beaconstac.api.places.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `address` | `string` | Yes | — |
 | `latitude` | `number` | Yes | — |
@@ -275,9 +248,6 @@ await corsair.beaconstac.api.places.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `organization` | `number` | No | — |
@@ -315,9 +285,6 @@ await corsair.beaconstac.api.places.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -332,9 +299,6 @@ await corsair.beaconstac.api.places.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -386,9 +350,6 @@ await corsair.beaconstac.api.places.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `place_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `organization` | `number` | Yes | — |
@@ -406,9 +367,6 @@ await corsair.beaconstac.api.places.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `organization` | `number` | No | — |
@@ -448,9 +406,6 @@ await corsair.beaconstac.api.qrcodes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -460,9 +415,6 @@ await corsair.beaconstac.api.qrcodes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 
 
@@ -486,9 +438,6 @@ await corsair.beaconstac.api.qrcodes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -498,9 +447,6 @@ await corsair.beaconstac.api.qrcodes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `qr_type` | `number` | No | — |
@@ -545,9 +491,6 @@ await corsair.beaconstac.api.qrcodes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `qrcode_id` | `number` | Yes | — |
 | `meta` | `object` | No | — |
 | `name` | `string` | No | — |
@@ -600,9 +543,6 @@ await corsair.beaconstac.api.qrcodes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `qr_type` | `number` | No | — |
@@ -649,9 +589,6 @@ await corsair.beaconstac.api.qrTemplates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `organization` | `number` | Yes | — |
 | `meta` | `object` | No | — |
@@ -692,9 +629,6 @@ await corsair.beaconstac.api.qrTemplates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `default` | `boolean` | No | — |
@@ -737,9 +671,6 @@ await corsair.beaconstac.api.qrTemplates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -749,9 +680,6 @@ await corsair.beaconstac.api.qrTemplates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 
 
@@ -775,9 +703,6 @@ await corsair.beaconstac.api.qrTemplates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -790,9 +715,6 @@ await corsair.beaconstac.api.qrTemplates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -851,9 +773,6 @@ await corsair.beaconstac.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `organization` | `number` | Yes | — |
 | `color` | `string` | No | — |
@@ -865,9 +784,6 @@ await corsair.beaconstac.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -897,9 +813,6 @@ await corsair.beaconstac.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `number` | Yes | — |
 
 
@@ -909,9 +822,6 @@ await corsair.beaconstac.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 
 
@@ -935,9 +845,6 @@ await corsair.beaconstac.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `ordering` | `string` | No | — |
@@ -950,9 +857,6 @@ await corsair.beaconstac.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -996,9 +900,6 @@ await corsair.beaconstac.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -1010,9 +911,6 @@ await corsair.beaconstac.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -1044,9 +942,6 @@ await corsair.beaconstac.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `organization` | `number` | Yes | — |
 | `email` | `string` | No | — |
@@ -1065,9 +960,6 @@ await corsair.beaconstac.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
@@ -1105,9 +997,6 @@ await corsair.beaconstac.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1117,9 +1006,6 @@ await corsair.beaconstac.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
@@ -1157,9 +1043,6 @@ await corsair.beaconstac.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1187,9 +1070,6 @@ await corsair.beaconstac.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -1241,9 +1121,6 @@ await corsair.beaconstac.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `number` | Yes | — |
 | `last_name` | `string` | No | — |
 | `first_name` | `string` | No | — |
@@ -1257,9 +1134,6 @@ await corsair.beaconstac.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |

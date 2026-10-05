@@ -31,9 +31,6 @@ await corsair.bart.api.advisories.elevators({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | No | — |
 | `date` | `string` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.bart.api.advisories.elevators({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
 | `bsa` | `object` | No | — |
@@ -103,9 +97,6 @@ await corsair.bart.api.advisories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | No | — |
 | `date` | `string` | No | — |
 
@@ -116,9 +107,6 @@ await corsair.bart.api.advisories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
 | `bsa` | `object` | No | — |
@@ -187,9 +175,6 @@ await corsair.bart.api.advisories.trainCount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
 | `traincount` | `string \| number` | Yes | — |
@@ -217,9 +202,6 @@ await corsair.bart.api.etd.station({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 | `plat` | `string \| number` | No | — |
 | `dir` | `string` | No | — |
@@ -231,9 +213,6 @@ await corsair.bart.api.etd.station({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
 | `station` | `object` | Yes | — |
@@ -395,9 +374,6 @@ await corsair.bart.api.fares.calculate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 | `dest` | `string` | Yes | — |
 | `date` | `string` | No | — |
@@ -410,9 +386,6 @@ await corsair.bart.api.fares.calculate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | No | — |
 | `destination` | `string` | No | — |
 | `sched` | `string` | No | — |
@@ -475,9 +448,6 @@ await corsair.bart.api.routes.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `route` | `string \| number` | Yes | — |
 | `sched` | `string \| number` | No | — |
 | `date` | `string` | No | — |
@@ -489,9 +459,6 @@ await corsair.bart.api.routes.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sched` | `string` | No | — |
 | `routes` | `object` | Yes | — |
 
@@ -557,9 +524,6 @@ await corsair.bart.api.routes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sched` | `string \| number` | No | — |
 | `date` | `string` | No | — |
 
@@ -570,9 +534,6 @@ await corsair.bart.api.routes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sched` | `string` | No | — |
 | `routes` | `object` | Yes | — |
 
@@ -624,9 +585,6 @@ await corsair.bart.api.schedules.arrivals({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 | `dest` | `string` | Yes | — |
 | `time` | `string` | No | — |
@@ -642,9 +600,6 @@ await corsair.bart.api.schedules.arrivals({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | No | — |
 | `destination` | `string` | No | — |
 | `schedule` | `object` | No | — |
@@ -801,9 +756,6 @@ await corsair.bart.api.schedules.departures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 | `dest` | `string` | Yes | — |
 | `time` | `string` | No | — |
@@ -819,9 +771,6 @@ await corsair.bart.api.schedules.departures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `origin` | `string` | No | — |
 | `destination` | `string` | No | — |
 | `schedule` | `object` | No | — |
@@ -978,9 +927,6 @@ await corsair.bart.api.schedules.routes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `route` | `string \| number` | Yes | — |
 | `time` | `string` | No | — |
 | `date` | `string` | No | — |
@@ -993,9 +939,6 @@ await corsair.bart.api.schedules.routes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `route` | `object` | No | — |
 
 
@@ -1060,9 +1003,6 @@ await corsair.bart.api.stations.access({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 | `l` | `string \| number` | No | — |
 
@@ -1073,9 +1013,6 @@ await corsair.bart.api.stations.access({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stations` | `object` | No | — |
 | `station` | `object` | No | — |
 
@@ -1250,9 +1187,6 @@ await corsair.bart.api.stations.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orig` | `string` | Yes | — |
 
 
@@ -1262,9 +1196,6 @@ await corsair.bart.api.stations.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stations` | `object` | No | — |
 | `station` | `object` | No | — |
 
@@ -1474,9 +1405,6 @@ await corsair.bart.api.stations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stations` | `object` | Yes | — |
 
 

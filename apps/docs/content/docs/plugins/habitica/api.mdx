@@ -31,9 +31,6 @@ await corsair.habitica.api.auth.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.habitica.api.auth.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `apiToken` | `string` | No | — |
 | `newUser` | `boolean` | No | — |
@@ -73,9 +67,6 @@ await corsair.habitica.api.auth.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
@@ -88,9 +79,6 @@ await corsair.habitica.api.auth.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `apiToken` | `string` | No | — |
 | `newUser` | `boolean` | No | — |
@@ -117,9 +105,6 @@ await corsair.habitica.api.auth.social({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `network` | `facebook \| google \| apple` | Yes | — |
 | `authResponse` | `object` | Yes | — |
 
@@ -140,9 +125,6 @@ await corsair.habitica.api.auth.social({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `apiToken` | `string` | No | — |
 | `newUser` | `boolean` | No | — |
@@ -171,9 +153,6 @@ await corsair.habitica.api.challenges.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 
 
@@ -183,9 +162,6 @@ await corsair.habitica.api.challenges.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -282,9 +258,6 @@ await corsair.habitica.api.challenges.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `shortName` | `string` | Yes | — |
@@ -299,9 +272,6 @@ await corsair.habitica.api.challenges.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -398,9 +368,6 @@ await corsair.habitica.api.challenges.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 
 
@@ -437,9 +404,6 @@ await corsair.habitica.api.challenges.exportCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 
 
@@ -449,9 +413,6 @@ await corsair.habitica.api.challenges.exportCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -476,9 +437,6 @@ await corsair.habitica.api.challenges.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 
 
@@ -488,9 +446,6 @@ await corsair.habitica.api.challenges.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -587,9 +542,6 @@ await corsair.habitica.api.challenges.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 
 
@@ -599,9 +551,6 @@ await corsair.habitica.api.challenges.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -698,9 +647,6 @@ await corsair.habitica.api.challenges.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 | `keep` | `keep-all \| remove-all` | No | — |
 
@@ -738,9 +684,6 @@ await corsair.habitica.api.challenges.listByGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 
 
@@ -814,9 +757,6 @@ await corsair.habitica.api.challenges.listForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | Yes | — |
 | `member` | `boolean` | No | — |
 | `owned` | `owned \| not_owned` | No | — |
@@ -895,9 +835,6 @@ await corsair.habitica.api.chat.deleteMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `chatId` | `string` | Yes | — |
 | `previousMsg` | `string` | No | — |
@@ -936,9 +873,6 @@ await corsair.habitica.api.chat.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | No | — |
 
 
@@ -978,9 +912,6 @@ await corsair.habitica.api.chat.markSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 
 
@@ -1049,9 +980,6 @@ await corsair.habitica.api.content.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `string` | No | — |
 
 
@@ -1088,9 +1016,6 @@ await corsair.habitica.api.content.getByType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter` | `string` | No | — |
 | `language` | `string` | No | — |
 
@@ -1128,9 +1053,6 @@ await corsair.habitica.api.content.marketGear({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `string` | No | — |
 
 
@@ -1167,9 +1089,6 @@ await corsair.habitica.api.content.modelPaths({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `user \| tag \| challenge \| group \| habit \| daily \| todo \| reward` | Yes | — |
 
 
@@ -1266,9 +1185,6 @@ await corsair.habitica.api.content.timeTravelers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `string` | No | — |
 
 
@@ -1305,9 +1221,6 @@ await corsair.habitica.api.content.validateCoupon({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 
 
@@ -1379,9 +1292,6 @@ await corsair.habitica.api.exports.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -1409,9 +1319,6 @@ await corsair.habitica.api.exports.inbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -1468,9 +1375,6 @@ await corsair.habitica.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `party \| guild` | Yes | — |
 | `privacy` | `private \| public` | No | — |
@@ -1484,9 +1388,6 @@ await corsair.habitica.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1627,9 +1528,6 @@ await corsair.habitica.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 
 
@@ -1639,9 +1537,6 @@ await corsair.habitica.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1785,9 +1680,6 @@ await corsair.habitica.api.groups.getParty({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1931,9 +1823,6 @@ await corsair.habitica.api.groups.getTavern({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2074,9 +1963,6 @@ await corsair.habitica.api.groups.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `uuids` | `string[]` | No | — |
 | `emails` | `object[]` | No | — |
@@ -2126,9 +2012,6 @@ await corsair.habitica.api.groups.inviteToQuest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `questKey` | `string` | Yes | — |
 
@@ -2166,9 +2049,6 @@ await corsair.habitica.api.groups.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `keep` | `keep-all \| remove-all` | No | — |
 | `keepChallenges` | `remain-in-challenges \| leave-challenges` | No | — |
@@ -2207,9 +2087,6 @@ await corsair.habitica.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `paginate` | `boolean` | No | — |
 | `page` | `number` | No | — |
@@ -2301,9 +2178,6 @@ await corsair.habitica.api.groups.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `lastId` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -2349,9 +2223,6 @@ await corsair.habitica.api.groups.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `memberId` | `string` | Yes | — |
 | `message` | `string` | No | — |
@@ -2390,9 +2261,6 @@ await corsair.habitica.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2407,9 +2275,6 @@ await corsair.habitica.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2552,9 +2417,6 @@ await corsair.habitica.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -2564,9 +2426,6 @@ await corsair.habitica.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `challenge` | `boolean` | No | — |
@@ -2593,9 +2452,6 @@ await corsair.habitica.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tagId` | `string` | Yes | — |
 
 
@@ -2666,9 +2522,6 @@ await corsair.habitica.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tagId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2679,9 +2532,6 @@ await corsair.habitica.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `challenge` | `boolean` | No | — |
@@ -2710,9 +2560,6 @@ await corsair.habitica.api.tasks.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `tagId` | `string` | Yes | — |
 
@@ -2723,9 +2570,6 @@ await corsair.habitica.api.tasks.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -2877,9 +2721,6 @@ await corsair.habitica.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `type` | `habit \| daily \| todo \| reward` | Yes | — |
 | `notes` | `string` | No | — |
@@ -2933,9 +2774,6 @@ await corsair.habitica.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -3087,9 +2925,6 @@ await corsair.habitica.api.tasks.createChallengeTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `type` | `habit \| daily \| todo \| reward` | Yes | — |
@@ -3233,9 +3068,6 @@ await corsair.habitica.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -3272,9 +3104,6 @@ await corsair.habitica.api.tasks.deleteChecklistItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `itemId` | `string` | Yes | — |
 
@@ -3285,9 +3114,6 @@ await corsair.habitica.api.tasks.deleteChecklistItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -3439,9 +3265,6 @@ await corsair.habitica.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -3451,9 +3274,6 @@ await corsair.habitica.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -3605,9 +3425,6 @@ await corsair.habitica.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `habits \| dailys \| todos \| rewards \| completedTodos \| _allCompletedTodos` | No | — |
 | `dueDate` | `string` | No | — |
 
@@ -3730,9 +3547,6 @@ await corsair.habitica.api.tasks.listChallengeTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 | `type` | `habits \| dailys \| todos \| rewards` | No | — |
 
@@ -3855,9 +3669,6 @@ await corsair.habitica.api.tasks.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `position` | `number` | Yes | — |
 
@@ -3885,9 +3696,6 @@ await corsair.habitica.api.tasks.score({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `direction` | `up \| down` | Yes | — |
 
@@ -3898,9 +3706,6 @@ await corsair.habitica.api.tasks.score({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delta` | `number` | No | — |
 | `_tmp` | `object` | No | — |
 | `hp` | `number` | No | — |
@@ -3964,9 +3769,6 @@ await corsair.habitica.api.tasks.unlinkAllChallengeTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `challengeId` | `string` | Yes | — |
 | `keep` | `keep-all \| remove-all` | No | — |
 
@@ -4004,9 +3806,6 @@ await corsair.habitica.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `text` | `string` | No | — |
 | `notes` | `string` | No | — |
@@ -4060,9 +3859,6 @@ await corsair.habitica.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -4214,9 +4010,6 @@ await corsair.habitica.api.tasks.updateChecklistItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `itemId` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
@@ -4228,9 +4021,6 @@ await corsair.habitica.api.tasks.updateChecklistItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `_id` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -4384,9 +4174,6 @@ await corsair.habitica.api.user.addPushDevice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `regId` | `string` | Yes | — |
 | `type` | `android \| ios` | Yes | — |
 
@@ -4424,9 +4211,6 @@ await corsair.habitica.api.user.deleteMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4463,9 +4247,6 @@ await corsair.habitica.api.user.deletePushDevice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `regId` | `string` | Yes | — |
 
 
@@ -4502,9 +4283,6 @@ await corsair.habitica.api.user.equip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `equipped \| costume \| pet \| mount \| background` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -4542,9 +4320,6 @@ await corsair.habitica.api.user.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userFields` | `string` | No | — |
 
 
@@ -4581,9 +4356,6 @@ await corsair.habitica.api.user.markNotificationSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notificationId` | `string` | Yes | — |
 
 
@@ -4620,9 +4392,6 @@ await corsair.habitica.api.user.markNotificationsSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notificationIds` | `string[]` | No | — |
 
 
@@ -4659,9 +4428,6 @@ await corsair.habitica.api.user.movePinnedItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `position` | `number` | Yes | — |
 
@@ -4699,9 +4465,6 @@ await corsair.habitica.api.user.readCard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cardType` | `birthday \| greeting \| nye \| thankyou \| valentine` | Yes | — |
 
 
@@ -4768,9 +4531,6 @@ await corsair.habitica.api.user.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `updates` | `object` | Yes | — |
 
 
@@ -4819,9 +4579,6 @@ await corsair.habitica.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `label` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
@@ -4845,9 +4602,6 @@ await corsair.habitica.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `label` | `string` | No | — |
@@ -4955,9 +4709,6 @@ await corsair.habitica.api.webhooks.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -4967,9 +4718,6 @@ await corsair.habitica.api.webhooks.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `label` | `string` | No | — |

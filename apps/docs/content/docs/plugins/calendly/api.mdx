@@ -31,9 +31,6 @@ await corsair.calendly.api.activityLog.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `sort` | `string` | No | — |
 | `count` | `number` | No | — |
@@ -49,9 +46,6 @@ await corsair.calendly.api.activityLog.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -108,9 +102,6 @@ await corsair.calendly.api.activityLog.listOutgoingCommunications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -122,9 +113,6 @@ await corsair.calendly.api.activityLog.listOutgoingCommunications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -179,9 +167,6 @@ await corsair.calendly.api.eventTypes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `host` | `string` | Yes | — |
 | `co_hosts` | `string[]` | No | — |
@@ -223,9 +208,6 @@ await corsair.calendly.api.eventTypes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -292,9 +274,6 @@ await corsair.calendly.api.eventTypes.createOneOff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `host` | `string` | Yes | — |
 | `duration` | `number` | Yes | — |
@@ -332,9 +311,6 @@ await corsair.calendly.api.eventTypes.createOneOff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -370,9 +346,6 @@ await corsair.calendly.api.eventTypes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -382,9 +355,6 @@ await corsair.calendly.api.eventTypes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -451,9 +421,6 @@ await corsair.calendly.api.eventTypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `active` | `boolean` | No | — |
@@ -468,9 +435,6 @@ await corsair.calendly.api.eventTypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -551,9 +515,6 @@ await corsair.calendly.api.eventTypes.listAvailableTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `string` | Yes | — |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | Yes | — |
@@ -567,9 +528,6 @@ await corsair.calendly.api.eventTypes.listAvailableTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 
 
@@ -607,9 +565,6 @@ await corsair.calendly.api.eventTypes.listHosts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -621,9 +576,6 @@ await corsair.calendly.api.eventTypes.listHosts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -674,9 +626,6 @@ await corsair.calendly.api.eventTypes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description_plain` | `string` | No | — |
@@ -691,9 +640,6 @@ await corsair.calendly.api.eventTypes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -760,9 +706,6 @@ await corsair.calendly.api.eventTypes.updateAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `rules` | `object[]` | No | — |
 | `timezone` | `string` | No | — |
@@ -791,9 +734,6 @@ await corsair.calendly.api.eventTypes.updateAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -834,9 +774,6 @@ await corsair.calendly.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -846,9 +783,6 @@ await corsair.calendly.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -890,9 +824,6 @@ await corsair.calendly.api.groups.getRelationship({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -902,9 +833,6 @@ await corsair.calendly.api.groups.getRelationship({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -943,9 +871,6 @@ await corsair.calendly.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -958,9 +883,6 @@ await corsair.calendly.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -1016,9 +938,6 @@ await corsair.calendly.api.groups.listRelationships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -1030,9 +949,6 @@ await corsair.calendly.api.groups.listRelationships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -1085,9 +1001,6 @@ await corsair.calendly.api.invitees.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type_uuid` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -1124,9 +1037,6 @@ await corsair.calendly.api.invitees.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1201,9 +1111,6 @@ await corsair.calendly.api.invitees.deleteData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 
 
@@ -1230,9 +1137,6 @@ await corsair.calendly.api.invitees.deleteNoShow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -1259,9 +1163,6 @@ await corsair.calendly.api.invitees.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_uuid` | `string` | Yes | — |
 | `invitee_uuid` | `string` | Yes | — |
 
@@ -1272,9 +1173,6 @@ await corsair.calendly.api.invitees.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1349,9 +1247,6 @@ await corsair.calendly.api.invitees.getNoShow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -1361,9 +1256,6 @@ await corsair.calendly.api.invitees.getNoShow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1401,9 +1293,6 @@ await corsair.calendly.api.invitees.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_uuid` | `string` | Yes | — |
 | `status` | `active \| canceled` | No | — |
 | `count` | `number` | No | — |
@@ -1418,9 +1307,6 @@ await corsair.calendly.api.invitees.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -1509,9 +1395,6 @@ await corsair.calendly.api.invitees.markNoShow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invitee` | `string` | Yes | — |
 
 
@@ -1521,9 +1404,6 @@ await corsair.calendly.api.invitees.markNoShow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1563,9 +1443,6 @@ await corsair.calendly.api.organizations.deleteMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -1592,9 +1469,6 @@ await corsair.calendly.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -1604,9 +1478,6 @@ await corsair.calendly.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1646,9 +1517,6 @@ await corsair.calendly.api.organizations.getInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_uuid` | `string` | Yes | — |
 | `uuid` | `string` | Yes | — |
 
@@ -1659,9 +1527,6 @@ await corsair.calendly.api.organizations.getInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1703,9 +1568,6 @@ await corsair.calendly.api.organizations.getMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -1715,9 +1577,6 @@ await corsair.calendly.api.organizations.getMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1768,9 +1627,6 @@ await corsair.calendly.api.organizations.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_uuid` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 
@@ -1781,9 +1637,6 @@ await corsair.calendly.api.organizations.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -1825,9 +1678,6 @@ await corsair.calendly.api.organizations.listInvitations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_uuid` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -1842,9 +1692,6 @@ await corsair.calendly.api.organizations.listInvitations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -1900,9 +1747,6 @@ await corsair.calendly.api.organizations.listMemberships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | No | — |
 | `user` | `string` | No | — |
 | `count` | `number` | No | — |
@@ -1916,9 +1760,6 @@ await corsair.calendly.api.organizations.listMemberships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -1983,9 +1824,6 @@ await corsair.calendly.api.organizations.removeMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2012,9 +1850,6 @@ await corsair.calendly.api.organizations.revokeInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_uuid` | `string` | Yes | — |
 | `uuid` | `string` | Yes | — |
 
@@ -2044,9 +1879,6 @@ await corsair.calendly.api.routingForms.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2056,9 +1888,6 @@ await corsair.calendly.api.routingForms.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2098,9 +1927,6 @@ await corsair.calendly.api.routingForms.getSampleWebhookData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `scope` | `string` | Yes | — |
 | `event` | `string` | Yes | — |
@@ -2112,9 +1938,6 @@ await corsair.calendly.api.routingForms.getSampleWebhookData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | Yes | — |
 
 
@@ -2148,9 +1971,6 @@ await corsair.calendly.api.routingForms.getSubmission({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2160,9 +1980,6 @@ await corsair.calendly.api.routingForms.getSubmission({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2206,9 +2023,6 @@ await corsair.calendly.api.routingForms.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `page_token` | `string` | No | — |
@@ -2221,9 +2035,6 @@ await corsair.calendly.api.routingForms.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -2279,9 +2090,6 @@ await corsair.calendly.api.scheduledEvents.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `reason` | `string` | No | — |
 
@@ -2292,9 +2100,6 @@ await corsair.calendly.api.scheduledEvents.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2331,9 +2136,6 @@ await corsair.calendly.api.scheduledEvents.deleteData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | Yes | — |
 
@@ -2361,9 +2163,6 @@ await corsair.calendly.api.scheduledEvents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2373,9 +2172,6 @@ await corsair.calendly.api.scheduledEvents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2439,9 +2235,6 @@ await corsair.calendly.api.scheduledEvents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `status` | `active \| canceled` | No | — |
@@ -2459,9 +2252,6 @@ await corsair.calendly.api.scheduledEvents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -2541,9 +2331,6 @@ await corsair.calendly.api.schedulingLinks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `max_event_count` | `number` | Yes | — |
 | `owner` | `string` | Yes | — |
 | `owner_type` | `string` | Yes | — |
@@ -2555,9 +2342,6 @@ await corsair.calendly.api.schedulingLinks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2594,9 +2378,6 @@ await corsair.calendly.api.schedulingLinks.createShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `string` | Yes | — |
 
 
@@ -2606,9 +2387,6 @@ await corsair.calendly.api.schedulingLinks.createShare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2646,9 +2424,6 @@ await corsair.calendly.api.schedulingLinks.createSingleUse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `max_event_count` | `number` | Yes | — |
 | `owner` | `string` | Yes | — |
 | `owner_type` | `string` | Yes | — |
@@ -2660,9 +2435,6 @@ await corsair.calendly.api.schedulingLinks.createSingleUse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2701,9 +2473,6 @@ await corsair.calendly.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2713,9 +2482,6 @@ await corsair.calendly.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2759,9 +2525,6 @@ await corsair.calendly.api.users.getAvailabilitySchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -2771,9 +2534,6 @@ await corsair.calendly.api.users.getAvailabilitySchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2819,9 +2579,6 @@ await corsair.calendly.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -2865,9 +2622,6 @@ await corsair.calendly.api.users.listAvailabilitySchedules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 
 
@@ -2877,9 +2631,6 @@ await corsair.calendly.api.users.listAvailabilitySchedules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 
 
@@ -2922,9 +2673,6 @@ await corsair.calendly.api.users.listBusyTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | Yes | — |
@@ -2936,9 +2684,6 @@ await corsair.calendly.api.users.listBusyTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 
 
@@ -2979,9 +2724,6 @@ await corsair.calendly.api.users.listEventTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 | `organization` | `string` | No | — |
 | `count` | `number` | No | — |
@@ -2995,9 +2737,6 @@ await corsair.calendly.api.users.listEventTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -3078,9 +2817,6 @@ await corsair.calendly.api.users.listMeetingLocations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | Yes | — |
 
 
@@ -3090,9 +2826,6 @@ await corsair.calendly.api.users.listMeetingLocations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 
 
@@ -3131,9 +2864,6 @@ await corsair.calendly.api.webhookSubscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
 | `organization` | `string` | Yes | — |
@@ -3148,9 +2878,6 @@ await corsair.calendly.api.webhookSubscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -3195,9 +2922,6 @@ await corsair.calendly.api.webhookSubscriptions.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -3224,9 +2948,6 @@ await corsair.calendly.api.webhookSubscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 
 
@@ -3236,9 +2957,6 @@ await corsair.calendly.api.webhookSubscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resource` | `object` | Yes | — |
 
 
@@ -3283,9 +3001,6 @@ await corsair.calendly.api.webhookSubscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `scope` | `string` | Yes | — |
 | `user` | `string` | No | — |
@@ -3299,9 +3014,6 @@ await corsair.calendly.api.webhookSubscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 

@@ -31,9 +31,6 @@ await corsair.agenty.api.agents.agentsControllerCreateAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `icon` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `tags` | `any[]` | No | — |
@@ -122,9 +119,6 @@ await corsair.agenty.api.agents.agentsControllerGetTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -175,9 +169,6 @@ await corsair.agenty.api.agents.agentsDeleteById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -225,9 +216,6 @@ await corsair.agenty.api.agents.agentsGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -278,9 +266,6 @@ await corsair.agenty.api.agents.agentsGetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -328,9 +313,6 @@ await corsair.agenty.api.agents.agentsUpdateById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `icon` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `tags` | `any[]` | No | — |
@@ -418,9 +400,6 @@ await corsair.agenty.api.agents.copyAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -469,9 +448,6 @@ await corsair.agenty.api.agents.transferAgentOwnership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -522,9 +498,6 @@ await corsair.agenty.api.apiKeys.apiKeysControllerCreateApiKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `role` | `string` | No | — |
 | `is_enabled` | `boolean` | No | — |
@@ -574,9 +547,6 @@ await corsair.agenty.api.apiKeys.apiKeysDeleteById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -624,9 +594,6 @@ await corsair.agenty.api.apiKeys.apiKeysDownload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -677,9 +644,6 @@ await corsair.agenty.api.apiKeys.apiKeysGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -730,9 +694,6 @@ await corsair.agenty.api.apiKeys.apiKeysGetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -780,9 +741,6 @@ await corsair.agenty.api.apiKeys.apiKeysResetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -830,9 +788,6 @@ await corsair.agenty.api.apiKeys.apiKeysUpdateById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `role` | `string` | No | — |
 | `key_id` | `number` | Yes | — |
@@ -882,9 +837,6 @@ await corsair.agenty.api.apiKeys.changeApiKeyStatusById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -934,9 +886,6 @@ await corsair.agenty.api.browser.captureScreenshot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -984,9 +933,6 @@ await corsair.agenty.api.browser.captureScreenshotWithOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `html` | `string` | No | — |
 | `options` | `object` | No | — |
@@ -1082,9 +1028,6 @@ await corsair.agenty.api.browser.convertUrlToPdf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1132,9 +1075,6 @@ await corsair.agenty.api.browser.convertUrlToPdfWithOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `html` | `string` | No | — |
 | `rotate` | `number` | No | — |
@@ -1214,9 +1154,6 @@ await corsair.agenty.api.browser.extractBrowserStructuredData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `gotoOptions` | `object` | No | — |
 | `body` | `any` | No | — |
@@ -1273,9 +1210,6 @@ await corsair.agenty.api.browser.extractStructuredData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1323,9 +1257,6 @@ await corsair.agenty.api.browser.getBrowserRedirects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1373,9 +1304,6 @@ await corsair.agenty.api.browser.getPageContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1423,9 +1351,6 @@ await corsair.agenty.api.browser.getPageContentWithOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `block_ads` | `boolean` | No | — |
 | `body` | `any` | No | — |
@@ -1474,9 +1399,6 @@ await corsair.agenty.api.browser.getRedirectsWithOptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `gotoOptions` | `object` | No | — |
 | `body` | `any` | No | — |
@@ -1533,9 +1455,6 @@ await corsair.agenty.api.browser.scrapeWebpageData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `debug` | `object` | No | — |
 | `query` | `object` | Yes | — |
@@ -1605,9 +1524,6 @@ await corsair.agenty.api.connections.connectionsGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -1660,9 +1576,6 @@ await corsair.agenty.api.dashboard.dashboardGetReportsUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `end` | `string` | No | — |
 | `start` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -1713,9 +1626,6 @@ await corsair.agenty.api.inputs.inputsGetByAgentId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1763,9 +1673,6 @@ await corsair.agenty.api.inputs.inputsUpdateByAgentId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `data` | `any[]` | No | — |
 | `type` | `string` | No | — |
@@ -1820,9 +1727,6 @@ await corsair.agenty.api.jobs.downloadAgentResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -1877,9 +1781,6 @@ await corsair.agenty.api.jobs.getAgentResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -1933,9 +1834,6 @@ await corsair.agenty.api.jobs.getJobResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -1990,9 +1888,6 @@ await corsair.agenty.api.jobs.jobsDownload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -2044,9 +1939,6 @@ await corsair.agenty.api.jobs.jobsDownloadFilesById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -2095,9 +1987,6 @@ await corsair.agenty.api.jobs.jobsDownloadResultById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -2151,9 +2040,6 @@ await corsair.agenty.api.jobs.jobsGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -2205,9 +2091,6 @@ await corsair.agenty.api.jobs.jobsGetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2255,9 +2138,6 @@ await corsair.agenty.api.jobs.jobsGetLogsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `job_id` | `number` | Yes | — |
 | `offset` | `number` | No | — |
@@ -2307,9 +2187,6 @@ await corsair.agenty.api.jobs.jobsListFilesById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2357,9 +2234,6 @@ await corsair.agenty.api.jobs.jobsStart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2407,9 +2281,6 @@ await corsair.agenty.api.jobs.jobsStopById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2459,9 +2330,6 @@ await corsair.agenty.api.lists.addListRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `any[]` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
@@ -2510,9 +2378,6 @@ await corsair.agenty.api.lists.deleteListRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
@@ -2561,9 +2426,6 @@ await corsair.agenty.api.lists.deleteListRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `any[]` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
@@ -2612,9 +2474,6 @@ await corsair.agenty.api.lists.downloadListRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2662,9 +2521,6 @@ await corsair.agenty.api.lists.getListById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2712,9 +2568,6 @@ await corsair.agenty.api.lists.getListRowById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
@@ -2763,9 +2616,6 @@ await corsair.agenty.api.lists.listsClearRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2813,9 +2663,6 @@ await corsair.agenty.api.lists.listsControllerCreateList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -2864,9 +2711,6 @@ await corsair.agenty.api.lists.listsDeleteById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
@@ -2915,9 +2759,6 @@ await corsair.agenty.api.lists.listsDownload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -2968,9 +2809,6 @@ await corsair.agenty.api.lists.listsGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -3021,9 +2859,6 @@ await corsair.agenty.api.lists.listsGetRowsById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -3075,9 +2910,6 @@ await corsair.agenty.api.lists.listsUpdateById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `description` | `string` | No | — |
@@ -3127,9 +2959,6 @@ await corsair.agenty.api.lists.listsUploadCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `object` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3186,9 +3015,6 @@ await corsair.agenty.api.lists.updateListRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `list_id` | `string \| number` | Yes | — |
 | `row_data` | `object` | Yes | — |
@@ -3248,9 +3074,6 @@ await corsair.agenty.api.projects.deleteProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3298,9 +3121,6 @@ await corsair.agenty.api.projects.getProjectById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3348,9 +3168,6 @@ await corsair.agenty.api.projects.projectsAddAgents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_ids` | `string[]` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3399,9 +3216,6 @@ await corsair.agenty.api.projects.projectsControllerCreateProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -3450,9 +3264,6 @@ await corsair.agenty.api.projects.projectsGetAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -3503,9 +3314,6 @@ await corsair.agenty.api.projects.removeAgentFromProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
@@ -3554,9 +3362,6 @@ await corsair.agenty.api.projects.updateProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -3608,9 +3413,6 @@ await corsair.agenty.api.scheduler.deleteSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3658,9 +3460,6 @@ await corsair.agenty.api.scheduler.getSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3708,9 +3507,6 @@ await corsair.agenty.api.scheduler.toggleSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `enabled` | `boolean` | Yes | — |
 | `agent_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -3759,9 +3555,6 @@ await corsair.agenty.api.scheduler.updateSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `agent_id` | `string` | Yes | — |
 | `frequency` | `number` | No | — |
@@ -3816,9 +3609,6 @@ await corsair.agenty.api.users.downloadUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -3869,9 +3659,6 @@ await corsair.agenty.api.users.getAllTeamMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
@@ -3923,9 +3710,6 @@ await corsair.agenty.api.users.getUserById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3973,9 +3757,6 @@ await corsair.agenty.api.users.updateUserById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `role` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
@@ -4032,9 +3813,6 @@ await corsair.agenty.api.workflows.createWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `agents` | `object` | Yes | — |
 | `actions` | `any[]` | Yes | — |
@@ -4101,9 +3879,6 @@ await corsair.agenty.api.workflows.deleteWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
@@ -4152,9 +3927,6 @@ await corsair.agenty.api.workflows.downloadWorkflows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4201,9 +3973,6 @@ await corsair.agenty.api.workflows.getWorkflowById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `body` | `any` | No | — |
@@ -4252,9 +4021,6 @@ await corsair.agenty.api.workflows.patchWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | No | — |
@@ -4304,9 +4070,6 @@ await corsair.agenty.api.workflows.updateWorkflow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workflow_id` | `string` | Yes | — |
 | `id` | `string \| number` | No | — |
 | `name` | `string` | Yes | — |

@@ -31,9 +31,6 @@ await corsair.monday.api.boards.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.monday.api.boards.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `archive_board` | `object` | Yes | — |
 
 
@@ -80,9 +74,6 @@ await corsair.monday.api.boards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_name` | `string` | Yes | — |
 | `board_kind` | `public \| private \| share` | No | — |
 | `workspace_id` | `number` | No | — |
@@ -95,9 +86,6 @@ await corsair.monday.api.boards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_board` | `object` | Yes | — |
 
 
@@ -133,9 +121,6 @@ await corsair.monday.api.boards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -145,9 +130,6 @@ await corsair.monday.api.boards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_board` | `object` | Yes | — |
 
 
@@ -182,9 +164,6 @@ await corsair.monday.api.boards.duplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `duplicate_type` | `duplicate_board_with_structure \| duplicate_board_with_pulses \| duplicate_board_with_pulses_and_updates` | No | — |
 | `board_name` | `string` | No | — |
@@ -197,9 +176,6 @@ await corsair.monday.api.boards.duplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `duplicate_board` | `object` | Yes | — |
 
 
@@ -236,9 +212,6 @@ await corsair.monday.api.boards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -248,9 +221,6 @@ await corsair.monday.api.boards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -304,9 +274,6 @@ await corsair.monday.api.boards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `page` | `number` | No | — |
 | `workspace_ids` | `number[]` | No | — |
@@ -321,9 +288,6 @@ await corsair.monday.api.boards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -363,9 +327,6 @@ await corsair.monday.api.boards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `board_attribute` | `name \| description \| communication` | Yes | — |
 | `new_value` | `string` | Yes | — |
@@ -377,9 +338,6 @@ await corsair.monday.api.boards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `update_board` | `object` | Yes | — |
 
 
@@ -416,9 +374,6 @@ await corsair.monday.api.columns.changeValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `column_id` | `string` | Yes | — |
@@ -431,9 +386,6 @@ await corsair.monday.api.columns.changeValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `change_column_value` | `object` | Yes | — |
 
 
@@ -468,9 +420,6 @@ await corsair.monday.api.columns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `column_type` | `string` | No | — |
@@ -483,9 +432,6 @@ await corsair.monday.api.columns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_column` | `object` | Yes | — |
 
 
@@ -521,9 +467,6 @@ await corsair.monday.api.columns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -533,9 +476,6 @@ await corsair.monday.api.columns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -578,9 +518,6 @@ await corsair.monday.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `group_name` | `string` | Yes | — |
 | `position` | `string` | No | — |
@@ -592,9 +529,6 @@ await corsair.monday.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_group` | `object` | Yes | — |
 
 
@@ -630,9 +564,6 @@ await corsair.monday.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `group_id` | `string` | Yes | — |
 
@@ -643,9 +574,6 @@ await corsair.monday.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_group` | `object` | Yes | — |
 
 
@@ -680,9 +608,6 @@ await corsair.monday.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -692,9 +617,6 @@ await corsair.monday.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -735,9 +657,6 @@ await corsair.monday.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `group_id` | `string` | Yes | — |
 | `group_attribute` | `title \| color \| position \| relative_position_before \| relative_position_after` | Yes | — |
@@ -750,9 +669,6 @@ await corsair.monday.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `update_group` | `object` | Yes | — |
 
 
@@ -789,9 +705,6 @@ await corsair.monday.api.items.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 
 
@@ -801,9 +714,6 @@ await corsair.monday.api.items.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `archive_item` | `object` | Yes | — |
 
 
@@ -838,9 +748,6 @@ await corsair.monday.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `item_name` | `string` | Yes | — |
 | `group_id` | `string` | No | — |
@@ -853,9 +760,6 @@ await corsair.monday.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_item` | `object` | Yes | — |
 
 
@@ -891,9 +795,6 @@ await corsair.monday.api.items.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 
 
@@ -903,9 +804,6 @@ await corsair.monday.api.items.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_item` | `object` | Yes | — |
 
 
@@ -940,9 +838,6 @@ await corsair.monday.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 
 
@@ -952,9 +847,6 @@ await corsair.monday.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 
 
@@ -1007,9 +899,6 @@ await corsair.monday.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -1021,9 +910,6 @@ await corsair.monday.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boards` | `object[]` | Yes | — |
 
 
@@ -1081,9 +967,6 @@ await corsair.monday.api.items.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 | `group_id` | `string` | Yes | — |
 
@@ -1094,9 +977,6 @@ await corsair.monday.api.items.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `move_item_to_group` | `object` | Yes | — |
 
 
@@ -1131,9 +1011,6 @@ await corsair.monday.api.items.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `column_id` | `string` | Yes | — |
@@ -1146,9 +1023,6 @@ await corsair.monday.api.items.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `change_column_value` | `object` | Yes | — |
 
 
@@ -1185,9 +1059,6 @@ await corsair.monday.api.updates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
 
@@ -1198,9 +1069,6 @@ await corsair.monday.api.updates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_update` | `object` | Yes | — |
 
 
@@ -1236,9 +1104,6 @@ await corsair.monday.api.updates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `update_id` | `string` | Yes | — |
 
 
@@ -1248,9 +1113,6 @@ await corsair.monday.api.updates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_update` | `object` | Yes | — |
 
 
@@ -1285,9 +1147,6 @@ await corsair.monday.api.updates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1299,9 +1158,6 @@ await corsair.monday.api.updates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 
 
@@ -1351,9 +1207,6 @@ await corsair.monday.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -1363,9 +1216,6 @@ await corsair.monday.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `object[]` | Yes | — |
 
 
@@ -1406,9 +1256,6 @@ await corsair.monday.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `page` | `number` | No | — |
 | `kind` | `all \| non_guests \| guests \| non_pending` | No | — |
@@ -1420,9 +1267,6 @@ await corsair.monday.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `object[]` | Yes | — |
 
 
@@ -1465,9 +1309,6 @@ await corsair.monday.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `event` | `change_column_value \| change_specific_column_value \| change_status_column_value \| create_item \| create_update \| delete_update \| item_archived \| item_deleted \| item_moved_to_board \| item_restored \| when_date_arrived` | Yes | — |
@@ -1480,9 +1321,6 @@ await corsair.monday.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `create_webhook` | `object` | Yes | — |
 
 
@@ -1519,9 +1357,6 @@ await corsair.monday.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -1531,9 +1366,6 @@ await corsair.monday.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delete_webhook` | `object` | Yes | — |
 
 
@@ -1569,9 +1401,6 @@ await corsair.monday.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `board_id` | `string` | Yes | — |
 
 
@@ -1581,9 +1410,6 @@ await corsair.monday.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | Yes | — |
 
 
@@ -1622,9 +1448,6 @@ await corsair.monday.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `page` | `number` | No | — |
 | `kind` | `open \| closed` | No | — |
@@ -1637,9 +1460,6 @@ await corsair.monday.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaces` | `object[]` | Yes | — |
 
 

@@ -34,9 +34,6 @@ await corsair.mailtrap.api.account.getBillingUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billing` | `object` | No | — |
 | `testing` | `object` | No | — |
 | `sending` | `object` | No | — |
@@ -185,9 +182,6 @@ await corsair.mailtrap.api.contactFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `merge_tag` | `string` | Yes | — |
 | `data_type` | `text \| number \| boolean \| date` | Yes | — |
@@ -199,9 +193,6 @@ await corsair.mailtrap.api.contactFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `merge_tag` | `string` | No | — |
@@ -230,9 +221,6 @@ await corsair.mailtrap.api.contactFields.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `field_id` | `number` | Yes | — |
 
 
@@ -259,9 +247,6 @@ await corsair.mailtrap.api.contactFields.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `field_id` | `number` | Yes | — |
 
 
@@ -271,9 +256,6 @@ await corsair.mailtrap.api.contactFields.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `merge_tag` | `string` | No | — |
@@ -338,9 +320,6 @@ await corsair.mailtrap.api.contactFields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `field_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `merge_tag` | `string` | No | — |
@@ -352,9 +331,6 @@ await corsair.mailtrap.api.contactFields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `merge_tag` | `string` | No | — |
@@ -385,9 +361,6 @@ await corsair.mailtrap.api.contactLists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -397,9 +370,6 @@ await corsair.mailtrap.api.contactLists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -424,9 +394,6 @@ await corsair.mailtrap.api.contactLists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `number` | Yes | — |
 
 
@@ -453,9 +420,6 @@ await corsair.mailtrap.api.contactLists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `number` | Yes | — |
 
 
@@ -465,9 +429,6 @@ await corsair.mailtrap.api.contactLists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -492,9 +453,6 @@ await corsair.mailtrap.api.contactLists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 
 
@@ -533,9 +491,6 @@ await corsair.mailtrap.api.contactLists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -546,9 +501,6 @@ await corsair.mailtrap.api.contactLists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -575,9 +527,6 @@ await corsair.mailtrap.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `fields` | `object` | No | — |
 | `list_ids` | `number[]` | No | — |
@@ -600,9 +549,6 @@ await corsair.mailtrap.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -642,9 +588,6 @@ await corsair.mailtrap.api.contacts.createEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `params` | `object` | No | — |
@@ -666,9 +609,6 @@ await corsair.mailtrap.api.contacts.createEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | No | — |
 | `contact_email` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -705,9 +645,6 @@ await corsair.mailtrap.api.contacts.createExport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filters` | `object[]` | Yes | — |
 
 
@@ -730,9 +667,6 @@ await corsair.mailtrap.api.contacts.createExport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `status` | `started \| created \| finished` | No | — |
 | `created_at` | `string` | No | — |
@@ -760,9 +694,6 @@ await corsair.mailtrap.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 
 
@@ -789,9 +720,6 @@ await corsair.mailtrap.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 
 
@@ -801,9 +729,6 @@ await corsair.mailtrap.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -843,9 +768,6 @@ await corsair.mailtrap.api.contacts.getExport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `export_id` | `number` | Yes | — |
 
 
@@ -855,9 +777,6 @@ await corsair.mailtrap.api.contacts.getExport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `status` | `started \| created \| finished` | No | — |
 | `created_at` | `string` | No | — |
@@ -885,9 +804,6 @@ await corsair.mailtrap.api.contacts.getImport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `import_id` | `number` | Yes | — |
 
 
@@ -897,9 +813,6 @@ await corsair.mailtrap.api.contacts.getImport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `status` | `created \| started \| finished \| failed` | No | — |
 | `created_at` | `string` | No | — |
@@ -929,9 +842,6 @@ await corsair.mailtrap.api.contacts.import({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contacts` | `object[]` | Yes | — |
 
 
@@ -956,9 +866,6 @@ await corsair.mailtrap.api.contacts.import({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `status` | `created \| started \| finished \| failed` | No | — |
 | `created_at` | `string` | No | — |
@@ -988,9 +895,6 @@ await corsair.mailtrap.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `fields` | `object` | No | — |
@@ -1016,9 +920,6 @@ await corsair.mailtrap.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `created_at` | `number` | No | — |
@@ -1060,9 +961,6 @@ await corsair.mailtrap.api.emailTemplates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `subject` | `string` | Yes | — |
 | `category` | `string` | Yes | — |
@@ -1076,9 +974,6 @@ await corsair.mailtrap.api.emailTemplates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `uuid` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -1110,9 +1005,6 @@ await corsair.mailtrap.api.emailTemplates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `number` | Yes | — |
 
 
@@ -1139,9 +1031,6 @@ await corsair.mailtrap.api.emailTemplates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `number` | Yes | — |
 
 
@@ -1151,9 +1040,6 @@ await corsair.mailtrap.api.emailTemplates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `uuid` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -1224,9 +1110,6 @@ await corsair.mailtrap.api.emailTemplates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `subject` | `string` | No | — |
@@ -1241,9 +1124,6 @@ await corsair.mailtrap.api.emailTemplates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `uuid` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -1277,9 +1157,6 @@ await corsair.mailtrap.api.inboxes.clean({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 
 
@@ -1289,9 +1166,6 @@ await corsair.mailtrap.api.inboxes.clean({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `username` | `string` | No | — |
@@ -1352,9 +1226,6 @@ await corsair.mailtrap.api.inboxes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 
 
@@ -1364,9 +1235,6 @@ await corsair.mailtrap.api.inboxes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `username` | `string` | No | — |
@@ -1486,9 +1354,6 @@ await corsair.mailtrap.api.inboxes.markAsRead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 
 
@@ -1498,9 +1363,6 @@ await corsair.mailtrap.api.inboxes.markAsRead({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `username` | `string` | No | — |
@@ -1561,9 +1423,6 @@ await corsair.mailtrap.api.inboxes.resetCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 
 
@@ -1573,9 +1432,6 @@ await corsair.mailtrap.api.inboxes.resetCredentials({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `username` | `string` | No | — |
@@ -1636,9 +1492,6 @@ await corsair.mailtrap.api.inboxes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `email_username` | `string` | No | — |
@@ -1650,9 +1503,6 @@ await corsair.mailtrap.api.inboxes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `username` | `string` | No | — |
@@ -1715,9 +1565,6 @@ await corsair.mailtrap.api.messages.getHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 | `message_id` | `number` | Yes | — |
 
@@ -1728,9 +1575,6 @@ await corsair.mailtrap.api.messages.getHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `html` | `string` | Yes | — |
 
 
@@ -1754,9 +1598,6 @@ await corsair.mailtrap.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inbox_id` | `number` | Yes | — |
 | `last_id` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1818,9 +1659,6 @@ await corsair.mailtrap.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | — |
 
 
@@ -1830,9 +1668,6 @@ await corsair.mailtrap.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1856,9 +1691,6 @@ await corsair.mailtrap.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | — |
 
 
@@ -1868,9 +1700,6 @@ await corsair.mailtrap.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `share_links` | `object` | No | — |
@@ -2032,9 +1861,6 @@ await corsair.mailtrap.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2045,9 +1871,6 @@ await corsair.mailtrap.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `share_links` | `object` | No | — |
@@ -2138,9 +1961,6 @@ await corsair.mailtrap.api.sendingDomains.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain_name` | `string` | Yes | — |
 
 
@@ -2150,9 +1970,6 @@ await corsair.mailtrap.api.sendingDomains.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `domain_name` | `string` | Yes | — |
 | `demo` | `boolean` | No | — |
@@ -2205,9 +2022,6 @@ await corsair.mailtrap.api.sendingDomains.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain_id` | `number` | Yes | — |
 
 
@@ -2234,9 +2048,6 @@ await corsair.mailtrap.api.sendingDomains.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain_id` | `number` | Yes | — |
 
 
@@ -2246,9 +2057,6 @@ await corsair.mailtrap.api.sendingDomains.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `domain_name` | `string` | Yes | — |
 | `demo` | `boolean` | No | — |
@@ -2354,9 +2162,6 @@ await corsair.mailtrap.api.stats.byCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 | `sending_domain_ids` | `number[]` | No | — |
@@ -2411,9 +2216,6 @@ await corsair.mailtrap.api.stats.byDate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 | `sending_domain_ids` | `number[]` | No | — |
@@ -2468,9 +2270,6 @@ await corsair.mailtrap.api.stats.byDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 | `sending_domain_ids` | `number[]` | No | — |
@@ -2525,9 +2324,6 @@ await corsair.mailtrap.api.stats.byEsp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 | `sending_domain_ids` | `number[]` | No | — |
@@ -2582,9 +2378,6 @@ await corsair.mailtrap.api.stats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 | `sending_domain_ids` | `number[]` | No | — |
@@ -2599,9 +2392,6 @@ await corsair.mailtrap.api.stats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delivery_count` | `number` | No | — |
 | `delivery_rate` | `number` | No | — |
 | `bounce_count` | `number` | No | — |
@@ -2636,9 +2426,6 @@ await corsair.mailtrap.api.suppressions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 
 

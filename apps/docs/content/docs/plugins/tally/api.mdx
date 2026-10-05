@@ -31,9 +31,6 @@ await corsair.tally.api.forms.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | No | — |
 | `templateId` | `string` | No | — |
 | `status` | `string` | Yes | — |
@@ -65,9 +62,6 @@ await corsair.tally.api.forms.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -116,9 +110,6 @@ await corsair.tally.api.forms.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 
 
@@ -145,9 +136,6 @@ await corsair.tally.api.forms.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 
 
@@ -157,9 +145,6 @@ await corsair.tally.api.forms.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -208,9 +193,6 @@ await corsair.tally.api.forms.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `workspaceIds` | `string[]` | No | — |
@@ -222,9 +204,6 @@ await corsair.tally.api.forms.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -272,9 +251,6 @@ await corsair.tally.api.forms.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -306,9 +282,6 @@ await corsair.tally.api.forms.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -359,9 +332,6 @@ await corsair.tally.api.organizations.cancelInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 | `inviteId` | `string` | Yes | — |
 
@@ -389,9 +359,6 @@ await corsair.tally.api.organizations.createInvite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 | `workspaceIds` | `string[]` | Yes | — |
 | `emails` | `string` | Yes | — |
@@ -420,9 +387,6 @@ await corsair.tally.api.organizations.listInvites({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 
 
@@ -464,9 +428,6 @@ await corsair.tally.api.organizations.listUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 
 
@@ -507,9 +468,6 @@ await corsair.tally.api.organizations.removeUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
 
@@ -539,9 +497,6 @@ await corsair.tally.api.questions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 
 
@@ -551,9 +506,6 @@ await corsair.tally.api.questions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `questions` | `object[]` | Yes | — |
 | `hasResponses` | `boolean` | No | — |
 
@@ -601,9 +553,6 @@ await corsair.tally.api.submissions.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `submissionId` | `string` | Yes | — |
 
@@ -631,9 +580,6 @@ await corsair.tally.api.submissions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `submissionId` | `string` | Yes | — |
 
@@ -644,9 +590,6 @@ await corsair.tally.api.submissions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `questions` | `object[]` | No | — |
 | `submission` | `object` | Yes | — |
 
@@ -717,9 +660,6 @@ await corsair.tally.api.submissions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -735,9 +675,6 @@ await corsair.tally.api.submissions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `hasMore` | `boolean` | No | — |
@@ -825,9 +762,6 @@ await corsair.tally.api.users.getMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -856,9 +790,6 @@ await corsair.tally.api.webhookManagement.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `eventTypes` | `string[]` | Yes | — |
@@ -885,9 +816,6 @@ await corsair.tally.api.webhookManagement.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `eventTypes` | `string[]` | No | — |
@@ -916,9 +844,6 @@ await corsair.tally.api.webhookManagement.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -945,9 +870,6 @@ await corsair.tally.api.webhookManagement.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -958,9 +880,6 @@ await corsair.tally.api.webhookManagement.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1004,9 +923,6 @@ await corsair.tally.api.webhookManagement.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1017,9 +933,6 @@ await corsair.tally.api.webhookManagement.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `events` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1067,9 +980,6 @@ await corsair.tally.api.webhookManagement.retryEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `eventId` | `string` | Yes | — |
 
@@ -1097,9 +1007,6 @@ await corsair.tally.api.webhookManagement.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `formId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -1146,9 +1053,6 @@ await corsair.tally.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1158,9 +1062,6 @@ await corsair.tally.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -1189,9 +1090,6 @@ await corsair.tally.api.workspaces.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -1218,9 +1116,6 @@ await corsair.tally.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -1230,9 +1125,6 @@ await corsair.tally.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -1261,9 +1153,6 @@ await corsair.tally.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 
 
@@ -1273,9 +1162,6 @@ await corsair.tally.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1319,9 +1205,6 @@ await corsair.tally.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -1332,9 +1215,6 @@ await corsair.tally.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |

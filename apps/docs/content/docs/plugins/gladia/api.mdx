@@ -31,9 +31,6 @@ await corsair.gladia.api.live.deleteSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -71,9 +68,6 @@ await corsair.gladia.api.live.getTranscriptionResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -83,9 +77,6 @@ await corsair.gladia.api.live.getTranscriptionResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `request_id` | `string` | No | — |
 | `version` | `number` | No | — |
@@ -162,9 +153,6 @@ await corsair.gladia.api.live.initiateTranscriptionSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `region` | `us-west \| eu-west` | No | — |
 | `encoding` | `wav/pcm \| wav/alaw \| wav/ulaw` | No | — |
 | `bit_depth` | `8 \| 16 \| 24 \| 32` | No | — |
@@ -247,9 +235,6 @@ await corsair.gladia.api.live.initiateTranscriptionSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -275,9 +260,6 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `date` | `string` | No | — |
@@ -303,9 +285,6 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `string` | Yes | — |
 | `current` | `string` | Yes | — |
 | `next` | `string` | No | — |
@@ -368,9 +347,6 @@ await corsair.gladia.api.preRecorded.deleteJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -408,9 +384,6 @@ await corsair.gladia.api.preRecorded.getJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -420,9 +393,6 @@ await corsair.gladia.api.preRecorded.getJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `request_id` | `string` | No | — |
 | `version` | `number` | No | — |
@@ -499,9 +469,6 @@ await corsair.gladia.api.preRecorded.initiateTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audio_url` | `string` | Yes | — |
 | `custom_vocabulary` | `boolean` | No | — |
 | `custom_vocabulary_config` | `object` | No | — |
@@ -627,9 +594,6 @@ await corsair.gladia.api.preRecorded.initiateTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `result_url` | `string` | Yes | — |
 
@@ -654,9 +618,6 @@ await corsair.gladia.api.preRecorded.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `date` | `string` | No | — |
@@ -682,9 +643,6 @@ await corsair.gladia.api.preRecorded.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `string` | Yes | — |
 | `current` | `string` | Yes | — |
 | `next` | `string` | No | — |
@@ -747,9 +705,6 @@ await corsair.gladia.api.upload.audioVideoFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audio` | `custom` | Yes | — |
 | `filename` | `string` | No | — |
 
@@ -760,9 +715,6 @@ await corsair.gladia.api.upload.audioVideoFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audio_url` | `string` | Yes | — |
 | `audio_metadata` | `object` | Yes | — |
 

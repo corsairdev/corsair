@@ -49,9 +49,6 @@ An issue event from GitLab (open, update, close)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_kind` | `issue` | Yes | — |
 | `event_type` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -167,9 +164,6 @@ A merge request event from GitLab (open, update, merge, close)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_kind` | `merge_request` | Yes | — |
 | `event_type` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -291,9 +285,6 @@ A comment event from GitLab (new comments on issues, MRs, commits)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_kind` | `note` | Yes | — |
 | `event_type` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -454,9 +445,6 @@ A pipeline event from GitLab (status change)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_kind` | `pipeline` | Yes | — |
 | `object_attributes` | `object` | No | — |
 | `user` | `object` | No | — |
@@ -589,9 +577,6 @@ A push event from GitLab (git push to repository)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object_kind` | `push` | Yes | — |
 | `event_name` | `string` | No | — |
 | `before` | `string` | No | — |

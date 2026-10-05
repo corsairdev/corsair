@@ -31,9 +31,6 @@ await corsair.aimlapi.api.assistants.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -69,9 +66,6 @@ await corsair.aimlapi.api.assistants.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -111,9 +105,6 @@ await corsair.aimlapi.api.assistants.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantId` | `string` | Yes | — |
 
 
@@ -123,9 +114,6 @@ await corsair.aimlapi.api.assistants.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | Yes | — |
@@ -151,9 +139,6 @@ await corsair.aimlapi.api.assistants.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantId` | `string` | Yes | — |
 
 
@@ -163,9 +148,6 @@ await corsair.aimlapi.api.assistants.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -205,9 +187,6 @@ await corsair.aimlapi.api.assistants.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -220,9 +199,6 @@ await corsair.aimlapi.api.assistants.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | No | — |
 | `data` | `any[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
@@ -250,9 +226,6 @@ await corsair.aimlapi.api.assistants.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistantId` | `string` | Yes | — |
 | `model` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -289,9 +262,6 @@ await corsair.aimlapi.api.assistants.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -333,9 +303,6 @@ await corsair.aimlapi.api.batches.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 
 
@@ -345,9 +312,6 @@ await corsair.aimlapi.api.batches.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -392,9 +356,6 @@ await corsair.aimlapi.api.billing.getBalance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `current_balance` | `number` | No | — |
 | `balance` | `number` | No | — |
 | `currency` | `string` | No | — |
@@ -422,9 +383,6 @@ await corsair.aimlapi.api.chat.createCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `maxTokens` | `number` | No | — |
@@ -458,9 +416,6 @@ await corsair.aimlapi.api.chat.createCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -516,9 +471,6 @@ await corsair.aimlapi.api.luma.getGeneration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generationId` | `string` | No | — |
 | `ids` | `string` | No | — |
 
@@ -529,9 +481,6 @@ await corsair.aimlapi.api.luma.getGeneration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
 | `video` | `any` | No | — |
@@ -561,9 +510,6 @@ await corsair.aimlapi.api.messages.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `role` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
@@ -587,9 +533,6 @@ await corsair.aimlapi.api.messages.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -629,9 +572,6 @@ await corsair.aimlapi.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
 
@@ -642,9 +582,6 @@ await corsair.aimlapi.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | Yes | — |
@@ -670,9 +607,6 @@ await corsair.aimlapi.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
 
@@ -683,9 +617,6 @@ await corsair.aimlapi.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -725,9 +656,6 @@ await corsair.aimlapi.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -742,9 +670,6 @@ await corsair.aimlapi.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | No | — |
 | `data` | `any[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
@@ -772,9 +697,6 @@ await corsair.aimlapi.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
 | `metadata` | `object` | No | — |
@@ -796,9 +718,6 @@ await corsair.aimlapi.api.messages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -919,9 +838,6 @@ await corsair.aimlapi.api.models.listWithDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -1013,9 +929,6 @@ await corsair.aimlapi.api.responses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responseId` | `string` | Yes | — |
 | `include` | `string[]` | No | — |
 | `startingAfter` | `number` | No | — |
@@ -1028,9 +941,6 @@ await corsair.aimlapi.api.responses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1072,9 +982,6 @@ await corsair.aimlapi.api.runs.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 
@@ -1085,9 +992,6 @@ await corsair.aimlapi.api.runs.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1127,9 +1031,6 @@ await corsair.aimlapi.api.runs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `assistantId` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
@@ -1154,9 +1055,6 @@ await corsair.aimlapi.api.runs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1196,9 +1094,6 @@ await corsair.aimlapi.api.runs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 
@@ -1209,9 +1104,6 @@ await corsair.aimlapi.api.runs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1251,9 +1143,6 @@ await corsair.aimlapi.api.runs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -1267,9 +1156,6 @@ await corsair.aimlapi.api.runs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | No | — |
 | `data` | `any[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
@@ -1297,9 +1183,6 @@ await corsair.aimlapi.api.runs.submitToolOutputs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `toolOutputs` | `any[]` | No | — |
@@ -1311,9 +1194,6 @@ await corsair.aimlapi.api.runs.submitToolOutputs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1353,9 +1233,6 @@ await corsair.aimlapi.api.runs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
@@ -1378,9 +1255,6 @@ await corsair.aimlapi.api.runs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1422,9 +1296,6 @@ await corsair.aimlapi.api.runSteps.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `stepId` | `string` | Yes | — |
@@ -1436,9 +1307,6 @@ await corsair.aimlapi.api.runSteps.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1478,9 +1346,6 @@ await corsair.aimlapi.api.runSteps.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `order` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -1495,9 +1360,6 @@ await corsair.aimlapi.api.runSteps.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `object` | `string` | No | — |
 | `data` | `any[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
@@ -1527,9 +1389,6 @@ await corsair.aimlapi.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
 | `metadata` | `object` | No | — |
@@ -1569,9 +1428,6 @@ await corsair.aimlapi.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1611,9 +1467,6 @@ await corsair.aimlapi.api.threads.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 
 
@@ -1623,9 +1476,6 @@ await corsair.aimlapi.api.threads.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `object` | `string` | No | — |
 | `deleted` | `boolean` | Yes | — |
@@ -1651,9 +1501,6 @@ await corsair.aimlapi.api.threads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 
 
@@ -1663,9 +1510,6 @@ await corsair.aimlapi.api.threads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |
@@ -1705,9 +1549,6 @@ await corsair.aimlapi.api.threads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `toolResources` | `object` | No | — |
 | `metadata` | `object` | No | — |
@@ -1737,9 +1578,6 @@ await corsair.aimlapi.api.threads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `string` | No | — |
 | `created` | `number` | No | — |

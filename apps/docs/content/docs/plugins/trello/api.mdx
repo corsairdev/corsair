@@ -31,9 +31,6 @@ await corsair.trello.api.boards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `desc` | `string` | No | — |
 | `idOrganization` | `string` | No | — |
@@ -58,9 +55,6 @@ await corsair.trello.api.boards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `desc` | `string` | No | — |
@@ -133,9 +127,6 @@ await corsair.trello.api.boards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 
 
@@ -145,9 +136,6 @@ await corsair.trello.api.boards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_value` | `string` | No | — |
 
 
@@ -171,9 +159,6 @@ await corsair.trello.api.boards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -184,9 +169,6 @@ await corsair.trello.api.boards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `desc` | `string` | No | — |
@@ -259,9 +241,6 @@ await corsair.trello.api.boards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `memberId` | `string` | No | — |
 | `filter` | `all \| closed \| members \| open \| organization \| public \| starred` | No | — |
 | `fields` | `string` | No | — |
@@ -334,9 +313,6 @@ await corsair.trello.api.boards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `desc` | `string` | No | — |
@@ -355,9 +331,6 @@ await corsair.trello.api.boards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `desc` | `string` | No | — |
@@ -432,9 +405,6 @@ await corsair.trello.api.cards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `idList` | `string` | Yes | — |
 | `desc` | `string` | No | — |
@@ -454,9 +424,6 @@ await corsair.trello.api.cards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `badges` | `object` | No | — |
 | `checkItemStates` | `any[]` | No | — |
@@ -541,9 +508,6 @@ await corsair.trello.api.cards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cardId` | `string` | Yes | — |
 
 
@@ -553,9 +517,6 @@ await corsair.trello.api.cards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_value` | `string` | No | — |
 
 
@@ -579,9 +540,6 @@ await corsair.trello.api.cards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cardId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -592,9 +550,6 @@ await corsair.trello.api.cards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `badges` | `object` | No | — |
 | `checkItemStates` | `any[]` | No | — |
@@ -679,9 +634,6 @@ await corsair.trello.api.cards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `filter` | `all \| closed \| none \| open \| visible` | No | — |
 | `fields` | `string` | No | — |
@@ -769,9 +721,6 @@ await corsair.trello.api.cards.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cardId` | `string` | Yes | — |
 | `idList` | `string` | Yes | — |
 | `idBoard` | `string` | No | — |
@@ -784,9 +733,6 @@ await corsair.trello.api.cards.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `badges` | `object` | No | — |
 | `checkItemStates` | `any[]` | No | — |
@@ -871,9 +817,6 @@ await corsair.trello.api.cards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cardId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `desc` | `string` | No | — |
@@ -896,9 +839,6 @@ await corsair.trello.api.cards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `badges` | `object` | No | — |
 | `checkItemStates` | `any[]` | No | — |
@@ -985,9 +925,6 @@ await corsair.trello.api.checklists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idCard` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `pos` | `number \| top \| bottom` | No | — |
@@ -1000,9 +937,6 @@ await corsair.trello.api.checklists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `idBoard` | `string` | No | — |
 | `idCard` | `string` | No | — |
@@ -1050,9 +984,6 @@ await corsair.trello.api.checklists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `checklistId` | `string` | Yes | — |
 
 
@@ -1062,9 +993,6 @@ await corsair.trello.api.checklists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_value` | `string` | No | — |
 
 
@@ -1088,9 +1016,6 @@ await corsair.trello.api.checklists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `checklistId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 | `checkItems` | `string` | No | — |
@@ -1103,9 +1028,6 @@ await corsair.trello.api.checklists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `idBoard` | `string` | No | — |
 | `idCard` | `string` | No | — |
@@ -1155,9 +1077,6 @@ await corsair.trello.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
 | `idBoard` | `string` | Yes | — |
@@ -1169,9 +1088,6 @@ await corsair.trello.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `idBoard` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1198,9 +1114,6 @@ await corsair.trello.api.labels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `labelId` | `string` | Yes | — |
 
 
@@ -1210,9 +1123,6 @@ await corsair.trello.api.labels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_value` | `string` | No | — |
 
 
@@ -1236,9 +1146,6 @@ await corsair.trello.api.labels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1281,9 +1188,6 @@ await corsair.trello.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `labelId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -1295,9 +1199,6 @@ await corsair.trello.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `idBoard` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1326,9 +1227,6 @@ await corsair.trello.api.lists.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 
 
@@ -1338,9 +1236,6 @@ await corsair.trello.api.lists.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `closed` | `boolean` | No | — |
@@ -1370,9 +1265,6 @@ await corsair.trello.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `idBoard` | `string` | Yes | — |
 | `idListSource` | `string` | No | — |
@@ -1385,9 +1277,6 @@ await corsair.trello.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `closed` | `boolean` | No | — |
@@ -1417,9 +1306,6 @@ await corsair.trello.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -1430,9 +1316,6 @@ await corsair.trello.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `closed` | `boolean` | No | — |
@@ -1462,9 +1345,6 @@ await corsair.trello.api.lists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 | `filter` | `all \| closed \| none \| open` | No | — |
 
@@ -1509,9 +1389,6 @@ await corsair.trello.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `closed` | `boolean` | No | — |
@@ -1526,9 +1403,6 @@ await corsair.trello.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `closed` | `boolean` | No | — |
@@ -1560,9 +1434,6 @@ await corsair.trello.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `memberId` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -1573,9 +1444,6 @@ await corsair.trello.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `activityBlocked` | `boolean` | No | — |
 | `avatarHash` | `string` | No | — |
@@ -1616,9 +1484,6 @@ await corsair.trello.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `boardId` | `string` | Yes | — |
 | `filter` | `admins \| all \| none \| normal \| owners` | No | — |
 

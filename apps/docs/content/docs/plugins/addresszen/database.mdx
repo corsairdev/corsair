@@ -28,9 +28,6 @@ const rows = await corsair.addresszen.db.autocompleteResults.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
 | `code` | `number` | equals, gt, gte, lt, lte, in |
@@ -58,9 +55,6 @@ const rows = await corsair.addresszen.db.keyAvailability.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `available` | `boolean` | equals |
 | `context` | `string` | equals, contains, startsWith, endsWith, in |
@@ -89,9 +83,6 @@ const rows = await corsair.addresszen.db.resolvedAddresses.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `addressId` | `string` | equals, contains, startsWith, endsWith, in |
 | `code` | `number` | equals, gt, gte, lt, lte, in |
@@ -119,9 +110,6 @@ const rows = await corsair.addresszen.db.verifiedAddresses.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
 | `city` | `string` | equals, contains, startsWith, endsWith, in |

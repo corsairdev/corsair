@@ -31,9 +31,6 @@ await corsair.box.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `parent` | `object` | Yes | — |
 | `name` | `string` | No | — |
@@ -57,9 +54,6 @@ await corsair.box.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `file` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -195,9 +189,6 @@ await corsair.box.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `if_match` | `string` | No | — |
 
@@ -208,9 +199,6 @@ await corsair.box.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -234,9 +222,6 @@ await corsair.box.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `version` | `string` | No | — |
 
@@ -264,9 +249,6 @@ await corsair.box.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -277,9 +259,6 @@ await corsair.box.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `file` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -415,9 +394,6 @@ await corsair.box.api.files.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -437,9 +413,6 @@ await corsair.box.api.files.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -479,9 +452,6 @@ await corsair.box.api.files.share({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `shared_link` | `object` | Yes | — |
 
@@ -510,9 +480,6 @@ await corsair.box.api.files.share({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `file` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -648,9 +615,6 @@ await corsair.box.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `parent_id` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
@@ -665,9 +629,6 @@ await corsair.box.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | No | — |
 | `entries` | `object[]` | No | — |
 
@@ -773,9 +734,6 @@ await corsair.box.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `parent_id` | `string` | Yes | — |
 | `folder_upload_email_access` | `string` | No | — |
@@ -788,9 +746,6 @@ await corsair.box.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -936,9 +891,6 @@ await corsair.box.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `recursive` | `boolean` | No | — |
 
@@ -949,9 +901,6 @@ await corsair.box.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -975,9 +924,6 @@ await corsair.box.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `fields` | `string` | No | — |
 
@@ -988,9 +934,6 @@ await corsair.box.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -1136,9 +1079,6 @@ await corsair.box.api.folders.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -1154,9 +1094,6 @@ await corsair.box.api.folders.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1196,9 +1133,6 @@ await corsair.box.api.folders.share({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `shared_link` | `object` | Yes | — |
 
@@ -1226,9 +1160,6 @@ await corsair.box.api.folders.share({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |
@@ -1374,9 +1305,6 @@ await corsair.box.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1394,9 +1322,6 @@ await corsair.box.api.folders.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
 | `sequence_id` | `string` | No | — |

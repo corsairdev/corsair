@@ -31,9 +31,6 @@ await corsair.unione.api.domain.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.unione.api.domain.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -69,9 +63,6 @@ await corsair.unione.api.domain.manage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `action` | `get_dns_records \| validate_verification \| validate_dkim \| list` | Yes | — |
 | `domain` | `string` | No | — |
 
@@ -82,9 +73,6 @@ await corsair.unione.api.domain.manage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `domain` | `string` | No | — |
 | `verification-record` | `any` | No | — |
@@ -133,9 +121,6 @@ await corsair.unione.api.email.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -168,9 +153,6 @@ await corsair.unione.api.email.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `dump_id` | `string` | No | — |
 
@@ -195,9 +177,6 @@ await corsair.unione.api.email.schedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipients` | `object[]` | Yes | — |
 | `from_email` | `string` | Yes | — |
 | `subject` | `string` | Yes | — |
@@ -263,9 +242,6 @@ await corsair.unione.api.email.schedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `job_id` | `string` | No | — |
 | `emails` | `string[]` | No | — |
@@ -302,9 +278,6 @@ await corsair.unione.api.email.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipients` | `object[]` | Yes | — |
 | `from_email` | `string` | Yes | — |
 | `subject` | `string` | Yes | — |
@@ -369,9 +342,6 @@ await corsair.unione.api.email.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `job_id` | `string` | No | — |
 | `emails` | `string[]` | No | — |
@@ -408,9 +378,6 @@ await corsair.unione.api.email.statistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | No | — |
 
@@ -421,9 +388,6 @@ await corsair.unione.api.email.statistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `dump_id` | `string` | No | — |
 
@@ -448,9 +412,6 @@ await corsair.unione.api.email.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_email` | `string` | Yes | — |
 | `to_email` | `string` | Yes | — |
 | `from_name` | `string` | No | — |
@@ -462,9 +423,6 @@ await corsair.unione.api.email.subscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -488,9 +446,6 @@ await corsair.unione.api.email.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `created` | `string` | No | — |
 
@@ -501,9 +456,6 @@ await corsair.unione.api.email.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -529,9 +481,6 @@ await corsair.unione.api.emailValidation.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 
 
@@ -541,9 +490,6 @@ await corsair.unione.api.emailValidation.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -591,9 +537,6 @@ await corsair.unione.api.eventDump.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_time` | `string` | Yes | — |
 | `end_time` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -628,9 +571,6 @@ await corsair.unione.api.eventDump.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `dump_id` | `string` | No | — |
 
@@ -655,9 +595,6 @@ await corsair.unione.api.eventDump.createForJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 | `start_time` | `string` | No | — |
 | `end_time` | `string` | No | — |
@@ -671,9 +608,6 @@ await corsair.unione.api.eventDump.createForJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `dump_id` | `string` | No | — |
 
@@ -698,9 +632,6 @@ await corsair.unione.api.eventDump.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dump_id` | `string` | Yes | — |
 
 
@@ -710,9 +641,6 @@ await corsair.unione.api.eventDump.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -736,9 +664,6 @@ await corsair.unione.api.eventDump.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dump_id` | `string` | Yes | — |
 
 
@@ -748,9 +673,6 @@ await corsair.unione.api.eventDump.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `event_dump` | `object` | No | — |
 
@@ -794,9 +716,6 @@ await corsair.unione.api.eventDump.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `event_dumps` | `object[]` | No | — |
 
@@ -839,9 +758,6 @@ await corsair.unione.api.suppression.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -851,9 +767,6 @@ await corsair.unione.api.suppression.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -877,9 +790,6 @@ await corsair.unione.api.suppression.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `all_projects` | `boolean` | No | — |
 
@@ -890,9 +800,6 @@ await corsair.unione.api.suppression.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `email` | `string` | No | — |
 | `suppressions` | `object[]` | No | — |
@@ -934,9 +841,6 @@ await corsair.unione.api.suppression.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cause` | `string` | No | — |
 | `source` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -950,9 +854,6 @@ await corsair.unione.api.suppression.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `count` | `number` | No | — |
 | `suppressions` | `object[]` | No | — |
@@ -1000,9 +901,6 @@ await corsair.unione.api.system.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `user_id` | `number` | No | — |
 | `email` | `string` | No | — |
@@ -1062,9 +960,6 @@ await corsair.unione.api.system.ping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -1090,9 +985,6 @@ await corsair.unione.api.tag.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `number` | Yes | — |
 
 
@@ -1102,9 +994,6 @@ await corsair.unione.api.tag.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -1131,9 +1020,6 @@ await corsair.unione.api.tag.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `tags` | `object[]` | No | — |
 
@@ -1172,9 +1058,6 @@ await corsair.unione.api.template.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1184,9 +1067,6 @@ await corsair.unione.api.template.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -1210,9 +1090,6 @@ await corsair.unione.api.template.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1222,9 +1099,6 @@ await corsair.unione.api.template.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `template` | `object` | No | — |
 
@@ -1291,9 +1165,6 @@ await corsair.unione.api.template.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -1304,9 +1175,6 @@ await corsair.unione.api.template.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `templates` | `object[]` | No | — |
 
@@ -1373,9 +1241,6 @@ await corsair.unione.api.template.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template` | `object` | Yes | — |
 
 
@@ -1427,9 +1292,6 @@ await corsair.unione.api.template.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `template` | `object` | No | — |
 
@@ -1498,9 +1360,6 @@ await corsair.unione.api.webhook.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -1510,9 +1369,6 @@ await corsair.unione.api.webhook.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -1536,9 +1392,6 @@ await corsair.unione.api.webhook.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -1548,9 +1401,6 @@ await corsair.unione.api.webhook.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `object` | `object` | No | — |
 
@@ -1600,9 +1450,6 @@ await corsair.unione.api.webhook.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `objects` | `object[]` | No | — |
 
@@ -1649,9 +1496,6 @@ await corsair.unione.api.webhook.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `event_format` | `string` | No | — |
@@ -1679,9 +1523,6 @@ await corsair.unione.api.webhook.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `object` | `object` | No | — |
 
@@ -1731,9 +1572,6 @@ await corsair.unione.api.webhook.types({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email_status` | `string[]` | Yes | — |
 | `spam_block` | `string[]` | Yes | — |
 

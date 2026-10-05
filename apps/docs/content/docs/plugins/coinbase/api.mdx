@@ -31,9 +31,6 @@ await corsair.coinbase.api.accounts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.coinbase.api.accounts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `primary` | `boolean` | No | — |
@@ -108,9 +102,6 @@ await corsair.coinbase.api.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `starting_after` | `string` | No | — |
 | `ending_before` | `string` | No | — |
@@ -123,9 +114,6 @@ await corsair.coinbase.api.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -200,9 +188,6 @@ await corsair.coinbase.api.data.getExchangeRates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency` | `string` | No | — |
 
 
@@ -212,9 +197,6 @@ await corsair.coinbase.api.data.getExchangeRates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency` | `string` | Yes | — |
 | `rates` | `object` | Yes | — |
 
@@ -252,9 +234,6 @@ await corsair.coinbase.api.data.getTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iso` | `string` | Yes | — |
 | `epoch` | `number` | Yes | — |
 
@@ -282,9 +261,6 @@ await corsair.coinbase.api.data.listCurrencies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 
 
@@ -326,9 +302,6 @@ await corsair.coinbase.api.markets.getCurrency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency_id` | `string` | Yes | — |
 
 
@@ -338,9 +311,6 @@ await corsair.coinbase.api.markets.getCurrency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -380,9 +350,6 @@ await corsair.coinbase.api.markets.getMarketProductBook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -393,9 +360,6 @@ await corsair.coinbase.api.markets.getMarketProductBook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pricebook` | `object` | No | — |
 
 
@@ -439,9 +403,6 @@ await corsair.coinbase.api.markets.getProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -452,9 +413,6 @@ await corsair.coinbase.api.markets.getProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | No | — |
 | `price` | `string` | No | — |
 | `base_currency_id` | `string` | No | — |
@@ -483,9 +441,6 @@ await corsair.coinbase.api.markets.getProductBook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -496,9 +451,6 @@ await corsair.coinbase.api.markets.getProductBook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pricebook` | `object` | No | — |
 
 
@@ -542,9 +494,6 @@ await corsair.coinbase.api.markets.getPublicTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -555,9 +504,6 @@ await corsair.coinbase.api.markets.getPublicTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trades` | `object[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
@@ -596,9 +542,6 @@ await corsair.coinbase.api.markets.getServerTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `iso` | `string` | No | — |
 | `epochSeconds` | `string \| number` | No | — |
 | `epochMillis` | `string \| number` | No | — |
@@ -624,9 +567,6 @@ await corsair.coinbase.api.markets.getTicker({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -637,9 +577,6 @@ await corsair.coinbase.api.markets.getTicker({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trades` | `object[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
@@ -675,9 +612,6 @@ await corsair.coinbase.api.markets.getVolumeSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `product_type` | `string` | No | — |
@@ -690,9 +624,6 @@ await corsair.coinbase.api.markets.getVolumeSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `products` | `object[]` | No | — |
 | `num_products` | `number` | No | — |
 
@@ -733,9 +664,6 @@ await corsair.coinbase.api.markets.listExchangeProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `product_type` | `string` | No | — |
@@ -748,9 +676,6 @@ await corsair.coinbase.api.markets.listExchangeProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `products` | `object[]` | No | — |
 | `num_products` | `number` | No | — |
 
@@ -791,9 +716,6 @@ await corsair.coinbase.api.markets.listProductCandles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `start` | `string` | No | — |
 | `end` | `string` | No | — |
@@ -806,9 +728,6 @@ await corsair.coinbase.api.markets.listProductCandles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candles` | `object[]` | No | — |
 
 
@@ -848,9 +767,6 @@ await corsair.coinbase.api.markets.listProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `product_type` | `string` | No | — |
@@ -863,9 +779,6 @@ await corsair.coinbase.api.markets.listProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `products` | `object[]` | No | — |
 | `num_products` | `number` | No | — |
 
@@ -906,9 +819,6 @@ await corsair.coinbase.api.markets.listProductsCandles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `start` | `string` | No | — |
 | `end` | `string` | No | — |
@@ -921,9 +831,6 @@ await corsair.coinbase.api.markets.listProductsCandles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candles` | `object[]` | No | — |
 
 
@@ -963,9 +870,6 @@ await corsair.coinbase.api.markets.listStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -976,9 +880,6 @@ await corsair.coinbase.api.markets.listStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | No | — |
 | `price` | `string` | No | — |
 | `base_currency_id` | `string` | No | — |
@@ -1007,9 +908,6 @@ await corsair.coinbase.api.markets.listTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `string` | Yes | Currency pair such as BTC-USD |
 | `limit` | `number` | No | — |
 
@@ -1020,9 +918,6 @@ await corsair.coinbase.api.markets.listTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trades` | `object[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
@@ -1058,9 +953,6 @@ await corsair.coinbase.api.markets.listWallets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `starting_after` | `string` | No | — |
 | `ending_before` | `string` | No | — |
@@ -1073,9 +965,6 @@ await corsair.coinbase.api.markets.listWallets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1150,9 +1039,6 @@ await corsair.coinbase.api.paymentMethods.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `starting_after` | `string` | No | — |
 | `ending_before` | `string` | No | — |
@@ -1165,9 +1051,6 @@ await corsair.coinbase.api.paymentMethods.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1234,9 +1117,6 @@ await corsair.coinbase.api.prices.getBuy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
 
 
@@ -1246,9 +1126,6 @@ await corsair.coinbase.api.prices.getBuy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `string` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `base` | `string` | No | — |
@@ -1274,9 +1151,6 @@ await corsair.coinbase.api.prices.getSell({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
 
 
@@ -1286,9 +1160,6 @@ await corsair.coinbase.api.prices.getSell({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `string` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `base` | `string` | No | — |
@@ -1314,9 +1185,6 @@ await corsair.coinbase.api.prices.getSpot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
 | `date` | `string` | No | Historic spot price date (YYYY-MM-DD, UTC) |
 
@@ -1327,9 +1195,6 @@ await corsair.coinbase.api.prices.getSpot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `string` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `base` | `string` | No | — |
@@ -1357,9 +1222,6 @@ await corsair.coinbase.api.transactions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_id` | `string` | Yes | — |
 | `transaction_id` | `string` | Yes | — |
 
@@ -1370,9 +1232,6 @@ await corsair.coinbase.api.transactions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1469,9 +1328,6 @@ await corsair.coinbase.api.transactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `starting_after` | `string` | No | — |
 | `ending_before` | `string` | No | — |
@@ -1485,9 +1341,6 @@ await corsair.coinbase.api.transactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -1571,9 +1424,6 @@ await corsair.coinbase.api.user.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `username` | `string` | No | — |

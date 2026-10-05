@@ -31,9 +31,6 @@ await corsair.github.api.comments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -62,9 +59,6 @@ await corsair.github.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -76,9 +70,6 @@ await corsair.github.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -110,9 +101,6 @@ await corsair.github.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `sort` | `created \| updated` | No | — |
@@ -164,9 +152,6 @@ await corsair.github.api.comments.listForIssue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `issueNumber` | `number` | Yes | — |
@@ -217,9 +202,6 @@ await corsair.github.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -232,9 +214,6 @@ await corsair.github.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -268,9 +247,6 @@ await corsair.github.api.discussions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `discussionNumber` | `number` | Yes | — |
@@ -282,9 +258,6 @@ await corsair.github.api.discussions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `number` | `number` | Yes | — |
@@ -342,9 +315,6 @@ await corsair.github.api.discussions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -412,9 +382,6 @@ await corsair.github.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
 
@@ -511,9 +478,6 @@ await corsair.github.api.events.listForNetwork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -612,9 +576,6 @@ await corsair.github.api.events.listForOrg({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -712,9 +673,6 @@ await corsair.github.api.events.listForRepository({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -813,9 +771,6 @@ await corsair.github.api.events.listForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -913,9 +868,6 @@ await corsair.github.api.events.listForUserOrg({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `org` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -1014,9 +966,6 @@ await corsair.github.api.events.listPublicForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1114,9 +1063,6 @@ await corsair.github.api.events.listPublicReceivedForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1214,9 +1160,6 @@ await corsair.github.api.events.listReceivedForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1316,9 +1259,6 @@ await corsair.github.api.forks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `organization` | `string` | No | — |
@@ -1332,9 +1272,6 @@ await corsair.github.api.forks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -1410,9 +1347,6 @@ await corsair.github.api.forks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `sort` | `newest \| oldest \| stargazers \| watchers` | No | — |
@@ -1499,9 +1433,6 @@ await corsair.github.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `title` | `string \| number` | Yes | — |
@@ -1534,9 +1465,6 @@ await corsair.github.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -1690,9 +1618,6 @@ await corsair.github.api.issues.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `issueNumber` | `number` | Yes | — |
@@ -1705,9 +1630,6 @@ await corsair.github.api.issues.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -1755,9 +1677,6 @@ await corsair.github.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `issueNumber` | `number` | Yes | — |
@@ -1769,9 +1688,6 @@ await corsair.github.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -1925,9 +1841,6 @@ await corsair.github.api.issues.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `milestone` | `string` | No | — |
@@ -2077,9 +1990,6 @@ await corsair.github.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `issueNumber` | `number` | Yes | — |
@@ -2115,9 +2025,6 @@ await corsair.github.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2273,9 +2180,6 @@ await corsair.github.api.pullRequests.createReview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `pullNumber` | `number` | Yes | — |
@@ -2308,9 +2212,6 @@ await corsair.github.api.pullRequests.createReview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -2354,9 +2255,6 @@ await corsair.github.api.pullRequests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `pullNumber` | `number` | Yes | — |
@@ -2368,9 +2266,6 @@ await corsair.github.api.pullRequests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
@@ -2748,9 +2643,6 @@ await corsair.github.api.pullRequests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `state` | `open \| closed \| all` | No | — |
@@ -3099,9 +2991,6 @@ await corsair.github.api.pullRequests.listReviews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `pullNumber` | `number` | Yes | — |
@@ -3156,9 +3045,6 @@ await corsair.github.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `tagName` | `string` | Yes | — |
@@ -3176,9 +3062,6 @@ await corsair.github.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
@@ -3271,9 +3154,6 @@ await corsair.github.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `releaseId` | `number` | Yes | — |
@@ -3285,9 +3165,6 @@ await corsair.github.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
@@ -3380,9 +3257,6 @@ await corsair.github.api.releases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -3476,9 +3350,6 @@ await corsair.github.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `releaseId` | `number` | Yes | — |
@@ -3496,9 +3367,6 @@ await corsair.github.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
@@ -3593,9 +3461,6 @@ await corsair.github.api.repositories.checkStarred({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 
@@ -3606,9 +3471,6 @@ await corsair.github.api.repositories.checkStarred({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `starred` | `boolean` | Yes | — |
 
 
@@ -3632,9 +3494,6 @@ await corsair.github.api.repositories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 
@@ -3645,9 +3504,6 @@ await corsair.github.api.repositories.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -3723,9 +3579,6 @@ await corsair.github.api.repositories.getContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
@@ -3796,9 +3649,6 @@ await corsair.github.api.repositories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | No | — |
 | `type` | `all \| owner \| public \| private \| member` | No | — |
 | `sort` | `created \| updated \| pushed \| full_name` | No | — |
@@ -3884,9 +3734,6 @@ await corsair.github.api.repositories.listBranches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `protected` | `boolean` | No | — |
@@ -3933,9 +3780,6 @@ await corsair.github.api.repositories.listCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `sha` | `string` | No | — |
@@ -4018,9 +3862,6 @@ await corsair.github.api.repositories.listStargazers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -4085,9 +3926,6 @@ await corsair.github.api.repositories.listStarred({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `created \| updated` | No | — |
 | `direction` | `asc \| desc` | No | — |
 | `perPage` | `number` | No | — |
@@ -4171,9 +4009,6 @@ await corsair.github.api.repositories.star({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 
@@ -4201,9 +4036,6 @@ await corsair.github.api.repositories.unstar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 
@@ -4233,9 +4065,6 @@ await corsair.github.api.search.issues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | — |
 | `sort` | `comments \| reactions \| reactions-+1 \| reactions--1 \| reactions-smile \| reactions-thinking_face \| reactions-heart \| reactions-tada \| interactions \| created \| updated` | No | — |
 | `order` | `asc \| desc` | No | — |
@@ -4251,9 +4080,6 @@ await corsair.github.api.search.issues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | Yes | — |
 | `incompleteResults` | `boolean` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -4444,9 +4270,6 @@ await corsair.github.api.search.repositories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | — |
 | `sort` | `stars \| forks \| help-wanted-issues \| updated` | No | — |
 | `order` | `asc \| desc` | No | — |
@@ -4460,9 +4283,6 @@ await corsair.github.api.search.repositories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | Yes | — |
 | `incompleteResults` | `boolean` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -4544,9 +4364,6 @@ await corsair.github.api.search.users({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | — |
 | `sort` | `followers \| repositories \| joined` | No | — |
 | `order` | `asc \| desc` | No | — |
@@ -4560,9 +4377,6 @@ await corsair.github.api.search.users({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | Yes | — |
 | `incompleteResults` | `boolean` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -4623,9 +4437,6 @@ await corsair.github.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 
 
@@ -4635,9 +4446,6 @@ await corsair.github.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `login` | `string` | Yes | — |
@@ -4721,9 +4529,6 @@ await corsair.github.api.users.getAuthenticated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `login` | `string` | Yes | — |
@@ -4804,9 +4609,6 @@ await corsair.github.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `number` | Yes | — |
 
 
@@ -4816,9 +4618,6 @@ await corsair.github.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `login` | `string` | Yes | — |
@@ -4899,9 +4698,6 @@ await corsair.github.api.users.getHovercard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `subjectType` | `organization \| repository \| issue \| pull_request` | No | — |
 | `subjectId` | `string` | No | — |
@@ -4913,9 +4709,6 @@ await corsair.github.api.users.getHovercard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contexts` | `object[]` | Yes | — |
 
 
@@ -4951,9 +4744,6 @@ await corsair.github.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -5013,9 +4803,6 @@ await corsair.github.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `blog` | `string` | No | — |
@@ -5032,9 +4819,6 @@ await corsair.github.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `login` | `string` | Yes | — |
@@ -5117,9 +4901,6 @@ await corsair.github.api.workflows.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `workflowId` | `number \| string` | Yes | — |
@@ -5131,9 +4912,6 @@ await corsair.github.api.workflows.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -5167,9 +4945,6 @@ await corsair.github.api.workflows.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `perPage` | `number` | No | — |
@@ -5182,9 +4957,6 @@ await corsair.github.api.workflows.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | No | — |
 | `workflows` | `object[]` | No | — |
 
@@ -5230,9 +5002,6 @@ await corsair.github.api.workflows.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `actor` | `string` | No | — |
@@ -5253,9 +5022,6 @@ await corsair.github.api.workflows.listRuns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | No | — |
 | `workflowRuns` | `object[]` | No | — |
 

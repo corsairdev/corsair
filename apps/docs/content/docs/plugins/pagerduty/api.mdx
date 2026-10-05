@@ -31,9 +31,6 @@ await corsair.pagerduty.api.incidentNotes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.pagerduty.api.incidentNotes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note` | `object` | Yes | — |
 
 
@@ -93,9 +87,6 @@ await corsair.pagerduty.api.incidentNotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -107,9 +98,6 @@ await corsair.pagerduty.api.incidentNotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notes` | `object[]` | Yes | — |
 
 
@@ -158,9 +146,6 @@ await corsair.pagerduty.api.incidents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `service` | `object` | Yes | — |
@@ -220,9 +205,6 @@ await corsair.pagerduty.api.incidents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident` | `object` | Yes | — |
 
 
@@ -296,9 +278,6 @@ await corsair.pagerduty.api.incidents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -308,9 +287,6 @@ await corsair.pagerduty.api.incidents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident` | `object` | Yes | — |
 
 
@@ -384,9 +360,6 @@ await corsair.pagerduty.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `statuses` | `triggered \| acknowledged \| resolved[]` | No | — |
@@ -404,9 +377,6 @@ await corsair.pagerduty.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incidents` | `object[]` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -484,9 +454,6 @@ await corsair.pagerduty.api.incidents.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `acknowledged \| resolved` | No | — |
 | `urgency` | `high \| low` | No | — |
@@ -525,9 +492,6 @@ await corsair.pagerduty.api.incidents.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident` | `object` | Yes | — |
 
 
@@ -603,9 +567,6 @@ await corsair.pagerduty.api.logEntries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `include` | `string[]` | No | — |
 
@@ -616,9 +577,6 @@ await corsair.pagerduty.api.logEntries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `log_entry` | `object` | Yes | — |
 
 
@@ -685,9 +643,6 @@ await corsair.pagerduty.api.logEntries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `since` | `string` | No | — |
@@ -703,9 +658,6 @@ await corsair.pagerduty.api.logEntries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `log_entries` | `object[]` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -778,9 +730,6 @@ await corsair.pagerduty.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `include` | `string[]` | No | — |
 
@@ -791,9 +740,6 @@ await corsair.pagerduty.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | Yes | — |
 
 

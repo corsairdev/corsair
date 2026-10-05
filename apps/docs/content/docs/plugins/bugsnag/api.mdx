@@ -31,9 +31,6 @@ await corsair.bugsnag.api.collaborators.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.bugsnag.api.collaborators.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -72,9 +66,6 @@ await corsair.bugsnag.api.collaborators.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 
@@ -85,9 +76,6 @@ await corsair.bugsnag.api.collaborators.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -138,9 +126,6 @@ await corsair.bugsnag.api.collaborators.getOnProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 
@@ -151,9 +136,6 @@ await corsair.bugsnag.api.collaborators.getOnProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -204,9 +186,6 @@ await corsair.bugsnag.api.collaborators.getProjectAccess({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 | `project_id` | `string` | Yes | — |
@@ -218,9 +197,6 @@ await corsair.bugsnag.api.collaborators.getProjectAccess({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_summary` | `object` | No | — |
 | `team_count` | `number` | No | — |
 | `is_admin` | `boolean` | No | — |
@@ -263,9 +239,6 @@ await corsair.bugsnag.api.collaborators.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `admin` | `boolean` | No | — |
@@ -279,9 +252,6 @@ await corsair.bugsnag.api.collaborators.invite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -332,9 +302,6 @@ await corsair.bugsnag.api.collaborators.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization_id` | `string` | Yes | — |
@@ -392,9 +359,6 @@ await corsair.bugsnag.api.collaborators.listOnProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -452,9 +416,6 @@ await corsair.bugsnag.api.collaborators.listProjectAccesses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization_id` | `string` | Yes | — |
@@ -507,9 +468,6 @@ await corsair.bugsnag.api.collaborators.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization_id` | `string` | Yes | — |
@@ -591,9 +549,6 @@ await corsair.bugsnag.api.collaborators.projectAccessCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_ids` | `string[]` | Yes | — |
 
@@ -634,9 +589,6 @@ await corsair.bugsnag.api.collaborators.updatePermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 | `admin` | `boolean` | No | — |
@@ -660,9 +612,6 @@ await corsair.bugsnag.api.collaborators.updatePermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -715,9 +664,6 @@ await corsair.bugsnag.api.dataDeletions.confirmForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `deletion_id` | `string` | Yes | — |
 
@@ -728,9 +674,6 @@ await corsair.bugsnag.api.dataDeletions.confirmForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -761,9 +704,6 @@ await corsair.bugsnag.api.dataDeletions.createForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `filters` | `object` | Yes | — |
 
@@ -784,9 +724,6 @@ await corsair.bugsnag.api.dataDeletions.createForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -817,9 +754,6 @@ await corsair.bugsnag.api.dataDeletions.createForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `filters` | `object` | Yes | — |
 
@@ -840,9 +774,6 @@ await corsair.bugsnag.api.dataDeletions.createForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -873,9 +804,6 @@ await corsair.bugsnag.api.dataDeletions.getForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `deletion_id` | `string` | Yes | — |
 
@@ -886,9 +814,6 @@ await corsair.bugsnag.api.dataDeletions.getForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -919,9 +844,6 @@ await corsair.bugsnag.api.dataDeletions.getForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `deletion_id` | `string` | Yes | — |
 
@@ -932,9 +854,6 @@ await corsair.bugsnag.api.dataDeletions.getForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -967,9 +886,6 @@ await corsair.bugsnag.api.dataRequests.createForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `filters` | `object` | Yes | — |
 | `report_type` | `string` | No | — |
@@ -991,9 +907,6 @@ await corsair.bugsnag.api.dataRequests.createForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -1024,9 +937,6 @@ await corsair.bugsnag.api.dataRequests.createForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `filters` | `object` | Yes | — |
 | `report_type` | `string` | No | — |
@@ -1048,9 +958,6 @@ await corsair.bugsnag.api.dataRequests.createForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -1081,9 +988,6 @@ await corsair.bugsnag.api.dataRequests.getForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `request_id` | `string` | Yes | — |
 
@@ -1094,9 +998,6 @@ await corsair.bugsnag.api.dataRequests.getForOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -1127,9 +1028,6 @@ await corsair.bugsnag.api.dataRequests.getForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `request_id` | `string` | Yes | — |
 
@@ -1140,9 +1038,6 @@ await corsair.bugsnag.api.dataRequests.getForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `string` | No | — |
 | `filters` | `any` | No | — |
@@ -1175,9 +1070,6 @@ await corsair.bugsnag.api.errors.bulkUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `error_ids` | `string[]` | Yes | — |
 | `operation` | `fix \| open \| ignore \| snooze \| discard \| undiscard \| delete \| override_severity \| assign \| create_issue \| link_issue \| unlink_issue` | Yes | — |
@@ -1205,9 +1097,6 @@ await corsair.bugsnag.api.errors.bulkUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `operation` | `string` | No | — |
 
 
@@ -1231,9 +1120,6 @@ await corsair.bugsnag.api.errors.deleteAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -1243,9 +1129,6 @@ await corsair.bugsnag.api.errors.deleteAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -1271,9 +1154,6 @@ await corsair.bugsnag.api.errors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1360,9 +1240,6 @@ await corsair.bugsnag.api.eventFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `filter_options` | `object` | Yes | — |
@@ -1384,9 +1261,6 @@ await corsair.bugsnag.api.eventFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `display_id` | `string` | Yes | — |
 | `custom` | `boolean` | No | — |
 | `pivot_options` | `any` | No | — |
@@ -1416,9 +1290,6 @@ await corsair.bugsnag.api.eventFields.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `display_id` | `string` | Yes | — |
 
@@ -1429,9 +1300,6 @@ await corsair.bugsnag.api.eventFields.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -1457,9 +1325,6 @@ await corsair.bugsnag.api.eventFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1507,9 +1372,6 @@ await corsair.bugsnag.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1583,9 +1445,6 @@ await corsair.bugsnag.api.events.listForError({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1662,9 +1521,6 @@ await corsair.bugsnag.api.featureFlags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1715,9 +1571,6 @@ await corsair.bugsnag.api.featureFlags.listSummaries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1762,9 +1615,6 @@ await corsair.bugsnag.api.integrations.configure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `integration_key` | `string` | Yes | — |
 | `configuration` | `object` | Yes | — |
@@ -1786,9 +1636,6 @@ await corsair.bugsnag.api.integrations.configure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `integration_key` | `string` | No | — |
 | `project_id` | `string` | No | — |
@@ -1820,9 +1667,6 @@ await corsair.bugsnag.api.integrations.deleteConfigured({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integration_id` | `string` | Yes | — |
 
 
@@ -1832,9 +1676,6 @@ await corsair.bugsnag.api.integrations.deleteConfigured({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -1860,9 +1701,6 @@ await corsair.bugsnag.api.integrations.getConfigured({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integration_id` | `string` | Yes | — |
 
 
@@ -1872,9 +1710,6 @@ await corsair.bugsnag.api.integrations.getConfigured({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `integration_key` | `string` | No | — |
 | `project_id` | `string` | No | — |
@@ -1906,9 +1741,6 @@ await corsair.bugsnag.api.integrations.listConfigured({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -1956,9 +1788,6 @@ await corsair.bugsnag.api.integrations.listSupported({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -2007,9 +1836,6 @@ await corsair.bugsnag.api.integrations.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `key` | `string` | Yes | — |
 | `configuration` | `object` | Yes | — |
 
@@ -2030,9 +1856,6 @@ await corsair.bugsnag.api.integrations.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `errors` | `any[]` | No | — |
@@ -2060,9 +1883,6 @@ await corsair.bugsnag.api.organizations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 
 
@@ -2072,9 +1892,6 @@ await corsair.bugsnag.api.organizations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -2100,9 +1917,6 @@ await corsair.bugsnag.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 
 
@@ -2112,9 +1926,6 @@ await corsair.bugsnag.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
@@ -2166,9 +1977,6 @@ await corsair.bugsnag.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -2228,9 +2036,6 @@ await corsair.bugsnag.api.pivots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -2285,9 +2090,6 @@ await corsair.bugsnag.api.pivots.values({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -2349,9 +2151,6 @@ await corsair.bugsnag.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -2363,9 +2162,6 @@ await corsair.bugsnag.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `organization_id` | `string` | No | — |
 | `slug` | `string` | No | — |
@@ -2444,9 +2240,6 @@ await corsair.bugsnag.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -2456,9 +2249,6 @@ await corsair.bugsnag.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -2484,9 +2274,6 @@ await corsair.bugsnag.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -2496,9 +2283,6 @@ await corsair.bugsnag.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `organization_id` | `string` | No | — |
 | `slug` | `string` | No | — |
@@ -2577,9 +2361,6 @@ await corsair.bugsnag.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization_id` | `string` | Yes | — |
@@ -2661,9 +2442,6 @@ await corsair.bugsnag.api.projects.networkGroupingRuleset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -2673,9 +2451,6 @@ await corsair.bugsnag.api.projects.networkGroupingRuleset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | No | — |
 | `endpoints` | `any[]` | No | — |
 
@@ -2700,9 +2475,6 @@ await corsair.bugsnag.api.projects.regenerateApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -2712,9 +2484,6 @@ await corsair.bugsnag.api.projects.regenerateApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `organization_id` | `string` | No | — |
 | `slug` | `string` | No | — |
@@ -2795,9 +2564,6 @@ await corsair.bugsnag.api.releases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -2859,9 +2625,6 @@ await corsair.bugsnag.api.releases.listGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -2923,9 +2686,6 @@ await corsair.bugsnag.api.savedSearches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `filters` | `object` | Yes | — |
@@ -2950,9 +2710,6 @@ await corsair.bugsnag.api.savedSearches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `project_id` | `string` | No | — |
@@ -2999,9 +2756,6 @@ await corsair.bugsnag.api.savedSearches.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `saved_search_id` | `string` | Yes | — |
 
 
@@ -3011,9 +2765,6 @@ await corsair.bugsnag.api.savedSearches.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -3039,9 +2790,6 @@ await corsair.bugsnag.api.savedSearches.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `saved_search_id` | `string` | Yes | — |
 
 
@@ -3051,9 +2799,6 @@ await corsair.bugsnag.api.savedSearches.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `user_id` | `string` | No | — |
 | `project_id` | `string` | No | — |
@@ -3100,9 +2845,6 @@ await corsair.bugsnag.api.savedSearches.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `project_id` | `string` | Yes | — |
@@ -3166,9 +2908,6 @@ await corsair.bugsnag.api.savedSearches.usageSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `saved_search_id` | `string` | Yes | — |
 
 
@@ -3178,9 +2917,6 @@ await corsair.bugsnag.api.savedSearches.usageSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_notifications_count` | `number` | No | — |
 | `current_user_using_for_email_notification` | `boolean` | No | — |
 | `collaborator_email_notifications_count` | `number` | No | — |
@@ -3209,9 +2945,6 @@ await corsair.bugsnag.api.teams.addCollaboratorMemberships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `collaborator_id` | `string` | Yes | — |
 | `team_ids` | `string[]` | No | — |
@@ -3224,9 +2957,6 @@ await corsair.bugsnag.api.teams.addCollaboratorMemberships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -3277,9 +3007,6 @@ await corsair.bugsnag.api.teams.addMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
 | `collaborator_ids` | `string[]` | No | — |
@@ -3292,9 +3019,6 @@ await corsair.bugsnag.api.teams.addMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `collaborator_count` | `number` | No | — |
@@ -3321,9 +3045,6 @@ await corsair.bugsnag.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -3334,9 +3055,6 @@ await corsair.bugsnag.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `collaborator_count` | `number` | No | — |
@@ -3363,9 +3081,6 @@ await corsair.bugsnag.api.teams.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
 
@@ -3376,9 +3091,6 @@ await corsair.bugsnag.api.teams.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `id` | `string` | Yes | — |
 | `already_absent` | `boolean` | Yes | — |
@@ -3404,9 +3116,6 @@ await corsair.bugsnag.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
 
@@ -3417,9 +3126,6 @@ await corsair.bugsnag.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `collaborator_count` | `number` | No | — |
@@ -3446,9 +3152,6 @@ await corsair.bugsnag.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `per_page` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization_id` | `string` | Yes | — |
@@ -3494,9 +3197,6 @@ await corsair.bugsnag.api.trends.projectBuckets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `buckets_count` | `number` | Yes | — |
 | `filters` | `object` | No | — |

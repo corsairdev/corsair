@@ -31,9 +31,6 @@ await corsair.sentry.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 | `eventId` | `string` | Yes | — |
@@ -45,9 +42,6 @@ await corsair.sentry.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `eventID` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -100,9 +94,6 @@ await corsair.sentry.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
@@ -157,9 +148,6 @@ await corsair.sentry.api.issues.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issueId` | `string` | Yes | — |
 
 
@@ -186,9 +174,6 @@ await corsair.sentry.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issueId` | `string` | Yes | — |
 
 
@@ -198,9 +183,6 @@ await corsair.sentry.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `shortId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -275,9 +257,6 @@ await corsair.sentry.api.issues.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 | `query` | `string` | No | — |
@@ -346,9 +325,6 @@ await corsair.sentry.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issueId` | `string` | Yes | — |
 | `status` | `resolved \| unresolved \| ignored` | No | — |
 | `assignedTo` | `string` | No | — |
@@ -364,9 +340,6 @@ await corsair.sentry.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `shortId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -443,9 +416,6 @@ await corsair.sentry.api.organizations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `agreeTerms` | `boolean` | No | — |
@@ -457,9 +427,6 @@ await corsair.sentry.api.organizations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -512,9 +479,6 @@ await corsair.sentry.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 
 
@@ -524,9 +488,6 @@ await corsair.sentry.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -579,9 +540,6 @@ await corsair.sentry.api.organizations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 
 
@@ -632,9 +590,6 @@ await corsair.sentry.api.organizations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
@@ -646,9 +601,6 @@ await corsair.sentry.api.organizations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -703,9 +655,6 @@ await corsair.sentry.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -719,9 +668,6 @@ await corsair.sentry.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -789,9 +735,6 @@ await corsair.sentry.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 
@@ -819,9 +762,6 @@ await corsair.sentry.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 
@@ -832,9 +772,6 @@ await corsair.sentry.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -902,9 +839,6 @@ await corsair.sentry.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -971,9 +905,6 @@ await corsair.sentry.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `projectSlug` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -988,9 +919,6 @@ await corsair.sentry.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1060,9 +988,6 @@ await corsair.sentry.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 | `ref` | `string` | No | — |
@@ -1077,9 +1002,6 @@ await corsair.sentry.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
 | `shortVersion` | `string` | No | — |
@@ -1126,9 +1048,6 @@ await corsair.sentry.api.releases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -1156,9 +1075,6 @@ await corsair.sentry.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 
@@ -1169,9 +1085,6 @@ await corsair.sentry.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
 | `shortVersion` | `string` | No | — |
@@ -1218,9 +1131,6 @@ await corsair.sentry.api.releases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `query` | `string` | No | — |
 | `cursor` | `string` | No | — |
@@ -1274,9 +1184,6 @@ await corsair.sentry.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
 | `ref` | `string` | No | — |
@@ -1290,9 +1197,6 @@ await corsair.sentry.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `version` | `string` | Yes | — |
 | `shortVersion` | `string` | No | — |
@@ -1341,9 +1245,6 @@ await corsair.sentry.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
@@ -1355,9 +1256,6 @@ await corsair.sentry.api.teams.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1401,9 +1299,6 @@ await corsair.sentry.api.teams.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 
@@ -1431,9 +1326,6 @@ await corsair.sentry.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 
@@ -1444,9 +1336,6 @@ await corsair.sentry.api.teams.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1490,9 +1379,6 @@ await corsair.sentry.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -1542,9 +1428,6 @@ await corsair.sentry.api.teams.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationSlug` | `string` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -1557,9 +1440,6 @@ await corsair.sentry.api.teams.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |

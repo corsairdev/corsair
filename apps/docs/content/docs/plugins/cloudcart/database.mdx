@@ -28,9 +28,6 @@ const rows = await corsair.cloudcart.db.categories.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
@@ -59,9 +56,6 @@ const rows = await corsair.cloudcart.db.customers.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `first_name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -91,9 +85,6 @@ const rows = await corsair.cloudcart.db.orders.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `order_total` | `number` | equals, gt, gte, lt, lte, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -124,9 +115,6 @@ const rows = await corsair.cloudcart.db.products.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `price` | `number` | equals, gt, gte, lt, lte, in |
@@ -159,9 +147,6 @@ const rows = await corsair.cloudcart.db.variants.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `sku` | `string` | equals, contains, startsWith, endsWith, in |
 | `price` | `number` | equals, gt, gte, lt, lte, in |

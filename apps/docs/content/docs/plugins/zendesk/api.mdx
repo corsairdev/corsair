@@ -31,9 +31,6 @@ await corsair.zendesk.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticket_id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -45,9 +42,6 @@ await corsair.zendesk.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comments` | `object[]` | Yes | — |
 | `next_page` | `string` | No | — |
 | `previous_page` | `string` | No | — |
@@ -95,9 +89,6 @@ await corsair.zendesk.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subject` | `string` | No | — |
 | `description` | `string` | No | — |
 | `comment` | `object` | No | — |
@@ -129,9 +120,6 @@ await corsair.zendesk.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticket` | `object` | Yes | — |
 
 
@@ -191,9 +179,6 @@ await corsair.zendesk.api.tickets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -203,9 +188,6 @@ await corsair.zendesk.api.tickets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 
 
@@ -229,9 +211,6 @@ await corsair.zendesk.api.tickets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -241,9 +220,6 @@ await corsair.zendesk.api.tickets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticket` | `object` | Yes | — |
 
 
@@ -303,9 +279,6 @@ await corsair.zendesk.api.tickets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `sort_by` | `string` | No | — |
@@ -318,9 +291,6 @@ await corsair.zendesk.api.tickets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tickets` | `object[]` | Yes | — |
 | `next_page` | `string` | No | — |
 | `previous_page` | `string` | No | — |
@@ -383,9 +353,6 @@ await corsair.zendesk.api.tickets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `subject` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -415,9 +382,6 @@ await corsair.zendesk.api.tickets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ticket` | `object` | Yes | — |
 
 
@@ -479,9 +443,6 @@ await corsair.zendesk.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `role` | `string` | No | — |
@@ -495,9 +456,6 @@ await corsair.zendesk.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | Yes | — |
 
 
@@ -549,9 +507,6 @@ await corsair.zendesk.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -561,9 +516,6 @@ await corsair.zendesk.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 
 
@@ -587,9 +539,6 @@ await corsair.zendesk.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -599,9 +548,6 @@ await corsair.zendesk.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | Yes | — |
 
 
@@ -653,9 +599,6 @@ await corsair.zendesk.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `role` | `string` | No | — |
@@ -667,9 +610,6 @@ await corsair.zendesk.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `object[]` | Yes | — |
 | `next_page` | `string` | No | — |
 | `previous_page` | `string` | No | — |
@@ -724,9 +664,6 @@ await corsair.zendesk.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -741,9 +678,6 @@ await corsair.zendesk.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | Yes | — |
 
 

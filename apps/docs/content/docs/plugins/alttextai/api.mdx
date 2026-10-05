@@ -34,9 +34,6 @@ await corsair.alttextai.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `webhook_url` | `string` | No | — |
 | `notification_email` | `string` | No | — |
@@ -95,9 +92,6 @@ await corsair.alttextai.api.account.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `object` | Yes | — |
 
 
@@ -123,9 +117,6 @@ await corsair.alttextai.api.account.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `webhook_url` | `string` | No | — |
 | `notification_email` | `string` | No | — |
@@ -186,9 +177,6 @@ await corsair.alttextai.api.images.bulkCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `custom` | Yes | CSV file with image URLs to process |
 | `email` | `string` | No | Optional email for bulk upload results |
 
@@ -199,9 +187,6 @@ await corsair.alttextai.api.images.bulkCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `rows` | `number` | No | — |
 | `row_errors` | `tuple[]` | No | — |
@@ -228,9 +213,6 @@ await corsair.alttextai.api.images.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `image` | `object` | Yes | — |
 | `async` | `boolean` | No | — |
 | `lang` | `string` | No | — |
@@ -278,9 +260,6 @@ await corsair.alttextai.api.images.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
 | `alt_text` | `string` | No | — |
@@ -339,9 +318,6 @@ await corsair.alttextai.api.images.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | Yes | Asset ID of the image to delete |
 
 
@@ -351,9 +327,6 @@ await corsair.alttextai.api.images.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
 | `alt_text` | `string` | No | — |
@@ -412,9 +385,6 @@ await corsair.alttextai.api.images.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | Yes | Asset ID of the image |
 
 
@@ -424,9 +394,6 @@ await corsair.alttextai.api.images.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
 | `alt_text` | `string` | No | — |
@@ -485,9 +452,6 @@ await corsair.alttextai.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page number (starts at 1) |
 | `limit` | `number` | No | Results per page (max 100) |
 | `url` | `string` | No | Exact image URL filter (no wildcards) |
@@ -499,9 +463,6 @@ await corsair.alttextai.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `images` | `object[]` | Yes | — |
 
 
@@ -548,9 +509,6 @@ await corsair.alttextai.api.images.pageScrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_scrape` | `object` | Yes | — |
 | `keywords` | `string[]` | No | — |
 | `negative_keywords` | `string[]` | No | — |
@@ -576,9 +534,6 @@ await corsair.alttextai.api.images.pageScrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `total_processed` | `number` | No | — |
 | `errors` | `any` | No | — |
@@ -620,9 +575,6 @@ await corsair.alttextai.api.images.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Search query (alt text, asset ID, or URL substring) |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -634,9 +586,6 @@ await corsair.alttextai.api.images.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `images` | `object[]` | Yes | — |
 
 
@@ -683,9 +632,6 @@ await corsair.alttextai.api.images.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | Yes | Asset ID of the image to update |
 | `lang` | `string` | No | Language code(s), comma-separated |
 | `overwrite` | `boolean` | No | — |
@@ -712,9 +658,6 @@ await corsair.alttextai.api.images.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
 | `alt_text` | `string` | No | — |

@@ -28,9 +28,6 @@ const rows = await corsair.sentry.db.comments.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `comment_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `issue_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -59,9 +56,6 @@ const rows = await corsair.sentry.db.events.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `eventID` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
@@ -93,9 +87,6 @@ const rows = await corsair.sentry.db.issues.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `shortId` | `string` | equals, contains, startsWith, endsWith, in |
@@ -137,9 +128,6 @@ const rows = await corsair.sentry.db.organizations.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
@@ -170,9 +158,6 @@ const rows = await corsair.sentry.db.projects.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
@@ -206,9 +191,6 @@ const rows = await corsair.sentry.db.releases.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `version` | `string` | equals, contains, startsWith, endsWith, in |
@@ -240,9 +222,6 @@ const rows = await corsair.sentry.db.teams.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |

@@ -31,9 +31,6 @@ await corsair.castingwords.api.audiofile.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofileId` | `number \| string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.castingwords.api.audiofile.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofile` | `object` | No | — |
 
 
@@ -90,9 +84,6 @@ await corsair.castingwords.api.invoice.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoiceId` | `number \| string` | Yes | — |
 
 
@@ -102,9 +93,6 @@ await corsair.castingwords.api.invoice.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `purchase_order` | `string \| number` | No | — |
 | `createtime` | `string` | No | — |
@@ -152,9 +140,6 @@ await corsair.castingwords.api.order.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string \| string[]` | Yes | — |
 | `sku` | `TRANS14 \| TRANS2 \| TRANS6 \| TRANS7 \| EMSR02 \| DIFFQ2 \| TSTMP1 \| CAPTION1[]` | Yes | — |
 | `test` | `boolean` | No | — |
@@ -168,9 +153,6 @@ await corsair.castingwords.api.order.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofiles` | `(string \| number)[]` | Yes | — |
 | `order` | `string \| number` | Yes | — |
 | `message` | `string` | No | — |
@@ -202,9 +184,6 @@ await corsair.castingwords.api.prepayBalance.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `balance` | `number` | Yes | — |
 
 
@@ -230,9 +209,6 @@ await corsair.castingwords.api.refund.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofileId` | `number \| string` | Yes | — |
 | `test` | `boolean` | No | — |
 
@@ -243,9 +219,6 @@ await corsair.castingwords.api.refund.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `success` | `boolean` | No | — |
 
@@ -275,9 +248,6 @@ await corsair.castingwords.api.skus.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `skus` | `object[]` | Yes | — |
 
 
@@ -316,9 +286,6 @@ await corsair.castingwords.api.transcript.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofileId` | `number \| string` | Yes | — |
 | `extension` | `txt \| doc \| rtf \| html \| srt \| docx \| tstxt \| vtt` | Yes | — |
 | `test` | `boolean` | No | — |
@@ -349,9 +316,6 @@ await corsair.castingwords.api.upgrade.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audiofileId` | `number \| string` | Yes | — |
 | `sku` | `DIFFQ2 \| TSTMP1 \| CAPTION1 \| EDIT01 \| UPGRD1 \| UPGRD2 \| UPGRD3[]` | Yes | — |
 | `test` | `boolean` | No | — |
@@ -363,9 +327,6 @@ await corsair.castingwords.api.upgrade.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `success` | `boolean` | No | — |
 
@@ -395,9 +356,6 @@ await corsair.castingwords.api.webhook.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook` | `string \| ` | No | — |
 
 
@@ -421,9 +379,6 @@ await corsair.castingwords.api.webhook.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook` | `string` | Yes | — |
 
 
@@ -433,9 +388,6 @@ await corsair.castingwords.api.webhook.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook` | `string \| ` | No | — |
 
 
@@ -459,9 +411,6 @@ await corsair.castingwords.api.webhook.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event` | `TRANSCRIPT_COMPLETE \| DIFFICULT_AUDIO \| REFUND_ISSUED \| ORDER_ON_HOLD` | Yes | — |
 
 
@@ -471,9 +420,6 @@ await corsair.castingwords.api.webhook.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook` | `string \| ` | No | — |
 
 

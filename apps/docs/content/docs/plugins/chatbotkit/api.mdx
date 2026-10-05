@@ -31,9 +31,6 @@ await corsair.chatbotkit.api.blueprints.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the blueprint template |
 | `description` | `string` | No | Description of the blueprint template |
 | `config` | `object` | No | Configuration dictionary |
@@ -65,9 +62,6 @@ await corsair.chatbotkit.api.blueprints.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -91,9 +85,6 @@ await corsair.chatbotkit.api.blueprints.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the blueprint to delete |
 
 
@@ -103,9 +94,6 @@ await corsair.chatbotkit.api.blueprints.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -129,9 +117,6 @@ await corsair.chatbotkit.api.blueprints.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the blueprint to fetch |
 
 
@@ -141,9 +126,6 @@ await corsair.chatbotkit.api.blueprints.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the blueprint |
 | `alias` | `string` | No | Custom alias for the blueprint |
 | `name` | `string` | Yes | Descriptive name of the blueprint |
@@ -193,9 +175,6 @@ await corsair.chatbotkit.api.blueprints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -207,9 +186,6 @@ await corsair.chatbotkit.api.blueprints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of blueprints matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -255,9 +231,6 @@ await corsair.chatbotkit.api.blueprints.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the blueprint to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
@@ -290,9 +263,6 @@ await corsair.chatbotkit.api.blueprints.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -318,9 +288,6 @@ await corsair.chatbotkit.api.bots.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the bot |
 | `description` | `string` | No | Description of the bot |
 | `backstory` | `string` | No | Instructions and persona for the bot |
@@ -350,9 +317,6 @@ await corsair.chatbotkit.api.bots.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -376,9 +340,6 @@ await corsair.chatbotkit.api.bots.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the bot to delete |
 
 
@@ -388,9 +349,6 @@ await corsair.chatbotkit.api.bots.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -414,9 +372,6 @@ await corsair.chatbotkit.api.bots.downvote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the bot to downvote |
 
 
@@ -426,9 +381,6 @@ await corsair.chatbotkit.api.bots.downvote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -452,9 +404,6 @@ await corsair.chatbotkit.api.bots.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier or alias of the bot to fetch |
 
 
@@ -464,9 +413,6 @@ await corsair.chatbotkit.api.bots.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the bot |
 | `alias` | `string` | No | Custom alias for the bot |
 | `name` | `string` | Yes | Descriptive name of the bot |
@@ -514,9 +460,6 @@ await corsair.chatbotkit.api.bots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -528,9 +471,6 @@ await corsair.chatbotkit.api.bots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of bots matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -581,9 +521,6 @@ await corsair.chatbotkit.api.bots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the bot to update |
 | `name` | `string` | No | Updated name of the bot |
 | `description` | `string` | No | Updated description of the bot |
@@ -612,9 +549,6 @@ await corsair.chatbotkit.api.bots.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -638,9 +572,6 @@ await corsair.chatbotkit.api.bots.upvote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the bot to upvote |
 
 
@@ -650,9 +581,6 @@ await corsair.chatbotkit.api.bots.upvote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -678,9 +606,6 @@ await corsair.chatbotkit.api.conversations.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the conversation |
 | `text` | `string` | Yes | User message text sent to the chatbot |
 
@@ -691,9 +616,6 @@ await corsair.chatbotkit.api.conversations.complete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | AI response message text |
 | `message` | `string` | No | Completion status or error message if limits reached |
 | `code` | `string` | No | Error code if completion failed |
@@ -731,9 +653,6 @@ await corsair.chatbotkit.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Name of the conversation |
 | `description` | `string` | No | Description of the conversation |
 | `botId` | `string` | No | ID of bot to associate |
@@ -760,9 +679,6 @@ await corsair.chatbotkit.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -786,9 +702,6 @@ await corsair.chatbotkit.api.conversations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the conversation to delete |
 
 
@@ -798,9 +711,6 @@ await corsair.chatbotkit.api.conversations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -824,9 +734,6 @@ await corsair.chatbotkit.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the conversation to fetch |
 
 
@@ -836,9 +743,6 @@ await corsair.chatbotkit.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the conversation |
 | `alias` | `string` | No | Custom alias for the conversation |
 | `name` | `string` | No | Name of the conversation |
@@ -885,9 +789,6 @@ await corsair.chatbotkit.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -899,9 +800,6 @@ await corsair.chatbotkit.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of conversations matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -951,9 +849,6 @@ await corsair.chatbotkit.api.conversations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the conversation to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
@@ -978,9 +873,6 @@ await corsair.chatbotkit.api.conversations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1006,9 +898,6 @@ await corsair.chatbotkit.api.datasets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the dataset |
 | `description` | `string` | No | Description of the dataset |
 | `blueprintId` | `string` | No | ID of blueprint template to connect |
@@ -1032,9 +921,6 @@ await corsair.chatbotkit.api.datasets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1058,9 +944,6 @@ await corsair.chatbotkit.api.datasets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the dataset to delete |
 
 
@@ -1070,9 +953,6 @@ await corsair.chatbotkit.api.datasets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1096,9 +976,6 @@ await corsair.chatbotkit.api.datasets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the dataset to fetch |
 
 
@@ -1108,9 +985,6 @@ await corsair.chatbotkit.api.datasets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the dataset |
 | `alias` | `string` | No | Custom alias for the dataset |
 | `name` | `string` | Yes | Descriptive name of the dataset |
@@ -1160,9 +1034,6 @@ await corsair.chatbotkit.api.datasets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -1174,9 +1045,6 @@ await corsair.chatbotkit.api.datasets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of datasets matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -1229,9 +1097,6 @@ await corsair.chatbotkit.api.datasets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the dataset to search |
 | `query` | `string` | Yes | Search query string |
 | `limit` | `number` | No | Max records to return |
@@ -1243,9 +1108,6 @@ await corsair.chatbotkit.api.datasets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | Array of search matches from the dataset |
 
 
@@ -1284,9 +1146,6 @@ await corsair.chatbotkit.api.datasets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the dataset to update |
 | `name` | `string` | No | Updated name of the dataset |
 | `description` | `string` | No | Updated description of the dataset |
@@ -1311,9 +1170,6 @@ await corsair.chatbotkit.api.datasets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1339,9 +1195,6 @@ await corsair.chatbotkit.api.files.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the file |
 | `description` | `string` | No | Description of the file |
 | `mimeType` | `string` | No | MIME type of the file |
@@ -1365,9 +1218,6 @@ await corsair.chatbotkit.api.files.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1391,9 +1241,6 @@ await corsair.chatbotkit.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the file to delete |
 
 
@@ -1403,9 +1250,6 @@ await corsair.chatbotkit.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1429,9 +1273,6 @@ await corsair.chatbotkit.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the file to fetch |
 
 
@@ -1441,9 +1282,6 @@ await corsair.chatbotkit.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the file resource |
 | `name` | `string` | Yes | File name |
 | `description` | `string` | No | File description |
@@ -1485,9 +1323,6 @@ await corsair.chatbotkit.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -1499,9 +1334,6 @@ await corsair.chatbotkit.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of files matching query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -1548,9 +1380,6 @@ await corsair.chatbotkit.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the secret |
 | `description` | `string` | No | Description of the secret |
 | `blueprintId` | `string` | No | Blueprint template ID |
@@ -1584,9 +1413,6 @@ await corsair.chatbotkit.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1610,9 +1436,6 @@ await corsair.chatbotkit.api.secrets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the secret to delete |
 
 
@@ -1622,9 +1445,6 @@ await corsair.chatbotkit.api.secrets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1648,9 +1468,6 @@ await corsair.chatbotkit.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the secret to fetch |
 
 
@@ -1660,9 +1477,6 @@ await corsair.chatbotkit.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the secret credential |
 | `alias` | `string` | No | Custom alias for the secret |
 | `name` | `string` | Yes | Descriptive name of the secret |
@@ -1715,9 +1529,6 @@ await corsair.chatbotkit.api.secrets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -1729,9 +1540,6 @@ await corsair.chatbotkit.api.secrets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of secrets matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -1780,9 +1588,6 @@ await corsair.chatbotkit.api.secrets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the secret to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
@@ -1815,9 +1620,6 @@ await corsair.chatbotkit.api.secrets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1843,9 +1645,6 @@ await corsair.chatbotkit.api.skillsets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the skillset |
 | `description` | `string` | No | Description of the skillset |
 | `blueprintId` | `string` | No | Blueprint template ID |
@@ -1869,9 +1668,6 @@ await corsair.chatbotkit.api.skillsets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1895,9 +1691,6 @@ await corsair.chatbotkit.api.skillsets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the skillset to delete |
 
 
@@ -1907,9 +1700,6 @@ await corsair.chatbotkit.api.skillsets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -1933,9 +1723,6 @@ await corsair.chatbotkit.api.skillsets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the skillset to fetch |
 
 
@@ -1945,9 +1732,6 @@ await corsair.chatbotkit.api.skillsets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the skillset |
 | `alias` | `string` | No | Custom alias for the skillset |
 | `name` | `string` | Yes | Descriptive name of the skillset |
@@ -1990,9 +1774,6 @@ await corsair.chatbotkit.api.skillsets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -2004,9 +1785,6 @@ await corsair.chatbotkit.api.skillsets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of skillsets matching the query |
 | `cursor` | `string` | No | Pagination cursor for the next page of results |
 
@@ -2052,9 +1830,6 @@ await corsair.chatbotkit.api.skillsets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the skillset to update |
 | `name` | `string` | No | Updated name of the skillset |
 | `description` | `string` | No | Updated description of the skillset |
@@ -2079,9 +1854,6 @@ await corsair.chatbotkit.api.skillsets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -2107,9 +1879,6 @@ await corsair.chatbotkit.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the background task |
 | `description` | `string` | No | Description of the task |
 | `botId` | `string` | No | ID of bot executing the task |
@@ -2134,9 +1903,6 @@ await corsair.chatbotkit.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -2160,9 +1926,6 @@ await corsair.chatbotkit.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the task to delete |
 
 
@@ -2172,9 +1935,6 @@ await corsair.chatbotkit.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 
@@ -2198,9 +1958,6 @@ await corsair.chatbotkit.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the task to fetch |
 
 
@@ -2210,9 +1967,6 @@ await corsair.chatbotkit.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the task |
 | `name` | `string` | Yes | Descriptive name of the task |
 | `description` | `string` | No | Brief description of the task |
@@ -2255,9 +2009,6 @@ await corsair.chatbotkit.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | Cursor for pagination |
 | `limit` | `number` | No | Maximum number of items to return |
 | `order` | `asc \| desc` | No | Sort order by creation time |
@@ -2269,9 +2020,6 @@ await corsair.chatbotkit.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | List of tasks matching query |
 | `cursor` | `string` | No | Pagination cursor for next page of results |
 
@@ -2317,9 +2065,6 @@ await corsair.chatbotkit.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | ID of the task to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
@@ -2345,9 +2090,6 @@ await corsair.chatbotkit.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier of the resource |
 
 

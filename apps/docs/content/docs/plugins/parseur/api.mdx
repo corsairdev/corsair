@@ -34,9 +34,6 @@ await corsair.parseur.api.bootstrap.getBootstrap({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `choices` | `object` | Yes | — |
 | `mappings` | `object` | Yes | — |
 | `max_field_lengths` | `object` | Yes | — |
@@ -93,9 +90,6 @@ await corsair.parseur.api.documents.copyDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `target_mailbox_id` | `string \| number` | Yes | — |
 
@@ -106,9 +100,6 @@ await corsair.parseur.api.documents.copyDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notification_set` | `object` | Yes | — |
 
 
@@ -143,9 +134,6 @@ await corsair.parseur.api.documents.createEmailDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subject` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `recipient` | `string` | Yes | — |
@@ -163,9 +151,6 @@ await corsair.parseur.api.documents.createEmailDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `DocumentID` | `string` | No | — |
 | `DocumentIDs` | `string[]` | No | — |
@@ -204,9 +189,6 @@ await corsair.parseur.api.documents.deleteDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -216,9 +198,6 @@ await corsair.parseur.api.documents.deleteDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -242,9 +221,6 @@ await corsair.parseur.api.documents.getDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -254,9 +230,6 @@ await corsair.parseur.api.documents.getDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `parser` | `number` | No | — |
@@ -299,9 +272,6 @@ await corsair.parseur.api.documents.getDocumentLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -313,9 +283,6 @@ await corsair.parseur.api.documents.getDocumentLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `current` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -358,9 +325,6 @@ await corsair.parseur.api.documents.listDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -379,9 +343,6 @@ await corsair.parseur.api.documents.listDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `current` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -429,9 +390,6 @@ await corsair.parseur.api.documents.processDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -441,9 +399,6 @@ await corsair.parseur.api.documents.processDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notification_set` | `object` | Yes | — |
 
 
@@ -478,9 +433,6 @@ await corsair.parseur.api.documents.skipDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -490,9 +442,6 @@ await corsair.parseur.api.documents.skipDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `parser` | `number` | No | — |
@@ -535,9 +484,6 @@ await corsair.parseur.api.documents.uploadDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `file` | `string` | Yes | — |
 | `file_name` | `string` | No | — |
@@ -549,9 +495,6 @@ await corsair.parseur.api.documents.uploadDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | Yes | — |
 | `attachments` | `object[]` | Yes | — |
 
@@ -590,9 +533,6 @@ await corsair.parseur.api.exportConfigs.createExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
@@ -606,9 +546,6 @@ await corsair.parseur.api.exportConfigs.createExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
@@ -639,9 +576,6 @@ await corsair.parseur.api.exportConfigs.deleteExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mailbox_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | Yes | — |
 
@@ -652,9 +586,6 @@ await corsair.parseur.api.exportConfigs.deleteExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -678,9 +609,6 @@ await corsair.parseur.api.exportConfigs.listExportConfigs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -692,9 +620,6 @@ await corsair.parseur.api.exportConfigs.listExportConfigs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `current` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -739,9 +664,6 @@ await corsair.parseur.api.exportConfigs.updateExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mailbox_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
@@ -756,9 +678,6 @@ await corsair.parseur.api.exportConfigs.updateExportConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `type` | `PARSER \| PARSER_FIELD` | No | — |
@@ -791,9 +710,6 @@ await corsair.parseur.api.mailboxes.copyMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -803,9 +719,6 @@ await corsair.parseur.api.mailboxes.copyMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notification_set` | `object` | Yes | — |
 
 
@@ -840,9 +753,6 @@ await corsair.parseur.api.mailboxes.createMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
 | `ai_instructions` | `string` | No | — |
@@ -861,9 +771,6 @@ await corsair.parseur.api.mailboxes.createMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
@@ -899,9 +806,6 @@ await corsair.parseur.api.mailboxes.deleteMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -911,9 +815,6 @@ await corsair.parseur.api.mailboxes.deleteMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -937,9 +838,6 @@ await corsair.parseur.api.mailboxes.getMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -949,9 +847,6 @@ await corsair.parseur.api.mailboxes.getMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
@@ -987,9 +882,6 @@ await corsair.parseur.api.mailboxes.getMailboxSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -999,9 +891,6 @@ await corsair.parseur.api.mailboxes.getMailboxSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `properties` | `object` | Yes | — |
 
@@ -1036,9 +925,6 @@ await corsair.parseur.api.mailboxes.listMailboxes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1051,9 +937,6 @@ await corsair.parseur.api.mailboxes.listMailboxes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `current` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -1103,9 +986,6 @@ await corsair.parseur.api.mailboxes.updateMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
 | `ai_instructions` | `string` | No | — |
@@ -1125,9 +1005,6 @@ await corsair.parseur.api.mailboxes.updateMailbox({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
@@ -1165,9 +1042,6 @@ await corsair.parseur.api.templates.copyTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `target_mailbox_id` | `string \| number` | Yes | — |
 
@@ -1178,9 +1052,6 @@ await corsair.parseur.api.templates.copyTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `notification_set` | `object` | Yes | — |
 
 
@@ -1215,9 +1086,6 @@ await corsair.parseur.api.templates.deleteTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1227,9 +1095,6 @@ await corsair.parseur.api.templates.deleteTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1253,9 +1118,6 @@ await corsair.parseur.api.templates.getTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1265,9 +1127,6 @@ await corsair.parseur.api.templates.getTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `parser` | `number` | No | — |
@@ -1296,9 +1155,6 @@ await corsair.parseur.api.templates.listTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -1312,9 +1168,6 @@ await corsair.parseur.api.templates.listTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `current` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -1359,9 +1212,6 @@ await corsair.parseur.api.webhooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event` | `document.processed \| document.processed.flattened \| document.template_needed \| document.export_failed \| table.processed` | Yes | — |
 | `target` | `string` | Yes | — |
 | `category` | `CUSTOM \| ZAPIER \| MAKE \| FLOW \| N8N` | No | — |
@@ -1387,9 +1237,6 @@ await corsair.parseur.api.webhooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `event` | `document.processed \| document.processed.flattened \| document.template_needed \| document.export_failed \| table.processed \| string` | Yes | — |
 | `target` | `string` | Yes | — |
@@ -1429,9 +1276,6 @@ await corsair.parseur.api.webhooks.deleteWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1441,9 +1285,6 @@ await corsair.parseur.api.webhooks.deleteWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1467,9 +1308,6 @@ await corsair.parseur.api.webhooks.disableWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mailbox_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | Yes | — |
 
@@ -1480,9 +1318,6 @@ await corsair.parseur.api.webhooks.disableWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1506,9 +1341,6 @@ await corsair.parseur.api.webhooks.enableWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mailbox_id` | `string \| number` | Yes | — |
 | `id` | `string \| number` | Yes | — |
 
@@ -1519,9 +1351,6 @@ await corsair.parseur.api.webhooks.enableWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `account_uuid` | `string` | No | — |
@@ -1557,9 +1386,6 @@ await corsair.parseur.api.webhooks.listWebhooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1569,9 +1395,6 @@ await corsair.parseur.api.webhooks.listWebhooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_set` | `object[]` | Yes | — |
 | `available_webhook_set` | `object[]` | Yes | — |
 

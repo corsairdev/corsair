@@ -31,9 +31,6 @@ await corsair.spoki.api.accounts.createOnboardingLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `number` | Yes | — |
 
 
@@ -70,9 +67,6 @@ await corsair.spoki.api.accounts.getAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `number` | Yes | — |
 
 
@@ -82,9 +76,6 @@ await corsair.spoki.api.accounts.getAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `current_credit` | `number` | Yes | — |
@@ -149,9 +140,6 @@ await corsair.spoki.api.accounts.getAccountByPhone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phone` | `string` | Yes | — |
 
 
@@ -161,9 +149,6 @@ await corsair.spoki.api.accounts.getAccountByPhone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `current_credit` | `number` | Yes | — |
@@ -228,9 +213,6 @@ await corsair.spoki.api.accounts.getCurrentReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `number` | Yes | — |
 
 
@@ -268,9 +250,6 @@ await corsair.spoki.api.accounts.listAccounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -345,9 +324,6 @@ await corsair.spoki.api.agencies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -390,9 +366,6 @@ await corsair.spoki.api.automation.triggerAutomation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uuid` | `string` | Yes | — |
 | `secret` | `string` | Yes | — |
 | `phone` | `string` | Yes | — |
@@ -447,9 +420,6 @@ await corsair.spoki.api.automations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -490,9 +460,6 @@ await corsair.spoki.api.automations.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -531,9 +498,6 @@ await corsair.spoki.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -574,9 +538,6 @@ await corsair.spoki.api.campaigns.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -618,9 +579,6 @@ await corsair.spoki.api.contacts.addOperator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `operator_id` | `number` | No | — |
 | `role_id` | `number` | No | — |
@@ -659,9 +617,6 @@ await corsair.spoki.api.contacts.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phone` | `string` | Yes | — |
 | `first_name` | `string` | No | — |
 | `last_name` | `string` | No | — |
@@ -702,9 +657,6 @@ await corsair.spoki.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -741,9 +693,6 @@ await corsair.spoki.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -784,9 +733,6 @@ await corsair.spoki.api.contacts.removeOperator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -823,9 +769,6 @@ await corsair.spoki.api.contacts.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -862,9 +805,6 @@ await corsair.spoki.api.contacts.syncBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contacts` | `any[]` | Yes | — |
 
 
@@ -901,9 +841,6 @@ await corsair.spoki.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -942,9 +879,6 @@ await corsair.spoki.api.customFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | Yes | — |
 | `code` | `string` | No | — |
 
@@ -982,9 +916,6 @@ await corsair.spoki.api.customFields.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1021,9 +952,6 @@ await corsair.spoki.api.customFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -1064,9 +992,6 @@ await corsair.spoki.api.customFields.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1103,9 +1028,6 @@ await corsair.spoki.api.customFields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `label` | `string` | No | — |
 
@@ -1145,9 +1067,6 @@ await corsair.spoki.api.invitations.resend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1184,9 +1103,6 @@ await corsair.spoki.api.invitations.updateRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1225,9 +1141,6 @@ await corsair.spoki.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1264,9 +1177,6 @@ await corsair.spoki.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1303,9 +1213,6 @@ await corsair.spoki.api.lists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -1346,9 +1253,6 @@ await corsair.spoki.api.lists.removeAllContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1385,9 +1289,6 @@ await corsair.spoki.api.lists.removeContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `contacts` | `any[]` | No | — |
 
@@ -1425,9 +1326,6 @@ await corsair.spoki.api.lists.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1464,9 +1362,6 @@ await corsair.spoki.api.lists.syncContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `contacts` | `any[]` | Yes | — |
 
@@ -1536,9 +1431,6 @@ await corsair.spoki.api.media.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1575,9 +1467,6 @@ await corsair.spoki.api.media.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -1618,9 +1507,6 @@ await corsair.spoki.api.media.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1657,9 +1543,6 @@ await corsair.spoki.api.media.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1698,9 +1581,6 @@ await corsair.spoki.api.messaging.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phone` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `channel_id` | `number` | No | — |
@@ -1742,9 +1622,6 @@ await corsair.spoki.api.partners.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -1787,9 +1664,6 @@ await corsair.spoki.api.reports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -1862,9 +1736,6 @@ await corsair.spoki.api.roles.checkPrivateKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1901,9 +1772,6 @@ await corsair.spoki.api.roles.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1940,9 +1808,6 @@ await corsair.spoki.api.roles.generatePrivateKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1979,9 +1844,6 @@ await corsair.spoki.api.roles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -2022,9 +1884,6 @@ await corsair.spoki.api.roles.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2061,9 +1920,6 @@ await corsair.spoki.api.roles.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2102,9 +1958,6 @@ await corsair.spoki.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -2145,9 +1998,6 @@ await corsair.spoki.api.tags.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2186,9 +2036,6 @@ await corsair.spoki.api.templates.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2225,9 +2072,6 @@ await corsair.spoki.api.templates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `category` | `string` | Yes | — |
 | `templatelocalization_set` | `any[]` | Yes | — |
@@ -2266,9 +2110,6 @@ await corsair.spoki.api.templates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `force_delete` | `boolean` | No | — |
 
@@ -2306,9 +2147,6 @@ await corsair.spoki.api.templates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |
@@ -2349,9 +2187,6 @@ await corsair.spoki.api.templates.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2388,9 +2223,6 @@ await corsair.spoki.api.templates.revertToDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2427,9 +2259,6 @@ await corsair.spoki.api.templates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2498,9 +2327,6 @@ await corsair.spoki.api.tickets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2537,9 +2363,6 @@ await corsair.spoki.api.tickets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `page` | `number \| string` | No | — |
 | `limit` | `number \| string` | No | — |

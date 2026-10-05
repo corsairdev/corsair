@@ -20,9 +20,6 @@ Every MCP adapter exposes the same three tools, regardless of how many plugins y
 
 | Tool | What it does |
 | --- | --- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_operations` | Discover every available endpoint |
 | `get_schema` | Inspect parameters for one endpoint |
 | `run_script` | Execute a JS snippet with `corsair` in scope |
@@ -102,9 +99,6 @@ github({
 ```
 
 | Mode | Read | Write | Destructive |
-| --- | --- | --- | --- |
-
-| Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `open` | allow | allow | allow |
 | `cautious` | allow | allow | require_approval |

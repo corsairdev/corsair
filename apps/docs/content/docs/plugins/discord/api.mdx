@@ -31,9 +31,6 @@ await corsair.discord.api.channels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `guild_id` | `string` | Yes | — |
 
 
@@ -88,9 +85,6 @@ await corsair.discord.api.guilds.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `guild_id` | `string` | Yes | — |
 | `with_counts` | `boolean` | No | — |
 
@@ -101,9 +95,6 @@ await corsair.discord.api.guilds.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `icon` | `string` | No | — |
@@ -162,9 +153,6 @@ await corsair.discord.api.guilds.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `before` | `string` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -214,9 +202,6 @@ await corsair.discord.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `guild_id` | `string` | Yes | — |
 | `user_id` | `string` | Yes | — |
 
@@ -227,9 +212,6 @@ await corsair.discord.api.members.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | No | — |
 | `nick` | `string` | No | — |
 | `avatar` | `string` | No | — |
@@ -285,9 +267,6 @@ await corsair.discord.api.members.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `guild_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -352,9 +331,6 @@ await corsair.discord.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 
@@ -365,9 +341,6 @@ await corsair.discord.api.messages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -391,9 +364,6 @@ await corsair.discord.api.messages.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
@@ -441,9 +411,6 @@ await corsair.discord.api.messages.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `channel_id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
@@ -629,9 +596,6 @@ await corsair.discord.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 
@@ -642,9 +606,6 @@ await corsair.discord.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `channel_id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
@@ -830,9 +791,6 @@ await corsair.discord.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `before` | `string` | No | — |
@@ -985,9 +943,6 @@ await corsair.discord.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
@@ -1036,9 +991,6 @@ await corsair.discord.api.messages.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `channel_id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
@@ -1224,9 +1176,6 @@ await corsair.discord.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `content` | `string` | No | — |
 | `embeds` | `object[]` | No | — |
@@ -1275,9 +1224,6 @@ await corsair.discord.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `channel_id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
@@ -1465,9 +1411,6 @@ await corsair.discord.api.reactions.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `emoji` | `string` | Yes | — |
@@ -1479,9 +1422,6 @@ await corsair.discord.api.reactions.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1505,9 +1445,6 @@ await corsair.discord.api.reactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `emoji` | `string` | Yes | — |
@@ -1561,9 +1498,6 @@ await corsair.discord.api.reactions.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `emoji` | `string` | Yes | — |
@@ -1575,9 +1509,6 @@ await corsair.discord.api.reactions.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1603,9 +1534,6 @@ await corsair.discord.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `auto_archive_duration` | `60 \| 1440 \| 4320 \| 10080` | No | — |
@@ -1619,9 +1547,6 @@ await corsair.discord.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `number` | Yes | — |
 | `guild_id` | `string` | No | — |
@@ -1669,9 +1594,6 @@ await corsair.discord.api.threads.createFromMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1684,9 +1606,6 @@ await corsair.discord.api.threads.createFromMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `number` | Yes | — |
 | `guild_id` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.aryn.api.asyncTasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path_filter` | `string` | No | — |
 
 
@@ -43,9 +40,6 @@ await corsair.aryn.api.asyncTasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tasks` | `object` | Yes | — |
 
 
@@ -81,9 +75,6 @@ await corsair.aryn.api.docset.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `schema` | `any` | No | — |
 | `properties` | `object` | No | — |
@@ -114,9 +105,6 @@ await corsair.aryn.api.docset.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
@@ -155,9 +143,6 @@ await corsair.aryn.api.docset.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 
 
@@ -167,9 +152,6 @@ await corsair.aryn.api.docset.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
@@ -208,9 +190,6 @@ await corsair.aryn.api.docset.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 
 
@@ -220,9 +199,6 @@ await corsair.aryn.api.docset.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `readonly` | `boolean` | Yes | — |
@@ -263,9 +239,6 @@ await corsair.aryn.api.document.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `doc_id` | `string` | Yes | — |
 | `include_elements` | `boolean` | No | — |
@@ -279,9 +252,6 @@ await corsair.aryn.api.document.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `elements` | `object[]` | No | — |
 | `properties` | `object` | No | — |
@@ -334,9 +304,6 @@ await corsair.aryn.api.document.getBinary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `doc_id` | `string` | Yes | — |
 
@@ -347,9 +314,6 @@ await corsair.aryn.api.document.getBinary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `doc_id` | `string` | Yes | — |
 | `contentBase64` | `string` | Yes | — |
@@ -375,9 +339,6 @@ await corsair.aryn.api.document.partition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `custom` | No | — |
 | `file_url` | `string` | No | — |
 | `options` | `object` | No | — |
@@ -419,9 +380,6 @@ await corsair.aryn.api.document.partition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string[]` | Yes | — |
 | `status_code` | `number` | No | — |
 | `error` | `string` | No | — |
@@ -467,9 +425,6 @@ await corsair.aryn.api.document.submitAsyncAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `docset_id` | `string` | Yes | — |
 | `file` | `custom` | No | — |
 | `file_url` | `string` | No | — |
@@ -512,9 +467,6 @@ await corsair.aryn.api.document.submitAsyncAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task_id` | `string` | Yes | — |
 
 
@@ -540,9 +492,6 @@ await corsair.aryn.api.query.generatePlan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `docset_id` | `string` | No | — |
 | `summarize_result` | `boolean` | No | — |
@@ -555,9 +504,6 @@ await corsair.aryn.api.query.generatePlan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `nodes` | `object` | Yes | — |
 | `result_node` | `number` | Yes | — |

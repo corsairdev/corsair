@@ -31,9 +31,6 @@ await corsair.crowterminal.api.agent.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agentName` | `string` | Yes | — |
 | `agentDescription` | `string` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.crowterminal.api.agent.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `apiKey` | `string` | No | — |
@@ -78,9 +72,6 @@ await corsair.crowterminal.api.data.getTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `dataTypes` | `object` | Yes | — |
 
@@ -115,9 +106,6 @@ await corsair.crowterminal.api.data.ingest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `platform` | `TIKTOK \| INSTAGRAM \| YOUTUBE` | Yes | — |
 | `dataType` | `retention \| demographics \| traffic_sources \| watch_time \| audience_activity \| follower_growth \| video_performance \| sound_performance \| hashtag_performance \| reach_sources \| content_interactions \| story_metrics \| reel_metrics \| subscriber_growth \| click_through_rate \| impression_sources \| end_screen_performance` | Yes | — |
@@ -142,9 +130,6 @@ await corsair.crowterminal.api.data.ingest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -168,9 +153,6 @@ await corsair.crowterminal.api.data.ingestBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 
 
@@ -197,9 +179,6 @@ await corsair.crowterminal.api.data.ingestBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `total` | `number` | No | — |
 | `results` | `any[]` | No | — |
@@ -230,9 +209,6 @@ await corsair.crowterminal.api.intelligence.getByokPlatform({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `platforms` | `string[]` | No | — |
 | `intelligence` | `any` | No | — |
@@ -261,9 +237,6 @@ await corsair.crowterminal.api.intelligence.getPlatform({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `data` | `any` | No | — |
 
@@ -290,9 +263,6 @@ await corsair.crowterminal.api.memory.compareMd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `agentMd` | `object` | Yes | — |
 
@@ -313,9 +283,6 @@ await corsair.crowterminal.api.memory.compareMd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `comparison` | `string` | No | — |
@@ -345,9 +312,6 @@ await corsair.crowterminal.api.memory.engagementAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `agentMd` | `object` | Yes | — |
 
@@ -368,9 +332,6 @@ await corsair.crowterminal.api.memory.engagementAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `analysis` | `string` | No | — |
@@ -410,9 +371,6 @@ await corsair.crowterminal.api.memory.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 
 
@@ -422,9 +380,6 @@ await corsair.crowterminal.api.memory.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `clientName` | `string` | No | — |
@@ -474,9 +429,6 @@ await corsair.crowterminal.api.memory.getBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientIds` | `string[]` | Yes | — |
 
 
@@ -486,9 +438,6 @@ await corsair.crowterminal.api.memory.getBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `total` | `number` | No | — |
 | `clients` | `object[]` | Yes | — |
@@ -539,9 +488,6 @@ await corsair.crowterminal.api.memory.getChangelog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 
 
@@ -551,9 +497,6 @@ await corsair.crowterminal.api.memory.getChangelog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -580,9 +523,6 @@ await corsair.crowterminal.api.memory.getPattern({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `field` | `string` | Yes | — |
 
@@ -593,9 +533,6 @@ await corsair.crowterminal.api.memory.getPattern({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `field` | `string` | No | — |
@@ -624,9 +561,6 @@ await corsair.crowterminal.api.memory.validateChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `proposedChanges` | `object[]` | Yes | — |
 
@@ -650,9 +584,6 @@ await corsair.crowterminal.api.memory.validateChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `validation` | `string` | No | — |
@@ -683,9 +614,6 @@ await corsair.crowterminal.api.sandbox.engagementAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agentMd` | `object` | No | — |
 
 
@@ -705,9 +633,6 @@ await corsair.crowterminal.api.sandbox.engagementAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `versionsAnalyzed` | `number` | No | — |
 | `overallStats` | `object` | No | — |
@@ -747,9 +672,6 @@ await corsair.crowterminal.api.sandbox.getClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `clientName` | `string` | No | — |
@@ -801,9 +723,6 @@ await corsair.crowterminal.api.sandbox.getMemory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `clientId` | `string` | No | — |
 | `clientName` | `string` | No | — |
@@ -852,9 +771,6 @@ await corsair.crowterminal.api.sandbox.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `proposedChanges` | `object[]` | Yes | — |
 
 
@@ -877,9 +793,6 @@ await corsair.crowterminal.api.sandbox.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `validation` | `string` | No | — |
 | `warnings` | `any[]` | Yes | — |
@@ -911,9 +824,6 @@ await corsair.crowterminal.api.status.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `timestamp` | `string` | No | — |
 | `version` | `string` | No | — |
@@ -971,9 +881,6 @@ await corsair.crowterminal.api.status.getComponents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timestamp` | `string` | No | — |
 | `components` | `object[]` | Yes | — |
 | `summary` | `object` | No | — |
@@ -1024,9 +931,6 @@ await corsair.crowterminal.api.status.getHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timestamp` | `string` | No | — |
 | `period` | `string` | No | — |
 | `dataPoints` | `object[]` | Yes | — |
@@ -1076,9 +980,6 @@ await corsair.crowterminal.api.status.getIncidents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timestamp` | `string` | No | — |
 | `incidents` | `object[]` | Yes | — |
 | `subscribe` | `string` | No | — |
@@ -1121,9 +1022,6 @@ await corsair.crowterminal.api.status.getUptime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timestamp` | `string` | No | — |
 | `currentStatus` | `string` | No | — |
 | `uptime` | `object` | Yes | — |
@@ -1163,9 +1061,6 @@ await corsair.crowterminal.api.status.ping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pong` | `boolean` | Yes | — |
 | `timestamp` | `string` | No | — |
 
@@ -1192,9 +1087,6 @@ await corsair.crowterminal.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | Yes | — |
 | `secret` | `string` | No | — |
@@ -1206,9 +1098,6 @@ await corsair.crowterminal.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `id` | `string` | No | — |
 | `secret` | `string` | No | — |
@@ -1234,9 +1123,6 @@ await corsair.crowterminal.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -1246,9 +1132,6 @@ await corsair.crowterminal.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1275,9 +1158,6 @@ await corsair.crowterminal.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `webhooks` | `object[]` | Yes | — |
 
@@ -1313,9 +1193,6 @@ await corsair.crowterminal.api.webhooks.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `secret` | `string` | No | — |
 
@@ -1326,9 +1203,6 @@ await corsair.crowterminal.api.webhooks.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1352,9 +1226,6 @@ await corsair.crowterminal.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | No | — |
@@ -1367,9 +1238,6 @@ await corsair.crowterminal.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 

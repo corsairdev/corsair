@@ -28,9 +28,6 @@ const rows = await corsair.pinecone.db.assistantFiles.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -61,9 +58,6 @@ const rows = await corsair.pinecone.db.assistants.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -93,9 +87,6 @@ const rows = await corsair.pinecone.db.backups.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `backup_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -133,9 +124,6 @@ const rows = await corsair.pinecone.db.collections.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -165,9 +153,6 @@ const rows = await corsair.pinecone.db.indexes.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `host` | `string` | equals, contains, startsWith, endsWith, in |
@@ -195,9 +180,6 @@ const rows = await corsair.pinecone.db.models.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `model` | `string` | equals, contains, startsWith, endsWith, in |
 | `short_description` | `string` | equals, contains, startsWith, endsWith, in |
@@ -225,9 +207,6 @@ const rows = await corsair.pinecone.db.namespaces.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `record_count` | `number` | equals, gt, gte, lt, lte, in |
@@ -253,9 +232,6 @@ const rows = await corsair.pinecone.db.restoreJobs.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `restore_job_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `backup_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -287,9 +263,6 @@ const rows = await corsair.pinecone.db.vectors.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 

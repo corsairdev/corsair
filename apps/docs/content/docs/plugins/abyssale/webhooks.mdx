@@ -51,9 +51,6 @@ An asynchronous batch generation request completed (NEW_BANNER_BATCH event)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `NEW_BANNER_BATCH` | Yes | — |
 | `generation_request_id` | `string` | Yes | — |
 | `banners` | `object[]` | Yes | — |
@@ -182,9 +179,6 @@ A visual was generated or saved in Abyssale (NEW_BANNER event)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `NEW_BANNER` | Yes | — |
 | `id` | `string` | Yes | — |
 | `version` | `number` | No | — |
@@ -300,9 +294,6 @@ A design's workflow status was updated (TEMPLATE_STATUS event)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `TEMPLATE_STATUS` | Yes | — |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -363,9 +354,6 @@ A workspace export archive finished processing (NEW_EXPORT event)
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `NEW_EXPORT` | Yes | — |
 | `export_id` | `string` | Yes | — |
 | `archive_url` | `string` | Yes | — |

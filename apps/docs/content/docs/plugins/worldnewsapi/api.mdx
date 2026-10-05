@@ -31,9 +31,6 @@ await corsair.worldnewsapi.api.news.extractNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the news article to extract into structured data. |
 | `analyze` | `boolean` | No | Whether to analyze the extracted news (extract named entities, detect sentiment, etc.). Defaults to false. |
 
@@ -44,9 +41,6 @@ await corsair.worldnewsapi.api.news.extractNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -121,9 +115,6 @@ await corsair.worldnewsapi.api.news.extractNewsLinks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The webpage or site URL from which news article links should be extracted. |
 | `analyze` | `boolean` | No | Whether to analyze extracted links. Defaults to false. |
 | `prefix` | `string` | No | The prefix that discovered news links must start with. |
@@ -136,9 +127,6 @@ await corsair.worldnewsapi.api.news.extractNewsLinks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `news_links` | `string[]` | Yes | — |
 
@@ -163,9 +151,6 @@ await corsair.worldnewsapi.api.news.getGeoCoordinates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `location` | `string` | Yes | The address or location name to geocode (e.g., "Tokyo, Japan" or "Mumbai, India"). |
 
 
@@ -175,9 +160,6 @@ await corsair.worldnewsapi.api.news.getGeoCoordinates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `latitude` | `number` | Yes | — |
 | `longitude` | `number` | Yes | — |
 | `city` | `string` | No | — |
@@ -203,9 +185,6 @@ await corsair.worldnewsapi.api.news.newsWebsiteToRssFeed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the news website/page to convert into an RSS 2.0 feed. |
 | `extractNews` | `boolean` | No | Whether to extract full article text/data for each item in the feed (costs additional quota). Defaults to false. |
 
@@ -216,9 +195,6 @@ await corsair.worldnewsapi.api.news.newsWebsiteToRssFeed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `link` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -267,9 +243,6 @@ await corsair.worldnewsapi.api.news.searchNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | No | Search query text. Supports implicit AND, OR, negation with -, parentheses, and quotes for exact phrases. |
 | `textMatchIndexes` | `string` | No | Where to search for text: "title", "content", or "title,content". |
 | `sourceCountry` | `string` | No | Filter by 2-letter ISO 3166 country code. |
@@ -295,9 +268,6 @@ await corsair.worldnewsapi.api.news.searchNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | Yes | — |
 | `number` | `number` | Yes | — |
 | `available` | `number` | Yes | — |
@@ -348,9 +318,6 @@ await corsair.worldnewsapi.api.news.searchNewsSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | The (partial) name of the news source to search for (e.g. "bbc", "reuters", "times"). |
 
 
@@ -360,9 +327,6 @@ await corsair.worldnewsapi.api.news.searchNewsSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `available` | `number` | Yes | — |
 | `sources` | `object[]` | Yes | — |
 
@@ -401,9 +365,6 @@ await corsair.worldnewsapi.api.news.topNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sourceCountry` | `string` | Yes | The 2-letter ISO 3166 country code for which top news should be retrieved (e.g., "us", "in", "gb"). |
 | `language` | `string` | Yes | The 2-letter ISO 639-1 language code of the top news (e.g., "en", "es", "fr"). |
 | `date` | `string` | No | The date for which the top news should be retrieved (YYYY-MM-DD). Defaults to today. |
@@ -417,9 +378,6 @@ await corsair.worldnewsapi.api.news.topNews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `top_news` | `object[]` | Yes | — |
 | `language` | `string` | No | — |
 | `country` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.openweathermap.api.airPollution.current({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude |
 | `lon` | `number` | Yes | Longitude |
 
@@ -44,9 +41,6 @@ await corsair.openweathermap.api.airPollution.current({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `coord` | `object` | No | — |
 | `list` | `object[]` | No | — |
 
@@ -103,9 +97,6 @@ await corsair.openweathermap.api.airPollution.forecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude |
 | `lon` | `number` | Yes | Longitude |
 
@@ -116,9 +107,6 @@ await corsair.openweathermap.api.airPollution.forecast({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `coord` | `object` | No | — |
 | `list` | `object[]` | No | — |
 
@@ -175,9 +163,6 @@ await corsair.openweathermap.api.airPollution.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude |
 | `lon` | `number` | Yes | Longitude |
 | `start` | `number` | Yes | Start UNIX timestamp (UTC) |
@@ -190,9 +175,6 @@ await corsair.openweathermap.api.airPollution.history({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `coord` | `object` | No | — |
 | `list` | `object[]` | No | — |
 
@@ -251,9 +233,6 @@ await corsair.openweathermap.api.geocoding.byZip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zip` | `string` | Yes | Zip/post code and country code (e.g. E14,GB) |
 
 
@@ -263,9 +242,6 @@ await corsair.openweathermap.api.geocoding.byZip({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zip` | `string` | No | — |
 | `name` | `string` | No | — |
 | `lat` | `number` | Yes | — |
@@ -293,9 +269,6 @@ await corsair.openweathermap.api.geocoding.direct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | City name, state code, and country code (e.g. London,UK) |
 | `limit` | `number` | No | Max number of results (1-5) |
 
@@ -340,9 +313,6 @@ await corsair.openweathermap.api.geocoding.reverse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude |
 | `lon` | `number` | Yes | Longitude |
 | `limit` | `number` | No | Max number of results (1-5) |
@@ -390,9 +360,6 @@ await corsair.openweathermap.api.history.timeMachine({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `dt` | `number` | Yes | Unix timestamp (UTC) for the requested historical date |
@@ -406,9 +373,6 @@ await corsair.openweathermap.api.history.timeMachine({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lon` | `number` | Yes | — |
 | `timezone` | `string` | Yes | — |
@@ -474,9 +438,6 @@ await corsair.openweathermap.api.maps.weatherMapTile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `layer` | `PAC0 \| PR0 \| PA0 \| PAR0 \| PAS0 \| SD0 \| WS10 \| WND \| APM \| TA2 \| TD2 \| TS0 \| TS10 \| HRD0 \| CL` | Yes | Weather map layer code (Maps 2.0 op parameter) |
 | `z` | `number` | Yes | Zoom level |
 | `x` | `number` | Yes | Tile X coordinate |
@@ -495,9 +456,6 @@ await corsair.openweathermap.api.maps.weatherMapTile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contentType` | `image/png` | Yes | — |
 | `dataBase64` | `string` | Yes | — |
 
@@ -524,9 +482,6 @@ await corsair.openweathermap.api.stations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `external_id` | `string` | Yes | Your external station identifier |
 | `name` | `string` | Yes | Station name |
 | `latitude` | `number` | Yes | Station latitude |
@@ -557,9 +512,6 @@ await corsair.openweathermap.api.stations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `station_id` | `string` | Yes | Internal OpenWeather station ID |
 
 
@@ -569,9 +521,6 @@ await corsair.openweathermap.api.stations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `external_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -603,9 +552,6 @@ await corsair.openweathermap.api.stations.getMeasurements({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `station_id` | `string` | Yes | Internal OpenWeather station ID |
 | `type` | `m \| h \| d` | Yes | Aggregation interval: m, h, or d |
 | `from` | `number` | Yes | Start of interval (Unix timestamp) |
@@ -736,9 +682,6 @@ await corsair.openweathermap.api.stations.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `station_id` | `string` | Yes | Internal OpenWeather station ID |
 
 
@@ -748,9 +691,6 @@ await corsair.openweathermap.api.stations.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -774,9 +714,6 @@ await corsair.openweathermap.api.stations.submitMeasurements({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `measurements` | `object[]` | Yes | Measurement records to submit |
 
 
@@ -807,9 +744,6 @@ await corsair.openweathermap.api.stations.submitMeasurements({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -833,9 +767,6 @@ await corsair.openweathermap.api.stations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `station_id` | `string` | Yes | Internal OpenWeather station ID |
 | `name` | `string` | No | — |
 | `external_id` | `string` | No | — |
@@ -850,9 +781,6 @@ await corsair.openweathermap.api.stations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `external_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -886,9 +814,6 @@ await corsair.openweathermap.api.summary.daySummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `date` | `string` | Yes | Date in YYYY-MM-DD format |
@@ -903,9 +828,6 @@ await corsair.openweathermap.api.summary.daySummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lon` | `number` | Yes | — |
 | `tz` | `string` | Yes | — |
@@ -1003,9 +925,6 @@ await corsair.openweathermap.api.summary.overview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `date` | `string` | No | Date in YYYY-MM-DD format (defaults to today) |
@@ -1018,9 +937,6 @@ await corsair.openweathermap.api.summary.overview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lon` | `number` | Yes | — |
 | `tz` | `string` | Yes | — |
@@ -1051,9 +967,6 @@ await corsair.openweathermap.api.weather.circleCity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude of circle center |
 | `lon` | `number` | Yes | Longitude of circle center |
 | `cnt` | `number` | No | Number of cities to return (1-50, default 10) |
@@ -1067,9 +980,6 @@ await corsair.openweathermap.api.weather.circleCity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cod` | `string` | No | — |
 | `count` | `number` | No | — |
 | `list` | `object[]` | No | — |
@@ -1141,9 +1051,6 @@ await corsair.openweathermap.api.weather.current({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, state code, country code |
 | `id` | `number` | No | OpenWeatherMap city ID |
 | `zip` | `string` | No | Zip/post code with country code |
@@ -1159,9 +1066,6 @@ await corsair.openweathermap.api.weather.current({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `coord` | `object` | No | — |
 | `weather` | `object[]` | No | — |
 | `main` | `object` | No | — |
@@ -1264,9 +1168,6 @@ await corsair.openweathermap.api.weather.forecast5Day({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | City name, state code, country code |
 | `id` | `number` | No | OpenWeatherMap city ID |
 | `zip` | `string` | No | Zip/post code with country code |
@@ -1283,9 +1184,6 @@ await corsair.openweathermap.api.weather.forecast5Day({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cod` | `string` | No | — |
 | `message` | `number` | No | — |
 | `cnt` | `number` | No | — |
@@ -1361,9 +1259,6 @@ await corsair.openweathermap.api.weather.oneCall({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `exclude` | `current \| minutely \| hourly \| daily \| alerts[]` | No | Parts to exclude from the response: current, minutely, hourly, daily, alerts |
@@ -1377,9 +1272,6 @@ await corsair.openweathermap.api.weather.oneCall({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lat` | `number` | Yes | — |
 | `lon` | `number` | Yes | — |
 | `timezone` | `string` | Yes | — |

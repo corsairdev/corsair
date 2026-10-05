@@ -28,9 +28,6 @@ const rows = await corsair.abstract.db.emailReputations.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
 | `deliverabilityStatus` | `string` | equals, contains, startsWith, endsWith, in |
@@ -63,9 +60,6 @@ const rows = await corsair.abstract.db.emailValidations.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `autocorrect` | `string` | equals, contains, startsWith, endsWith, in |
@@ -101,9 +95,6 @@ const rows = await corsair.abstract.db.ibanValidations.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `iban` | `string` | equals, contains, startsWith, endsWith, in |
 | `isValid` | `boolean` | equals |
@@ -130,9 +121,6 @@ const rows = await corsair.abstract.db.vatCategories.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
 | `category` | `string` | equals, contains, startsWith, endsWith, in |

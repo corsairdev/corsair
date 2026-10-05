@@ -28,9 +28,6 @@ const rows = await corsair.asticaai.db.audioTranscripts.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |
@@ -60,9 +57,6 @@ const rows = await corsair.asticaai.db.readTextResults.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |

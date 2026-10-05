@@ -31,9 +31,6 @@ await corsair.gitlab.api.branches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `ref` | `string` | Yes | — |
@@ -45,9 +42,6 @@ await corsair.gitlab.api.branches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `merged` | `boolean` | No | — |
 | `protected` | `boolean` | No | — |
@@ -101,9 +95,6 @@ await corsair.gitlab.api.branches.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `branch` | `string` | Yes | — |
 
@@ -131,9 +122,6 @@ await corsair.gitlab.api.branches.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `branch` | `string` | Yes | — |
 
@@ -144,9 +132,6 @@ await corsair.gitlab.api.branches.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `merged` | `boolean` | No | — |
 | `protected` | `boolean` | No | — |
@@ -200,9 +185,6 @@ await corsair.gitlab.api.branches.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -266,9 +248,6 @@ await corsair.gitlab.api.commits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `sha` | `string` | Yes | — |
 | `stats` | `boolean` | No | — |
@@ -280,9 +259,6 @@ await corsair.gitlab.api.commits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `short_id` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -331,9 +307,6 @@ await corsair.gitlab.api.commits.getDiff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -381,9 +354,6 @@ await corsair.gitlab.api.commits.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -442,9 +412,6 @@ await corsair.gitlab.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -458,9 +425,6 @@ await corsair.gitlab.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -494,9 +458,6 @@ await corsair.gitlab.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number \| string` | Yes | — |
 
 
@@ -523,9 +484,6 @@ await corsair.gitlab.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number \| string` | Yes | — |
 | `with_projects` | `boolean` | No | — |
 
@@ -536,9 +494,6 @@ await corsair.gitlab.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -572,9 +527,6 @@ await corsair.gitlab.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -629,9 +581,6 @@ await corsair.gitlab.api.groups.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `group_id` | `number \| string` | Yes | — |
@@ -711,9 +660,6 @@ await corsair.gitlab.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number \| string` | Yes | — |
 | `name` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -727,9 +673,6 @@ await corsair.gitlab.api.groups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -765,9 +708,6 @@ await corsair.gitlab.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -785,9 +725,6 @@ await corsair.gitlab.api.issues.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -912,9 +849,6 @@ await corsair.gitlab.api.issues.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `issue_iid` | `number` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -926,9 +860,6 @@ await corsair.gitlab.api.issues.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `body` | `string` | Yes | — |
 | `author` | `object` | No | — |
@@ -977,9 +908,6 @@ await corsair.gitlab.api.issues.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `issue_iid` | `number` | Yes | — |
 
@@ -1007,9 +935,6 @@ await corsair.gitlab.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `issue_iid` | `number` | Yes | — |
 
@@ -1020,9 +945,6 @@ await corsair.gitlab.api.issues.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -1147,9 +1069,6 @@ await corsair.gitlab.api.issues.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -1255,9 +1174,6 @@ await corsair.gitlab.api.issues.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -1316,9 +1232,6 @@ await corsair.gitlab.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `issue_iid` | `number` | Yes | — |
 | `title` | `string` | No | — |
@@ -1338,9 +1251,6 @@ await corsair.gitlab.api.issues.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -1467,9 +1377,6 @@ await corsair.gitlab.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | Yes | — |
@@ -1483,9 +1390,6 @@ await corsair.gitlab.api.labels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
@@ -1518,9 +1422,6 @@ await corsair.gitlab.api.labels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `label_id` | `number` | Yes | — |
 
@@ -1548,9 +1449,6 @@ await corsair.gitlab.api.labels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -1600,9 +1498,6 @@ await corsair.gitlab.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `label_id` | `number` | Yes | — |
 | `new_name` | `string` | No | — |
@@ -1617,9 +1512,6 @@ await corsair.gitlab.api.labels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `color` | `string` | No | — |
@@ -1654,9 +1546,6 @@ await corsair.gitlab.api.mergeRequests.approve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 | `sha` | `string` | No | — |
@@ -1685,9 +1574,6 @@ await corsair.gitlab.api.mergeRequests.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `source_branch` | `string` | Yes | — |
 | `target_branch` | `string` | Yes | — |
@@ -1708,9 +1594,6 @@ await corsair.gitlab.api.mergeRequests.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -1856,9 +1739,6 @@ await corsair.gitlab.api.mergeRequests.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -1870,9 +1750,6 @@ await corsair.gitlab.api.mergeRequests.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `body` | `string` | Yes | — |
 | `author` | `object` | No | — |
@@ -1921,9 +1798,6 @@ await corsair.gitlab.api.mergeRequests.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 
@@ -1951,9 +1825,6 @@ await corsair.gitlab.api.mergeRequests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 
@@ -1964,9 +1835,6 @@ await corsair.gitlab.api.mergeRequests.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -2112,9 +1980,6 @@ await corsair.gitlab.api.mergeRequests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -2237,9 +2102,6 @@ await corsair.gitlab.api.mergeRequests.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -2298,9 +2160,6 @@ await corsair.gitlab.api.mergeRequests.merge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 | `merge_commit_message` | `string` | No | — |
@@ -2317,9 +2176,6 @@ await corsair.gitlab.api.mergeRequests.merge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -2465,9 +2321,6 @@ await corsair.gitlab.api.mergeRequests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `merge_request_iid` | `number` | Yes | — |
 | `title` | `string` | No | — |
@@ -2488,9 +2341,6 @@ await corsair.gitlab.api.mergeRequests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
@@ -2638,9 +2488,6 @@ await corsair.gitlab.api.milestones.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -2654,9 +2501,6 @@ await corsair.gitlab.api.milestones.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2690,9 +2534,6 @@ await corsair.gitlab.api.milestones.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `milestone_id` | `number` | Yes | — |
 
@@ -2720,9 +2561,6 @@ await corsair.gitlab.api.milestones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `milestone_id` | `number` | Yes | — |
 
@@ -2733,9 +2571,6 @@ await corsair.gitlab.api.milestones.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2769,9 +2604,6 @@ await corsair.gitlab.api.milestones.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -2823,9 +2655,6 @@ await corsair.gitlab.api.milestones.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `milestone_id` | `number` | Yes | — |
 | `title` | `string` | No | — |
@@ -2841,9 +2670,6 @@ await corsair.gitlab.api.milestones.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2879,9 +2705,6 @@ await corsair.gitlab.api.pipelines.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `pipeline_id` | `number` | Yes | — |
 
@@ -2892,9 +2715,6 @@ await corsair.gitlab.api.pipelines.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2947,9 +2767,6 @@ await corsair.gitlab.api.pipelines.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `ref` | `string` | Yes | — |
 | `variables` | `object[]` | No | — |
@@ -2974,9 +2791,6 @@ await corsair.gitlab.api.pipelines.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -3029,9 +2843,6 @@ await corsair.gitlab.api.pipelines.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `pipeline_id` | `number` | Yes | — |
 
@@ -3059,9 +2870,6 @@ await corsair.gitlab.api.pipelines.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `pipeline_id` | `number` | Yes | — |
 
@@ -3072,9 +2880,6 @@ await corsair.gitlab.api.pipelines.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -3127,9 +2932,6 @@ await corsair.gitlab.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -3195,9 +2997,6 @@ await corsair.gitlab.api.pipelines.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -3252,9 +3051,6 @@ await corsair.gitlab.api.pipelines.retry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `pipeline_id` | `number` | Yes | — |
 
@@ -3265,9 +3061,6 @@ await corsair.gitlab.api.pipelines.retry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `iid` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -3322,9 +3115,6 @@ await corsair.gitlab.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
 | `namespace_id` | `number` | No | — |
@@ -3340,9 +3130,6 @@ await corsair.gitlab.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -3416,9 +3203,6 @@ await corsair.gitlab.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 
 
@@ -3445,9 +3229,6 @@ await corsair.gitlab.api.projects.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `namespace_id` | `number` | No | — |
 | `namespace_path` | `string` | No | — |
@@ -3462,9 +3243,6 @@ await corsair.gitlab.api.projects.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -3538,9 +3316,6 @@ await corsair.gitlab.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `statistics` | `boolean` | No | — |
 | `license` | `boolean` | No | — |
@@ -3552,9 +3327,6 @@ await corsair.gitlab.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -3628,9 +3400,6 @@ await corsair.gitlab.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -3712,9 +3481,6 @@ await corsair.gitlab.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -3729,9 +3495,6 @@ await corsair.gitlab.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path` | `string` | No | — |
@@ -3807,9 +3570,6 @@ await corsair.gitlab.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `tag_name` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -3825,9 +3585,6 @@ await corsair.gitlab.api.releases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_name` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -3908,9 +3665,6 @@ await corsair.gitlab.api.releases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `tag_name` | `string` | Yes | — |
 
@@ -3938,9 +3692,6 @@ await corsair.gitlab.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `tag_name` | `string` | Yes | — |
 
@@ -3951,9 +3702,6 @@ await corsair.gitlab.api.releases.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_name` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4034,9 +3782,6 @@ await corsair.gitlab.api.releases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -4112,9 +3857,6 @@ await corsair.gitlab.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `tag_name` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -4129,9 +3871,6 @@ await corsair.gitlab.api.releases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_name` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4214,9 +3953,6 @@ await corsair.gitlab.api.repository.compare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -4229,9 +3965,6 @@ await corsair.gitlab.api.repository.compare({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `object` | No | — |
 | `commits` | `object[]` | No | — |
 | `diffs` | `object[]` | No | — |
@@ -4317,9 +4050,6 @@ await corsair.gitlab.api.repository.getFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `number \| string` | Yes | — |
 | `file_path` | `string` | Yes | — |
 | `ref` | `string` | No | — |
@@ -4331,9 +4061,6 @@ await corsair.gitlab.api.repository.getFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_name` | `string` | Yes | — |
 | `file_path` | `string` | Yes | — |
 | `size` | `number` | No | — |
@@ -4366,9 +4093,6 @@ await corsair.gitlab.api.repository.getTree({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `project_id` | `number \| string` | Yes | — |
@@ -4420,9 +4144,6 @@ await corsair.gitlab.api.users.getCurrentUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `username` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -4458,9 +4179,6 @@ await corsair.gitlab.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `number` | Yes | — |
 
 
@@ -4470,9 +4188,6 @@ await corsair.gitlab.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `username` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -4501,9 +4216,6 @@ await corsair.gitlab.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `search` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.instagram.api.carousel.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the carousel post. |
 | `children` | `string[]` | Yes | An array of media container IDs that will be included in the carousel. A carousel must contain at least two media items. |
 | `media_type` | `string` | Yes | The type of media container to create. For carousel posts, this is typically set to CAROUSEL. |
@@ -61,9 +58,6 @@ await corsair.instagram.api.carousel.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -89,9 +83,6 @@ await corsair.instagram.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | The Instagram Comment ID of the comment whose details should be retrieved. |
 | `q` | `string` | No | Optional search query or filter used when retrieving comment details. |
 
@@ -102,9 +93,6 @@ await corsair.instagram.api.comments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique Instagram Comment ID. |
 | `text` | `string` | No | The text content of the comment. |
 | `hidden` | `boolean` | No | Indicates whether the comment is hidden from public view. |
@@ -172,9 +160,6 @@ await corsair.instagram.api.comments.getReplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | The Instagram Comment ID. |
 | `fields` | `string` | No | Optional fields to query. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -187,9 +172,6 @@ await corsair.instagram.api.comments.getReplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | The replies. |
 | `paging` | `object` | No | — |
 
@@ -241,9 +223,6 @@ await corsair.instagram.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, video, or carousel whose comments should be retrieved. |
 | `q` | `string` | No | Optional search query used to filter comments by text, username, or other supported criteria. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -256,9 +235,6 @@ await corsair.instagram.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | The list of comments associated with the requested Instagram media. |
 
 
@@ -296,9 +272,6 @@ await corsair.instagram.api.comments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | The Instagram Comment ID of the comment that should be permanently deleted. |
 
 
@@ -308,9 +281,6 @@ await corsair.instagram.api.comments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates whether the comment update operation completed successfully. |
 
 
@@ -334,9 +304,6 @@ await corsair.instagram.api.comments.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | The Instagram Comment ID of the comment that should receive a reply. |
 | `message` | `string` | Yes | The text content of the reply to post in response to the specified comment. |
 
@@ -347,9 +314,6 @@ await corsair.instagram.api.comments.reply({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique ID of the newly created reply comment. |
 
 
@@ -373,9 +337,6 @@ await corsair.instagram.api.comments.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, video, Story, or carousel on which the comment will be created. |
 | `message` | `string` | Yes | The text content of the comment to post on the specified Instagram media. |
 
@@ -386,9 +347,6 @@ await corsair.instagram.api.comments.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique ID of the newly created Instagram comment. |
 
 
@@ -412,9 +370,6 @@ await corsair.instagram.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string` | Yes | The Instagram Comment ID of the comment to update. |
 | `hide` | `boolean` | Yes | Whether the comment should be hidden. Set to true to hide the comment or false to unhide it. |
 
@@ -425,9 +380,6 @@ await corsair.instagram.api.comments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Indicates whether the comment update operation completed successfully. |
 
 
@@ -453,9 +405,6 @@ await corsair.instagram.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `conversation_id` | `string` | Yes | The Instagram conversation or message thread ID whose messages should be retrieved. |
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that owns the conversation. |
 | `q` | `string` | No | Optional search query used to filter messages within the conversation. |
@@ -469,9 +418,6 @@ await corsair.instagram.api.conversations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | The list of messages contained within the specified conversation. |
 
 
@@ -524,9 +470,6 @@ await corsair.instagram.api.conversations.getConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `conversation_id` | `string` | Yes | The DM conversation ID. |
 | `fields` | `string` | No | Optional fields to query. |
@@ -538,9 +481,6 @@ await corsair.instagram.api.conversations.getConversation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The DM conversation ID. |
 | `updated_time` | `string` | No | Last updated timestamp. |
 | `message_count` | `number` | No | Total message count. |
@@ -567,9 +507,6 @@ await corsair.instagram.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account whose conversations should be retrieved. |
 | `q` | `string` | No | Optional search query used to filter conversations by participant, message content, or other supported criteria. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -582,9 +519,6 @@ await corsair.instagram.api.conversations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | The list of Instagram conversations associated with the connected account. |
 
 
@@ -621,9 +555,6 @@ await corsair.instagram.api.image.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the image. |
 | `image_url` | `string` | Yes | A publicly accessible URL of the image to be uploaded to Instagram. |
 | `caption` | `string` | No | Optional caption text that will be displayed with the Instagram post. |
@@ -664,9 +595,6 @@ await corsair.instagram.api.image.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -690,9 +618,6 @@ await corsair.instagram.api.image.story({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story. |
 | `image_url` | `string` | Yes | A publicly accessible URL of the image to be uploaded as an Instagram Story. |
 | `user_tags` | `string[]` | No | Optional list of Instagram usernames or user IDs to mention or tag in the Story. |
@@ -704,9 +629,6 @@ await corsair.instagram.api.image.story({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -732,9 +654,6 @@ await corsair.instagram.api.media.children({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | The Instagram Media ID (parent carousel/album). |
 | `fields` | `string` | No | Optional fields to query. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -747,9 +666,6 @@ await corsair.instagram.api.media.children({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | Media children items. |
 | `paging` | `object` | No | — |
 
@@ -800,9 +716,6 @@ await corsair.instagram.api.media.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | The Instagram Media ID of the post, reel, story, carousel, or video to retrieve. |
 | `q` | `string` | No | Optional search query or filter used when retrieving media-related information. |
 
@@ -813,9 +726,6 @@ await corsair.instagram.api.media.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique Instagram Media ID. |
 | `caption` | `string` | No | The caption text associated with the media. |
 | `media_type` | `IMAGE \| VIDEO \| CAROUSEL_ALBUM` | No | The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM. |
@@ -867,9 +777,6 @@ await corsair.instagram.api.media.insights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, Story, video, or carousel whose insights should be retrieved. |
 | `type` | `IMAGE \| VIDEO \| REELS \| STORY \| CAROUSEL_ALBUM` | Yes | The type of Instagram media for which insights are being requested. |
 | `metric` | `string` | No | Optional insight metric to retrieve, such as impressions, reach, engagement, saved, likes, comments, shares, plays, or other supported Instagram insight metrics. |
@@ -881,9 +788,6 @@ await corsair.instagram.api.media.insights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | A collection of insight metrics and values returned for the requested Instagram media. |
 
 
@@ -927,9 +831,6 @@ await corsair.instagram.api.media.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account or createro account whose media should be retrieved. |
 | `q` | `string` | No | Optional search keyword or filter to narrow the media results. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -942,9 +843,6 @@ await corsair.instagram.api.media.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | The list of Instagram media objects returned by the request. |
 | `paging` | `object` | No | Pagination information used to navigate through additional pages of media results. |
 
@@ -1012,9 +910,6 @@ await corsair.instagram.api.media.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `container_id` | `string` | Yes | The Instagram media container ID whose processing status should be retrieved. |
 
 
@@ -1024,9 +919,6 @@ await corsair.instagram.api.media.status({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The Instagram media container ID whose status was requested. |
 | `status_code` | `IN_PROGRESS \| FINISHED \| ERROR \| EXPIRED \| PUBLISHED` | Yes | The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, PUBLISHED indicates it was already published, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid. |
 
@@ -1053,9 +945,6 @@ await corsair.instagram.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that owns the message. |
 | `message_id` | `string` | Yes | The unique ID of the Instagram Direct Message to retrieve. |
 | `q` | `string` | Yes | A search query or filter string used when retrieving message details. |
@@ -1067,9 +956,6 @@ await corsair.instagram.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The unique identifier of the message. |
 | `message` | `string` | No | The text content of the message. |
 | `created_time` | `string` | No | The timestamp indicating when the message was created. |
@@ -1127,9 +1013,6 @@ await corsair.instagram.api.messages.markSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `recipient_id` | `string` | Yes | The recipient user ID to mark messages as seen. |
 
@@ -1140,9 +1023,6 @@ await corsair.instagram.api.messages.markSeen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | Whether action succeeded. |
 
 
@@ -1166,9 +1046,6 @@ await corsair.instagram.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that will send the message. |
 | `recipient` | `string` | Yes | The recipient Instagram-scoped user ID (IGSID) or Messenger user ID that will receive the message. |
 | `message` | `object` | Yes | The message content, including text, attachments, and optional quick replies. |
@@ -1208,9 +1085,6 @@ await corsair.instagram.api.messages.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipient_id` | `string` | Yes | The ID of the user who received the message. |
 | `message_id` | `string` | Yes | The unique identifier of the message that was sent. |
 | `timestamp` | `number` | No | The Unix timestamp indicating when the message was sent. |
@@ -1236,9 +1110,6 @@ await corsair.instagram.api.messages.sendImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `recipient_id` | `string` | Yes | The recipient ID. |
 | `image_url` | `string` | Yes | The URL of the image to send via DM. |
@@ -1250,9 +1121,6 @@ await corsair.instagram.api.messages.sendImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | The message ID. |
 
 
@@ -1278,9 +1146,6 @@ await corsair.instagram.api.messenger.deleteProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `fields` | `persistent_menu \| ice_breakers[]` | No | The Instagram Messenger Profile fields to delete. |
 
@@ -1291,9 +1156,6 @@ await corsair.instagram.api.messenger.deleteProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `string` | Yes | The API status response, typically "success". |
 
 
@@ -1317,9 +1179,6 @@ await corsair.instagram.api.messenger.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `fields` | `persistent_menu \| ice_breakers[]` | No | Instagram Messenger Profile fields to query. |
 
@@ -1330,9 +1189,6 @@ await corsair.instagram.api.messenger.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | Messenger Profile options. |
 
 
@@ -1380,9 +1236,6 @@ await corsair.instagram.api.messenger.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_id` | `string` | Yes | The Facebook Page ID. |
 | `persistent_menu` | `object[]` | No | Persistent menu configuration. |
 | `ice_breakers` | `object[]` | No | Ice breaker configuration. |
@@ -1422,9 +1275,6 @@ await corsair.instagram.api.messenger.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `string` | Yes | The API response result, typically "success". |
 
 
@@ -1450,9 +1300,6 @@ await corsair.instagram.api.profile.contentPublishingLimit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (Instagram Business Account ID). |
 
 
@@ -1462,9 +1309,6 @@ await corsair.instagram.api.profile.contentPublishingLimit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -1503,9 +1347,6 @@ await corsair.instagram.api.profile.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram account. |
 | `q` | `string` | No | Optional search query or keyword used to filter related Instagram user data. |
 
@@ -1516,9 +1357,6 @@ await corsair.instagram.api.profile.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `ig_id` | `number` | No | — |
 | `username` | `string` | No | — |
@@ -1553,9 +1391,6 @@ await corsair.instagram.api.profile.insights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account whose insights should be retrieved. |
 | `metric` | `string` | Yes | One or more Instagram insight metrics to retrieve, such as impressions, reach, profile_views, follower_count, accounts_engaged, or other supported account-level metrics. |
 | `period` | `string` | Yes | The aggregation period for the requested metrics, such as day, week, days_28, lifetime, or other supported periods. |
@@ -1572,9 +1407,6 @@ await corsair.instagram.api.profile.insights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | A collection of insight metrics and values returned for the requested Instagram media. |
 
 
@@ -1618,9 +1450,6 @@ await corsair.instagram.api.profile.liveMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID. |
 | `fields` | `string` | No | Optional fields to query. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -1633,9 +1462,6 @@ await corsair.instagram.api.profile.liveMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | Live media items. |
 | `paging` | `object` | No | — |
 
@@ -1703,9 +1529,6 @@ await corsair.instagram.api.profile.replyMentions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mention_id` | `string` | Yes | The mention ID (media or comment ID). |
 | `message` | `string` | Yes | The text of the reply. |
 
@@ -1716,9 +1539,6 @@ await corsair.instagram.api.profile.replyMentions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The created comment reply ID. |
 
 
@@ -1742,9 +1562,6 @@ await corsair.instagram.api.profile.stories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID. |
 | `fields` | `string` | No | Optional fields to query. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -1757,9 +1574,6 @@ await corsair.instagram.api.profile.stories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | Stories list. |
 | `paging` | `object` | No | — |
 
@@ -1827,9 +1641,6 @@ await corsair.instagram.api.profile.tags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID. |
 | `fields` | `string` | No | Optional fields to query. |
 | `after` | `string` | No | Cursor for the next page of results. |
@@ -1842,9 +1653,6 @@ await corsair.instagram.api.profile.tags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | Tagged media list. |
 | `paging` | `object` | No | — |
 
@@ -1914,9 +1722,6 @@ await corsair.instagram.api.publish.publish_media({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the media. |
 | `creation_id` | `string` | Yes | The media container ID returned by a previous media container creation request. This container will be published to Instagram. |
 
@@ -1927,9 +1732,6 @@ await corsair.instagram.api.publish.publish_media({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -1955,9 +1757,6 @@ await corsair.instagram.api.reel.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Reel. |
 | `video_url` | `string` | Yes | A publicly accessible URL of the video file to be uploaded as an Instagram Reel. |
 | `media_type` | `string` | Yes | The type of media container to create. For Reels, this is typically set to REELS. |
@@ -1991,9 +1790,6 @@ await corsair.instagram.api.reel.post({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -2019,9 +1815,6 @@ await corsair.instagram.api.video.container({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the video. |
 | `video_url` | `string` | Yes | A publicly accessible URL of the video to be uploaded to Instagram. |
 | `caption` | `string` | No | Optional caption text that will be displayed with the video post. |
@@ -2061,9 +1854,6 @@ await corsair.instagram.api.video.container({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 
@@ -2087,9 +1877,6 @@ await corsair.instagram.api.video.story({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story. |
 | `video_url` | `string` | Yes | A publicly accessible URL of the video to be uploaded as an Instagram Story. |
 | `user_tags` | `string[]` | No | Optional list of Instagram usernames or user IDs to mention or tag in the Story. |
@@ -2101,9 +1888,6 @@ await corsair.instagram.api.video.story({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
 
 

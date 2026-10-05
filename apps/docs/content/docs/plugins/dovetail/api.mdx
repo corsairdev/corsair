@@ -31,9 +31,6 @@ await corsair.dovetail.api.channels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `content_type` | `APP_REVIEW \| CHURN_REASONS \| NPS_FEEDBACK \| PRODUCT_REVIEW \| SUPPORT_TICKETS` | Yes | — |
 | `project_category_id` | `string` | No | — |
@@ -45,9 +42,6 @@ await corsair.dovetail.api.channels.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -99,9 +93,6 @@ await corsair.dovetail.api.channels.createDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | — |
@@ -126,9 +117,6 @@ await corsair.dovetail.api.channels.createDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -173,9 +161,6 @@ await corsair.dovetail.api.channels.createTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
@@ -187,9 +172,6 @@ await corsair.dovetail.api.channels.createTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -232,9 +214,6 @@ await corsair.dovetail.api.channels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 
 
@@ -244,9 +223,6 @@ await corsair.dovetail.api.channels.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -285,9 +261,6 @@ await corsair.dovetail.api.channels.deleteTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `topic_id` | `string` | Yes | — |
 
 
@@ -297,9 +270,6 @@ await corsair.dovetail.api.channels.deleteTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -338,9 +308,6 @@ await corsair.dovetail.api.channels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `context` | `string` | No | — |
@@ -352,9 +319,6 @@ await corsair.dovetail.api.channels.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -406,9 +370,6 @@ await corsair.dovetail.api.channels.updateTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `topic_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -420,9 +381,6 @@ await corsair.dovetail.api.channels.updateTopic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -467,9 +425,6 @@ await corsair.dovetail.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `fields` | `object[]` | No | — |
@@ -494,9 +449,6 @@ await corsair.dovetail.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -542,9 +494,6 @@ await corsair.dovetail.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -554,9 +503,6 @@ await corsair.dovetail.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -602,9 +548,6 @@ await corsair.dovetail.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -637,9 +580,6 @@ await corsair.dovetail.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -697,9 +637,6 @@ await corsair.dovetail.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -725,9 +662,6 @@ await corsair.dovetail.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -775,9 +709,6 @@ await corsair.dovetail.api.data.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `content` | `string` | No | — |
@@ -803,9 +734,6 @@ await corsair.dovetail.api.data.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -853,9 +781,6 @@ await corsair.dovetail.api.data.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_id` | `string` | Yes | — |
 
 
@@ -865,9 +790,6 @@ await corsair.dovetail.api.data.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -915,9 +837,6 @@ await corsair.dovetail.api.data.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_id` | `string` | Yes | — |
 | `type` | `html \| markdown` | Yes | — |
 | `include_file_content` | `boolean` | No | — |
@@ -929,9 +848,6 @@ await corsair.dovetail.api.data.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -977,9 +893,6 @@ await corsair.dovetail.api.data.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_id` | `string` | Yes | — |
 
 
@@ -989,9 +902,6 @@ await corsair.dovetail.api.data.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1039,9 +949,6 @@ await corsair.dovetail.api.data.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `url` | `string` | No | — |
@@ -1071,9 +978,6 @@ await corsair.dovetail.api.data.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1121,9 +1025,6 @@ await corsair.dovetail.api.data.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -1164,9 +1065,6 @@ await corsair.dovetail.api.data.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -1226,9 +1124,6 @@ await corsair.dovetail.api.data.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `fields` | `object[]` | No | — |
@@ -1253,9 +1148,6 @@ await corsair.dovetail.api.data.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1305,9 +1197,6 @@ await corsair.dovetail.api.docs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `content` | `string` | No | — |
 | `content_type` | `text \| html \| markdown` | No | — |
@@ -1335,9 +1224,6 @@ await corsair.dovetail.api.docs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1384,9 +1270,6 @@ await corsair.dovetail.api.docs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `doc_id` | `string` | Yes | — |
 
 
@@ -1396,9 +1279,6 @@ await corsair.dovetail.api.docs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1445,9 +1325,6 @@ await corsair.dovetail.api.docs.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `doc_id` | `string` | Yes | — |
 | `type` | `html \| markdown` | Yes | — |
 
@@ -1458,9 +1335,6 @@ await corsair.dovetail.api.docs.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1498,9 +1372,6 @@ await corsair.dovetail.api.docs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `doc_id` | `string` | Yes | — |
 
 
@@ -1510,9 +1381,6 @@ await corsair.dovetail.api.docs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1559,9 +1427,6 @@ await corsair.dovetail.api.docs.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `project_id` | `string` | No | — |
 | `folder_id` | `string` | No | — |
@@ -1576,9 +1441,6 @@ await corsair.dovetail.api.docs.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1625,9 +1487,6 @@ await corsair.dovetail.api.docs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -1668,9 +1527,6 @@ await corsair.dovetail.api.docs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -1729,9 +1585,6 @@ await corsair.dovetail.api.docs.listUserDocs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
@@ -1773,9 +1626,6 @@ await corsair.dovetail.api.docs.listUserDocs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -1834,9 +1684,6 @@ await corsair.dovetail.api.docs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `doc_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `folder_id` | `string` | No | — |
@@ -1863,9 +1710,6 @@ await corsair.dovetail.api.docs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1914,9 +1758,6 @@ await corsair.dovetail.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -1926,9 +1767,6 @@ await corsair.dovetail.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1972,9 +1810,6 @@ await corsair.dovetail.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 
 
@@ -1984,9 +1819,6 @@ await corsair.dovetail.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2026,9 +1858,6 @@ await corsair.dovetail.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -2062,9 +1891,6 @@ await corsair.dovetail.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -2118,9 +1944,6 @@ await corsair.dovetail.api.highlights.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -2167,9 +1990,6 @@ await corsair.dovetail.api.highlights.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -2226,9 +2046,6 @@ await corsair.dovetail.api.insights.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `content` | `string` | No | — |
 | `content_type` | `text \| html \| markdown` | No | — |
@@ -2256,9 +2073,6 @@ await corsair.dovetail.api.insights.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2305,9 +2119,6 @@ await corsair.dovetail.api.insights.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `insight_id` | `string` | Yes | — |
 
 
@@ -2317,9 +2128,6 @@ await corsair.dovetail.api.insights.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2366,9 +2174,6 @@ await corsair.dovetail.api.insights.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `insight_id` | `string` | Yes | — |
 | `type` | `html \| markdown` | Yes | — |
 
@@ -2379,9 +2184,6 @@ await corsair.dovetail.api.insights.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2419,9 +2221,6 @@ await corsair.dovetail.api.insights.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `insight_id` | `string` | Yes | — |
 
 
@@ -2431,9 +2230,6 @@ await corsair.dovetail.api.insights.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2480,9 +2276,6 @@ await corsair.dovetail.api.insights.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `project_id` | `string` | No | — |
 | `folder_id` | `string` | No | — |
@@ -2497,9 +2290,6 @@ await corsair.dovetail.api.insights.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2546,9 +2336,6 @@ await corsair.dovetail.api.insights.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -2589,9 +2376,6 @@ await corsair.dovetail.api.insights.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -2650,9 +2434,6 @@ await corsair.dovetail.api.insights.listUserInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
@@ -2694,9 +2475,6 @@ await corsair.dovetail.api.insights.listUserInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -2755,9 +2533,6 @@ await corsair.dovetail.api.insights.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `insight_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `folder_id` | `string` | No | — |
@@ -2784,9 +2559,6 @@ await corsair.dovetail.api.insights.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2835,9 +2607,6 @@ await corsair.dovetail.api.notes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `content` | `string` | No | — |
@@ -2863,9 +2632,6 @@ await corsair.dovetail.api.notes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2911,9 +2677,6 @@ await corsair.dovetail.api.notes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note_id` | `string` | Yes | — |
 
 
@@ -2923,9 +2686,6 @@ await corsair.dovetail.api.notes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2971,9 +2731,6 @@ await corsair.dovetail.api.notes.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note_id` | `string` | Yes | — |
 | `type` | `html \| markdown` | Yes | — |
 
@@ -2984,9 +2741,6 @@ await corsair.dovetail.api.notes.export({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3024,9 +2778,6 @@ await corsair.dovetail.api.notes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note_id` | `string` | Yes | — |
 
 
@@ -3036,9 +2787,6 @@ await corsair.dovetail.api.notes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3084,9 +2832,6 @@ await corsair.dovetail.api.notes.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -3099,9 +2844,6 @@ await corsair.dovetail.api.notes.importFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3147,9 +2889,6 @@ await corsair.dovetail.api.notes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -3189,9 +2928,6 @@ await corsair.dovetail.api.notes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -3249,9 +2985,6 @@ await corsair.dovetail.api.notes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `note_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `fields` | `object[]` | No | — |
@@ -3276,9 +3009,6 @@ await corsair.dovetail.api.notes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3326,9 +3056,6 @@ await corsair.dovetail.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `folder_id` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -3340,9 +3067,6 @@ await corsair.dovetail.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3383,9 +3107,6 @@ await corsair.dovetail.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 
 
@@ -3395,9 +3116,6 @@ await corsair.dovetail.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3438,9 +3156,6 @@ await corsair.dovetail.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -3474,9 +3189,6 @@ await corsair.dovetail.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -3531,9 +3243,6 @@ await corsair.dovetail.api.search.magicSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -3556,9 +3265,6 @@ await corsair.dovetail.api.search.magicSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `highlights` | `any[]` | No | — |
 | `notes` | `any[]` | No | — |
 | `insights` | `any[]` | No | — |
@@ -3589,9 +3295,6 @@ await corsair.dovetail.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `object` | No | — |
 | `filter` | `object` | No | — |
 | `sort` | `string` | No | — |
@@ -3625,9 +3328,6 @@ await corsair.dovetail.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -3687,9 +3387,6 @@ await corsair.dovetail.api.token.getInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 

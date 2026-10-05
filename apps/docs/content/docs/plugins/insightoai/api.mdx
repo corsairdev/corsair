@@ -31,9 +31,6 @@ await corsair.insightoai.api.agency.createAgency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_id` | `string` | Yes | — |
 | `domain` | `object` | No | — |
 | `branding` | `object` | No | — |
@@ -108,9 +105,6 @@ await corsair.insightoai.api.agency.getAgencyBillingPlan({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billing_plan_id` | `string` | Yes | — |
 
 
@@ -147,9 +141,6 @@ await corsair.insightoai.api.agency.getAgencyBrandingById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agency_id` | `string` | Yes | — |
 
 
@@ -186,9 +177,6 @@ await corsair.insightoai.api.agency.getAgentList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | Yes | — |
 | `size` | `number` | Yes | — |
 
@@ -226,9 +214,6 @@ await corsair.insightoai.api.agency.getPricingForUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `llm_model_id` | `string` | No | — |
 | `voice_stt_id` | `string` | No | — |
 | `voice_tts_id` | `string` | No | — |
@@ -267,9 +252,6 @@ await corsair.insightoai.api.agency.retrieveUserMonthlyUsagesAggregation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -307,9 +289,6 @@ await corsair.insightoai.api.agency.updateUserProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_id` | `string` | Yes | — |
 
 
@@ -348,9 +327,6 @@ await corsair.insightoai.api.assistants.addIntentToAssistant({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `intent_id` | `string` | Yes | — |
 | `attributes` | `object` | No | — |
@@ -399,9 +375,6 @@ await corsair.insightoai.api.assistants.createIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `is_active` | `boolean` | No | — |
 | `attributes` | `object` | No | — |
@@ -452,9 +425,6 @@ await corsair.insightoai.api.assistants.createPrompt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `owner_type` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -494,9 +464,6 @@ await corsair.insightoai.api.assistants.deleteAssistantById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 
 
@@ -533,9 +500,6 @@ await corsair.insightoai.api.assistants.deletePromptById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt_id` | `string` | Yes | — |
 
 
@@ -572,9 +536,6 @@ await corsair.insightoai.api.assistants.getAssistantById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 
 
@@ -611,9 +572,6 @@ await corsair.insightoai.api.assistants.getIntentById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `intent_id` | `string` | Yes | — |
 
 
@@ -650,9 +608,6 @@ await corsair.insightoai.api.assistants.getPromptById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt_id` | `string` | Yes | — |
 
 
@@ -689,9 +644,6 @@ await corsair.insightoai.api.assistants.readIntentsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -731,9 +683,6 @@ await corsair.insightoai.api.contacts.createContactCustomField({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org_id` | `string` | No | — |
 | `custom_field_name` | `string` | Yes | — |
 | `custom_field_type` | `string` | Yes | — |
@@ -772,9 +721,6 @@ await corsair.insightoai.api.contacts.deleteContactsInBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_ids` | `string[]` | Yes | — |
 
 
@@ -811,9 +757,6 @@ await corsair.insightoai.api.contacts.getContactById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -850,9 +793,6 @@ await corsair.insightoai.api.contacts.getListOfContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -890,9 +830,6 @@ await corsair.insightoai.api.contacts.readCampaignContactList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `campaign_id` | `string` | Yes | — |
@@ -931,9 +868,6 @@ await corsair.insightoai.api.contacts.readContactCustomFieldList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -971,9 +905,6 @@ await corsair.insightoai.api.contacts.readContactSyncLogList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -1011,9 +942,6 @@ await corsair.insightoai.api.contacts.sendMessagesToContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `widget_id` | `string` | Yes | — |
 | `contact_ids` | `string[]` | Yes | — |
@@ -1053,9 +981,6 @@ await corsair.insightoai.api.contacts.upsertContactByEmailOrPhoneNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
@@ -1097,9 +1022,6 @@ await corsair.insightoai.api.datasources.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `attributes` | `object` | No | — |
 | `color_code` | `string` | Yes | — |
@@ -1149,9 +1071,6 @@ await corsair.insightoai.api.datasources.deleteLinkedAssistantDatasource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assistant_id` | `string` | Yes | — |
 | `datasource_id` | `string` | Yes | — |
 
@@ -1189,9 +1108,6 @@ await corsair.insightoai.api.datasources.deleteLinkTagEntityById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `link_tag_entity_id` | `string` | Yes | — |
 
 
@@ -1228,9 +1144,6 @@ await corsair.insightoai.api.datasources.deleteTagById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `string` | Yes | — |
 
 
@@ -1267,9 +1180,6 @@ await corsair.insightoai.api.datasources.getDatasourceById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `datasource_id` | `string` | Yes | — |
 
 
@@ -1306,9 +1216,6 @@ await corsair.insightoai.api.datasources.getListOfDatasources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -1346,9 +1253,6 @@ await corsair.insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `assistant_id` | `string` | Yes | — |
@@ -1387,9 +1291,6 @@ await corsair.insightoai.api.datasources.readTagList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -1429,9 +1330,6 @@ await corsair.insightoai.api.forms.createForm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `fields` | `object[]` | No | — |
 | `org_id` | `string` | No | — |
@@ -1502,9 +1400,6 @@ await corsair.insightoai.api.forms.deleteBulkFormsByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `form_ids` | `string[]` | Yes | — |
 
 
@@ -1541,9 +1436,6 @@ await corsair.insightoai.api.forms.deleteFormById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `form_id` | `string` | Yes | — |
 
 
@@ -1580,9 +1472,6 @@ await corsair.insightoai.api.forms.getCapturedFormByFormId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `form_id` | `string` | Yes | — |
@@ -1623,9 +1512,6 @@ await corsair.insightoai.api.providers.createProvider({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `org_id` | `string` | No | — |
 | `status` | `boolean` | No | — |
@@ -1677,9 +1563,6 @@ await corsair.insightoai.api.providers.deleteProviderById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `provider_id` | `string` | Yes | — |
 
 
@@ -1716,9 +1599,6 @@ await corsair.insightoai.api.providers.getProviderById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `provider_id` | `string` | Yes | — |
 
 
@@ -1755,9 +1635,6 @@ await corsair.insightoai.api.providers.getSpeechtotextList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -1795,9 +1672,6 @@ await corsair.insightoai.api.providers.retrieveListOfUserCustomVoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -1837,9 +1711,6 @@ await corsair.insightoai.api.tools.createToolfunction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `details` | `object` | No | — |
 | `tool_id` | `string` | No | — |
@@ -1891,9 +1762,6 @@ await corsair.insightoai.api.tools.deleteToolById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 
 
@@ -1930,9 +1798,6 @@ await corsair.insightoai.api.tools.deleteToolfunctionById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `toolfunction_id` | `string` | Yes | — |
 
 
@@ -1969,9 +1834,6 @@ await corsair.insightoai.api.tools.readToolFunctionInvokeLogList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `conversation_id` | `string` | No | — |
@@ -2010,9 +1872,6 @@ await corsair.insightoai.api.tools.readToolToolfunctionList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `tool_id` | `string` | Yes | — |
@@ -2051,9 +1910,6 @@ await corsair.insightoai.api.tools.retrieveLinkedToolAndUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `tool_id` | `string` | Yes | — |
@@ -2092,9 +1948,6 @@ await corsair.insightoai.api.tools.updateLinkToolUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `link_tool_user_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `org_id` | `string` | No | — |
@@ -2154,9 +2007,6 @@ await corsair.insightoai.api.tools.updateToolById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tool_id` | `string` | Yes | — |
 | `sdk` | `object` | No | — |
 | `name` | `string` | No | — |
@@ -2231,9 +2081,6 @@ await corsair.insightoai.api.tools.updateToolfunctionById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `toolfunction_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `details` | `object` | No | — |
@@ -2288,9 +2135,6 @@ await corsair.insightoai.api.webhooksTelephony.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
 | `endpoint` | `string` | Yes | — |
@@ -2329,9 +2173,6 @@ await corsair.insightoai.api.webhooksTelephony.deleteTwilioAuthById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `twilio_auth_id` | `string` | Yes | — |
 
 
@@ -2368,9 +2209,6 @@ await corsair.insightoai.api.webhooksTelephony.deleteUserwhatsappById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userwhatsapp_id` | `string` | Yes | — |
 
 
@@ -2407,9 +2245,6 @@ await corsair.insightoai.api.webhooksTelephony.deleteWebhookById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -2446,9 +2281,6 @@ await corsair.insightoai.api.webhooksTelephony.readTwilioAuthList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 
@@ -2486,9 +2318,6 @@ await corsair.insightoai.api.webhooksTelephony.retrieveWebhookLog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `webhook_id` | `string` | Yes | — |
@@ -2527,9 +2356,6 @@ await corsair.insightoai.api.webhooksTelephony.updateTwilioAuthById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `twilio_auth_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `twilio_auth_token` | `string` | No | — |
@@ -2569,9 +2395,6 @@ await corsair.insightoai.api.webhooksTelephony.updateUserwhatsappById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userwhatsapp_id` | `string` | Yes | — |
 | `phone_number_id` | `string` | No | — |
 | `phone_business_id` | `string` | No | — |
@@ -2613,9 +2436,6 @@ await corsair.insightoai.api.webhooksTelephony.updateWebhookById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
@@ -2657,9 +2477,6 @@ await corsair.insightoai.api.widgets.createWidget({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `org_id` | `string` | No | — |
 | `attributes` | `object` | No | — |
@@ -2745,9 +2562,6 @@ await corsair.insightoai.api.widgets.deleteWidgetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `widget_id` | `string` | Yes | — |
 
 
@@ -2784,9 +2598,6 @@ await corsair.insightoai.api.widgets.getListOfConversations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `date_to` | `string` | Yes | — |
@@ -2829,9 +2640,6 @@ await corsair.insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 | `assistant_id` | `string` | Yes | — |
@@ -2870,9 +2678,6 @@ await corsair.insightoai.api.widgets.getWidgetById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `widget_id` | `string` | Yes | — |
 
 
@@ -2909,9 +2714,6 @@ await corsair.insightoai.api.widgets.listChannels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
 

@@ -28,9 +28,6 @@ const rows = await corsair.gitlab.db.branches.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `merged` | `boolean` | equals |
@@ -62,9 +59,6 @@ const rows = await corsair.gitlab.db.commits.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `short_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -99,9 +93,6 @@ const rows = await corsair.gitlab.db.groups.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -134,9 +125,6 @@ const rows = await corsair.gitlab.db.issues.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `iid` | `number` | equals, gt, gte, lt, lte, in |
@@ -175,9 +163,6 @@ const rows = await corsair.gitlab.db.labels.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -210,9 +195,6 @@ const rows = await corsair.gitlab.db.mergeRequests.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `iid` | `number` | equals, gt, gte, lt, lte, in |
@@ -255,9 +237,6 @@ const rows = await corsair.gitlab.db.milestones.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `iid` | `number` | equals, gt, gte, lt, lte, in |
@@ -292,9 +271,6 @@ const rows = await corsair.gitlab.db.pipelines.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `iid` | `number` | equals, gt, gte, lt, lte, in |
@@ -331,9 +307,6 @@ const rows = await corsair.gitlab.db.projects.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -375,9 +348,6 @@ const rows = await corsair.gitlab.db.releases.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `tag_name` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -407,9 +377,6 @@ const rows = await corsair.gitlab.db.users.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `username` | `string` | equals, contains, startsWith, endsWith, in |

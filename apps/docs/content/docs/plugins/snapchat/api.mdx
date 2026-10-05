@@ -31,9 +31,6 @@ await corsair.snapchat.api.actions.addSegmentUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `string[] \| string` | Yes | User identifiers (SHA-256 hashed email, phone, or mobile ad ID) |
 | `segment_id` | `string` | Yes | Unique identifier for segment_id |
 
@@ -71,9 +68,6 @@ await corsair.snapchat.api.actions.copyMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_copy` | `object[]` | Yes | Parameter media_copy |
 | `destination_ad_account_id` | `string` | Yes | Unique identifier for destination_ad_account_id |
 
@@ -121,9 +115,6 @@ await corsair.snapchat.api.actions.createAccountRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `roles` | `object[]` | Yes | Parameter roles |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -171,9 +162,6 @@ await corsair.snapchat.api.actions.createAdAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `adaccounts` | `object[]` | Yes | Parameter adaccounts |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -221,9 +209,6 @@ await corsair.snapchat.api.actions.createAdaccountsAudienceSizeV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `targeting` | `object` | Yes | Targeting or delivery specification for targeting |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -271,9 +256,6 @@ await corsair.snapchat.api.actions.createAdaccountsCreativeElements({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 | `creative_elements` | `object[]` | Yes | Parameter creative_elements |
 
@@ -321,9 +303,6 @@ await corsair.snapchat.api.actions.createAdaccountsDynamicTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `adaccount_id` | `string` | Yes | Unique identifier for adaccount_id |
 | `dynamic_templates` | `object[]` | Yes | Parameter dynamic_templates |
 
@@ -371,9 +350,6 @@ await corsair.snapchat.api.actions.createAdaccountsEventDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 | `event_details` | `object[]` | Yes | Parameter event_details |
 
@@ -421,9 +397,6 @@ await corsair.snapchat.api.actions.createAdaccountsInteractionZones({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 | `interaction_zones` | `object[]` | Yes | Parameter interaction_zones |
 
@@ -471,9 +444,6 @@ await corsair.snapchat.api.actions.createAdaccountsOfferDisclaimers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 | `offer_disclaimers` | `object[]` | Yes | Parameter offer_disclaimers |
 
@@ -521,9 +491,6 @@ await corsair.snapchat.api.actions.createAdaccountsReservedForecasting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 | `end_time` | `string \| Date` | Yes | Timestamp for end_time |
 | `targeting` | `object` | Yes | Targeting or delivery specification for targeting |
@@ -609,9 +576,6 @@ await corsair.snapchat.api.actions.createAdaccountsTargetingInsights({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 | `base_spec` | `object` | Yes | Targeting or delivery specification for base_spec |
 | `targeting_spec` | `object` | Yes | Targeting or delivery specification for targeting_spec |
@@ -668,9 +632,6 @@ await corsair.snapchat.api.actions.createAdSquad({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `adsquads` | `object[]` | Yes | Parameter adsquads |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
@@ -718,9 +679,6 @@ await corsair.snapchat.api.actions.createBillingCenter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billingcenters` | `object[]` | Yes | Parameter billingcenters |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -768,9 +726,6 @@ await corsair.snapchat.api.actions.createCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Value for name |
 | `start_time` | `string \| Date` | Yes | Timestamp for start_time |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
@@ -809,9 +764,6 @@ await corsair.snapchat.api.actions.createCatalogRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `roles` | `object[]` | Yes | Parameter roles |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
@@ -859,9 +811,6 @@ await corsair.snapchat.api.actions.createCatalogsFacets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `facets` | `object[]` | Yes | Parameter facets |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
@@ -909,9 +858,6 @@ await corsair.snapchat.api.actions.createCatalogsFlightsSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -948,9 +894,6 @@ await corsair.snapchat.api.actions.createCatalogsProductFeeds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Value for name |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 | `default_currency` | `string` | Yes | Value for default_currency |
@@ -989,9 +932,6 @@ await corsair.snapchat.api.actions.createCatalogsProductSets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Value for name |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
@@ -1029,9 +969,6 @@ await corsair.snapchat.api.actions.createMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media` | `object[]` | Yes | Parameter media |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -1079,9 +1016,6 @@ await corsair.snapchat.api.actions.createOrganizationsCatalogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalogs` | `object[]` | Yes | Parameter catalogs |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -1129,9 +1063,6 @@ await corsair.snapchat.api.actions.createOrgRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `roles` | `object[]` | Yes | Parameter roles |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -1179,9 +1110,6 @@ await corsair.snapchat.api.actions.createSegment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segments` | `object[]` | Yes | Parameter segments |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -1229,9 +1157,6 @@ await corsair.snapchat.api.actions.deleteAdaccountsOfferDisclaimers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 | `offer_disclaimer_id` | `string` | Yes | Unique identifier for offer_disclaimer_id |
 
@@ -1269,9 +1194,6 @@ await corsair.snapchat.api.actions.deleteAdsquads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 
 
@@ -1308,9 +1230,6 @@ await corsair.snapchat.api.actions.deleteAllSegmentUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment_id` | `string` | Yes | Unique identifier for segment_id |
 
 
@@ -1347,9 +1266,6 @@ await corsair.snapchat.api.actions.deleteCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -1386,9 +1302,6 @@ await corsair.snapchat.api.actions.deleteCatalogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -1425,9 +1338,6 @@ await corsair.snapchat.api.actions.deleteEventDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_details_id` | `string` | Yes | Unique identifier for event_details_id |
 
 
@@ -1464,9 +1374,6 @@ await corsair.snapchat.api.actions.deleteMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `member_id` | `string` | Yes | Unique identifier for member_id |
 
 
@@ -1503,9 +1410,6 @@ await corsair.snapchat.api.actions.deleteProductFeeds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_feed_id` | `string` | Yes | Unique identifier for product_feed_id |
 
 
@@ -1542,9 +1446,6 @@ await corsair.snapchat.api.actions.deleteRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role_id` | `string` | Yes | Unique identifier for role_id |
 
 
@@ -1581,9 +1482,6 @@ await corsair.snapchat.api.actions.deleteSegment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment_id` | `string` | Yes | Unique identifier for segment_id |
 
 
@@ -1620,9 +1518,6 @@ await corsair.snapchat.api.actions.deleteSegmentUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `string[] \| string` | Yes | User identifiers (SHA-256 hashed email, phone, or mobile ad ID) |
 | `segment_id` | `string` | Yes | Unique identifier for segment_id |
 
@@ -1660,9 +1555,6 @@ await corsair.snapchat.api.actions.getAdAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1699,9 +1591,6 @@ await corsair.snapchat.api.actions.getAdaccountsAdsquads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1738,9 +1627,6 @@ await corsair.snapchat.api.actions.getAdaccountsAdSquadUiRenderData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1777,9 +1663,6 @@ await corsair.snapchat.api.actions.getAdaccountsDynamicTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1816,9 +1699,6 @@ await corsair.snapchat.api.actions.getAdaccountsEventDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1855,9 +1735,6 @@ await corsair.snapchat.api.actions.getAdaccountsInteractionZones({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1894,9 +1771,6 @@ await corsair.snapchat.api.actions.getAdAccountsLeadGenerationForms({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -1933,9 +1807,6 @@ await corsair.snapchat.api.actions.getAdaccountsLeadsReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 | `report_run_id` | `string` | Yes | Unique identifier for report_run_id |
 
@@ -1973,9 +1844,6 @@ await corsair.snapchat.api.actions.getAdaccountsMobileApps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -2012,9 +1880,6 @@ await corsair.snapchat.api.actions.getAdaccountsOfferDisclaimers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -2051,9 +1916,6 @@ await corsair.snapchat.api.actions.getAdaccountsSpendGuidance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -2090,9 +1952,6 @@ await corsair.snapchat.api.actions.getAdAccountsStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -2129,9 +1988,6 @@ await corsair.snapchat.api.actions.getAdaccountsStatsReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 | `report_run_id` | `string` | Yes | Unique identifier for report_run_id |
 
@@ -2169,9 +2025,6 @@ await corsair.snapchat.api.actions.getAdSquad({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -2208,9 +2061,6 @@ await corsair.snapchat.api.actions.getAdSquadRestrictions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -2247,9 +2097,6 @@ await corsair.snapchat.api.actions.getAdsquadsAudienceSizeV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -2286,9 +2133,6 @@ await corsair.snapchat.api.actions.getAdsquadsStatsReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 | `report_run_id` | `string` | Yes | Unique identifier for report_run_id |
 
@@ -2326,9 +2170,6 @@ await corsair.snapchat.api.actions.getAdSquadStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -2365,9 +2206,6 @@ await corsair.snapchat.api.actions.getAdSquadTargeting({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -2404,9 +2242,6 @@ await corsair.snapchat.api.actions.getAdStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_id` | `string` | Yes | Unique identifier for ad_id |
 
 
@@ -2473,9 +2308,6 @@ await corsair.snapchat.api.actions.getBillingCenter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billing_center_id` | `string` | Yes | Unique identifier for billing_center_id |
 
 
@@ -2512,9 +2344,6 @@ await corsair.snapchat.api.actions.getCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -2551,9 +2380,6 @@ await corsair.snapchat.api.actions.getCampaignChangelog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -2590,9 +2416,6 @@ await corsair.snapchat.api.actions.getCampaignsByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_ids` | `string[] \| string` | Yes | List of entity identifiers or single identifier |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -2630,9 +2453,6 @@ await corsair.snapchat.api.actions.getCampaignStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -2669,9 +2489,6 @@ await corsair.snapchat.api.actions.getCatalogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -2708,9 +2525,6 @@ await corsair.snapchat.api.actions.getCatalogsProductSets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -2747,9 +2561,6 @@ await corsair.snapchat.api.actions.getDynamicTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 
 
@@ -2786,9 +2597,6 @@ await corsair.snapchat.api.actions.getDynamicTemplatesExternalChangelogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dynamic_template_id` | `string` | Yes | Unique identifier for dynamic_template_id |
 
 
@@ -2825,9 +2633,6 @@ await corsair.snapchat.api.actions.getEventDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_details_id` | `string` | Yes | Unique identifier for event_details_id |
 
 
@@ -2864,9 +2669,6 @@ await corsair.snapchat.api.actions.getFundingSource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `funding_source_id` | `string` | Yes | Unique identifier for funding_source_id |
 
 
@@ -2903,9 +2705,6 @@ await corsair.snapchat.api.actions.getInteractionZone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interaction_zone_id` | `string` | Yes | Unique identifier for interaction_zone_id |
 
 
@@ -2942,9 +2741,6 @@ await corsair.snapchat.api.actions.getInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoice_id` | `string` | Yes | Unique identifier for invoice_id |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -2982,9 +2778,6 @@ await corsair.snapchat.api.actions.getMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | Unique identifier for media_id |
 
 
@@ -3021,9 +2814,6 @@ await corsair.snapchat.api.actions.getMediaByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_ids` | `string[] \| string` | Yes | List of entity identifiers or single identifier |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -3061,9 +2851,6 @@ await corsair.snapchat.api.actions.getMediaStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | Unique identifier for media_id |
 
 
@@ -3100,9 +2887,6 @@ await corsair.snapchat.api.actions.getMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `member_id` | `string` | Yes | Unique identifier for member_id |
 
 
@@ -3139,9 +2923,6 @@ await corsair.snapchat.api.actions.getOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -3178,9 +2959,6 @@ await corsair.snapchat.api.actions.getOrganizationsCatalogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -3217,9 +2995,6 @@ await corsair.snapchat.api.actions.getOrganizationsMobileApps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -3256,9 +3031,6 @@ await corsair.snapchat.api.actions.getOrganizationsPublicProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -3295,9 +3067,6 @@ await corsair.snapchat.api.actions.getPixels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -3334,9 +3103,6 @@ await corsair.snapchat.api.actions.getProductFeeds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_feed_id` | `string` | Yes | Unique identifier for product_feed_id |
 
 
@@ -3373,9 +3139,6 @@ await corsair.snapchat.api.actions.getProductFeedsFeedUploads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_feed_id` | `string` | Yes | Unique identifier for product_feed_id |
 
 
@@ -3412,9 +3175,6 @@ await corsair.snapchat.api.actions.getProductSets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | Unique identifier for id |
 
 
@@ -3451,9 +3211,6 @@ await corsair.snapchat.api.actions.getSegment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment_id` | `string` | Yes | Unique identifier for segment_id |
 
 
@@ -3490,9 +3247,6 @@ await corsair.snapchat.api.actions.getTargetingCarriers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3529,9 +3283,6 @@ await corsair.snapchat.api.actions.getTargetingConnectionTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3568,9 +3319,6 @@ await corsair.snapchat.api.actions.getTargetingDemographicsAdvancedDemographics(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3607,9 +3355,6 @@ await corsair.snapchat.api.actions.getTargetingDemographicsAgeGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3646,9 +3391,6 @@ await corsair.snapchat.api.actions.getTargetingDemographicsGender({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3685,9 +3427,6 @@ await corsair.snapchat.api.actions.getTargetingDemographicsLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3724,9 +3463,6 @@ await corsair.snapchat.api.actions.getTargetingDeviceIosOsVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3763,9 +3499,6 @@ await corsair.snapchat.api.actions.getTargetingDeviceMarketingNames({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3802,9 +3535,6 @@ await corsair.snapchat.api.actions.getTargetingGeoPostalCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -3841,9 +3571,6 @@ await corsair.snapchat.api.actions.getTargetingGeoRegion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4060,9 +3787,6 @@ await corsair.snapchat.api.actions.getTargetingInterestsPlc({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4099,9 +3823,6 @@ await corsair.snapchat.api.actions.getTargetingLocationCategoriesLoi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4138,9 +3859,6 @@ await corsair.snapchat.api.actions.getTargetingMetros({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4237,9 +3955,6 @@ await corsair.snapchat.api.actions.getTargetingV1InterestsScLs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4276,9 +3991,6 @@ await corsair.snapchat.api.actions.getTargetingV1InterestsShp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | Value for country_code |
 
 
@@ -4375,9 +4087,6 @@ await corsair.snapchat.api.actions.listAccountRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4414,9 +4123,6 @@ await corsair.snapchat.api.actions.listAdAccounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -4453,9 +4159,6 @@ await corsair.snapchat.api.actions.listAdsByAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4492,9 +4195,6 @@ await corsair.snapchat.api.actions.listAdsByAdSquad({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_squad_id` | `string` | Yes | Unique identifier for ad_squad_id |
 
 
@@ -4531,9 +4231,6 @@ await corsair.snapchat.api.actions.listAdsByCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -4570,9 +4267,6 @@ await corsair.snapchat.api.actions.listAdSquads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
 
@@ -4609,9 +4303,6 @@ await corsair.snapchat.api.actions.listBillingCenters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -4648,9 +4339,6 @@ await corsair.snapchat.api.actions.listCampaigns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4687,9 +4375,6 @@ await corsair.snapchat.api.actions.listCatalogRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -4726,9 +4411,6 @@ await corsair.snapchat.api.actions.listCreatives({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4765,9 +4447,6 @@ await corsair.snapchat.api.actions.listFundingSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -4804,9 +4483,6 @@ await corsair.snapchat.api.actions.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4843,9 +4519,6 @@ await corsair.snapchat.api.actions.listMedia({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -4882,9 +4555,6 @@ await corsair.snapchat.api.actions.listMemberRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `member_id` | `string` | Yes | Unique identifier for member_id |
 
 
@@ -4921,9 +4591,6 @@ await corsair.snapchat.api.actions.listMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -4990,9 +4657,6 @@ await corsair.snapchat.api.actions.listOrgPixels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -5029,9 +4693,6 @@ await corsair.snapchat.api.actions.listOrgRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -5068,9 +4729,6 @@ await corsair.snapchat.api.actions.listPhoneNumbers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -5107,9 +4765,6 @@ await corsair.snapchat.api.actions.listSegments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
 
@@ -5176,9 +4831,6 @@ await corsair.snapchat.api.actions.listTransactions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
 
@@ -5215,9 +4867,6 @@ await corsair.snapchat.api.actions.searchAdsLibrarySponsoredContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `creator_name` | `string` | Yes | Value for creator_name |
 
 
@@ -5254,9 +4903,6 @@ await corsair.snapchat.api.actions.searchCatalogProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -5293,9 +4939,6 @@ await corsair.snapchat.api.actions.searchCatalogsHotels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `catalog_id` | `string` | Yes | Unique identifier for catalog_id |
 
 
@@ -5332,9 +4975,6 @@ await corsair.snapchat.api.actions.updateAdAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `adaccounts` | `object[]` | Yes | Parameter adaccounts |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -5382,9 +5022,6 @@ await corsair.snapchat.api.actions.updateAdSquad({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `adsquads` | `object[]` | Yes | Parameter adsquads |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 
@@ -5432,9 +5069,6 @@ await corsair.snapchat.api.actions.updateBillingCenter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billingcenters` | `object[]` | Yes | Parameter billingcenters |
 | `organization_id` | `string` | Yes | Unique identifier for organization_id |
 
@@ -5482,9 +5116,6 @@ await corsair.snapchat.api.actions.updateCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaign_id` | `string` | Yes | Unique identifier for campaign_id |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -5522,9 +5153,6 @@ await corsair.snapchat.api.actions.updateSegment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segments` | `object[]` | Yes | Parameter segments |
 | `ad_account_id` | `string` | Yes | Unique identifier for ad_account_id |
 
@@ -5572,9 +5200,6 @@ await corsair.snapchat.api.actions.uploadMediaMultipart({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `media_id` | `string` | Yes | Unique identifier for media_id |
 
 
@@ -5611,9 +5236,6 @@ await corsair.snapchat.api.actions.validateConversionEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `events` | `object` | Yes | Conversion events array, object, or string to validate |
 | `pixel_id` | `string` | Yes | Unique identifier for pixel_id |
 

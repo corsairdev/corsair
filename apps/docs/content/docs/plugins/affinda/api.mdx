@@ -31,9 +31,6 @@ await corsair.affinda.api.annotations.batchUpdateAnnotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `annotations` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -81,9 +78,6 @@ await corsair.affinda.api.annotations.createBatchAnnotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `annotations` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -131,9 +125,6 @@ await corsair.affinda.api.annotations.deleteAnnotationsBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `annotation_ids` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -181,9 +172,6 @@ await corsair.affinda.api.annotations.getAnnotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `document` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -231,9 +219,6 @@ await corsair.affinda.api.annotations.updateAnnotation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `raw` | `string` | No | — |
 | `field` | `string` | No | — |
@@ -293,9 +278,6 @@ await corsair.affinda.api.apiUsers.createApiUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `avatar` | `string` | No | — |
@@ -347,9 +329,6 @@ await corsair.affinda.api.apiUsers.getAllApiUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization` | `string` | No | — |
@@ -401,9 +380,6 @@ await corsair.affinda.api.collections.createCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `extractor` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -453,9 +429,6 @@ await corsair.affinda.api.collections.createDataFieldForCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `field` | `object` | Yes | — |
 | `dataPoint` | `object` | Yes | — |
 | `identifier` | `string` | Yes | — |
@@ -522,9 +495,6 @@ await corsair.affinda.api.collections.deleteCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -572,9 +542,6 @@ await corsair.affinda.api.collections.getCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -622,9 +589,6 @@ await corsair.affinda.api.collections.getCollectionFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `datapoint_identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -673,9 +637,6 @@ await corsair.affinda.api.collections.getCollections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `workspace` | `string` | Yes | — |
@@ -725,9 +686,6 @@ await corsair.affinda.api.collections.getCollectionUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `end` | `string` | No | — |
 | `start` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
@@ -777,9 +735,6 @@ await corsair.affinda.api.collections.updateCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -828,9 +783,6 @@ await corsair.affinda.api.collections.updateDataFieldForCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | No | — |
 | `mapping` | `string` | No | — |
 | `fieldType` | `string` | No | — |
@@ -891,9 +843,6 @@ await corsair.affinda.api.dataPointChoices.createDataPointChoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
 | `synonyms` | `any[]` | No | — |
@@ -947,9 +896,6 @@ await corsair.affinda.api.dataPointChoices.getDataPointChoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -997,9 +943,6 @@ await corsair.affinda.api.dataPointChoices.listDataPointChoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1051,9 +994,6 @@ await corsair.affinda.api.dataPointChoices.replaceDataPointChoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `choices` | `any[]` | Yes | — |
 | `dataPoint` | `string` | Yes | — |
 | `collection` | `string` | No | — |
@@ -1104,9 +1044,6 @@ await corsair.affinda.api.dataPointChoices.updateDataPointChoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `label` | `string` | No | — |
 | `value` | `string` | No | — |
@@ -1163,9 +1100,6 @@ await corsair.affinda.api.dataPoints.createDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `noRect` | `boolean` | No | — |
@@ -1223,9 +1157,6 @@ await corsair.affinda.api.dataPoints.deleteDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1273,9 +1204,6 @@ await corsair.affinda.api.dataPoints.getDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1323,9 +1251,6 @@ await corsair.affinda.api.dataPoints.listDataPoints({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `slug` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -1381,9 +1306,6 @@ await corsair.affinda.api.dataPoints.updateDataPoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -1438,9 +1360,6 @@ await corsair.affinda.api.dataSources.createDataSource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `schema` | `object` | No | — |
 | `values` | `any[]` | No | — |
@@ -1503,9 +1422,6 @@ await corsair.affinda.api.dataSources.createDataSourceValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | No | — |
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
@@ -1556,9 +1472,6 @@ await corsair.affinda.api.dataSources.deleteDataSource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1606,9 +1519,6 @@ await corsair.affinda.api.dataSources.deleteDataSourceValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1657,9 +1567,6 @@ await corsair.affinda.api.dataSources.getDataSource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1707,9 +1614,6 @@ await corsair.affinda.api.dataSources.getDataSourceValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1758,9 +1662,6 @@ await corsair.affinda.api.dataSources.getDataSourceValues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1813,9 +1714,6 @@ await corsair.affinda.api.dataSources.listDataSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -1868,9 +1766,6 @@ await corsair.affinda.api.dataSources.replaceDataSourceValues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `values` | `any[]` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1919,9 +1814,6 @@ await corsair.affinda.api.dataSources.updateDataSourceValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `label` | `string` | No | — |
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
@@ -1974,9 +1866,6 @@ await corsair.affinda.api.documents.addTagToDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `number` | Yes | — |
 | `identifiers` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
@@ -2025,9 +1914,6 @@ await corsair.affinda.api.documents.createDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `file` | `object` | No | — |
 | `wait` | `boolean` | No | — |
@@ -2093,9 +1979,6 @@ await corsair.affinda.api.documents.createFromDataDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `string` | Yes | — |
 | `wait` | `boolean` | No | — |
 | `language` | `string` | No | — |
@@ -2152,9 +2035,6 @@ await corsair.affinda.api.documents.deleteDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2202,9 +2082,6 @@ await corsair.affinda.api.documents.getDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2252,9 +2129,6 @@ await corsair.affinda.api.documents.getDocumentRedacted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2302,9 +2176,6 @@ await corsair.affinda.api.documents.getDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `boolean` | No | — |
 | `limit` | `number` | No | — |
 | `ready` | `boolean` | No | — |
@@ -2363,9 +2234,6 @@ await corsair.affinda.api.documents.removeTagFromDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `number` | Yes | — |
 | `identifiers` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
@@ -2414,9 +2282,6 @@ await corsair.affinda.api.documents.updateDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileName` | `string` | No | — |
 | `language` | `string` | No | — |
 | `workspace` | `string` | No | — |
@@ -2481,9 +2346,6 @@ await corsair.affinda.api.documents.updateDocumentData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2542,9 +2404,6 @@ await corsair.affinda.api.documentSplitters.getAllDocumentSplitters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `organization` | `string` | No | — |
@@ -2595,9 +2454,6 @@ await corsair.affinda.api.documentSplitters.getDocumentSplitter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2647,9 +2503,6 @@ await corsair.affinda.api.documentTypes.createDocumentType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `organization` | `string` | Yes | — |
@@ -2699,9 +2552,6 @@ await corsair.affinda.api.documentTypes.deleteDocumentType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2749,9 +2599,6 @@ await corsair.affinda.api.documentTypes.getDocumentType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2799,9 +2646,6 @@ await corsair.affinda.api.documentTypes.getDocumentTypeJsonSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2850,9 +2694,6 @@ await corsair.affinda.api.documentTypes.getDocumentTypePydanticModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `model_name` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -2901,9 +2742,6 @@ await corsair.affinda.api.documentTypes.getDocumentTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -2950,9 +2788,6 @@ await corsair.affinda.api.documentTypes.updateDocumentType({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -3004,9 +2839,6 @@ await corsair.affinda.api.extractors.createExtractor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `category` | `string` | No | — |
 | `namePlural` | `string` | No | — |
@@ -3060,9 +2892,6 @@ await corsair.affinda.api.extractors.deleteExtractor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3110,9 +2939,6 @@ await corsair.affinda.api.extractors.getExtractor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3160,9 +2986,6 @@ await corsair.affinda.api.extractors.getExtractors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization` | `string` | Yes | — |
 | `include_public_extractors` | `boolean` | No | — |
 | `name` | `string` | No | — |
@@ -3213,9 +3036,6 @@ await corsair.affinda.api.extractors.updateExtractor({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `category` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
@@ -3271,9 +3091,6 @@ await corsair.affinda.api.indexes.createIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `docType` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -3322,9 +3139,6 @@ await corsair.affinda.api.indexes.deleteIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3372,9 +3186,6 @@ await corsair.affinda.api.indexes.getIndexDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -3424,9 +3235,6 @@ await corsair.affinda.api.indexes.listIndexes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -3477,9 +3285,6 @@ await corsair.affinda.api.indexes.updateIndex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `new_name` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -3530,9 +3335,6 @@ await corsair.affinda.api.invitations.createInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | No | — |
 | `email` | `string` | Yes | — |
 | `organization` | `string` | Yes | — |
@@ -3582,9 +3384,6 @@ await corsair.affinda.api.invitations.deleteInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3632,9 +3431,6 @@ await corsair.affinda.api.invitations.getAllInvitations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -3686,9 +3482,6 @@ await corsair.affinda.api.invitations.getInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3736,9 +3529,6 @@ await corsair.affinda.api.invitations.updateInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -3789,9 +3579,6 @@ await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `resume` | `string` | No | — |
@@ -3870,9 +3657,6 @@ await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `configOverride` | `object` | No | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -3928,9 +3712,6 @@ await corsair.affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -3977,9 +3758,6 @@ await corsair.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `number` | No | — |
 | `actions` | `any[]` | No | — |
 | `indices` | `any[]` | No | — |
@@ -4066,9 +3844,6 @@ await corsair.affinda.api.mappings.createMapping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orderBy` | `string` | No | — |
 | `dataSource` | `string` | Yes | — |
 | `scoreCutoff` | `number` | No | — |
@@ -4119,9 +3894,6 @@ await corsair.affinda.api.mappings.deleteMapping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4169,9 +3941,6 @@ await corsair.affinda.api.mappings.getMapping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4219,9 +3988,6 @@ await corsair.affinda.api.mappings.listMappings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `mappingDataSource` | `string` | Yes | — |
@@ -4271,9 +4037,6 @@ await corsair.affinda.api.mappings.updateMapping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orderBy` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `scoreCutoff` | `number` | No | — |
@@ -4325,9 +4088,6 @@ await corsair.affinda.api.occupationGroups.listOccupationGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4376,9 +4136,6 @@ await corsair.affinda.api.organizationMemberships.getAllOrganizationMemberships(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -4429,9 +4186,6 @@ await corsair.affinda.api.organizationMemberships.getOrganizationMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4479,9 +4233,6 @@ await corsair.affinda.api.organizationMemberships.updateOrganizationMembership({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -4532,9 +4283,6 @@ await corsair.affinda.api.organizations.createOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4582,9 +4330,6 @@ await corsair.affinda.api.organizations.deleteOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4632,9 +4377,6 @@ await corsair.affinda.api.organizations.getOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4682,9 +4424,6 @@ await corsair.affinda.api.organizations.getOrganizations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -4731,9 +4470,6 @@ await corsair.affinda.api.organizations.updateOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `avatar` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
@@ -4795,9 +4531,6 @@ await corsair.affinda.api.resthooks.createResthookSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event` | `string` | No | — |
 | `targetUrl` | `string` | Yes | — |
 | `organization` | `string` | Yes | — |
@@ -4847,9 +4580,6 @@ await corsair.affinda.api.resthooks.deleteResthookSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4897,9 +4627,6 @@ await corsair.affinda.api.resthooks.getResthookSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -4947,9 +4674,6 @@ await corsair.affinda.api.resthooks.getResthookSubscriptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
@@ -4998,9 +4722,6 @@ await corsair.affinda.api.resthooks.updateResthookSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event` | `string` | No | — |
 | `active` | `boolean` | No | — |
 | `targetUrl` | `string` | No | — |
@@ -5053,9 +4774,6 @@ await corsair.affinda.api.resumeSearch.createResumeSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `resume` | `string` | No | — |
@@ -5143,9 +4861,6 @@ await corsair.affinda.api.resumeSearch.createResumeSearchEmbedUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `configOverride` | `object` | No | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5201,9 +4916,6 @@ await corsair.affinda.api.resumeSearch.listResumeSearchConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -5250,9 +4962,6 @@ await corsair.affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_titles` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5300,9 +5009,6 @@ await corsair.affinda.api.resumeSearch.listResumeSearchSkillSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `skills` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5350,9 +5056,6 @@ await corsair.affinda.api.resumeSearch.updateResumeSearchConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `number` | No | — |
 | `actions` | `any[]` | No | — |
 | `indices` | `any[]` | No | — |
@@ -5439,9 +5142,6 @@ await corsair.affinda.api.tags.createTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -5490,9 +5190,6 @@ await corsair.affinda.api.tags.deleteTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5540,9 +5237,6 @@ await corsair.affinda.api.tags.getAllTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -5593,9 +5287,6 @@ await corsair.affinda.api.tags.getTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5643,9 +5334,6 @@ await corsair.affinda.api.tags.updateTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `workspace` | `string` | No | — |
@@ -5697,9 +5385,6 @@ await corsair.affinda.api.validation.splitDocumentPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `splits` | `any[]` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -5750,9 +5435,6 @@ await corsair.affinda.api.validationResults.createValidationResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `passed` | `boolean` | No | — |
 | `message` | `string` | Yes | — |
 | `document` | `string` | Yes | — |
@@ -5804,9 +5486,6 @@ await corsair.affinda.api.validationResults.createValidationResultsBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `validation_results` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5854,9 +5533,6 @@ await corsair.affinda.api.validationResults.deleteValidationResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -5904,9 +5580,6 @@ await corsair.affinda.api.validationResults.getAllValidationResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `document` | `string` | Yes | — |
@@ -5958,9 +5631,6 @@ await corsair.affinda.api.workspaceMemberships.createWorkspaceMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -6009,9 +5679,6 @@ await corsair.affinda.api.workspaceMemberships.deleteWorkspaceMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -6059,9 +5726,6 @@ await corsair.affinda.api.workspaceMemberships.getAllWorkspaceMemberships({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -6112,9 +5776,6 @@ await corsair.affinda.api.workspaceMemberships.getWorkspaceMembership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -6164,9 +5825,6 @@ await corsair.affinda.api.workspaces.createWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `visibility` | `string` | No | — |
 | `organization` | `string` | Yes | — |
@@ -6217,9 +5875,6 @@ await corsair.affinda.api.workspaces.deleteWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -6267,9 +5922,6 @@ await corsair.affinda.api.workspaces.getUsageByWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `end` | `string` | No | — |
 | `start` | `string` | No | — |
 | `workspace_id` | `string` | Yes | — |
@@ -6319,9 +5971,6 @@ await corsair.affinda.api.workspaces.getWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -6369,9 +6018,6 @@ await corsair.affinda.api.workspaces.getWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -6420,9 +6066,6 @@ await corsair.affinda.api.workspaces.updateWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `visibility` | `string` | No | — |
 | `workspace_id` | `string` | Yes | — |

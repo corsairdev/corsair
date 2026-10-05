@@ -31,9 +31,6 @@ await corsair.tinyurl.api.urls.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The long URL to be shortened |
 | `domain` | `string` | No | Domain to use for the shortened URL (e.g. tinyurl.com) |
 | `alias` | `string` | No | Optional custom alias for the shortened URL |
@@ -48,9 +45,6 @@ await corsair.tinyurl.api.urls.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 | `alias` | `string` | Yes | — |
 | `deleted` | `boolean` | No | — |
@@ -96,9 +90,6 @@ await corsair.tinyurl.api.urls.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `available \| archived` | Yes | URL list type for GET /urls/{type} |
 | `page` | `number` | No | Page number for pagination |
 | `limit` | `number` | No | Results per page (1-100) |
@@ -114,9 +105,6 @@ await corsair.tinyurl.api.urls.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `code` | `number` | No | — |
 | `errors` | `any[]` | No | — |

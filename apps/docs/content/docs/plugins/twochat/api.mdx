@@ -34,9 +34,6 @@ await corsair.twochat.api.account.getApiUsageInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `account` | `object` | No | — |
 | `limits` | `object` | No | — |
@@ -103,9 +100,6 @@ await corsair.twochat.api.account.testApiKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `account` | `object` | No | — |
 | `limits` | `object` | No | — |
@@ -171,9 +165,6 @@ await corsair.twochat.api.contacts.createContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first_name` | `string` | Yes | First name of the new contact |
 | `last_name` | `string` | No | Last name of the new contact |
 | `profile_pic_url` | `string` | No | Publicly accessible URL to the contact profile picture |
@@ -199,9 +190,6 @@ await corsair.twochat.api.contacts.createContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `contact` | `object` | Yes | — |
 
@@ -258,9 +246,6 @@ await corsair.twochat.api.contacts.listContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_number` | `number` | Yes | Zero-based page number for pagination |
 | `results_per_page` | `number` | Yes | Number of contacts per page (1–100) |
 
@@ -271,9 +256,6 @@ await corsair.twochat.api.contacts.listContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `page` | `number` | Yes | — |
 | `count` | `number` | Yes | — |
@@ -337,9 +319,6 @@ await corsair.twochat.api.webhookSubscriptions.listWebhooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `webhooks` | `object[]` | Yes | — |
 

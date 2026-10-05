@@ -31,9 +31,6 @@ await corsair.studiobyai21labs.api.chat.completions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `tools` | `object[]` | No | — |
@@ -108,9 +105,6 @@ await corsair.studiobyai21labs.api.chat.completions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `choices` | `object[]` | Yes | — |
 | `usage` | `object` | No | — |
@@ -166,9 +160,6 @@ await corsair.studiobyai21labs.api.library.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -195,9 +186,6 @@ await corsair.studiobyai21labs.api.library.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -224,9 +212,6 @@ await corsair.studiobyai21labs.api.library.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -236,9 +221,6 @@ await corsair.studiobyai21labs.api.library.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `size` | `number` | No | — |
@@ -268,9 +250,6 @@ await corsair.studiobyai21labs.api.library.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `path` | `string` | No | — |
 | `status` | `DB_RECORD_CREATED \| UPLOADED \| UPLOAD_FAILED \| PROCESSED \| PROCESSING_FAILED` | No | — |
@@ -319,9 +298,6 @@ await corsair.studiobyai21labs.api.library.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `publicUrl` | `string` | No | — |
 | `labels` | `string[]` | No | — |
@@ -350,9 +326,6 @@ await corsair.studiobyai21labs.api.library.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string \| custom` | No | — |
 | `fileName` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -366,9 +339,6 @@ await corsair.studiobyai21labs.api.library.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -394,9 +364,6 @@ await corsair.studiobyai21labs.api.maestro.createRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `input` | `object[]` | Yes | — |
 | `system_prompt` | `string` | No | — |
 | `requirements` | `object[]` | No | — |
@@ -472,9 +439,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `completed \| failed \| in_progress` | No | — |
 | `result` | `any` | No | — |
@@ -536,9 +500,6 @@ await corsair.studiobyai21labs.api.maestro.retrieveRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -548,9 +509,6 @@ await corsair.studiobyai21labs.api.maestro.retrieveRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `status` | `completed \| failed \| in_progress` | No | — |
 | `result` | `any` | No | — |

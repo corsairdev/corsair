@@ -31,9 +31,6 @@ await corsair.circleci.api.contexts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `ownerId` | `string` | Yes | — |
 | `ownerType` | `organization \| account` | No | — |
@@ -45,9 +42,6 @@ await corsair.circleci.api.contexts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -73,9 +67,6 @@ await corsair.circleci.api.contexts.createRestriction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `restrictionType` | `project \| expression \| group` | Yes | — |
 | `restrictionValue` | `string` | Yes | — |
@@ -87,9 +78,6 @@ await corsair.circleci.api.contexts.createRestriction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `context_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -118,9 +106,6 @@ await corsair.circleci.api.contexts.deleteRestriction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `restrictionId` | `string` | Yes | — |
 
@@ -158,9 +143,6 @@ await corsair.circleci.api.contexts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 
 
@@ -170,9 +152,6 @@ await corsair.circleci.api.contexts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -198,9 +177,6 @@ await corsair.circleci.api.contexts.listEnvVars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `pageToken` | `string` | No | — |
 
@@ -211,9 +187,6 @@ await corsair.circleci.api.contexts.listEnvVars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -253,9 +226,6 @@ await corsair.circleci.api.contexts.upsertEnvVar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `variable` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -267,9 +237,6 @@ await corsair.circleci.api.contexts.upsertEnvVar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `variable` | `string` | No | — |
 | `truncated_value` | `string` | No | — |
 | `context_id` | `string` | No | — |
@@ -299,9 +266,6 @@ await corsair.circleci.api.contextsGraphQL.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextName` | `string` | Yes | — |
 | `ownerId` | `string` | Yes | — |
 | `ownerType` | `organization \| account` | Yes | — |
@@ -313,9 +277,6 @@ await corsair.circleci.api.contextsGraphQL.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -341,9 +302,6 @@ await corsair.circleci.api.contextsGraphQL.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 
 
@@ -380,9 +338,6 @@ await corsair.circleci.api.contextsGraphQL.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 
 
@@ -392,9 +347,6 @@ await corsair.circleci.api.contextsGraphQL.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `createdAt` | `string` | No | — |
@@ -420,9 +372,6 @@ await corsair.circleci.api.contextsGraphQL.removeEnvVar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `variable` | `string` | Yes | — |
 
@@ -460,9 +409,6 @@ await corsair.circleci.api.contextsGraphQL.storeEnvVar({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contextId` | `string` | Yes | — |
 | `variable` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -503,9 +449,6 @@ await corsair.circleci.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -517,9 +460,6 @@ await corsair.circleci.api.groups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -545,9 +485,6 @@ await corsair.circleci.api.groups.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `groupId` | `string` | Yes | — |
 
@@ -585,9 +522,6 @@ await corsair.circleci.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `groupId` | `string` | Yes | — |
 
@@ -598,9 +532,6 @@ await corsair.circleci.api.groups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -626,9 +557,6 @@ await corsair.circleci.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `pageToken` | `string` | No | — |
@@ -640,9 +568,6 @@ await corsair.circleci.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 | `total_count` | `number` | No | — |
@@ -683,9 +608,6 @@ await corsair.circleci.api.insights.branches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `workflowName` | `string` | No | — |
 
@@ -723,9 +645,6 @@ await corsair.circleci.api.insights.flakyTests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 
 
@@ -762,9 +681,6 @@ await corsair.circleci.api.insights.orgSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlug` | `string` | Yes | — |
 | `reportingWindow` | `string` | No | — |
 | `projectNames` | `string[]` | No | — |
@@ -803,9 +719,6 @@ await corsair.circleci.api.insights.pagesSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `reportingWindow` | `string` | No | — |
 | `branches` | `string[]` | No | — |
@@ -845,9 +758,6 @@ await corsair.circleci.api.insights.planMetrics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlug` | `string` | Yes | — |
 | `reportingWindow` | `string` | No | — |
 | `projectNames` | `string[]` | No | — |
@@ -886,9 +796,6 @@ await corsair.circleci.api.insights.projectWorkflows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `reportingWindow` | `string` | No | — |
 | `branch` | `string` | No | — |
@@ -931,9 +838,6 @@ await corsair.circleci.api.jobs.getArtifacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vcsType` | `gh \| bb` | Yes | — |
 | `username` | `string` | Yes | — |
 | `project` | `string` | Yes | — |
@@ -977,9 +881,6 @@ await corsair.circleci.api.jobs.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vcsType` | `gh \| bb` | Yes | — |
 | `username` | `string` | Yes | — |
 | `project` | `string` | Yes | — |
@@ -992,9 +893,6 @@ await corsair.circleci.api.jobs.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `build_num` | `number` | No | — |
 | `branch` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1036,9 +934,6 @@ await corsair.circleci.api.jobs.getTestMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `vcsType` | `gh \| bb` | Yes | — |
 | `username` | `string` | Yes | — |
 | `project` | `string` | Yes | — |
@@ -1087,9 +982,6 @@ await corsair.circleci.api.namespace.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1126,9 +1018,6 @@ await corsair.circleci.api.namespace.deleteAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1165,9 +1054,6 @@ await corsair.circleci.api.namespace.queryExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1177,9 +1063,6 @@ await corsair.circleci.api.namespace.queryExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exists` | `boolean` | Yes | — |
 
 
@@ -1203,9 +1086,6 @@ await corsair.circleci.api.namespace.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `newName` | `string` | Yes | — |
 
@@ -1216,9 +1096,6 @@ await corsair.circleci.api.namespace.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -1245,9 +1122,6 @@ await corsair.circleci.api.orbAllowlist.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlugOrId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `prefix` | `string` | Yes | — |
@@ -1260,9 +1134,6 @@ await corsair.circleci.api.orbAllowlist.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `message` | `string` | No | — |
 
@@ -1287,9 +1158,6 @@ await corsair.circleci.api.orbAllowlist.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlugOrId` | `string` | Yes | — |
 | `entryId` | `string` | Yes | — |
 
@@ -1329,9 +1197,6 @@ await corsair.circleci.api.orbs.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1341,9 +1206,6 @@ await corsair.circleci.api.orbs.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `isPrivate` | `boolean` | No | — |
@@ -1382,9 +1244,6 @@ await corsair.circleci.api.orbs.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orbVersionRef` | `string` | Yes | — |
 
 
@@ -1394,9 +1253,6 @@ await corsair.circleci.api.orbs.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `version` | `string` | No | — |
 | `source` | `string` | No | — |
@@ -1422,9 +1278,6 @@ await corsair.circleci.api.orbs.listCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `number` | No | — |
 | `after` | `string` | No | — |
 
@@ -1435,9 +1288,6 @@ await corsair.circleci.api.orbs.listCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `pageInfo` | `object` | No | — |
 
@@ -1484,9 +1334,6 @@ await corsair.circleci.api.orbs.listNamespaceOrbs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespaceId` | `string` | No | — |
 | `certified` | `boolean` | No | — |
 | `private` | `boolean` | No | — |
@@ -1499,9 +1346,6 @@ await corsair.circleci.api.orbs.listNamespaceOrbs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `page` | `object` | No | — |
 
@@ -1550,9 +1394,6 @@ await corsair.circleci.api.orbs.listOrbs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `number` | No | — |
 | `after` | `string` | No | — |
 
@@ -1563,9 +1404,6 @@ await corsair.circleci.api.orbs.listOrbs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `pageInfo` | `object` | No | — |
 
@@ -1617,9 +1455,6 @@ await corsair.circleci.api.orbs.queryCategoryId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1629,9 +1464,6 @@ await corsair.circleci.api.orbs.queryCategoryId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -1656,9 +1488,6 @@ await corsair.circleci.api.orbs.queryExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1668,9 +1497,6 @@ await corsair.circleci.api.orbs.queryExists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `exists` | `boolean` | Yes | — |
 | `isPrivate` | `boolean` | No | — |
 
@@ -1695,9 +1521,6 @@ await corsair.circleci.api.orbs.queryId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1707,9 +1530,6 @@ await corsair.circleci.api.orbs.queryId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `isPrivate` | `boolean` | No | — |
@@ -1748,9 +1568,6 @@ await corsair.circleci.api.orbs.queryLatestVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -1760,9 +1577,6 @@ await corsair.circleci.api.orbs.queryLatestVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `version` | `string` | No | — |
 
@@ -1787,9 +1601,6 @@ await corsair.circleci.api.orbs.querySource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orbVersionRef` | `string` | Yes | — |
 
 
@@ -1799,9 +1610,6 @@ await corsair.circleci.api.orbs.querySource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `version` | `string` | No | — |
 | `source` | `string` | No | — |
@@ -1827,9 +1635,6 @@ await corsair.circleci.api.orbs.validateConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orbYaml` | `string` | Yes | — |
 
 
@@ -1839,9 +1644,6 @@ await corsair.circleci.api.orbs.validateConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `valid` | `boolean` | No | — |
 | `errors` | `object[]` | No | — |
 | `sourceYaml` | `string` | No | — |
@@ -1880,9 +1682,6 @@ await corsair.circleci.api.organization.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1892,9 +1691,6 @@ await corsair.circleci.api.organization.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -1921,9 +1717,6 @@ await corsair.circleci.api.pipelineDefinitions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `pipelineDefinitionId` | `string` | Yes | — |
 
@@ -1934,9 +1727,6 @@ await corsair.circleci.api.pipelineDefinitions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1994,9 +1784,6 @@ await corsair.circleci.api.pipelineDefinitions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -2054,9 +1841,6 @@ await corsair.circleci.api.pipelines.getConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pipelineId` | `string` | Yes | — |
 
 
@@ -2093,9 +1877,6 @@ await corsair.circleci.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlug` | `string` | No | — |
 | `pageToken` | `string` | No | — |
 | `mine` | `boolean` | No | — |
@@ -2107,9 +1888,6 @@ await corsair.circleci.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -2156,9 +1934,6 @@ await corsair.circleci.api.pipelines.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `branch` | `string` | No | — |
 | `pageToken` | `string` | No | — |
@@ -2170,9 +1945,6 @@ await corsair.circleci.api.pipelines.listForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -2219,9 +1991,6 @@ await corsair.circleci.api.pipelines.trigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `branch` | `string` | No | — |
 | `tag` | `string` | No | — |
@@ -2244,9 +2013,6 @@ await corsair.circleci.api.pipelines.trigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `project_slug` | `string` | No | — |
 | `number` | `number` | No | — |
@@ -2306,9 +2072,6 @@ await corsair.circleci.api.projectEnvVars.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -2320,9 +2083,6 @@ await corsair.circleci.api.projectEnvVars.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `value` | `string` | No | — |
 | `created-at` | `string` | No | — |
@@ -2349,9 +2109,6 @@ await corsair.circleci.api.projectEnvVars.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2389,9 +2146,6 @@ await corsair.circleci.api.projectEnvVars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 
 
@@ -2401,9 +2155,6 @@ await corsair.circleci.api.projectEnvVars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -2444,9 +2195,6 @@ await corsair.circleci.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgSlugOrId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2457,9 +2205,6 @@ await corsair.circleci.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2502,9 +2247,6 @@ await corsair.circleci.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 
 
@@ -2541,9 +2283,6 @@ await corsair.circleci.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 
 
@@ -2553,9 +2292,6 @@ await corsair.circleci.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2600,9 +2336,6 @@ await corsair.circleci.api.runners.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `namespace` | `string` | No | — |
 | `resourceClass` | `string` | No | — |
 
@@ -2613,9 +2346,6 @@ await corsair.circleci.api.runners.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 
 
@@ -2655,9 +2385,6 @@ await corsair.circleci.api.schedules.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `pageToken` | `string` | No | — |
 
@@ -2668,9 +2395,6 @@ await corsair.circleci.api.schedules.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -2728,9 +2452,6 @@ await corsair.circleci.api.usageExport.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `start` | `string` | Yes | — |
 | `end` | `string` | Yes | — |
@@ -2770,9 +2491,6 @@ await corsair.circleci.api.usageExport.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `string` | Yes | — |
 | `usageExportJobId` | `string` | Yes | — |
 
@@ -2815,9 +2533,6 @@ await corsair.circleci.api.user.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `login` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2844,9 +2559,6 @@ await corsair.circleci.api.user.getInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -2856,9 +2568,6 @@ await corsair.circleci.api.user.getInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `login` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2922,9 +2631,6 @@ await corsair.circleci.api.workflows.getSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `workflowName` | `string` | Yes | — |
 | `branch` | `string` | No | — |
@@ -2964,9 +2670,6 @@ await corsair.circleci.api.workflows.listByPipelineId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pipelineId` | `string` | Yes | — |
 | `pageToken` | `string` | No | — |
 
@@ -2977,9 +2680,6 @@ await corsair.circleci.api.workflows.listByPipelineId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `next_page_token` | `string` | No | — |
 
@@ -3023,9 +2723,6 @@ await corsair.circleci.api.workflows.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `workflowName` | `string` | Yes | — |
 | `reportingWindow` | `string` | No | — |
@@ -3068,9 +2765,6 @@ await corsair.circleci.api.workflows.listTestMetrics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectSlug` | `string` | Yes | — |
 | `workflowName` | `string` | Yes | — |
 | `branch` | `string` | No | — |

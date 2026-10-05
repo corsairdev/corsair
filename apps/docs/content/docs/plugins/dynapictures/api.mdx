@@ -31,9 +31,6 @@ await corsair.dynapictures.api.media.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | The ID of a workspace to upload an image to. |
 | `fileUrl` | `string` | Yes | Public URL of the image uploaded as the official file field. |
 | `filename` | `string` | No | Filename of uploaded image. |
@@ -45,9 +42,6 @@ await corsair.dynapictures.api.media.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of an asset. |
 | `folder` | `boolean` | Yes | Whether this asset is a folder instead of an image. |
 | `mimeType` | `string` | Yes | MIME type of an image. |
@@ -126,9 +120,6 @@ await corsair.dynapictures.api.webhooks.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `targetUrl` | `string` | Yes | The URL of the REST endpoint receiving notifications. |
 | `eventType` | `NEW_IMAGE` | Yes | Event type passed when subscribing this webhook. |
 | `templateId` | `string` | Yes | The UID of the image template used when subscribing. |
@@ -140,9 +131,6 @@ await corsair.dynapictures.api.webhooks.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | Yes | — |
 
@@ -169,9 +157,6 @@ await corsair.dynapictures.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of a new workspace. Required field. |
 
 
@@ -181,9 +166,6 @@ await corsair.dynapictures.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of a workspace. |
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |
@@ -211,9 +193,6 @@ await corsair.dynapictures.api.workspaces.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of a workspace to be deleted. |
 
 
@@ -223,9 +202,6 @@ await corsair.dynapictures.api.workspaces.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of a workspace. |
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |
@@ -288,9 +264,6 @@ await corsair.dynapictures.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of a workspace to be updated. |
 | `name` | `string` | Yes | New name of a workspace. Required field. |
 
@@ -301,9 +274,6 @@ await corsair.dynapictures.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The ID of a workspace. |
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |

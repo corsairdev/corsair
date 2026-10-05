@@ -31,9 +31,6 @@ await corsair.openrouter.api.chatCompletions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `stream` | `false` | No | — |
@@ -234,9 +231,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `chat.completion` | Yes | — |
 | `created` | `number` | Yes | — |
@@ -324,9 +318,6 @@ await corsair.openrouter.api.credits.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -369,9 +360,6 @@ await corsair.openrouter.api.embeddings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `input` | `object[]` | Yes | — |
 | `encodingFormat` | `float \| base64` | No | — |
@@ -411,9 +399,6 @@ string | string[] | number[] | number[][] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `object` | `list` | Yes | — |
 | `data` | `object[]` | Yes | — |
@@ -466,9 +451,6 @@ await corsair.openrouter.api.generations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -478,9 +460,6 @@ await corsair.openrouter.api.generations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -538,9 +517,6 @@ await corsair.openrouter.api.key.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -599,9 +575,6 @@ await corsair.openrouter.api.messages.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `maxTokens` | `number` | No | — |
 | `messages` | `object[]` | Yes | — |
@@ -741,9 +714,6 @@ await corsair.openrouter.api.messages.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `message` | Yes | — |
 | `role` | `assistant` | Yes | — |
@@ -819,9 +789,6 @@ await corsair.openrouter.api.modelEndpoints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `author` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 
@@ -832,9 +799,6 @@ await corsair.openrouter.api.modelEndpoints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -911,9 +875,6 @@ await corsair.openrouter.api.models.count({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -948,9 +909,6 @@ await corsair.openrouter.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -961,9 +919,6 @@ await corsair.openrouter.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `links` | `object` | No | — |
 | `total_count` | `number` | No | — |
@@ -1032,9 +987,6 @@ await corsair.openrouter.api.models.listEmbeddings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -1045,9 +997,6 @@ await corsair.openrouter.api.models.listEmbeddings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `links` | `object` | No | — |
 | `total_count` | `number` | No | — |
@@ -1116,9 +1065,6 @@ await corsair.openrouter.api.models.listUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -1129,9 +1075,6 @@ await corsair.openrouter.api.models.listUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `links` | `object` | No | — |
 | `total_count` | `number` | No | — |
@@ -1205,9 +1148,6 @@ await corsair.openrouter.api.providers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 
 
@@ -1253,9 +1193,6 @@ await corsair.openrouter.api.zdr.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 
 

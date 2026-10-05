@@ -31,9 +31,6 @@ await corsair.toggl.api.clients.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 
@@ -80,9 +77,6 @@ await corsair.toggl.api.clients.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `notes` | `string` | No | — |
@@ -94,9 +88,6 @@ await corsair.toggl.api.clients.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `wid` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -126,9 +117,6 @@ await corsair.toggl.api.clients.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 
@@ -139,9 +127,6 @@ await corsair.toggl.api.clients.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -166,9 +151,6 @@ await corsair.toggl.api.clients.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 
@@ -179,9 +161,6 @@ await corsair.toggl.api.clients.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `wid` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -211,9 +190,6 @@ await corsair.toggl.api.clients.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `status` | `active \| archived \| both` | No | — |
 | `name` | `string` | No | — |
@@ -259,9 +235,6 @@ await corsair.toggl.api.clients.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -274,9 +247,6 @@ await corsair.toggl.api.clients.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `wid` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -308,9 +278,6 @@ await corsair.toggl.api.me.disableProductEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `disable_code` | `string` | Yes | — |
 
 
@@ -320,9 +287,6 @@ await corsair.toggl.api.me.disableProductEmails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -346,9 +310,6 @@ await corsair.toggl.api.me.disableWeeklyReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 
 
@@ -358,9 +319,6 @@ await corsair.toggl.api.me.disableWeeklyReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -384,9 +342,6 @@ await corsair.toggl.api.me.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `with_related_data` | `boolean` | No | — |
 
 
@@ -396,9 +351,6 @@ await corsair.toggl.api.me.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
 | `fullname` | `string` | No | — |
@@ -438,9 +390,6 @@ await corsair.toggl.api.me.getClients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 
 
@@ -487,9 +436,6 @@ await corsair.toggl.api.me.getLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `city` | `string` | No | — |
 | `city_lat_long` | `string` | No | — |
 | `state` | `string` | No | — |
@@ -520,9 +466,6 @@ await corsair.toggl.api.me.getLogged({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -549,9 +492,6 @@ await corsair.toggl.api.me.getPreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `BeginningOfWeek` | `number` | No | — |
 | `timeofday_format` | `string` | No | — |
 | `date_format` | `string` | No | — |
@@ -594,9 +534,6 @@ await corsair.toggl.api.me.getProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 
 
@@ -686,9 +623,6 @@ await corsair.toggl.api.me.getTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 
 
@@ -730,9 +664,6 @@ await corsair.toggl.api.me.getTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 
 
@@ -779,9 +710,6 @@ await corsair.toggl.api.me.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fullname` | `string` | No | — |
 | `email` | `string` | No | — |
 | `timezone` | `string` | No | — |
@@ -795,9 +723,6 @@ await corsair.toggl.api.me.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
 | `fullname` | `string` | No | — |
@@ -837,9 +762,6 @@ await corsair.toggl.api.me.updatePreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeofday_format` | `string` | No | — |
 | `date_format` | `string` | No | — |
 | `duration_format` | `string` | No | — |
@@ -851,9 +773,6 @@ await corsair.toggl.api.me.updatePreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `BeginningOfWeek` | `number` | No | — |
 | `timeofday_format` | `string` | No | — |
 | `date_format` | `string` | No | — |
@@ -898,9 +817,6 @@ await corsair.toggl.api.organizations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `workspace_name` | `string` | No | — |
 
@@ -911,9 +827,6 @@ await corsair.toggl.api.organizations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `pricing_plan_id` | `number` | No | — |
@@ -946,9 +859,6 @@ await corsair.toggl.api.organizations.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -959,9 +869,6 @@ await corsair.toggl.api.organizations.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number` | No | — |
 | `id` | `number` | No | — |
 | `organization_id` | `number` | No | — |
@@ -1009,9 +916,6 @@ await corsair.toggl.api.organizations.createInvitation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 | `emails` | `string[]` | Yes | — |
 | `workspaces` | `object[]` | No | — |
@@ -1063,9 +967,6 @@ await corsair.toggl.api.organizations.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 | `group_id` | `number` | Yes | — |
 
@@ -1076,9 +977,6 @@ await corsair.toggl.api.organizations.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1103,9 +1001,6 @@ await corsair.toggl.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 
 
@@ -1115,9 +1010,6 @@ await corsair.toggl.api.organizations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `pricing_plan_id` | `number` | No | — |
@@ -1150,9 +1042,6 @@ await corsair.toggl.api.organizations.getGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 
 
@@ -1198,9 +1087,6 @@ await corsair.toggl.api.organizations.getPlans({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 
 
@@ -1237,9 +1123,6 @@ await corsair.toggl.api.organizations.getSubscriptionPlans({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 
 
@@ -1276,9 +1159,6 @@ await corsair.toggl.api.organizations.getUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 | `filter` | `string` | No | — |
 | `active` | `boolean` | No | — |
@@ -1334,9 +1214,6 @@ await corsair.toggl.api.organizations.getWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 
 
@@ -1391,9 +1268,6 @@ await corsair.toggl.api.organizations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organization_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -1404,9 +1278,6 @@ await corsair.toggl.api.organizations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `pricing_plan_id` | `number` | No | — |
@@ -1441,9 +1312,6 @@ await corsair.toggl.api.projects.addUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `user_id` | `number` | Yes | — |
@@ -1458,9 +1326,6 @@ await corsair.toggl.api.projects.addUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | No | — |
 | `user_id` | `number` | No | — |
@@ -1491,9 +1356,6 @@ await corsair.toggl.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `client_id` | `number` | No | — |
@@ -1512,9 +1374,6 @@ await corsair.toggl.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `client_id` | `number` | No | — |
@@ -1556,9 +1415,6 @@ await corsair.toggl.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 
@@ -1569,9 +1425,6 @@ await corsair.toggl.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1596,9 +1449,6 @@ await corsair.toggl.api.projects.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_group_id` | `number` | Yes | — |
 
@@ -1609,9 +1459,6 @@ await corsair.toggl.api.projects.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -1636,9 +1483,6 @@ await corsair.toggl.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 
@@ -1649,9 +1493,6 @@ await corsair.toggl.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `client_id` | `number` | No | — |
@@ -1693,9 +1534,6 @@ await corsair.toggl.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `active` | `boolean` | No | — |
 | `name` | `string` | No | — |
@@ -1755,9 +1593,6 @@ await corsair.toggl.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
@@ -1774,9 +1609,6 @@ await corsair.toggl.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `client_id` | `number` | No | — |
@@ -1856,9 +1688,6 @@ await corsair.toggl.api.reference.getCountrySubdivisions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_id` | `number` | Yes | — |
 
 
@@ -1935,9 +1764,6 @@ await corsair.toggl.api.reference.getKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keys` | `object[]` | Yes | — |
 
 
@@ -2025,9 +1851,6 @@ await corsair.toggl.api.smail.sendContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
@@ -2039,9 +1862,6 @@ await corsair.toggl.api.smail.sendContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -2065,9 +1885,6 @@ await corsair.toggl.api.smail.sendDemo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `company` | `string` | No | — |
@@ -2080,9 +1897,6 @@ await corsair.toggl.api.smail.sendDemo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -2106,9 +1920,6 @@ await corsair.toggl.api.smail.sendMeet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `location` | `string` | Yes | — |
@@ -2120,9 +1931,6 @@ await corsair.toggl.api.smail.sendMeet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ok` | `true` | Yes | — |
 
 
@@ -2148,9 +1956,6 @@ await corsair.toggl.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2161,9 +1966,6 @@ await corsair.toggl.api.tags.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -2191,9 +1993,6 @@ await corsair.toggl.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `tag_id` | `number` | Yes | — |
 
@@ -2204,9 +2003,6 @@ await corsair.toggl.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2231,9 +2027,6 @@ await corsair.toggl.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -2278,9 +2071,6 @@ await corsair.toggl.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `tag_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -2292,9 +2082,6 @@ await corsair.toggl.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -2324,9 +2111,6 @@ await corsair.toggl.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -2341,9 +2125,6 @@ await corsair.toggl.api.tasks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2376,9 +2157,6 @@ await corsair.toggl.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `task_id` | `number` | Yes | — |
@@ -2390,9 +2168,6 @@ await corsair.toggl.api.tasks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2417,9 +2192,6 @@ await corsair.toggl.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `task_id` | `number` | Yes | — |
@@ -2431,9 +2203,6 @@ await corsair.toggl.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2466,9 +2235,6 @@ await corsair.toggl.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | No | — |
 | `active` | `boolean` | No | — |
@@ -2519,9 +2285,6 @@ await corsair.toggl.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `task_id` | `number` | Yes | — |
@@ -2536,9 +2299,6 @@ await corsair.toggl.api.tasks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2573,9 +2333,6 @@ await corsair.toggl.api.timeEntries.bulkEdit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `time_entry_ids` | `number[]` | Yes | — |
 | `operations` | `object[]` | Yes | — |
@@ -2600,9 +2357,6 @@ await corsair.toggl.api.timeEntries.bulkEdit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `number[]` | No | — |
 | `failure` | `object[]` | No | — |
 
@@ -2639,9 +2393,6 @@ await corsair.toggl.api.timeEntries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `start` | `string` | Yes | — |
 | `duration` | `number` | Yes | — |
@@ -2661,9 +2412,6 @@ await corsair.toggl.api.timeEntries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2701,9 +2449,6 @@ await corsair.toggl.api.timeEntries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `time_entry_id` | `number` | Yes | — |
 
@@ -2714,9 +2459,6 @@ await corsair.toggl.api.timeEntries.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2741,9 +2483,6 @@ await corsair.toggl.api.timeEntries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time_entry_id` | `number` | Yes | — |
 
 
@@ -2753,9 +2492,6 @@ await corsair.toggl.api.timeEntries.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2796,9 +2532,6 @@ await corsair.toggl.api.timeEntries.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2836,9 +2569,6 @@ await corsair.toggl.api.timeEntries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string \| string` | No | — |
 | `end_date` | `string \| string` | No | — |
 | `since` | `number` | No | — |
@@ -2894,9 +2624,6 @@ await corsair.toggl.api.timeEntries.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `time_entry_id` | `number` | Yes | — |
 
@@ -2907,9 +2634,6 @@ await corsair.toggl.api.timeEntries.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -2947,9 +2671,6 @@ await corsair.toggl.api.timeEntries.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `time_entry_id` | `number` | Yes | — |
 | `description` | `string` | No | — |
@@ -2969,9 +2690,6 @@ await corsair.toggl.api.timeEntries.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `workspace_id` | `number` | No | — |
 | `project_id` | `number` | No | — |
@@ -3011,9 +2729,6 @@ await corsair.toggl.api.webhooks.deleteSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `subscription_id` | `number` | Yes | — |
 
@@ -3024,9 +2739,6 @@ await corsair.toggl.api.webhooks.deleteSubscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `true` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -3084,9 +2796,6 @@ await corsair.toggl.api.webhooks.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 
 
@@ -3110,9 +2819,6 @@ await corsair.toggl.api.webhooks.listSubscriptions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 
 
@@ -3160,9 +2866,6 @@ await corsair.toggl.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 
 
@@ -3172,9 +2875,6 @@ await corsair.toggl.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `organization_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
@@ -3215,9 +2915,6 @@ await corsair.toggl.api.workspaces.getLogo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 
 
@@ -3227,9 +2924,6 @@ await corsair.toggl.api.workspaces.getLogo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `logo` | `string` | No | — |
 
 
@@ -3253,9 +2947,6 @@ await corsair.toggl.api.workspaces.getPreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 
 
@@ -3265,9 +2956,6 @@ await corsair.toggl.api.workspaces.getPreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `initial_pricing_plan` | `number` | No | — |
 | `hide_start_end_times` | `boolean` | No | — |
 
@@ -3292,9 +2980,6 @@ await corsair.toggl.api.workspaces.getUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 
 
@@ -3340,9 +3025,6 @@ await corsair.toggl.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `since` | `number` | No | — |
 
 
@@ -3397,9 +3079,6 @@ await corsair.toggl.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `default_currency` | `string` | No | — |
@@ -3414,9 +3093,6 @@ await corsair.toggl.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `organization_id` | `number` | No | — |
 | `name` | `string` | Yes | — |

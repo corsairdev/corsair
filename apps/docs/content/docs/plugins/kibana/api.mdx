@@ -31,9 +31,6 @@ await corsair.kibana.api.alerting.createRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
@@ -54,9 +51,6 @@ await corsair.kibana.api.alerting.createRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `consumer` | `string` | No | — |
@@ -82,9 +76,6 @@ await corsair.kibana.api.alerting.deleteRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -121,9 +112,6 @@ await corsair.kibana.api.alerting.listRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -138,9 +126,6 @@ await corsair.kibana.api.alerting.listRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -180,9 +165,6 @@ await corsair.kibana.api.alerting.listRuleTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_types` | `object[]` | No | — |
 
 
@@ -218,9 +200,6 @@ await corsair.kibana.api.cases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `owner` | `cases \| observability \| securitySolution` | Yes | — |
@@ -264,9 +243,6 @@ await corsair.kibana.api.cases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -292,9 +268,6 @@ await corsair.kibana.api.cases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -312,9 +285,6 @@ await corsair.kibana.api.cases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -353,9 +323,6 @@ await corsair.kibana.api.connectors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `connector_type_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -387,9 +354,6 @@ await corsair.kibana.api.connectors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `connector_type_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -415,9 +379,6 @@ await corsair.kibana.api.connectors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -454,9 +415,6 @@ await corsair.kibana.api.connectors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -466,9 +424,6 @@ await corsair.kibana.api.connectors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `connector_type_id` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -524,9 +479,6 @@ await corsair.kibana.api.connectors.listTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `feature_id` | `string` | No | — |
 
 
@@ -536,9 +488,6 @@ await corsair.kibana.api.connectors.listTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `connector_types` | `object[]` | No | — |
 
 
@@ -574,9 +523,6 @@ await corsair.kibana.api.dashboards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `panels` | `object[]` | No | — |
@@ -599,9 +545,6 @@ await corsair.kibana.api.dashboards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 
@@ -626,9 +569,6 @@ await corsair.kibana.api.dashboards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -665,9 +605,6 @@ await corsair.kibana.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -677,9 +614,6 @@ await corsair.kibana.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 
@@ -704,9 +638,6 @@ await corsair.kibana.api.dashboards.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 
@@ -717,9 +648,6 @@ await corsair.kibana.api.dashboards.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -765,9 +693,6 @@ await corsair.kibana.api.dashboards.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -790,9 +715,6 @@ await corsair.kibana.api.dashboards.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 
@@ -819,9 +741,6 @@ await corsair.kibana.api.dataViews.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -835,9 +754,6 @@ await corsair.kibana.api.dataViews.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_view` | `object` | No | — |
 
 
@@ -873,9 +789,6 @@ await corsair.kibana.api.dataViews.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -885,9 +798,6 @@ await corsair.kibana.api.dataViews.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_view` | `object` | Yes | — |
 
 
@@ -930,9 +840,6 @@ await corsair.kibana.api.dataViews.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_view` | `object[]` | No | — |
 
 
@@ -968,9 +875,6 @@ await corsair.kibana.api.detection.findAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 | `aggs` | `object` | No | — |
 | `size` | `number` | No | — |
@@ -1000,9 +904,6 @@ await corsair.kibana.api.detection.findAlerts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hits` | `object` | No | — |
 | `aggregations` | `object` | No | — |
 | `took` | `number` | No | — |
@@ -1047,9 +948,6 @@ await corsair.kibana.api.detection.findRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `filter` | `string` | No | — |
@@ -1064,9 +962,6 @@ await corsair.kibana.api.detection.findRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -1105,9 +1000,6 @@ await corsair.kibana.api.fleet.agentPoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `kuery` | `string` | No | — |
@@ -1122,9 +1014,6 @@ await corsair.kibana.api.fleet.agentPoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `total` | `number` | No | — |
 
@@ -1162,9 +1051,6 @@ await corsair.kibana.api.fleet.agentsSetup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `isReady` | `boolean` | No | — |
 
 
@@ -1191,9 +1077,6 @@ await corsair.kibana.api.fleet.agentsVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `string[]` | No | — |
 
 
@@ -1217,9 +1100,6 @@ await corsair.kibana.api.fleet.checkPermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fleetServerSetup` | `boolean` | No | — |
 
 
@@ -1229,9 +1109,6 @@ await corsair.kibana.api.fleet.checkPermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `error` | `string` | No | — |
 
@@ -1256,9 +1133,6 @@ await corsair.kibana.api.fleet.enrollmentKeyGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keyId` | `string` | Yes | — |
 
 
@@ -1268,9 +1142,6 @@ await corsair.kibana.api.fleet.enrollmentKeyGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item` | `object` | No | — |
 
 
@@ -1304,9 +1175,6 @@ await corsair.kibana.api.fleet.enrollmentKeysList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `kuery` | `string` | No | — |
@@ -1318,9 +1186,6 @@ await corsair.kibana.api.fleet.enrollmentKeysList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `total` | `number` | No | — |
 
@@ -1355,9 +1220,6 @@ await corsair.kibana.api.fleet.epmCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prerelease` | `boolean` | No | — |
 
 
@@ -1367,9 +1229,6 @@ await corsair.kibana.api.fleet.epmCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object[]` | No | — |
 
 
@@ -1403,9 +1262,6 @@ await corsair.kibana.api.fleet.epmDataStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `datasetQuery` | `string` | No | — |
 
@@ -1416,9 +1272,6 @@ await corsair.kibana.api.fleet.epmDataStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data_streams` | `object[]` | No | — |
 
 
@@ -1452,9 +1305,6 @@ await corsair.kibana.api.fleet.epmPackageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pkgName` | `string` | Yes | — |
 | `pkgVersion` | `string` | Yes | — |
 | `full` | `boolean` | No | — |
@@ -1466,9 +1316,6 @@ await corsair.kibana.api.fleet.epmPackageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object` | No | — |
 
 
@@ -1502,9 +1349,6 @@ await corsair.kibana.api.fleet.epmPackageFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pkgName` | `string` | Yes | — |
 | `pkgVersion` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
@@ -1533,9 +1377,6 @@ await corsair.kibana.api.fleet.epmPackagesInstalled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nameQuery` | `string` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -1546,9 +1387,6 @@ await corsair.kibana.api.fleet.epmPackagesInstalled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object[]` | No | — |
 
 
@@ -1585,9 +1423,6 @@ await corsair.kibana.api.fleet.epmPackagesLimited({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string[]` | No | — |
 
 
@@ -1614,9 +1449,6 @@ await corsair.kibana.api.fleet.epmPackagesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object[]` | No | — |
 
 
@@ -1650,9 +1482,6 @@ await corsair.kibana.api.fleet.epmPackageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pkgName` | `string` | Yes | — |
 
 
@@ -1662,9 +1491,6 @@ await corsair.kibana.api.fleet.epmPackageStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object` | No | — |
 
 
@@ -1698,9 +1524,6 @@ await corsair.kibana.api.fleet.outputDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `outputId` | `string` | Yes | — |
 
 
@@ -1737,9 +1560,6 @@ await corsair.kibana.api.fleet.packagePoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `kuery` | `string` | No | — |
@@ -1753,9 +1573,6 @@ await corsair.kibana.api.fleet.packagePoliciesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `total` | `number` | No | — |
 
@@ -1790,9 +1607,6 @@ await corsair.kibana.api.fleet.proxyDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `itemId` | `string` | Yes | — |
 
 
@@ -1829,9 +1643,6 @@ await corsair.kibana.api.fleet.serverHostGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `itemId` | `string` | Yes | — |
 
 
@@ -1841,9 +1652,6 @@ await corsair.kibana.api.fleet.serverHostGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item` | `object` | No | — |
 
 
@@ -1880,9 +1688,6 @@ await corsair.kibana.api.fleet.serverHostsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 
@@ -1918,9 +1723,6 @@ await corsair.kibana.api.index.listIndices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `index` | `string` | No | — |
 
 
@@ -1930,9 +1732,6 @@ await corsair.kibana.api.index.listIndices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indices` | `object[]` | No | — |
 
 
@@ -1968,9 +1767,6 @@ await corsair.kibana.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `deleteReferences` | `boolean` | No | — |
 | `ignoreReferences` | `boolean` | No | — |
@@ -2011,9 +1807,6 @@ await corsair.kibana.api.metrics.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `node_id` | `string` | No | — |
 | `metric` | `string \| string[]` | No | — |
 
@@ -2024,9 +1817,6 @@ await corsair.kibana.api.metrics.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nodes` | `object` | No | — |
 
 
@@ -2062,9 +1852,6 @@ await corsair.kibana.api.osquery.deleteSavedQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2103,9 +1890,6 @@ await corsair.kibana.api.reporting.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 
@@ -2116,9 +1900,6 @@ await corsair.kibana.api.reporting.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobs` | `object[]` | No | — |
 | `total` | `number` | No | — |
 
@@ -2155,9 +1936,6 @@ await corsair.kibana.api.savedObjects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `id` | `string` | No | — |
 | `attributes` | `object` | Yes | — |
@@ -2189,9 +1967,6 @@ await corsair.kibana.api.savedObjects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `attributes` | `object` | Yes | — |
@@ -2238,9 +2013,6 @@ await corsair.kibana.api.savedObjects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -2278,9 +2050,6 @@ await corsair.kibana.api.savedObjects.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string \| string[]` | Yes | — |
 | `search` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -2307,9 +2076,6 @@ await corsair.kibana.api.savedObjects.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | Yes | — |
@@ -2354,9 +2120,6 @@ await corsair.kibana.api.savedObjects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -2367,9 +2130,6 @@ await corsair.kibana.api.savedObjects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `attributes` | `object` | Yes | — |
@@ -2416,9 +2176,6 @@ await corsair.kibana.api.savedObjects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `attributes` | `object` | Yes | — |
@@ -2449,9 +2206,6 @@ await corsair.kibana.api.savedObjects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `attributes` | `object` | Yes | — |
@@ -2500,9 +2254,6 @@ await corsair.kibana.api.security.entitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter` | `string` | No | — |
 | `filterQuery` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -2522,9 +2273,6 @@ await corsair.kibana.api.security.entitiesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `records` | `object[]` | No | — |
 | `total` | `number` | No | — |
 
@@ -2562,9 +2310,6 @@ await corsair.kibana.api.security.entityStoreEngines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `engines` | `object[]` | No | — |
 
 
@@ -2598,9 +2343,6 @@ await corsair.kibana.api.security.entityStoreStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `include_components` | `boolean` | No | — |
 
 
@@ -2610,9 +2352,6 @@ await corsair.kibana.api.security.entityStoreStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `engines` | `object[]` | No | — |
 
@@ -2647,9 +2386,6 @@ await corsair.kibana.api.security.listEndpointItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `filter` | `string` | No | — |
@@ -2663,9 +2399,6 @@ await corsair.kibana.api.security.listEndpointItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -2707,9 +2440,6 @@ await corsair.kibana.api.status.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `version` | `object` | No | — |
 | `status` | `object` | No | — |

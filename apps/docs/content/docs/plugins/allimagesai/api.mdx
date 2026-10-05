@@ -34,9 +34,6 @@ await corsair.allimagesai.api.apiKeys.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `name` | `string` | No | — |
 
@@ -66,9 +63,6 @@ await corsair.allimagesai.api.credits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `credits` | `object[]` | Yes | — |
 
 
@@ -108,9 +102,6 @@ await corsair.allimagesai.api.imageGenerations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `printIds` | `string[]` | Yes | — |
 
 
@@ -120,9 +111,6 @@ await corsair.allimagesai.api.imageGenerations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | Yes | — |
 | `printIds` | `string[]` | Yes | — |
 
@@ -147,9 +135,6 @@ await corsair.allimagesai.api.imageGenerations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -163,9 +148,6 @@ await corsair.allimagesai.api.imageGenerations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filteredResults` | `object` | No | — |
 | `prints` | `object[]` | Yes | — |
 
@@ -228,9 +210,6 @@ await corsair.allimagesai.api.images.listDownloaded({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sort` | `string` | No | — |
@@ -244,9 +223,6 @@ await corsair.allimagesai.api.images.listDownloaded({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filteredResults` | `object` | No | — |
 | `images` | `object[]` | Yes | — |
 
@@ -297,9 +273,6 @@ await corsair.allimagesai.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `test \| print.created \| print.active \| print.failed \| print.progress \| print.completed[]` | No | — |
 
@@ -310,9 +283,6 @@ await corsair.allimagesai.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -336,9 +306,6 @@ await corsair.allimagesai.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiKeyWebhookId` | `string` | Yes | — |
 
 
@@ -348,9 +315,6 @@ await corsair.allimagesai.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `apiKeyId` | `string` | No | — |
 | `url` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.plain.api.companies.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `companyId` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.plain.api.companies.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `company` | `object` | No | — |
 
 
@@ -83,9 +77,6 @@ await corsair.plain.api.companies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `object` | Yes | — |
 | `name` | `string` | Yes | — |
 | `domainName` | `string` | Yes | — |
@@ -111,9 +102,6 @@ await corsair.plain.api.companies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `CREATED \| UPDATED \| NOOP` | No | — |
 | `company` | `object` | No | — |
 
@@ -154,9 +142,6 @@ await corsair.plain.api.customerGroups.addCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 | `customerGroupIdentifiers` | `object[]` | Yes | — |
 
@@ -180,9 +165,6 @@ await corsair.plain.api.customerGroups.addCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerGroupMemberships` | `object[]` | Yes | — |
 
 
@@ -224,9 +206,6 @@ await corsair.plain.api.customerGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `color` | `string` | Yes | — |
@@ -239,9 +218,6 @@ await corsair.plain.api.customerGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerGroup` | `object` | Yes | — |
 
 
@@ -280,9 +256,6 @@ await corsair.plain.api.customerGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filters` | `object` | No | — |
 | `first` | `number` | No | — |
 | `after` | `string` | No | — |
@@ -307,9 +280,6 @@ await corsair.plain.api.customerGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerGroups` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 
@@ -361,9 +331,6 @@ await corsair.plain.api.customerGroups.removeCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 | `customerGroupIdentifiers` | `object[]` | Yes | — |
 
@@ -387,9 +354,6 @@ await corsair.plain.api.customerGroups.removeCustomer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -415,9 +379,6 @@ await corsair.plain.api.customers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 
 
@@ -427,9 +388,6 @@ await corsair.plain.api.customers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -453,9 +411,6 @@ await corsair.plain.api.customers.getByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -465,9 +420,6 @@ await corsair.plain.api.customers.getByEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customer` | `object` | No | — |
 
 
@@ -509,9 +461,6 @@ await corsair.plain.api.customers.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 
 
@@ -521,9 +470,6 @@ await corsair.plain.api.customers.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customer` | `object` | No | — |
 
 
@@ -565,9 +511,6 @@ await corsair.plain.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filters` | `object` | No | — |
 | `sortBy` | `object` | No | — |
 | `first` | `number` | No | — |
@@ -614,9 +557,6 @@ await corsair.plain.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customers` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 | `totalCount` | `number` | Yes | — |
@@ -672,9 +612,6 @@ await corsair.plain.api.customers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `object` | Yes | — |
 | `onCreate` | `object` | Yes | — |
 | `onUpdate` | `object` | Yes | — |
@@ -744,9 +681,6 @@ await corsair.plain.api.customers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `CREATED \| UPDATED \| NOOP` | No | — |
 | `customer` | `object` | No | — |
 
@@ -791,9 +725,6 @@ await corsair.plain.api.graphql.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `variables` | `object` | No | — |
 | `operationName` | `string` | No | — |
@@ -834,9 +765,6 @@ await corsair.plain.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerIdentifier` | `object` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -902,9 +830,6 @@ await corsair.plain.api.threads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thread` | `object` | No | — |
 
 
@@ -943,9 +868,6 @@ await corsair.plain.api.threads.fetchIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | — |
 | `threadFirst` | `number` | No | — |
 | `threadAfter` | `string` | No | — |
@@ -960,9 +882,6 @@ await corsair.plain.api.threads.fetchIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issues` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 | `totalThreads` | `number` | Yes | — |
@@ -1023,9 +942,6 @@ await corsair.plain.api.threads.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 
 
@@ -1035,9 +951,6 @@ await corsair.plain.api.threads.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thread` | `object` | No | — |
 
 
@@ -1076,9 +989,6 @@ await corsair.plain.api.threads.listDeprecated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filters` | `object` | No | — |
 | `sortBy` | `object` | No | — |
 | `first` | `number` | No | — |
@@ -1144,9 +1054,6 @@ await corsair.plain.api.threads.listDeprecated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threads` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 | `totalCount` | `number` | Yes | — |
@@ -1199,9 +1106,6 @@ await corsair.plain.api.threads.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filters` | `object` | No | — |
 | `sortBy` | `object` | No | — |
 | `first` | `number` | No | — |
@@ -1267,9 +1171,6 @@ await corsair.plain.api.threads.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threads` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 | `totalCount` | `number` | Yes | — |
@@ -1322,9 +1223,6 @@ await corsair.plain.api.threads.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `textContent` | `string` | Yes | — |
 | `markdownContent` | `string` | No | — |
@@ -1355,9 +1253,6 @@ await corsair.plain.api.threads.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1381,9 +1276,6 @@ await corsair.plain.api.threads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 
@@ -1394,9 +1286,6 @@ await corsair.plain.api.threads.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `thread` | `object` | No | — |
 
 
@@ -1437,9 +1326,6 @@ await corsair.plain.api.tiers.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tierId` | `string` | Yes | — |
 
 
@@ -1449,9 +1335,6 @@ await corsair.plain.api.tiers.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tier` | `object` | No | — |
 
 
@@ -1490,9 +1373,6 @@ await corsair.plain.api.tiers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `first` | `number` | No | — |
 | `after` | `string` | No | — |
 | `last` | `number` | No | — |
@@ -1505,9 +1385,6 @@ await corsair.plain.api.tiers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tiers` | `object[]` | Yes | — |
 | `pageInfo` | `object` | Yes | — |
 
@@ -1561,9 +1438,6 @@ await corsair.plain.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -1573,9 +1447,6 @@ await corsair.plain.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1599,9 +1470,6 @@ await corsair.plain.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -1611,9 +1479,6 @@ await corsair.plain.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | No | — |
 
 

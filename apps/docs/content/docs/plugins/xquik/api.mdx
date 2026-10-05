@@ -31,9 +31,6 @@ await corsair.xquik.api.media.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | No | — |
 | `tweetIds` | `string[]` | No | — |
 | `tweetInput` | `string` | No | — |
@@ -46,9 +43,6 @@ await corsair.xquik.api.media.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cacheHit` | `boolean` | No | — |
 | `galleryUrl` | `string` | No | — |
 | `totalMedia` | `number` | No | — |
@@ -76,9 +70,6 @@ await corsair.xquik.api.media.uploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 
@@ -89,9 +80,6 @@ await corsair.xquik.api.media.uploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mediaId` | `string` | Yes | — |
 | `mediaUrl` | `string` | Yes | — |
 | `success` | `true` | Yes | — |
@@ -119,9 +107,6 @@ await corsair.xquik.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `woeid` | `number` | No | — |
 
@@ -132,9 +117,6 @@ await corsair.xquik.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | Yes | — |
 | `trends` | `object[]` | Yes | — |
 | `woeid` | `number` | Yes | — |
@@ -176,9 +158,6 @@ await corsair.xquik.api.tweets.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 
 
@@ -188,9 +167,6 @@ await corsair.xquik.api.tweets.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
@@ -268,9 +244,6 @@ await corsair.xquik.api.tweets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `attachment_url` | `string` | No | — |
 | `community_id` | `string` | No | — |
@@ -322,9 +295,6 @@ await corsair.xquik.api.tweets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -335,9 +305,6 @@ await corsair.xquik.api.tweets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -361,9 +328,6 @@ await corsair.xquik.api.tweets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -373,9 +337,6 @@ await corsair.xquik.api.tweets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `author` | `object` | No | — |
 | `tweet` | `object` | Yes | — |
 
@@ -444,9 +405,6 @@ await corsair.xquik.api.tweets.like({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -457,9 +415,6 @@ await corsair.xquik.api.tweets.like({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -483,9 +438,6 @@ await corsair.xquik.api.tweets.retweet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -496,9 +448,6 @@ await corsair.xquik.api.tweets.retweet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -522,9 +471,6 @@ await corsair.xquik.api.tweets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `anyWords` | `string` | No | — |
 | `cashtags` | `string` | No | — |
 | `conversationId` | `string` | No | — |
@@ -564,9 +510,6 @@ await corsair.xquik.api.tweets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
@@ -644,9 +587,6 @@ await corsair.xquik.api.tweets.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -657,9 +597,6 @@ await corsair.xquik.api.tweets.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -685,9 +622,6 @@ await corsair.xquik.api.users.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 
 
@@ -697,9 +631,6 @@ await corsair.xquik.api.users.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
@@ -747,9 +678,6 @@ await corsair.xquik.api.users.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -760,9 +688,6 @@ await corsair.xquik.api.users.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -786,9 +711,6 @@ await corsair.xquik.api.users.followers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `pageSize` | `number` | No | — |
@@ -800,9 +722,6 @@ await corsair.xquik.api.users.followers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
@@ -850,9 +769,6 @@ await corsair.xquik.api.users.following({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `pageSize` | `number` | No | — |
@@ -864,9 +780,6 @@ await corsair.xquik.api.users.following({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
@@ -914,9 +827,6 @@ await corsair.xquik.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -926,9 +836,6 @@ await corsair.xquik.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `coverPicture` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -963,9 +870,6 @@ await corsair.xquik.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `q` | `string` | Yes | — |
 
@@ -976,9 +880,6 @@ await corsair.xquik.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
@@ -1026,9 +927,6 @@ await corsair.xquik.api.users.tweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `pageSize` | `number` | No | — |
@@ -1067,9 +965,6 @@ await corsair.xquik.api.users.tweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `has_next_page` | `boolean` | Yes | — |
 | `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
@@ -1147,9 +1042,6 @@ await corsair.xquik.api.users.unfollow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 
@@ -1160,9 +1052,6 @@ await corsair.xquik.api.users.unfollow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1188,9 +1077,6 @@ await corsair.xquik.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
 | `url` | `string` | Yes | — |
 
@@ -1201,9 +1087,6 @@ await corsair.xquik.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | Yes | — |
 | `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
 | `id` | `string` | Yes | — |
@@ -1232,9 +1115,6 @@ await corsair.xquik.api.webhooks.deactivate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1244,9 +1124,6 @@ await corsair.xquik.api.webhooks.deactivate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1270,9 +1147,6 @@ await corsair.xquik.api.webhooks.deliveries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1282,9 +1156,6 @@ await corsair.xquik.api.webhooks.deliveries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deliveries` | `object[]` | Yes | — |
 
 
@@ -1329,9 +1200,6 @@ await corsair.xquik.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | Yes | — |
 
 
@@ -1370,9 +1238,6 @@ await corsair.xquik.api.webhooks.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1382,9 +1247,6 @@ await corsair.xquik.api.webhooks.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `string` | No | — |
 | `statusCode` | `number` | Yes | — |
 | `success` | `boolean` | Yes | — |
@@ -1410,9 +1272,6 @@ await corsair.xquik.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | No | — |
 | `id` | `string` | Yes | — |
 | `isActive` | `boolean` | No | — |
@@ -1425,9 +1284,6 @@ await corsair.xquik.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | Yes | — |
 | `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
 | `id` | `string` | Yes | — |
@@ -1457,9 +1313,6 @@ await corsair.xquik.api.writeActions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1469,9 +1322,6 @@ await corsair.xquik.api.writeActions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `action` | `string` | Yes | — |
 | `charged` | `boolean` | Yes | — |
 | `confirmationAttempts` | `number` | No | — |

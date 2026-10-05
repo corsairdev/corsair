@@ -31,9 +31,6 @@ await corsair.customerio.api.broadcasts.getTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `broadcast_id` | `number` | Yes | — |
 | `trigger_id` | `number` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.customerio.api.broadcasts.getTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `broadcast_id` | `number` | No | — |
 | `campaign_id` | `number` | No | — |
@@ -77,9 +71,6 @@ await corsair.customerio.api.broadcasts.listTriggers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `broadcast_id` | `number` | Yes | — |
 
 
@@ -89,9 +80,6 @@ await corsair.customerio.api.broadcasts.listTriggers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `triggers` | `object[]` | Yes | — |
 | `next` | `string` | No | — |
 
@@ -134,9 +122,6 @@ await corsair.customerio.api.broadcasts.trigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `broadcast_id` | `number` | Yes | — |
 | `data` | `lazy` | No | — |
 | `recipients` | `lazy` | No | — |
@@ -168,9 +153,6 @@ await corsair.customerio.api.broadcasts.trigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `broadcast_id` | `number` | No | — |
 | `trigger_id` | `number` | No | — |
@@ -199,9 +181,6 @@ await corsair.customerio.api.cdp.batch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batch` | `object[]` | Yes | — |
 | `context` | `lazy` | No | — |
 
@@ -285,9 +264,6 @@ await corsair.customerio.api.cdp.page({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `anonymousId` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -319,9 +295,6 @@ await corsair.customerio.api.cdp.screen({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | No | — |
 | `anonymousId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -358,9 +331,6 @@ await corsair.customerio.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collections` | `object[]` | No | — |
 
 
@@ -402,9 +372,6 @@ await corsair.customerio.api.groups.addPerson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `groupId` | `string` | Yes | — |
 | `traits` | `lazy` | No | — |
@@ -438,9 +405,6 @@ await corsair.customerio.api.info.listIps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip_addresses` | `string[]` | Yes | — |
 
 
@@ -466,9 +430,6 @@ await corsair.customerio.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `start` | `string` | No | — |
 | `drafts` | `boolean` | No | — |
@@ -484,9 +445,6 @@ await corsair.customerio.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | Yes | — |
 | `next` | `string` | No | — |
 
@@ -531,9 +489,6 @@ await corsair.customerio.api.newsletters.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `start` | `string` | No | — |
 | `sort` | `asc \| desc` | No | — |
@@ -545,9 +500,6 @@ await corsair.customerio.api.newsletters.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `newsletters` | `object[]` | Yes | — |
 | `next` | `string` | No | — |
 
@@ -589,9 +541,6 @@ await corsair.customerio.api.profiles.alias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `primary` | `object` | Yes | — |
 | `secondary` | `object` | Yes | — |
 
@@ -643,9 +592,6 @@ await corsair.customerio.api.profiles.identify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `id` | `string \| number` | No | — |
@@ -676,9 +622,6 @@ await corsair.customerio.api.profiles.reportPush({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delivery_id` | `string` | Yes | — |
 | `metric` | `bounced \| clicked \| converted \| deferred \| delivered \| dropped \| opened \| spammed` | No | — |
 | `event` | `bounced \| clicked \| converted \| deferred \| delivered \| dropped \| opened \| spammed` | No | — |
@@ -711,9 +654,6 @@ await corsair.customerio.api.profiles.suppress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 
 
@@ -740,9 +680,6 @@ await corsair.customerio.api.profiles.trackEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `data` | `lazy` | No | — |
@@ -774,9 +711,6 @@ await corsair.customerio.api.profiles.unsubscribe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `delivery_id` | `string` | Yes | — |
 | `unsubscribe` | `boolean` | No | — |
 
@@ -809,9 +743,6 @@ await corsair.customerio.api.reportingWebhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reporting_webhooks` | `object[]` | No | — |
 
 
@@ -852,9 +783,6 @@ await corsair.customerio.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment_id` | `number` | Yes | — |
 
 
@@ -864,9 +792,6 @@ await corsair.customerio.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment` | `object` | Yes | — |
 
 
@@ -909,9 +834,6 @@ await corsair.customerio.api.segments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segments` | `object[]` | Yes | — |
 
 
@@ -951,9 +873,6 @@ await corsair.customerio.api.segments.membership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segment_id` | `number` | Yes | — |
 | `limit` | `number` | No | — |
 | `start` | `string` | No | — |
@@ -965,9 +884,6 @@ await corsair.customerio.api.segments.membership({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customers` | `lazy[]` | No | — |
 | `ids` | `string[]` | No | — |
 | `next` | `string` | No | — |
@@ -998,9 +914,6 @@ await corsair.customerio.api.snippets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `snippets` | `object[]` | Yes | — |
 
 
@@ -1042,9 +955,6 @@ await corsair.customerio.api.transactional.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | Yes | — |
 
 

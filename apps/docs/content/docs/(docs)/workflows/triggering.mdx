@@ -23,9 +23,6 @@ const { status, runId } = await corsair.workflows.run('wf_123', {
 
 | Option | Type | Purpose |
 | --- | --- | --- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `unknown` | Data handed to the workflow as its `payload` argument. Optional. |
 | `idempotencyKey` | `string` | Collapses retried triggers into a single run. Optional. |
 

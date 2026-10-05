@@ -31,9 +31,6 @@ await corsair.convoloai.api.agent.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | Yes | — |
 
 
@@ -70,9 +67,6 @@ await corsair.convoloai.api.agent.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -99,9 +93,6 @@ await corsair.convoloai.api.agent.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -128,9 +119,6 @@ await corsair.convoloai.api.agent.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `searchString` | `string` | No | — |
 | `page` | `number` | No | — |
 | `itemsPerPage` | `number` | No | — |
@@ -172,9 +160,6 @@ await corsair.convoloai.api.agent.listV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `searchString` | `string` | No | — |
 | `page` | `number` | No | — |
 | `itemsPerPage` | `number` | No | — |
@@ -216,9 +201,6 @@ await corsair.convoloai.api.agent.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
@@ -256,9 +238,6 @@ await corsair.convoloai.api.agent.updateSchedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
@@ -298,9 +277,6 @@ await corsair.convoloai.api.call.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `callId` | `string` | Yes | — |
 
 
@@ -327,9 +303,6 @@ await corsair.convoloai.api.call.getEndWebhookPayload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `callId` | `string` | Yes | — |
 
 
@@ -356,9 +329,6 @@ await corsair.convoloai.api.call.getLog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `callId` | `string` | Yes | — |
 
 
@@ -385,9 +355,6 @@ await corsair.convoloai.api.call.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date_from` | `string` | No | — |
 | `date_to` | `string` | No | — |
 | `widget_ids` | `string[]` | No | — |
@@ -432,9 +399,6 @@ await corsair.convoloai.api.call.listPayloadData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date_from` | `string` | No | — |
 | `date_to` | `string` | No | — |
 | `widget_ids` | `string[]` | No | — |
@@ -479,9 +443,6 @@ await corsair.convoloai.api.call.listV5({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date_from` | `string` | No | — |
 | `date_to` | `string` | No | — |
 | `widget_ids` | `string[]` | No | — |
@@ -526,9 +487,6 @@ await corsair.convoloai.api.call.listWithTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date_from` | `string` | No | — |
 | `date_to` | `string` | No | — |
 | `widget_ids` | `string[]` | No | — |
@@ -577,9 +535,6 @@ await corsair.convoloai.api.call.setRating({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `callId` | `string` | Yes | — |
 | `tag` | `string` | No | — |
 | `type` | `positive \| negative \| neutral` | No | — |
@@ -608,9 +563,6 @@ await corsair.convoloai.api.call.setS2lTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `callId` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
@@ -648,9 +600,6 @@ await corsair.convoloai.api.call.trigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api_key` | `string` | Yes | — |
 | `widget_key` | `string` | Yes | — |
 | `lc_number` | `string` | Yes | — |
@@ -692,9 +641,6 @@ await corsair.convoloai.api.getCustomWidgetParams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `widget_key` | `string` | Yes | — |
 | `api_key` | `string` | Yes | — |
 
@@ -746,9 +692,6 @@ await corsair.convoloai.api.lead.getOutcomeTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -775,9 +718,6 @@ await corsair.convoloai.api.lead.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_string` | `string` | No | — |
 | `name` | `string` | No | — |
 | `phone` | `string` | No | — |
@@ -825,9 +765,6 @@ await corsair.convoloai.api.lead.listByPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | No | — |
 
 
@@ -866,9 +803,6 @@ await corsair.convoloai.api.widget.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `object` | Yes | — |
 
 
@@ -905,9 +839,6 @@ await corsair.convoloai.api.widget.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -934,9 +865,6 @@ await corsair.convoloai.api.widget.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -963,9 +891,6 @@ await corsair.convoloai.api.widget.getHtmlSiteCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -992,9 +917,6 @@ await corsair.convoloai.api.widget.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `searchString` | `string` | No | — |
 | `status` | `boolean` | No | — |
 | `page` | `number` | No | — |
@@ -1033,9 +955,6 @@ await corsair.convoloai.api.widget.toggle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `new_state` | `0 \| 1` | Yes | — |
 
@@ -1063,9 +982,6 @@ await corsair.convoloai.api.widget.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
@@ -1103,9 +1019,6 @@ await corsair.convoloai.api.widget.updateSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `widget_key` | `string` | Yes | — |
 | `api_key` | `string` | Yes | — |
 | `body` | `object` | No | — |
@@ -1144,9 +1057,6 @@ await corsair.convoloai.api.widget.updateV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `widgetId` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 

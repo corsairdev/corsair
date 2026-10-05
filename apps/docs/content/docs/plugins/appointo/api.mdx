@@ -31,9 +31,6 @@ await corsair.appointo.api.appointments.getAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appointment_id` | `number` | Yes | — |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | No | — |
@@ -87,9 +84,6 @@ await corsair.appointo.api.appointments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appointment_id` | `number` | No | — |
 | `product_id` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -143,9 +137,6 @@ await corsair.appointo.api.appointments.upsertConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appointment_id` | `number` | Yes | — |
 | `config` | `object` | No | — |
 | `availabilities` | `object[]` | No | — |
@@ -292,9 +283,6 @@ await corsair.appointo.api.bookings.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `booking_id` | `number` | Yes | — |
 | `customer_ids` | `number[]` | No | — |
 
@@ -305,9 +293,6 @@ await corsair.appointo.api.bookings.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object` | No | — |
 
 
@@ -500,9 +485,6 @@ await corsair.appointo.api.bookings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appointment_id` | `number` | Yes | — |
 | `timestring` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
@@ -700,9 +682,6 @@ await corsair.appointo.api.bookings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `status` | `past \| upcoming` | No | — |
@@ -899,9 +878,6 @@ await corsair.appointo.api.bookings.reschedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `booking_id` | `number` | Yes | — |
 | `timestring` | `string` | Yes | — |
 | `customer_ids` | `number[]` | No | — |
@@ -914,9 +890,6 @@ await corsair.appointo.api.bookings.reschedule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object` | No | — |
 
 
@@ -1109,9 +1082,6 @@ await corsair.appointo.api.bookings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `booking_id` | `number` | Yes | — |
 | `start_buffer_time` | `number` | No | — |
 | `end_buffer_time` | `number` | No | — |
@@ -1123,9 +1093,6 @@ await corsair.appointo.api.bookings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `object` | No | — |
 
 
@@ -1320,9 +1287,6 @@ await corsair.appointo.api.products.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `search_term` | `string` | No | — |
 | `offset` | `number` | No | — |
@@ -1392,9 +1356,6 @@ await corsair.appointo.api.subscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_term` | `string` | No | — |
 
 

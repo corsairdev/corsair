@@ -31,9 +31,6 @@ await corsair.bluesky.api.feeds.getTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `algorithm` | `string` | No | Algorithm to use for the feed |
 | `limit` | `number` | No | Maximum number of items to return (1-100) |
 | `cursor` | `string` | No | Pagination cursor |
@@ -45,9 +42,6 @@ await corsair.bluesky.api.feeds.getTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `feed` | `object[]` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -101,9 +95,6 @@ await corsair.bluesky.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | The text content of the post (max 300 characters) |
 
 
@@ -113,9 +104,6 @@ await corsair.bluesky.api.posts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uri` | `string` | Yes | — |
 | `cid` | `string` | Yes | — |
 
@@ -140,9 +128,6 @@ await corsair.bluesky.api.posts.deleteRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uri` | `string` | Yes | The AT Protocol URI (at://did:plc:...) of the post to delete |
 
 
@@ -152,9 +137,6 @@ await corsair.bluesky.api.posts.deleteRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -180,9 +162,6 @@ await corsair.bluesky.api.profiles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `actor` | `string` | Yes | The handle or DID of the user profile to fetch |
 
 
@@ -192,9 +171,6 @@ await corsair.bluesky.api.profiles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `did` | `string` | Yes | — |
 | `handle` | `string` | Yes | — |
 | `displayName` | `string` | No | — |

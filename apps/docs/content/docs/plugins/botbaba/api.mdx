@@ -31,9 +31,6 @@ await corsair.botbaba.api.actions.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `action` | `string` | No | — |
 | `conv_id` | `string` | No | — |
 | `tag_ids` | `string` | No | — |
@@ -73,9 +70,6 @@ await corsair.botbaba.api.actions.executeByUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `action` | `string` | No | — |
 | `bot_id` | `number` | No | — |
 | `action_id` | `number` | No | — |
@@ -116,9 +110,6 @@ await corsair.botbaba.api.actions.getWidgetSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bot_id` | `number` | Yes | — |
 
 
@@ -157,9 +148,6 @@ await corsair.botbaba.api.broadcasts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `broadcast_id` | `string` | Yes | — |
 
 
@@ -196,9 +184,6 @@ await corsair.botbaba.api.broadcasts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `broadcast_id` | `string` | Yes | — |
 
 
@@ -235,9 +220,6 @@ await corsair.botbaba.api.broadcasts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -277,9 +259,6 @@ await corsair.botbaba.api.contacts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -316,9 +295,6 @@ await corsair.botbaba.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 
 
@@ -355,9 +331,6 @@ await corsair.botbaba.api.contacts.getAnalytics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `end_date` | `string` | No | — |
 | `start_date` | `string` | No | — |
 
@@ -395,9 +368,6 @@ await corsair.botbaba.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_id` | `string` | Yes | — |
 | `tags` | `string[]` | No | — |
 | `email` | `string` | No | — |
@@ -452,9 +422,6 @@ await corsair.botbaba.api.flows.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `flow_id` | `string` | Yes | — |
 
 
@@ -491,9 +458,6 @@ await corsair.botbaba.api.flows.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `flow_id` | `string` | Yes | — |
 
 
@@ -562,9 +526,6 @@ await corsair.botbaba.api.gupshup.forwardMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -613,9 +574,6 @@ await corsair.botbaba.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 
 
@@ -652,9 +610,6 @@ await corsair.botbaba.api.messages.getAnalytics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message_id` | `string` | Yes | — |
 
 
@@ -691,9 +646,6 @@ await corsair.botbaba.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -731,9 +683,6 @@ await corsair.botbaba.api.messages.sendWhatsappTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -782,9 +731,6 @@ await corsair.botbaba.api.shopify.cartCreation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | No | — |
 | `X-Shopify-Webhook-Id` | `string` | No | — |
@@ -843,9 +789,6 @@ await corsair.botbaba.api.shopify.cartUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | No | — |
 | `X-Shopify-Webhook-Id` | `string` | No | — |
@@ -904,9 +847,6 @@ await corsair.botbaba.api.shopify.checkoutCreation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | No | — |
 | `X-Shopify-Webhook-Id` | `string` | No | — |
@@ -965,9 +905,6 @@ await corsair.botbaba.api.shopify.checkoutUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | No | — |
 | `X-Shopify-Webhook-Id` | `string` | No | — |
@@ -1026,9 +963,6 @@ await corsair.botbaba.api.shopify.orderCancellation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | Yes | — |
 | `X-Shopify-Webhook-Id` | `string` | Yes | — |
@@ -1081,9 +1015,6 @@ await corsair.botbaba.api.shopify.orderFulfillment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Topic` | `string` | No | — |
 | `X-Shopify-Webhook-Id` | `string` | No | — |
@@ -1142,9 +1073,6 @@ await corsair.botbaba.api.shopify.orderPayment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 | `X-Shopify-Event-Id` | `string` | No | — |
 | `X-Shopify-Topic` | `string` | No | — |
@@ -1209,9 +1137,6 @@ await corsair.botbaba.api.simulators.cartCreation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -1248,9 +1173,6 @@ await corsair.botbaba.api.simulators.checkoutCreation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -1287,9 +1209,6 @@ await corsair.botbaba.api.simulators.checkoutUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -1323,9 +1242,6 @@ await corsair.botbaba.api.simulators.gupshup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sender` | `string` | Yes | — |
 | `recipient` | `string` | Yes | — |
 | `text` | `string` | No | — |
@@ -1351,9 +1267,6 @@ await corsair.botbaba.api.simulators.gupshup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -1387,9 +1300,6 @@ await corsair.botbaba.api.simulators.orderFulfillment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `variant` | `standard \| with_tracking \| partial` | Yes | — |
 
 
@@ -1399,9 +1309,6 @@ await corsair.botbaba.api.simulators.orderFulfillment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payload` | `object` | Yes | — |
 
 
@@ -1437,9 +1344,6 @@ await corsair.botbaba.api.tags.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag_id` | `string` | Yes | — |
 
 
@@ -1506,9 +1410,6 @@ await corsair.botbaba.api.tags.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `tag_id` | `string` | Yes | — |
 
@@ -1548,9 +1449,6 @@ await corsair.botbaba.api.templates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `string` | Yes | — |
 
 
@@ -1587,9 +1485,6 @@ await corsair.botbaba.api.templates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `string` | Yes | — |
 
 
@@ -1626,9 +1521,6 @@ await corsair.botbaba.api.templates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1667,9 +1559,6 @@ await corsair.botbaba.api.templates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1712,9 +1601,6 @@ await corsair.botbaba.api.utils.getFilename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -1724,9 +1610,6 @@ await corsair.botbaba.api.utils.getFilename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filename` | `string` | Yes | — |
 
 
@@ -1752,9 +1635,6 @@ await corsair.botbaba.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -1791,9 +1671,6 @@ await corsair.botbaba.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 
 
@@ -1830,9 +1707,6 @@ await corsair.botbaba.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 
@@ -1900,9 +1774,6 @@ await corsair.botbaba.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook_id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `active` | `boolean` | No | — |

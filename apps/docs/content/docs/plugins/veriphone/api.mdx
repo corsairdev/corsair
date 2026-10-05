@@ -34,9 +34,6 @@ await corsair.veriphone.api.coverage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `countries` | `object[]` | Yes | — |
 | `updatedAt` | `string` | No | — |
 
@@ -78,9 +75,6 @@ await corsair.veriphone.api.credits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `counter` | `number` | Yes | — |
 | `active` | `boolean` | Yes | — |
@@ -142,9 +136,6 @@ await corsair.veriphone.api.getExamplePhoneNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country_code` | `string` | Yes | ISO 3166-1 alpha-2 country code, e.g. US. Confirm it before calling. |
 | `type` | `mobile \| fixed_line \| toll_free \| premium_rate \| shared_cost \| voip` | No | Example number line type. Defaults to mobile when omitted. |
 
@@ -155,9 +146,6 @@ await corsair.veriphone.api.getExamplePhoneNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success \| error` | Yes | — |
 | `phone_type` | `string` | Yes | — |
 | `country_code` | `string` | Yes | — |
@@ -190,9 +178,6 @@ await corsair.veriphone.api.verifyPhoneNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phone` | `string` | Yes | Phone number to verify. International E.164 format recommended. |
 | `default_country` | `string` | No | ISO 3166-1 alpha-2 country code used when the number has no international prefix. |
 | `mode` | `static \| current` | No | static (default, 1 credit) or current (live registry lookup, 10 credits). |
@@ -205,9 +190,6 @@ await corsair.veriphone.api.verifyPhoneNumber({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success \| error \| syntax-error` | Yes | — |
 | `phone_valid` | `boolean` | Yes | — |
 | `phone` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetName` | `string` | No | — |
 | `keyColumn` | `string` | No | Column letter (e.g. "A"), not a header name (e.g. "Company Name") |
@@ -49,9 +46,6 @@ await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `totalUpdatedRows` | `number` | No | — |
 | `totalUpdatedColumns` | `number` | No | — |
@@ -95,9 +89,6 @@ await corsair.googlesheets.api.sheets.appendRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetName` | `string` | No | — |
 | `range` | `string` | No | — |
@@ -112,9 +103,6 @@ await corsair.googlesheets.api.sheets.appendRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `totalUpdatedRows` | `number` | No | — |
 | `totalUpdatedColumns` | `number` | No | — |
@@ -158,9 +146,6 @@ await corsair.googlesheets.api.sheets.clearSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetName` | `string` | No | — |
 | `range` | `string` | No | — |
@@ -172,9 +157,6 @@ await corsair.googlesheets.api.sheets.clearSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `clearedRange` | `string` | No | — |
 
@@ -199,9 +181,6 @@ await corsair.googlesheets.api.sheets.createSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 
@@ -212,9 +191,6 @@ await corsair.googlesheets.api.sheets.createSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `replies` | `any[]` | No | — |
 | `updatedSpreadsheet` | `object` | No | — |
@@ -258,9 +234,6 @@ await corsair.googlesheets.api.sheets.deleteRowsOrColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetId` | `number` | Yes | — |
 | `dimension` | `ROWS \| COLUMNS` | No | — |
@@ -274,9 +247,6 @@ await corsair.googlesheets.api.sheets.deleteRowsOrColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `replies` | `any[]` | No | — |
 | `updatedSpreadsheet` | `object` | No | — |
@@ -320,9 +290,6 @@ await corsair.googlesheets.api.sheets.deleteSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetId` | `number` | Yes | — |
 
@@ -333,9 +300,6 @@ await corsair.googlesheets.api.sheets.deleteSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `replies` | `any[]` | No | — |
 | `updatedSpreadsheet` | `object` | No | — |
@@ -379,9 +343,6 @@ await corsair.googlesheets.api.sheets.getRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetName` | `string` | No | — |
 | `range` | `string` | No | — |
@@ -395,9 +356,6 @@ await corsair.googlesheets.api.sheets.getRows({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `range` | `string` | No | — |
 | `majorDimension` | `ROWS \| COLUMNS \| DIMENSION_UNSPECIFIED` | No | — |
 | `values` | `(string \| number \| boolean \| null)[][]` | No | — |
@@ -423,9 +381,6 @@ await corsair.googlesheets.api.sheets.listSheetsInSpreadsheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 
 
@@ -435,9 +390,6 @@ await corsair.googlesheets.api.sheets.listSheetsInSpreadsheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `sheets` | `object[]` | No | — |
 
@@ -477,9 +429,6 @@ await corsair.googlesheets.api.sheets.updateRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 | `sheetName` | `string` | No | — |
 | `range` | `string` | No | — |
@@ -494,9 +443,6 @@ await corsair.googlesheets.api.sheets.updateRow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `totalUpdatedRows` | `number` | No | — |
 | `totalUpdatedColumns` | `number` | No | — |
@@ -542,9 +488,6 @@ await corsair.googlesheets.api.spreadsheets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `properties` | `object` | No | — |
 
 
@@ -567,9 +510,6 @@ await corsair.googlesheets.api.spreadsheets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | No | — |
 | `properties` | `object` | No | — |
 | `spreadsheetUrl` | `string` | No | — |
@@ -609,9 +549,6 @@ await corsair.googlesheets.api.spreadsheets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `spreadsheetId` | `string` | Yes | — |
 
 
@@ -638,9 +575,6 @@ await corsair.googlesheets.api.spreadsheets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageToken` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -652,9 +586,6 @@ await corsair.googlesheets.api.spreadsheets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `files` | `object[]` | No | — |
 | `nextPageToken` | `string` | No | — |
 

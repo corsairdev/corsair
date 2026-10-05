@@ -31,9 +31,6 @@ await corsair.betterstack.api.catalog.relations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 
@@ -44,9 +41,6 @@ await corsair.betterstack.api.catalog.relations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -101,9 +95,6 @@ await corsair.betterstack.api.heartbeatGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `paused` | `boolean` | No | Set to true to pause monitoring for any existing heartbeats in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing heartbeats in the  |
 | `name` | `string` | No | A name of the group that you can see in the dashboard. |
@@ -116,9 +107,6 @@ await corsair.betterstack.api.heartbeatGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -158,9 +146,6 @@ await corsair.betterstack.api.heartbeatGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
 
 
@@ -170,9 +155,6 @@ await corsair.betterstack.api.heartbeatGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -212,9 +194,6 @@ await corsair.betterstack.api.heartbeatGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter heartbeat groups belonging to a specified team when using global API token. |
@@ -226,9 +205,6 @@ await corsair.betterstack.api.heartbeatGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -281,9 +257,6 @@ await corsair.betterstack.api.heartbeatGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
 
 
@@ -310,9 +283,6 @@ await corsair.betterstack.api.heartbeatGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
 | `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
 | `paused` | `boolean` | No | Set to true to pause monitoring for any existing heartbeats in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing heartbeats in the  |
@@ -326,9 +296,6 @@ await corsair.betterstack.api.heartbeatGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -370,9 +337,6 @@ await corsair.betterstack.api.heartbeats.availability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
 | `from` | `string` | No | Start date (e.g., 2021-01-26) |
 | `to` | `string` | No | End date (e.g., 2021-01-27) |
@@ -384,9 +348,6 @@ await corsair.betterstack.api.heartbeats.availability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -426,9 +387,6 @@ await corsair.betterstack.api.heartbeats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | No | The name of the service for this heartbeat. |
 | `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
@@ -456,9 +414,6 @@ await corsair.betterstack.api.heartbeats.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -498,9 +453,6 @@ await corsair.betterstack.api.heartbeats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
 
 
@@ -510,9 +462,6 @@ await corsair.betterstack.api.heartbeats.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -552,9 +501,6 @@ await corsair.betterstack.api.heartbeats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter heartbeats belonging to a specified team when using global API token. |
@@ -566,9 +512,6 @@ await corsair.betterstack.api.heartbeats.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -621,9 +564,6 @@ await corsair.betterstack.api.heartbeats.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
 
 
@@ -650,9 +590,6 @@ await corsair.betterstack.api.heartbeats.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
 | `name` | `string` | No | The name of the service for this heartbeat. |
 | `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
@@ -680,9 +617,6 @@ await corsair.betterstack.api.heartbeats.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -724,9 +658,6 @@ await corsair.betterstack.api.incidentComments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `content` | `string` | Yes | The content of the comment. Markdown is supported for formatting. |
 | `user_email` | `string` | No | Email of a team member to tag in the comment. |
@@ -738,9 +669,6 @@ await corsair.betterstack.api.incidentComments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -780,9 +708,6 @@ await corsair.betterstack.api.incidentComments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
 
@@ -793,9 +718,6 @@ await corsair.betterstack.api.incidentComments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -835,9 +757,6 @@ await corsair.betterstack.api.incidentComments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
@@ -849,9 +768,6 @@ await corsair.betterstack.api.incidentComments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -904,9 +820,6 @@ await corsair.betterstack.api.incidentComments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
 
@@ -934,9 +847,6 @@ await corsair.betterstack.api.incidentComments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
 | `content` | `string` | No | The content of the comment. Markdown is supported for formatting. |
@@ -948,9 +858,6 @@ await corsair.betterstack.api.incidentComments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -992,9 +899,6 @@ await corsair.betterstack.api.incidents.acknowledge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `acknowledged_by` | `string` | No | User e-mail or a custom identifier of the entity that acknowledged the incident |
 
@@ -1005,9 +909,6 @@ await corsair.betterstack.api.incidents.acknowledge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1047,9 +948,6 @@ await corsair.betterstack.api.incidents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `requester_email` | `string` | Yes | E-mail of the user who requested the incident. Not required when authenticating with an OAuth token |
 | `name` | `string` | No | Short name of the incident |
@@ -1081,9 +979,6 @@ await corsair.betterstack.api.incidents.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1123,9 +1018,6 @@ await corsair.betterstack.api.incidents.escalate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `escalation_type` | `string` | Yes | Who should we escalate this incident to? \\nPossible values: User, Team, Schedule, Policy, and Organization |
 | `user_email` | `string` | No | Define which team member to escalate to. \\nEither user_email or user_id required when escalating to User. |
@@ -1158,9 +1050,6 @@ await corsair.betterstack.api.incidents.escalate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1200,9 +1089,6 @@ await corsair.betterstack.api.incidents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 
 
@@ -1212,9 +1098,6 @@ await corsair.betterstack.api.incidents.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1254,9 +1137,6 @@ await corsair.betterstack.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter incidents belonging to a specified team when using global API token. |
@@ -1275,9 +1155,6 @@ await corsair.betterstack.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1330,9 +1207,6 @@ await corsair.betterstack.api.incidents.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 
 
@@ -1359,9 +1233,6 @@ await corsair.betterstack.api.incidents.resolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
 | `resolved_by` | `string` | No | User e-mail or a custom identifier of the entity that resolved the incident |
 
@@ -1372,9 +1243,6 @@ await corsair.betterstack.api.incidents.resolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1414,9 +1282,6 @@ await corsair.betterstack.api.incidents.timeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
@@ -1428,9 +1293,6 @@ await corsair.betterstack.api.incidents.timeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1485,9 +1347,6 @@ await corsair.betterstack.api.integrations.awsCloudWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -1499,9 +1358,6 @@ await corsair.betterstack.api.integrations.awsCloudWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1554,9 +1410,6 @@ await corsair.betterstack.api.integrations.azure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter Azure integrations belonging to a specified team when using global API token. |
@@ -1568,9 +1421,6 @@ await corsair.betterstack.api.integrations.azure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1623,9 +1473,6 @@ await corsair.betterstack.api.integrations.datadog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter Datadog integrations belonging to a specified team when using global API token. |
@@ -1637,9 +1484,6 @@ await corsair.betterstack.api.integrations.datadog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1692,9 +1536,6 @@ await corsair.betterstack.api.integrations.elastic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter Elastic integrations belonging to a specified team when using global API token. |
@@ -1706,9 +1547,6 @@ await corsair.betterstack.api.integrations.elastic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1761,9 +1599,6 @@ await corsair.betterstack.api.integrations.email({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter email integrations belonging to a specified team when using global API token. |
@@ -1775,9 +1610,6 @@ await corsair.betterstack.api.integrations.email({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1830,9 +1662,6 @@ await corsair.betterstack.api.integrations.googleMonitoring({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -1844,9 +1673,6 @@ await corsair.betterstack.api.integrations.googleMonitoring({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1899,9 +1725,6 @@ await corsair.betterstack.api.integrations.grafana({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -1913,9 +1736,6 @@ await corsair.betterstack.api.integrations.grafana({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1968,9 +1788,6 @@ await corsair.betterstack.api.integrations.jira({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter Jira integrations belonging to a specified team when using global API token. |
@@ -1982,9 +1799,6 @@ await corsair.betterstack.api.integrations.jira({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2037,9 +1851,6 @@ await corsair.betterstack.api.integrations.newRelic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -2051,9 +1862,6 @@ await corsair.betterstack.api.integrations.newRelic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2106,9 +1914,6 @@ await corsair.betterstack.api.integrations.pagerDuty({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -2120,9 +1925,6 @@ await corsair.betterstack.api.integrations.pagerDuty({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2175,9 +1977,6 @@ await corsair.betterstack.api.integrations.prometheus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -2189,9 +1988,6 @@ await corsair.betterstack.api.integrations.prometheus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2244,9 +2040,6 @@ await corsair.betterstack.api.integrations.slack({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter Slack integrations belonging to a specified team when using global API token. |
@@ -2258,9 +2051,6 @@ await corsair.betterstack.api.integrations.slack({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2313,9 +2103,6 @@ await corsair.betterstack.api.integrations.splunkOnCall({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
@@ -2327,9 +2114,6 @@ await corsair.betterstack.api.integrations.splunkOnCall({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2384,9 +2168,6 @@ await corsair.betterstack.api.metadata.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `owner_id` | `string` | Yes | Resource to update metadata for |
 | `owner_type` | `string` | Yes | Type of resource to update metadata for. Accepted values: Monitor, Heartbeat, Incident, WebhookIntegration, EmailIntegration, IncomingWebhook, or CallRouting |
 | `key` | `string` | Yes | Metadata key |
@@ -2410,9 +2191,6 @@ await corsair.betterstack.api.metadata.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2452,9 +2230,6 @@ await corsair.betterstack.api.metadata.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter metadata belonging to a specified team when using global API token. |
@@ -2468,9 +2243,6 @@ await corsair.betterstack.api.metadata.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2525,9 +2297,6 @@ await corsair.betterstack.api.monitorGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `paused` | `boolean` | No | Set to true to pause monitoring for any existing monitors in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing monitors in the grou |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
@@ -2540,9 +2309,6 @@ await corsair.betterstack.api.monitorGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2582,9 +2348,6 @@ await corsair.betterstack.api.monitorGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
 
 
@@ -2594,9 +2357,6 @@ await corsair.betterstack.api.monitorGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2636,9 +2396,6 @@ await corsair.betterstack.api.monitorGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter monitor groups belonging to a specified team when using global API token. |
@@ -2650,9 +2407,6 @@ await corsair.betterstack.api.monitorGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2705,9 +2459,6 @@ await corsair.betterstack.api.monitorGroups.monitors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
@@ -2719,9 +2470,6 @@ await corsair.betterstack.api.monitorGroups.monitors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2774,9 +2522,6 @@ await corsair.betterstack.api.monitorGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
 
 
@@ -2803,9 +2548,6 @@ await corsair.betterstack.api.monitorGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
 | `paused` | `boolean` | No | Set to true to pause monitoring for any existing monitors in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing monitors in the grou |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
@@ -2818,9 +2560,6 @@ await corsair.betterstack.api.monitorGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2862,9 +2601,6 @@ await corsair.betterstack.api.monitors.availability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
 | `from` | `string` | No | Start date (e.g., 2021-01-26) |
 | `to` | `string` | No | End date (e.g., 2021-01-27) |
@@ -2876,9 +2612,6 @@ await corsair.betterstack.api.monitors.availability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2918,9 +2651,6 @@ await corsair.betterstack.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `monitor_type` | `string` | No | — |
 | `url` | `string` | No | The URL of your website or the host you want to ping. See monitor_type below. |
@@ -2989,9 +2719,6 @@ await corsair.betterstack.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3031,9 +2758,6 @@ await corsair.betterstack.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
 
 
@@ -3043,9 +2767,6 @@ await corsair.betterstack.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3085,9 +2806,6 @@ await corsair.betterstack.api.monitors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter monitors belonging to a specified team when using global API token. |
@@ -3101,9 +2819,6 @@ await corsair.betterstack.api.monitors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -3156,9 +2871,6 @@ await corsair.betterstack.api.monitors.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
 
 
@@ -3185,9 +2897,6 @@ await corsair.betterstack.api.monitors.responseTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
 
 
@@ -3197,9 +2906,6 @@ await corsair.betterstack.api.monitors.responseTimes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3239,9 +2945,6 @@ await corsair.betterstack.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
 | `monitor_type` | `string` | No | — |
 | `url` | `string` | No | The URL of your website or the host you want to ping. See monitor_type below. |
@@ -3310,9 +3013,6 @@ await corsair.betterstack.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3354,9 +3054,6 @@ await corsair.betterstack.api.onCalls.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | The name of the schedule |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 
@@ -3367,9 +3064,6 @@ await corsair.betterstack.api.onCalls.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3409,9 +3103,6 @@ await corsair.betterstack.api.onCalls.events({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
@@ -3423,9 +3114,6 @@ await corsair.betterstack.api.onCalls.events({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -3478,9 +3166,6 @@ await corsair.betterstack.api.onCalls.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
 | `date` | `string` | No | Include an ISO-8601-formatted date or date-time if you want to look-up on-call at a specific date or time. |
 
@@ -3491,9 +3176,6 @@ await corsair.betterstack.api.onCalls.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3533,9 +3215,6 @@ await corsair.betterstack.api.onCalls.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter on-call schedules belonging to a specified team when using global API token. |
@@ -3547,9 +3226,6 @@ await corsair.betterstack.api.onCalls.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -3602,9 +3278,6 @@ await corsair.betterstack.api.onCalls.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
 
 
@@ -3631,9 +3304,6 @@ await corsair.betterstack.api.onCalls.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
 | `name` | `string` | No | The name of the schedule |
 
@@ -3644,9 +3314,6 @@ await corsair.betterstack.api.onCalls.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3688,9 +3355,6 @@ await corsair.betterstack.api.outgoingWebhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource. |
 | `name` | `string` | No | The name of the Outgoing Webhook integration that you can see in the dashboard. |
 | `url` | `string` | Yes | The URL of the Outgoing Webhook integration. |
@@ -3720,9 +3384,6 @@ await corsair.betterstack.api.outgoingWebhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3762,9 +3423,6 @@ await corsair.betterstack.api.outgoingWebhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
 
 
@@ -3774,9 +3432,6 @@ await corsair.betterstack.api.outgoingWebhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3816,9 +3471,6 @@ await corsair.betterstack.api.outgoingWebhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter outgoing webhooks belonging to a specified team when using global API token. |
@@ -3830,9 +3482,6 @@ await corsair.betterstack.api.outgoingWebhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -3885,9 +3534,6 @@ await corsair.betterstack.api.outgoingWebhooks.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
 
 
@@ -3914,9 +3560,6 @@ await corsair.betterstack.api.outgoingWebhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
 | `name` | `string` | No | The name of the Outgoing Webhook integration that you can see in the dashboard. |
 | `url` | `string` | No | The URL of the Outgoing Webhook integration. |
@@ -3945,9 +3588,6 @@ await corsair.betterstack.api.outgoingWebhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3989,9 +3629,6 @@ await corsair.betterstack.api.policies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | Yes | The name of this Policy. |
 | `repeat_count` | `number` | No | How many times should the entire policy be repeated if no one acknowledges the incident. |
@@ -4016,9 +3653,6 @@ await corsair.betterstack.api.policies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4058,9 +3692,6 @@ await corsair.betterstack.api.policies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
 
 
@@ -4070,9 +3701,6 @@ await corsair.betterstack.api.policies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4112,9 +3740,6 @@ await corsair.betterstack.api.policies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter policies belonging to a specified team when using global API token. |
@@ -4126,9 +3751,6 @@ await corsair.betterstack.api.policies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -4181,9 +3803,6 @@ await corsair.betterstack.api.policies.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
 
 
@@ -4210,9 +3829,6 @@ await corsair.betterstack.api.policies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
 | `name` | `string` | No | The name of this Policy. |
 | `repeat_count` | `number` | No | How many times should the entire policy be repeated if no one acknowledges the incident. |
@@ -4237,9 +3853,6 @@ await corsair.betterstack.api.policies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4281,9 +3894,6 @@ await corsair.betterstack.api.policyGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | Yes | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your escalation policy groups. |
@@ -4295,9 +3905,6 @@ await corsair.betterstack.api.policyGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4337,9 +3944,6 @@ await corsair.betterstack.api.policyGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
 
 
@@ -4349,9 +3953,6 @@ await corsair.betterstack.api.policyGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4391,9 +3992,6 @@ await corsair.betterstack.api.policyGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter policy groups belonging to a specified team when using global API token. |
@@ -4405,9 +4003,6 @@ await corsair.betterstack.api.policyGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -4460,9 +4055,6 @@ await corsair.betterstack.api.policyGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
 
 
@@ -4489,9 +4081,6 @@ await corsair.betterstack.api.policyGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your escalation policy. |
@@ -4503,9 +4092,6 @@ await corsair.betterstack.api.policyGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4547,9 +4133,6 @@ await corsair.betterstack.api.sourceGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your source groups. |
@@ -4561,9 +4144,6 @@ await corsair.betterstack.api.sourceGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4603,9 +4183,6 @@ await corsair.betterstack.api.sourceGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `source_group_id` | `string \| number` | Yes | source_group_id (path parameter) |
 
 
@@ -4632,9 +4209,6 @@ await corsair.betterstack.api.sourceGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `source_group_id` | `string \| number` | Yes | source_group_id (path parameter) |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your source groups. |
@@ -4646,9 +4220,6 @@ await corsair.betterstack.api.sourceGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4690,9 +4261,6 @@ await corsair.betterstack.api.statusPageGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using a global API token to specify the team which should own the resource. |
 | `name` | `string` | No | A name for the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your status page groups. |
@@ -4704,9 +4272,6 @@ await corsair.betterstack.api.statusPageGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4746,9 +4311,6 @@ await corsair.betterstack.api.statusPageGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
 
 
@@ -4758,9 +4320,6 @@ await corsair.betterstack.api.statusPageGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4800,9 +4359,6 @@ await corsair.betterstack.api.statusPageGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 
@@ -4813,9 +4369,6 @@ await corsair.betterstack.api.statusPageGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -4868,9 +4421,6 @@ await corsair.betterstack.api.statusPageGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
 
 
@@ -4897,9 +4447,6 @@ await corsair.betterstack.api.statusPageGroups.statusPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
@@ -4911,9 +4458,6 @@ await corsair.betterstack.api.statusPageGroups.statusPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -4966,9 +4510,6 @@ await corsair.betterstack.api.statusPageGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
 | `name` | `string` | No | A name for the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your status page groups. |
@@ -4980,9 +4521,6 @@ await corsair.betterstack.api.statusPageGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5024,9 +4562,6 @@ await corsair.betterstack.api.statusPageReports.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `title` | `string` | No | The title of your new status page report. |
 | `message` | `string` | No | The first status update message for this report. |
@@ -5054,9 +4589,6 @@ await corsair.betterstack.api.statusPageReports.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5096,9 +4628,6 @@ await corsair.betterstack.api.statusPageReports.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 
@@ -5109,9 +4638,6 @@ await corsair.betterstack.api.statusPageReports.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5151,9 +4677,6 @@ await corsair.betterstack.api.statusPageReports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
@@ -5165,9 +4688,6 @@ await corsair.betterstack.api.statusPageReports.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -5220,9 +4740,6 @@ await corsair.betterstack.api.statusPageReports.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 
@@ -5250,9 +4767,6 @@ await corsair.betterstack.api.statusPageReports.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 | `title` | `string` | No | The title of your new status page report. |
@@ -5277,9 +4791,6 @@ await corsair.betterstack.api.statusPageReports.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5321,9 +4832,6 @@ await corsair.betterstack.api.statusPageResources.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_page_section_id` | `number` | No | The ID of the section which should contain this resource. When omitted, defaults to the first section on the status page. |
 | `widget_type` | `string` | No | What widget to display for this resource. Available values:\\n\\n- plain - Only display status.\\n- history - Display historical status.\\n- intraday_history - Display detailed histori |
@@ -5363,9 +4871,6 @@ await corsair.betterstack.api.statusPageResources.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5405,9 +4910,6 @@ await corsair.betterstack.api.statusPageResources.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
 
@@ -5418,9 +4920,6 @@ await corsair.betterstack.api.statusPageResources.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5460,9 +4959,6 @@ await corsair.betterstack.api.statusPageResources.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
@@ -5474,9 +4970,6 @@ await corsair.betterstack.api.statusPageResources.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -5529,9 +5022,6 @@ await corsair.betterstack.api.statusPageResources.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
 
@@ -5559,9 +5049,6 @@ await corsair.betterstack.api.statusPageResources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
 | `status_page_section_id` | `number` | No | The ID of the section which should contain this resource. When omitted, defaults to the first section on the status page. |
@@ -5601,9 +5088,6 @@ await corsair.betterstack.api.statusPageResources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5645,9 +5129,6 @@ await corsair.betterstack.api.statusPages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 
 
@@ -5657,9 +5138,6 @@ await corsair.betterstack.api.statusPages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5699,9 +5177,6 @@ await corsair.betterstack.api.statusPages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 
@@ -5712,9 +5187,6 @@ await corsair.betterstack.api.statusPages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -5767,9 +5239,6 @@ await corsair.betterstack.api.statusPages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `history` | `number` | No | Number of days to display on the status page. Between 7 and 365 days. |
 | `company_name` | `string` | No | Name of your company |
@@ -5820,9 +5289,6 @@ await corsair.betterstack.api.statusPages.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5864,9 +5330,6 @@ await corsair.betterstack.api.statusPageSections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `name` | `string` | No | The name of the section. Leave blank to hide the section header. |
 | `position` | `number` | No | The position of this resource on your status page, indexed from zero. If you don't specify a position, we add the resource to the end of the status page. When you specify a positio |
@@ -5878,9 +5341,6 @@ await corsair.betterstack.api.statusPageSections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5920,9 +5380,6 @@ await corsair.betterstack.api.statusPageSections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `section_id` | `string \| number` | Yes | section_id (path parameter) |
 
@@ -5933,9 +5390,6 @@ await corsair.betterstack.api.statusPageSections.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5975,9 +5429,6 @@ await corsair.betterstack.api.statusPageSections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
@@ -5989,9 +5440,6 @@ await corsair.betterstack.api.statusPageSections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -6044,9 +5492,6 @@ await corsair.betterstack.api.statusPageSections.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `section_id` | `string \| number` | Yes | section_id (path parameter) |
 
@@ -6074,9 +5519,6 @@ await corsair.betterstack.api.statusPageSections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `section_id` | `string \| number` | Yes | section_id (path parameter) |
 | `name` | `string` | No | The name of the section. Leave blank to hide the section header. |
@@ -6089,9 +5531,6 @@ await corsair.betterstack.api.statusPageSections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6133,9 +5572,6 @@ await corsair.betterstack.api.statusUpdates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 | `message` | `string` | No | A message associated with the status update |
@@ -6160,9 +5596,6 @@ await corsair.betterstack.api.statusUpdates.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6202,9 +5635,6 @@ await corsair.betterstack.api.statusUpdates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 | `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
@@ -6216,9 +5646,6 @@ await corsair.betterstack.api.statusUpdates.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6258,9 +5685,6 @@ await corsair.betterstack.api.statusUpdates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
@@ -6273,9 +5697,6 @@ await corsair.betterstack.api.statusUpdates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -6328,9 +5749,6 @@ await corsair.betterstack.api.statusUpdates.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 | `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
@@ -6359,9 +5777,6 @@ await corsair.betterstack.api.statusUpdates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
 | `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
 | `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
@@ -6387,9 +5802,6 @@ await corsair.betterstack.api.statusUpdates.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6434,9 +5846,6 @@ await corsair.betterstack.api.token.describe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `configured` | `boolean` | Yes | — |
 | `token_length` | `number` | Yes | — |
 | `token_suffix` | `string` | Yes | — |
@@ -6465,9 +5874,6 @@ await corsair.betterstack.api.urgencies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | Yes | The name of this severity. |
 | `sms` | `boolean` | Yes | Whether to send SMS when a new incident is created. |
@@ -6483,9 +5889,6 @@ await corsair.betterstack.api.urgencies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6525,9 +5928,6 @@ await corsair.betterstack.api.urgencies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
 
 
@@ -6537,9 +5937,6 @@ await corsair.betterstack.api.urgencies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6579,9 +5976,6 @@ await corsair.betterstack.api.urgencies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 | `team_name` | `string` | No | Filter severities belonging to a specified team when using global API token. |
@@ -6593,9 +5987,6 @@ await corsair.betterstack.api.urgencies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -6648,9 +6039,6 @@ await corsair.betterstack.api.urgencies.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
 
 
@@ -6677,9 +6065,6 @@ await corsair.betterstack.api.urgencies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
 | `name` | `string` | No | The name of this severity. |
 | `sms` | `boolean` | No | Whether to send SMS when a new incident is created. |
@@ -6695,9 +6080,6 @@ await corsair.betterstack.api.urgencies.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6739,9 +6121,6 @@ await corsair.betterstack.api.urgencyGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
 | `name` | `string` | Yes | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your severity groups. |
@@ -6753,9 +6132,6 @@ await corsair.betterstack.api.urgencyGroups.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6795,9 +6171,6 @@ await corsair.betterstack.api.urgencyGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
 
 
@@ -6807,9 +6180,6 @@ await corsair.betterstack.api.urgencyGroups.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6849,9 +6219,6 @@ await corsair.betterstack.api.urgencyGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Page of results to return. Defaults to the first page. |
 | `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
 
@@ -6862,9 +6229,6 @@ await corsair.betterstack.api.urgencyGroups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -6917,9 +6281,6 @@ await corsair.betterstack.api.urgencyGroups.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
 
 
@@ -6946,9 +6307,6 @@ await corsair.betterstack.api.urgencyGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
 | `name` | `string` | No | The name of the group that you can see in the dashboard. |
 | `sort_index` | `number` | No | Set sort_index to specify how to sort your severity. |
@@ -6960,9 +6318,6 @@ await corsair.betterstack.api.urgencyGroups.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 

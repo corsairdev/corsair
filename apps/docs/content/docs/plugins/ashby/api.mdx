@@ -34,9 +34,6 @@ await corsair.ashby.api.apiKey.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -76,9 +73,6 @@ await corsair.ashby.api.application.changeStage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 | `interviewStageId` | `string` | Yes | — |
 | `archiveReasonId` | `string` | No | — |
@@ -90,9 +84,6 @@ await corsair.ashby.api.application.changeStage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -147,9 +138,6 @@ await corsair.ashby.api.application.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 | `jobId` | `string` | Yes | — |
 | `interviewStageId` | `string` | No | — |
@@ -176,9 +164,6 @@ await corsair.ashby.api.application.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -233,9 +218,6 @@ await corsair.ashby.api.application.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 
 
@@ -245,9 +227,6 @@ await corsair.ashby.api.application.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -302,9 +281,6 @@ await corsair.ashby.api.application.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -319,9 +295,6 @@ await corsair.ashby.api.application.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -379,9 +352,6 @@ await corsair.ashby.api.application.transfer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 | `jobId` | `string` | Yes | — |
 | `interviewStageId` | `string` | No | — |
@@ -393,9 +363,6 @@ await corsair.ashby.api.application.transfer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -450,9 +417,6 @@ await corsair.ashby.api.application.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 | `archiveReasonId` | `string` | No | — |
 | `customFields` | `object[]` | No | — |
@@ -477,9 +441,6 @@ await corsair.ashby.api.application.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -536,9 +497,6 @@ await corsair.ashby.api.candidate.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
 
@@ -549,9 +507,6 @@ await corsair.ashby.api.candidate.addTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -623,9 +578,6 @@ await corsair.ashby.api.candidate.anonymize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 
 
@@ -635,9 +587,6 @@ await corsair.ashby.api.candidate.anonymize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -674,9 +623,6 @@ await corsair.ashby.api.candidate.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `phoneNumber` | `string` | No | — |
@@ -715,9 +661,6 @@ await corsair.ashby.api.candidate.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -789,9 +732,6 @@ await corsair.ashby.api.candidate.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 | `note` | `string` | Yes | — |
 
@@ -802,9 +742,6 @@ await corsair.ashby.api.candidate.createNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -844,9 +781,6 @@ await corsair.ashby.api.candidate.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 
 
@@ -856,9 +790,6 @@ await corsair.ashby.api.candidate.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -930,9 +861,6 @@ await corsair.ashby.api.candidate.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -946,9 +874,6 @@ await corsair.ashby.api.candidate.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -1023,9 +948,6 @@ await corsair.ashby.api.candidate.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 
 
@@ -1035,9 +957,6 @@ await corsair.ashby.api.candidate.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -1077,9 +996,6 @@ await corsair.ashby.api.candidate.removeTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 | `tag` | `string` | Yes | — |
 
@@ -1090,9 +1006,6 @@ await corsair.ashby.api.candidate.removeTag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1164,9 +1077,6 @@ await corsair.ashby.api.candidate.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 | `name` | `string` | No | — |
 | `phone` | `string` | No | — |
@@ -1178,9 +1088,6 @@ await corsair.ashby.api.candidate.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -1252,9 +1159,6 @@ await corsair.ashby.api.candidate.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `candidateId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `primaryEmailAddress` | `string` | No | — |
@@ -1282,9 +1186,6 @@ await corsair.ashby.api.candidate.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1358,9 +1259,6 @@ await corsair.ashby.api.customField.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customFieldDefinitionId` | `string` | Yes | — |
 
 
@@ -1370,9 +1268,6 @@ await corsair.ashby.api.customField.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1412,9 +1307,6 @@ await corsair.ashby.api.customField.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -1427,9 +1319,6 @@ await corsair.ashby.api.customField.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -1472,9 +1361,6 @@ await corsair.ashby.api.customField.setValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objectType` | `string` | Yes | — |
 | `objectId` | `string` | Yes | — |
 | `customFieldDefinitionId` | `string` | Yes | — |
@@ -1487,9 +1373,6 @@ await corsair.ashby.api.customField.setValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | No | — |
 
@@ -1526,9 +1409,6 @@ await corsair.ashby.api.department.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `departmentId` | `string` | Yes | — |
 
 
@@ -1538,9 +1418,6 @@ await corsair.ashby.api.department.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1579,9 +1456,6 @@ await corsair.ashby.api.department.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `parentId` | `string` | No | — |
 
@@ -1592,9 +1466,6 @@ await corsair.ashby.api.department.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1633,9 +1504,6 @@ await corsair.ashby.api.department.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `departmentId` | `string` | Yes | — |
 
 
@@ -1645,9 +1513,6 @@ await corsair.ashby.api.department.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1686,9 +1551,6 @@ await corsair.ashby.api.department.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -1701,9 +1563,6 @@ await corsair.ashby.api.department.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -1745,9 +1604,6 @@ await corsair.ashby.api.department.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `departmentId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `parentId` | `string` | No | — |
@@ -1759,9 +1615,6 @@ await corsair.ashby.api.department.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1802,9 +1655,6 @@ await corsair.ashby.api.interview.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interviewId` | `string` | Yes | — |
 
 
@@ -1814,9 +1664,6 @@ await corsair.ashby.api.interview.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1855,9 +1702,6 @@ await corsair.ashby.api.interview.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -1870,9 +1714,6 @@ await corsair.ashby.api.interview.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -1914,9 +1755,6 @@ await corsair.ashby.api.interview.scheduleInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `interviewScheduleId` | `string` | Yes | — |
 
 
@@ -1926,9 +1764,6 @@ await corsair.ashby.api.interview.scheduleInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -1972,9 +1807,6 @@ await corsair.ashby.api.interview.scheduleList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -1987,9 +1819,6 @@ await corsair.ashby.api.interview.scheduleList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -2036,9 +1865,6 @@ await corsair.ashby.api.interview.stageList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | No | — |
 | `interviewPlanId` | `string` | No | — |
 
@@ -2049,9 +1875,6 @@ await corsair.ashby.api.interview.stageList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -2093,9 +1916,6 @@ await corsair.ashby.api.job.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `departmentId` | `string` | No | — |
 | `locationId` | `string` | No | — |
@@ -2122,9 +1942,6 @@ await corsair.ashby.api.job.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2184,9 +2001,6 @@ await corsair.ashby.api.job.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -2196,9 +2010,6 @@ await corsair.ashby.api.job.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2258,9 +2069,6 @@ await corsair.ashby.api.job.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -2275,9 +2083,6 @@ await corsair.ashby.api.job.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -2340,9 +2145,6 @@ await corsair.ashby.api.job.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `status` | `string` | No | — |
 
@@ -2353,9 +2155,6 @@ await corsair.ashby.api.job.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -2415,9 +2214,6 @@ await corsair.ashby.api.job.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `departmentId` | `string` | No | — |
@@ -2445,9 +2241,6 @@ await corsair.ashby.api.job.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2509,9 +2302,6 @@ await corsair.ashby.api.jobPosting.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobPostingId` | `string` | Yes | — |
 
 
@@ -2521,9 +2311,6 @@ await corsair.ashby.api.jobPosting.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2568,9 +2355,6 @@ await corsair.ashby.api.jobPosting.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -2586,9 +2370,6 @@ await corsair.ashby.api.jobPosting.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -2638,9 +2419,6 @@ await corsair.ashby.api.location.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `locationId` | `string` | Yes | — |
 
 
@@ -2650,9 +2428,6 @@ await corsair.ashby.api.location.archive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2691,9 +2466,6 @@ await corsair.ashby.api.location.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `parentId` | `string` | No | — |
 
@@ -2704,9 +2476,6 @@ await corsair.ashby.api.location.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2745,9 +2514,6 @@ await corsair.ashby.api.location.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `locationId` | `string` | Yes | — |
 
 
@@ -2757,9 +2523,6 @@ await corsair.ashby.api.location.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2798,9 +2561,6 @@ await corsair.ashby.api.location.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -2813,9 +2573,6 @@ await corsair.ashby.api.location.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -2857,9 +2614,6 @@ await corsair.ashby.api.location.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `locationId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `parentId` | `string` | No | — |
@@ -2871,9 +2625,6 @@ await corsair.ashby.api.location.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2914,9 +2665,6 @@ await corsair.ashby.api.offer.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `applicationId` | `string` | Yes | — |
 | `salary` | `number` | No | — |
 | `currency` | `string` | No | — |
@@ -2943,9 +2691,6 @@ await corsair.ashby.api.offer.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -2993,9 +2738,6 @@ await corsair.ashby.api.offer.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offerId` | `string` | Yes | — |
 
 
@@ -3005,9 +2747,6 @@ await corsair.ashby.api.offer.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -3055,9 +2794,6 @@ await corsair.ashby.api.offer.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -3071,9 +2807,6 @@ await corsair.ashby.api.offer.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -3124,9 +2857,6 @@ await corsair.ashby.api.offer.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offerId` | `string` | Yes | — |
 | `salary` | `number` | No | — |
 | `currency` | `string` | No | — |
@@ -3154,9 +2884,6 @@ await corsair.ashby.api.offer.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -3206,9 +2933,6 @@ await corsair.ashby.api.user.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -3218,9 +2942,6 @@ await corsair.ashby.api.user.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -3260,9 +2981,6 @@ await corsair.ashby.api.user.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `syncToken` | `string` | No | — |
@@ -3275,9 +2993,6 @@ await corsair.ashby.api.user.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `moreDataAvailable` | `boolean` | No | — |
@@ -3320,9 +3035,6 @@ await corsair.ashby.api.user.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -3333,9 +3045,6 @@ await corsair.ashby.api.user.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
@@ -3377,9 +3086,6 @@ await corsair.ashby.api.webhook.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `requestActionNames` | `string[]` | Yes | — |
 | `description` | `string` | No | — |
@@ -3392,9 +3098,6 @@ await corsair.ashby.api.webhook.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 
@@ -3435,9 +3138,6 @@ await corsair.ashby.api.webhook.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -3447,9 +3147,6 @@ await corsair.ashby.api.webhook.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | No | — |
 
@@ -3484,9 +3181,6 @@ await corsair.ashby.api.webhook.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string` | Yes | — |
 
 
@@ -3496,9 +3190,6 @@ await corsair.ashby.api.webhook.info({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `results` | `object` | Yes | — |
 

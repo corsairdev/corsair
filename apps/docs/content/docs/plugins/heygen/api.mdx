@@ -31,9 +31,6 @@ await corsair.heygen.api.aiClipping.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video` | `object` | Yes | — |
 | `title` | `string` | No | — |
 | `input_language` | `string` | No | — |
@@ -76,9 +73,6 @@ await corsair.heygen.api.aiClipping.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -113,9 +107,6 @@ await corsair.heygen.api.aiClipping.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 
 
@@ -125,9 +116,6 @@ await corsair.heygen.api.aiClipping.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -161,9 +149,6 @@ await corsair.heygen.api.aiClipping.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `job_id` | `string` | Yes | — |
 
 
@@ -173,9 +158,6 @@ await corsair.heygen.api.aiClipping.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -229,9 +211,6 @@ await corsair.heygen.api.aiClipping.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -242,9 +221,6 @@ await corsair.heygen.api.aiClipping.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -302,9 +278,6 @@ await corsair.heygen.api.assets.completeUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | Yes | — |
 | `checksum_sha256` | `string` | No | — |
 
@@ -315,9 +288,6 @@ await corsair.heygen.api.assets.completeUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -356,9 +326,6 @@ await corsair.heygen.api.assets.createFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `parent_folder_id` | `string` | No | — |
 
@@ -369,9 +336,6 @@ await corsair.heygen.api.assets.createFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -407,9 +371,6 @@ await corsair.heygen.api.assets.createUploadSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filename` | `string` | Yes | — |
 | `content_type` | `string` | Yes | — |
 | `size_bytes` | `number` | Yes | — |
@@ -422,9 +383,6 @@ await corsair.heygen.api.assets.createUploadSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -465,9 +423,6 @@ await corsair.heygen.api.assets.deleteAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | Yes | — |
 
 
@@ -477,9 +432,6 @@ await corsair.heygen.api.assets.deleteAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -514,9 +466,6 @@ await corsair.heygen.api.assets.deleteAssetV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | Yes | — |
 
 
@@ -526,9 +475,6 @@ await corsair.heygen.api.assets.deleteAssetV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -563,9 +509,6 @@ await corsair.heygen.api.assets.getAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `asset_id` | `string` | Yes | — |
 
 
@@ -575,9 +518,6 @@ await corsair.heygen.api.assets.getAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -619,9 +559,6 @@ await corsair.heygen.api.assets.getTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `string` | Yes | — |
 
 
@@ -631,9 +568,6 @@ await corsair.heygen.api.assets.getTemplate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -669,9 +603,6 @@ await corsair.heygen.api.assets.listAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_type` | `string` | No | — |
 | `folder_id` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -684,9 +615,6 @@ await corsair.heygen.api.assets.listAssets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -723,9 +651,6 @@ await corsair.heygen.api.assets.listAssets2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -736,9 +661,6 @@ await corsair.heygen.api.assets.listAssets2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -776,9 +698,6 @@ await corsair.heygen.api.assets.listFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -789,9 +708,6 @@ await corsair.heygen.api.assets.listFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -831,9 +747,6 @@ await corsair.heygen.api.assets.listTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -870,9 +783,6 @@ await corsair.heygen.api.assets.restoreFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 
 
@@ -882,9 +792,6 @@ await corsair.heygen.api.assets.restoreFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -919,9 +826,6 @@ await corsair.heygen.api.assets.trashFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 
 
@@ -931,9 +835,6 @@ await corsair.heygen.api.assets.trashFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -968,9 +869,6 @@ await corsair.heygen.api.assets.updateFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -981,9 +879,6 @@ await corsair.heygen.api.assets.updateFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1018,9 +913,6 @@ await corsair.heygen.api.assets.uploadAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileBase64` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -1031,9 +923,6 @@ await corsair.heygen.api.assets.uploadAsset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1070,9 +959,6 @@ await corsair.heygen.api.assets.uploadAssetV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileBase64` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -1083,9 +969,6 @@ await corsair.heygen.api.assets.uploadAssetV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1125,9 +1008,6 @@ await corsair.heygen.api.audio.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `type` | `music \| sound_effects` | No | — |
 | `limit` | `number` | No | — |
@@ -1141,9 +1021,6 @@ await corsair.heygen.api.audio.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -1181,9 +1058,6 @@ await corsair.heygen.api.avatarRealtime.appendText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stream_id` | `string` | Yes | — |
 | `delta` | `string` | Yes | — |
 | `final` | `boolean` | No | — |
@@ -1195,9 +1069,6 @@ await corsair.heygen.api.avatarRealtime.appendText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1233,9 +1104,6 @@ await corsair.heygen.api.avatarRealtime.cancelSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stream_id` | `string` | Yes | — |
 
 
@@ -1245,9 +1113,6 @@ await corsair.heygen.api.avatarRealtime.cancelSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1319,9 +1184,6 @@ await corsair.heygen.api.avatarRealtime.createSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1356,9 +1218,6 @@ await corsair.heygen.api.avatarRealtime.getSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `stream_id` | `string` | Yes | — |
 
 
@@ -1368,9 +1227,6 @@ await corsair.heygen.api.avatarRealtime.getSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1411,9 +1267,6 @@ await corsair.heygen.api.avatars.addLooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 | `image_keys` | `string[]` | Yes | — |
 | `name` | `string` | No | — |
@@ -1426,9 +1279,6 @@ await corsair.heygen.api.avatars.addLooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1464,9 +1314,6 @@ await corsair.heygen.api.avatars.addMotion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1476,9 +1323,6 @@ await corsair.heygen.api.avatars.addMotion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1514,9 +1358,6 @@ await corsair.heygen.api.avatars.checkLookStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `generation_id` | `string` | Yes | — |
 
 
@@ -1526,9 +1367,6 @@ await corsair.heygen.api.avatars.checkLookStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1627,9 +1465,6 @@ await corsair.heygen.api.avatars.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1699,9 +1534,6 @@ await corsair.heygen.api.avatars.createConsent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 | `reroute_url` | `string` | No | — |
 | `consent_text` | `string` | No | — |
@@ -1713,9 +1545,6 @@ await corsair.heygen.api.avatars.createConsent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1766,9 +1595,6 @@ await corsair.heygen.api.avatars.createPhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `image_key` | `string` | Yes | — |
 | `generation_id` | `string` | No | — |
@@ -1780,9 +1606,6 @@ await corsair.heygen.api.avatars.createPhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1821,9 +1644,6 @@ await corsair.heygen.api.avatars.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -1833,9 +1653,6 @@ await corsair.heygen.api.avatars.deleteGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1870,9 +1687,6 @@ await corsair.heygen.api.avatars.deleteLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `look_id` | `string` | Yes | — |
 
 
@@ -1882,9 +1696,6 @@ await corsair.heygen.api.avatars.deleteLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1919,9 +1730,6 @@ await corsair.heygen.api.avatars.deletePhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1931,9 +1739,6 @@ await corsair.heygen.api.avatars.deletePhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -1968,9 +1773,6 @@ await corsair.heygen.api.avatars.deletePhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -1980,9 +1782,6 @@ await corsair.heygen.api.avatars.deletePhotoGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2017,9 +1816,6 @@ await corsair.heygen.api.avatars.deleteTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `talking_photo_id` | `string` | Yes | — |
 
 
@@ -2029,9 +1825,6 @@ await corsair.heygen.api.avatars.deleteTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2066,9 +1859,6 @@ await corsair.heygen.api.avatars.generatePhotos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `age` | `string` | Yes | — |
 | `gender` | `string` | Yes | — |
@@ -2085,9 +1875,6 @@ await corsair.heygen.api.avatars.generatePhotos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2123,9 +1910,6 @@ await corsair.heygen.api.avatars.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `avatar_id` | `string` | Yes | — |
 
 
@@ -2135,9 +1919,6 @@ await corsair.heygen.api.avatars.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2173,9 +1954,6 @@ await corsair.heygen.api.avatars.getGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -2185,9 +1963,6 @@ await corsair.heygen.api.avatars.getGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2235,9 +2010,6 @@ await corsair.heygen.api.avatars.getLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `look_id` | `string` | Yes | — |
 
 
@@ -2247,9 +2019,6 @@ await corsair.heygen.api.avatars.getLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2301,9 +2070,6 @@ await corsair.heygen.api.avatars.getPhotoDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2313,9 +2079,6 @@ await corsair.heygen.api.avatars.getPhotoDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2351,9 +2114,6 @@ await corsair.heygen.api.avatars.getTrainingStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -2363,9 +2123,6 @@ await corsair.heygen.api.avatars.getTrainingStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2401,9 +2158,6 @@ await corsair.heygen.api.avatars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ownership` | `public \| private` | No | — |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
@@ -2415,9 +2169,6 @@ await corsair.heygen.api.avatars.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -2453,9 +2204,6 @@ await corsair.heygen.api.avatars.listGroupAvatars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | Yes | — |
 
 
@@ -2465,9 +2213,6 @@ await corsair.heygen.api.avatars.listGroupAvatars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2507,9 +2252,6 @@ await corsair.heygen.api.avatars.listGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2546,9 +2288,6 @@ await corsair.heygen.api.avatars.listLooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `string` | No | — |
 | `avatar_type` | `studio_avatar \| digital_twin \| photo_avatar` | No | — |
 | `ownership` | `public \| private` | No | — |
@@ -2562,9 +2301,6 @@ await corsair.heygen.api.avatars.listLooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -2621,9 +2357,6 @@ await corsair.heygen.api.avatars.listTalkingPhotos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -2658,9 +2391,6 @@ await corsair.heygen.api.avatars.searchPublicGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keyword` | `string` | No | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2672,9 +2402,6 @@ await corsair.heygen.api.avatars.searchPublicGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2711,9 +2438,6 @@ await corsair.heygen.api.avatars.updateLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `look_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 
@@ -2724,9 +2448,6 @@ await corsair.heygen.api.avatars.updateLook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -2778,9 +2499,6 @@ await corsair.heygen.api.avatars.uploadTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `imageBase64` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 
@@ -2791,9 +2509,6 @@ await corsair.heygen.api.avatars.uploadTalkingPhoto({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2829,9 +2544,6 @@ await corsair.heygen.api.avatars.upscale({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -2841,9 +2553,6 @@ await corsair.heygen.api.avatars.upscale({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -2881,9 +2590,6 @@ await corsair.heygen.api.brand.listGlossaries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -2894,9 +2600,6 @@ await corsair.heygen.api.brand.listGlossaries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -2936,9 +2639,6 @@ await corsair.heygen.api.brand.listKits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -2949,9 +2649,6 @@ await corsair.heygen.api.brand.listKits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -2993,9 +2690,6 @@ await corsair.heygen.api.hyperframes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `object` | Yes | — |
 | `fps` | `number` | No | — |
 | `quality` | `draft \| standard \| high` | No | — |
@@ -3042,9 +2736,6 @@ await corsair.heygen.api.hyperframes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3079,9 +2770,6 @@ await corsair.heygen.api.hyperframes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `render_id` | `string` | Yes | — |
 
 
@@ -3091,9 +2779,6 @@ await corsair.heygen.api.hyperframes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3128,9 +2813,6 @@ await corsair.heygen.api.hyperframes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `render_id` | `string` | Yes | — |
 
 
@@ -3140,9 +2822,6 @@ await corsair.heygen.api.hyperframes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3192,9 +2871,6 @@ await corsair.heygen.api.hyperframes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -3205,9 +2881,6 @@ await corsair.heygen.api.hyperframes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -3261,9 +2934,6 @@ await corsair.heygen.api.knowledgeBases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `opening` | `string` | No | — |
 | `prompt` | `string` | No | — |
@@ -3275,9 +2945,6 @@ await corsair.heygen.api.knowledgeBases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -3313,9 +2980,6 @@ await corsair.heygen.api.knowledgeBases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 
 
@@ -3325,9 +2989,6 @@ await corsair.heygen.api.knowledgeBases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -3365,9 +3026,6 @@ await corsair.heygen.api.knowledgeBases.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -3404,9 +3062,6 @@ await corsair.heygen.api.knowledgeBases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `knowledge_base_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `opening` | `string` | No | — |
@@ -3419,9 +3074,6 @@ await corsair.heygen.api.knowledgeBases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -3458,9 +3110,6 @@ await corsair.heygen.api.lipsync.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video` | `object` | Yes | — |
 | `audio` | `object` | Yes | — |
 | `title` | `string` | No | — |
@@ -3513,9 +3162,6 @@ await corsair.heygen.api.lipsync.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3550,9 +3196,6 @@ await corsair.heygen.api.lipsync.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lipsync_id` | `string` | Yes | — |
 
 
@@ -3562,9 +3205,6 @@ await corsair.heygen.api.lipsync.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3599,9 +3239,6 @@ await corsair.heygen.api.lipsync.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lipsync_id` | `string` | Yes | — |
 
 
@@ -3611,9 +3248,6 @@ await corsair.heygen.api.lipsync.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3656,9 +3290,6 @@ await corsair.heygen.api.lipsync.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -3669,9 +3300,6 @@ await corsair.heygen.api.lipsync.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -3716,9 +3344,6 @@ await corsair.heygen.api.lipsync.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lipsync_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 
@@ -3729,9 +3354,6 @@ await corsair.heygen.api.lipsync.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3776,9 +3398,6 @@ await corsair.heygen.api.proofread.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video` | `object` | Yes | — |
 | `output_languages` | `string[]` | Yes | — |
 | `title` | `string` | Yes | — |
@@ -3828,9 +3447,6 @@ await corsair.heygen.api.proofread.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3866,9 +3482,6 @@ await corsair.heygen.api.proofread.downloadSrt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `proofread_id` | `string` | Yes | — |
 
 
@@ -3878,9 +3491,6 @@ await corsair.heygen.api.proofread.downloadSrt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3916,9 +3526,6 @@ await corsair.heygen.api.proofread.generateVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `proofread_id` | `string` | Yes | — |
 | `captions` | `boolean` | No | — |
 | `translate_audio_only` | `boolean` | No | — |
@@ -3932,9 +3539,6 @@ await corsair.heygen.api.proofread.generateVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -3970,9 +3574,6 @@ await corsair.heygen.api.proofread.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `proofread_id` | `string` | Yes | — |
 
 
@@ -3982,9 +3583,6 @@ await corsair.heygen.api.proofread.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4026,9 +3624,6 @@ await corsair.heygen.api.proofread.uploadSrt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `proofread_id` | `string` | Yes | — |
 | `srt` | `object` | Yes | — |
 
@@ -4054,9 +3649,6 @@ await corsair.heygen.api.proofread.uploadSrt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4103,9 +3695,6 @@ await corsair.heygen.api.streaming.createToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4141,9 +3730,6 @@ await corsair.heygen.api.streaming.ice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 | `candidate` | `object` | Yes | — |
 
@@ -4168,9 +3754,6 @@ await corsair.heygen.api.streaming.ice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4205,9 +3788,6 @@ await corsair.heygen.api.streaming.interrupt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -4217,9 +3797,6 @@ await corsair.heygen.api.streaming.interrupt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4254,9 +3831,6 @@ await corsair.heygen.api.streaming.keepAlive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -4266,9 +3840,6 @@ await corsair.heygen.api.streaming.keepAlive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4306,9 +3877,6 @@ await corsair.heygen.api.streaming.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4348,9 +3916,6 @@ await corsair.heygen.api.streaming.listAvatars({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -4385,9 +3950,6 @@ await corsair.heygen.api.streaming.listSessionHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -4398,9 +3960,6 @@ await corsair.heygen.api.streaming.listSessionHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4437,9 +3996,6 @@ await corsair.heygen.api.streaming.new({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `quality` | `string` | No | — |
 
 
@@ -4449,9 +4005,6 @@ await corsair.heygen.api.streaming.new({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4488,9 +4041,6 @@ await corsair.heygen.api.streaming.newSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `quality` | `string` | No | — |
 | `avatar_id` | `string` | No | — |
 | `voice` | `object` | No | — |
@@ -4514,9 +4064,6 @@ await corsair.heygen.api.streaming.newSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4557,9 +4104,6 @@ await corsair.heygen.api.streaming.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 | `sdp` | `object` | Yes | — |
 
@@ -4582,9 +4126,6 @@ await corsair.heygen.api.streaming.start({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4620,9 +4161,6 @@ await corsair.heygen.api.streaming.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -4632,9 +4170,6 @@ await corsair.heygen.api.streaming.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4669,9 +4204,6 @@ await corsair.heygen.api.streaming.task({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `task_type` | `talk \| repeat` | No | — |
@@ -4683,9 +4215,6 @@ await corsair.heygen.api.streaming.task({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -4723,9 +4252,6 @@ await corsair.heygen.api.videoAgents.createSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt` | `string` | Yes | — |
 | `mode` | `generate \| chat` | No | — |
 | `avatar_id` | `string` | No | — |
@@ -4766,9 +4292,6 @@ await corsair.heygen.api.videoAgents.createSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4806,9 +4329,6 @@ await corsair.heygen.api.videoAgents.getResource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 | `resource_id` | `string` | Yes | — |
 
@@ -4819,9 +4339,6 @@ await corsair.heygen.api.videoAgents.getResource({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4864,9 +4381,6 @@ await corsair.heygen.api.videoAgents.getSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -4876,9 +4390,6 @@ await corsair.heygen.api.videoAgents.getSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -4925,9 +4436,6 @@ await corsair.heygen.api.videoAgents.listSessions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -4938,9 +4446,6 @@ await corsair.heygen.api.videoAgents.listSessions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -4979,9 +4484,6 @@ await corsair.heygen.api.videoAgents.listStyles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
@@ -4993,9 +4495,6 @@ await corsair.heygen.api.videoAgents.listStyles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -5037,9 +4536,6 @@ await corsair.heygen.api.videoAgents.listVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -5049,9 +4545,6 @@ await corsair.heygen.api.videoAgents.listVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -5089,9 +4582,6 @@ await corsair.heygen.api.videoAgents.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
 | `avatar_id` | `string` | No | — |
@@ -5127,9 +4617,6 @@ await corsair.heygen.api.videoAgents.sendMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5166,9 +4653,6 @@ await corsair.heygen.api.videoAgents.stopSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `session_id` | `string` | Yes | — |
 
 
@@ -5178,9 +4662,6 @@ await corsair.heygen.api.videoAgents.stopSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5217,9 +4698,6 @@ await corsair.heygen.api.videos.createWebm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `avatar_id` | `string` | Yes | — |
 | `avatar_style` | `string` | No | — |
 | `input_text` | `string` | No | — |
@@ -5236,9 +4714,6 @@ await corsair.heygen.api.videos.createWebm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5274,9 +4749,6 @@ await corsair.heygen.api.videos.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | — |
 
 
@@ -5286,9 +4758,6 @@ await corsair.heygen.api.videos.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5323,9 +4792,6 @@ await corsair.heygen.api.videos.deleteV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | — |
 
 
@@ -5335,9 +4801,6 @@ await corsair.heygen.api.videos.deleteV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5373,9 +4836,6 @@ await corsair.heygen.api.videos.generate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `avatar \| image \| cinematic_avatar` | Yes | — |
 | `title` | `string` | No | — |
 | `resolution` | `string` | No | — |
@@ -5391,9 +4851,6 @@ await corsair.heygen.api.videos.generate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5430,9 +4887,6 @@ await corsair.heygen.api.videos.getSharableUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | — |
 
 
@@ -5442,9 +4896,6 @@ await corsair.heygen.api.videos.getSharableUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5480,9 +4931,6 @@ await corsair.heygen.api.videos.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_id` | `string` | Yes | — |
 
 
@@ -5492,9 +4940,6 @@ await corsair.heygen.api.videos.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5544,9 +4989,6 @@ await corsair.heygen.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -5557,9 +4999,6 @@ await corsair.heygen.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5597,9 +5036,6 @@ await corsair.heygen.api.videos.listV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 | `folder_id` | `string` | No | — |
@@ -5612,9 +5048,6 @@ await corsair.heygen.api.videos.listV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -5652,9 +5085,6 @@ await corsair.heygen.api.videos.personalizedAddContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `variables_list` | `object[]` | Yes | — |
 
@@ -5677,9 +5107,6 @@ await corsair.heygen.api.videos.personalizedAddContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5714,9 +5141,6 @@ await corsair.heygen.api.videos.personalizedProjectDetail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -5726,9 +5150,6 @@ await corsair.heygen.api.videos.personalizedProjectDetail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5765,9 +5186,6 @@ await corsair.heygen.api.videos.templateGenerate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `template_id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `caption` | `boolean` | No | — |
@@ -5803,9 +5221,6 @@ await corsair.heygen.api.videos.templateGenerate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -5841,9 +5256,6 @@ await corsair.heygen.api.videos.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video` | `object` | Yes | — |
 | `output_languages` | `string[]` | Yes | — |
 | `title` | `string` | No | — |
@@ -5892,9 +5304,6 @@ await corsair.heygen.api.videos.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5929,9 +5338,6 @@ await corsair.heygen.api.videos.translateStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_translate_id` | `string` | Yes | — |
 
 
@@ -5941,9 +5347,6 @@ await corsair.heygen.api.videos.translateStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -5994,9 +5397,6 @@ await corsair.heygen.api.videos.translateTargetLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6033,9 +5433,6 @@ await corsair.heygen.api.videoTranslations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_translation_id` | `string` | Yes | — |
 
 
@@ -6045,9 +5442,6 @@ await corsair.heygen.api.videoTranslations.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6082,9 +5476,6 @@ await corsair.heygen.api.videoTranslations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -6095,9 +5486,6 @@ await corsair.heygen.api.videoTranslations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -6147,9 +5535,6 @@ await corsair.heygen.api.videoTranslations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `video_translation_id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 
@@ -6160,9 +5545,6 @@ await corsair.heygen.api.videoTranslations.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6212,9 +5594,6 @@ await corsair.heygen.api.voices.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `audio` | `object` | Yes | — |
 | `voice_name` | `string` | Yes | — |
 | `language` | `string` | No | — |
@@ -6246,9 +5625,6 @@ await corsair.heygen.api.voices.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6283,9 +5659,6 @@ await corsair.heygen.api.voices.deleteV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `voice_id` | `string` | Yes | — |
 
 
@@ -6295,9 +5668,6 @@ await corsair.heygen.api.voices.deleteV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6332,9 +5702,6 @@ await corsair.heygen.api.voices.design({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `prompt` | `string` | Yes | — |
 | `gender` | `string` | No | — |
 | `locale` | `string` | No | — |
@@ -6347,9 +5714,6 @@ await corsair.heygen.api.voices.design({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6394,9 +5758,6 @@ await corsair.heygen.api.voices.generatePreview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `voice_id` | `string` | Yes | — |
 | `text` | `string` | No | — |
 
@@ -6407,9 +5768,6 @@ await corsair.heygen.api.voices.generatePreview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6445,9 +5803,6 @@ await corsair.heygen.api.voices.generateSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `voice_id` | `string` | Yes | — |
 | `speed` | `number` | No | — |
@@ -6462,9 +5817,6 @@ await corsair.heygen.api.voices.generateSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6501,9 +5853,6 @@ await corsair.heygen.api.voices.generateSpeechV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `voice_id` | `string` | Yes | — |
 | `input_type` | `text \| ssml` | No | — |
@@ -6518,9 +5867,6 @@ await corsair.heygen.api.voices.generateSpeechV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6562,9 +5908,6 @@ await corsair.heygen.api.voices.getV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `voice_id` | `string` | Yes | — |
 
 
@@ -6574,9 +5917,6 @@ await corsair.heygen.api.voices.getV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -6623,9 +5963,6 @@ await corsair.heygen.api.voices.listBrandVoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6665,9 +6002,6 @@ await corsair.heygen.api.voices.listLocales({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6704,9 +6038,6 @@ await corsair.heygen.api.voices.listTts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `language` | `string` | No | — |
 | `gender` | `string` | No | — |
 
@@ -6717,9 +6048,6 @@ await corsair.heygen.api.voices.listTts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6759,9 +6087,6 @@ await corsair.heygen.api.voices.listV1({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6801,9 +6126,6 @@ await corsair.heygen.api.voices.listV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6840,9 +6162,6 @@ await corsair.heygen.api.voices.listV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `public \| private` | No | — |
 | `engine` | `string` | No | — |
 | `language` | `string` | No | — |
@@ -6857,9 +6176,6 @@ await corsair.heygen.api.voices.listV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -6905,9 +6221,6 @@ await corsair.heygen.api.webhooksQuota.addEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
 
@@ -6918,9 +6231,6 @@ await corsair.heygen.api.webhooksQuota.addEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -6956,9 +6266,6 @@ await corsair.heygen.api.webhooksQuota.addEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `string[]` | No | — |
 | `entity_id` | `string` | No | — |
@@ -6970,9 +6277,6 @@ await corsair.heygen.api.webhooksQuota.addEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -7012,9 +6316,6 @@ await corsair.heygen.api.webhooksQuota.deleteEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint_id` | `string` | Yes | — |
 
 
@@ -7024,9 +6325,6 @@ await corsair.heygen.api.webhooksQuota.deleteEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -7061,9 +6359,6 @@ await corsair.heygen.api.webhooksQuota.deleteEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint_id` | `string` | Yes | — |
 
 
@@ -7073,9 +6368,6 @@ await corsair.heygen.api.webhooksQuota.deleteEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -7112,9 +6404,6 @@ await corsair.heygen.api.webhooksQuota.getCurrentUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -7162,9 +6451,6 @@ await corsair.heygen.api.webhooksQuota.listEndpoints({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -7199,9 +6485,6 @@ await corsair.heygen.api.webhooksQuota.listEndpointsV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `token` | `string` | No | — |
 
@@ -7212,9 +6495,6 @@ await corsair.heygen.api.webhooksQuota.listEndpointsV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -7256,9 +6536,6 @@ await corsair.heygen.api.webhooksQuota.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `event_type` | `string` | No | — |
 | `entity_id` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -7271,9 +6548,6 @@ await corsair.heygen.api.webhooksQuota.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -7317,9 +6591,6 @@ await corsair.heygen.api.webhooksQuota.listEventTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object[]` | Yes | — |
 
@@ -7357,9 +6628,6 @@ await corsair.heygen.api.webhooksQuota.listEventTypesV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_token` | `string` | No | — |
@@ -7400,9 +6668,6 @@ await corsair.heygen.api.webhooksQuota.remainingQuota({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -7438,9 +6703,6 @@ await corsair.heygen.api.webhooksQuota.rotateSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint_id` | `string` | Yes | — |
 
 
@@ -7450,9 +6712,6 @@ await corsair.heygen.api.webhooksQuota.rotateSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -7488,9 +6747,6 @@ await corsair.heygen.api.webhooksQuota.updateEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint_id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `events` | `string[]` | No | — |
@@ -7502,9 +6758,6 @@ await corsair.heygen.api.webhooksQuota.updateEndpoint({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `any` | No | — |
 | `data` | `object` | Yes | — |
 
@@ -7539,9 +6792,6 @@ await corsair.heygen.api.webhooksQuota.updateEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint_id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `events` | `string[]` | No | — |
@@ -7553,9 +6803,6 @@ await corsair.heygen.api.webhooksQuota.updateEndpointV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 

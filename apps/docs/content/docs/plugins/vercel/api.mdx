@@ -31,9 +31,6 @@ await corsair.vercel.api.aliases.assignAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deploymentId` | `string` | Yes | — |
 | `alias` | `string` | Yes | — |
 | `redirect` | `string` | No | — |
@@ -46,9 +43,6 @@ await corsair.vercel.api.aliases.assignAlias({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uid` | `string` | Yes | — |
 | `alias` | `string` | Yes | — |
 | `created` | `string` | Yes | — |
@@ -75,9 +69,6 @@ await corsair.vercel.api.aliases.getAliases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
@@ -90,9 +81,6 @@ await corsair.vercel.api.aliases.getAliases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `aliases` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -147,9 +135,6 @@ await corsair.vercel.api.deployments.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `project` | `string` | No | — |
 | `target` | `production \| staging` | No | — |
@@ -196,9 +181,6 @@ await corsair.vercel.api.deployments.createDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -264,9 +246,6 @@ await corsair.vercel.api.deployments.getDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idOrUrl` | `string` | Yes | — |
 | `teamId` | `string` | No | — |
 
@@ -277,9 +256,6 @@ await corsair.vercel.api.deployments.getDeployment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -345,9 +321,6 @@ await corsair.vercel.api.deployments.getDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
@@ -360,9 +333,6 @@ await corsair.vercel.api.deployments.getDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deployments` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -430,9 +400,6 @@ await corsair.vercel.api.domains.getDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
@@ -445,9 +412,6 @@ await corsair.vercel.api.domains.getDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domains` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -502,9 +466,6 @@ await corsair.vercel.api.domains.getProjectDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idOrName` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
@@ -518,9 +479,6 @@ await corsair.vercel.api.domains.getProjectDomains({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domains` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -577,9 +535,6 @@ await corsair.vercel.api.envs.createEnvVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idOrName` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -596,9 +551,6 @@ await corsair.vercel.api.envs.createEnvVariable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
@@ -632,9 +584,6 @@ await corsair.vercel.api.envs.getEnvVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idOrName` | `string` | Yes | — |
 | `teamId` | `string` | No | — |
 
@@ -645,9 +594,6 @@ await corsair.vercel.api.envs.getEnvVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `envs` | `object[]` | No | — |
 
 
@@ -694,9 +640,6 @@ await corsair.vercel.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `idOrName` | `string` | Yes | — |
 | `teamId` | `string` | No | — |
 
@@ -707,9 +650,6 @@ await corsair.vercel.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `accountId` | `string` | Yes | — |
@@ -768,9 +708,6 @@ await corsair.vercel.api.projects.getProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
@@ -783,9 +720,6 @@ await corsair.vercel.api.projects.getProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projects` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -853,9 +787,6 @@ await corsair.vercel.api.teams.getTeams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | No | — |
 
 
@@ -865,9 +796,6 @@ await corsair.vercel.api.teams.getTeams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teams` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
@@ -926,9 +854,6 @@ await corsair.vercel.api.webhooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
 | `projectIds` | `string[]` | No | — |
@@ -941,9 +866,6 @@ await corsair.vercel.api.webhooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
@@ -973,9 +895,6 @@ await corsair.vercel.api.webhooks.getWebhooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | No | — |
 
 

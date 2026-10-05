@@ -31,9 +31,6 @@ await corsair.googlecalendar.api.calendar.getAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeMin` | `string` | Yes | — |
 | `timeMax` | `string` | Yes | — |
 | `timeZone` | `string` | No | — |
@@ -59,9 +56,6 @@ await corsair.googlecalendar.api.calendar.getAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `kind` | `string` | No | — |
 | `calendars` | `object` | No | — |
 | `groups` | `object` | No | — |
@@ -109,9 +103,6 @@ await corsair.googlecalendar.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
 | `event` | `object` | Yes | Event body. Provide at minimum "summary", "start", and "end". |
 | `sendUpdates` | `all \| externalOnly \| none` | No | — |
@@ -186,9 +177,6 @@ await corsair.googlecalendar.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `status` | `confirmed \| tentative \| cancelled` | No | — |
 | `htmlLink` | `string` | No | — |
@@ -414,9 +402,6 @@ await corsair.googlecalendar.api.events.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendarId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `sendUpdates` | `all \| externalOnly \| none` | No | — |
@@ -446,9 +431,6 @@ await corsair.googlecalendar.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendarId` | `string` | No | — |
 | `id` | `string` | Yes | — |
 | `timeZone` | `string` | No | — |
@@ -461,9 +443,6 @@ await corsair.googlecalendar.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `status` | `confirmed \| tentative \| cancelled` | No | — |
 | `htmlLink` | `string` | No | — |
@@ -689,9 +668,6 @@ await corsair.googlecalendar.api.events.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendarId` | `string` | No | — |
 | `timeMin` | `string` | No | — |
 | `timeMax` | `string` | No | — |
@@ -713,9 +689,6 @@ await corsair.googlecalendar.api.events.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
 | `summary` | `string` | No | — |
@@ -893,9 +866,6 @@ await corsair.googlecalendar.api.events.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
 | `id` | `string` | Yes | Event ID to update |
 | `event` | `object` | Yes | Updated event fields |
@@ -971,9 +941,6 @@ await corsair.googlecalendar.api.events.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `status` | `confirmed \| tentative \| cancelled` | No | — |
 | `htmlLink` | `string` | No | — |

@@ -31,9 +31,6 @@ await corsair.xero.api.accounts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `accountId` | `string` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.xero.api.accounts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Accounts` | `object[]` | Yes | — |
 
 
@@ -90,9 +84,6 @@ await corsair.xero.api.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -106,9 +97,6 @@ await corsair.xero.api.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Accounts` | `object[]` | Yes | — |
 
 
@@ -154,9 +142,6 @@ await corsair.xero.api.assets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `assetId` | `string` | Yes | — |
 
@@ -167,9 +152,6 @@ await corsair.xero.api.assets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `assetId` | `string` | No | — |
 | `assetName` | `string` | No | — |
 | `assetNumber` | `string` | No | — |
@@ -199,9 +181,6 @@ await corsair.xero.api.assets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -216,9 +195,6 @@ await corsair.xero.api.assets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -263,9 +239,6 @@ await corsair.xero.api.attachments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `endpoint` | `Invoices \| Contacts \| ManualJournals \| PurchaseOrders \| BankTransactions` | Yes | — |
 | `entityId` | `string` | Yes | — |
@@ -277,9 +250,6 @@ await corsair.xero.api.attachments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Attachments` | `object[]` | Yes | — |
 
 
@@ -318,9 +288,6 @@ await corsair.xero.api.attachments.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `endpoint` | `Invoices \| Contacts \| ManualJournals \| PurchaseOrders \| BankTransactions` | Yes | — |
 | `entityId` | `string` | Yes | — |
@@ -335,9 +302,6 @@ await corsair.xero.api.attachments.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Attachments` | `object[]` | Yes | — |
 
 
@@ -378,9 +342,6 @@ await corsair.xero.api.bankTransactions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Type` | `SPEND \| RECEIVE \| RECEIVE-TRANSFER \| SPEND-TRANSFER \| RECEIVE-OVERPAYMENT \| RECEIVE-PREPAYMENT \| SPEND-OVERPAYMENT \| SPEND-PREPAYMENT` | Yes | — |
 | `Contact` | `object` | Yes | — |
@@ -431,9 +392,6 @@ await corsair.xero.api.bankTransactions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `BankTransactions` | `object[]` | Yes | — |
 
 
@@ -485,9 +443,6 @@ await corsair.xero.api.bankTransactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -503,9 +458,6 @@ await corsair.xero.api.bankTransactions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `BankTransactions` | `object[]` | Yes | — |
 
 
@@ -559,9 +511,6 @@ await corsair.xero.api.budgets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `budgetId` | `string` | No | — |
 | `dateFrom` | `string` | No | — |
@@ -574,9 +523,6 @@ await corsair.xero.api.budgets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Budgets` | `object[]` | Yes | — |
 
 
@@ -656,9 +602,6 @@ await corsair.xero.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Name` | `string` | Yes | — |
 | `FirstName` | `string` | No | — |
@@ -678,9 +621,6 @@ await corsair.xero.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Contacts` | `object[]` | Yes | — |
 
 
@@ -727,9 +667,6 @@ await corsair.xero.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -746,9 +683,6 @@ await corsair.xero.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Contacts` | `object[]` | Yes | — |
 
 
@@ -795,9 +729,6 @@ await corsair.xero.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `contactId` | `string` | Yes | — |
 | `Name` | `string` | No | — |
@@ -819,9 +750,6 @@ await corsair.xero.api.contacts.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Contacts` | `object[]` | Yes | — |
 
 
@@ -870,9 +798,6 @@ await corsair.xero.api.creditNotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -886,9 +811,6 @@ await corsair.xero.api.creditNotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `CreditNotes` | `object[]` | Yes | — |
 
 
@@ -935,9 +857,6 @@ await corsair.xero.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -951,9 +870,6 @@ await corsair.xero.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Items` | `object[]` | Yes | — |
 | `TotalCount` | `number` | No | — |
 
@@ -993,9 +909,6 @@ await corsair.xero.api.files.listFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 
 
@@ -1038,9 +951,6 @@ await corsair.xero.api.invoices.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Type` | `ACCREC \| ACCPAY` | Yes | — |
 | `Contact` | `object` | Yes | — |
@@ -1087,9 +997,6 @@ await corsair.xero.api.invoices.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Invoices` | `object[]` | Yes | — |
 
 
@@ -1144,9 +1051,6 @@ await corsair.xero.api.invoices.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `invoiceId` | `string` | Yes | — |
 
@@ -1157,9 +1061,6 @@ await corsair.xero.api.invoices.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Invoices` | `object[]` | Yes | — |
 
 
@@ -1214,9 +1115,6 @@ await corsair.xero.api.invoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -1235,9 +1133,6 @@ await corsair.xero.api.invoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Invoices` | `object[]` | Yes | — |
 
 
@@ -1292,9 +1187,6 @@ await corsair.xero.api.invoices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `invoiceId` | `string` | Yes | — |
 | `Contact` | `object` | No | — |
@@ -1336,9 +1228,6 @@ await corsair.xero.api.invoices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Invoices` | `object[]` | Yes | — |
 
 
@@ -1395,9 +1284,6 @@ await corsair.xero.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Code` | `string` | Yes | — |
 | `Name` | `string` | No | — |
@@ -1439,9 +1325,6 @@ await corsair.xero.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Items` | `object[]` | Yes | — |
 
 
@@ -1490,9 +1373,6 @@ await corsair.xero.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `itemId` | `string` | Yes | — |
 
@@ -1503,9 +1383,6 @@ await corsair.xero.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Items` | `object[]` | Yes | — |
 
 
@@ -1554,9 +1431,6 @@ await corsair.xero.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -1570,9 +1444,6 @@ await corsair.xero.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Items` | `object[]` | Yes | — |
 
 
@@ -1623,9 +1494,6 @@ await corsair.xero.api.journals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -1641,9 +1509,6 @@ await corsair.xero.api.journals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Journals` | `object[]` | Yes | — |
 
 
@@ -1685,9 +1550,6 @@ await corsair.xero.api.manualJournals.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `manualJournalId` | `string` | Yes | — |
 
@@ -1698,9 +1560,6 @@ await corsair.xero.api.manualJournals.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ManualJournals` | `object[]` | Yes | — |
 
 
@@ -1740,9 +1599,6 @@ await corsair.xero.api.manualJournals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -1756,9 +1612,6 @@ await corsair.xero.api.manualJournals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ManualJournals` | `object[]` | Yes | — |
 
 
@@ -1798,9 +1651,6 @@ await corsair.xero.api.organisations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 
 
@@ -1810,9 +1660,6 @@ await corsair.xero.api.organisations.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Organisations` | `object[]` | Yes | — |
 
 
@@ -1859,9 +1706,6 @@ await corsair.xero.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Invoice` | `object` | Yes | — |
 | `Account` | `object` | Yes | — |
@@ -1898,9 +1742,6 @@ await corsair.xero.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Payments` | `object[]` | Yes | — |
 
 
@@ -1950,9 +1791,6 @@ await corsair.xero.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -1966,9 +1804,6 @@ await corsair.xero.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Payments` | `object[]` | Yes | — |
 
 
@@ -2020,9 +1855,6 @@ await corsair.xero.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `projectId` | `string` | Yes | — |
 
@@ -2033,9 +1865,6 @@ await corsair.xero.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `contactId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -2067,9 +1896,6 @@ await corsair.xero.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -2085,9 +1911,6 @@ await corsair.xero.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -2136,9 +1959,6 @@ await corsair.xero.api.purchaseOrders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `Contact` | `object` | Yes | — |
 | `LineItems` | `object[]` | Yes | — |
@@ -2180,9 +2000,6 @@ await corsair.xero.api.purchaseOrders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `PurchaseOrders` | `object[]` | Yes | — |
 
 
@@ -2230,9 +2047,6 @@ await corsair.xero.api.purchaseOrders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `purchaseOrderId` | `string` | Yes | — |
 
@@ -2243,9 +2057,6 @@ await corsair.xero.api.purchaseOrders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `PurchaseOrders` | `object[]` | Yes | — |
 
 
@@ -2293,9 +2104,6 @@ await corsair.xero.api.purchaseOrders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -2312,9 +2120,6 @@ await corsair.xero.api.purchaseOrders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `PurchaseOrders` | `object[]` | Yes | — |
 
 
@@ -2364,9 +2169,6 @@ await corsair.xero.api.quotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -2386,9 +2188,6 @@ await corsair.xero.api.quotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Quotes` | `object[]` | Yes | — |
 
 
@@ -2438,9 +2237,6 @@ await corsair.xero.api.reports.getBalanceSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `date` | `string` | No | — |
 | `periods` | `number` | No | — |
@@ -2456,9 +2252,6 @@ await corsair.xero.api.reports.getBalanceSheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Reports` | `object[]` | Yes | — |
 
 
@@ -2498,9 +2291,6 @@ await corsair.xero.api.reports.getProfitLoss({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tenantId` | `string` | No | — |
 | `fromDate` | `string` | No | — |
 | `toDate` | `string` | No | — |
@@ -2517,9 +2307,6 @@ await corsair.xero.api.reports.getProfitLoss({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Reports` | `object[]` | Yes | — |
 
 
@@ -2561,9 +2348,6 @@ await corsair.xero.api.taxRates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -2577,9 +2361,6 @@ await corsair.xero.api.taxRates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `TaxRates` | `object[]` | Yes | — |
 
 
@@ -2624,9 +2405,6 @@ await corsair.xero.api.trackingCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `pageSize` | `number` | No | — |
 | `where` | `string` | No | — |
@@ -2641,9 +2419,6 @@ await corsair.xero.api.trackingCategories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `TrackingCategories` | `object[]` | Yes | — |
 
 

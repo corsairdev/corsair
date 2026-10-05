@@ -34,9 +34,6 @@ await corsair.pdfco.api.accountBalance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -68,9 +65,6 @@ await corsair.pdfco.api.barcodeGenerate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | Barcode type, e.g. "QRCode" or "Code128" |
 | `value` | `string` | Yes | Value to encode inside the barcode |
 | `name` | `string` | No | Output file name |
@@ -97,9 +91,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -134,9 +125,6 @@ await corsair.pdfco.api.documentParser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `templateId` | `string` | No | Parser template id from PDF.co |
 | `template` | `string` | No | Inline YAML parser template |
@@ -166,9 +154,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -220,9 +205,6 @@ await corsair.pdfco.api.excelToCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
 | `inline` | `boolean` | No | Return converted content inline |
 | `worksheetIndex` | `string` | No | Worksheet index, 1-based |
@@ -248,9 +230,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -286,9 +265,6 @@ await corsair.pdfco.api.excelToHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
 | `inline` | `boolean` | No | Return converted content inline |
 | `worksheetIndex` | `string` | No | Worksheet index, 1-based |
@@ -314,9 +290,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -352,9 +325,6 @@ await corsair.pdfco.api.excelToJson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
 | `inline` | `boolean` | No | Return converted content inline |
 | `worksheetIndex` | `string` | No | Worksheet index, 1-based |
@@ -380,9 +350,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -418,9 +385,6 @@ await corsair.pdfco.api.excelToText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
 | `inline` | `boolean` | No | Return converted content inline |
 | `worksheetIndex` | `string` | No | Worksheet index, 1-based |
@@ -446,9 +410,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -484,9 +445,6 @@ await corsair.pdfco.api.excelToXml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source xls/xlsx/csv file |
 | `inline` | `boolean` | No | Return converted content inline |
 | `worksheetIndex` | `string` | No | Worksheet index, 1-based |
@@ -512,9 +470,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -550,9 +505,6 @@ await corsair.pdfco.api.fileUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source file to store |
 | `name` | `string` | No | Destination file name |
 
@@ -563,9 +515,6 @@ await corsair.pdfco.api.fileUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -600,9 +549,6 @@ await corsair.pdfco.api.fileUploadBase64({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `string` | Yes | Base64-encoded file content |
 | `name` | `string` | No | Destination file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
@@ -614,9 +560,6 @@ await corsair.pdfco.api.fileUploadBase64({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -651,9 +594,6 @@ await corsair.pdfco.api.jobCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | Background job id from an async call |
 
 
@@ -663,9 +603,6 @@ await corsair.pdfco.api.jobCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `working \| success \| failed \| aborted` | No | — |
@@ -702,9 +639,6 @@ await corsair.pdfco.api.pdfAdd({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `annotations` | `object[]` | No | Text annotations to overlay |
 | `images` | `object[]` | No | Images to overlay |
@@ -782,9 +716,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -819,9 +750,6 @@ await corsair.pdfco.api.pdfChangeTextSearchable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the scanned PDF or image |
 | `lang` | `string` | No | OCR language, e.g. "eng" or "eng+deu" |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
@@ -848,9 +776,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -885,9 +810,6 @@ await corsair.pdfco.api.pdfDeletePages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | Yes | 1-based pages to delete, e.g. '1-2' |
 | `password` | `string` | No | PDF password if protected |
@@ -913,9 +835,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -950,9 +869,6 @@ await corsair.pdfco.api.pdfExtractAttachments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `inline` | `boolean` | No | Return attachments inline |
 | `password` | `string` | No | PDF password if protected |
@@ -978,9 +894,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1015,9 +928,6 @@ await corsair.pdfco.api.pdfFind({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `searchString` | `string` | Yes | Text or regex pattern to find |
 | `pages` | `string` | No | 0-based pages to search; default all |
@@ -1043,9 +953,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1095,9 +1002,6 @@ await corsair.pdfco.api.pdfFormsInfoReader({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `password` | `string` | No | PDF password if protected |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
@@ -1120,9 +1024,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1192,9 +1093,6 @@ await corsair.pdfco.api.pdfFromEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the .msg or .eml file |
 | `embedAttachments` | `boolean` | No | Embed email attachments into the PDF |
 | `convertAttachments` | `boolean` | No | Convert convertible attachments to PDF pages |
@@ -1223,9 +1121,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1260,9 +1155,6 @@ await corsair.pdfco.api.pdfFromHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `html` | `string` | Yes | Raw HTML markup to render as PDF |
 | `margins` | `string` | No | Margins, e.g. "10px 10px 10px 10px" |
 | `paperSize` | `string` | No | Paper size, e.g. "A4" or "Letter" |
@@ -1292,9 +1184,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1329,9 +1218,6 @@ await corsair.pdfco.api.pdfFromText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the TXT/DOC/DOCX/RTF/PPT source file |
 | `pages` | `string` | No | Page indices, e.g. "0-" |
 | `autosize` | `boolean` | No | Autosize pages to content |
@@ -1357,9 +1243,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1394,9 +1277,6 @@ await corsair.pdfco.api.pdfInfoReader({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `password` | `string` | No | PDF password if protected |
 | `async` | `boolean` | No | Run in background and return a jobId for PDF_CO_JOB_CHECK |
@@ -1419,9 +1299,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1474,9 +1351,6 @@ await corsair.pdfco.api.pdfMerge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Comma-separated list of PDF URLs to merge |
 | `name` | `string` | No | Output file name |
 | `expiration` | `number` | No | Output link lifetime in minutes |
@@ -1500,9 +1374,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1537,9 +1408,6 @@ await corsair.pdfco.api.pdfRotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | 0-based pages to rotate, e.g. "0-2,4"; default all pages |
 | `angle` | `0 \| 90 \| 180 \| 270` | No | Clockwise rotation angle in degrees |
@@ -1565,9 +1433,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1603,9 +1468,6 @@ await corsair.pdfco.api.pdfSearchAndDeleteText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `searchString` | `string` | No | Single text to delete |
 | `searchStrings` | `string[]` | No | Multiple texts to delete |
@@ -1636,9 +1498,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1673,9 +1532,6 @@ await corsair.pdfco.api.pdfSearchAndReplaceText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `searchString` | `string` | No | Single text to search for |
 | `replaceString` | `string` | No | Replacement text |
@@ -1708,9 +1564,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1745,9 +1598,6 @@ await corsair.pdfco.api.pdfSplit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | Yes | 1-based pages or ranges to keep, e.g. '1-2,3-' |
 | `password` | `string` | No | PDF password if protected |
@@ -1773,9 +1623,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1810,9 +1657,6 @@ await corsair.pdfco.api.pdfToCsv({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `inline` | `boolean` | No | Return CSV inline in body |
@@ -1839,9 +1683,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1877,9 +1718,6 @@ await corsair.pdfco.api.pdfToHtml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `inline` | `boolean` | No | Return HTML inline in body |
@@ -1906,9 +1744,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -1944,9 +1779,6 @@ await corsair.pdfco.api.pdfToImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `format` | `jpg \| png \| tiff` | No | Output image format; selects the /to/jpg, /to/png, or /to/tiff endpoint |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
@@ -1973,9 +1805,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -2010,9 +1839,6 @@ await corsair.pdfco.api.pdfToJson({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `inline` | `boolean` | No | Return JSON inline in body |
@@ -2039,9 +1865,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -2077,9 +1900,6 @@ await corsair.pdfco.api.pdfToText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `inline` | `boolean` | No | Return text inline in body |
@@ -2106,9 +1926,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -2144,9 +1961,6 @@ await corsair.pdfco.api.pdfToXls({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `password` | `string` | No | PDF password if protected |
@@ -2172,9 +1986,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -2209,9 +2020,6 @@ await corsair.pdfco.api.pdfToXlsx({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `password` | `string` | No | PDF password if protected |
@@ -2237,9 +2045,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |
@@ -2274,9 +2079,6 @@ await corsair.pdfco.api.pdfToXml({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public URL of the source PDF |
 | `pages` | `string` | No | Page indices, e.g. "0,1,2-" |
 | `inline` | `boolean` | No | Return XML inline in body |
@@ -2303,9 +2105,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `error` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `status` | `number` | No | — |

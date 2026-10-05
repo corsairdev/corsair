@@ -31,9 +31,6 @@ await corsair.marketstack.api.currencies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
 | `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
 
@@ -44,9 +41,6 @@ await corsair.marketstack.api.currencies.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -99,9 +93,6 @@ await corsair.marketstack.api.dividends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
 | `dateFrom` | `string` | No | Only return dividends on or after this date (YYYY-MM-DD) |
 | `dateTo` | `string` | No | Only return dividends on or before this date (YYYY-MM-DD) |
@@ -115,9 +106,6 @@ await corsair.marketstack.api.dividends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -173,9 +161,6 @@ await corsair.marketstack.api.eod.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
 | `exchange` | `string` | No | Filter by stock exchange MIC |
 | `sort` | `ASC \| DESC` | No | Sort order by date (default DESC) |
@@ -191,9 +176,6 @@ await corsair.marketstack.api.eod.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -261,9 +243,6 @@ await corsair.marketstack.api.exchanges.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mic` | `string` | Yes | Market Identifier Code of the exchange, e.g. "XNAS" |
 
 
@@ -273,9 +252,6 @@ await corsair.marketstack.api.exchanges.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `acronym` | `string` | No | — |
 | `mic` | `string` | Yes | — |
@@ -362,9 +338,6 @@ await corsair.marketstack.api.exchanges.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Search exchanges by name, acronym, or MIC |
 | `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
 | `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
@@ -376,9 +349,6 @@ await corsair.marketstack.api.exchanges.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -461,9 +431,6 @@ await corsair.marketstack.api.splits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
 | `dateFrom` | `string` | No | Only return splits on or after this date (YYYY-MM-DD) |
 | `dateTo` | `string` | No | Only return splits on or before this date (YYYY-MM-DD) |
@@ -477,9 +444,6 @@ await corsair.marketstack.api.splits.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -532,9 +496,6 @@ await corsair.marketstack.api.tickers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
 
 
@@ -544,9 +505,6 @@ await corsair.marketstack.api.tickers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `symbol` | `string` | Yes | — |
 | `has_intraday` | `boolean` | No | — |
@@ -630,9 +588,6 @@ await corsair.marketstack.api.tickers.getEod({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
 | `sort` | `ASC \| DESC` | No | Sort order by date (default DESC) |
 | `dateFrom` | `string` | No | Only return data on or after this date (YYYY-MM-DD) |
@@ -647,9 +602,6 @@ await corsair.marketstack.api.tickers.getEod({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -715,9 +667,6 @@ await corsair.marketstack.api.tickers.getEodLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
 
 
@@ -727,9 +676,6 @@ await corsair.marketstack.api.tickers.getEodLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `open` | `number` | No | — |
 | `high` | `number` | No | — |
 | `low` | `number` | No | — |
@@ -771,9 +717,6 @@ await corsair.marketstack.api.tickers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Search tickers by name or symbol, e.g. "Apple" |
 | `exchange` | `string` | No | Filter by stock exchange MIC |
 | `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
@@ -786,9 +729,6 @@ await corsair.marketstack.api.tickers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pagination` | `object` | Yes | — |
 | `data` | `object[]` | Yes | — |
 

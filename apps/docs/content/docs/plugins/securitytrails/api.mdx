@@ -34,9 +34,6 @@ await corsair.securitytrails.api.account.ping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -63,9 +60,6 @@ await corsair.securitytrails.api.account.usage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `current_monthly_usage` | `number` | No | — |
 | `allowed_monthly_usage` | `number` | No | — |
 
@@ -92,9 +86,6 @@ await corsair.securitytrails.api.company.associatedIps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
@@ -106,9 +97,6 @@ await corsair.securitytrails.api.company.associatedIps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `records` | `object[]` | No | — |
 | `query` | `string` | No | — |
 | `record_count` | `number` | No | — |
@@ -151,9 +139,6 @@ await corsair.securitytrails.api.domain.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hostname` | `string` | Yes | — |
 
 
@@ -163,9 +148,6 @@ await corsair.securitytrails.api.domain.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hostname` | `string` | No | — |
 | `alexa_rank` | `number` | No | — |
 | `current_dns` | `object` | No | — |
@@ -244,9 +226,6 @@ await corsair.securitytrails.api.domain.ssl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hostname` | `string` | Yes | — |
 | `include_subdomains` | `boolean` | No | — |
 | `status` | `valid \| all \| expired` | No | — |
@@ -259,9 +238,6 @@ await corsair.securitytrails.api.domain.ssl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint` | `string` | No | — |
 | `meta` | `object` | No | — |
 | `record_count` | `number` | No | — |
@@ -328,9 +304,6 @@ await corsair.securitytrails.api.ips.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -341,9 +314,6 @@ await corsair.securitytrails.api.ips.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint` | `string` | No | — |
 | `records` | `object[]` | No | — |
 | `record_count` | `number` | No | — |
@@ -395,9 +365,6 @@ await corsair.securitytrails.api.ips.stats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 
 
@@ -407,9 +374,6 @@ await corsair.securitytrails.api.ips.stats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endpoint` | `string` | No | — |
 | `top_ptr_patterns` | `object[]` | No | — |
 | `ports` | `object[]` | No | — |
@@ -460,9 +424,6 @@ await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_id` | `string` | Yes | — |
 | `add_rules` | `object[]` | No | — |
 | `remove_rules` | `object[]` | No | — |
@@ -498,9 +459,6 @@ await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `complete` | `boolean` | No | — |
@@ -577,9 +535,6 @@ await corsair.securitytrails.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort_direction` | `asc \| desc` | No | — |
 
 
@@ -589,9 +544,6 @@ await corsair.securitytrails.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -655,9 +607,6 @@ await corsair.securitytrails.api.scroll.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scroll_id` | `string` | Yes | — |
 
 
@@ -696,9 +645,6 @@ await corsair.securitytrails.api.sql.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -709,9 +655,6 @@ await corsair.securitytrails.api.sql.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `id` | `string` | No | — |
 | `total` | `object` | No | — |
@@ -758,9 +701,6 @@ await corsair.securitytrails.api.sql.scroll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -770,9 +710,6 @@ await corsair.securitytrails.api.sql.scroll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `id` | `string` | No | — |
 | `total` | `object` | No | — |

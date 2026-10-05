@@ -31,9 +31,6 @@ await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `connect_integration_id` | `number` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `contractors` | `object` | No | — |
 
@@ -83,9 +77,6 @@ await corsair.baselinker.api.connect.getConnectIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `integrations` | `object` | No | — |
 
@@ -122,9 +113,6 @@ await corsair.baselinker.api.couriers.createPackageManual({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `courier_code` | `string` | No | — |
 | `package_number` | `string` | No | — |
@@ -138,9 +126,6 @@ await corsair.baselinker.api.couriers.createPackageManual({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `package_id` | `number` | No | — |
 | `package_number` | `string` | No | — |
@@ -166,9 +151,6 @@ await corsair.baselinker.api.couriers.getCourierAccounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `courier_code` | `string` | Yes | — |
 
 
@@ -178,9 +160,6 @@ await corsair.baselinker.api.couriers.getCourierAccounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `accounts` | `object` | No | — |
 
@@ -215,9 +194,6 @@ await corsair.baselinker.api.couriers.getCourierFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `courier_code` | `string` | Yes | — |
 
 
@@ -227,9 +203,6 @@ await corsair.baselinker.api.couriers.getCourierFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `multi_packages` | `boolean` | No | — |
 | `fields` | `object` | No | — |
@@ -274,9 +247,6 @@ await corsair.baselinker.api.couriers.getCourierPackagesStatusHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `package_ids` | `object` | Yes | — |
 
 
@@ -296,9 +266,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `packages_history` | `object` | No | — |
 
@@ -336,9 +303,6 @@ await corsair.baselinker.api.couriers.getCouriersList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `couriers` | `object` | No | — |
 
@@ -373,9 +337,6 @@ await corsair.baselinker.api.couriers.getOrderPackages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 
 
@@ -385,9 +346,6 @@ await corsair.baselinker.api.couriers.getOrderPackages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `packages` | `object` | No | — |
 
@@ -422,9 +380,6 @@ await corsair.baselinker.api.couriers.getPackageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `package_id` | `number` | Yes | — |
 
 
@@ -434,9 +389,6 @@ await corsair.baselinker.api.couriers.getPackageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `package_details` | `object` | No | — |
 
@@ -471,9 +423,6 @@ await corsair.baselinker.api.couriers.getProtocol({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `courier_code` | `string` | Yes | — |
 | `package_ids` | `object` | No | — |
 | `package_numbers` | `object` | No | — |
@@ -504,9 +453,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `extension` | `string` | No | — |
 | `protocol` | `string` | No | — |
@@ -532,9 +478,6 @@ await corsair.baselinker.api.couriers.getRequestParcelPickupFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `courier_code` | `string` | Yes | — |
 
 
@@ -544,9 +487,6 @@ await corsair.baselinker.api.couriers.getRequestParcelPickupFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `fields` | `object` | No | — |
 
@@ -581,9 +521,6 @@ await corsair.baselinker.api.couriers.runRequestParcelPickup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `courier_code` | `string` | Yes | — |
 | `package_ids` | `object` | No | — |
 | `package_numbers` | `object` | No | — |
@@ -623,9 +560,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `pickup_number` | `string` | No | — |
 
@@ -652,9 +586,6 @@ await corsair.baselinker.api.documents.addInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `series_id` | `number` | No | — |
 | `vat_rate` | `string` | No | — |
@@ -666,9 +597,6 @@ await corsair.baselinker.api.documents.addInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `invoice_id` | `number` | No | — |
 
@@ -693,9 +621,6 @@ await corsair.baselinker.api.documents.addInvoiceCorrection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `original_invoice_id` | `number` | Yes | — |
 | `return_order_id` | `number` | No | — |
 | `series_id` | `number` | No | — |
@@ -732,9 +657,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `invoice_id` | `number` | No | — |
 
@@ -759,9 +681,6 @@ await corsair.baselinker.api.documents.getInvoiceFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoice_id` | `number` | Yes | — |
 | `get_external` | `boolean` | No | — |
 
@@ -772,9 +691,6 @@ await corsair.baselinker.api.documents.getInvoiceFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `invoice` | `string` | No | — |
 | `invoice_number` | `string` | No | — |
@@ -800,9 +716,6 @@ await corsair.baselinker.api.documents.getInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invoice_id` | `number` | No | — |
 | `order_id` | `number` | No | — |
 | `date_from` | `number` | No | — |
@@ -818,9 +731,6 @@ await corsair.baselinker.api.documents.getInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `invoices` | `object` | No | — |
 
@@ -855,9 +765,6 @@ await corsair.baselinker.api.documents.getNewReceipts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `series_id` | `number` | No | — |
 | `id_from` | `number` | No | — |
 
@@ -868,9 +775,6 @@ await corsair.baselinker.api.documents.getNewReceipts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `orders` | `object` | No | — |
 | `receipt_id` | `number` | No | — |
@@ -921,9 +825,6 @@ await corsair.baselinker.api.documents.getReceipts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `series_id` | `number` | No | — |
 | `id_from` | `number` | No | — |
 | `date_from` | `number` | No | — |
@@ -936,9 +837,6 @@ await corsair.baselinker.api.documents.getReceipts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `receipts` | `object` | No | — |
 
@@ -976,9 +874,6 @@ await corsair.baselinker.api.documents.getSeries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `series` | `object` | No | — |
 
@@ -1013,9 +908,6 @@ await corsair.baselinker.api.documents.setOrderReceipt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `receipt_id` | `number` | Yes | — |
 | `receipt_nr` | `string` | Yes | — |
 | `date` | `number` | Yes | — |
@@ -1029,9 +921,6 @@ await corsair.baselinker.api.documents.setOrderReceipt({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1057,9 +946,6 @@ await corsair.baselinker.api.externalStorages.addCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `storage_id` | `string` | Yes | — |
 | `category_id` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -1072,9 +958,6 @@ await corsair.baselinker.api.externalStorages.addCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `storage_id` | `string` | No | — |
 | `category_id` | `number` | No | — |
@@ -1100,9 +983,6 @@ await corsair.baselinker.api.externalStorages.getExternalStorageProductsQuantity
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `storage_id` | `string` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1113,9 +993,6 @@ await corsair.baselinker.api.externalStorages.getExternalStorageProductsQuantity
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `storage_id` | `string` | No | — |
 | `products` | `object` | No | — |
@@ -1154,9 +1031,6 @@ await corsair.baselinker.api.externalStorages.getExternalStoragesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `storages` | `object` | No | — |
 
@@ -1194,9 +1068,6 @@ await corsair.baselinker.api.externalStorages.getStoragesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `storages` | `object` | No | — |
 
@@ -1233,9 +1104,6 @@ await corsair.baselinker.api.inventory.addInventory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1280,9 +1148,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `inventory_id` | `number` | No | — |
 
@@ -1307,9 +1172,6 @@ await corsair.baselinker.api.inventory.addInventoryCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `category_id` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -1322,9 +1184,6 @@ await corsair.baselinker.api.inventory.addInventoryCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `category_id` | `number` | No | — |
 
@@ -1349,9 +1208,6 @@ await corsair.baselinker.api.inventory.addInventoryManufacturer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `manufacturer_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `manufacturer_name` | `string` | No | — |
@@ -1372,9 +1228,6 @@ await corsair.baselinker.api.inventory.addInventoryManufacturer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `manufacturer_id` | `number` | No | — |
 
@@ -1399,9 +1252,6 @@ await corsair.baselinker.api.inventory.addInventoryPayer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payer_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `address` | `string` | No | — |
@@ -1416,9 +1266,6 @@ await corsair.baselinker.api.inventory.addInventoryPayer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `payer_id` | `number` | No | — |
 
@@ -1443,9 +1290,6 @@ await corsair.baselinker.api.inventory.addInventoryPriceGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `price_group_id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1465,9 +1309,6 @@ await corsair.baselinker.api.inventory.addInventoryPriceGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `price_group_id` | `number` | No | — |
 
@@ -1492,9 +1333,6 @@ await corsair.baselinker.api.inventory.addInventoryProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `product_id` | `number` | No | — |
 | `parent_id` | `number` | No | — |
@@ -1629,9 +1467,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `product_id` | `number` | No | — |
 | `warnings` | `object` | No | — |
@@ -1667,9 +1502,6 @@ await corsair.baselinker.api.inventory.addInventorySupplier({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `supplier_id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `take_product_cost_from` | `string` | No | — |
@@ -1690,9 +1522,6 @@ await corsair.baselinker.api.inventory.addInventorySupplier({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `supplier_id` | `number` | No | — |
 
@@ -1717,9 +1546,6 @@ await corsair.baselinker.api.inventory.addInventoryWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1736,9 +1562,6 @@ await corsair.baselinker.api.inventory.addInventoryWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `warehouse_id` | `number` | No | — |
 
@@ -1763,9 +1586,6 @@ await corsair.baselinker.api.inventory.deleteInventory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 
 
@@ -1775,9 +1595,6 @@ await corsair.baselinker.api.inventory.deleteInventory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1801,9 +1618,6 @@ await corsair.baselinker.api.inventory.deleteInventoryCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_id` | `number` | Yes | — |
 
 
@@ -1813,9 +1627,6 @@ await corsair.baselinker.api.inventory.deleteInventoryCategory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1839,9 +1650,6 @@ await corsair.baselinker.api.inventory.deleteInventoryManufacturer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `manufacturer_id` | `number` | Yes | — |
 
 
@@ -1851,9 +1659,6 @@ await corsair.baselinker.api.inventory.deleteInventoryManufacturer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1877,9 +1682,6 @@ await corsair.baselinker.api.inventory.deleteInventoryPayer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payer_id` | `number` | Yes | — |
 
 
@@ -1889,9 +1691,6 @@ await corsair.baselinker.api.inventory.deleteInventoryPayer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1915,9 +1714,6 @@ await corsair.baselinker.api.inventory.deleteInventoryPriceGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `price_group_id` | `number` | Yes | — |
 
 
@@ -1927,9 +1723,6 @@ await corsair.baselinker.api.inventory.deleteInventoryPriceGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1953,9 +1746,6 @@ await corsair.baselinker.api.inventory.deleteInventoryProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `number` | Yes | — |
 
 
@@ -1965,9 +1755,6 @@ await corsair.baselinker.api.inventory.deleteInventoryProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -1991,9 +1778,6 @@ await corsair.baselinker.api.inventory.deleteInventoryWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | Yes | — |
 
 
@@ -2003,9 +1787,6 @@ await corsair.baselinker.api.inventory.deleteInventoryWarehouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -2032,9 +1813,6 @@ await corsair.baselinker.api.inventory.getInventories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `inventories` | `object` | No | — |
 
@@ -2069,9 +1847,6 @@ await corsair.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 
 
@@ -2081,9 +1856,6 @@ await corsair.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `text_field_keys` | `object` | No | — |
 
@@ -2118,9 +1890,6 @@ await corsair.baselinker.api.inventory.getInventoryCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 
 
@@ -2130,9 +1899,6 @@ await corsair.baselinker.api.inventory.getInventoryCategories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `categories` | `object` | No | — |
 
@@ -2170,9 +1936,6 @@ await corsair.baselinker.api.inventory.getInventoryExtraFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `extra_fields` | `object` | No | — |
 
@@ -2207,9 +1970,6 @@ await corsair.baselinker.api.inventory.getInventoryIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 
 
@@ -2219,9 +1979,6 @@ await corsair.baselinker.api.inventory.getInventoryIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `integrations` | `object` | No | — |
 
@@ -2256,9 +2013,6 @@ await corsair.baselinker.api.inventory.getInventoryManufacturers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 
 
@@ -2268,9 +2022,6 @@ await corsair.baselinker.api.inventory.getInventoryManufacturers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `manufacturers` | `object` | No | — |
 
@@ -2305,9 +2056,6 @@ await corsair.baselinker.api.inventory.getInventoryPayers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter_id` | `number` | No | — |
 | `filter_name` | `string` | No | — |
 
@@ -2318,9 +2066,6 @@ await corsair.baselinker.api.inventory.getInventoryPayers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `payers` | `object` | No | — |
 
@@ -2358,9 +2103,6 @@ await corsair.baselinker.api.inventory.getInventoryPriceGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `price_groups` | `object` | No | — |
 
@@ -2398,9 +2140,6 @@ await corsair.baselinker.api.inventory.getInventoryPrintoutTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `printouts` | `object` | No | — |
 
@@ -2435,9 +2174,6 @@ await corsair.baselinker.api.inventory.getInventoryProductLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `number` | Yes | — |
 | `date_from` | `number` | No | — |
 | `date_to` | `number` | No | — |
@@ -2452,9 +2188,6 @@ await corsair.baselinker.api.inventory.getInventoryProductLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `logs` | `object` | No | — |
 
@@ -2489,9 +2222,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `products` | `object` | No | — |
 | `include_erp_units` | `boolean` | No | — |
@@ -2519,9 +2249,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `products` | `object` | No | — |
 
@@ -2556,9 +2283,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `filter_id` | `number` | No | — |
 | `filter_category_id` | `number` | No | — |
@@ -2581,9 +2305,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `products` | `object` | No | — |
 
@@ -2618,9 +2339,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsPrices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -2631,9 +2349,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsPrices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `products` | `object` | No | — |
 
@@ -2668,9 +2383,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsStock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `filter_id` | `number` | No | — |
 | `filter_category_id` | `number` | No | — |
@@ -2691,9 +2403,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsStock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `products` | `object` | No | — |
 
@@ -2728,9 +2437,6 @@ await corsair.baselinker.api.inventory.getInventorySuppliers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter_id` | `number` | No | — |
 | `filter_name` | `string` | No | — |
 
@@ -2741,9 +2447,6 @@ await corsair.baselinker.api.inventory.getInventorySuppliers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `suppliers` | `object` | No | — |
 
@@ -2781,9 +2484,6 @@ await corsair.baselinker.api.inventory.getInventoryTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `tags` | `object` | No | — |
 
@@ -2821,9 +2521,6 @@ await corsair.baselinker.api.inventory.getInventoryWarehouses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `warehouses` | `object` | No | — |
 
@@ -2858,9 +2555,6 @@ await corsair.baselinker.api.inventory.runProductMacroTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `product_id` | `number` | Yes | — |
 | `trigger_id` | `number` | Yes | — |
 
@@ -2871,9 +2565,6 @@ await corsair.baselinker.api.inventory.runProductMacroTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -2897,9 +2588,6 @@ await corsair.baselinker.api.inventory.updateInventoryProductsStock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inventory_id` | `number` | Yes | — |
 | `products` | `object` | Yes | — |
 
@@ -2920,9 +2608,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `counter` | `number` | No | — |
 | `warnings` | `object` | No | — |
@@ -2960,9 +2645,6 @@ await corsair.baselinker.api.inventoryDocuments.addInventoryDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | Yes | — |
 | `document_type` | `number` | No | — |
 | `target_warehouse_id` | `number` | No | — |
@@ -2979,9 +2661,6 @@ await corsair.baselinker.api.inventoryDocuments.addInventoryDocument({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `document_id` | `number` | No | — |
 | `document_number` | `string` | No | — |
@@ -3007,9 +2686,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `document_id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -3020,9 +2696,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `items` | `object` | No | — |
 
@@ -3057,9 +2730,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter_source_object_type` | `number` | No | — |
 | `filter_source_object_id` | `number` | No | — |
 | `filter_document_id` | `number` | No | — |
@@ -3077,9 +2747,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocuments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `documents` | `object` | No | — |
 
@@ -3114,9 +2781,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | No | — |
 
 
@@ -3126,9 +2790,6 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `document_series` | `object` | No | — |
 
@@ -3165,9 +2826,6 @@ await corsair.baselinker.api.orders.addOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_status_id` | `number` | Yes | — |
 | `custom_source_id` | `number` | No | — |
 | `date_add` | `number` | No | — |
@@ -3233,9 +2891,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `order_id` | `number` | No | — |
 
@@ -3260,9 +2915,6 @@ await corsair.baselinker.api.orders.addOrderBySplit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `items_to_split` | `object` | No | — |
 | `delivery_cost_to_split` | `number` | No | — |
@@ -3284,9 +2936,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `new_order_id` | `number` | No | — |
 
@@ -3311,9 +2960,6 @@ await corsair.baselinker.api.orders.addOrderDuplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 
 
@@ -3323,9 +2969,6 @@ await corsair.baselinker.api.orders.addOrderDuplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `order_id` | `number` | No | — |
 
@@ -3350,9 +2993,6 @@ await corsair.baselinker.api.orders.deleteOrderProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `order_product_id` | `number` | Yes | — |
 
@@ -3363,9 +3003,6 @@ await corsair.baselinker.api.orders.deleteOrderProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -3389,9 +3026,6 @@ await corsair.baselinker.api.orders.deleteOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_ids` | `object` | Yes | — |
 
 
@@ -3411,9 +3045,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `deleted_order_ids` | `object` | No | — |
 
@@ -3448,9 +3079,6 @@ await corsair.baselinker.api.orders.getJournalList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `last_log_id` | `number` | Yes | — |
 | `logs_types` | `object` | No | — |
 | `order_id` | `number` | No | — |
@@ -3472,9 +3100,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `logs` | `object` | No | — |
 
@@ -3512,9 +3137,6 @@ await corsair.baselinker.api.orders.getOrderExtraFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `extra_fields` | `object` | No | — |
 
@@ -3549,9 +3171,6 @@ await corsair.baselinker.api.orders.getOrderPaymentsHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `show_full_history` | `boolean` | No | — |
 
@@ -3562,9 +3181,6 @@ await corsair.baselinker.api.orders.getOrderPaymentsHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `payments` | `object` | No | — |
 
@@ -3599,9 +3215,6 @@ await corsair.baselinker.api.orders.getOrderPickPackHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `action_type` | `number` | No | — |
 
@@ -3612,9 +3225,6 @@ await corsair.baselinker.api.orders.getOrderPickPackHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `history` | `object` | No | — |
 
@@ -3652,9 +3262,6 @@ await corsair.baselinker.api.orders.getOrderPrintoutTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `printouts` | `object` | No | — |
 
@@ -3689,9 +3296,6 @@ await corsair.baselinker.api.orders.getOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | No | — |
 | `date_confirmed_from` | `number` | No | — |
 | `date_from` | `number` | No | — |
@@ -3715,9 +3319,6 @@ await corsair.baselinker.api.orders.getOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `orders` | `object` | No | — |
 
@@ -3752,9 +3353,6 @@ await corsair.baselinker.api.orders.getOrdersByPhone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `phone` | `string` | Yes | — |
 
 
@@ -3764,9 +3362,6 @@ await corsair.baselinker.api.orders.getOrdersByPhone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `orders` | `object` | No | — |
 
@@ -3804,9 +3399,6 @@ await corsair.baselinker.api.orders.getOrderSources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `sources` | `object` | No | — |
 
@@ -3844,9 +3436,6 @@ await corsair.baselinker.api.orders.getOrderStatusList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `statuses` | `object` | No | — |
 
@@ -3881,9 +3470,6 @@ await corsair.baselinker.api.orders.getOrderTransactionData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `include_complex_taxes` | `boolean` | No | — |
 | `include_amazon_data` | `boolean` | No | — |
@@ -3895,9 +3481,6 @@ await corsair.baselinker.api.orders.getOrderTransactionData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `currency` | `string` | No | — |
 | `fulfillment_shipments` | `object` | No | — |
@@ -3953,9 +3536,6 @@ await corsair.baselinker.api.orders.getPickPackCarts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `carts` | `object` | No | — |
 
@@ -3990,9 +3570,6 @@ await corsair.baselinker.api.orders.runOrderMacroTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `trigger_id` | `number` | Yes | — |
 
@@ -4003,9 +3580,6 @@ await corsair.baselinker.api.orders.runOrderMacroTrigger({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4029,9 +3603,6 @@ await corsair.baselinker.api.orders.setOrderFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `admin_comments` | `string` | No | — |
 | `user_comments` | `string` | No | — |
@@ -4087,9 +3658,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4113,9 +3681,6 @@ await corsair.baselinker.api.orders.setOrderPayment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `payment_done` | `number` | Yes | — |
 | `payment_date` | `number` | Yes | — |
@@ -4129,9 +3694,6 @@ await corsair.baselinker.api.orders.setOrderPayment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4155,9 +3717,6 @@ await corsair.baselinker.api.orders.setOrderProductFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `order_product_id` | `number` | Yes | — |
 | `storage` | `string` | No | — |
@@ -4183,9 +3742,6 @@ await corsair.baselinker.api.orders.setOrderProductFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4209,9 +3765,6 @@ await corsair.baselinker.api.orders.setOrdersMerge({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `main_order_id` | `number` | Yes | — |
 | `order_ids_to_merge` | `object` | Yes | — |
 | `merge_mode` | `string` | Yes | — |
@@ -4234,9 +3787,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `merged_order_id` | `number` | No | — |
 
@@ -4261,9 +3811,6 @@ await corsair.baselinker.api.orders.setOrderStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `status_id` | `number` | Yes | — |
 
@@ -4274,9 +3821,6 @@ await corsair.baselinker.api.orders.setOrderStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4300,9 +3844,6 @@ await corsair.baselinker.api.orders.setOrderStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_ids` | `object` | Yes | — |
 | `status_id` | `number` | Yes | — |
 
@@ -4323,9 +3864,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4351,9 +3889,6 @@ await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | Yes | — |
 | `supplier_id` | `number` | No | — |
 | `payer_id` | `number` | No | — |
@@ -4390,9 +3925,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `order_id` | `number` | No | — |
 | `document_number` | `string` | No | — |
@@ -4418,9 +3950,6 @@ await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `items` | `object` | No | — |
 
@@ -4441,9 +3970,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `items` | `object` | No | — |
 
@@ -4478,9 +4004,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -4491,9 +4014,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `items` | `object` | No | — |
 
@@ -4528,9 +4048,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | No | — |
 | `supplier_id` | `number` | No | — |
 | `series_id` | `number` | No | — |
@@ -4547,9 +4064,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `purchase_orders` | `object` | No | — |
 
@@ -4584,9 +4098,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `warehouse_id` | `number` | No | — |
 
 
@@ -4596,9 +4107,6 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `series` | `object` | No | — |
 
@@ -4633,9 +4141,6 @@ await corsair.baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | Yes | — |
 | `status` | `number` | Yes | — |
 | `completed_items` | `object` | No | — |
@@ -4657,9 +4162,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4685,9 +4187,6 @@ await corsair.baselinker.api.returns.addOrderReturn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | No | — |
 | `status_id` | `number` | No | — |
 | `custom_source_id` | `number` | No | — |
@@ -4740,9 +4239,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `return_id` | `number` | No | — |
 
@@ -4767,9 +4263,6 @@ await corsair.baselinker.api.returns.addOrderReturnProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | No | — |
 | `order_product_id` | `number` | No | — |
 | `storage` | `string` | No | — |
@@ -4797,9 +4290,6 @@ await corsair.baselinker.api.returns.addOrderReturnProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `order_return_product_id` | `number` | No | — |
 
@@ -4824,9 +4314,6 @@ await corsair.baselinker.api.returns.deleteOrderReturnProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | Yes | — |
 | `order_return_product_id` | `number` | Yes | — |
 
@@ -4837,9 +4324,6 @@ await corsair.baselinker.api.returns.deleteOrderReturnProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -4866,9 +4350,6 @@ await corsair.baselinker.api.returns.getOrderReturnExtraFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `extra_fields` | `object` | No | — |
 
@@ -4903,9 +4384,6 @@ await corsair.baselinker.api.returns.getOrderReturnJournalList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `last_log_id` | `number` | Yes | — |
 | `logs_types` | `object` | No | — |
 | `return_id` | `number` | No | — |
@@ -4927,9 +4405,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `logs` | `object` | No | — |
 
@@ -4964,9 +4439,6 @@ await corsair.baselinker.api.returns.getOrderReturnPaymentsHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | Yes | — |
 | `show_full_history` | `boolean` | No | — |
 
@@ -4977,9 +4449,6 @@ await corsair.baselinker.api.returns.getOrderReturnPaymentsHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `payments` | `object` | No | — |
 
@@ -5017,9 +4486,6 @@ await corsair.baselinker.api.returns.getOrderReturnProductStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `order_return_product_statuses` | `object` | No | — |
 
@@ -5057,9 +4523,6 @@ await corsair.baselinker.api.returns.getOrderReturnReasonsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `return_reasons` | `object` | No | — |
 
@@ -5094,9 +4557,6 @@ await corsair.baselinker.api.returns.getOrderReturns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `order_id` | `number` | No | — |
 | `return_id` | `number` | No | — |
 | `date_from` | `number` | No | — |
@@ -5114,9 +4574,6 @@ await corsair.baselinker.api.returns.getOrderReturns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `returns` | `object` | No | — |
 
@@ -5154,9 +4611,6 @@ await corsair.baselinker.api.returns.getOrderReturnStatusList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 | `statuses` | `object` | No | — |
 
@@ -5191,9 +4645,6 @@ await corsair.baselinker.api.returns.setOrderReturnFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | No | — |
 | `admin_comments` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -5228,9 +4679,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -5254,9 +4702,6 @@ await corsair.baselinker.api.returns.setOrderReturnProductFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | Yes | — |
 | `order_return_product_id` | `number` | Yes | — |
 | `storage` | `string` | No | — |
@@ -5284,9 +4729,6 @@ await corsair.baselinker.api.returns.setOrderReturnProductFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -5310,9 +4752,6 @@ await corsair.baselinker.api.returns.setOrderReturnRefund({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | Yes | — |
 | `order_refund_done` | `number` | Yes | — |
 | `refund_date` | `number` | Yes | — |
@@ -5326,9 +4765,6 @@ await corsair.baselinker.api.returns.setOrderReturnRefund({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -5352,9 +4788,6 @@ await corsair.baselinker.api.returns.setOrderReturnStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_id` | `number` | Yes | — |
 | `status_id` | `number` | Yes | — |
 
@@ -5365,9 +4798,6 @@ await corsair.baselinker.api.returns.setOrderReturnStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 
@@ -5391,9 +4821,6 @@ await corsair.baselinker.api.returns.setOrderReturnStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `return_ids` | `object` | Yes | — |
 | `status_id` | `number` | Yes | — |
 
@@ -5414,9 +4841,6 @@ any[] | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `SUCCESS` | Yes | — |
 
 

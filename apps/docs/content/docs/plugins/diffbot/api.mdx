@@ -34,9 +34,6 @@ await corsair.diffbot.api.account.getAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | No | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -69,9 +66,6 @@ await corsair.diffbot.api.bulk.createBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the bulk job (unique per token) |
 | `apiUrl` | `string` | Yes | Full Diffbot Extract API URL (e.g. "https://api.diffbot.com/v3/article") |
 | `urls` | `string[]` | Yes | Array of URLs to process with the Extract API |
@@ -85,9 +79,6 @@ await corsair.diffbot.api.bulk.createBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -114,9 +105,6 @@ await corsair.diffbot.api.bulk.getBulkData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | The name of the completed bulk job to download |
 | `format` | `json \| csv` | No | Download format (default json) |
 
@@ -127,9 +115,6 @@ await corsair.diffbot.api.bulk.getBulkData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `data` | `any` | No | — |
 
@@ -157,9 +142,6 @@ await corsair.diffbot.api.bulk.listBulkJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobs` | `object[]` | No | — |
 
 
@@ -193,9 +175,6 @@ await corsair.diffbot.api.bulk.startBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Unique name for the bulk extract job |
 | `apiUrl` | `string` | Yes | Full Diffbot Extract API URL |
 | `urls` | `string` | Yes | Comma-separated or space-separated list of URLs to process |
@@ -209,9 +188,6 @@ await corsair.diffbot.api.bulk.startBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -237,9 +213,6 @@ await corsair.diffbot.api.bulk.stopBulkJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | The name of the bulk extract job to pause/stop |
 
 
@@ -249,9 +222,6 @@ await corsair.diffbot.api.bulk.stopBulkJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -279,9 +249,6 @@ await corsair.diffbot.api.crawl.getCrawlData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | The name of the completed crawl job to download |
 | `format` | `json \| csv` | No | Download format (default json) |
 
@@ -292,9 +259,6 @@ await corsair.diffbot.api.crawl.getCrawlData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `data` | `any` | No | — |
 
@@ -319,9 +283,6 @@ await corsair.diffbot.api.crawl.manageCrawl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | The name of the crawl job to inspect or modify |
 | `pause` | `number` | No | Set to 1 to pause an active crawl job, 0 to resume |
 | `restart` | `number` | No | Set to 1 to restart a completed/paused crawl job |
@@ -337,9 +298,6 @@ await corsair.diffbot.api.crawl.manageCrawl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobs` | `object[]` | No | — |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -376,9 +334,6 @@ await corsair.diffbot.api.crawl.startCrawl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Unique name for the crawl job |
 | `seeds` | `string` | Yes | Space-separated seed URL(s) from which the crawl begins |
 | `apiUrl` | `string` | Yes | Full Diffbot Extract API URL used to process pages (e.g. "https://api.diffbot.com/v3/article") |
@@ -395,9 +350,6 @@ await corsair.diffbot.api.crawl.startCrawl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -425,9 +377,6 @@ await corsair.diffbot.api.customApi.createCustomApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api` | `string` | Yes | Name of the custom API (e.g. "myCustomArticleApi") |
 | `url` | `string` | Yes | Sample URL that this custom API applies to |
 | `pattern` | `string` | No | URL regex pattern to match pages for this custom API |
@@ -450,9 +399,6 @@ await corsair.diffbot.api.customApi.createCustomApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `api` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -479,9 +425,6 @@ await corsair.diffbot.api.customApi.deleteCustomApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `api` | `string` | Yes | Name of the custom API to delete |
 | `url` | `string` | No | URL pattern or test URL of the custom API |
 
@@ -492,9 +435,6 @@ await corsair.diffbot.api.customApi.deleteCustomApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | No | — |
 | `api` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -523,9 +463,6 @@ await corsair.diffbot.api.customApi.listCustomApis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customApis` | `object[]` | No | — |
 | `apis` | `object[]` | No | — |
 
@@ -570,9 +507,6 @@ await corsair.diffbot.api.enhance.combineEntityProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Person name |
 | `type` | `string` | No | Entity type (defaults to Person) |
 | `email` | `string` | No | Email address |
@@ -586,9 +520,6 @@ await corsair.diffbot.api.enhance.combineEntityProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `number` | No | — |
 | `hits` | `number` | No | — |
 | `kgversion` | `string` | No | — |
@@ -634,9 +565,6 @@ await corsair.diffbot.api.enhance.enhanceEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | Entity name (person or organization) |
 | `type` | `string` | No | Entity type filter: "Organization" or "Person" |
 | `email` | `string` | No | Email address of the entity |
@@ -654,9 +582,6 @@ await corsair.diffbot.api.enhance.enhanceEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `number` | No | — |
 | `hits` | `number` | No | — |
 | `kgversion` | `string` | No | — |
@@ -711,9 +636,6 @@ await corsair.diffbot.api.enhance.getKgCoverageReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reportId` | `string` | Yes | Coverage report ID generated from DQL query or bulk job |
 | `bulkjobId` | `string` | No | Optional bulkjob ID associated with the report |
 
@@ -724,9 +646,6 @@ await corsair.diffbot.api.enhance.getKgCoverageReportById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `reportId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `coverage` | `object` | No | — |
@@ -764,9 +683,6 @@ await corsair.diffbot.api.enhance.resolveLostId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | The lost or non-canonical identifier to resolve |
 
 
@@ -776,9 +692,6 @@ await corsair.diffbot.api.enhance.resolveLostId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `canonicalId` | `string` | No | — |
 | `diffbotUri` | `string` | No | — |
@@ -820,9 +733,6 @@ await corsair.diffbot.api.extract.extractJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the job posting page |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -834,9 +744,6 @@ await corsair.diffbot.api.extract.extractJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -897,9 +804,6 @@ await corsair.diffbot.api.extract.extractList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the list / directory / index page |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -911,9 +815,6 @@ await corsair.diffbot.api.extract.extractList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -966,9 +867,6 @@ await corsair.diffbot.api.extract.getAnalyze({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL to analyze — Diffbot auto-detects the page type |
 | `fields` | `string` | No | Comma-separated list of optional fields |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -982,9 +880,6 @@ await corsair.diffbot.api.extract.getAnalyze({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `type` | `string` | No | Detected page type (article, product, discussion, etc.) |
 | `humanLanguage` | `string` | No | — |
@@ -1033,9 +928,6 @@ await corsair.diffbot.api.extract.getArticle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the article to extract |
 | `fields` | `string` | No | Comma-separated list of optional fields (e.g. "links,meta") |
 | `timeout` | `number` | No | Timeout in milliseconds (default 30000) |
@@ -1050,9 +942,6 @@ await corsair.diffbot.api.extract.getArticle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1147,9 +1036,6 @@ await corsair.diffbot.api.extract.getDiscussion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the discussion / forum / comment page |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -1162,9 +1048,6 @@ await corsair.diffbot.api.extract.getDiscussion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1222,9 +1105,6 @@ await corsair.diffbot.api.extract.getEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the event page to extract |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -1236,9 +1116,6 @@ await corsair.diffbot.api.extract.getEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1297,9 +1174,6 @@ await corsair.diffbot.api.extract.getImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the page or image to extract |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -1311,9 +1185,6 @@ await corsair.diffbot.api.extract.getImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1374,9 +1245,6 @@ await corsair.diffbot.api.extract.getProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the product page to extract |
 | `fields` | `string` | No | Comma-separated list of optional fields |
 | `timeout` | `number` | No | Timeout in milliseconds (default 30000) |
@@ -1389,9 +1257,6 @@ await corsair.diffbot.api.extract.getProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1484,9 +1349,6 @@ await corsair.diffbot.api.extract.getVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The URL of the video page to extract |
 | `fields` | `string` | No | Optional fields to return |
 | `timeout` | `number` | No | Timeout in milliseconds |
@@ -1498,9 +1360,6 @@ await corsair.diffbot.api.extract.getVideo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `objects` | `object[]` | Yes | — |
 
@@ -1562,9 +1421,6 @@ await corsair.diffbot.api.kgBulkEnhance.createKgBulkEnhance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entities` | `object[]` | Yes | Array of entity objects to enhance |
 | `notifyEmail` | `string` | No | Email address to notify upon job completion |
 | `name` | `string` | No | Custom name for the bulk job |
@@ -1593,9 +1449,6 @@ await corsair.diffbot.api.kgBulkEnhance.createKgBulkEnhance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `job_id` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1623,9 +1476,6 @@ await corsair.diffbot.api.kgBulkEnhance.deleteKgEnhanceBulkjob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to delete |
 
 
@@ -1635,9 +1485,6 @@ await corsair.diffbot.api.kgBulkEnhance.deleteKgEnhanceBulkjob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -1663,9 +1510,6 @@ await corsair.diffbot.api.kgBulkEnhance.downloadBulkResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to download |
 | `format` | `json \| jsonl \| csv \| xls \| xlsx` | No | Export format |
 | `filter` | `string` | No | DQL filter criteria to apply to the output |
@@ -1679,9 +1523,6 @@ await corsair.diffbot.api.kgBulkEnhance.downloadBulkResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `data` | `object[]` | No | — |
@@ -1718,9 +1559,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkJobStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to check |
 
 
@@ -1730,9 +1568,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkJobStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `jobStatus` | `object` | No | — |
@@ -1772,9 +1607,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to download |
 | `format` | `json \| jsonl \| csv \| xls \| xlsx` | No | Download output format (default jsonl) |
 | `head` | `number` | No | Preview only the first N results from the job |
@@ -1786,9 +1618,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `data` | `object[]` | No | — |
@@ -1825,9 +1654,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkSingleResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The bulk enhance job ID |
 | `jobIndex` | `number` | Yes | Zero-indexed position of the entity record within the bulk job |
 
@@ -1838,9 +1664,6 @@ await corsair.diffbot.api.kgBulkEnhance.getBulkSingleResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `jobIndex` | `number` | No | — |
 | `data` | `object` | No | — |
@@ -1888,9 +1711,6 @@ await corsair.diffbot.api.kgBulkEnhance.listBulkJobsStatusForToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobs` | `object[]` | No | — |
 | `bulkjobs` | `object[]` | No | — |
 
@@ -1933,9 +1753,6 @@ await corsair.diffbot.api.kgBulkEnhance.stopKgBulkJobById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to pause/stop |
 
 
@@ -1945,9 +1762,6 @@ await corsair.diffbot.api.kgBulkEnhance.stopKgBulkJobById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bulkjobId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -1975,9 +1789,6 @@ await corsair.diffbot.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | DQL query string (e.g. "type:Organization name:\\"OpenAI\\"") |
 | `entityType` | `string` | No | Entity type filter prepended to query (e.g. "Organization") |
 | `queryType` | `query \| text \| queryTextFallback \| crawl` | No | Execution mode for the DQL request |
@@ -1992,9 +1803,6 @@ await corsair.diffbot.api.search.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `number` | No | — |
 | `hits` | `number` | No | — |
 | `results` | `number` | No | — |
@@ -2043,9 +1851,6 @@ await corsair.diffbot.api.search.searchCrawlData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `col` | `string` | Yes | The name of the crawl job collection to search |
 | `query` | `string` | Yes | Search query string or DQL filter |
 | `num` | `number` | No | Number of results to return (max 25) |
@@ -2058,9 +1863,6 @@ await corsair.diffbot.api.search.searchCrawlData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `request` | `object` | No | — |
 | `results` | `object[]` | No | — |
 | `numResults` | `number` | No | — |

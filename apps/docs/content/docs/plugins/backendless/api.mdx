@@ -31,9 +31,6 @@ await corsair.backendless.api.counters.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `counterName` | `string` | Yes | — |
 
 
@@ -60,9 +57,6 @@ await corsair.backendless.api.counters.reset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `counterName` | `string` | Yes | — |
 
 
@@ -89,9 +83,6 @@ await corsair.backendless.api.counters.set({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `counterName` | `string` | Yes | — |
 | `expected` | `number` | Yes | — |
 | `updated` | `number` | Yes | — |
@@ -122,9 +113,6 @@ await corsair.backendless.api.data.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tableName` | `string` | Yes | — |
 | `objectId` | `string` | No | — |
 | `where` | `string` | No | — |
@@ -182,9 +170,6 @@ await corsair.backendless.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sourcePath` | `string` | Yes | — |
 | `targetPath` | `string` | Yes | — |
 
@@ -212,9 +197,6 @@ await corsair.backendless.api.files.count({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `pattern` | `string` | No | — |
 | `recursive` | `boolean` | No | — |
@@ -244,9 +226,6 @@ await corsair.backendless.api.files.createDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -273,9 +252,6 @@ await corsair.backendless.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `fileName` | `string` | Yes | — |
 
@@ -303,9 +279,6 @@ await corsair.backendless.api.files.deleteDirectory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -332,9 +305,6 @@ await corsair.backendless.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `pattern` | `string` | No | — |
 | `sub` | `boolean` | No | — |
@@ -380,9 +350,6 @@ await corsair.backendless.api.files.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sourcePath` | `string` | Yes | — |
 | `targetPath` | `string` | Yes | — |
 
@@ -412,9 +379,6 @@ await corsair.backendless.api.hive.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hiveName` | `string` | Yes | — |
 
 
@@ -441,9 +405,6 @@ await corsair.backendless.api.hive.keyItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hiveName` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `index` | `number` | No | — |
@@ -484,9 +445,6 @@ await corsair.backendless.api.hive.mapPut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hiveName` | `string` | Yes | — |
 | `mapKey` | `string` | Yes | — |
 | `keyName` | `string` | Yes | — |
@@ -516,9 +474,6 @@ await corsair.backendless.api.hive.values({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hiveName` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -558,9 +513,6 @@ await corsair.backendless.api.messaging.publish({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `channel` | `string` | Yes | — |
 | `message` | `any` | Yes | — |
 | `headers` | `object` | No | — |
@@ -584,9 +536,6 @@ await corsair.backendless.api.messaging.publish({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `errorMessage` | `string` | No | — |
 | `messageId` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
@@ -614,9 +563,6 @@ await corsair.backendless.api.permissions.grant({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tableName` | `string` | Yes | — |
 | `permission` | `ADD \| UPDATE \| FIND \| REMOVE \| DESCRIBE \| PERMISSION \| LOAD_RELATIONS \| ADD_RELATION \| DELETE_RELATION \| UPSERT \| *` | Yes | — |
 | `objectId` | `string` | No | — |
@@ -647,9 +593,6 @@ await corsair.backendless.api.permissions.revoke({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tableName` | `string` | Yes | — |
 | `permission` | `ADD \| UPDATE \| FIND \| REMOVE \| DESCRIBE \| PERMISSION \| LOAD_RELATIONS \| ADD_RELATION \| DELETE_RELATION \| UPSERT \| *` | Yes | — |
 | `objectId` | `string` | No | — |
@@ -682,9 +625,6 @@ await corsair.backendless.api.users.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -722,9 +662,6 @@ await corsair.backendless.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 
 
@@ -734,9 +671,6 @@ await corsair.backendless.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objectId` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
@@ -766,9 +700,6 @@ await corsair.backendless.api.users.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `login` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
 | `stayLoggedIn` | `boolean` | No | — |
@@ -780,9 +711,6 @@ await corsair.backendless.api.users.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | No | — |
 | `userToken` | `string` | No | — |
 
@@ -844,9 +772,6 @@ await corsair.backendless.api.users.passwordRecovery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identity` | `string` | Yes | — |
 
 
@@ -873,9 +798,6 @@ await corsair.backendless.api.users.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identity` | `string` | Yes | — |
 | `password` | `string` | Yes | — |
 | `properties` | `object` | No | — |
@@ -897,9 +819,6 @@ await corsair.backendless.api.users.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objectId` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
@@ -929,9 +848,6 @@ await corsair.backendless.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `properties` | `object` | Yes | — |
 
@@ -952,9 +868,6 @@ await corsair.backendless.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objectId` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `___class` | `string` | No | — |
@@ -984,9 +897,6 @@ await corsair.backendless.api.users.validateToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userToken` | `string` | No | — |
 
 

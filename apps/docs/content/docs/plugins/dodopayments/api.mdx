@@ -31,9 +31,6 @@ await corsair.dodopayments.api.customers.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 | `phone_number` | `string` | No | — |
@@ -45,9 +42,6 @@ await corsair.dodopayments.api.customers.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -75,9 +69,6 @@ await corsair.dodopayments.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -87,9 +78,6 @@ await corsair.dodopayments.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -119,9 +107,6 @@ await corsair.dodopayments.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `customer_id` | `string` | No | — |
@@ -145,9 +130,6 @@ await corsair.dodopayments.api.payments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
@@ -189,9 +171,6 @@ await corsair.dodopayments.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -201,9 +180,6 @@ await corsair.dodopayments.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
@@ -245,9 +221,6 @@ await corsair.dodopayments.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | — |
 | `starting_after` | `string` | No | — |
 | `ending_before` | `string` | No | — |
@@ -259,9 +232,6 @@ await corsair.dodopayments.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 
@@ -308,9 +278,6 @@ await corsair.dodopayments.api.refunds.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `payment_id` | `string` | Yes | — |
 | `amount` | `number` | No | — |
 | `reason` | `string` | No | — |
@@ -322,9 +289,6 @@ await corsair.dodopayments.api.refunds.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `payment_id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -355,9 +319,6 @@ await corsair.dodopayments.api.subscriptions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -367,9 +328,6 @@ await corsair.dodopayments.api.subscriptions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
 | `plan_id` | `string` | No | — |
@@ -408,9 +366,6 @@ await corsair.dodopayments.api.subscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customer_id` | `string` | Yes | — |
 | `plan_id` | `string` | Yes | — |
 | `quantity` | `number` | No | — |
@@ -422,9 +377,6 @@ await corsair.dodopayments.api.subscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
 | `plan_id` | `string` | No | — |
@@ -463,9 +415,6 @@ await corsair.dodopayments.api.subscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -475,9 +424,6 @@ await corsair.dodopayments.api.subscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `customer_id` | `string` | Yes | — |
 | `plan_id` | `string` | No | — |

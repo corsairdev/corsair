@@ -31,9 +31,6 @@ await corsair.phantombuster.api.agents.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -60,9 +57,6 @@ await corsair.phantombuster.api.agents.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -72,9 +66,6 @@ await corsair.phantombuster.api.agents.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `scriptOrgName` | `string` | No | — |
 | `scriptId` | `string` | No | — |
@@ -190,9 +181,6 @@ await corsair.phantombuster.api.agents.fetchOutput({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `fromOutputPos` | `number` | No | — |
 | `prevContainerId` | `string` | No | — |
@@ -206,9 +194,6 @@ await corsair.phantombuster.api.agents.fetchOutput({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `containerId` | `string` | No | — |
 | `status` | `starting \| running \| finished \| unknown \| launch error \| never launched` | Yes | — |
 | `output` | `string` | No | — |
@@ -240,9 +225,6 @@ await corsair.phantombuster.api.agents.launch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `argument` | `object` | No | — |
 | `arguments` | `object` | No | — |
@@ -285,9 +267,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `containerId` | `string` | No | — |
 
 
@@ -311,9 +290,6 @@ await corsair.phantombuster.api.agents.launchSoon({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `minutes` | `number` | Yes | — |
 | `argument` | `object` | No | — |
@@ -363,9 +339,6 @@ await corsair.phantombuster.api.agents.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `org` | `string` | No | — |
@@ -400,9 +373,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -426,9 +396,6 @@ await corsair.phantombuster.api.agents.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `softAbort` | `boolean` | No | — |
 | `cascadeToAllSlaves` | `boolean` | No | — |
@@ -442,9 +409,6 @@ await corsair.phantombuster.api.agents.stop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `containerId` | `string` | No | — |
 
 
@@ -490,9 +454,6 @@ await corsair.phantombuster.api.branches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -502,9 +463,6 @@ await corsair.phantombuster.api.branches.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -529,9 +487,6 @@ await corsair.phantombuster.api.branches.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -591,9 +546,6 @@ await corsair.phantombuster.api.branches.fetchDiff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -637,9 +589,6 @@ await corsair.phantombuster.api.branches.release({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `scriptIds` | `string[]` | Yes | — |
 
@@ -669,9 +618,6 @@ await corsair.phantombuster.api.containers.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `withResultObject` | `string` | No | — |
 | `withOutput` | `string` | No | — |
@@ -685,9 +631,6 @@ await corsair.phantombuster.api.containers.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `agentId` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -719,9 +662,6 @@ await corsair.phantombuster.api.containers.fetchAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agentId` | `string` | Yes | — |
 | `beforeEndedAt` | `string` | No | — |
 | `limit` | `string` | No | — |
@@ -735,9 +675,6 @@ await corsair.phantombuster.api.containers.fetchAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `maxLimitReached` | `boolean` | Yes | — |
 | `containers` | `object[]` | Yes | — |
 
@@ -781,9 +718,6 @@ await corsair.phantombuster.api.containers.fetchOutput({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `mode` | `json \| raw` | No | — |
 
@@ -794,9 +728,6 @@ await corsair.phantombuster.api.containers.fetchOutput({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `output` | `string` | No | — |
 
 
@@ -820,9 +751,6 @@ await corsair.phantombuster.api.containers.fetchResultObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -832,9 +760,6 @@ await corsair.phantombuster.api.containers.fetchResultObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `resultObject` | `string` | No | — |
 
 
@@ -863,9 +788,6 @@ await corsair.phantombuster.api.identities.generateToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | No | — |
 
 
@@ -889,9 +811,6 @@ await corsair.phantombuster.api.identities.saveEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identity_type` | `string` | Yes | — |
 | `profile_id` | `string` | Yes | — |
 | `event_type` | `string` | Yes | — |
@@ -934,9 +853,6 @@ await corsair.phantombuster.api.leads.deleteMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 
 
@@ -946,9 +862,6 @@ await corsair.phantombuster.api.leads.deleteMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deletedCount` | `number` | Yes | — |
 
 
@@ -972,9 +885,6 @@ await corsair.phantombuster.api.leads.fetchByList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `paginationOptions` | `object` | No | — |
 | `withLeadObjectsOfTypes` | `string[]` | No | — |
@@ -1002,9 +912,6 @@ await corsair.phantombuster.api.leads.fetchByList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leads` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
 
@@ -1043,9 +950,6 @@ await corsair.phantombuster.api.leads.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `lead` | `object` | Yes | — |
 
 
@@ -1069,9 +973,6 @@ await corsair.phantombuster.api.leads.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `linkedinProfileSlug` | `string` | No | — |
 | `isCreation` | `boolean` | No | — |
@@ -1097,9 +998,6 @@ await corsair.phantombuster.api.leads.saveMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `leads` | `object[]` | Yes | — |
 
 
@@ -1161,9 +1059,6 @@ await corsair.phantombuster.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1173,9 +1068,6 @@ await corsair.phantombuster.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1199,9 +1091,6 @@ await corsair.phantombuster.api.lists.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1211,9 +1100,6 @@ await corsair.phantombuster.api.lists.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1278,9 +1164,6 @@ await corsair.phantombuster.api.lists.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1292,9 +1175,6 @@ await corsair.phantombuster.api.lists.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1320,9 +1200,6 @@ await corsair.phantombuster.api.misc.fetchIpLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ip` | `string` | Yes | — |
 
 
@@ -1332,9 +1209,6 @@ await corsair.phantombuster.api.misc.fetchIpLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `country` | `string` | Yes | — |
 
 
@@ -1358,9 +1232,6 @@ await corsair.phantombuster.api.misc.requestAiCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `messages` | `object[]` | Yes | — |
 | `model` | `gpt-35-turbo \| gpt-4 \| gpt-4o \| gpt-4o-mini \| gpt-4.1-mini \| gpt-5.1` | No | — |
 | `temperature` | `number` | No | — |
@@ -1384,9 +1255,6 @@ await corsair.phantombuster.api.misc.requestAiCompletion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `choices` | `string[]` | Yes | — |
 | `creditsCost` | `number` | Yes | — |
 
@@ -1411,9 +1279,6 @@ await corsair.phantombuster.api.misc.solveHCaptcha({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
@@ -1424,9 +1289,6 @@ await corsair.phantombuster.api.misc.solveHCaptcha({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | Yes | — |
 
 
@@ -1450,9 +1312,6 @@ await corsair.phantombuster.api.misc.solveRecaptcha({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `type` | `v2 \| v3` | Yes | — |
@@ -1467,9 +1326,6 @@ await corsair.phantombuster.api.misc.solveRecaptcha({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `response` | `string` | Yes | — |
 
 
@@ -1495,9 +1351,6 @@ await corsair.phantombuster.api.orgs.exportAgentUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `days` | `string` | Yes | — |
 
 
@@ -1524,9 +1377,6 @@ await corsair.phantombuster.api.orgs.exportContainerUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `days` | `string` | Yes | — |
 | `agentId` | `string` | No | — |
 
@@ -1554,9 +1404,6 @@ await corsair.phantombuster.api.orgs.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `withGlobalObject` | `string` | No | — |
 | `withProxies` | `string` | No | — |
 | `withCrmIntegrations` | `string` | No | — |
@@ -1569,9 +1416,6 @@ await corsair.phantombuster.api.orgs.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 
@@ -1634,9 +1478,6 @@ await corsair.phantombuster.api.orgs.fetchResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dailyExecutionTime` | `number` | No | — |
 | `dailyMail` | `number` | No | — |
 | `dailyCaptcha` | `number` | No | — |
@@ -1680,9 +1521,6 @@ await corsair.phantombuster.api.orgs.fetchRunningContainers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `containers` | `object[]` | Yes | — |
 
 
@@ -1723,9 +1561,6 @@ await corsair.phantombuster.api.orgs.saveAgentGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agentGroups` | `object[]` | Yes | — |
 
 
@@ -1750,9 +1585,6 @@ await corsair.phantombuster.api.orgs.saveAgentGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `agentGroups` | `object[]` | Yes | — |
 
 
@@ -1793,9 +1625,6 @@ await corsair.phantombuster.api.scripts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `branch` | `string` | No | — |
 | `environment` | `staging \| release` | No | — |
@@ -1824,9 +1653,6 @@ await corsair.phantombuster.api.scripts.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `branch` | `string` | No | — |
 | `environment` | `staging \| release` | No | — |
@@ -1839,9 +1665,6 @@ await corsair.phantombuster.api.scripts.fetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `orgId` | `string` | Yes | — |
@@ -1887,9 +1710,6 @@ await corsair.phantombuster.api.scripts.fetchAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `org` | `string` | No | — |
 | `branch` | `string` | No | — |
 | `exclude` | `modules \| non-modules` | No | — |
@@ -1943,9 +1763,6 @@ await corsair.phantombuster.api.scripts.fetchCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `script` | `string` | Yes | — |
 | `org` | `string` | No | — |
 | `branch` | `string` | No | — |
@@ -1958,9 +1775,6 @@ await corsair.phantombuster.api.scripts.fetchCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 
 
@@ -1984,9 +1798,6 @@ await corsair.phantombuster.api.scripts.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `branch` | `string` | No | — |
@@ -2000,9 +1811,6 @@ await corsair.phantombuster.api.scripts.save({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -2027,9 +1835,6 @@ await corsair.phantombuster.api.scripts.updateAccessList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `add` | `string` | No | — |
@@ -2059,9 +1864,6 @@ await corsair.phantombuster.api.scripts.updateVisibility({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
 | `visibility` | `private \| semi public \| public \| semi open source \| open source` | Yes | — |
@@ -2092,9 +1894,6 @@ await corsair.phantombuster.api.storage.deleteLeadObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `slug` | `string` | No | — |
 | `leadObjectId` | `string` | No | — |
@@ -2106,9 +1905,6 @@ await corsair.phantombuster.api.storage.deleteLeadObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deletedCount` | `number` | Yes | — |
 
 
@@ -2132,9 +1928,6 @@ await corsair.phantombuster.api.storage.saveCompanyObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `linkedinCompanyId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
@@ -2159,9 +1952,6 @@ await corsair.phantombuster.api.storage.saveCompanyObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `linkedinCompanyId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -2200,9 +1990,6 @@ await corsair.phantombuster.api.storage.saveLeadObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `properties` | `object` | Yes | — |
@@ -2229,9 +2016,6 @@ await corsair.phantombuster.api.storage.saveLeadObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `orgId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -2272,9 +2056,6 @@ await corsair.phantombuster.api.storage.saveManyCompanyObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objects` | `object[]` | Yes | — |
 
 
@@ -2343,9 +2124,6 @@ await corsair.phantombuster.api.storage.saveManyLeadObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `objects` | `object[]` | Yes | — |
 
 
@@ -2407,9 +2185,6 @@ await corsair.phantombuster.api.storage.searchCompanyObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -2465,9 +2240,6 @@ await corsair.phantombuster.api.storage.searchLeadObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -2529,9 +2301,6 @@ await corsair.phantombuster.api.users.fetchMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `detailedOrgId` | `string` | No | — |
 | `withCustomPrompts` | `string` | No | — |
 
@@ -2542,9 +2311,6 @@ await corsair.phantombuster.api.users.fetchMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `zendeskToken` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -2587,9 +2353,6 @@ await corsair.phantombuster.api.users.updateMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
 | `phone` | `string` | No | — |

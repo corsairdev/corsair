@@ -34,9 +34,6 @@ await corsair.bouncer.api.account.getCredits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `credits` | `number` | Yes | — |
 
 
@@ -62,9 +59,6 @@ await corsair.bouncer.api.email.createBatchRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `recipients` | `object[]` | Yes | — |
 | `callback` | `string` | No | — |
 
@@ -88,9 +82,6 @@ await corsair.bouncer.api.email.createBatchRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 | `created` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -118,9 +109,6 @@ await corsair.bouncer.api.email.deleteBatchRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 
 
@@ -147,9 +135,6 @@ await corsair.bouncer.api.email.finishBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 
 
@@ -176,9 +161,6 @@ await corsair.bouncer.api.email.getBatchResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 | `download` | `all \| deliverable \| risky \| undeliverable \| unknown` | No | — |
 
@@ -240,9 +222,6 @@ await corsair.bouncer.api.email.getBatchStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 | `withStats` | `boolean` | No | — |
 
@@ -253,9 +232,6 @@ await corsair.bouncer.api.email.getBatchStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 | `created` | `string` | No | — |
 | `started` | `string` | No | — |
@@ -302,9 +278,6 @@ await corsair.bouncer.api.email.verifyDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `string` | Yes | — |
 
 
@@ -314,9 +287,6 @@ await corsair.bouncer.api.email.verifyDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `domain` | `object` | No | — |
 | `dns` | `object` | No | — |
 | `provider` | `string` | No | — |
@@ -367,9 +337,6 @@ await corsair.bouncer.api.email.verifyEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `timeout` | `number` | No | — |
 
@@ -380,9 +347,6 @@ await corsair.bouncer.api.email.verifyEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 | `status` | `deliverable \| risky \| undeliverable \| unknown` | Yes | — |
 | `reason` | `accepted_email \| low_deliverability \| low_quality \| invalid_email \| invalid_domain \| rejected_email \| dns_error \| unavailable_smtp \| unsupported \| timeout \| unknown` | Yes | — |
@@ -454,9 +418,6 @@ await corsair.bouncer.api.toxicity.checkToxicityListJobStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -466,9 +427,6 @@ await corsair.bouncer.api.toxicity.checkToxicityListJobStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | No | — |
 | `status` | `string` | Yes | — |
@@ -494,9 +452,6 @@ await corsair.bouncer.api.toxicity.createToxicityListJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `emails` | `string[]` | Yes | — |
 
 
@@ -506,9 +461,6 @@ await corsair.bouncer.api.toxicity.createToxicityListJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `createdAt` | `string` | No | — |
 | `status` | `string` | Yes | — |
@@ -534,9 +486,6 @@ await corsair.bouncer.api.toxicity.deleteToxicityListJob({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -563,9 +512,6 @@ await corsair.bouncer.api.toxicity.getToxicityListResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 

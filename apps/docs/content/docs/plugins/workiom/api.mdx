@@ -34,9 +34,6 @@ await corsair.workiom.api.apps.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
 
@@ -76,9 +73,6 @@ await corsair.workiom.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `expand` | `Fields \| Views \| Filters[]` | No | — |
 
@@ -89,9 +83,6 @@ await corsair.workiom.api.lists.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `appId` | `string` | No | — |
 | `name` | `string` | Yes | — |
@@ -164,9 +155,6 @@ await corsair.workiom.api.lists.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appId` | `string` | Yes | Workiom app UUID from the app URL or Apps/GetAll |
 
 
@@ -176,9 +164,6 @@ await corsair.workiom.api.lists.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
 
@@ -242,9 +227,6 @@ await corsair.workiom.api.records.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `record` | `object` | Yes | Field ID keys to values, per list metadata |
 
@@ -265,9 +247,6 @@ await corsair.workiom.api.records.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_id` | `string` | No | — |
 
 
@@ -291,9 +270,6 @@ await corsair.workiom.api.records.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `sorting` | `string` | No | Official sort string, e.g. '11284 ASC' or '11284 DESC' |
 | `maxResultCount` | `number` | No | — |
@@ -320,9 +296,6 @@ await corsair.workiom.api.records.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | Yes | — |
 | `totalCount` | `number` | Yes | — |
 | `summary` | `object` | No | — |
@@ -367,9 +340,6 @@ await corsair.workiom.api.records.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `record` | `object` | Yes | Full record body; PUT replaces the record |
@@ -391,9 +361,6 @@ await corsair.workiom.api.records.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `_id` | `string` | No | — |
 
 

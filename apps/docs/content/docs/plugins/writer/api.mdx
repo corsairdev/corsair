@@ -31,9 +31,6 @@ await corsair.writer.api.applications.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `before` | `string` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -48,9 +45,6 @@ await corsair.writer.api.applications.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 | `first_id` | `string` | No | — |
@@ -91,9 +85,6 @@ await corsair.writer.api.chat.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `temperature` | `number` | No | — |
@@ -118,9 +109,6 @@ await corsair.writer.api.chat.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `object` | `chat.completion` | Yes | — |
 | `choices` | `object[]` | Yes | — |
@@ -178,9 +166,6 @@ await corsair.writer.api.completions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `prompt` | `string` | Yes | — |
 | `max_tokens` | `number` | No | — |
@@ -198,9 +183,6 @@ await corsair.writer.api.completions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `choices` | `object[]` | Yes | — |
 | `model` | `string` | Yes | — |
 
@@ -239,9 +221,6 @@ await corsair.writer.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -251,9 +230,6 @@ await corsair.writer.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `deleted` | `boolean` | No | — |
 
@@ -278,9 +254,6 @@ await corsair.writer.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -307,9 +280,6 @@ await corsair.writer.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 
 
@@ -319,9 +289,6 @@ await corsair.writer.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -347,9 +314,6 @@ await corsair.writer.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `before` | `string` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -365,9 +329,6 @@ await corsair.writer.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 | `first_id` | `string` | No | — |
@@ -407,9 +368,6 @@ await corsair.writer.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | — |
 | `contentType` | `string` | Yes | — |
 | `filename` | `string` | Yes | — |
@@ -422,9 +380,6 @@ await corsair.writer.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -452,9 +407,6 @@ await corsair.writer.api.knowledgeGraphs.addFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_id` | `string` | Yes | — |
 | `file_id` | `string` | Yes | — |
 
@@ -465,9 +417,6 @@ await corsair.writer.api.knowledgeGraphs.addFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -493,9 +442,6 @@ await corsair.writer.api.knowledgeGraphs.askQuestion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_ids` | `string[]` | Yes | — |
 | `question` | `string` | Yes | — |
 | `stream` | `false` | No | — |
@@ -507,9 +453,6 @@ await corsair.writer.api.knowledgeGraphs.askQuestion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `question` | `string` | Yes | — |
 | `answer` | `string` | Yes | — |
 | `sources` | `any[]` | No | — |
@@ -535,9 +478,6 @@ await corsair.writer.api.knowledgeGraphs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `team_ids` | `number[]` | No | — |
@@ -550,9 +490,6 @@ await corsair.writer.api.knowledgeGraphs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -578,9 +515,6 @@ await corsair.writer.api.knowledgeGraphs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_id` | `string` | Yes | — |
 
 
@@ -590,9 +524,6 @@ await corsair.writer.api.knowledgeGraphs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `deleted` | `boolean` | No | — |
 
@@ -617,9 +548,6 @@ await corsair.writer.api.knowledgeGraphs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `before` | `string` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -633,9 +561,6 @@ await corsair.writer.api.knowledgeGraphs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 | `first_id` | `string` | No | — |
@@ -675,9 +600,6 @@ await corsair.writer.api.knowledgeGraphs.removeFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_id` | `string` | Yes | — |
 | `file_id` | `string` | Yes | — |
 
@@ -688,9 +610,6 @@ await corsair.writer.api.knowledgeGraphs.removeFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `deleted` | `boolean` | No | — |
 
@@ -715,9 +634,6 @@ await corsair.writer.api.knowledgeGraphs.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_id` | `string` | Yes | — |
 
 
@@ -727,9 +643,6 @@ await corsair.writer.api.knowledgeGraphs.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -755,9 +668,6 @@ await corsair.writer.api.knowledgeGraphs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `graph_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -771,9 +681,6 @@ await corsair.writer.api.knowledgeGraphs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -804,9 +711,6 @@ await corsair.writer.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `models` | `object[]` | Yes | — |
 
 
@@ -844,9 +748,6 @@ await corsair.writer.api.tools.analyzeImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model` | `string` | Yes | — |
 | `input` | `any[]` | Yes | — |
 | `stream` | `false` | No | — |
@@ -858,9 +759,6 @@ await corsair.writer.api.tools.analyzeImages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `choices` | `any[]` | No | — |
 
@@ -885,9 +783,6 @@ await corsair.writer.api.tools.detectAiContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `organizationId` | `number` | Yes | — |
 | `text` | `string` | Yes | — |
 
@@ -927,9 +822,6 @@ await corsair.writer.api.tools.medicalComprehend({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `model` | `string` | No | — |
 
@@ -957,9 +849,6 @@ await corsair.writer.api.tools.parsePdf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_id` | `string` | Yes | — |
 | `format` | `string` | No | — |
 
@@ -970,9 +859,6 @@ await corsair.writer.api.tools.parsePdf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | No | — |
 | `markdown` | `string` | No | — |
 
@@ -997,9 +883,6 @@ await corsair.writer.api.tools.translateText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `target_language` | `string` | Yes | — |
 | `source_language` | `string` | No | — |
@@ -1013,9 +896,6 @@ await corsair.writer.api.tools.translateText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `translation` | `string` | No | — |
 | `translated_text` | `string` | No | — |
 
@@ -1040,9 +920,6 @@ await corsair.writer.api.tools.webSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `count` | `number` | No | — |
 | `country` | `string` | No | — |
@@ -1054,9 +931,6 @@ await corsair.writer.api.tools.webSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `results` | `any[]` | No | — |
 
 

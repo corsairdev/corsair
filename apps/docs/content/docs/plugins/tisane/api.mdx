@@ -31,9 +31,6 @@ await corsair.tisane.api.text.extractEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | Text to extract named entities and topics from |
 | `language` | `string` | Yes | — |
 
@@ -44,9 +41,6 @@ await corsair.tisane.api.text.extractEntities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entities` | `object[]` | Yes | — |
 | `topics` | `object[]` | Yes | — |
 
@@ -96,9 +90,6 @@ await corsair.tisane.api.text.moderate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | Text to check for abusive language, hate speech, or harassment |
 | `language` | `string` | Yes | — |
 
@@ -109,9 +100,6 @@ await corsair.tisane.api.text.moderate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `abuse` | `object[]` | Yes | — |
 | `flagged` | `boolean` | Yes | — |
 
@@ -153,9 +141,6 @@ await corsair.tisane.api.text.parse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | The text content to analyze |
 | `language` | `string` | Yes | ISO 639-1 language code |
 | `settings` | `object` | No | — |
@@ -185,9 +170,6 @@ await corsair.tisane.api.text.parse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `language` | `string` | No | — |
 | `topics` | `object[]` | No | — |
@@ -274,9 +256,6 @@ await corsair.tisane.api.text.sentiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | Text to analyze for aspect-based sentiment |
 | `language` | `string` | Yes | — |
 
@@ -287,9 +266,6 @@ await corsair.tisane.api.text.sentiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sentiment` | `object[]` | Yes | — |
 | `text` | `string` | No | — |
 

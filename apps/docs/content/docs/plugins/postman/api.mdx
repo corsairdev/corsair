@@ -31,9 +31,6 @@ await corsair.postman.api.accessKeys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | No | — |
 | `cursor` | `string` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.postman.api.accessKeys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -107,9 +101,6 @@ await corsair.postman.api.account.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `object` | No | — |
 | `operations` | `object[]` | No | — |
 
@@ -170,9 +161,6 @@ await corsair.postman.api.apis.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `summary` | `string` | No | — |
@@ -185,9 +173,6 @@ await corsair.postman.api.apis.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `summary` | `string` | No | — |
@@ -218,9 +203,6 @@ await corsair.postman.api.apis.createCollectionFromSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `body` | `object` | No | — |
 
@@ -428,9 +410,6 @@ await corsair.postman.api.apis.createCollectionFromSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 
 
@@ -454,9 +433,6 @@ await corsair.postman.api.apis.createOrUpdateSchemaFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `schemaId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
@@ -482,9 +458,6 @@ await corsair.postman.api.apis.createOrUpdateSchemaFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdBy` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `root` | `object` | No | — |
@@ -526,9 +499,6 @@ await corsair.postman.api.apis.createRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -566,9 +536,6 @@ await corsair.postman.api.apis.createSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `type` | `proto:2 \| proto:3 \| graphql \| openapi:3_1 \| openapi:3 \| openapi:2 \| openapi:1 \| raml:1 \| raml:0_8 \| wsdl:2 \| wsdl:1 \| asyncapi:2` | Yes | — |
 | `files` | `object[]` | Yes | — |
@@ -595,9 +562,6 @@ await corsair.postman.api.apis.createSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `type` | `proto:2 \| proto:3 \| graphql \| openapi:3_1 \| openapi:3 \| openapi:2 \| openapi:1 \| raml:1 \| raml:0_8 \| wsdl:2 \| wsdl:1 \| asyncapi:2` | No | — |
 | `files` | `object[]` | No | — |
@@ -647,9 +611,6 @@ await corsair.postman.api.apis.deleteComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
 
@@ -677,9 +638,6 @@ await corsair.postman.api.apis.deleteSchemaFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `schemaId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
@@ -708,9 +666,6 @@ await corsair.postman.api.apis.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `include` | `collections \| versions \| schemas \| gitInfo[]` | No | — |
 
@@ -782,9 +737,6 @@ await corsair.postman.api.apis.getComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 
 
@@ -794,9 +746,6 @@ await corsair.postman.api.apis.getComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -837,9 +786,6 @@ await corsair.postman.api.apis.getContractTestRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -877,9 +823,6 @@ await corsair.postman.api.apis.getDocumentationRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -917,9 +860,6 @@ await corsair.postman.api.apis.getEnvironmentRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -957,9 +897,6 @@ await corsair.postman.api.apis.getIntegrationTestRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -997,9 +934,6 @@ await corsair.postman.api.apis.getLinkedRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1037,9 +971,6 @@ await corsair.postman.api.apis.getSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `schemaId` | `string` | Yes | — |
 | `versionId` | `string` | No | — |
@@ -1107,9 +1038,6 @@ await corsair.postman.api.apis.getSchemaFileContents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `schemaId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
@@ -1122,9 +1050,6 @@ await corsair.postman.api.apis.getSchemaFileContents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -1155,9 +1080,6 @@ await corsair.postman.api.apis.getSchemaFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `schemaId` | `string` | Yes | — |
 | `versionId` | `string` | No | — |
@@ -1171,9 +1093,6 @@ await corsair.postman.api.apis.getSchemaFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `files` | `object[]` | No | — |
 
@@ -1224,9 +1143,6 @@ await corsair.postman.api.apis.getTestRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1264,9 +1180,6 @@ await corsair.postman.api.apis.getTestSuiteRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1304,9 +1217,6 @@ await corsair.postman.api.apis.getUnclassifiedRelations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1344,9 +1254,6 @@ await corsair.postman.api.apis.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1357,9 +1264,6 @@ await corsair.postman.api.apis.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `version` | `object` | No | — |
 
 
@@ -1406,9 +1310,6 @@ await corsair.postman.api.apis.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `createdBy` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -1422,9 +1323,6 @@ await corsair.postman.api.apis.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apis` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -1478,9 +1376,6 @@ await corsair.postman.api.apis.listReleases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `versionId` | `string` | Yes | — |
 
@@ -1518,9 +1413,6 @@ await corsair.postman.api.apis.listVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1532,9 +1424,6 @@ await corsair.postman.api.apis.listVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `versions` | `object[]` | No | — |
 
@@ -1585,9 +1474,6 @@ await corsair.postman.api.apis.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 
 
@@ -1614,9 +1500,6 @@ await corsair.postman.api.apis.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `summary` | `string` | No | — |
@@ -1629,9 +1512,6 @@ await corsair.postman.api.apis.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `summary` | `string` | No | — |
@@ -1662,9 +1542,6 @@ await corsair.postman.api.apis.updateComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -1695,9 +1572,6 @@ await corsair.postman.api.apis.updateComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -1742,9 +1616,6 @@ await corsair.postman.api.billing.getAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `billingEmail` | `string` | No | — |
 | `id` | `number` | No | — |
 | `state` | `string` | No | — |
@@ -1787,9 +1658,6 @@ await corsair.postman.api.billing.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accountId` | `string` | Yes | — |
 | `status` | `PAID` | Yes | — |
 
@@ -1800,9 +1668,6 @@ await corsair.postman.api.billing.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 
 
@@ -1848,9 +1713,6 @@ await corsair.postman.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `collection` | `object` | No | — |
 
@@ -2172,9 +2034,6 @@ await corsair.postman.api.collections.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -2211,9 +2070,6 @@ await corsair.postman.api.collections.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
 | `threadId` | `number` | No | — |
@@ -2244,9 +2100,6 @@ await corsair.postman.api.collections.createComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -2286,9 +2139,6 @@ await corsair.postman.api.collections.createFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `folder` | `string` | No | — |
@@ -2300,9 +2150,6 @@ await corsair.postman.api.collections.createFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -2360,9 +2207,6 @@ await corsair.postman.api.collections.createFolderComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -2394,9 +2238,6 @@ await corsair.postman.api.collections.createFolderComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -2436,9 +2277,6 @@ await corsair.postman.api.collections.createPullRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -2452,9 +2290,6 @@ await corsair.postman.api.collections.createPullRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `createdBy` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2486,9 +2321,6 @@ await corsair.postman.api.collections.createRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `folder` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -2736,9 +2568,6 @@ string | string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -2793,9 +2622,6 @@ await corsair.postman.api.collections.createRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `requestId` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -2827,9 +2653,6 @@ await corsair.postman.api.collections.createRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -2869,9 +2692,6 @@ await corsair.postman.api.collections.createResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `request` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -2966,9 +2786,6 @@ string | string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -3019,9 +2836,6 @@ await corsair.postman.api.collections.createResponseComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `responseId` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
@@ -3053,9 +2867,6 @@ await corsair.postman.api.collections.createResponseComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -3095,9 +2906,6 @@ await corsair.postman.api.collections.deleteComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
 
@@ -3125,9 +2933,6 @@ await corsair.postman.api.collections.deleteFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folderId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 
@@ -3138,9 +2943,6 @@ await corsair.postman.api.collections.deleteFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -3187,9 +2989,6 @@ await corsair.postman.api.collections.deleteFolderComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -3218,9 +3017,6 @@ await corsair.postman.api.collections.deleteRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `requestId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -3249,9 +3045,6 @@ await corsair.postman.api.collections.deleteResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responseId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 
@@ -3262,9 +3055,6 @@ await corsair.postman.api.collections.deleteResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | No | — |
 | `meta` | `object` | No | — |
 | `data` | `object` | No | — |
@@ -3311,9 +3101,6 @@ await corsair.postman.api.collections.deleteResponseComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `responseId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -3342,9 +3129,6 @@ await corsair.postman.api.collections.duplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `suffix` | `string` | No | — |
@@ -3356,9 +3140,6 @@ await corsair.postman.api.collections.duplicate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task` | `object` | No | — |
 
 
@@ -3395,9 +3176,6 @@ await corsair.postman.api.collections.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `label` | `string` | Yes | — |
@@ -3409,9 +3187,6 @@ await corsair.postman.api.collections.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -3453,9 +3228,6 @@ await corsair.postman.api.collections.generateSpec({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionUid` | `string` | Yes | — |
 | `elementType` | `spec` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -3469,9 +3241,6 @@ await corsair.postman.api.collections.generateSpec({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | No | — |
 | `url` | `string` | No | — |
 
@@ -3496,9 +3265,6 @@ await corsair.postman.api.collections.getComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -3508,9 +3274,6 @@ await corsair.postman.api.collections.getComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -3551,9 +3314,6 @@ await corsair.postman.api.collections.getDuplicationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -3563,9 +3323,6 @@ await corsair.postman.api.collections.getDuplicationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task` | `object` | No | — |
 
 
@@ -3602,9 +3359,6 @@ await corsair.postman.api.collections.getFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folderId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `ids` | `boolean` | No | — |
@@ -3618,9 +3372,6 @@ await corsair.postman.api.collections.getFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | No | — |
 | `meta` | `object` | No | — |
 | `data` | `object` | No | — |
@@ -3673,9 +3424,6 @@ await corsair.postman.api.collections.getFolderComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
 
@@ -3686,9 +3434,6 @@ await corsair.postman.api.collections.getFolderComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -3729,9 +3474,6 @@ await corsair.postman.api.collections.getForks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -3744,9 +3486,6 @@ await corsair.postman.api.collections.getForks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -3795,9 +3534,6 @@ await corsair.postman.api.collections.getGeneratedSpecs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionUid` | `string` | Yes | — |
 | `elementType` | `spec` | Yes | — |
 
@@ -3808,9 +3544,6 @@ await corsair.postman.api.collections.getGeneratedSpecs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specs` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -3861,9 +3594,6 @@ await corsair.postman.api.collections.getPullRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -3873,9 +3603,6 @@ await corsair.postman.api.collections.getPullRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -3921,9 +3648,6 @@ await corsair.postman.api.collections.getRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `ids` | `boolean` | No | — |
@@ -3937,9 +3661,6 @@ await corsair.postman.api.collections.getRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `model_id` | `string` | No | — |
 | `meta` | `object` | No | — |
 | `data` | `object` | No | — |
@@ -3990,9 +3711,6 @@ await corsair.postman.api.collections.getRequestComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `requestId` | `string` | Yes | — |
 
@@ -4003,9 +3721,6 @@ await corsair.postman.api.collections.getRequestComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -4046,9 +3761,6 @@ await corsair.postman.api.collections.getResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responseId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `ids` | `boolean` | No | — |
@@ -4062,9 +3774,6 @@ await corsair.postman.api.collections.getResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -4116,9 +3825,6 @@ await corsair.postman.api.collections.getResponseComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `responseId` | `string` | Yes | — |
 
@@ -4129,9 +3835,6 @@ await corsair.postman.api.collections.getResponseComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -4172,9 +3875,6 @@ await corsair.postman.api.collections.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -4184,9 +3884,6 @@ await corsair.postman.api.collections.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group` | `object[]` | No | — |
 | `team` | `object[]` | No | — |
 | `user` | `object[]` | No | — |
@@ -4244,9 +3941,6 @@ await corsair.postman.api.collections.getSourceStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -4256,9 +3950,6 @@ await corsair.postman.api.collections.getSourceStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -4295,9 +3986,6 @@ await corsair.postman.api.collections.getUpdateStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -4307,9 +3995,6 @@ await corsair.postman.api.collections.getUpdateStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `status` | `successful \| failed \| in-progress` | No | — |
 
@@ -4334,9 +4019,6 @@ await corsair.postman.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | No | — |
 | `name` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -4349,9 +4031,6 @@ await corsair.postman.api.collections.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collections` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -4409,9 +4088,6 @@ await corsair.postman.api.collections.listForked({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `direction` | `asc \| desc` | No | — |
@@ -4423,9 +4099,6 @@ await corsair.postman.api.collections.listForked({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -4475,9 +4148,6 @@ await corsair.postman.api.collections.mergeFork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `destination` | `string` | Yes | — |
 | `source` | `string` | Yes | — |
 | `strategy` | `deleteSource \| updateSourceWithDestination` | No | — |
@@ -4489,9 +4159,6 @@ await corsair.postman.api.collections.mergeFork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -4527,9 +4194,6 @@ await corsair.postman.api.collections.pullChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -4539,9 +4203,6 @@ await corsair.postman.api.collections.pullChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -4577,9 +4238,6 @@ await corsair.postman.api.collections.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 
 
@@ -4589,9 +4247,6 @@ await corsair.postman.api.collections.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -4627,9 +4282,6 @@ await corsair.postman.api.collections.replace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `collection` | `object` | No | — |
 
@@ -4990,9 +4642,6 @@ await corsair.postman.api.collections.replace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -5029,9 +4678,6 @@ await corsair.postman.api.collections.syncWithSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `apiId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 
@@ -5042,9 +4688,6 @@ await corsair.postman.api.collections.syncWithSchema({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | No | — |
 
 
@@ -5068,9 +4711,6 @@ await corsair.postman.api.collections.syncWithSpec({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionUid` | `string` | Yes | — |
 | `specId` | `string` | Yes | — |
 
@@ -5081,9 +4721,6 @@ await corsair.postman.api.collections.syncWithSpec({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | No | — |
 | `url` | `string` | No | — |
 
@@ -5108,9 +4745,6 @@ await corsair.postman.api.collections.transferFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | Yes | — |
 | `mode` | `copy \| move` | Yes | — |
 | `target` | `object` | Yes | — |
@@ -5146,9 +4780,6 @@ await corsair.postman.api.collections.transferFolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[]` | No | — |
 
 
@@ -5172,9 +4803,6 @@ await corsair.postman.api.collections.transformToOpenapi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `format` | `json \| yaml` | No | — |
 
@@ -5185,9 +4813,6 @@ await corsair.postman.api.collections.transformToOpenapi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `output` | `string` | No | — |
 
 
@@ -5211,9 +4836,6 @@ await corsair.postman.api.collections.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `collection` | `object` | No | — |
 
@@ -5427,9 +5049,6 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collection` | `object` | No | — |
 
 
@@ -5466,9 +5085,6 @@ await corsair.postman.api.collections.updateFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folderId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -5481,9 +5097,6 @@ await corsair.postman.api.collections.updateFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -5538,9 +5151,6 @@ await corsair.postman.api.collections.updateFolderComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -5572,9 +5182,6 @@ await corsair.postman.api.collections.updateFolderComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -5614,9 +5221,6 @@ await corsair.postman.api.collections.updateRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -5864,9 +5468,6 @@ string | string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -5919,9 +5520,6 @@ await corsair.postman.api.collections.updateRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `requestId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -5953,9 +5551,6 @@ await corsair.postman.api.collections.updateRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -5995,9 +5590,6 @@ await corsair.postman.api.collections.updateResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responseId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -6092,9 +5684,6 @@ string | string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 | `model_id` | `string` | No | — |
@@ -6145,9 +5734,6 @@ await corsair.postman.api.collections.updateResponseComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collectionId` | `string` | Yes | — |
 | `responseId` | `string` | Yes | — |
 | `commentId` | `number` | Yes | — |
@@ -6179,9 +5765,6 @@ await corsair.postman.api.collections.updateResponseComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -6223,9 +5806,6 @@ await corsair.postman.api.comments.resolve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `threadId` | `number` | Yes | — |
 
 
@@ -6254,9 +5834,6 @@ await corsair.postman.api.environments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `environment` | `object` | No | — |
 
@@ -6299,9 +5876,6 @@ await corsair.postman.api.environments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6338,9 +5912,6 @@ await corsair.postman.api.environments.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 | `workspaceId` | `string` | Yes | — |
 | `forkName` | `string` | Yes | — |
@@ -6352,9 +5923,6 @@ await corsair.postman.api.environments.fork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6391,9 +5959,6 @@ await corsair.postman.api.environments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 
 
@@ -6403,9 +5968,6 @@ await corsair.postman.api.environments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6463,9 +6025,6 @@ await corsair.postman.api.environments.getForks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `direction` | `asc \| desc` | No | — |
@@ -6479,9 +6038,6 @@ await corsair.postman.api.environments.getForks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -6531,9 +6087,6 @@ await corsair.postman.api.environments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | No | — |
 
 
@@ -6543,9 +6096,6 @@ await corsair.postman.api.environments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environments` | `object[]` | No | — |
 
 
@@ -6586,9 +6136,6 @@ await corsair.postman.api.environments.mergeFork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 | `source` | `string` | Yes | — |
 | `deleteSource` | `boolean` | No | — |
@@ -6600,9 +6147,6 @@ await corsair.postman.api.environments.mergeFork({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6637,9 +6181,6 @@ await corsair.postman.api.environments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 
 
@@ -6649,9 +6190,6 @@ await corsair.postman.api.environments.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6687,9 +6225,6 @@ await corsair.postman.api.environments.replace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 | `environment` | `object` | No | — |
 
@@ -6732,9 +6267,6 @@ await corsair.postman.api.environments.replace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6771,9 +6303,6 @@ await corsair.postman.api.environments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environmentId` | `string` | Yes | — |
 | `body` | `object[]` | No | — |
 
@@ -6826,9 +6355,6 @@ await corsair.postman.api.environments.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `environment` | `object` | No | — |
 
 
@@ -6891,9 +6417,6 @@ await corsair.postman.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -6938,9 +6461,6 @@ await corsair.postman.api.mocks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `mock` | `object` | No | — |
 
@@ -6965,9 +6485,6 @@ await corsair.postman.api.mocks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mock` | `object` | No | — |
 
 
@@ -7023,9 +6540,6 @@ await corsair.postman.api.mocks.createServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mockId` | `string` | Yes | — |
 | `serverResponse` | `object` | No | — |
 
@@ -7054,9 +6568,6 @@ await corsair.postman.api.mocks.createServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -7102,9 +6613,6 @@ await corsair.postman.api.mocks.deleteServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mockId` | `string` | Yes | — |
 | `serverResponseId` | `string` | Yes | — |
 
@@ -7115,9 +6623,6 @@ await corsair.postman.api.mocks.deleteServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `statusCode` | `number` | No | — |
@@ -7161,9 +6666,6 @@ await corsair.postman.api.mocks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `teamId` | `string` | No | — |
 | `workspace` | `string` | No | — |
 
@@ -7174,9 +6676,6 @@ await corsair.postman.api.mocks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mocks` | `object[]` | No | — |
 
 
@@ -7230,9 +6729,6 @@ await corsair.postman.api.mocks.publish({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mockId` | `string` | Yes | — |
 
 
@@ -7242,9 +6738,6 @@ await corsair.postman.api.mocks.publish({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mock` | `object` | No | — |
 
 
@@ -7279,9 +6772,6 @@ await corsair.postman.api.mocks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mockId` | `string` | Yes | — |
 | `mock` | `object` | No | — |
 
@@ -7311,9 +6801,6 @@ await corsair.postman.api.mocks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mock` | `object` | No | — |
 
 
@@ -7369,9 +6856,6 @@ await corsair.postman.api.mocks.updateServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `mockId` | `string` | Yes | — |
 | `serverResponseId` | `string` | Yes | — |
 | `serverResponse` | `object` | No | — |
@@ -7401,9 +6885,6 @@ await corsair.postman.api.mocks.updateServerResponse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -7451,9 +6932,6 @@ await corsair.postman.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `monitor` | `object` | No | — |
 
@@ -7503,9 +6981,6 @@ await corsair.postman.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor` | `object` | No | — |
 
 
@@ -7543,9 +7018,6 @@ await corsair.postman.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `string` | Yes | — |
 
 
@@ -7555,9 +7027,6 @@ await corsair.postman.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor` | `object` | No | — |
 
 
@@ -7635,9 +7104,6 @@ await corsair.postman.api.monitors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | No | — |
 | `active` | `boolean` | No | — |
 | `owner` | `number` | No | — |
@@ -7653,9 +7119,6 @@ await corsair.postman.api.monitors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitors` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -7707,9 +7170,6 @@ await corsair.postman.api.monitors.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `string` | Yes | — |
 
 
@@ -7719,9 +7179,6 @@ await corsair.postman.api.monitors.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor` | `object` | No | — |
 
 
@@ -7757,9 +7214,6 @@ await corsair.postman.api.monitors.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `string` | Yes | — |
 | `async` | `boolean` | No | — |
 
@@ -7770,9 +7224,6 @@ await corsair.postman.api.monitors.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `run` | `object` | No | — |
 
 
@@ -7840,9 +7291,6 @@ await corsair.postman.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `string` | Yes | — |
 | `monitor` | `object` | No | — |
 
@@ -7890,9 +7338,6 @@ await corsair.postman.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitor` | `object` | No | — |
 
 
@@ -7932,9 +7377,6 @@ await corsair.postman.api.pullRequests.review({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullRequestId` | `string` | Yes | — |
 | `action` | `approve \| decline \| merge \| unapprove` | Yes | — |
 | `comment` | `string` | No | — |
@@ -7946,9 +7388,6 @@ await corsair.postman.api.pullRequests.review({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `reviewedBy` | `object` | No | — |
 | `status` | `string` | No | — |
@@ -7988,9 +7427,6 @@ await corsair.postman.api.pullRequests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullRequestId` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -8003,9 +7439,6 @@ await corsair.postman.api.pullRequests.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `createdBy` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -8083,9 +7516,6 @@ await corsair.postman.api.scim.getServiceConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `schemas` | `string[]` | No | — |
 | `documentationUri` | `string` | No | — |
 | `patch` | `object` | No | — |
@@ -8201,9 +7631,6 @@ await corsair.postman.api.specs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | Yes | — |
@@ -8234,9 +7661,6 @@ await corsair.postman.api.specs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | No | — |
 | `id` | `string` | No | — |
@@ -8266,9 +7690,6 @@ await corsair.postman.api.specs.createFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
@@ -8280,9 +7701,6 @@ await corsair.postman.api.specs.createFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `createdBy` | `number` | No | — |
 | `id` | `string` | No | — |
@@ -8312,9 +7730,6 @@ await corsair.postman.api.specs.deleteFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
 
@@ -8342,9 +7757,6 @@ await corsair.postman.api.specs.generateCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `elementType` | `collection` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -8377,9 +7789,6 @@ await corsair.postman.api.specs.generateCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | No | — |
 | `url` | `string` | No | — |
 
@@ -8404,9 +7813,6 @@ await corsair.postman.api.specs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 
 
@@ -8416,9 +7822,6 @@ await corsair.postman.api.specs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `fileFormat` | `json \| yaml \| proto \| graphql \| smithy` | No | — |
 | `name` | `string` | No | — |
@@ -8449,9 +7852,6 @@ await corsair.postman.api.specs.getDefinition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 
 
@@ -8488,9 +7888,6 @@ await corsair.postman.api.specs.getFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
 
@@ -8501,9 +7898,6 @@ await corsair.postman.api.specs.getFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `path` | `string` | No | — |
@@ -8535,9 +7929,6 @@ await corsair.postman.api.specs.getFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 
 
@@ -8547,9 +7938,6 @@ await corsair.postman.api.specs.getFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `files` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -8601,9 +7989,6 @@ await corsair.postman.api.specs.getGeneratedCollections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `elementType` | `collection` | Yes | — |
 | `limit` | `number` | No | — |
@@ -8616,9 +8001,6 @@ await corsair.postman.api.specs.getGeneratedCollections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collections` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -8668,9 +8050,6 @@ await corsair.postman.api.specs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -8682,9 +8061,6 @@ await corsair.postman.api.specs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `meta` | `object` | No | — |
 | `specs` | `object[]` | No | — |
 
@@ -8735,9 +8111,6 @@ await corsair.postman.api.specs.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 
 
@@ -8764,9 +8137,6 @@ await corsair.postman.api.specs.syncWithCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `collectionUid` | `string` | Yes | — |
 
@@ -8777,9 +8147,6 @@ await corsair.postman.api.specs.syncWithCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | No | — |
 | `url` | `string` | No | — |
 
@@ -8804,9 +8171,6 @@ await corsair.postman.api.specs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 
@@ -8817,9 +8181,6 @@ await corsair.postman.api.specs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `type` | `OPENAPI:2.0 \| OPENAPI:3.0 \| OPENAPI:3.1 \| ASYNCAPI:2.0 \| ASYNCAPI:3.0 \| PROTOBUF:2 \| PROTOBUF:3 \| GRAPHQL \| SMITHY:2.0` | No | — |
 | `createdBy` | `number` | No | — |
@@ -8849,9 +8210,6 @@ await corsair.postman.api.specs.updateFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `specId` | `string` | Yes | — |
 | `filePath` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -8865,9 +8223,6 @@ await corsair.postman.api.specs.updateFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `createdAt` | `string` | No | — |
 | `createdBy` | `number` | No | — |
 | `id` | `string` | No | — |
@@ -8899,9 +8254,6 @@ await corsair.postman.api.tools.importOpenapi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `body` | `object` | No | — |
 
@@ -8952,9 +8304,6 @@ await corsair.postman.api.tools.importOpenapi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `collections` | `object[]` | No | — |
 
 
@@ -8993,9 +8342,6 @@ await corsair.postman.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `number` | Yes | — |
 
 
@@ -9005,9 +8351,6 @@ await corsair.postman.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `username` | `string` | No | — |
@@ -9036,9 +8379,6 @@ await corsair.postman.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `groupId` | `number` | No | — |
 
 
@@ -9048,9 +8388,6 @@ await corsair.postman.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -9092,9 +8429,6 @@ await corsair.postman.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `collection` | `string` | Yes | — |
 | `workspace` | `string` | No | — |
@@ -9106,9 +8440,6 @@ await corsair.postman.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhook` | `object` | No | — |
 
 
@@ -9148,9 +8479,6 @@ await corsair.postman.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `object` | No | — |
 
 
@@ -9175,9 +8503,6 @@ await corsair.postman.api.workspaces.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `object` | No | — |
 
 
@@ -9213,9 +8538,6 @@ await corsair.postman.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `include` | `string` | No | — |
 
@@ -9226,9 +8548,6 @@ await corsair.postman.api.workspaces.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `object` | No | — |
 
 
@@ -9304,9 +8623,6 @@ await corsair.postman.api.workspaces.getActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `userId` | `number` | No | — |
 | `elementType` | `collection \| workspace \| environment \| mock \| monitor` | No | — |
@@ -9320,9 +8636,6 @@ await corsair.postman.api.workspaces.getActivity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -9381,9 +8694,6 @@ await corsair.postman.api.workspaces.getGlobalVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -9393,9 +8703,6 @@ await corsair.postman.api.workspaces.getGlobalVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `values` | `object[]` | No | — |
 
 
@@ -9434,9 +8741,6 @@ await corsair.postman.api.workspaces.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `include` | `scim` | No | — |
 
@@ -9447,9 +8751,6 @@ await corsair.postman.api.workspaces.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `roles` | `object[]` | No | — |
 
 
@@ -9488,9 +8789,6 @@ await corsair.postman.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `personal \| team \| private \| public \| partner` | No | — |
 | `createdBy` | `number` | No | — |
 | `include` | `mocks:deactivated \| scim` | No | — |
@@ -9506,9 +8804,6 @@ await corsair.postman.api.workspaces.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaces` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -9563,9 +8858,6 @@ await corsair.postman.api.workspaces.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 
 
@@ -9575,9 +8867,6 @@ await corsair.postman.api.workspaces.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `object` | No | — |
 
 
@@ -9612,9 +8901,6 @@ await corsair.postman.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `workspace` | `object` | No | — |
 
@@ -9639,9 +8925,6 @@ await corsair.postman.api.workspaces.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `object` | No | — |
 
 
@@ -9677,9 +8960,6 @@ await corsair.postman.api.workspaces.updateGlobalVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspaceId` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
 
@@ -9705,9 +8985,6 @@ await corsair.postman.api.workspaces.updateGlobalVariables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `values` | `object[]` | No | — |
 
 

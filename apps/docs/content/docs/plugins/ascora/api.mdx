@@ -31,9 +31,6 @@ await corsair.ascora.api.attachments.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entityId` | `string` | Yes | Official entity GUID. |
 | `entityType` | `Enquiry \| Job \| Quotation \| Task \| SupplierInvoice \| Invoice \| Supply \| Customer` | Yes | Official `EntityType`. |
 | `fileName` | `string` | Yes | — |
@@ -47,9 +44,6 @@ await corsair.ascora.api.attachments.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
@@ -77,9 +71,6 @@ await corsair.ascora.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `string` | Yes | Official contact GUID. |
 
 
@@ -89,9 +80,6 @@ await corsair.ascora.api.contacts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `contact` | `object` | No | — |
@@ -137,9 +125,6 @@ await corsair.ascora.api.contacts.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | Official customer GUID. |
 | `contactId` | `string` | No | Set to update an existing contact. |
 | `firstName` | `string` | No | — |
@@ -158,9 +143,6 @@ await corsair.ascora.api.contacts.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `contact` | `object` | No | — |
@@ -208,9 +190,6 @@ await corsair.ascora.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | Yes | Official customer GUID. |
 
 
@@ -220,9 +199,6 @@ await corsair.ascora.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `customer` | `object` | No | — |
@@ -301,9 +277,6 @@ await corsair.ascora.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. Customer number, email, phone, name. |
@@ -320,9 +293,6 @@ await corsair.ascora.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -403,9 +373,6 @@ await corsair.ascora.api.customers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customerId` | `string` | No | Set to update an existing customer. |
 | `customerNumber` | `string` | No | — |
 | `companyName` | `string` | No | — |
@@ -471,9 +438,6 @@ await corsair.ascora.api.customers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `customer` | `object` | No | — |
@@ -554,9 +518,6 @@ await corsair.ascora.api.enquiries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `companyName` | `string` | No | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -592,9 +553,6 @@ await corsair.ascora.api.enquiries.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
@@ -622,9 +580,6 @@ await corsair.ascora.api.inventory.categories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. |
@@ -638,9 +593,6 @@ await corsair.ascora.api.inventory.categories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -682,9 +634,6 @@ await corsair.ascora.api.inventory.kits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. |
@@ -699,9 +648,6 @@ await corsair.ascora.api.inventory.kits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -755,9 +701,6 @@ await corsair.ascora.api.inventory.supplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. |
@@ -772,9 +715,6 @@ await corsair.ascora.api.inventory.supplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -836,9 +776,6 @@ await corsair.ascora.api.jobs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobNumber` | `string` | Yes | Official full job number, e.g. J1. |
 
 
@@ -848,9 +785,6 @@ await corsair.ascora.api.jobs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `job` | `object` | No | — |
@@ -918,9 +852,6 @@ await corsair.ascora.api.jobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `jobStatus` | `string` | No | Official `JobStatus`. NEW, IN-PROGRESS, COMPLETED, CANCELLED, BOOKED, ALL-OPEN, ALL, etc. |
@@ -937,9 +868,6 @@ await corsair.ascora.api.jobs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1009,9 +937,6 @@ await corsair.ascora.api.jobs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. Job number, name, or address. |
@@ -1024,9 +949,6 @@ await corsair.ascora.api.jobs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1098,9 +1020,6 @@ await corsair.ascora.api.notes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entityId` | `string` | Yes | Official entity GUID. |
 | `entityType` | `Enquiry \| Job \| Quotation \| Invoice \| Customer` | Yes | Official `entityType`. |
 | `noteContent` | `string` | Yes | Official `noteContent`. |
@@ -1113,9 +1032,6 @@ await corsair.ascora.api.notes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entityId` | `string` | No | — |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
@@ -1176,9 +1092,6 @@ await corsair.ascora.api.quotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `filterText` | `string` | No | Official `FilterText`. |
@@ -1196,9 +1109,6 @@ await corsair.ascora.api.quotes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1330,9 +1240,6 @@ await corsair.ascora.api.supplierInvoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `supplierName` | `string` | No | Official `SupplierName`. |
@@ -1348,9 +1255,6 @@ await corsair.ascora.api.supplierInvoices.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1407,9 +1311,6 @@ await corsair.ascora.api.suppliers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `supplierId` | `string` | Yes | Official supplier GUID. |
 
 
@@ -1419,9 +1320,6 @@ await corsair.ascora.api.suppliers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `supplier` | `object` | No | — |
@@ -1480,9 +1378,6 @@ await corsair.ascora.api.suppliers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | Official `Page`. Default 1. |
 | `pageSize` | `number` | No | Official `PageSize`. Default 250. |
 | `supplierName` | `string` | No | Official `SupplierName`. |
@@ -1496,9 +1391,6 @@ await corsair.ascora.api.suppliers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -1559,9 +1451,6 @@ await corsair.ascora.api.suppliers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `supplierId` | `string` | No | Set to update an existing supplier. |
 | `supplierNumber` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1591,9 +1480,6 @@ await corsair.ascora.api.suppliers.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `message` | `string` | No | — |
 | `supplier` | `object` | No | — |

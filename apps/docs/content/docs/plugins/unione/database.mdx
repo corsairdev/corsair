@@ -28,9 +28,6 @@ const rows = await corsair.unione.db.account.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `project_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -63,9 +60,6 @@ const rows = await corsair.unione.db.domains.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `domain` | `string` | equals, contains, startsWith, endsWith, in |
 | `verification_status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -94,9 +88,6 @@ const rows = await corsair.unione.db.eventDumps.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `dump_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `dump_status` | `string` | equals, contains, startsWith, endsWith, in |
@@ -122,9 +113,6 @@ const rows = await corsair.unione.db.suppressions.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `project_id` | `string` | equals, contains, startsWith, endsWith, in |
@@ -155,9 +143,6 @@ const rows = await corsair.unione.db.tags.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `tag_id` | `number` | equals, gt, gte, lt, lte, in |
 | `tag` | `string` | equals, contains, startsWith, endsWith, in |
@@ -183,9 +168,6 @@ const rows = await corsair.unione.db.templates.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -216,9 +198,6 @@ const rows = await corsair.unione.db.webhooks.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |

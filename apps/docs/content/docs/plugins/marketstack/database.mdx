@@ -28,9 +28,6 @@ const rows = await corsair.marketstack.db.currencies.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `code` | `string` | equals, contains, startsWith, endsWith, in |
 | `symbol` | `string` | equals, contains, startsWith, endsWith, in |
@@ -58,9 +55,6 @@ const rows = await corsair.marketstack.db.dividends.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `symbol` | `string` | equals, contains, startsWith, endsWith, in |
 | `date` | `string` | equals, contains, startsWith, endsWith, in |
@@ -91,9 +85,6 @@ const rows = await corsair.marketstack.db.eodBars.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `open` | `number` | equals, gt, gte, lt, lte, in |
 | `high` | `number` | equals, gt, gte, lt, lte, in |
@@ -136,9 +127,6 @@ const rows = await corsair.marketstack.db.exchanges.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `acronym` | `string` | equals, contains, startsWith, endsWith, in |
@@ -176,9 +164,6 @@ const rows = await corsair.marketstack.db.splits.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `symbol` | `string` | equals, contains, startsWith, endsWith, in |
 | `date` | `string` | equals, contains, startsWith, endsWith, in |
@@ -206,9 +191,6 @@ const rows = await corsair.marketstack.db.tickers.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `symbol` | `string` | equals, contains, startsWith, endsWith, in |

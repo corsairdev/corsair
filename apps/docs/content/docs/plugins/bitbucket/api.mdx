@@ -31,9 +31,6 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAn
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -85,9 +82,6 @@ await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -140,9 +134,6 @@ await corsair.bitbucket.api.commitsAndInsights.deleteCommitComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string \| number` | Yes | — |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -172,9 +163,6 @@ await corsair.bitbucket.api.commitsAndInsights.deleteRepositoriesCommitReportsAn
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -205,9 +193,6 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitBuildStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -247,9 +232,6 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `spec` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -295,9 +277,6 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string \| number` | Yes | — |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -337,9 +316,6 @@ await corsair.bitbucket.api.commitsAndInsights.getCommitDiff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `spec` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -375,9 +351,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -416,9 +389,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitComments({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -461,9 +431,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -503,9 +470,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReports({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -546,9 +510,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnot
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -589,9 +550,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -635,9 +593,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoriesMergeBase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `revspec` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -676,9 +631,6 @@ await corsair.bitbucket.api.commitsAndInsights.getRepositoryPatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `spec` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -707,9 +659,6 @@ await corsair.bitbucket.api.commitsAndInsights.listCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -749,9 +698,6 @@ await corsair.bitbucket.api.commitsAndInsights.listCommitsFromRevision({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `revision` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -792,9 +738,6 @@ await corsair.bitbucket.api.commitsAndInsights.listCommitsOnMaster({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -834,9 +777,6 @@ await corsair.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommit
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -888,9 +828,6 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string \| number` | Yes | — |
 | `commit` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -942,9 +879,6 @@ await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAn
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `commit` | `string` | Yes | — |
@@ -999,9 +933,6 @@ await corsair.bitbucket.api.issues.createIssue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
@@ -1051,9 +982,6 @@ await corsair.bitbucket.api.issues.createIssueComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -1104,9 +1032,6 @@ await corsair.bitbucket.api.issues.deleteIssue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -1135,9 +1060,6 @@ await corsair.bitbucket.api.issues.getRepositoriesIssuesVote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -1176,9 +1098,6 @@ await corsair.bitbucket.api.issues.listIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1218,9 +1137,6 @@ await corsair.bitbucket.api.issues.listVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1260,9 +1176,6 @@ await corsair.bitbucket.api.issues.updateIssue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `issue_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -1329,9 +1242,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `body` | `object[]` | No | — |
 
@@ -1380,9 +1290,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `body` | `object[]` | No | — |
 
@@ -1431,9 +1338,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.deleteUserPipelineVariable({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `variable_uuid` | `string` | Yes | — |
 
@@ -1461,9 +1365,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVari
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `environment_uuid` | `string` | Yes | — |
@@ -1504,9 +1405,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 
 
@@ -1543,9 +1441,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `environment_uuid` | `string` | Yes | — |
@@ -1584,9 +1479,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `pipeline_uuid` | `string` | Yes | — |
@@ -1625,9 +1517,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1667,9 +1556,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1709,9 +1595,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1751,9 +1634,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1793,9 +1673,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConf
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1835,9 +1712,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesStep
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `pipeline_uuid` | `string` | Yes | — |
@@ -1878,9 +1752,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listDeployments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -1920,9 +1791,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listPipelines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `creator.uuid` | `string` | No | — |
@@ -1973,9 +1841,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -2015,9 +1880,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `variable_uuid` | `string` | Yes | — |
 | `body` | `object[]` | Yes | — |
@@ -2067,9 +1929,6 @@ await corsair.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `variable_uuid` | `string` | Yes | — |
 | `body` | `object[]` | Yes | — |
@@ -2121,9 +1980,6 @@ await corsair.bitbucket.api.pullRequests.approvePullRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2162,9 +2018,6 @@ await corsair.bitbucket.api.pullRequests.createPullRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
@@ -2219,9 +2072,6 @@ await corsair.bitbucket.api.pullRequests.createPullRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2272,9 +2122,6 @@ await corsair.bitbucket.api.pullRequests.getPullRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2313,9 +2160,6 @@ await corsair.bitbucket.api.pullRequests.getPullRequestComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `comment_id` | `string \| number` | Yes | — |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -2355,9 +2199,6 @@ await corsair.bitbucket.api.pullRequests.getPullRequestCommits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2398,9 +2239,6 @@ await corsair.bitbucket.api.pullRequests.getPullRequestDiff({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2429,9 +2267,6 @@ await corsair.bitbucket.api.pullRequests.getPullRequestDiffstat({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2472,9 +2307,6 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -2514,9 +2346,6 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsComments({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2557,9 +2386,6 @@ await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2602,9 +2428,6 @@ await corsair.bitbucket.api.pullRequests.listPullRequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `state` | `OPEN \| MERGED \| DECLINED \| SUPERSEDED` | No | — |
@@ -2645,9 +2468,6 @@ await corsair.bitbucket.api.pullRequests.listPullRequestTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2690,9 +2510,6 @@ await corsair.bitbucket.api.pullRequests.requestPullRequestChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pull_request_id` | `string \| number` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -2733,9 +2550,6 @@ await corsair.bitbucket.api.repositories.createRepository({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `object[]` | No | — |
@@ -2785,9 +2599,6 @@ await corsair.bitbucket.api.repositories.deleteRepository({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `redirect_to` | `string` | No | — |
@@ -2816,9 +2627,6 @@ await corsair.bitbucket.api.repositories.getRepositoriesWatchers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -2858,9 +2666,6 @@ await corsair.bitbucket.api.repositories.getRepository({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -2898,9 +2703,6 @@ await corsair.bitbucket.api.repositories.listRepositories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `after` | `string` | No | — |
 | `role` | `admin \| contributor \| member \| owner` | No | — |
 | `q` | `string` | No | — |
@@ -2942,9 +2744,6 @@ await corsair.bitbucket.api.repositories.listRepositoriesInWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `role` | `admin \| contributor \| member \| owner` | No | — |
 | `q` | `string` | No | — |
@@ -2988,9 +2787,6 @@ await corsair.bitbucket.api.searchAndDiscovery.getHookEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subject_type` | `repository \| workspace` | Yes | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
@@ -3029,9 +2825,6 @@ await corsair.bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `search_query` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -3071,9 +2864,6 @@ await corsair.bitbucket.api.searchAndDiscovery.searchTeamCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `username` | `string` | Yes | — |
 | `search_query` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -3113,9 +2903,6 @@ await corsair.bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `search_query` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -3157,9 +2944,6 @@ await corsair.bitbucket.api.snippets.createSnippetComment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `encoded_id` | `string \| number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `object[]` | Yes | — |
@@ -3209,9 +2993,6 @@ await corsair.bitbucket.api.snippets.deleteSnippetsWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `encoded_id` | `string \| number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -3239,9 +3020,6 @@ await corsair.bitbucket.api.snippets.getSnippet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `encoded_id` | `string \| number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -3279,9 +3057,6 @@ await corsair.bitbucket.api.snippets.getSnippetsWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `encoded_id` | `string \| number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -3319,9 +3094,6 @@ await corsair.bitbucket.api.snippets.listSnippets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `owner \| contributor \| member` | No | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
@@ -3362,9 +3134,6 @@ await corsair.bitbucket.api.sourceAndRefs.browseRepositoryPath({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -3410,9 +3179,6 @@ await corsair.bitbucket.api.sourceAndRefs.createBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
@@ -3465,9 +3231,6 @@ await corsair.bitbucket.api.sourceAndRefs.getBranch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -3506,9 +3269,6 @@ await corsair.bitbucket.api.sourceAndRefs.getFileFromRepository({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -3554,9 +3314,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRawFileContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -3590,9 +3347,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -3630,9 +3384,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 
@@ -3670,9 +3421,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesFilehistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -3717,9 +3465,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `q` | `string` | No | — |
@@ -3761,9 +3506,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefsTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
@@ -3802,9 +3544,6 @@ await corsair.bitbucket.api.sourceAndRefs.getRepositoriesSrc({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `format` | `meta` | No | — |
@@ -3845,9 +3584,6 @@ await corsair.bitbucket.api.sourceAndRefs.listBranches({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `q` | `string` | No | — |
@@ -3889,9 +3625,6 @@ await corsair.bitbucket.api.sourceAndRefs.listRepositoryPaths({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `commit` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `repo_slug` | `string` | Yes | — |
@@ -3937,9 +3670,6 @@ await corsair.bitbucket.api.sourceAndRefs.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `repo_slug` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `q` | `string` | No | — |
@@ -4013,9 +3743,6 @@ await corsair.bitbucket.api.usersAndPermissions.getSshLatestKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
@@ -4054,9 +3781,6 @@ await corsair.bitbucket.api.usersAndPermissions.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 
 
@@ -4123,9 +3847,6 @@ await corsair.bitbucket.api.usersAndPermissions.getUserEmails2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -4162,9 +3883,6 @@ await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsRepositories({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | — |
 | `sort` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -4204,9 +3922,6 @@ await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | No | — |
 | `sort` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -4246,9 +3961,6 @@ await corsair.bitbucket.api.usersAndPermissions.getUserWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sort` | `string` | No | — |
 | `administrator` | `boolean` | No | — |
 | `page` | `number` | No | — |
@@ -4290,9 +4002,6 @@ await corsair.bitbucket.api.workspacesAndProjects.getProjectsRepos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `role` | `admin \| contributor \| member \| owner` | No | — |
 | `q` | `string` | No | — |
@@ -4335,9 +4044,6 @@ await corsair.bitbucket.api.workspacesAndProjects.getWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 
 
@@ -4374,9 +4080,6 @@ await corsair.bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `selected_user` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `state` | `OPEN \| MERGED \| DECLINED \| SUPERSEDED` | No | — |
@@ -4417,9 +4120,6 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
@@ -4458,9 +4158,6 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workspace` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `pagelen` | `number` | No | — |
@@ -4499,9 +4196,6 @@ await corsair.bitbucket.api.workspacesAndProjects.listWorkspaces({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `owner \| collaborator \| member` | No | — |
 | `q` | `string` | No | — |
 | `sort` | `string` | No | — |

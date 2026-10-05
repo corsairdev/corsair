@@ -31,9 +31,6 @@ await corsair.razorpay.api.customers.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `contact` | `string` | No | — |
@@ -58,9 +55,6 @@ await corsair.razorpay.api.customers.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `customer` | Yes | — |
 | `name` | `string` | No | — |
@@ -101,9 +95,6 @@ await corsair.razorpay.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -113,9 +104,6 @@ await corsair.razorpay.api.customers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `customer` | Yes | — |
 | `name` | `string` | No | — |
@@ -156,9 +144,6 @@ await corsair.razorpay.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `count` | `number` | No | — |
 | `skip` | `number` | No | — |
 
@@ -169,9 +154,6 @@ await corsair.razorpay.api.customers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -216,9 +198,6 @@ await corsair.razorpay.api.customers.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
@@ -243,9 +222,6 @@ await corsair.razorpay.api.customers.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `customer` | Yes | — |
 | `name` | `string` | No | — |
@@ -288,9 +264,6 @@ await corsair.razorpay.api.orders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `receipt` | `string` | No | — |
@@ -313,9 +286,6 @@ await corsair.razorpay.api.orders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `order` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -360,9 +330,6 @@ await corsair.razorpay.api.orders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -372,9 +339,6 @@ await corsair.razorpay.api.orders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `order` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -419,9 +383,6 @@ await corsair.razorpay.api.orders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `count` | `number` | No | — |
@@ -436,9 +397,6 @@ await corsair.razorpay.api.orders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -489,9 +447,6 @@ await corsair.razorpay.api.payments.capture({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
@@ -503,9 +458,6 @@ await corsair.razorpay.api.payments.capture({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `payment` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -552,9 +504,6 @@ await corsair.razorpay.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -564,9 +513,6 @@ await corsair.razorpay.api.payments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `payment` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -613,9 +559,6 @@ await corsair.razorpay.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `count` | `number` | No | — |
@@ -628,9 +571,6 @@ await corsair.razorpay.api.payments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -683,9 +623,6 @@ await corsair.razorpay.api.payouts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_number` | `string` | Yes | — |
 | `fund_account_id` | `string` | Yes | — |
 | `amount` | `number` | Yes | — |
@@ -714,9 +651,6 @@ await corsair.razorpay.api.payouts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `payout` | Yes | — |
 | `fund_account_id` | `string` | Yes | — |
@@ -779,9 +713,6 @@ await corsair.razorpay.api.payouts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -791,9 +722,6 @@ await corsair.razorpay.api.payouts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `payout` | Yes | — |
 | `fund_account_id` | `string` | Yes | — |
@@ -856,9 +784,6 @@ await corsair.razorpay.api.payouts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `account_number` | `string` | Yes | — |
 | `contact_id` | `string` | No | — |
 | `fund_account_id` | `string` | No | — |
@@ -877,9 +802,6 @@ await corsair.razorpay.api.payouts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -941,9 +863,6 @@ await corsair.razorpay.api.refunds.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paymentId` | `string` | Yes | — |
 | `amount` | `number` | No | — |
 | `speed` | `normal \| optimum` | No | — |
@@ -967,9 +886,6 @@ await corsair.razorpay.api.refunds.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `refund` | Yes | — |
 | `payment_id` | `string` | Yes | — |
@@ -1013,9 +929,6 @@ await corsair.razorpay.api.refunds.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paymentId` | `string` | Yes | — |
 | `refundId` | `string` | Yes | — |
 
@@ -1026,9 +939,6 @@ await corsair.razorpay.api.refunds.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `refund` | Yes | — |
 | `payment_id` | `string` | Yes | — |
@@ -1072,9 +982,6 @@ await corsair.razorpay.api.refunds.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `paymentId` | `string` | Yes | — |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
@@ -1088,9 +995,6 @@ await corsair.razorpay.api.refunds.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -1140,9 +1044,6 @@ await corsair.razorpay.api.settlements.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1152,9 +1053,6 @@ await corsair.razorpay.api.settlements.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `settlement` | Yes | — |
 | `amount` | `number` | No | — |
@@ -1185,9 +1083,6 @@ await corsair.razorpay.api.settlements.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `count` | `number` | No | — |
@@ -1200,9 +1095,6 @@ await corsair.razorpay.api.settlements.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -1248,9 +1140,6 @@ await corsair.razorpay.api.subscriptions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `cancel_at_cycle_end` | `boolean` | No | — |
 
@@ -1261,9 +1150,6 @@ await corsair.razorpay.api.subscriptions.cancel({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |
@@ -1321,9 +1207,6 @@ await corsair.razorpay.api.subscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `plan_id` | `string` | Yes | — |
 | `total_count` | `number` | Yes | — |
 | `quantity` | `number` | No | — |
@@ -1351,9 +1234,6 @@ await corsair.razorpay.api.subscriptions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |
@@ -1411,9 +1291,6 @@ await corsair.razorpay.api.subscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1423,9 +1300,6 @@ await corsair.razorpay.api.subscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |
@@ -1483,9 +1357,6 @@ await corsair.razorpay.api.subscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | No | — |
 | `to` | `number` | No | — |
 | `count` | `number` | No | — |
@@ -1499,9 +1370,6 @@ await corsair.razorpay.api.subscriptions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `collection` | No | — |
 | `count` | `number` | Yes | — |
 | `items` | `object[]` | Yes | — |
@@ -1563,9 +1431,6 @@ await corsair.razorpay.api.subscriptions.pause({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `pause_initiated_by` | `customer \| bank` | No | — |
 
@@ -1576,9 +1441,6 @@ await corsair.razorpay.api.subscriptions.pause({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |
@@ -1636,9 +1498,6 @@ await corsair.razorpay.api.subscriptions.resume({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `resume_at` | `now` | No | — |
 
@@ -1649,9 +1508,6 @@ await corsair.razorpay.api.subscriptions.resume({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |
@@ -1709,9 +1565,6 @@ await corsair.razorpay.api.subscriptions.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `plan_id` | `string` | No | — |
 | `quantity` | `number` | No | — |
@@ -1727,9 +1580,6 @@ await corsair.razorpay.api.subscriptions.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `entity` | `subscription` | Yes | — |
 | `plan_id` | `string` | Yes | — |

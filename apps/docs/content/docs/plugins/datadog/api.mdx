@@ -31,9 +31,6 @@ await corsair.datadog.api.apiKeys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 | `filter` | `string` | No | — |
@@ -45,9 +42,6 @@ await corsair.datadog.api.apiKeys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -101,9 +95,6 @@ await corsair.datadog.api.aws.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `accounts` | `object[]` | No | — |
 
 
@@ -144,9 +135,6 @@ await corsair.datadog.api.dashboards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `widgets` | `object[]` | Yes | — |
 | `layoutType` | `ordered \| free` | Yes | — |
@@ -180,9 +168,6 @@ await corsair.datadog.api.dashboards.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -245,9 +230,6 @@ await corsair.datadog.api.dashboards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboardId` | `string` | Yes | — |
 
 
@@ -257,9 +239,6 @@ await corsair.datadog.api.dashboards.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted_dashboard_id` | `string` | No | — |
 
 
@@ -283,9 +262,6 @@ await corsair.datadog.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboardId` | `string` | Yes | — |
 
 
@@ -295,9 +271,6 @@ await corsair.datadog.api.dashboards.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -360,9 +333,6 @@ await corsair.datadog.api.dashboards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filterShared` | `boolean` | No | — |
 | `filterDeleted` | `boolean` | No | — |
 | `count` | `number` | No | — |
@@ -375,9 +345,6 @@ await corsair.datadog.api.dashboards.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dashboards` | `object[]` | No | — |
 
 
@@ -420,9 +387,6 @@ await corsair.datadog.api.dashboards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `widgets` | `object[]` | Yes | — |
 | `layoutType` | `ordered \| free` | Yes | — |
@@ -457,9 +421,6 @@ await corsair.datadog.api.dashboards.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -524,9 +485,6 @@ await corsair.datadog.api.downtimes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `scope` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `monitorId` | `number` | No | — |
@@ -541,9 +499,6 @@ await corsair.datadog.api.downtimes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 
 
@@ -590,9 +545,6 @@ await corsair.datadog.api.downtimes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `currentOnly` | `boolean` | No | — |
 | `pageOffset` | `number` | No | — |
 | `pageLimit` | `number` | No | — |
@@ -654,9 +606,6 @@ await corsair.datadog.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `text` | `string` | Yes | — |
 | `tags` | `string[]` | No | — |
@@ -673,9 +622,6 @@ await corsair.datadog.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `event` | `object` | No | — |
 
@@ -720,9 +666,6 @@ await corsair.datadog.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start` | `number` | Yes | — |
 | `end` | `number` | Yes | — |
 | `priority` | `normal \| low` | No | — |
@@ -737,9 +680,6 @@ await corsair.datadog.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `events` | `object[]` | No | — |
 
 
@@ -785,9 +725,6 @@ await corsair.datadog.api.hosts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `filter` | `string` | No | — |
 | `sortField` | `string` | No | — |
 | `sortDir` | `asc \| desc` | No | — |
@@ -801,9 +738,6 @@ await corsair.datadog.api.hosts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host_list` | `object[]` | No | — |
 | `total_matching` | `number` | No | — |
 | `total_returned` | `number` | No | — |
@@ -853,9 +787,6 @@ await corsair.datadog.api.hosts.totals({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `total_active` | `number` | No | — |
 | `total_up` | `number` | No | — |
 
@@ -882,9 +813,6 @@ await corsair.datadog.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageOffset` | `number` | No | — |
 
@@ -895,9 +823,6 @@ await corsair.datadog.api.incidents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -948,9 +873,6 @@ await corsair.datadog.api.logs.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -965,9 +887,6 @@ await corsair.datadog.api.logs.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | No | — |
 | `meta` | `object` | No | — |
 
@@ -1013,9 +932,6 @@ await corsair.datadog.api.logs.listIndexes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `indexes` | `object[]` | No | — |
 
 
@@ -1055,9 +971,6 @@ await corsair.datadog.api.logs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -1073,9 +986,6 @@ await corsair.datadog.api.logs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -1129,9 +1039,6 @@ await corsair.datadog.api.metrics.listActive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `number` | Yes | — |
 | `host` | `string` | No | — |
 | `tagFilter` | `string` | No | — |
@@ -1143,9 +1050,6 @@ await corsair.datadog.api.metrics.listActive({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metrics` | `string[]` | No | — |
 | `from` | `string` | No | — |
 
@@ -1170,9 +1074,6 @@ await corsair.datadog.api.metrics.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `from` | `number` | Yes | — |
 | `to` | `number` | Yes | — |
@@ -1184,9 +1085,6 @@ await corsair.datadog.api.metrics.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `query` | `string` | No | — |
 | `from_date` | `number` | No | — |
@@ -1230,9 +1128,6 @@ await corsair.datadog.api.metrics.submit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `series` | `object[]` | Yes | — |
 
 
@@ -1257,9 +1152,6 @@ await corsair.datadog.api.metrics.submit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 
 
@@ -1285,9 +1177,6 @@ await corsair.datadog.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | Yes | — |
 | `query` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1313,9 +1202,6 @@ await corsair.datadog.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1371,9 +1257,6 @@ await corsair.datadog.api.monitors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `number` | Yes | — |
 
 
@@ -1383,9 +1266,6 @@ await corsair.datadog.api.monitors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted_monitor_id` | `number` | No | — |
 
 
@@ -1409,9 +1289,6 @@ await corsair.datadog.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `number` | Yes | — |
 | `groupStates` | `string` | No | — |
 
@@ -1422,9 +1299,6 @@ await corsair.datadog.api.monitors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1480,9 +1354,6 @@ await corsair.datadog.api.monitors.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `tags` | `string` | No | — |
 | `monitorTags` | `string` | No | — |
@@ -1541,9 +1412,6 @@ await corsair.datadog.api.monitors.mute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `number` | Yes | — |
 | `scope` | `string` | No | — |
 | `end` | `number` | No | — |
@@ -1555,9 +1423,6 @@ await corsair.datadog.api.monitors.mute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1613,9 +1478,6 @@ await corsair.datadog.api.monitors.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | No | — |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
@@ -1628,9 +1490,6 @@ await corsair.datadog.api.monitors.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitors` | `object[]` | No | — |
 | `metadata` | `object` | No | — |
 
@@ -1694,9 +1553,6 @@ await corsair.datadog.api.monitors.unmute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `number` | Yes | — |
 | `scope` | `string` | No | — |
 | `allScopes` | `boolean` | No | — |
@@ -1708,9 +1564,6 @@ await corsair.datadog.api.monitors.unmute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1766,9 +1619,6 @@ await corsair.datadog.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `monitorId` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `query` | `string` | No | — |
@@ -1794,9 +1644,6 @@ await corsair.datadog.api.monitors.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -1854,9 +1701,6 @@ await corsair.datadog.api.roles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 | `filter` | `string` | No | — |
@@ -1868,9 +1712,6 @@ await corsair.datadog.api.roles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -1921,9 +1762,6 @@ await corsair.datadog.api.services.listDefinitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 | `schemaVersion` | `string` | No | — |
@@ -1935,9 +1773,6 @@ await corsair.datadog.api.services.listDefinitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 
 
@@ -1977,9 +1812,6 @@ await corsair.datadog.api.slos.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `metric \| monitor` | Yes | — |
 | `thresholds` | `object[]` | Yes | — |
@@ -2018,9 +1850,6 @@ await corsair.datadog.api.slos.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `error` | `string` | No | — |
 
@@ -2072,9 +1901,6 @@ await corsair.datadog.api.slos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string` | No | — |
 | `query` | `string` | No | — |
 | `tagsQuery` | `string` | No | — |
@@ -2088,9 +1914,6 @@ await corsair.datadog.api.slos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `metadata` | `object` | No | — |
 
@@ -2156,9 +1979,6 @@ await corsair.datadog.api.spans.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -2173,9 +1993,6 @@ await corsair.datadog.api.spans.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -2222,9 +2039,6 @@ await corsair.datadog.api.spans.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
@@ -2284,9 +2098,6 @@ await corsair.datadog.api.synthetics.createApiTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `config` | `object` | Yes | — |
 | `locations` | `string[]` | Yes | — |
@@ -2320,9 +2131,6 @@ await corsair.datadog.api.synthetics.createApiTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `public_id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -2373,9 +2181,6 @@ await corsair.datadog.api.synthetics.getApiTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `publicId` | `string` | Yes | — |
 
 
@@ -2385,9 +2190,6 @@ await corsair.datadog.api.synthetics.getApiTest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `public_id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
@@ -2441,9 +2243,6 @@ await corsair.datadog.api.synthetics.listLocations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `locations` | `object[]` | No | — |
 
 
@@ -2481,9 +2280,6 @@ await corsair.datadog.api.synthetics.listTests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 
@@ -2494,9 +2290,6 @@ await corsair.datadog.api.synthetics.listTests({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tests` | `object[]` | No | — |
 
 
@@ -2544,9 +2337,6 @@ await corsair.datadog.api.tags.getHost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hostName` | `string` | Yes | — |
 | `source` | `string` | No | — |
 
@@ -2557,9 +2347,6 @@ await corsair.datadog.api.tags.getHost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 
@@ -2584,9 +2371,6 @@ await corsair.datadog.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `source` | `string` | No | — |
 
 
@@ -2596,9 +2380,6 @@ await corsair.datadog.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tags` | `object` | No | — |
 
 
@@ -2632,9 +2413,6 @@ await corsair.datadog.api.tags.updateHost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hostName` | `string` | Yes | — |
 | `tags` | `string[]` | Yes | — |
 | `source` | `string` | No | — |
@@ -2646,9 +2424,6 @@ await corsair.datadog.api.tags.updateHost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `host` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 
@@ -2675,9 +2450,6 @@ await corsair.datadog.api.usage.getSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `startMonth` | `string` | Yes | — |
 | `endMonth` | `string` | No | — |
 | `includeOrgDetails` | `boolean` | No | — |
@@ -2689,9 +2461,6 @@ await corsair.datadog.api.usage.getSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
 | `usage` | `object[]` | No | — |
@@ -2729,9 +2498,6 @@ await corsair.datadog.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 | `filter` | `string` | No | — |
@@ -2743,9 +2509,6 @@ await corsair.datadog.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | No | — |
 | `meta` | `object` | No | — |
 
@@ -2796,9 +2559,6 @@ await corsair.datadog.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `payload` | `string` | No | — |
@@ -2812,9 +2572,6 @@ await corsair.datadog.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
 | `payload` | `string` | No | — |
@@ -2842,9 +2599,6 @@ await corsair.datadog.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookName` | `string` | Yes | — |
 
 
@@ -2854,9 +2608,6 @@ await corsair.datadog.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
 | `payload` | `string` | No | — |

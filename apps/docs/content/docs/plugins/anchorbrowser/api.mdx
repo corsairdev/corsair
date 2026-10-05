@@ -31,9 +31,6 @@ await corsair.anchorbrowser.api.agent.listAgentResources({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -81,9 +78,6 @@ await corsair.anchorbrowser.api.agent.pauseAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -131,9 +125,6 @@ await corsair.anchorbrowser.api.agent.resumeAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -181,9 +172,6 @@ await corsair.anchorbrowser.api.agent.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `object` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `file_content_base64` | `string` | No | — |
@@ -243,9 +231,6 @@ await corsair.anchorbrowser.api.batchSessions.getBatchSessionStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `batchId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -295,9 +280,6 @@ await corsair.anchorbrowser.api.downloads.listSessionDownloads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -347,9 +329,6 @@ await corsair.anchorbrowser.api.events.signalEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `eventName` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -406,9 +385,6 @@ await corsair.anchorbrowser.api.events.waitForEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeoutMs` | `number` | No | — |
 | `eventName` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -459,9 +435,6 @@ await corsair.anchorbrowser.api.extensions.deleteExtension({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -509,9 +482,6 @@ await corsair.anchorbrowser.api.extensions.listExtensions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -558,9 +528,6 @@ await corsair.anchorbrowser.api.extensions.uploadExtension({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `object` | No | — |
 | `name` | `string` | Yes | — |
 | `file_name` | `string` | No | — |
@@ -621,9 +588,6 @@ await corsair.anchorbrowser.api.integrations.createIntegration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `credentials` | `object` | Yes | — |
@@ -681,9 +645,6 @@ await corsair.anchorbrowser.api.integrations.deleteIntegration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `integrationId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -731,9 +692,6 @@ await corsair.anchorbrowser.api.integrations.listIntegrations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -782,9 +740,6 @@ await corsair.anchorbrowser.api.osLevel.clickMouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `button` | `string` | No | — |
@@ -835,9 +790,6 @@ await corsair.anchorbrowser.api.osLevel.copySelectedText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -885,9 +837,6 @@ await corsair.anchorbrowser.api.osLevel.doubleClickMouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
@@ -937,9 +886,6 @@ await corsair.anchorbrowser.api.osLevel.dragAndDrop({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `endX` | `number` | Yes | — |
 | `endY` | `number` | Yes | — |
 | `startX` | `number` | Yes | — |
@@ -991,9 +937,6 @@ await corsair.anchorbrowser.api.osLevel.getClipboardContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1041,9 +984,6 @@ await corsair.anchorbrowser.api.osLevel.moveMouse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
@@ -1093,9 +1033,6 @@ await corsair.anchorbrowser.api.osLevel.navigateToUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1144,9 +1081,6 @@ await corsair.anchorbrowser.api.osLevel.pasteText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1195,9 +1129,6 @@ await corsair.anchorbrowser.api.osLevel.performKeyboardShortcut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keys` | `any[]` | Yes | — |
 | `hold_time` | `number` | No | — |
 | `sessionId` | `string` | Yes | — |
@@ -1247,9 +1178,6 @@ await corsair.anchorbrowser.api.osLevel.pressMouseButton({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `button` | `string` | No | — |
@@ -1300,9 +1228,6 @@ await corsair.anchorbrowser.api.osLevel.releaseMouseButton({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `button` | `string` | No | — |
@@ -1353,9 +1278,6 @@ await corsair.anchorbrowser.api.osLevel.scrollSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x` | `number` | Yes | — |
 | `y` | `number` | Yes | — |
 | `steps` | `number` | No | — |
@@ -1409,9 +1331,6 @@ await corsair.anchorbrowser.api.osLevel.setClipboardContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -1460,9 +1379,6 @@ await corsair.anchorbrowser.api.osLevel.typeText({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `delay` | `number` | No | — |
 | `sessionId` | `string` | Yes | — |
@@ -1514,9 +1430,6 @@ await corsair.anchorbrowser.api.pages.getSessionPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1566,9 +1479,6 @@ await corsair.anchorbrowser.api.profiles.createProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `source` | `string` | No | — |
 | `session_id` | `string` | Yes | — |
@@ -1620,9 +1530,6 @@ await corsair.anchorbrowser.api.profiles.deleteProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1670,9 +1577,6 @@ await corsair.anchorbrowser.api.profiles.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1720,9 +1624,6 @@ await corsair.anchorbrowser.api.profiles.listProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -1769,9 +1670,6 @@ await corsair.anchorbrowser.api.profiles.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `source` | `string` | No | — |
 | `session_id` | `string` | Yes | — |
@@ -1824,9 +1722,6 @@ await corsair.anchorbrowser.api.recordings.listSessionRecordings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1874,9 +1769,6 @@ await corsair.anchorbrowser.api.recordings.pauseSessionRecording({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1924,9 +1816,6 @@ await corsair.anchorbrowser.api.recordings.resumeSessionRecording({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -1976,9 +1865,6 @@ await corsair.anchorbrowser.api.screenshots.takeScreenshot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2028,9 +1914,6 @@ await corsair.anchorbrowser.api.sessions.endAllSessions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
@@ -2077,9 +1960,6 @@ await corsair.anchorbrowser.api.sessions.endBrowserSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2127,9 +2007,6 @@ await corsair.anchorbrowser.api.sessions.getBrowserSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2177,9 +2054,6 @@ await corsair.anchorbrowser.api.sessions.listSessions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `sort_by` | `string` | No | — |
@@ -2242,9 +2116,6 @@ await corsair.anchorbrowser.api.sessions.startBrowserSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `browser` | `object` | No | — |
 | `session` | `object` | No | — |
 | `identities` | `any[]` | No | — |
@@ -2313,9 +2184,6 @@ await corsair.anchorbrowser.api.tasks.createOrUpdateTaskDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2364,9 +2232,6 @@ await corsair.anchorbrowser.api.tasks.createTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `language` | `string` | Yes | — |
@@ -2426,9 +2291,6 @@ await corsair.anchorbrowser.api.tasks.deleteTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2476,9 +2338,6 @@ await corsair.anchorbrowser.api.tasks.deleteTaskVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `taskVersion` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2527,9 +2386,6 @@ await corsair.anchorbrowser.api.tasks.deployTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 | `language` | `string` | No | — |
@@ -2589,9 +2445,6 @@ await corsair.anchorbrowser.api.tasks.getLatestTaskVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2639,9 +2492,6 @@ await corsair.anchorbrowser.api.tasks.getTaskDraft({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2689,9 +2539,6 @@ await corsair.anchorbrowser.api.tasks.getTaskExecutionResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `executionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2740,9 +2587,6 @@ await corsair.anchorbrowser.api.tasks.getTaskMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2790,9 +2634,6 @@ await corsair.anchorbrowser.api.tasks.getTaskVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `taskVersion` | `string` | Yes | — |
 | `body` | `any` | No | — |
@@ -2841,9 +2682,6 @@ await corsair.anchorbrowser.api.tasks.listTaskExecutions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `string` | No | — |
 | `limit` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -2895,9 +2733,6 @@ await corsair.anchorbrowser.api.tasks.listTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `string` | No | — |
 | `limit` | `string` | No | — |
 | `body` | `any` | No | — |
@@ -2946,9 +2781,6 @@ await corsair.anchorbrowser.api.tasks.listTaskVersions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
 | `query` | `object` | No | — |
@@ -2996,9 +2828,6 @@ await corsair.anchorbrowser.api.tasks.publishTaskVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `code` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 | `language` | `string` | No | — |
@@ -3059,9 +2888,6 @@ await corsair.anchorbrowser.api.tasks.runTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `async` | `boolean` | No | — |
 | `inputs` | `object` | No | — |
 | `taskId` | `string` | Yes | — |
@@ -3131,9 +2957,6 @@ await corsair.anchorbrowser.api.tasks.runTaskByName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `inputs` | `object` | No | — |
 | `taskName` | `string` | Yes | — |
 | `sessionId` | `string` | No | — |
@@ -3201,9 +3024,6 @@ await corsair.anchorbrowser.api.tasks.updateTaskMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `taskId` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -3255,9 +3075,6 @@ await corsair.anchorbrowser.api.tools.getWebpageContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `wait` | `number` | No | — |
 | `format` | `string` | No | — |
@@ -3311,9 +3128,6 @@ await corsair.anchorbrowser.api.tools.performWebTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `agent` | `string` | No | — |
 | `async` | `boolean` | No | — |
@@ -3389,9 +3203,6 @@ await corsair.anchorbrowser.api.tools.screenshotWebpage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `wait` | `number` | No | — |
 | `width` | `number` | No | — |
@@ -3449,9 +3260,6 @@ await corsair.anchorbrowser.api.uploads.uploadFilesToSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `object` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |

@@ -34,9 +34,6 @@ await corsair.clickhouse.api.play.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | The Play UI URL |
 | `html` | `string` | Yes | Play UI HTML page (Monaco editor + query UI) |
 | `sizeBytes` | `number` | Yes | — |
@@ -64,9 +61,6 @@ await corsair.clickhouse.api.query.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sql` | `string` | Yes | SQL query to execute against ClickHouse |
 | `database` | `string` | No | Default database context (sent as ?database=) |
 | `limit` | `number` | No | Maximum rows to return; appended as LIMIT when not present in SQL |
@@ -78,9 +72,6 @@ await corsair.clickhouse.api.query.execute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rows` | `object[]` | Yes | JSONEachRow objects; column names map to native JSON values |
 | `rowCount` | `number` | Yes | — |
 
@@ -118,9 +109,6 @@ await corsair.clickhouse.api.query.listDatabases({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databases` | `object[]` | Yes | — |
 
 
@@ -156,9 +144,6 @@ await corsair.clickhouse.api.query.listTables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | Database to list tables from |
 | `limit` | `number` | No | Maximum tables to return |
 | `offset` | `number` | No | Tables to skip before returning rows |
@@ -170,9 +155,6 @@ await corsair.clickhouse.api.query.listTables({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | — |
 | `tables` | `object[]` | Yes | — |
 | `count` | `number` | Yes | Number of tables returned |
@@ -214,9 +196,6 @@ await corsair.clickhouse.api.schema.getDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | Database to introspect |
 | `includeColumns` | `boolean` | No | When true, also fetch column definitions for each table |
 | `limit` | `number` | No | — |
@@ -229,9 +208,6 @@ await corsair.clickhouse.api.schema.getDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | — |
 | `tables` | `object[]` | Yes | — |
 | `count` | `number` | Yes | — |
@@ -278,9 +254,6 @@ await corsair.clickhouse.api.schema.getTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | Database the table belongs to |
 | `table` | `string` | Yes | Table to introspect |
 | `includeSample` | `boolean` | No | When true, include up to `sampleSize` rows from the table |
@@ -293,9 +266,6 @@ await corsair.clickhouse.api.schema.getTable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `database` | `string` | Yes | — |
 | `table` | `string` | Yes | — |
 | `engine` | `string` | No | — |

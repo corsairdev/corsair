@@ -28,9 +28,6 @@ const rows = await corsair.ambee.db.airQualityReadings.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `locationKey` | `string` | equals, contains, startsWith, endsWith, in |
 | `city` | `string` | equals, contains, startsWith, endsWith, in |
@@ -73,9 +70,6 @@ const rows = await corsair.ambee.db.geocodedPlaces.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `query` | `string` | equals, contains, startsWith, endsWith, in |
 | `lat` | `number` | equals, gt, gte, lt, lte, in |
@@ -109,9 +103,6 @@ const rows = await corsair.ambee.db.weatherObservations.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `locationKey` | `string` | equals, contains, startsWith, endsWith, in |
 | `lat` | `number` | equals, gt, gte, lt, lte, in |

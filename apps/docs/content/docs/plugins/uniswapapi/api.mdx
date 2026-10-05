@@ -31,9 +31,6 @@ await corsair.uniswapapi.api.approval.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | Yes | Token contract address |
 | `amount` | `string` | Yes | Amount to check approval for |
 | `walletAddress` | `string` | Yes | Wallet address to check |
@@ -46,9 +43,6 @@ await corsair.uniswapapi.api.approval.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `approval` | `object` | No | — |
 | `cancel` | `object` | No | — |
@@ -114,9 +108,6 @@ await corsair.uniswapapi.api.delegation.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `walletAddresses` | `string[]` | Yes | Wallet addresses to check delegation for |
 | `chainIds` | `number[]` | Yes | Chain IDs to check delegation status for |
 
@@ -127,9 +118,6 @@ await corsair.uniswapapi.api.delegation.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `delegationDetails` | `object` | Yes | — |
 
@@ -166,9 +154,6 @@ await corsair.uniswapapi.api.order.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orderId` | `string` | No | Single UniswapX order ID |
 | `orderIds` | `string[]` | No | Multiple UniswapX order IDs |
 | `orderStatus` | `open \| expired \| error \| cancelled \| filled \| unverified \| insufficient-funds` | No | Filter orders by status |
@@ -185,9 +170,6 @@ await corsair.uniswapapi.api.order.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `orders` | `object[]` | Yes | — |
 | `cursor` | `string` | No | — |
@@ -235,9 +217,6 @@ await corsair.uniswapapi.api.quote.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `EXACT_INPUT \| EXACT_OUTPUT` | Yes | Swap type |
 | `tokenIn` | `string` | Yes | Input token contract address |
 | `tokenInChainId` | `number` | Yes | Input token chain ID |
@@ -258,9 +237,6 @@ await corsair.uniswapapi.api.quote.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `routing` | `CLASSIC \| DUTCH_LIMIT \| DUTCH_V2 \| DUTCH_V3 \| BRIDGE \| LIMIT_ORDER \| PRIORITY \| WRAP \| UNWRAP \| CHAINED` | Yes | — |
 | `quote` | `object` | Yes | — |
@@ -326,9 +302,6 @@ await corsair.uniswapapi.api.swap.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `quote` | `object` | Yes | The quote object returned from /v1/quote |
 | `signature` | `string` | No | Signed Permit2 message; required when the quote returned permitData |
 | `permitData` | `object` | No | Permit2 message from the quote; must be sent together with its signature |
@@ -360,9 +333,6 @@ await corsair.uniswapapi.api.swap.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `swap` | `object` | Yes | — |
 | `gasFee` | `string` | No | — |
@@ -407,9 +377,6 @@ await corsair.uniswapapi.api.swap.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `txHashes` | `string[]` | No | On-chain transaction hashes to query |
 | `userOpHashes` | `string[]` | No | ERC-4337 userOperation hashes to query |
 | `chainId` | `number` | Yes | Chain ID the transactions belong to |
@@ -422,9 +389,6 @@ await corsair.uniswapapi.api.swap.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `swaps` | `object[]` | Yes | — |
 
@@ -467,9 +431,6 @@ await corsair.uniswapapi.api.swappableTokens.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tokenIn` | `string` | Yes | Source token contract address |
 | `tokenInChainId` | `number` | Yes | Source token chain ID |
 
@@ -480,9 +441,6 @@ await corsair.uniswapapi.api.swappableTokens.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `tokens` | `object[]` | Yes | — |
 
@@ -531,9 +489,6 @@ await corsair.uniswapapi.api.transaction.encode7702({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `calls` | `object[]` | Yes | Transactions to encode; all calls must share the same chainId |
 | `smartContractDelegationAddress` | `string` | Yes | Smart contract delegation implementation address to use |
 | `walletAddress` | `string` | Yes | Wallet address the transactions are encoded for |
@@ -560,9 +515,6 @@ await corsair.uniswapapi.api.transaction.encode7702({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `requestId` | `string` | Yes | — |
 | `encoded` | `object` | Yes | — |
 

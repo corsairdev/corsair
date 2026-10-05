@@ -31,9 +31,6 @@ await corsair.witai.api.apps.createApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the app |
 | `lang` | `string` | Yes | Language code, e.g. "en" |
 | `private` | `boolean \| string` | No | Whether the app is private |
@@ -47,9 +44,6 @@ await corsair.witai.api.apps.createApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | — |
 | `access_token` | `string` | No | — |
 
@@ -74,9 +68,6 @@ await corsair.witai.api.apps.deleteApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | The Wit.ai app ID to delete |
 
 
@@ -86,9 +77,6 @@ await corsair.witai.api.apps.deleteApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | No | — |
 | `success` | `boolean` | No | — |
 
@@ -113,9 +101,6 @@ await corsair.witai.api.apps.exportApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | The Wit.ai app ID to export |
 
 
@@ -125,9 +110,6 @@ await corsair.witai.api.apps.exportApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `uri` | `string` | No | — |
 
 
@@ -151,9 +133,6 @@ await corsair.witai.api.apps.getApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | The Wit.ai app ID |
 
 
@@ -163,9 +142,6 @@ await corsair.witai.api.apps.getApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `lang` | `string` | No | — |
@@ -200,9 +176,6 @@ await corsair.witai.api.apps.listApps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | Max apps to return (default 100) |
 | `offset` | `number` | No | Pagination offset |
 
@@ -252,9 +225,6 @@ await corsair.witai.api.apps.listTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | The Wit.ai app ID |
 
 
@@ -296,9 +266,6 @@ await corsair.witai.api.apps.updateApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `app_id` | `string` | Yes | The Wit.ai app ID to update |
 | `name` | `string` | No | New name |
 | `lang` | `string` | No | Language code |
@@ -313,9 +280,6 @@ await corsair.witai.api.apps.updateApp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -344,9 +308,6 @@ await corsair.witai.api.entities.addKeyword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name |
 | `keyword` | `string` | Yes | Keyword to add |
 | `synonyms` | `string[]` | No | Optional synonyms for the keyword |
@@ -358,9 +319,6 @@ await corsair.witai.api.entities.addKeyword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `roles` | `object[]` | No | — |
@@ -410,9 +368,6 @@ await corsair.witai.api.entities.addSynonym({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name |
 | `keyword` | `string` | Yes | Keyword to add synonym to |
 | `synonym` | `string` | Yes | Synonym to add |
@@ -424,9 +379,6 @@ await corsair.witai.api.entities.addSynonym({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `roles` | `object[]` | No | — |
@@ -476,9 +428,6 @@ await corsair.witai.api.entities.createEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the new entity |
 | `roles` | `string[]` | No | Optional role names for the entity |
 | `lookups` | `string[]` | No | Optional lookup strategies (e.g. keywords, free-text) |
@@ -490,9 +439,6 @@ await corsair.witai.api.entities.createEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `roles` | `object[]` | No | — |
@@ -542,9 +488,6 @@ await corsair.witai.api.entities.deleteEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name to delete |
 
 
@@ -554,9 +497,6 @@ await corsair.witai.api.entities.deleteEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -583,9 +523,6 @@ await corsair.witai.api.entities.deleteKeyword({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name |
 | `keyword` | `string` | Yes | Keyword to delete |
 
@@ -639,9 +576,6 @@ await corsair.witai.api.entities.deleteRole({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name |
 | `role` | `string` | Yes | Role name to delete |
 
@@ -695,9 +629,6 @@ await corsair.witai.api.entities.deleteSynonym({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name |
 | `keyword` | `string` | Yes | Keyword name |
 | `synonym` | `string` | Yes | Synonym to delete |
@@ -752,9 +683,6 @@ await corsair.witai.api.entities.getEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity` | `string` | Yes | Entity name or ID |
 
 
@@ -764,9 +692,6 @@ await corsair.witai.api.entities.getEntity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `roles` | `object[]` | No | — |
@@ -859,9 +784,6 @@ await corsair.witai.api.intents.createIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the new intent |
 
 
@@ -871,9 +793,6 @@ await corsair.witai.api.intents.createIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `entities` | `object[]` | No | — |
@@ -919,9 +838,6 @@ await corsair.witai.api.intents.deleteIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `intent` | `string` | Yes | Intent name to delete |
 
 
@@ -931,9 +847,6 @@ await corsair.witai.api.intents.deleteIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -960,9 +873,6 @@ await corsair.witai.api.intents.getIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `intent` | `string` | Yes | Intent name or ID |
 
 
@@ -972,9 +882,6 @@ await corsair.witai.api.intents.getIntent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `entities` | `object[]` | No | — |
@@ -1066,9 +973,6 @@ await corsair.witai.api.message.detectLanguage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Text whose language should be detected |
 | `n` | `number` | No | Number of locales to return |
 
@@ -1079,9 +983,6 @@ await corsair.witai.api.message.detectLanguage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `detected_locales` | `object[]` | Yes | — |
 
 
@@ -1117,9 +1018,6 @@ await corsair.witai.api.message.getMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Text to analyze for intents, entities, and traits |
 | `n` | `number` | No | Max number of n-best intents/traits to return |
 | `tag` | `string` | No | App version tag to use |
@@ -1132,9 +1030,6 @@ await corsair.witai.api.message.getMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `text` | `string` | Yes | — |
 | `intents` | `object[]` | No | — |
 | `entities` | `object` | No | — |
@@ -1192,9 +1087,6 @@ await corsair.witai.api.traits.addValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trait` | `string` | Yes | Trait name |
 | `value` | `string` | Yes | Value to add |
 
@@ -1205,9 +1097,6 @@ await corsair.witai.api.traits.addValue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
@@ -1245,9 +1134,6 @@ await corsair.witai.api.traits.createTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | Name of the new trait |
 | `values` | `string[]` | No | Initial values for the trait |
 
@@ -1258,9 +1144,6 @@ await corsair.witai.api.traits.createTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
@@ -1298,9 +1181,6 @@ await corsair.witai.api.traits.deleteTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trait` | `string` | Yes | Trait name to delete |
 
 
@@ -1310,9 +1190,6 @@ await corsair.witai.api.traits.deleteTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -1339,9 +1216,6 @@ await corsair.witai.api.traits.getTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `trait` | `string` | Yes | Trait name or ID |
 
 
@@ -1351,9 +1225,6 @@ await corsair.witai.api.traits.getTrait({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
@@ -1429,9 +1300,6 @@ await corsair.witai.api.utterances.createUtterances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `utterances` | `object[]` | Yes | Utterances to add (rate limit: 200 samples/min) |
 
 
@@ -1464,9 +1332,6 @@ await corsair.witai.api.utterances.createUtterances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -1493,9 +1358,6 @@ await corsair.witai.api.utterances.deleteUtterances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `texts` | `string[]` | Yes | Utterance texts to delete |
 
 
@@ -1505,9 +1367,6 @@ await corsair.witai.api.utterances.deleteUtterances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sent` | `boolean` | No | — |
 | `n` | `number` | No | — |
 | `deleted` | `string \| number` | No | — |
@@ -1534,9 +1393,6 @@ await corsair.witai.api.utterances.listUtterances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | Max utterances to return |
 | `offset` | `number` | No | Pagination offset |
 | `intent_id` | `string` | No | Filter by intent ID |
@@ -1600,9 +1456,6 @@ await corsair.witai.api.voices.getVoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `voice` | `string` | Yes | Voice name to retrieve details for |
 
 
@@ -1612,9 +1465,6 @@ await corsair.witai.api.voices.getVoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `locale` | `string` | No | — |
 | `gender` | `string` | No | — |

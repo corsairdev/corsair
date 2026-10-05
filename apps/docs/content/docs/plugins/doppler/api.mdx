@@ -31,9 +31,6 @@ await corsair.doppler.api.activityLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `string` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.doppler.api.activityLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `logs` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -95,9 +89,6 @@ await corsair.doppler.api.activityLogs.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `log` | `string` | Yes | — |
 
 
@@ -107,9 +98,6 @@ await corsair.doppler.api.activityLogs.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `text` | `string` | No | — |
 | `html` | `string` | No | — |
@@ -167,9 +155,6 @@ await corsair.doppler.api.auth.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -224,9 +209,6 @@ await corsair.doppler.api.changeRequests.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `status` | `string[]` | No | — |
@@ -268,9 +250,6 @@ await corsair.doppler.api.configLogs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `log` | `string` | Yes | — |
@@ -282,9 +261,6 @@ await corsair.doppler.api.configLogs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `text` | `string` | No | — |
 | `html` | `string` | No | — |
@@ -331,9 +307,6 @@ await corsair.doppler.api.configLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -346,9 +319,6 @@ await corsair.doppler.api.configLogs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `logs` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -391,9 +361,6 @@ await corsair.doppler.api.configLogs.rollback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `log` | `string` | Yes | — |
@@ -405,9 +372,6 @@ await corsair.doppler.api.configLogs.rollback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `text` | `string` | No | — |
 | `html` | `string` | No | — |
@@ -456,9 +420,6 @@ await corsair.doppler.api.configs.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -470,9 +431,6 @@ await corsair.doppler.api.configs.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -508,9 +466,6 @@ await corsair.doppler.api.configs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `environment` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -522,9 +477,6 @@ await corsair.doppler.api.configs.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -560,9 +512,6 @@ await corsair.doppler.api.configs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 
@@ -573,9 +522,6 @@ await corsair.doppler.api.configs.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -599,9 +545,6 @@ await corsair.doppler.api.configs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 
@@ -612,9 +555,6 @@ await corsair.doppler.api.configs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -650,9 +590,6 @@ await corsair.doppler.api.configs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `environment` | `string` | No | — |
 | `page` | `number` | No | — |
@@ -665,9 +602,6 @@ await corsair.doppler.api.configs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `configs` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -715,9 +649,6 @@ await corsair.doppler.api.configs.lock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 
@@ -728,9 +659,6 @@ await corsair.doppler.api.configs.lock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -766,9 +694,6 @@ await corsair.doppler.api.configs.unlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 
@@ -779,9 +704,6 @@ await corsair.doppler.api.configs.unlock({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -817,9 +739,6 @@ await corsair.doppler.api.configs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -831,9 +750,6 @@ await corsair.doppler.api.configs.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `project` | `string` | No | — |
@@ -871,9 +787,6 @@ await corsair.doppler.api.dynamicSecrets.revokeLease({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `dynamicSecret` | `string` | Yes | — |
@@ -886,9 +799,6 @@ await corsair.doppler.api.dynamicSecrets.revokeLease({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -914,9 +824,6 @@ await corsair.doppler.api.environments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
@@ -929,9 +836,6 @@ await corsair.doppler.api.environments.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -961,9 +865,6 @@ await corsair.doppler.api.environments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `environment` | `string` | Yes | — |
 
@@ -974,9 +875,6 @@ await corsair.doppler.api.environments.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1000,9 +898,6 @@ await corsair.doppler.api.environments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `environment` | `string` | Yes | — |
 
@@ -1013,9 +908,6 @@ await corsair.doppler.api.environments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1045,9 +937,6 @@ await corsair.doppler.api.environments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 
 
@@ -1091,9 +980,6 @@ await corsair.doppler.api.environments.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `environment` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -1107,9 +993,6 @@ await corsair.doppler.api.environments.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1141,9 +1024,6 @@ await corsair.doppler.api.groups.deleteMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group` | `string` | Yes | — |
 | `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
 | `memberSlug` | `string` | Yes | — |
@@ -1155,9 +1035,6 @@ await corsair.doppler.api.groups.deleteMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1215,9 +1092,6 @@ await corsair.doppler.api.invites.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -1228,9 +1102,6 @@ await corsair.doppler.api.invites.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `invites` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1267,9 +1138,6 @@ await corsair.doppler.api.projectMembers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
 | `slug` | `string` | Yes | — |
@@ -1281,9 +1149,6 @@ await corsair.doppler.api.projectMembers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1307,9 +1172,6 @@ await corsair.doppler.api.projectMembers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
 | `slug` | `string` | Yes | — |
@@ -1321,9 +1183,6 @@ await corsair.doppler.api.projectMembers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `string` | No | — |
 | `slug` | `string` | No | — |
 | `role` | `object` | No | — |
@@ -1360,9 +1219,6 @@ await corsair.doppler.api.projectMembers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
@@ -1374,9 +1230,6 @@ await corsair.doppler.api.projectMembers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `members` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1418,9 +1271,6 @@ await corsair.doppler.api.projectRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | Yes | — |
 
 
@@ -1430,9 +1280,6 @@ await corsair.doppler.api.projectRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `identifier` | `string` | No | — |
 | `name` | `string` | No | — |
 | `permissions` | `string[]` | No | — |
@@ -1517,9 +1364,6 @@ await corsair.doppler.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 
@@ -1530,9 +1374,6 @@ await corsair.doppler.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1560,9 +1401,6 @@ await corsair.doppler.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 
 
@@ -1572,9 +1410,6 @@ await corsair.doppler.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1598,9 +1433,6 @@ await corsair.doppler.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 
 
@@ -1610,9 +1442,6 @@ await corsair.doppler.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1640,9 +1469,6 @@ await corsair.doppler.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -1653,9 +1479,6 @@ await corsair.doppler.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projects` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 
@@ -1695,9 +1518,6 @@ await corsair.doppler.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1709,9 +1529,6 @@ await corsair.doppler.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `name` | `string` | No | — |
@@ -1741,9 +1558,6 @@ await corsair.doppler.api.secrets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1755,9 +1569,6 @@ await corsair.doppler.api.secrets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -1781,9 +1592,6 @@ await corsair.doppler.api.secrets.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `format` | `json \| env \| yaml \| docker \| env-no-quotes` | No | — |
@@ -1826,9 +1634,6 @@ await corsair.doppler.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -1840,9 +1645,6 @@ await corsair.doppler.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `raw` | `string` | No | — |
 | `computed` | `string` | No | — |
 | `note` | `string` | No | — |
@@ -1891,9 +1693,6 @@ await corsair.doppler.api.secrets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `includeDynamicSecrets` | `boolean` | No | — |
@@ -1933,9 +1732,6 @@ await corsair.doppler.api.secrets.names({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `includeDynamicSecrets` | `boolean` | No | — |
@@ -1965,9 +1761,6 @@ await corsair.doppler.api.secrets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `secrets` | `object` | Yes | — |
@@ -2016,9 +1809,6 @@ await corsair.doppler.api.secrets.updateNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `secret` | `string` | Yes | — |
 | `note` | `string` | Yes | — |
@@ -2030,9 +1820,6 @@ await corsair.doppler.api.secrets.updateNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret` | `string` | No | — |
 | `note` | `string` | No | — |
 
@@ -2057,9 +1844,6 @@ await corsair.doppler.api.secrets.updateNoteViaConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `secret` | `string` | Yes | — |
@@ -2072,9 +1856,6 @@ await corsair.doppler.api.secrets.updateNoteViaConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret` | `string` | No | — |
 | `note` | `string` | No | — |
 
@@ -2101,9 +1882,6 @@ await corsair.doppler.api.serviceTokens.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -2117,9 +1895,6 @@ await corsair.doppler.api.serviceTokens.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
 | `access` | `string` | No | — |
@@ -2153,9 +1928,6 @@ await corsair.doppler.api.serviceTokens.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
@@ -2167,9 +1939,6 @@ await corsair.doppler.api.serviceTokens.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -2193,9 +1962,6 @@ await corsair.doppler.api.serviceTokens.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 
@@ -2246,9 +2012,6 @@ await corsair.doppler.api.share.createEncrypted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `encryptedSecret` | `string` | Yes | — |
 | `hashedPassword` | `string` | Yes | — |
 | `encryptionKdf` | `pbkdf2` | No | — |
@@ -2263,9 +2026,6 @@ await corsair.doppler.api.share.createEncrypted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `authenticated_url` | `string` | No | — |
 | `password` | `string` | No | — |
@@ -2291,9 +2051,6 @@ await corsair.doppler.api.share.createPlain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `secret` | `string` | Yes | — |
 | `expireViews` | `number \| -1` | No | — |
 | `expireDays` | `number` | No | — |
@@ -2305,9 +2062,6 @@ await corsair.doppler.api.share.createPlain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | No | — |
 | `authenticated_url` | `string` | No | — |
 | `password` | `string` | No | — |
@@ -2335,9 +2089,6 @@ await corsair.doppler.api.webhooks.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `url` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -2367,9 +2118,6 @@ await corsair.doppler.api.webhooks.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2400,9 +2148,6 @@ await corsair.doppler.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `slug` | `string` | Yes | — |
 
@@ -2413,9 +2158,6 @@ await corsair.doppler.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 
 
@@ -2439,9 +2181,6 @@ await corsair.doppler.api.webhooks.disable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `slug` | `string` | Yes | — |
 
@@ -2452,9 +2191,6 @@ await corsair.doppler.api.webhooks.disable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2485,9 +2221,6 @@ await corsair.doppler.api.webhooks.enable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `slug` | `string` | Yes | — |
 
@@ -2498,9 +2231,6 @@ await corsair.doppler.api.webhooks.enable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2531,9 +2261,6 @@ await corsair.doppler.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `slug` | `string` | Yes | — |
 
@@ -2544,9 +2271,6 @@ await corsair.doppler.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2577,9 +2301,6 @@ await corsair.doppler.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 
 
@@ -2624,9 +2345,6 @@ await corsair.doppler.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project` | `string` | No | — |
 | `slug` | `string` | Yes | — |
 | `url` | `string` | No | — |
@@ -2658,9 +2376,6 @@ await corsair.doppler.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
@@ -2696,9 +2411,6 @@ await corsair.doppler.api.workplace.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `billing_email` | `string` | No | — |
@@ -2725,9 +2437,6 @@ await corsair.doppler.api.workplace.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `billingEmail` | `string` | No | — |
 | `securityEmail` | `string` | No | — |
@@ -2739,9 +2448,6 @@ await corsair.doppler.api.workplace.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `billing_email` | `string` | No | — |
@@ -2770,9 +2476,6 @@ await corsair.doppler.api.workplaceRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `role` | `string` | Yes | — |
 
 
@@ -2782,9 +2485,6 @@ await corsair.doppler.api.workplaceRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `permissions` | `string[]` | No | — |
 
@@ -2863,9 +2563,6 @@ await corsair.doppler.api.workplaceUsers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `slug` | `string` | Yes | — |
 
 
@@ -2875,9 +2572,6 @@ await corsair.doppler.api.workplaceUsers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `access` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `user` | `object` | No | — |
@@ -2917,9 +2611,6 @@ await corsair.doppler.api.workplaceUsers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `email` | `string` | No | — |
 
@@ -2930,9 +2621,6 @@ await corsair.doppler.api.workplaceUsers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `workplace_users` | `object[]` | Yes | — |
 | `page` | `number` | No | — |
 

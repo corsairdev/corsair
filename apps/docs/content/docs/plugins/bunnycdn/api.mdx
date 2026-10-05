@@ -31,9 +31,6 @@ await corsair.bunnycdn.api.apiKeys.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -112,9 +109,6 @@ await corsair.bunnycdn.api.containers.applicationsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextCursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -142,9 +136,6 @@ await corsair.bunnycdn.api.containers.configSuggestions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `registryId` | `string \| number` | Yes | — |
 | `imageName` | `string` | Yes | — |
 | `imageNamespace` | `string` | Yes | — |
@@ -174,9 +165,6 @@ await corsair.bunnycdn.api.containers.imageDigest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `registryId` | `string \| number` | Yes | — |
 | `imageName` | `string` | Yes | — |
 | `imageNamespace` | `string` | Yes | — |
@@ -206,9 +194,6 @@ await corsair.bunnycdn.api.containers.imageTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `registryId` | `string \| number` | Yes | — |
 | `imageName` | `string` | Yes | — |
 | `imageNamespace` | `string` | Yes | — |
@@ -237,9 +222,6 @@ await corsair.bunnycdn.api.containers.nodesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextCursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -267,9 +249,6 @@ await corsair.bunnycdn.api.containers.optimalBaseRegion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cdnServerToken` | `string` | No | — |
 
 
@@ -296,9 +275,6 @@ await corsair.bunnycdn.api.containers.publicImagesSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `registryId` | `string \| number` | Yes | — |
 | `prefix` | `string` | Yes | — |
 | `size` | `number` | No | — |
@@ -328,9 +304,6 @@ await corsair.bunnycdn.api.containers.regionsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `nextCursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 
@@ -378,9 +351,6 @@ await corsair.bunnycdn.api.containers.registryDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `registryId` | `string \| number` | Yes | — |
 
 
@@ -427,9 +397,6 @@ await corsair.bunnycdn.api.containers.volumesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `appId` | `string` | Yes | — |
 
 
@@ -458,9 +425,6 @@ await corsair.bunnycdn.api.dnsZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 
 
@@ -470,9 +434,6 @@ await corsair.bunnycdn.api.dnsZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Available` | `boolean` | Yes | — |
 
 
@@ -496,9 +457,6 @@ await corsair.bunnycdn.api.dnsZone.createRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zoneId` | `number` | Yes | — |
 | `record` | `object` | Yes | — |
 
@@ -540,9 +498,6 @@ await corsair.bunnycdn.api.dnsZone.createRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | No | — |
 | `Type` | `number` | No | — |
 | `Value` | `string` | No | — |
@@ -570,9 +525,6 @@ await corsair.bunnycdn.api.dnsZone.deleteRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zoneId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -583,9 +535,6 @@ await corsair.bunnycdn.api.dnsZone.deleteRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -609,9 +558,6 @@ await corsair.bunnycdn.api.dnsZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -621,9 +567,6 @@ await corsair.bunnycdn.api.dnsZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Domain` | `string` | No | — |
 
@@ -648,9 +591,6 @@ await corsair.bunnycdn.api.dnsZone.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -692,9 +632,6 @@ await corsair.bunnycdn.api.dnsZone.updateRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `zoneId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 | `record` | `object` | Yes | — |
@@ -737,9 +674,6 @@ await corsair.bunnycdn.api.dnsZone.updateRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -765,9 +699,6 @@ await corsair.bunnycdn.api.edgeScripts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -811,9 +742,6 @@ await corsair.bunnycdn.api.pullZone.addAllowedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `hostname` | `string` | Yes | — |
 
@@ -824,9 +752,6 @@ await corsair.bunnycdn.api.pullZone.addAllowedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -850,9 +775,6 @@ await corsair.bunnycdn.api.pullZone.addBlockedIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `blockedIp` | `string` | Yes | — |
 
@@ -863,9 +785,6 @@ await corsair.bunnycdn.api.pullZone.addBlockedIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -889,9 +808,6 @@ await corsair.bunnycdn.api.pullZone.addBlockedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `hostname` | `string` | Yes | — |
 
@@ -902,9 +818,6 @@ await corsair.bunnycdn.api.pullZone.addBlockedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -928,9 +841,6 @@ await corsair.bunnycdn.api.pullZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 
 
@@ -940,9 +850,6 @@ await corsair.bunnycdn.api.pullZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Available` | `boolean` | Yes | — |
 
 
@@ -966,9 +873,6 @@ await corsair.bunnycdn.api.pullZone.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `originUrl` | `string` | No | — |
 | `type` | `number` | No | — |
@@ -1141,9 +1045,6 @@ await corsair.bunnycdn.api.pullZone.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Name` | `string` | No | — |
 | `OriginUrl` | `string` | No | — |
@@ -1189,9 +1090,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `edgeRuleId` | `string \| number` | Yes | — |
 
@@ -1202,9 +1100,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1228,9 +1123,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleSetEnabled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `edgeRuleId` | `string \| number` | Yes | — |
 | `value` | `boolean` | Yes | — |
@@ -1242,9 +1134,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleSetEnabled({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1268,9 +1157,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleUpsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `rule` | `object` | Yes | — |
 
@@ -1297,9 +1183,6 @@ await corsair.bunnycdn.api.pullZone.edgeRuleUpsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Guid` | `string` | No | — |
 | `ActionType` | `number` | No | — |
 | `ActionParameter1` | `string` | No | — |
@@ -1328,9 +1211,6 @@ await corsair.bunnycdn.api.pullZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `includeCertificate` | `boolean` | No | — |
 
@@ -1341,9 +1221,6 @@ await corsair.bunnycdn.api.pullZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Name` | `string` | No | — |
 | `OriginUrl` | `string` | No | — |
@@ -1389,9 +1266,6 @@ await corsair.bunnycdn.api.pullZone.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `search` | `string` | No | — |
@@ -1465,9 +1339,6 @@ await corsair.bunnycdn.api.pullZone.optimizerStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `dateFrom` | `string` | No | — |
 | `dateTo` | `string` | No | — |
@@ -1497,9 +1368,6 @@ await corsair.bunnycdn.api.pullZone.originShieldQueueStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `dateFrom` | `string` | No | — |
 | `dateTo` | `string` | No | — |
@@ -1529,9 +1397,6 @@ await corsair.bunnycdn.api.pullZone.purgeCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `cacheTag` | `string` | No | — |
 
@@ -1542,9 +1407,6 @@ await corsair.bunnycdn.api.pullZone.purgeCache({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1568,9 +1430,6 @@ await corsair.bunnycdn.api.pullZone.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1580,9 +1439,6 @@ await corsair.bunnycdn.api.pullZone.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1606,9 +1462,6 @@ await corsair.bunnycdn.api.pullZone.removeAllowedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `hostname` | `string` | Yes | — |
 
@@ -1619,9 +1472,6 @@ await corsair.bunnycdn.api.pullZone.removeAllowedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1645,9 +1495,6 @@ await corsair.bunnycdn.api.pullZone.removeBlockedIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `blockedIp` | `string` | Yes | — |
 
@@ -1658,9 +1505,6 @@ await corsair.bunnycdn.api.pullZone.removeBlockedIp({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1684,9 +1528,6 @@ await corsair.bunnycdn.api.pullZone.removeBlockedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `hostname` | `string` | Yes | — |
 
@@ -1697,9 +1538,6 @@ await corsair.bunnycdn.api.pullZone.removeBlockedReferrer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1723,9 +1561,6 @@ await corsair.bunnycdn.api.pullZone.resetSecurityKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `securityKey` | `string` | No | — |
 
@@ -1736,9 +1571,6 @@ await corsair.bunnycdn.api.pullZone.resetSecurityKey({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1762,9 +1594,6 @@ await corsair.bunnycdn.api.pullZone.safeHopStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 | `dateFrom` | `string` | No | — |
 | `dateTo` | `string` | No | — |
@@ -1794,9 +1623,6 @@ await corsair.bunnycdn.api.pullZone.setForceSSL({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `hostname` | `string` | Yes | — |
 | `forceSSL` | `boolean` | Yes | — |
@@ -1808,9 +1634,6 @@ await corsair.bunnycdn.api.pullZone.setForceSSL({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -1834,9 +1657,6 @@ await corsair.bunnycdn.api.pullZone.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `settings` | `object` | Yes | — |
 
@@ -2006,9 +1826,6 @@ await corsair.bunnycdn.api.pullZone.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Name` | `string` | No | — |
 | `OriginUrl` | `string` | No | — |
@@ -2056,9 +1873,6 @@ await corsair.bunnycdn.api.purge.url({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `async` | `boolean` | No | — |
 | `exactPath` | `boolean` | No | — |
@@ -2089,9 +1903,6 @@ await corsair.bunnycdn.api.search.global({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | — |
 | `from` | `number` | No | — |
 | `size` | `number` | No | — |
@@ -2122,9 +1933,6 @@ await corsair.bunnycdn.api.shield.accessListConfigUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 | `isEnabled` | `boolean` | No | — |
@@ -2154,9 +1962,6 @@ await corsair.bunnycdn.api.shield.accessListCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string \| number` | Yes | — |
@@ -2171,9 +1976,6 @@ await corsair.bunnycdn.api.shield.accessListCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `any` | No | — |
@@ -2199,9 +2001,6 @@ await corsair.bunnycdn.api.shield.accessListEnums({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2228,9 +2027,6 @@ await corsair.bunnycdn.api.shield.accessListGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 
@@ -2241,9 +2037,6 @@ await corsair.bunnycdn.api.shield.accessListGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `any` | No | — |
@@ -2269,9 +2062,6 @@ await corsair.bunnycdn.api.shield.accessListsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2298,9 +2088,6 @@ await corsair.bunnycdn.api.shield.accessListUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
@@ -2314,9 +2101,6 @@ await corsair.bunnycdn.api.shield.accessListUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
 | `type` | `any` | No | — |
@@ -2342,9 +2126,6 @@ await corsair.bunnycdn.api.shield.botDetectionGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2371,9 +2152,6 @@ await corsair.bunnycdn.api.shield.botDetectionUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `executionMode` | `number` | No | — |
 
@@ -2421,9 +2199,6 @@ await corsair.bunnycdn.api.shield.eventLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `date` | `string` | Yes | — |
 | `continuationToken` | `string` | Yes | — |
@@ -2452,9 +2227,6 @@ await corsair.bunnycdn.api.shield.metricsBotDetection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2481,9 +2253,6 @@ await corsair.bunnycdn.api.shield.metricsOverview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2510,9 +2279,6 @@ await corsair.bunnycdn.api.shield.metricsOverviewDetailed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
@@ -2542,9 +2308,6 @@ await corsair.bunnycdn.api.shield.metricsRateLimit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2571,9 +2334,6 @@ await corsair.bunnycdn.api.shield.metricsRateLimits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2600,9 +2360,6 @@ await corsair.bunnycdn.api.shield.metricsUploadScanning({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2629,9 +2386,6 @@ await corsair.bunnycdn.api.shield.metricsWafRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `ruleId` | `string \| number` | Yes | — |
 
@@ -2679,9 +2433,6 @@ await corsair.bunnycdn.api.shield.rateLimitCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `ruleName` | `string` | No | — |
 | `ruleDescription` | `string` | No | — |
@@ -2718,9 +2469,6 @@ await corsair.bunnycdn.api.shield.rateLimitCreate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `shieldZoneId` | `number` | No | — |
 | `ruleName` | `string` | No | — |
@@ -2747,9 +2495,6 @@ await corsair.bunnycdn.api.shield.rateLimitDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2759,9 +2504,6 @@ await corsair.bunnycdn.api.shield.rateLimitDelete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -2785,9 +2527,6 @@ await corsair.bunnycdn.api.shield.rateLimitGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2797,9 +2536,6 @@ await corsair.bunnycdn.api.shield.rateLimitGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `shieldZoneId` | `number` | No | — |
 | `ruleName` | `string` | No | — |
@@ -2826,9 +2562,6 @@ await corsair.bunnycdn.api.shield.rateLimitsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
@@ -2857,9 +2590,6 @@ await corsair.bunnycdn.api.shield.rateLimitUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `ruleName` | `string` | No | — |
 | `ruleDescription` | `string` | No | — |
@@ -2896,9 +2626,6 @@ await corsair.bunnycdn.api.shield.rateLimitUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | No | — |
 | `shieldZoneId` | `number` | No | — |
 | `ruleName` | `string` | No | — |
@@ -2925,9 +2652,6 @@ await corsair.bunnycdn.api.shield.uploadScanningGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -2954,9 +2678,6 @@ await corsair.bunnycdn.api.shield.uploadScanningUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `isEnabled` | `boolean` | No | — |
 | `csamScanningMode` | `number` | No | — |
@@ -2986,9 +2707,6 @@ await corsair.bunnycdn.api.shield.wafCustomRuleGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -3015,9 +2733,6 @@ await corsair.bunnycdn.api.shield.wafCustomRulesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
@@ -3106,9 +2821,6 @@ await corsair.bunnycdn.api.shield.wafRulesByZone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -3155,9 +2867,6 @@ await corsair.bunnycdn.api.shield.wafRulesReviewTriggered({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -3184,9 +2893,6 @@ await corsair.bunnycdn.api.shield.wafRulesReviewTriggeredPost({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `ruleId` | `string \| number` | No | — |
 | `action` | `string \| number` | No | — |
@@ -3215,9 +2921,6 @@ await corsair.bunnycdn.api.shield.zoneGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 
 
@@ -3227,9 +2930,6 @@ await corsair.bunnycdn.api.shield.zoneGet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `pullZoneId` | `number` | No | — |
 | `learningMode` | `boolean` | No | — |
@@ -3257,9 +2957,6 @@ await corsair.bunnycdn.api.shield.zoneGetByPullZone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pullZoneId` | `number` | Yes | — |
 
 
@@ -3269,9 +2966,6 @@ await corsair.bunnycdn.api.shield.zoneGetByPullZone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `pullZoneId` | `number` | No | — |
 | `learningMode` | `boolean` | No | — |
@@ -3299,9 +2993,6 @@ await corsair.bunnycdn.api.shield.zonesList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 
@@ -3349,9 +3040,6 @@ await corsair.bunnycdn.api.shield.zoneUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `shieldZoneId` | `number` | Yes | — |
 | `shieldZone` | `object` | No | — |
 
@@ -3445,9 +3133,6 @@ await corsair.bunnycdn.api.statistics.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `dateFrom` | `string` | No | — |
 | `dateTo` | `string` | No | — |
 | `pullZone` | `number` | No | — |
@@ -3522,9 +3207,6 @@ await corsair.bunnycdn.api.storageZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 
 
@@ -3534,9 +3216,6 @@ await corsair.bunnycdn.api.storageZone.checkAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Available` | `boolean` | Yes | — |
 
 
@@ -3560,9 +3239,6 @@ await corsair.bunnycdn.api.storageZone.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `region` | `string` | Yes | — |
 | `details` | `object` | No | — |
@@ -3589,9 +3265,6 @@ await corsair.bunnycdn.api.storageZone.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Name` | `string` | No | — |
 | `Region` | `string` | No | — |
@@ -3620,9 +3293,6 @@ await corsair.bunnycdn.api.storageZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -3632,9 +3302,6 @@ await corsair.bunnycdn.api.storageZone.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Id` | `number` | Yes | — |
 | `Name` | `string` | No | — |
 | `Region` | `string` | No | — |
@@ -3663,9 +3330,6 @@ await corsair.bunnycdn.api.storageZone.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `includeDeleted` | `boolean` | No | — |
@@ -3712,9 +3376,6 @@ await corsair.bunnycdn.api.storageZone.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `deleteLinkedPullZones` | `boolean` | No | — |
 
@@ -3725,9 +3386,6 @@ await corsair.bunnycdn.api.storageZone.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -3751,9 +3409,6 @@ await corsair.bunnycdn.api.storageZone.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `settings` | `object` | Yes | — |
 
@@ -3778,9 +3433,6 @@ await corsair.bunnycdn.api.storageZone.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `true` | Yes | — |
 
 
@@ -3806,9 +3458,6 @@ await corsair.bunnycdn.api.stream.oembed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 | `maxWidth` | `number` | No | — |
 | `maxHeight` | `number` | No | — |
@@ -3841,9 +3490,6 @@ await corsair.bunnycdn.api.user.auditLog({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `date` | `string` | Yes | — |
 | `product` | `string[]` | No | — |
 | `resourceType` | `string[]` | No | — |
@@ -3899,9 +3545,6 @@ await corsair.bunnycdn.api.videoLibrary.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `perPage` | `number` | No | — |
 | `search` | `string` | No | — |

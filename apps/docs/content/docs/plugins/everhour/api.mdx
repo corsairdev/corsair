@@ -31,9 +31,6 @@ await corsair.everhour.api.clients.createClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `projects` | `string[]` | No | — |
 | `businessDetails` | `string` | No | — |
@@ -47,9 +44,6 @@ await corsair.everhour.api.clients.createClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `email` | `string \| string[]` | No | — |
@@ -80,9 +74,6 @@ await corsair.everhour.api.clients.deleteClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 
 
@@ -109,9 +100,6 @@ await corsair.everhour.api.clients.getClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 
 
@@ -121,9 +109,6 @@ await corsair.everhour.api.clients.getClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `email` | `string \| string[]` | No | — |
@@ -154,9 +139,6 @@ await corsair.everhour.api.clients.listClients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 
 
@@ -211,9 +193,6 @@ await corsair.everhour.api.clients.updateClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `projects` | `string[]` | No | — |
@@ -228,9 +207,6 @@ await corsair.everhour.api.clients.updateClient({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `email` | `string \| string[]` | No | — |
@@ -299,9 +275,6 @@ await corsair.everhour.api.expenses.listExpenses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 
 
@@ -358,9 +331,6 @@ await corsair.everhour.api.hooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
 | `project` | `string` | No | — |
@@ -372,9 +342,6 @@ await corsair.everhour.api.hooks.createWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
@@ -404,9 +371,6 @@ await corsair.everhour.api.hooks.deleteWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hookId` | `string` | Yes | — |
 
 
@@ -433,9 +397,6 @@ await corsair.everhour.api.hooks.getWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hookId` | `string` | Yes | — |
 
 
@@ -445,9 +406,6 @@ await corsair.everhour.api.hooks.getWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
@@ -514,9 +472,6 @@ await corsair.everhour.api.hooks.updateWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `hookId` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
 
@@ -527,9 +482,6 @@ await corsair.everhour.api.hooks.updateWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
@@ -561,9 +513,6 @@ await corsair.everhour.api.invoices.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 
 
@@ -652,9 +601,6 @@ await corsair.everhour.api.projects.createProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `type` | `board \| list` | Yes | — |
 | `users` | `number[]` | No | — |
@@ -668,9 +614,6 @@ await corsair.everhour.api.projects.createProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -702,9 +645,6 @@ await corsair.everhour.api.projects.deleteProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -731,9 +671,6 @@ await corsair.everhour.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -743,9 +680,6 @@ await corsair.everhour.api.projects.getProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -777,9 +711,6 @@ await corsair.everhour.api.projects.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -840,9 +771,6 @@ await corsair.everhour.api.projects.updateProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `type` | `board \| list` | No | — |
@@ -858,9 +786,6 @@ await corsair.everhour.api.projects.updateProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -894,9 +819,6 @@ await corsair.everhour.api.sections.createSection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `open \| archived` | No | — |
@@ -909,9 +831,6 @@ await corsair.everhour.api.sections.createSection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `project` | `string` | Yes | — |
@@ -940,9 +859,6 @@ await corsair.everhour.api.sections.deleteSection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sectionId` | `string` | Yes | — |
 
 
@@ -969,9 +885,6 @@ await corsair.everhour.api.sections.getSection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sectionId` | `string` | Yes | — |
 
 
@@ -981,9 +894,6 @@ await corsair.everhour.api.sections.getSection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `project` | `string` | Yes | — |
@@ -1012,9 +922,6 @@ await corsair.everhour.api.sections.listSections({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -1094,9 +1001,6 @@ await corsair.everhour.api.tasks.createTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `section` | `number` | No | — |
@@ -1111,9 +1015,6 @@ await corsair.everhour.api.tasks.createTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `projects` | `string[]` | No | — |
@@ -1146,9 +1047,6 @@ await corsair.everhour.api.tasks.getTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `string` | Yes | — |
 
 
@@ -1158,9 +1056,6 @@ await corsair.everhour.api.tasks.getTask({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `projects` | `string[]` | No | — |
@@ -1193,9 +1088,6 @@ await corsair.everhour.api.tasks.listTasksForProject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `query` | `object` | No | — |
 
@@ -1258,9 +1150,6 @@ await corsair.everhour.api.tasks.searchTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `project` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1312,9 +1201,6 @@ await corsair.everhour.api.time.deleteTimeEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeId` | `string` | Yes | — |
 
 
@@ -1341,9 +1227,6 @@ await corsair.everhour.api.time.discardTimesheetApproval({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timesheetId` | `string` | Yes | — |
 | `comment` | `string` | No | — |
 | `reviewer` | `number` | No | — |
@@ -1356,9 +1239,6 @@ await corsair.everhour.api.time.discardTimesheetApproval({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `user` | `string \| number` | No | — |
 | `weekId` | `number` | No | — |
@@ -1385,9 +1265,6 @@ await corsair.everhour.api.time.listUserTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `query` | `object` | No | — |
 
@@ -1448,9 +1325,6 @@ await corsair.everhour.api.time.listUserTimesheets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `query` | `object` | No | — |
 
@@ -1499,9 +1373,6 @@ await corsair.everhour.api.time.logTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time` | `number` | Yes | — |
 | `date` | `string` | No | — |
 | `task` | `string` | No | — |
@@ -1515,9 +1386,6 @@ await corsair.everhour.api.time.logTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `time` | `number` | No | — |
 | `user` | `string \| number` | No | — |
@@ -1553,9 +1421,6 @@ await corsair.everhour.api.time.requestTimesheetApproval({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timesheetId` | `string` | Yes | — |
 | `comment` | `string` | No | — |
 | `reviewer` | `number` | No | — |
@@ -1568,9 +1433,6 @@ await corsair.everhour.api.time.requestTimesheetApproval({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | No | — |
 | `user` | `string \| number` | No | — |
 | `weekId` | `number` | No | — |
@@ -1597,9 +1459,6 @@ await corsair.everhour.api.time.updateTimeEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `timeId` | `string` | Yes | — |
 | `time` | `number` | Yes | — |
 | `date` | `string` | No | — |
@@ -1614,9 +1473,6 @@ await corsair.everhour.api.time.updateTimeEntry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `time` | `number` | No | — |
 | `user` | `string \| number` | No | — |
@@ -1654,9 +1510,6 @@ await corsair.everhour.api.timecards.clockIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `userDate` | `string` | No | — |
 
@@ -1667,9 +1520,6 @@ await corsair.everhour.api.timecards.clockIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string \| number` | Yes | — |
 | `workTime` | `number` | Yes | — |
 | `clockIn` | `string` | No | — |
@@ -1700,9 +1550,6 @@ await corsair.everhour.api.timecards.clockOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `userDate` | `string` | No | — |
 
@@ -1713,9 +1560,6 @@ await corsair.everhour.api.timecards.clockOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string \| number` | Yes | — |
 | `workTime` | `number` | Yes | — |
 | `clockIn` | `string` | No | — |
@@ -1746,9 +1590,6 @@ await corsair.everhour.api.timecards.deleteTimecard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `date` | `string` | Yes | — |
 
@@ -1776,9 +1617,6 @@ await corsair.everhour.api.timecards.getTimecard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `date` | `string` | Yes | — |
 
@@ -1789,9 +1627,6 @@ await corsair.everhour.api.timecards.getTimecard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string \| number` | Yes | — |
 | `workTime` | `number` | Yes | — |
 | `clockIn` | `string` | No | — |
@@ -1822,9 +1657,6 @@ await corsair.everhour.api.timecards.listTimecards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from` | `string` | No | — |
 | `to` | `string` | No | — |
 
@@ -1870,9 +1702,6 @@ await corsair.everhour.api.timecards.listUserTimecards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `from` | `string` | No | — |
 | `to` | `string` | No | — |
@@ -1919,9 +1748,6 @@ await corsair.everhour.api.timecards.updateTimecard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `date` | `string` | Yes | — |
 | `clockIn` | `string` | No | — |
@@ -1935,9 +1761,6 @@ await corsair.everhour.api.timecards.updateTimecard({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user` | `string \| number` | Yes | — |
 | `workTime` | `number` | Yes | — |
 | `clockIn` | `string` | No | — |
@@ -1973,9 +1796,6 @@ await corsair.everhour.api.timer.getCurrentTimer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `task_id` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -2005,9 +1825,6 @@ await corsair.everhour.api.timer.startTimer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `task` | `string` | Yes | — |
 | `userDate` | `string` | No | — |
 | `comment` | `string` | No | — |
@@ -2019,9 +1836,6 @@ await corsair.everhour.api.timer.startTimer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `task_id` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -2054,9 +1868,6 @@ await corsair.everhour.api.timer.stopTimer({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `task_id` | `string` | No | — |
 | `start_time` | `string` | No | — |
@@ -2091,9 +1902,6 @@ await corsair.everhour.api.user.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `first_name` | `string` | No | — |
@@ -2157,9 +1965,6 @@ await corsair.everhour.api.user.listTeamUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `object` | No | — |
 | `limit` | `number` | No | — |
 

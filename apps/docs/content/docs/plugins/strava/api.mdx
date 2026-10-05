@@ -31,9 +31,6 @@ await corsair.strava.api.activities.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `sport_type` | `string` | Yes | — |
 | `start_date_local` | `string` | Yes | — |
@@ -51,9 +48,6 @@ await corsair.strava.api.activities.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `sport_type` | `string` | No | — |
@@ -143,9 +137,6 @@ await corsair.strava.api.activities.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `include_all_efforts` | `boolean` | No | — |
 
@@ -156,9 +147,6 @@ await corsair.strava.api.activities.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `sport_type` | `string` | No | — |
@@ -248,9 +236,6 @@ await corsair.strava.api.activities.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
 | `key_by_type` | `boolean` | No | — |
@@ -262,9 +247,6 @@ await corsair.strava.api.activities.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time` | `object` | No | — |
 | `distance` | `object` | No | — |
 | `latlng` | `object` | No | — |
@@ -443,9 +425,6 @@ await corsair.strava.api.activities.getZones({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -493,9 +472,6 @@ await corsair.strava.api.activities.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `before` | `number` | No | — |
 | `after` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -586,9 +562,6 @@ await corsair.strava.api.activities.listComments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -673,9 +646,6 @@ await corsair.strava.api.activities.listKudoers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -721,9 +691,6 @@ await corsair.strava.api.activities.listLaps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -792,9 +759,6 @@ await corsair.strava.api.athletes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `username` | `string` | No | — |
 | `firstname` | `string` | No | — |
@@ -873,9 +837,6 @@ await corsair.strava.api.athletes.getStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -885,9 +846,6 @@ await corsair.strava.api.athletes.getStats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `biggest_ride_distance` | `number` | No | — |
 | `biggest_climb_elevation_gain` | `number` | No | — |
 | `recent_ride_totals` | `object` | No | — |
@@ -1052,9 +1010,6 @@ await corsair.strava.api.athletes.getZones({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `heart_rate` | `object` | No | — |
 | `power` | `object` | No | — |
 
@@ -1106,9 +1061,6 @@ await corsair.strava.api.athletes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `weight` | `number` | No | — |
 
 
@@ -1118,9 +1070,6 @@ await corsair.strava.api.athletes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `username` | `string` | No | — |
 | `firstname` | `string` | No | — |
@@ -1201,9 +1150,6 @@ await corsair.strava.api.clubs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1213,9 +1159,6 @@ await corsair.strava.api.clubs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `profile` | `string` | No | — |
@@ -1255,9 +1198,6 @@ await corsair.strava.api.gear.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 
 
@@ -1267,9 +1207,6 @@ await corsair.strava.api.gear.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `primary` | `boolean` | No | — |
 | `name` | `string` | No | — |
@@ -1307,9 +1244,6 @@ await corsair.strava.api.routes.exportGpx({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1336,9 +1270,6 @@ await corsair.strava.api.routes.exportTcx({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1365,9 +1296,6 @@ await corsair.strava.api.routes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1377,9 +1305,6 @@ await corsair.strava.api.routes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `athlete` | `object` | No | — |
 | `description` | `string` | No | — |
@@ -1439,9 +1364,6 @@ await corsair.strava.api.routes.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1451,9 +1373,6 @@ await corsair.strava.api.routes.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time` | `object` | No | — |
 | `distance` | `object` | No | — |
 | `latlng` | `object` | No | — |
@@ -1634,9 +1553,6 @@ await corsair.strava.api.segmentEfforts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1646,9 +1562,6 @@ await corsair.strava.api.segmentEfforts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `activity_id` | `number` | No | — |
 | `athlete_id` | `number` | No | — |
@@ -1703,9 +1616,6 @@ await corsair.strava.api.segmentEfforts.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
 | `key_by_type` | `boolean` | No | — |
@@ -1717,9 +1627,6 @@ await corsair.strava.api.segmentEfforts.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time` | `object` | No | — |
 | `distance` | `object` | No | — |
 | `latlng` | `object` | No | — |
@@ -1900,9 +1807,6 @@ await corsair.strava.api.segments.explore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `bounds` | `string` | Yes | — |
 | `activity_type` | `running \| riding` | No | — |
 | `min_cat` | `number` | No | — |
@@ -1915,9 +1819,6 @@ await corsair.strava.api.segments.explore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `segments` | `object[]` | No | — |
 
 
@@ -1964,9 +1865,6 @@ await corsair.strava.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -1976,9 +1874,6 @@ await corsair.strava.api.segments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `activity_type` | `string` | No | — |
@@ -2037,9 +1932,6 @@ await corsair.strava.api.segments.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
 | `key_by_type` | `boolean` | No | — |
@@ -2051,9 +1943,6 @@ await corsair.strava.api.segments.getStreams({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `time` | `object` | No | — |
 | `distance` | `object` | No | — |
 | `latlng` | `object` | No | — |
@@ -2232,9 +2121,6 @@ await corsair.strava.api.segments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 
@@ -2299,9 +2185,6 @@ await corsair.strava.api.segments.star({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `starred` | `boolean` | Yes | — |
 
@@ -2312,9 +2195,6 @@ await corsair.strava.api.segments.star({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `activity_type` | `string` | No | — |
@@ -2375,9 +2255,6 @@ await corsair.strava.api.uploads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `custom` | Yes | — |
 | `data_type` | `fit \| fit.gz \| tcx \| tcx.gz \| gpx \| gpx.gz` | Yes | — |
 | `name` | `string` | No | — |
@@ -2393,9 +2270,6 @@ await corsair.strava.api.uploads.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `external_id` | `string` | No | — |
 | `error` | `string` | No | — |
@@ -2423,9 +2297,6 @@ await corsair.strava.api.uploads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 
 
@@ -2435,9 +2306,6 @@ await corsair.strava.api.uploads.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `external_id` | `string` | No | — |
 | `error` | `string` | No | — |

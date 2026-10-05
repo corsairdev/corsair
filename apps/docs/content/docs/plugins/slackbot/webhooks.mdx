@@ -58,9 +58,6 @@ A new channel created in the workspace
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `channel_created` | Yes | — |
 | `channel` | `object` | Yes | — |
 | `event_ts` | `string` | No | — |
@@ -136,9 +133,6 @@ A message posted by another bot or app
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -244,9 +238,6 @@ A direct message sent to the bot
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -352,9 +343,6 @@ A message in a multi-person direct message
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -460,9 +448,6 @@ A message posted by a person in a public channel
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -568,9 +553,6 @@ A message posted by a person in a private channel
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -676,9 +658,6 @@ A reply posted inside a message thread
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `message` | Yes | — |
 | `subtype` | `string` | No | — |
 | `channel` | `string` | Yes | — |
@@ -786,9 +765,6 @@ An emoji reaction added to a message or file
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `reaction_added` | Yes | — |
 | `user` | `string` | Yes | — |
 | `reaction` | `string` | Yes | — |
@@ -864,9 +840,6 @@ An emoji reaction removed from a message or file
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `reaction_removed` | Yes | — |
 | `user` | `string` | Yes | — |
 | `reaction` | `string` | Yes | — |
@@ -944,9 +917,6 @@ Slack Events API URL verification handshake
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `type` | `url_verification` | Yes | — |
 | `token` | `string` | No | — |
 | `challenge` | `string` | Yes | — |

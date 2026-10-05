@@ -58,15 +58,8 @@ It returns a log string and skips existing rows.
 
 | Creates | Does not touch |
 |---|---|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `corsair_accounts` per auth-type plugin | New plugins (needs a code change) |
-
 | Account DEKs | OAuth tokens (arrive on connect) |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `corsair_integrations` rows if missing | Integration creds (set those explicitly) |
 
 
@@ -88,9 +81,6 @@ pnpm corsair setup --gmail client_id=... client_secret=...
 
 | Flag | Effect |
 |------|--------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `--tenant <id>` | Account rows + account credentials |
 | `--<plugin> field=value` | Inline credentials |
 | `--backfill` | Seed data (`setup/backfill.config.ts`); needs `--tenant` on multi-tenant |

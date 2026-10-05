@@ -31,9 +31,6 @@ await corsair.cincopa.api.asset.abortUploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusId` | `string` | Yes | Status tracking identifier of the upload to abort |
 
 
@@ -43,9 +40,6 @@ await corsair.cincopa.api.asset.abortUploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `runtime` | `number` | No | — |
 | `status_id` | `string` | No | — |
@@ -71,9 +65,6 @@ await corsair.cincopa.api.asset.getUploadFromUrlStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `statusId` | `string` | Yes | Status tracking identifier from uploadFromUrl |
 
 
@@ -83,9 +74,6 @@ await corsair.cincopa.api.asset.getUploadFromUrlStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `runtime` | `number` | No | — |
 | `status` | `string` | No | — |
@@ -117,9 +105,6 @@ await corsair.cincopa.api.asset.uploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `input` | `string` | Yes | External URL of the media asset to upload |
 | `fid` | `string` | No | Optional gallery folder identifier (FID) target |
 | `rid` | `string` | No | Optional existing resource identifier (RID) to replace |
@@ -132,9 +117,6 @@ await corsair.cincopa.api.asset.uploadFromUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `runtime` | `number` | No | — |
 | `status_id` | `string` | Yes | — |
@@ -162,9 +144,6 @@ await corsair.cincopa.api.gallery.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search` | `string` | No | Search term to filter galleries |
 | `page` | `number` | No | Page number for pagination (starts at 1) |
 | `itemsPerPage` | `number` | No | Number of items per page (1-100) |
@@ -177,9 +156,6 @@ await corsair.cincopa.api.gallery.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `runtime` | `number` | Yes | — |
 | `workspace` | `string` | No | — |
@@ -247,9 +223,6 @@ await corsair.cincopa.api.general.getUploadIframe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fid` | `string` | No | Optional gallery folder identifier (FID) target |
 | `rrid` | `string` | No | Optional replace resource identifier (RRID) target |
 
@@ -260,9 +233,6 @@ await corsair.cincopa.api.general.getUploadIframe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | Public upload iframe URL stripped of credentials |
 | `html` | `string` | Yes | Safe iframe HTML markup with credentials redacted |
 
@@ -290,9 +260,6 @@ await corsair.cincopa.api.general.ping({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `ping` | `string` | No | — |
 | `runtime` | `number` | No | — |

@@ -31,9 +31,6 @@ await corsair.customgpt.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `name` | `string` | No | — |
 
@@ -44,9 +41,6 @@ await corsair.customgpt.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -92,9 +86,6 @@ await corsair.customgpt.api.licenses.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `licenseId` | `number` | Yes | — |
 
@@ -105,9 +96,6 @@ await corsair.customgpt.api.licenses.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -143,9 +131,6 @@ await corsair.customgpt.api.licenses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `licenseId` | `number` | Yes | — |
 
@@ -156,9 +141,6 @@ await corsair.customgpt.api.licenses.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `license` | `object` | Yes | — |
 
@@ -199,9 +181,6 @@ await corsair.customgpt.api.licenses.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -211,9 +190,6 @@ await corsair.customgpt.api.licenses.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
@@ -254,9 +230,6 @@ await corsair.customgpt.api.licenses.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `licenseId` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -268,9 +241,6 @@ await corsair.customgpt.api.licenses.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `license` | `object` | Yes | — |
 
@@ -316,9 +286,6 @@ await corsair.customgpt.api.limits.getUsage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -361,9 +328,6 @@ await corsair.customgpt.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `promptId` | `number` | Yes | — |
@@ -376,9 +340,6 @@ await corsair.customgpt.api.messages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -459,9 +420,6 @@ await corsair.customgpt.api.messages.getTrustScore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `promptId` | `number` | Yes | — |
@@ -473,9 +431,6 @@ await corsair.customgpt.api.messages.getTrustScore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -549,9 +504,6 @@ await corsair.customgpt.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `page` | `number` | No | — |
@@ -565,9 +517,6 @@ await corsair.customgpt.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -674,9 +623,6 @@ await corsair.customgpt.api.messages.submitFeedback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `promptId` | `number` | Yes | — |
@@ -690,9 +636,6 @@ await corsair.customgpt.api.messages.submitFeedback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -773,9 +716,6 @@ await corsair.customgpt.api.messages.verify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `promptId` | `number` | Yes | — |
@@ -787,9 +727,6 @@ await corsair.customgpt.api.messages.verify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -827,9 +764,6 @@ await corsair.customgpt.api.pages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `pageId` | `number` | Yes | — |
 
@@ -840,9 +774,6 @@ await corsair.customgpt.api.pages.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -878,9 +809,6 @@ await corsair.customgpt.api.pages.getMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `pageId` | `number` | Yes | — |
 
@@ -891,9 +819,6 @@ await corsair.customgpt.api.pages.getMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -933,9 +858,6 @@ await corsair.customgpt.api.pages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -951,9 +873,6 @@ await corsair.customgpt.api.pages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1040,9 +959,6 @@ await corsair.customgpt.api.pages.reindex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `pageId` | `number` | Yes | — |
 
@@ -1053,9 +969,6 @@ await corsair.customgpt.api.pages.reindex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1091,9 +1004,6 @@ await corsair.customgpt.api.pages.updateMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `pageId` | `number` | Yes | — |
 | `title` | `string` | No | — |
@@ -1108,9 +1018,6 @@ await corsair.customgpt.api.pages.updateMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1152,9 +1059,6 @@ await corsair.customgpt.api.personas.activate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `version` | `number` | Yes | — |
 
@@ -1165,9 +1069,6 @@ await corsair.customgpt.api.personas.activate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1203,9 +1104,6 @@ await corsair.customgpt.api.personas.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -1217,9 +1115,6 @@ await corsair.customgpt.api.personas.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1273,9 +1168,6 @@ await corsair.customgpt.api.projects.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -1285,9 +1177,6 @@ await corsair.customgpt.api.projects.clone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1341,9 +1230,6 @@ await corsair.customgpt.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `project_name` | `string` | No | — |
 | `is_master` | `boolean` | No | — |
 | `use_planner_mode` | `boolean` | No | — |
@@ -1391,9 +1277,6 @@ await corsair.customgpt.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1447,9 +1330,6 @@ await corsair.customgpt.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -1459,9 +1339,6 @@ await corsair.customgpt.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1497,9 +1374,6 @@ await corsair.customgpt.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `width` | `string` | No | — |
 | `height` | `string` | No | — |
@@ -1511,9 +1385,6 @@ await corsair.customgpt.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1567,9 +1438,6 @@ await corsair.customgpt.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `duration` | `number` | No | — |
 | `order` | `asc \| desc` | No | — |
@@ -1585,9 +1453,6 @@ await corsair.customgpt.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1654,9 +1519,6 @@ await corsair.customgpt.api.projects.plugins({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -1666,9 +1528,6 @@ await corsair.customgpt.api.projects.plugins({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1710,9 +1569,6 @@ await corsair.customgpt.api.projects.stats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -1722,9 +1578,6 @@ await corsair.customgpt.api.projects.stats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1767,9 +1620,6 @@ await corsair.customgpt.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `project_name` | `string` | No | — |
 | `is_shared` | `boolean` | No | — |
@@ -1818,9 +1668,6 @@ await corsair.customgpt.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1876,9 +1723,6 @@ await corsair.customgpt.api.reports.exportLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
@@ -1893,9 +1737,6 @@ await corsair.customgpt.api.reports.exportLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1957,9 +1798,6 @@ await corsair.customgpt.api.reports.getAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `filters` | `queries \| conversations \| queries_per_conversation[]` | Yes | — |
 | `interval` | `daily \| weekly` | No | — |
@@ -1971,9 +1809,6 @@ await corsair.customgpt.api.reports.getAnalysis({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2020,9 +1855,6 @@ await corsair.customgpt.api.reports.getConversations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `filters` | `total \| average_queries_per_conversation[]` | Yes | — |
 
@@ -2033,9 +1865,6 @@ await corsair.customgpt.api.reports.getConversations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2072,9 +1901,6 @@ await corsair.customgpt.api.reports.getIntelligence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -2104,9 +1930,6 @@ await corsair.customgpt.api.reports.getIntelligence({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 | `total_queries` | `number` | No | — |
@@ -2177,9 +2000,6 @@ await corsair.customgpt.api.reports.getTraffic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `filters` | `sources[]` | Yes | — |
 
@@ -2190,9 +2010,6 @@ await corsair.customgpt.api.reports.getTraffic({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2233,9 +2050,6 @@ await corsair.customgpt.api.settings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -2245,9 +2059,6 @@ await corsair.customgpt.api.settings.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2363,9 +2174,6 @@ await corsair.customgpt.api.settings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `chat_bot_avatar` | `string` | No | — |
 | `chat_bot_bg` | `string` | No | — |
 | `chat_bot_bg_type` | `image \| color` | No | — |
@@ -2454,9 +2262,6 @@ await corsair.customgpt.api.settings.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2494,9 +2299,6 @@ await corsair.customgpt.api.sources.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sync_all_images` | `boolean` | No | — |
 | `sitemap_path` | `string` | No | — |
@@ -2543,9 +2345,6 @@ await corsair.customgpt.api.sources.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2615,9 +2414,6 @@ await corsair.customgpt.api.sources.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sourceId` | `number` | Yes | — |
 
@@ -2628,9 +2424,6 @@ await corsair.customgpt.api.sources.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -2666,9 +2459,6 @@ await corsair.customgpt.api.sources.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 
 
@@ -2678,9 +2468,6 @@ await corsair.customgpt.api.sources.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -3196,9 +2983,6 @@ await corsair.customgpt.api.sources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `sourceId` | `number` | Yes | — |
 | `executive_js` | `boolean` | No | — |
@@ -3231,9 +3015,6 @@ await corsair.customgpt.api.sources.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -3308,9 +3089,6 @@ await corsair.customgpt.api.user.getProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -3352,9 +3130,6 @@ await corsair.customgpt.api.user.searchTeamMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | No | — |
 | `user_id` | `number` | No | — |
 
@@ -3365,9 +3140,6 @@ await corsair.customgpt.api.user.searchTeamMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -3409,9 +3181,6 @@ await corsair.customgpt.api.user.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | No | — |
 | `profile_photo` | `object` | No | — |
 
@@ -3435,9 +3204,6 @@ await corsair.customgpt.api.user.updateProfile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 

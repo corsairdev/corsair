@@ -34,9 +34,6 @@ await corsair.emelia.api.account.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `me` | `object` | No | — |
 
 
@@ -79,9 +76,6 @@ await corsair.emelia.api.blacklist.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -91,9 +85,6 @@ await corsair.emelia.api.blacklist.add({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -118,9 +109,6 @@ await corsair.emelia.api.blacklist.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -130,9 +118,6 @@ await corsair.emelia.api.blacklist.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -159,9 +144,6 @@ await corsair.emelia.api.campaigns.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `contact` | `object` | Yes | — |
 
@@ -182,9 +164,6 @@ await corsair.emelia.api.campaigns.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `addContactToCampaignHook` | `any` | No | — |
 
 
@@ -208,9 +187,6 @@ await corsair.emelia.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `options` | `object` | No | — |
 
 
@@ -230,9 +206,6 @@ await corsair.emelia.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `all_campaigns` | `object[]` | No | — |
 
 
@@ -273,9 +246,6 @@ await corsair.emelia.api.campaigns.removeContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 
@@ -286,9 +256,6 @@ await corsair.emelia.api.campaigns.removeContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `removeOneContactFromCampaign` | `any` | No | — |
 
 
@@ -314,9 +281,6 @@ await corsair.emelia.api.contacts.addToList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `contact` | `object` | Yes | — |
 
@@ -337,9 +301,6 @@ await corsair.emelia.api.contacts.addToList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `addContactsToListHook` | `any` | No | — |
 
 
@@ -366,9 +327,6 @@ await corsair.emelia.api.contacts.listLists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contact_lists` | `object[]` | No | — |
 
 
@@ -409,9 +367,6 @@ await corsair.emelia.api.emailCampaigns.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | Yes | — |
 | `contact` | `object` | Yes | — |
 
@@ -432,9 +387,6 @@ await corsair.emelia.api.emailCampaigns.addContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -459,9 +411,6 @@ await corsair.emelia.api.emailCampaigns.deleteContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | Yes | — |
 | `email` | `string` | Yes | — |
 
@@ -472,9 +421,6 @@ await corsair.emelia.api.emailCampaigns.deleteContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -499,9 +445,6 @@ await corsair.emelia.api.emailCampaigns.listContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | No | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -563,9 +506,6 @@ await corsair.emelia.api.linkedin.createCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -575,9 +515,6 @@ await corsair.emelia.api.linkedin.createCampaign({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `campaignId` | `string` | No | — |
@@ -605,9 +542,6 @@ await corsair.emelia.api.linkedin.deleteContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | No | — |
 | `contactUrl` | `string` | Yes | — |
 
@@ -618,9 +552,6 @@ await corsair.emelia.api.linkedin.deleteContact({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -645,9 +576,6 @@ await corsair.emelia.api.linkedin.getActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | Yes | — |
 
 
@@ -705,9 +633,6 @@ await corsair.emelia.api.linkedin.listCampaigns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -817,9 +742,6 @@ await corsair.emelia.api.restCampaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 
 
@@ -829,9 +751,6 @@ await corsair.emelia.api.restCampaigns.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `campaignId` | `string` | No | — |
@@ -859,9 +778,6 @@ await corsair.emelia.api.restCampaigns.getActivities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -921,9 +837,6 @@ await corsair.emelia.api.restCampaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 
@@ -983,9 +896,6 @@ await corsair.emelia.api.tools.findEmailSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fullname` | `string` | Yes | — |
 | `companyName` | `string` | Yes | — |
 | `companyWebsite` | `string` | No | — |
@@ -998,9 +908,6 @@ await corsair.emelia.api.tools.findEmailSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `jobId` | `string` | Yes | — |
 
@@ -1025,9 +932,6 @@ await corsair.emelia.api.tools.findPhoneSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `linkedinUrl` | `string` | Yes | — |
 
 
@@ -1037,9 +941,6 @@ await corsair.emelia.api.tools.findPhoneSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `jobId` | `string` | Yes | — |
 
@@ -1064,9 +965,6 @@ await corsair.emelia.api.tools.getFindEmailResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -1076,9 +974,6 @@ await corsair.emelia.api.tools.getFindEmailResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1120,9 +1015,6 @@ await corsair.emelia.api.tools.getFindPhoneResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -1132,9 +1024,6 @@ await corsair.emelia.api.tools.getFindPhoneResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1175,9 +1064,6 @@ await corsair.emelia.api.tools.getVerifyEmailResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `jobId` | `string` | Yes | — |
 
 
@@ -1187,9 +1073,6 @@ await corsair.emelia.api.tools.getVerifyEmailResult({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `data` | `object` | Yes | — |
 
@@ -1228,9 +1111,6 @@ await corsair.emelia.api.tools.verifyEmailSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `email` | `string` | Yes | — |
 
 
@@ -1240,9 +1120,6 @@ await corsair.emelia.api.tools.verifyEmailSingle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `jobId` | `string` | Yes | — |
 
@@ -1269,9 +1146,6 @@ await corsair.emelia.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `campaignId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
@@ -1283,9 +1157,6 @@ await corsair.emelia.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -1362,9 +1233,6 @@ await corsair.emelia.api.webhooks.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `url` | `string` | Yes | — |
 
 
@@ -1374,9 +1242,6 @@ await corsair.emelia.api.webhooks.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `message` | `string` | No | — |
 

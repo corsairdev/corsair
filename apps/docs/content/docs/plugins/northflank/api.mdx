@@ -31,9 +31,6 @@ await corsair.northflank.api.addonTypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -45,9 +42,6 @@ await corsair.northflank.api.addonTypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -106,9 +100,6 @@ await corsair.northflank.api.cloudProviders.listNodeTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -125,9 +116,6 @@ await corsair.northflank.api.cloudProviders.listNodeTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -186,9 +174,6 @@ await corsair.northflank.api.cloudProviders.listRegions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -201,9 +186,6 @@ await corsair.northflank.api.cloudProviders.listRegions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -264,9 +246,6 @@ await corsair.northflank.api.misc.getDnsId({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -303,9 +282,6 @@ await corsair.northflank.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -318,9 +294,6 @@ await corsair.northflank.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -375,9 +348,6 @@ await corsair.northflank.api.plans.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -389,9 +359,6 @@ await corsair.northflank.api.plans.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -446,9 +413,6 @@ await corsair.northflank.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `region` | `string` | No | — |
@@ -462,9 +426,6 @@ await corsair.northflank.api.projects.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -506,9 +467,6 @@ await corsair.northflank.api.projects.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -522,9 +480,6 @@ await corsair.northflank.api.projects.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -566,9 +521,6 @@ await corsair.northflank.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `delete_child_objects` | `boolean` | No | — |
 
@@ -579,9 +531,6 @@ await corsair.northflank.api.projects.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -615,9 +564,6 @@ await corsair.northflank.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 
 
@@ -627,9 +573,6 @@ await corsair.northflank.api.projects.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -671,9 +614,6 @@ await corsair.northflank.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `cursor` | `string` | No | — |
@@ -685,9 +625,6 @@ await corsair.northflank.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -743,9 +680,6 @@ await corsair.northflank.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `color` | `string` | No | — |
@@ -757,9 +691,6 @@ await corsair.northflank.api.projects.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -806,9 +737,6 @@ await corsair.northflank.api.regions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -849,9 +777,6 @@ await corsair.northflank.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -930,9 +855,6 @@ await corsair.northflank.api.secrets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -994,9 +916,6 @@ await corsair.northflank.api.secrets.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1075,9 +994,6 @@ await corsair.northflank.api.secrets.createOrUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1139,9 +1055,6 @@ await corsair.northflank.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `secretId` | `string` | Yes | — |
 | `show` | `this \| inherited \| all` | No | — |
@@ -1153,9 +1066,6 @@ await corsair.northflank.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1217,9 +1127,6 @@ await corsair.northflank.api.secrets.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `secretId` | `string` | Yes | — |
 
@@ -1230,9 +1137,6 @@ await corsair.northflank.api.secrets.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1302,9 +1206,6 @@ await corsair.northflank.api.secrets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -1317,9 +1218,6 @@ await corsair.northflank.api.secrets.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 
@@ -1395,9 +1293,6 @@ await corsair.northflank.api.secrets.patch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `secretId` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1476,9 +1371,6 @@ await corsair.northflank.api.secrets.patch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1540,9 +1432,6 @@ await corsair.northflank.api.secrets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `secretId` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -1619,9 +1508,6 @@ await corsair.northflank.api.secrets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 
 
@@ -1657,9 +1543,6 @@ await corsair.northflank.api.services.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `string` | Yes | — |
 | `page` | `number` | No | — |
 | `per_page` | `number` | No | — |
@@ -1672,9 +1555,6 @@ await corsair.northflank.api.services.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `pagination` | `object` | No | — |
 

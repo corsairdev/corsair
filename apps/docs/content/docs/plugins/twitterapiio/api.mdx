@@ -31,9 +31,6 @@ await corsair.twitterapiio.api.api.webhooks.addRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `string` | Yes | Custom label to identify this rule |
 | `value` | `string` | Yes | Filter expression (e.g. "from:elonmusk OR from:kaitoeasyapi"). Rules are inactive until updated with isActive: true. |
 | `intervalSeconds` | `number` | Yes | How often to check for new tweets matching this rule (seconds, 100–86400) |
@@ -45,9 +42,6 @@ await corsair.twitterapiio.api.api.webhooks.addRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_id` | `string` | No | — |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
@@ -73,9 +67,6 @@ await corsair.twitterapiio.api.api.webhooks.deleteRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ruleId` | `string` | Yes | ID of the rule to delete |
 
 
@@ -85,9 +76,6 @@ await corsair.twitterapiio.api.api.webhooks.deleteRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
 
@@ -115,9 +103,6 @@ await corsair.twitterapiio.api.api.webhooks.getRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rules` | `object[]` | No | — |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
@@ -157,9 +142,6 @@ await corsair.twitterapiio.api.api.webhooks.updateRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ruleId` | `string` | Yes | ID of the rule to update |
 | `tag` | `string` | Yes | Custom label |
 | `value` | `string` | Yes | Filter expression |
@@ -173,9 +155,6 @@ await corsair.twitterapiio.api.api.webhooks.updateRule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `rule_id` | `string` | No | — |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
@@ -203,9 +182,6 @@ await corsair.twitterapiio.api.communities.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
@@ -217,9 +193,6 @@ await corsair.twitterapiio.api.communities.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -244,9 +217,6 @@ await corsair.twitterapiio.api.communities.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -257,9 +227,6 @@ await corsair.twitterapiio.api.communities.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -284,9 +251,6 @@ await corsair.twitterapiio.api.communities.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 
 
@@ -296,9 +260,6 @@ await corsair.twitterapiio.api.communities.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `data` | `object` | No | — |
 
@@ -344,9 +305,6 @@ await corsair.twitterapiio.api.communities.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -357,9 +315,6 @@ await corsair.twitterapiio.api.communities.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `members` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -416,9 +371,6 @@ await corsair.twitterapiio.api.communities.getModerators({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -429,9 +381,6 @@ await corsair.twitterapiio.api.communities.getModerators({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `members` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -488,9 +437,6 @@ await corsair.twitterapiio.api.communities.getTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -501,9 +447,6 @@ await corsair.twitterapiio.api.communities.getTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -605,9 +548,6 @@ await corsair.twitterapiio.api.communities.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -618,9 +558,6 @@ await corsair.twitterapiio.api.communities.join({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -645,9 +582,6 @@ await corsair.twitterapiio.api.communities.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `communityId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -658,9 +592,6 @@ await corsair.twitterapiio.api.communities.leave({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -685,9 +616,6 @@ await corsair.twitterapiio.api.communities.searchTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -698,9 +626,6 @@ await corsair.twitterapiio.api.communities.searchTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -804,9 +729,6 @@ await corsair.twitterapiio.api.lists.getFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -817,9 +739,6 @@ await corsair.twitterapiio.api.lists.getFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -876,9 +795,6 @@ await corsair.twitterapiio.api.lists.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -889,9 +805,6 @@ await corsair.twitterapiio.api.lists.getMembers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -948,9 +861,6 @@ await corsair.twitterapiio.api.lists.getTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -961,9 +871,6 @@ await corsair.twitterapiio.api.lists.getTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -1067,9 +974,6 @@ await corsair.twitterapiio.api.replies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `sinceTime` | `string` | No | Unix timestamp in seconds |
 | `untilTime` | `string` | No | Unix timestamp in seconds |
@@ -1082,9 +986,6 @@ await corsair.twitterapiio.api.replies.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `replies` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -1190,9 +1091,6 @@ await corsair.twitterapiio.api.replies.getV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `queryType` | `Relevance \| Latest \| Likes` | No | Sort order for replies. Default is Relevance. |
 | `cursor` | `string` | No | — |
@@ -1204,9 +1102,6 @@ await corsair.twitterapiio.api.replies.getV2({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | No | — |
 | `replies` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -1314,9 +1209,6 @@ await corsair.twitterapiio.api.stream.addUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | Twitter/X handle to add to the real-time monitor stream |
 
 
@@ -1326,9 +1218,6 @@ await corsair.twitterapiio.api.stream.addUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success \| error` | No | — |
 | `msg` | `string` | No | — |
 
@@ -1356,9 +1245,6 @@ await corsair.twitterapiio.api.stream.listUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `users` | `string[]` | No | Monitored Twitter usernames |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
@@ -1384,9 +1270,6 @@ await corsair.twitterapiio.api.stream.removeUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | Twitter/X handle to remove from the monitor stream |
 
 
@@ -1396,9 +1279,6 @@ await corsair.twitterapiio.api.stream.removeUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `success \| error` | No | — |
 | `msg` | `string` | No | — |
 
@@ -1425,9 +1305,6 @@ await corsair.twitterapiio.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `woeid` | `number` | No | Where On Earth ID. 1 = worldwide |
 
 
@@ -1437,9 +1314,6 @@ await corsair.twitterapiio.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `trends` | `object[]` | No | — |
 
@@ -1481,9 +1355,6 @@ await corsair.twitterapiio.api.tweets.advancedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keywords` | `string[]` | No | Words that must all appear in tweets (AND logic) |
 | `exactPhrase` | `string` | No | Exact phrase that must appear in tweets |
 | `anyOf` | `string[]` | No | At least one of these words must appear (OR logic, minimum 2 items) |
@@ -1516,9 +1387,6 @@ await corsair.twitterapiio.api.tweets.advancedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -1620,9 +1488,6 @@ await corsair.twitterapiio.api.tweets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweet` | `string` | Yes | Tweet text content |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 | `replyToTweetId` | `string` | No | Tweet ID to reply to |
@@ -1635,9 +1500,6 @@ await corsair.twitterapiio.api.tweets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -1662,9 +1524,6 @@ await corsair.twitterapiio.api.tweets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -1675,9 +1534,6 @@ await corsair.twitterapiio.api.tweets.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -1702,9 +1558,6 @@ await corsair.twitterapiio.api.tweets.getByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetIds` | `string` | Yes | Comma-separated list of tweet IDs |
 
 
@@ -1714,9 +1567,6 @@ await corsair.twitterapiio.api.tweets.getByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 
@@ -1816,9 +1666,6 @@ await corsair.twitterapiio.api.tweets.getQuotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -1829,9 +1676,6 @@ await corsair.twitterapiio.api.tweets.getQuotations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -1933,9 +1777,6 @@ await corsair.twitterapiio.api.tweets.getRetweeters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -1946,9 +1787,6 @@ await corsair.twitterapiio.api.tweets.getRetweeters({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2005,9 +1843,6 @@ await corsair.twitterapiio.api.tweets.getThreadContext({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -2018,9 +1853,6 @@ await corsair.twitterapiio.api.tweets.getThreadContext({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2122,9 +1954,6 @@ await corsair.twitterapiio.api.tweets.getUserLastTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -2135,9 +1964,6 @@ await corsair.twitterapiio.api.tweets.getUserLastTweets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2239,9 +2065,6 @@ await corsair.twitterapiio.api.tweets.getUserMentions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -2252,9 +2075,6 @@ await corsair.twitterapiio.api.tweets.getUserMentions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2356,9 +2176,6 @@ await corsair.twitterapiio.api.tweets.getUserTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userId` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -2369,9 +2186,6 @@ await corsair.twitterapiio.api.tweets.getUserTimeline({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2473,9 +2287,6 @@ await corsair.twitterapiio.api.tweets.like({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -2486,9 +2297,6 @@ await corsair.twitterapiio.api.tweets.like({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -2513,9 +2321,6 @@ await corsair.twitterapiio.api.tweets.retweet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -2526,9 +2331,6 @@ await corsair.twitterapiio.api.tweets.retweet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -2553,9 +2355,6 @@ await corsair.twitterapiio.api.tweets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `queryType` | `Top \| Latest \| Photos \| Videos` | No | Search type. Defaults to Top |
 | `cursor` | `string` | No | — |
@@ -2567,9 +2366,6 @@ await corsair.twitterapiio.api.tweets.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `tweets` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -2671,9 +2467,6 @@ await corsair.twitterapiio.api.tweets.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tweetId` | `string` | Yes | — |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -2684,9 +2477,6 @@ await corsair.twitterapiio.api.tweets.unlike({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -2713,9 +2503,6 @@ await corsair.twitterapiio.api.users.batchGetByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userIds` | `string` | Yes | Comma-separated list of user IDs |
 
 
@@ -2725,9 +2512,6 @@ await corsair.twitterapiio.api.users.batchGetByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `data` | `object[]` | No | — |
 
@@ -2782,9 +2566,6 @@ await corsair.twitterapiio.api.users.checkFollowRelationship({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `sourceUserName` | `string` | Yes | — |
 | `targetUserName` | `string` | Yes | — |
 
@@ -2795,9 +2576,6 @@ await corsair.twitterapiio.api.users.checkFollowRelationship({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `isFollowing` | `boolean` | No | — |
 | `isFollowedBy` | `boolean` | No | — |
@@ -2823,9 +2601,6 @@ await corsair.twitterapiio.api.users.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `followId` | `string` | Yes | User ID to follow |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -2836,9 +2611,6 @@ await corsair.twitterapiio.api.users.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 
@@ -2863,9 +2635,6 @@ await corsair.twitterapiio.api.users.getByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 
 
@@ -2875,9 +2644,6 @@ await corsair.twitterapiio.api.users.getByUsername({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `data` | `object` | No | — |
 
@@ -2932,9 +2698,6 @@ await corsair.twitterapiio.api.users.getFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -2945,9 +2708,6 @@ await corsair.twitterapiio.api.users.getFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -3004,9 +2764,6 @@ await corsair.twitterapiio.api.users.getFollowings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -3017,9 +2774,6 @@ await corsair.twitterapiio.api.users.getFollowings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -3076,9 +2830,6 @@ await corsair.twitterapiio.api.users.getMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
 
@@ -3088,9 +2839,6 @@ await corsair.twitterapiio.api.users.getMe({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `data` | `object` | No | — |
 
@@ -3145,9 +2893,6 @@ await corsair.twitterapiio.api.users.getVerifiedFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -3158,9 +2903,6 @@ await corsair.twitterapiio.api.users.getVerifiedFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -3217,9 +2959,6 @@ await corsair.twitterapiio.api.users.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `userName` | `string` | Yes | Twitter username |
 | `email` | `string` | Yes | Account email address |
 | `password` | `string` | Yes | Account password |
@@ -3233,9 +2972,6 @@ await corsair.twitterapiio.api.users.login({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `login_cookie` | `string` | No | — |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
@@ -3261,9 +2997,6 @@ await corsair.twitterapiio.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `keyword` | `string` | Yes | — |
 | `cursor` | `string` | No | — |
 
@@ -3274,9 +3007,6 @@ await corsair.twitterapiio.api.users.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `users` | `object[]` | No | — |
 | `next_cursor` | `string` | No | — |
@@ -3333,9 +3063,6 @@ await corsair.twitterapiio.api.users.unfollow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `followId` | `string` | Yes | User ID to unfollow |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
 
@@ -3346,9 +3073,6 @@ await corsair.twitterapiio.api.users.unfollow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `boolean` | No | — |
 | `message` | `string` | No | — |
 

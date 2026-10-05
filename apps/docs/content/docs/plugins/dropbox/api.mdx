@@ -31,9 +31,6 @@ await corsair.dropbox.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_path` | `string` | Yes | — |
 | `to_path` | `string` | Yes | — |
 | `allow_shared_folder` | `boolean` | No | — |
@@ -47,9 +44,6 @@ await corsair.dropbox.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -105,9 +99,6 @@ await corsair.dropbox.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -117,9 +108,6 @@ await corsair.dropbox.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -175,9 +163,6 @@ await corsair.dropbox.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -187,9 +172,6 @@ await corsair.dropbox.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `size` | `number` | No | — |
@@ -216,9 +198,6 @@ await corsair.dropbox.api.files.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_path` | `string` | Yes | — |
 | `to_path` | `string` | Yes | — |
 | `allow_shared_folder` | `boolean` | No | — |
@@ -232,9 +211,6 @@ await corsair.dropbox.api.files.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -290,9 +266,6 @@ await corsair.dropbox.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
 | `mode` | `add \| overwrite \| update` | No | — |
@@ -307,9 +280,6 @@ await corsair.dropbox.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `path_lower` | `string` | No | — |
@@ -344,9 +314,6 @@ await corsair.dropbox.api.folders.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_path` | `string` | Yes | — |
 | `to_path` | `string` | Yes | — |
 | `allow_shared_folder` | `boolean` | No | — |
@@ -360,9 +327,6 @@ await corsair.dropbox.api.folders.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -418,9 +382,6 @@ await corsair.dropbox.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `autorename` | `boolean` | No | — |
 
@@ -431,9 +392,6 @@ await corsair.dropbox.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -472,9 +430,6 @@ await corsair.dropbox.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 
 
@@ -484,9 +439,6 @@ await corsair.dropbox.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -542,9 +494,6 @@ await corsair.dropbox.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `path` | `string` | Yes | — |
 | `recursive` | `boolean` | No | — |
 | `include_deleted` | `boolean` | No | — |
@@ -558,9 +507,6 @@ await corsair.dropbox.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entries` | `object[]` | Yes | — |
 | `cursor` | `string` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
@@ -620,9 +566,6 @@ await corsair.dropbox.api.folders.listContinue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `cursor` | `string` | Yes | — |
 
 
@@ -632,9 +575,6 @@ await corsair.dropbox.api.folders.listContinue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entries` | `object[]` | Yes | — |
 | `cursor` | `string` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
@@ -694,9 +634,6 @@ await corsair.dropbox.api.folders.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `from_path` | `string` | Yes | — |
 | `to_path` | `string` | Yes | — |
 | `allow_shared_folder` | `boolean` | No | — |
@@ -710,9 +647,6 @@ await corsair.dropbox.api.folders.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `metadata` | `object` | Yes | — |
 
 
@@ -770,9 +704,6 @@ await corsair.dropbox.api.search.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query` | `string` | Yes | — |
 | `path` | `string` | No | — |
 | `max_results` | `number` | No | — |
@@ -785,9 +716,6 @@ await corsair.dropbox.api.search.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `matches` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `cursor` | `string` | No | — |

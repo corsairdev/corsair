@@ -31,9 +31,6 @@ await corsair.filevine.api.contacts.attach({ projectId: 123, contactId: 456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `contactId` | `number` | Yes | — |
 | `role` | `string` | No | e.g. Client, Opposing Party, Witness |
@@ -64,9 +61,6 @@ await corsair.filevine.api.contacts.create({ firstName: 'John', organization: 'A
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
 | `organization` | `string` | No | — |
@@ -82,9 +76,6 @@ await corsair.filevine.api.contacts.create({ firstName: 'John', organization: 'A
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `number` | Yes | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -116,9 +107,6 @@ await corsair.filevine.api.contacts.get({ contactId: 456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `number` | Yes | — |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
@@ -130,9 +118,6 @@ await corsair.filevine.api.contacts.get({ contactId: 456 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contactId` | `number` | Yes | — |
 | `firstName` | `string` | No | — |
 | `lastName` | `string` | No | — |
@@ -164,9 +149,6 @@ await corsair.filevine.api.contacts.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `q` | `string` | No | Search query |
@@ -180,9 +162,6 @@ await corsair.filevine.api.contacts.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 
@@ -228,9 +207,6 @@ await corsair.filevine.api.deadlines.create({ projectId: 123, name: 'Filing', du
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `dueDate` | `string` | Yes | ISO 8601 date-time |
@@ -258,9 +234,6 @@ await corsair.filevine.api.deadlines.create({ projectId: 123, name: 'Filing', du
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deadlineId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `name` | `string` | No | — |
@@ -302,9 +275,6 @@ await corsair.filevine.api.deadlines.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `status` | `open \| completed \| missed` | No | — |
 | `from` | `string` | No | Filter from date (YYYY-MM-DD) |
@@ -321,9 +291,6 @@ await corsair.filevine.api.deadlines.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 
@@ -370,9 +337,6 @@ await corsair.filevine.api.documents.get({ documentId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `number` | Yes | — |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
@@ -384,9 +348,6 @@ await corsair.filevine.api.documents.get({ documentId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `folderId` | `number` | No | — |
@@ -421,9 +382,6 @@ await corsair.filevine.api.documents.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `folderId` | `number` | No | — |
 | `tag` | `string` | No | — |
@@ -439,9 +397,6 @@ await corsair.filevine.api.documents.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 
@@ -488,9 +443,6 @@ await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contrac
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `filename` | `string` | No | Filename override, else derived from file |
 | `folderId` | `number` | No | — |
@@ -508,9 +460,6 @@ await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contrac
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `folderId` | `number` | No | — |
@@ -547,9 +496,6 @@ await corsair.filevine.api.identity.getAccessToken({ token: 'PAT_xxx' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | Yes | Filevine Personal Access Token (PAT) |
 | `scope` | `string` | No | OAuth scope — defaults to fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read |
 | `client_id` | `string` | No | — |
@@ -562,9 +508,6 @@ await corsair.filevine.api.identity.getAccessToken({ token: 'PAT_xxx' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `access_token` | `string` | Yes | — |
 | `token_type` | `string` | No | — |
 | `expires_in` | `number` | No | — |
@@ -594,9 +537,6 @@ await corsair.filevine.api.identity.getUserOrgsWithToken({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `UserId` | `object` | No | — |
 | `FirstName` | `string` | No | — |
 | `LastName` | `string` | No | — |
@@ -660,9 +600,6 @@ await corsair.filevine.api.notes.create({ projectId: 123, body: 'Hello' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `body` | `string` | Yes | Note body, supports @mentions and markdown |
 | `kind` | `note \| task \| portalMessage \| phoneCall \| text` | Yes | — |
@@ -678,9 +615,6 @@ await corsair.filevine.api.notes.create({ projectId: 123, body: 'Hello' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `noteId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `body` | `string` | No | — |
@@ -713,9 +647,6 @@ await corsair.filevine.api.notes.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -730,9 +661,6 @@ await corsair.filevine.api.notes.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 
@@ -777,9 +705,6 @@ await corsair.filevine.api.notes.update({ noteId: 123, body: 'Updated' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `noteId` | `number` | Yes | — |
 | `body` | `string` | No | — |
 | `pinned` | `boolean` | No | — |
@@ -793,9 +718,6 @@ await corsair.filevine.api.notes.update({ noteId: 123, body: 'Updated' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `noteId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `body` | `string` | No | — |
@@ -830,9 +752,6 @@ await corsair.filevine.api.projects.create({ projectTypeId: 1, projectName: 'Tes
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectTypeId` | `number` | Yes | Project type ID |
 | `projectName` | `string` | Yes | Display name for the new project |
 | `clientId` | `number` | Yes | Primary client contact ID |
@@ -847,9 +766,6 @@ await corsair.filevine.api.projects.create({ projectTypeId: 1, projectName: 'Tes
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `projectName` | `string` | No | — |
 | `number` | `string` | No | — |
@@ -881,9 +797,6 @@ await corsair.filevine.api.projects.get({ projectId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | Filevine project ID |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
@@ -895,9 +808,6 @@ await corsair.filevine.api.projects.get({ projectId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `projectName` | `string` | No | — |
 | `number` | `string` | No | — |
@@ -929,9 +839,6 @@ await corsair.filevine.api.projects.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `offset` | `number` | No | Pagination offset, default 0 |
 | `limit` | `number` | No | Page size, max 1000, default 50 |
 | `projectTypeId` | `number` | No | — |
@@ -947,9 +854,6 @@ await corsair.filevine.api.projects.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 | `totalCount` | `number` | No | — |
@@ -994,9 +898,6 @@ await corsair.filevine.api.projects.update({ projectId: 123, phaseName: 'Discove
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `projectName` | `string` | No | — |
 | `phaseName` | `string` | No | — |
@@ -1011,9 +912,6 @@ await corsair.filevine.api.projects.update({ projectId: 123, phaseName: 'Discove
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `projectName` | `string` | No | — |
 | `number` | `string` | No | — |
@@ -1047,9 +945,6 @@ await corsair.filevine.api.tasks.create({ projectId: 123, title: 'Review', assig
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `title` | `string` | Yes | — |
 | `body` | `string` | No | — |
@@ -1066,9 +961,6 @@ await corsair.filevine.api.tasks.create({ projectId: 123, title: 'Review', assig
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `title` | `string` | No | — |
@@ -1100,9 +992,6 @@ await corsair.filevine.api.tasks.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectId` | `number` | Yes | — |
 | `assigneeId` | `number` | No | — |
 | `status` | `open \| inProgress \| completed \| cancelled` | No | — |
@@ -1118,9 +1007,6 @@ await corsair.filevine.api.tasks.list({ projectId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 | `hasMore` | `boolean` | No | — |
 
@@ -1164,9 +1050,6 @@ await corsair.filevine.api.tasks.update({ taskId: 123, status: 'completed' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `status` | `open \| inProgress \| completed \| cancelled` | No | — |
 | `priority` | `low \| normal \| high \| urgent` | No | — |
@@ -1182,9 +1065,6 @@ await corsair.filevine.api.tasks.update({ taskId: 123, status: 'completed' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `taskId` | `number` | Yes | — |
 | `projectId` | `number` | No | — |
 | `title` | `string` | No | — |
@@ -1222,9 +1102,6 @@ await corsair.filevine.api.webhooks.create({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `endpoint` | `string` | Yes | — |
@@ -1239,9 +1116,6 @@ await corsair.filevine.api.webhooks.create({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subscriptionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -1271,9 +1145,6 @@ await corsair.filevine.api.webhooks.delete({ subscriptionId: 'sub_123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `subscriptionId` | `string` | Yes | — |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
@@ -1302,9 +1173,6 @@ await corsair.filevine.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |
 
@@ -1315,9 +1183,6 @@ await corsair.filevine.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `items` | `object[]` | No | — |
 
 

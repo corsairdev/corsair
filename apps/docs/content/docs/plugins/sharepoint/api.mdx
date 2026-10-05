@@ -31,9 +31,6 @@ await corsair.sharepoint.api.contentTypes.addFieldLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `listid` | `string` | Yes | — |
 | `contenttypeid` | `string` | Yes | — |
 | `field_internal_name` | `string` | Yes | — |
@@ -47,9 +44,6 @@ await corsair.sharepoint.api.contentTypes.addFieldLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `field_link` | `object` | No | — |
 
 
@@ -88,9 +82,6 @@ await corsair.sharepoint.api.contentTypes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `group` | `string` | No | — |
@@ -114,9 +105,6 @@ await corsair.sharepoint.api.contentTypes.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -144,9 +132,6 @@ await corsair.sharepoint.api.contentTypes.createListField({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `field_type` | `string` | Yes | — |
 | `internal_name` | `string` | Yes | — |
@@ -162,9 +147,6 @@ await corsair.sharepoint.api.contentTypes.createListField({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `displayName` | `string` | No | — |
@@ -194,9 +176,6 @@ await corsair.sharepoint.api.contentTypes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content_type_id` | `string` | Yes | — |
 
 
@@ -206,9 +185,6 @@ await corsair.sharepoint.api.contentTypes.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -239,9 +215,6 @@ await corsair.sharepoint.api.contentTypes.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -280,9 +253,6 @@ await corsair.sharepoint.api.contentTypes.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `content_type_id` | `string` | Yes | — |
 
@@ -293,9 +263,6 @@ await corsair.sharepoint.api.contentTypes.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -323,9 +290,6 @@ await corsair.sharepoint.api.contentTypes.getForList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 
 
@@ -335,9 +299,6 @@ await corsair.sharepoint.api.contentTypes.getForList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -376,9 +337,6 @@ await corsair.sharepoint.api.contentTypes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content_type_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -391,9 +349,6 @@ await corsair.sharepoint.api.contentTypes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -419,9 +374,6 @@ await corsair.sharepoint.api.drive.createSharingLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `type` | `view \| edit \| embed` | Yes | — |
@@ -436,9 +388,6 @@ await corsair.sharepoint.api.drive.createSharingLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `type` | `string` | No | — |
 | `link` | `object` | No | — |
@@ -477,9 +426,6 @@ await corsair.sharepoint.api.drive.deleteVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
@@ -491,9 +437,6 @@ await corsair.sharepoint.api.drive.deleteVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -517,9 +460,6 @@ await corsair.sharepoint.api.drive.getAnalytics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 
@@ -530,9 +470,6 @@ await corsair.sharepoint.api.drive.getAnalytics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `allTime` | `object` | No | — |
 
 
@@ -570,9 +507,6 @@ await corsair.sharepoint.api.drive.listRecentItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 
 
@@ -582,9 +516,6 @@ await corsair.sharepoint.api.drive.listRecentItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -628,9 +559,6 @@ await corsair.sharepoint.api.drive.restoreVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `version_id` | `string` | Yes | — |
@@ -642,9 +570,6 @@ await corsair.sharepoint.api.drive.restoreVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -668,9 +593,6 @@ await corsair.sharepoint.api.drive.updateItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `item_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -696,9 +618,6 @@ await corsair.sharepoint.api.drive.updateItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `size` | `number` | No | — |
@@ -749,9 +668,6 @@ await corsair.sharepoint.api.files.checkIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_path` | `string` | Yes | — |
 | `comment` | `string` | No | — |
 | `checkintype` | `number` | No | — |
@@ -763,9 +679,6 @@ await corsair.sharepoint.api.files.checkIn({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `number` | No | — |
 | `message` | `string` | No | — |
 | `server_relative_path` | `string` | No | — |
@@ -791,9 +704,6 @@ await corsair.sharepoint.api.files.checkOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_path` | `string` | Yes | — |
 
 
@@ -803,9 +713,6 @@ await corsair.sharepoint.api.files.checkOut({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `server_relative_path` | `string` | No | — |
 
@@ -830,9 +737,6 @@ await corsair.sharepoint.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -842,9 +746,6 @@ await corsair.sharepoint.api.files.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | Yes | — |
 | `fileName` | `string` | No | — |
 | `mimeType` | `string` | No | — |
@@ -870,9 +771,6 @@ await corsair.sharepoint.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -882,9 +780,6 @@ await corsair.sharepoint.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `webUrl` | `string` | No | — |
@@ -942,9 +837,6 @@ await corsair.sharepoint.api.files.listInFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_server_relative_url` | `string` | Yes | — |
 | `filter` | `string` | No | — |
 | `select` | `string` | No | — |
@@ -956,9 +848,6 @@ await corsair.sharepoint.api.files.listInFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -1004,9 +893,6 @@ await corsair.sharepoint.api.files.recycle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -1016,9 +902,6 @@ await corsair.sharepoint.api.files.recycle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `string` | No | — |
 
 
@@ -1042,9 +925,6 @@ await corsair.sharepoint.api.files.undoCheckout({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_path` | `string` | Yes | — |
 
 
@@ -1054,9 +934,6 @@ await corsair.sharepoint.api.files.undoCheckout({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `server_relative_path` | `string` | No | — |
 
@@ -1081,9 +958,6 @@ await corsair.sharepoint.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `folder_server_relative_url` | `string` | Yes | — |
 | `file_name` | `string` | Yes | — |
 | `content_text` | `string` | No | — |
@@ -1097,9 +971,6 @@ await corsair.sharepoint.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `webUrl` | `string` | No | — |
@@ -1159,9 +1030,6 @@ await corsair.sharepoint.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -1171,9 +1039,6 @@ await corsair.sharepoint.api.folders.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `webUrl` | `string` | No | — |
@@ -1231,9 +1096,6 @@ await corsair.sharepoint.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -1243,9 +1105,6 @@ await corsair.sharepoint.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1269,9 +1128,6 @@ await corsair.sharepoint.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -1281,9 +1137,6 @@ await corsair.sharepoint.api.folders.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `webUrl` | `string` | No | — |
@@ -1341,9 +1194,6 @@ await corsair.sharepoint.api.folders.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | No | — |
 | `server_relative_url` | `string` | No | — |
 
@@ -1354,9 +1204,6 @@ await corsair.sharepoint.api.folders.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -1402,9 +1249,6 @@ await corsair.sharepoint.api.folders.listSubfolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 
 
@@ -1414,9 +1258,6 @@ await corsair.sharepoint.api.folders.listSubfolders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -1462,9 +1303,6 @@ await corsair.sharepoint.api.folders.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `server_relative_url` | `string` | Yes | — |
 | `new_name` | `string` | Yes | — |
 
@@ -1475,9 +1313,6 @@ await corsair.sharepoint.api.folders.rename({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 | `new_server_relative_url` | `string` | No | — |
 
@@ -1504,9 +1339,6 @@ await corsair.sharepoint.api.items.addAttachment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `number` | Yes | — |
 | `list_title` | `string` | Yes | — |
 | `file_name` | `string` | Yes | — |
@@ -1520,9 +1352,6 @@ await corsair.sharepoint.api.items.addAttachment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `FileName` | `string` | No | — |
 | `ServerRelativeUrl` | `string` | No | — |
 
@@ -1547,9 +1376,6 @@ await corsair.sharepoint.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `fields` | `object` | Yes | — |
 
@@ -1570,9 +1396,6 @@ await corsair.sharepoint.api.items.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
@@ -1611,9 +1434,6 @@ await corsair.sharepoint.api.items.createByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_guid` | `string` | Yes | — |
 | `fields` | `object` | Yes | — |
 
@@ -1634,9 +1454,6 @@ await corsair.sharepoint.api.items.createByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
@@ -1675,9 +1492,6 @@ await corsair.sharepoint.api.items.createInFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `folder_path` | `string` | Yes | — |
 | `fields` | `object` | Yes | — |
@@ -1699,9 +1513,6 @@ await corsair.sharepoint.api.items.createInFolder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
@@ -1740,9 +1551,6 @@ await corsair.sharepoint.api.items.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 
@@ -1753,9 +1561,6 @@ await corsair.sharepoint.api.items.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -1779,9 +1584,6 @@ await corsair.sharepoint.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `select` | `string` | No | — |
@@ -1794,9 +1596,6 @@ await corsair.sharepoint.api.items.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
@@ -1835,9 +1634,6 @@ await corsair.sharepoint.api.items.getAttachmentContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `file_name` | `string` | Yes | — |
@@ -1849,9 +1645,6 @@ await corsair.sharepoint.api.items.getAttachmentContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `content` | `string` | No | — |
 | `fileName` | `string` | No | — |
 
@@ -1876,9 +1669,6 @@ await corsair.sharepoint.api.items.getEtag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 
@@ -1889,9 +1679,6 @@ await corsair.sharepoint.api.items.getEtag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `etag` | `string` | Yes | — |
 
 
@@ -1915,9 +1702,6 @@ await corsair.sharepoint.api.items.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `version_id` | `string` | Yes | — |
@@ -1929,9 +1713,6 @@ await corsair.sharepoint.api.items.getVersion({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
 | `fields` | `object` | No | — |
@@ -1967,9 +1748,6 @@ await corsair.sharepoint.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `filter` | `string` | No | — |
 | `select` | `string` | No | — |
@@ -1985,9 +1763,6 @@ await corsair.sharepoint.api.items.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2028,9 +1803,6 @@ await corsair.sharepoint.api.items.listAttachments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 
@@ -2041,9 +1813,6 @@ await corsair.sharepoint.api.items.listAttachments({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2079,9 +1848,6 @@ await corsair.sharepoint.api.items.listByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_guid` | `string` | Yes | — |
 | `filter` | `string` | No | — |
 | `select` | `string` | No | — |
@@ -2095,9 +1861,6 @@ await corsair.sharepoint.api.items.listByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2138,9 +1901,6 @@ await corsair.sharepoint.api.items.recycle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 
@@ -2151,9 +1911,6 @@ await corsair.sharepoint.api.items.recycle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `string` | No | — |
 
 
@@ -2177,9 +1934,6 @@ await corsair.sharepoint.api.items.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `fields` | `object` | Yes | — |
@@ -2202,9 +1956,6 @@ await corsair.sharepoint.api.items.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2230,9 +1981,6 @@ await corsair.sharepoint.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `template` | `number` | No | — |
@@ -2245,9 +1993,6 @@ await corsair.sharepoint.api.lists.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2290,9 +2035,6 @@ await corsair.sharepoint.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_guid` | `string` | Yes | — |
 
 
@@ -2302,9 +2044,6 @@ await corsair.sharepoint.api.lists.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2328,9 +2067,6 @@ await corsair.sharepoint.api.lists.deleteByTitle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 
 
@@ -2340,9 +2076,6 @@ await corsair.sharepoint.api.lists.deleteByTitle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2366,9 +2099,6 @@ await corsair.sharepoint.api.lists.getByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_guid` | `string` | Yes | — |
 
 
@@ -2378,9 +2108,6 @@ await corsair.sharepoint.api.lists.getByGuid({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2423,9 +2150,6 @@ await corsair.sharepoint.api.lists.getByTitle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 
 
@@ -2435,9 +2159,6 @@ await corsair.sharepoint.api.lists.getByTitle({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2480,9 +2201,6 @@ await corsair.sharepoint.api.lists.getChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `change_token` | `string` | No | — |
 
@@ -2493,9 +2211,6 @@ await corsair.sharepoint.api.lists.getChanges({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 | `@odata.deltaLink` | `string` | No | — |
 | `@odata.nextLink` | `string` | No | — |
@@ -2541,9 +2256,6 @@ await corsair.sharepoint.api.lists.listAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2588,9 +2300,6 @@ await corsair.sharepoint.api.lists.listColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 
 
@@ -2600,9 +2309,6 @@ await corsair.sharepoint.api.lists.listColumns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2643,9 +2349,6 @@ await corsair.sharepoint.api.lists.renderDataAsStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `view_xml` | `string` | No | — |
 | `row_limit` | `number` | No | — |
@@ -2658,9 +2361,6 @@ await corsair.sharepoint.api.lists.renderDataAsStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `Row` | `object[]` | No | — |
 | `NextHref` | `string` | No | — |
 | `PrevHref` | `string` | No | — |
@@ -2698,9 +2398,6 @@ await corsair.sharepoint.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -2713,9 +2410,6 @@ await corsair.sharepoint.api.lists.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2741,9 +2435,6 @@ await corsair.sharepoint.api.permissions.addRoleToItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `principal_id` | `number` | Yes | — |
@@ -2756,9 +2447,6 @@ await corsair.sharepoint.api.permissions.addRoleToItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 | `list_title` | `string` | No | — |
 | `item_id` | `number` | No | — |
@@ -2786,9 +2474,6 @@ await corsair.sharepoint.api.permissions.addRoleToList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `principal_id` | `number` | Yes | — |
 | `role_definition_id` | `number` | Yes | — |
@@ -2800,9 +2485,6 @@ await corsair.sharepoint.api.permissions.addRoleToList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | No | — |
 | `status_code` | `number` | No | — |
 
@@ -2827,9 +2509,6 @@ await corsair.sharepoint.api.permissions.breakInheritanceOnItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
 | `copy_role_assignments` | `boolean` | No | — |
@@ -2842,9 +2521,6 @@ await corsair.sharepoint.api.permissions.breakInheritanceOnItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 
 
@@ -2868,9 +2544,6 @@ await corsair.sharepoint.api.permissions.breakInheritanceOnList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_title` | `string` | Yes | — |
 | `copy_role_assignments` | `boolean` | Yes | — |
 | `clear_subscopes` | `boolean` | Yes | — |
@@ -2882,9 +2555,6 @@ await corsair.sharepoint.api.permissions.breakInheritanceOnList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `message` | `string` | No | — |
 
 
@@ -2911,9 +2581,6 @@ await corsair.sharepoint.api.permissions.getRoleDefinitions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -2952,9 +2619,6 @@ await corsair.sharepoint.api.recycleBin.deletePermanent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 
 
@@ -2964,9 +2628,6 @@ await corsair.sharepoint.api.recycleBin.deletePermanent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -2990,9 +2651,6 @@ await corsair.sharepoint.api.recycleBin.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `row_limit` | `number` | No | — |
 | `is_ascending` | `boolean` | No | — |
 
@@ -3003,9 +2661,6 @@ await corsair.sharepoint.api.recycleBin.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3047,9 +2702,6 @@ await corsair.sharepoint.api.recycleBin.restore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `item_id` | `string` | Yes | — |
 
 
@@ -3059,9 +2711,6 @@ await corsair.sharepoint.api.recycleBin.restore({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3087,9 +2736,6 @@ await corsair.sharepoint.api.search.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query_text` | `string` | Yes | — |
 | `row_limit` | `number` | No | — |
 | `start_row` | `number` | No | — |
@@ -3117,9 +2763,6 @@ await corsair.sharepoint.api.search.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3165,9 +2808,6 @@ await corsair.sharepoint.api.search.suggest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `query_text` | `string` | Yes | — |
 | `show_people_name_suggestions` | `boolean` | No | — |
 | `max_suggestion_results` | `number` | No | — |
@@ -3180,9 +2820,6 @@ await corsair.sharepoint.api.search.suggest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3218,9 +2855,6 @@ await corsair.sharepoint.api.social.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `actor_type` | `number` | Yes | — |
 | `content_uri` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -3233,9 +2867,6 @@ await corsair.sharepoint.api.social.follow({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `number` | No | — |
 
 
@@ -3259,9 +2890,6 @@ await corsair.sharepoint.api.social.getFollowed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `types` | `number` | No | — |
 
 
@@ -3271,9 +2899,6 @@ await corsair.sharepoint.api.social.getFollowed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3318,9 +2943,6 @@ await corsair.sharepoint.api.social.getFollowers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3362,9 +2984,6 @@ await corsair.sharepoint.api.social.isFollowed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `actor_type` | `number` | Yes | — |
 | `content_uri` | `string` | No | — |
 | `id` | `string` | No | — |
@@ -3377,9 +2996,6 @@ await corsair.sharepoint.api.social.isFollowed({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `boolean` | No | — |
 
 
@@ -3405,9 +3021,6 @@ await corsair.sharepoint.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `login_name` | `string` | Yes | — |
 
 
@@ -3417,9 +3030,6 @@ await corsair.sharepoint.api.users.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
@@ -3447,9 +3057,6 @@ await corsair.sharepoint.api.users.ensure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `login_name` | `string` | Yes | — |
 
 
@@ -3459,9 +3066,6 @@ await corsair.sharepoint.api.users.ensure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
@@ -3489,9 +3093,6 @@ await corsair.sharepoint.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `search_value` | `string` | Yes | — |
 
 
@@ -3501,9 +3102,6 @@ await corsair.sharepoint.api.users.find({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3545,9 +3143,6 @@ await corsair.sharepoint.api.users.getCurrent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
@@ -3575,9 +3170,6 @@ await corsair.sharepoint.api.users.getEffectivePermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `user_login_name` | `string` | Yes | — |
 
 
@@ -3587,9 +3179,6 @@ await corsair.sharepoint.api.users.getEffectivePermissions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
@@ -3617,9 +3206,6 @@ await corsair.sharepoint.api.users.getGroupUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_name` | `string` | Yes | — |
 
 
@@ -3629,9 +3215,6 @@ await corsair.sharepoint.api.users.getGroupUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3670,9 +3253,6 @@ await corsair.sharepoint.api.users.getGroupUsersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `group_id` | `number` | Yes | — |
 
 
@@ -3682,9 +3262,6 @@ await corsair.sharepoint.api.users.getGroupUsersById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3726,9 +3303,6 @@ await corsair.sharepoint.api.users.listGroups({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3769,9 +3343,6 @@ await corsair.sharepoint.api.users.listSite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 
@@ -3810,9 +3381,6 @@ await corsair.sharepoint.api.users.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `login_name` | `string` | Yes | — |
 
 
@@ -3822,9 +3390,6 @@ await corsair.sharepoint.api.users.remove({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -3850,9 +3415,6 @@ await corsair.sharepoint.api.web.createSubsite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `description` | `string` | No | — |
@@ -3867,9 +3429,6 @@ await corsair.sharepoint.api.web.createSubsite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -3912,9 +3471,6 @@ await corsair.sharepoint.api.web.getContextInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `FormDigestValue` | `string` | No | — |
 | `FormDigestTimeoutSeconds` | `number` | No | — |
 | `LibraryVersion` | `string` | No | — |
@@ -3942,9 +3498,6 @@ await corsair.sharepoint.api.web.getDriveItemByPath({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `site_id` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 
@@ -3955,9 +3508,6 @@ await corsair.sharepoint.api.web.getDriveItemByPath({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `size` | `number` | No | — |
@@ -4009,9 +3559,6 @@ await corsair.sharepoint.api.web.getInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4054,9 +3601,6 @@ await corsair.sharepoint.api.web.getSiteCollectionInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `displayName` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -4096,9 +3640,6 @@ await corsair.sharepoint.api.web.getSitePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page_server_relative_url` | `string` | Yes | — |
 
 
@@ -4108,9 +3649,6 @@ await corsair.sharepoint.api.web.getSitePage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -4137,9 +3675,6 @@ await corsair.sharepoint.api.web.logEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entry_type` | `number` | Yes | — |
 | `event_code` | `number` | Yes | — |
 | `message` | `string` | Yes | — |
@@ -4151,9 +3686,6 @@ await corsair.sharepoint.api.web.logEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4177,9 +3709,6 @@ await corsair.sharepoint.api.web.updateSite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
 
@@ -4190,9 +3719,6 @@ await corsair.sharepoint.api.web.updateSite({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -4218,9 +3744,6 @@ await corsair.sharepoint.api.webhookSubscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 | `subscription_id` | `string` | Yes | — |
 
@@ -4231,9 +3754,6 @@ await corsair.sharepoint.api.webhookSubscriptions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | No | — |
 | `clientState` | `string` | No | — |
 | `expirationDateTime` | `string` | No | — |
@@ -4261,9 +3781,6 @@ await corsair.sharepoint.api.webhookSubscriptions.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `list_id` | `string` | Yes | — |
 
 
@@ -4273,9 +3790,6 @@ await corsair.sharepoint.api.webhookSubscriptions.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `value` | `object[]` | No | — |
 
 

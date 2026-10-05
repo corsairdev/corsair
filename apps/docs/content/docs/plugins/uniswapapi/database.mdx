@@ -28,9 +28,6 @@ const rows = await corsair.uniswapapi.db.approval.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `walletAddress` | `string` | equals, contains, startsWith, endsWith, in |
 | `token` | `string` | equals, contains, startsWith, endsWith, in |
@@ -59,9 +56,6 @@ const rows = await corsair.uniswapapi.db.gaslessOrder.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `orderId` | `string` | equals, contains, startsWith, endsWith, in |
 | `orderHash` | `string` | equals, contains, startsWith, endsWith, in |
@@ -91,9 +85,6 @@ const rows = await corsair.uniswapapi.db.quote.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `requestId` | `string` | equals, contains, startsWith, endsWith, in |
 | `quoteId` | `string` | equals, contains, startsWith, endsWith, in |
@@ -130,9 +121,6 @@ const rows = await corsair.uniswapapi.db.swapStatus.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `txHash` | `string` | equals, contains, startsWith, endsWith, in |
 | `chainId` | `number` | equals, gt, gte, lt, lte, in |
@@ -158,9 +146,6 @@ const rows = await corsair.uniswapapi.db.token.search({
 
 | Field | Type | Operators |
 |-------|------|-----------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `chainId` | `number` | equals, gt, gte, lt, lte, in |
 | `address` | `string` | equals, contains, startsWith, endsWith, in |

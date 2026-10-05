@@ -31,9 +31,6 @@ await corsair.agilitycms.api.content.getApiTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code |
 | `apiType` | `fetch \| preview` | Yes | API access mode |
@@ -72,9 +69,6 @@ await corsair.agilitycms.api.content.getContentModels({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
@@ -119,9 +113,6 @@ await corsair.agilitycms.api.content.getItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `contentId` | `number` | Yes | Content item ID to retrieve |
@@ -136,9 +127,6 @@ await corsair.agilitycms.api.content.getItem({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `contentID` | `number` | Yes | Unique identifier for the content item |
 | `properties` | `object` | No | System metadata properties |
 | `fields` | `object` | Yes | Dynamic content fields key-value dictionary |
@@ -188,9 +176,6 @@ await corsair.agilitycms.api.content.getList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `referenceName` | `string` | Yes | Content list reference name (e.g. posts, authors) |
@@ -210,9 +195,6 @@ await corsair.agilitycms.api.content.getList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `totalCount` | `number` | No | Total number of matching content items |
 | `items` | `object[]` | Yes | Array of retrieved content items |
 
@@ -258,9 +240,6 @@ await corsair.agilitycms.api.content.getLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `syncToken` | `string` | Yes | Sync token for incremental change sync; use '0' for initial sync |
@@ -274,9 +253,6 @@ await corsair.agilitycms.api.content.getLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `syncToken` | `string` | Yes | Next sync token to persist; returns '0' when sync is up to date |
 | `items` | `object[]` | Yes | List of content items created or updated since last sync |
 
@@ -322,9 +298,6 @@ await corsair.agilitycms.api.content.getPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `pageId` | `number` | Yes | Page ID to retrieve |
@@ -339,9 +312,6 @@ await corsair.agilitycms.api.content.getPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageID` | `number` | Yes | Unique identifier for the page |
 | `name` | `string` | Yes | Page name |
 | `path` | `string` | No | URL path of the page |
@@ -413,9 +383,6 @@ await corsair.agilitycms.api.content.getPageModules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
@@ -460,9 +427,6 @@ await corsair.agilitycms.api.content.getSitemapFlat({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `channelName` | `string` | Yes | Digital channel name (e.g. website) |
@@ -502,9 +466,6 @@ await corsair.agilitycms.api.content.syncPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
 | `locale` | `string` | Yes | Language locale code (e.g. en-us) |
 | `syncToken` | `string` | Yes | Sync token for incremental page sync; use '0' for initial sync |
@@ -518,9 +479,6 @@ await corsair.agilitycms.api.content.syncPages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `syncToken` | `string` | Yes | Next sync token to persist; returns '0' when page sync is up to date |
 | `items` | `object[]` | Yes | List of page items created or updated since last sync |
 

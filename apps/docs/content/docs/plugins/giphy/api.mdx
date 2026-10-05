@@ -31,9 +31,6 @@ await corsair.giphy.api.analytics.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pingback_url` | `string` | Yes | Tracking URL from a GIF analytics object (onload, onclick, or onsent) |
 | `customer_id` | `string` | Yes | Identifier assigned to a user in your platform |
 | `ts` | `number` | No | UNIX timestamp in milliseconds of when the action occurred. Default: now |
@@ -45,9 +42,6 @@ await corsair.giphy.api.analytics.register({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -73,9 +67,6 @@ await corsair.giphy.api.categories.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_id` | `string` | Yes | Category identifier (name_encoded value from categories.list, e.g. "actions") |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
 
@@ -86,9 +77,6 @@ await corsair.giphy.api.categories.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -185,9 +173,6 @@ await corsair.giphy.api.categories.gifs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `category_id` | `string` | Yes | Category identifier (name_encoded value from categories.list, e.g. "actions") |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
@@ -201,9 +186,6 @@ await corsair.giphy.api.categories.gifs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -292,9 +274,6 @@ await corsair.giphy.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
 
 
@@ -304,9 +283,6 @@ await corsair.giphy.api.categories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -405,9 +381,6 @@ await corsair.giphy.api.channels.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Term to search through GIPHY channels |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25, maximum: 50 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
@@ -420,9 +393,6 @@ await corsair.giphy.api.channels.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -498,9 +468,6 @@ await corsair.giphy.api.emoji.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
@@ -512,9 +479,6 @@ await corsair.giphy.api.emoji.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -603,9 +567,6 @@ await corsair.giphy.api.emoji.variations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `gif_id` | `string` | Yes | GIPHY Emoji GIF ID to get variations for |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
 
@@ -616,9 +577,6 @@ await corsair.giphy.api.emoji.variations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -709,9 +667,6 @@ await corsair.giphy.api.gifs.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `gif_id` | `string` | Yes | GIPHY GIF ID |
 | `rating` | `g \| pg \| pg-13 \| r` | No | If the GIF rating exceeds this, the API returns an empty error response |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
@@ -723,9 +678,6 @@ await corsair.giphy.api.gifs.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -802,9 +754,6 @@ await corsair.giphy.api.gifs.getByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `ids` | `string[] \| string` | Yes | Array of GIF IDs or comma-separated string |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
@@ -816,9 +765,6 @@ await corsair.giphy.api.gifs.getByIds({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -907,9 +853,6 @@ await corsair.giphy.api.gifs.random({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `string` | No | Filters results by specified tag |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
 | `random_id` | `string` | No | Deprecated alias for customer_id, kept for backwards compatibility |
@@ -922,9 +865,6 @@ await corsair.giphy.api.gifs.random({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1001,9 +941,6 @@ await corsair.giphy.api.gifs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Search query term or phrase |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
@@ -1021,9 +958,6 @@ await corsair.giphy.api.gifs.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -1112,9 +1046,6 @@ await corsair.giphy.api.gifs.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `s` | `string` | Yes | Search term to translate into a GIF |
 | `weirdness` | `number` | No | Value from 0-10 on the weirdness scale |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
@@ -1127,9 +1058,6 @@ await corsair.giphy.api.gifs.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1206,9 +1134,6 @@ await corsair.giphy.api.gifs.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
@@ -1223,9 +1148,6 @@ await corsair.giphy.api.gifs.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -1314,9 +1236,6 @@ await corsair.giphy.api.gifs.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file_base64` | `string` | No | Animated GIF or video file content as base64. Required when source_image_url is omitted |
 | `file_name` | `string` | No | Filename for the multipart upload part. Default: upload.gif |
 | `source_image_url` | `string` | No | Public URL of the image or video to upload. Required when file_base64 is omitted |
@@ -1331,9 +1250,6 @@ await corsair.giphy.api.gifs.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1385,9 +1301,6 @@ await corsair.giphy.api.randomId.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1436,9 +1349,6 @@ await corsair.giphy.api.stickers.random({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `tag` | `string` | No | Filters results by specified tag |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
@@ -1450,9 +1360,6 @@ await corsair.giphy.api.stickers.random({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1529,9 +1436,6 @@ await corsair.giphy.api.stickers.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Search query term or phrase |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
@@ -1546,9 +1450,6 @@ await corsair.giphy.api.stickers.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -1637,9 +1538,6 @@ await corsair.giphy.api.stickers.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `s` | `string` | Yes | Search term to translate into a sticker |
 | `weirdness` | `number` | No | Value from 0-10 on the weirdness scale |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
@@ -1652,9 +1550,6 @@ await corsair.giphy.api.stickers.translate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1731,9 +1626,6 @@ await corsair.giphy.api.stickers.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
 | `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
@@ -1746,9 +1638,6 @@ await corsair.giphy.api.stickers.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `pagination` | `object` | No | — |
 | `meta` | `object` | No | — |
@@ -1839,9 +1728,6 @@ await corsair.giphy.api.tags.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `q` | `string` | Yes | Tag term to autocomplete |
 | `limit` | `number` | No | The maximum number of objects to return. Default: 5 |
 | `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
@@ -1854,9 +1740,6 @@ await corsair.giphy.api.tags.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1903,9 +1786,6 @@ await corsair.giphy.api.tags.related({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `term` | `string` | Yes | Tag term to find related tags for |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
 
@@ -1916,9 +1796,6 @@ await corsair.giphy.api.tags.related({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `object[]` | Yes | — |
 | `meta` | `object` | No | — |
 
@@ -1965,9 +1842,6 @@ await corsair.giphy.api.tags.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customer_id` | `string` | No | Identifier assigned to a user in your platform |
 
 
@@ -1977,9 +1851,6 @@ await corsair.giphy.api.tags.trending({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `data` | `string[]` | Yes | — |
 | `meta` | `object` | No | — |
 

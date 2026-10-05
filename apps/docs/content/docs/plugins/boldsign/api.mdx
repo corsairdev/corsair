@@ -31,9 +31,6 @@ await corsair.boldsign.api.brands.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `brandId` | `string` | Yes | — |
 
 
@@ -43,9 +40,6 @@ await corsair.boldsign.api.brands.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `brandId` | `string` | Yes | — |
 | `brandName` | `string` | No | — |
 
@@ -73,9 +67,6 @@ await corsair.boldsign.api.brands.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `result` | `object[]` | Yes | — |
 
 
@@ -113,9 +104,6 @@ await corsair.boldsign.api.customFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fieldName` | `string` | Yes | — |
 | `formField` | `object` | Yes | — |
 | `fieldDescription` | `string` | No | — |
@@ -143,9 +131,6 @@ await corsair.boldsign.api.customFields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customFieldId` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
 
@@ -170,9 +155,6 @@ await corsair.boldsign.api.customFields.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fieldName` | `string` | Yes | — |
 | `formField` | `object` | Yes | — |
 | `fieldDescription` | `string` | No | — |
@@ -201,9 +183,6 @@ await corsair.boldsign.api.customFields.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `customFieldId` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
 
@@ -230,9 +209,6 @@ await corsair.boldsign.api.documents.createEmbeddedRequestLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | No | — |
 | `message` | `string` | No | — |
 | `signers` | `object[]` | No | — |
@@ -288,9 +264,6 @@ await corsair.boldsign.api.documents.createEmbeddedRequestLink({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | — |
 | `sendUrl` | `string` | Yes | — |
 
@@ -315,9 +288,6 @@ await corsair.boldsign.api.documents.editBeta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `message` | `string` | No | — |
@@ -370,9 +340,6 @@ await corsair.boldsign.api.documents.editBeta({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `status` | `string` | Yes | — |
 
 
@@ -396,9 +363,6 @@ await corsair.boldsign.api.documents.extendExpiry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | — |
 | `newExpiryValue` | `string` | Yes | — |
 | `warnPrior` | `boolean` | No | — |
@@ -411,9 +375,6 @@ await corsair.boldsign.api.documents.extendExpiry({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -437,9 +398,6 @@ await corsair.boldsign.api.documents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | Yes | — |
 | `pageSize` | `number` | No | — |
 | `startDate` | `string` | No | — |
@@ -461,9 +419,6 @@ await corsair.boldsign.api.documents.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageDetails` | `object` | Yes | — |
 | `result` | `object[]` | Yes | — |
 
@@ -514,9 +469,6 @@ await corsair.boldsign.api.documents.listBehalf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | Yes | — |
 | `pageType` | `string` | No | — |
 | `pageSize` | `number` | No | — |
@@ -537,9 +489,6 @@ await corsair.boldsign.api.documents.listBehalf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageDetails` | `object` | Yes | — |
 | `result` | `object[]` | Yes | — |
 
@@ -590,9 +539,6 @@ await corsair.boldsign.api.documents.listTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `page` | `number` | Yes | — |
 | `pageSize` | `number` | No | — |
 | `userId` | `string[]` | No | — |
@@ -614,9 +560,6 @@ await corsair.boldsign.api.documents.listTeam({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pageDetails` | `object` | Yes | — |
 | `result` | `object[]` | Yes | — |
 
@@ -667,9 +610,6 @@ await corsair.boldsign.api.documents.removeAuthentication({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | — |
 | `emailId` | `string` | Yes | — |
 | `zOrder` | `number` | No | — |
@@ -682,9 +622,6 @@ await corsair.boldsign.api.documents.removeAuthentication({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `success` | `boolean` | Yes | — |
 
 
@@ -708,9 +645,6 @@ await corsair.boldsign.api.documents.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `title` | `string` | Yes | — |
 | `message` | `string` | No | — |
 | `signers` | `object[]` | No | — |
@@ -773,9 +707,6 @@ await corsair.boldsign.api.documents.send({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `documentId` | `string` | Yes | — |
 
 
@@ -801,9 +732,6 @@ await corsair.boldsign.api.helpers.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `fileName` | `string` | Yes | — |
 | `mimeType` | `string` | Yes | — |
 | `base64Content` | `string` | Yes | — |
@@ -815,9 +743,6 @@ await corsair.boldsign.api.helpers.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `file` | `object` | Yes | — |
 
 
@@ -858,9 +783,6 @@ await corsair.boldsign.api.plan.getApiCreditsCount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `BalanceCredits` | `number` | No | — |
 | `balanceCredits` | `number` | No | — |
 

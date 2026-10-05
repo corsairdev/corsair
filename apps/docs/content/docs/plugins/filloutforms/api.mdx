@@ -31,9 +31,6 @@ await corsair.filloutforms.api.databases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `name` | `string` | Yes | — |
 | `tables` | `object[]` | Yes | — |
 
@@ -61,9 +58,6 @@ await corsair.filloutforms.api.databases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `tables` | `object[]` | Yes | — |
@@ -123,9 +117,6 @@ await corsair.filloutforms.api.databases.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 
 
@@ -185,9 +176,6 @@ await corsair.filloutforms.api.databases.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 
 
@@ -197,9 +185,6 @@ await corsair.filloutforms.api.databases.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `tables` | `object[]` | Yes | — |
@@ -261,9 +246,6 @@ await corsair.filloutforms.api.fields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -287,9 +269,6 @@ await corsair.filloutforms.api.fields.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -327,9 +306,6 @@ await corsair.filloutforms.api.fields.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `fieldId` | `string` | Yes | — |
@@ -358,9 +334,6 @@ await corsair.filloutforms.api.fields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `fieldId` | `string` | Yes | — |
@@ -384,9 +357,6 @@ await corsair.filloutforms.api.fields.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
@@ -426,9 +396,6 @@ await corsair.filloutforms.api.forms.getFormMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 
 
@@ -438,9 +405,6 @@ await corsair.filloutforms.api.forms.getFormMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `questions` | `object[]` | Yes | — |
@@ -558,9 +522,6 @@ await corsair.filloutforms.api.oauth.authorize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `clientId` | `string` | Yes | — |
 | `redirectUri` | `string` | Yes | — |
 | `state` | `string` | No | — |
@@ -572,9 +533,6 @@ await corsair.filloutforms.api.oauth.authorize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `authorizationUrl` | `string` | Yes | — |
 
 
@@ -600,9 +558,6 @@ await corsair.filloutforms.api.records.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `record` | `object` | Yes | — |
@@ -624,9 +579,6 @@ await corsair.filloutforms.api.records.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 | `fields` | `object` | Yes | — |
@@ -672,9 +624,6 @@ await corsair.filloutforms.api.records.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
@@ -703,9 +652,6 @@ await corsair.filloutforms.api.records.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
@@ -717,9 +663,6 @@ await corsair.filloutforms.api.records.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 | `fields` | `object` | Yes | — |
@@ -765,9 +708,6 @@ await corsair.filloutforms.api.records.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `filter` | `object` | No | — |
@@ -800,9 +740,6 @@ await corsair.filloutforms.api.records.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `records` | `object[]` | Yes | — |
 | `total` | `number` | No | — |
 
@@ -844,9 +781,6 @@ await corsair.filloutforms.api.records.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
@@ -869,9 +803,6 @@ await corsair.filloutforms.api.records.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
 | `fields` | `object` | Yes | — |
@@ -919,9 +850,6 @@ await corsair.filloutforms.api.submissions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `submissions` | `object[]` | Yes | — |
 
@@ -959,9 +887,6 @@ await corsair.filloutforms.api.submissions.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `submissions` | `object[]` | Yes | — |
 
 
@@ -1023,9 +948,6 @@ await corsair.filloutforms.api.submissions.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `submissionId` | `string` | Yes | — |
 
@@ -1036,9 +958,6 @@ await corsair.filloutforms.api.submissions.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `deleted` | `boolean` | No | — |
 
 
@@ -1062,9 +981,6 @@ await corsair.filloutforms.api.submissions.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `submissionId` | `string` | Yes | — |
 | `includeEditLink` | `boolean` | No | — |
@@ -1076,9 +992,6 @@ await corsair.filloutforms.api.submissions.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `submission` | `object` | Yes | — |
 
 
@@ -1140,9 +1053,6 @@ await corsair.filloutforms.api.submissions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `afterDate` | `string` | No | — |
@@ -1161,9 +1071,6 @@ await corsair.filloutforms.api.submissions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `responses` | `object[]` | Yes | — |
 | `totalResponses` | `number` | Yes | — |
 | `pageCount` | `number` | Yes | — |
@@ -1229,9 +1136,6 @@ await corsair.filloutforms.api.tables.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `fields` | `object[]` | Yes | — |
@@ -1257,9 +1161,6 @@ await corsair.filloutforms.api.tables.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `order` | `number` | Yes | — |
@@ -1318,9 +1219,6 @@ await corsair.filloutforms.api.tables.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 
@@ -1348,9 +1246,6 @@ await corsair.filloutforms.api.tables.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `tableId` | `string` | Yes | — |
 | `name` | `string` | No | — |
@@ -1362,9 +1257,6 @@ await corsair.filloutforms.api.tables.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `order` | `number` | Yes | — |
@@ -1425,9 +1317,6 @@ await corsair.filloutforms.api.token.invalidate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | `string` | Yes | — |
 
 
@@ -1456,9 +1345,6 @@ await corsair.filloutforms.api.webhooks.createDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `events` | `record.created \| record.updated \| record.deleted \| table.created \| table.updated \| table.deleted \| field.created \| field.updated \| field.deleted[]` | Yes | — |
@@ -1471,9 +1357,6 @@ await corsair.filloutforms.api.webhooks.createDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `number` | Yes | — |
 | `secret` | `string` | Yes | — |
 
@@ -1498,9 +1381,6 @@ await corsair.filloutforms.api.webhooks.createForm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `formId` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 
@@ -1511,9 +1391,6 @@ await corsair.filloutforms.api.webhooks.createForm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `id` | `string \| number` | Yes | — |
 
 
@@ -1537,9 +1414,6 @@ await corsair.filloutforms.api.webhooks.deleteDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 | `webhookId` | `string \| number` | Yes | — |
 
@@ -1567,9 +1441,6 @@ await corsair.filloutforms.api.webhooks.listDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `databaseId` | `string` | Yes | — |
 
 
@@ -1579,9 +1450,6 @@ await corsair.filloutforms.api.webhooks.listDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhooks` | `object[]` | Yes | — |
 
 
@@ -1620,9 +1488,6 @@ await corsair.filloutforms.api.webhooks.removeForm({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `webhookId` | `string \| number` | Yes | — |
 
 
