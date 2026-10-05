@@ -10,6 +10,13 @@ export const getActor: TurbotPipesEndpoints['actorGet'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['actorGet']
 	>('actor', ctx.key, { method: 'GET' });
+	if (response && response.id && ctx.db?.actor) {
+		try {
+			await ctx.db?.actor.upsertByEntityId(response.id, { ...response });
+		} catch (error) {
+			console.warn('Failed to save actor to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.get',

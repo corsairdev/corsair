@@ -88,8 +88,9 @@ export const createUserWorkspaceModVariableSetting: TurbotPipesEndpoints['create
 		);
 		await logEventFromContext(
 			ctx,
+			// Log only identifiers; variable values may carry secrets.
 			'turbotpipes.mods.create_user_var_setting',
-			{ ...input },
+			{ user_handle, workspace_handle, mod_alias, variable_name },
 			'completed',
 		);
 		return response;

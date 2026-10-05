@@ -12,10 +12,11 @@ export const createUserPassword: TurbotPipesEndpoints['createUserPassword'] =
 			method: 'POST',
 			body: { password },
 		});
+		// Log only the identifier; the password must never persist in event storage.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.auth.create_user_password',
-			{ ...input },
+			{ user_handle },
 			'completed',
 		);
 		return response;

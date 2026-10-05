@@ -43,7 +43,7 @@ export const getTenantSettings: TurbotPipesEndpoints['getTenantSettings'] =
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.tenants.get_settings',
-			{ ..._input },
+			{},
 			'completed',
 		);
 		return response;

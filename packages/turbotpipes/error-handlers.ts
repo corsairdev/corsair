@@ -16,8 +16,21 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error) => {
+			// Only GET is replayed. A 429 on a write is returned as-is,
+			// with no Retry-After wait, to avoid duplicate side effects.
+			const method =
+				error instanceof TurbotPipesAPIError ? error.method : undefined;
+			if (method !== undefined && method !== 'GET') {
+				return { maxRetries: 0 };
+			}
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			}
+			if (
+				error instanceof TurbotPipesAPIError &&
+				error.retryAfter !== undefined
+			) {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
@@ -88,7 +101,9 @@ export const errorHandlers = {
 				msg.includes('503')
 			);
 		},
-		handler: async () => ({ maxRetries: 3 }),
+		// POSTs bill on success. A 500 can arrive after Turbot Pipes already
+		// created the resource, so the call is not retried.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,

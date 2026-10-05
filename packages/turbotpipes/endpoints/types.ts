@@ -238,6 +238,7 @@ export const ListOrgUsageInputSchema = z.object({ org_handle: z.string() });
 export type ListOrgUsageInput = z.infer<typeof ListOrgUsageInputSchema>;
 
 // ── Connections Schemas ──────────────────────────────────────────────────────
+// unknown: connection config is provider-defined (e.g. AWS, GCP keys); no fixed shape.
 export const CreateUserConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	handle: z.string(),
@@ -1014,6 +1015,7 @@ export type ListOrgWorkspaceModsInput = z.infer<
 	typeof ListOrgWorkspaceModsInputSchema
 >;
 
+// unknown: mod variable values accept any JSON value per the provider API.
 export const CreateUserWorkspaceModVariableSettingInputSchema = z.object({
 	user_handle: z.string(),
 	workspace_handle: z.string(),
@@ -1349,9 +1351,7 @@ export const GetTenantAvatarInputSchema = z.object({
 });
 export type GetTenantAvatarInput = z.infer<typeof GetTenantAvatarInputSchema>;
 
-export const GetTenantSettingsInputSchema = z.object({
-	tenant_handle: z.string().optional(),
-});
+export const GetTenantSettingsInputSchema = z.object({});
 export type GetTenantSettingsInput = z.infer<
 	typeof GetTenantSettingsInputSchema
 >;
@@ -1374,6 +1374,7 @@ export const ListIdentitiesInputSchema = z.object({});
 export type ListIdentitiesInput = z.infer<typeof ListIdentitiesInputSchema>;
 
 // ── Output Schemas ───────────────────────────────────────────────────────────
+// unknown: list items are per-endpoint records; the provider does not fix a shared shape.
 export const ListItemsOutputSchema = z.object({
 	items: z.array(z.record(z.string(), z.unknown())),
 	next_token: z.string().optional(),
@@ -1387,7 +1388,12 @@ export const StatusOutputSchema = z.object({
 	status: z.string().optional(),
 });
 
+// unknown: generic endpoints return provider-defined JSON objects without a fixed shape.
 export const GenericRecordOutputSchema = z.record(z.string(), z.unknown());
+
+// Avatar endpoints return binary image bytes (`*/*`), not JSON.
+// The shared HTTP client surfaces the body as text; callers receive raw content.
+export const AvatarOutputSchema = z.string();
 
 // ── Master Schemas Maps required by Corsair plugin validation ────────────────
 export const TurbotPipesEndpointInputSchemas = {
@@ -1746,11 +1752,11 @@ export const TurbotPipesEndpointOutputSchemas = {
 	createLoginTokenEmail: SuccessOutputSchema,
 	getAuthProvider: GenericRecordOutputSchema,
 	getTenant: GenericRecordOutputSchema,
-	getTenantAvatar: GenericRecordOutputSchema,
+	getTenantAvatar: AvatarOutputSchema,
 	getTenantSettings: GenericRecordOutputSchema,
 	listTenants: ListItemsOutputSchema,
 	getIdentity: GenericRecordOutputSchema,
-	getIdentityAvatar: GenericRecordOutputSchema,
+	getIdentityAvatar: AvatarOutputSchema,
 	listIdentities: ListItemsOutputSchema,
 } as const;
 

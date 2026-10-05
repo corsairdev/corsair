@@ -1,14 +1,41 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TurbotPipesAPIError extends Error {
+	public readonly code?: string;
+	public readonly status?: number;
+	public readonly statusText?: string;
+	// unknown: Turbot Pipes error bodies are JSON objects, strings, or omitted.
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+	public readonly method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
 	constructor(
 		message: string,
-		public readonly code?: string,
-		public readonly status?: number,
+		options?: {
+			cause?: Error;
+			code?: string;
+			status?: number;
+			// unknown: same as body above. The provider does not fix an error shape.
+			body?: unknown;
+			retryAfter?: number;
+			method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		},
 	) {
-		super(message);
+		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'TurbotPipesAPIError';
+		this.code = options?.code;
+		this.status = options?.status;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
+		this.method = options?.method;
+
+		if (options?.cause instanceof ApiError) {
+			this.status = this.status ?? options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = this.body ?? options.cause.body;
+			this.retryAfter = this.retryAfter ?? options.cause.retryAfter;
+		}
 	}
 }
 
@@ -23,6 +50,7 @@ export async function makeTurbotPipesRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: endpoint bodies are per-operation objects validated by zod input schemas.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -39,7 +67,6 @@ export async function makeTurbotPipesRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: formattedToken,
@@ -61,9 +88,17 @@ export async function makeTurbotPipesRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
-		if (error instanceof Error) {
-			throw new TurbotPipesAPIError(error.message);
+		if (error instanceof ApiError) {
+			throw error;
 		}
-		throw new TurbotPipesAPIError('Unknown Turbot Pipes API error');
+		if (error instanceof Error) {
+			throw new TurbotPipesAPIError(error.message, {
+				cause: error,
+				method,
+			});
+		}
+		throw new TurbotPipesAPIError('Unknown Turbot Pipes API error', {
+			method,
+		});
 	}
 }

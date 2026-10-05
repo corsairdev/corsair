@@ -1776,17 +1776,20 @@ const turbotpipesEndpointMeta = {
 		description: 'Update user preferences',
 	},
 	'users.deleteUserAvatar': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete custom user avatar',
 	},
 	'orgs.get': { riskLevel: 'read', description: 'Get organization details' },
-	'orgs.delete': { riskLevel: 'write', description: 'Delete an organization' },
+	'orgs.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an organization',
+	},
 	'orgs.listWorkspaces': {
 		riskLevel: 'read',
 		description: 'List organization workspaces',
 	},
 	'orgs.deleteWorkspace': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete organization workspace',
 	},
 	'orgs.runWorkspaceCommand': {
@@ -1838,7 +1841,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Update user connection',
 	},
 	'connections.deleteUserConnectionDeprecated': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete user connection (deprecated)',
 	},
 	'connections.testUserConnection': {
@@ -1858,7 +1861,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Get org connection permission',
 	},
 	'connections.deleteOrgConnectionPermission': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete org connection permission',
 	},
 	'connections.createOrgConnectionFolder': {
@@ -2012,7 +2015,7 @@ const turbotpipesEndpointMeta = {
 	},
 	'ai.testUserAiKey': { riskLevel: 'read', description: 'Test user AI key' },
 	'ai.deleteOrgWorkspaceConversation': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete AI conversation in org workspace',
 	},
 	'ai.getUserWorkspaceConversation': {
@@ -2036,7 +2039,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Create user integration',
 	},
 	'integrations.deleteUserIntegration': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete user integration',
 	},
 	'integrations.getUserIntegration': {
@@ -2092,7 +2095,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Create workspace notifier',
 	},
 	'notifiers.deleteUserWorkspaceNotifier': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete workspace notifier',
 	},
 	'notifiers.getUserWorkspaceNotifier': {
@@ -2176,7 +2179,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Create mod variable setting',
 	},
 	'mods.deleteUserWorkspaceModVariableSetting': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete mod variable setting',
 	},
 	'mods.getUserWorkspaceModVariableSetting': {
@@ -2192,7 +2195,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Get org mod variable setting',
 	},
 	'mods.deleteOrgWorkspaceModVariableSetting': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete org mod variable setting',
 	},
 	'pipelines.installUserWorkspaceFlowpipeMod': {
@@ -2204,11 +2207,11 @@ const turbotpipesEndpointMeta = {
 		description: 'Get Flowpipe mod details',
 	},
 	'pipelines.uninstallFlowpipeMod': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Uninstall Flowpipe mod',
 	},
 	'pipelines.uninstallOrgWorkspaceFlowpipeMod': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Uninstall org Flowpipe mod',
 	},
 	'pipelines.listOrgWorkspaceFlowpipeModVariables': {
@@ -2252,7 +2255,7 @@ const turbotpipesEndpointMeta = {
 		description: 'List triggers for pipeline',
 	},
 	'pipelines.deleteUserWorkspacePipeline': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete pipeline from workspace',
 	},
 	'pipelines.getUserWorkspacePipeline': {
@@ -2268,7 +2271,7 @@ const turbotpipesEndpointMeta = {
 		description: 'List pipelines in org workspace',
 	},
 	'billing.deleteOrgBillingSubscription': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete org billing subscription',
 	},
 	'billing.updateOrgBillingSubscription': {
@@ -2312,7 +2315,7 @@ const turbotpipesEndpointMeta = {
 		description: 'Get user token metadata',
 	},
 	'auth.deleteUserToken': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete user token',
 	},
 	'auth.updateUserToken': {
@@ -2414,8 +2417,11 @@ export function turbotpipes<const T extends TurbotPipesPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('turbotpipes', 'api_key');
+				}
+				return key;
 			}
 
 			throw new AuthMissingError('turbotpipes', 'api_key');

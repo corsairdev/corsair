@@ -5,14 +5,20 @@ import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserConnection: TurbotPipesEndpoints['createUserConnection'] =
 	async (ctx, input) => {
-		const { user_handle, ...body } = input;
+		const { user_handle, handle } = input;
+		const { plugin, config, ..._rest } = input;
+		void _rest;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createUserConnection']
-		>(`user/${user_handle}/connection`, ctx.key, { method: 'POST', body });
+		>(`user/${user_handle}/connection`, ctx.key, {
+			method: 'POST',
+			body: { handle, plugin, config },
+		});
+		// Log only identifiers; connection config may carry credentials.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.create_user',
-			{ ...input },
+			{ user_handle, handle },
 			'completed',
 		);
 		return response;
@@ -27,6 +33,13 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 			ctx.key,
 			{ method: 'GET' },
 		);
+		if (response && response.id && ctx.db?.connection) {
+			try {
+				await ctx.db?.connection.upsertByEntityId(response.id, { ...response });
+			} catch (error) {
+				console.warn('Failed to save connection to database:', error);
+			}
+		}
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_user',
@@ -62,8 +75,9 @@ export const updateUserConnection: TurbotPipesEndpoints['updateUserConnection'] 
 		});
 		await logEventFromContext(
 			ctx,
+			// Log only identifiers; connection config may carry credentials.
 			'turbotpipes.connections.update_user',
-			{ ...input },
+			{ user_handle, connection_handle },
 			'completed',
 		);
 		return response;
@@ -99,8 +113,9 @@ export const testUserConnection: TurbotPipesEndpoints['testUserConnection'] =
 		});
 		await logEventFromContext(
 			ctx,
+			// Log only identifiers; connection config may carry credentials.
 			'turbotpipes.connections.test_user',
-			{ ...input },
+			{ user_handle, connection_handle },
 			'completed',
 		);
 		return response;
@@ -108,14 +123,20 @@ export const testUserConnection: TurbotPipesEndpoints['testUserConnection'] =
 
 export const createOrgConnection: TurbotPipesEndpoints['createOrgConnection'] =
 	async (ctx, input) => {
-		const { org_handle, ...body } = input;
+		const { org_handle, handle } = input;
+		const { plugin, config, ..._orgRest } = input;
+		void _orgRest;
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createOrgConnection']
-		>(`org/${org_handle}/connection`, ctx.key, { method: 'POST', body });
+		>(`org/${org_handle}/connection`, ctx.key, {
+			method: 'POST',
+			body: { handle, plugin, config },
+		});
+		// Log only identifiers; connection config may carry credentials.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.create_org',
-			{ ...input },
+			{ org_handle, handle },
 			'completed',
 		);
 		return response;
@@ -132,8 +153,9 @@ export const updateOrgConnection: TurbotPipesEndpoints['updateOrgConnection'] =
 		});
 		await logEventFromContext(
 			ctx,
+			// Log only identifiers; connection config may carry credentials.
 			'turbotpipes.connections.update_org',
-			{ ...input },
+			{ org_handle, connection_handle },
 			'completed',
 		);
 		return response;

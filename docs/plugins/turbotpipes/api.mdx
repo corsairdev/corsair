@@ -255,7 +255,7 @@ await corsair.turbotpipes.api.ai.createUserAiKey({});
 
 Delete AI conversation in org workspace
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({});
@@ -686,7 +686,7 @@ await corsair.turbotpipes.api.auth.createUserPassword({});
 
 Delete user token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.auth.deleteUserToken({});
@@ -892,7 +892,7 @@ await corsair.turbotpipes.api.auth.updateUserToken({});
 
 Delete org billing subscription
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({});
@@ -1324,7 +1324,7 @@ await corsair.turbotpipes.api.connections.createUserConnection({});
 
 Delete org connection permission
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({});
@@ -1355,7 +1355,7 @@ await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({});
 
 Delete user connection (deprecated)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({});
@@ -2221,17 +2221,7 @@ await corsair.turbotpipes.api.identities.getIdentityAvatar({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `string`
 
 
 ---
@@ -2317,7 +2307,7 @@ await corsair.turbotpipes.api.integrations.createUserIntegration({});
 
 Delete user integration
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.integrations.deleteUserIntegration({});
@@ -2728,7 +2718,7 @@ await corsair.turbotpipes.api.mods.createUserWorkspaceModVariableSetting({});
 
 Delete org mod variable setting
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({});
@@ -2761,7 +2751,7 @@ await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({});
 
 Delete mod variable setting
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({});
@@ -3148,7 +3138,7 @@ await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({});
 
 Delete workspace notifier
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({});
@@ -3372,7 +3362,7 @@ await corsair.turbotpipes.api.notifiers.postUserWorkspaceNotifierCommand({});
 
 Delete an organization
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.orgs.delete({});
@@ -3402,7 +3392,7 @@ await corsair.turbotpipes.api.orgs.delete({});
 
 Delete organization workspace
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.orgs.deleteWorkspace({});
@@ -3820,7 +3810,7 @@ await corsair.turbotpipes.api.orgs.updateServiceAccountToken({});
 
 Delete pipeline from workspace
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({});
@@ -4442,7 +4432,7 @@ await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand({
 
 Uninstall Flowpipe mod
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({});
@@ -4474,7 +4464,7 @@ await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({});
 
 Uninstall org Flowpipe mod
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({});
@@ -4860,17 +4850,7 @@ await corsair.turbotpipes.api.tenants.getTenantAvatar({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `string`
 
 
 ---
@@ -4887,12 +4867,7 @@ Get tenant settings
 await corsair.turbotpipes.api.tenants.getTenantSettings({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `tenant_handle` | `string` | No | — |
-
+**Input:** _empty object_
 
 
 **Output:** `object`
@@ -4954,7 +4929,7 @@ await corsair.turbotpipes.api.tenants.listTenants({});
 
 Delete custom user avatar
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.turbotpipes.api.users.deleteUserAvatar({});

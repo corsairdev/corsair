@@ -7,6 +7,13 @@ export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getOrg']
 	>(`org/${input.org_handle}`, ctx.key, { method: 'GET' });
+	if (response && response.id && ctx.db?.org) {
+		try {
+			await ctx.db?.org.upsertByEntityId(response.id, { ...response });
+		} catch (error) {
+			console.warn('Failed to save org to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get',

@@ -7,6 +7,13 @@ export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUser']
 	>(`user/${input.user_handle}`, ctx.key, { method: 'GET' });
+	if (response && response.id && ctx.db?.user) {
+		try {
+			await ctx.db?.user.upsertByEntityId(response.id, { ...response });
+		} catch (error) {
+			console.warn('Failed to save user to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get',
@@ -57,6 +64,13 @@ export const getUserWorkspace: TurbotPipesEndpoints['getUserWorkspace'] =
 			ctx.key,
 			{ method: 'GET' },
 		);
+		if (response && response.id && ctx.db?.workspace) {
+			try {
+				await ctx.db?.workspace.upsertByEntityId(response.id, { ...response });
+			} catch (error) {
+				console.warn('Failed to save workspace to database:', error);
+			}
+		}
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_workspace',

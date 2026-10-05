@@ -7,14 +7,20 @@ export const createUserAiKey: TurbotPipesEndpoints['createUserAiKey'] = async (
 	ctx,
 	input,
 ) => {
-	const { user_handle, ...body } = input;
+	const { user_handle, provider } = input;
+	const { key, ..._rest } = input;
+	void _rest;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['createUserAiKey']
-	>(`user/${user_handle}/ai/key`, ctx.key, { method: 'POST', body });
+	>(`user/${user_handle}/ai/key`, ctx.key, {
+		method: 'POST',
+		body: { provider, key },
+	});
+	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.create_user_key',
-		{ ...input },
+		{ user_handle, provider },
 		'completed',
 	);
 	return response;
@@ -58,17 +64,18 @@ export const updateUserAiKey: TurbotPipesEndpoints['updateUserAiKey'] = async (
 	ctx,
 	input,
 ) => {
-	const { user_handle, provider, ...body } = input;
+	const { user_handle, provider, key } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['updateUserAiKey']
 	>(`user/${user_handle}/ai/key/${provider}`, ctx.key, {
 		method: 'PATCH',
-		body,
+		body: { key },
 	});
+	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.update_user_key',
-		{ ...input },
+		{ user_handle, provider },
 		'completed',
 	);
 	return response;
@@ -78,17 +85,18 @@ export const testUserAiKey: TurbotPipesEndpoints['testUserAiKey'] = async (
 	ctx,
 	input,
 ) => {
-	const { user_handle, provider, ...body } = input;
+	const { user_handle, provider, key } = input;
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['testUserAiKey']
 	>(`user/${user_handle}/ai/key/${provider}/test`, ctx.key, {
 		method: 'POST',
-		body,
+		body: { key },
 	});
+	// Log only identifiers; the AI provider key must never persist in event storage.
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.ai.test_user_key',
-		{ ...input },
+		{ user_handle, provider },
 		'completed',
 	);
 	return response;
@@ -176,10 +184,11 @@ export const sendUserWorkspaceChatMessage: TurbotPipesEndpoints['sendUserWorkspa
 			method: 'POST',
 			body: { message, conversation_id },
 		});
+		// Log only identifiers; message content may carry sensitive data.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.ai.send_chat_message',
-			{ ...input },
+			{ user_handle, workspace_handle, conversation_id },
 			'completed',
 		);
 		return response;
