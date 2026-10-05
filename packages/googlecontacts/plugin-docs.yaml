@@ -1,0 +1,25 @@
+displayName: Google Contacts
+description: Read and manage a user's Google contacts, contact groups, and auto-saved "other contacts" through the People API.
+examples:
+  read:
+    path: contacts.search
+    title: Find a contact
+    args:
+      query: ada
+      readMask:
+        - names
+        - emailAddresses
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      person:
+        names:
+          - givenName: Ada
+            familyName: Lovelace
+        emailAddresses:
+          - value: ada@example.com
+dbExample:
+  entity: contacts
+  note: Search synced contacts without hitting the People API.
+  limit: 50

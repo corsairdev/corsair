@@ -203,6 +203,7 @@ export const BaseProviders = [
 	'googlebigquery',
 	'googlecalendar',
 	'googlecloudvision',
+	'googlecontacts',
 	'googledocs',
 	'googledrive',
 	'googlemaps',
@@ -552,6 +553,7 @@ export const ProviderDisplayNames = {
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googlecloudvision: 'Google Cloud Vision',
+	googlecontacts: 'Google Contacts',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
@@ -908,6 +910,7 @@ export type AllProviders =
 	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googlecloudvision'
+	| 'googlecontacts'
 	| 'googledocs'
 	| 'googledrive'
 	| 'googlemaps'
