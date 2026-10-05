@@ -5,3 +5,5 @@ content/docs/(api)/v1/
 .source/
 next-env.d.ts
 *.tsbuildinfo
+.vercel
+.env*
