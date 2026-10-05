@@ -116,6 +116,7 @@ export const BaseProviders = [
 	'bunnycdn',
 	'byteforms',
 	'cal',
+	'callpage',
 	'calendly',
 	'campaigncleaner',
 	'campayn',
@@ -465,6 +466,7 @@ export const ProviderDisplayNames = {
 	bunnycdn: 'Bunnycdn',
 	byteforms: 'ByteForms',
 	cal: 'Cal',
+	callpage: 'CallPage',
 	calendly: 'Calendly',
 	campaigncleaner: 'Campaign Cleaner',
 	campayn: 'Campayn',
@@ -821,6 +823,7 @@ export type AllProviders =
 	| 'bunnycdn'
 	| 'byteforms'
 	| 'cal'
+	| 'callpage'
 	| 'calendly'
 	| 'campaigncleaner'
 	| 'campayn'
