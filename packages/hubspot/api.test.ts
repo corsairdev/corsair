@@ -238,19 +238,19 @@ describe('HubSpot API Type Tests', () => {
 				{
 					method: 'POST',
 					body: {
-	filterGroups: [
-		{
-			filters: [
-				{
-					propertyName: 'domain',
-					operator: 'EQ',
-					value: 'example.com',
-				},
-			],
-		},
-	],
-	properties: ['domain'],
-},
+						filterGroups: [
+							{
+								filters: [
+									{
+										propertyName: 'domain',
+										operator: 'EQ',
+										value: 'example.com',
+									},
+								],
+							},
+						],
+						properties: ['domain'],
+					},
 				},
 			);
 			const result = response;
