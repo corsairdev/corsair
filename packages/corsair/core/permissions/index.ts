@@ -103,29 +103,44 @@ export function evaluatePermission(
 // Duration Parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds. */
+const DEFAULT_DURATION_MS = 10 * 60 * 1_000;
+const UNIT_MS: Record<string, number> = {
+	d: 86_400_000,
+	h: 3_600_000,
+	m: 60_000,
+	s: 1_000,
+};
+
+/**
+ * Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds.
+ * Only a full duration string is accepted. Anything else ('1.5h', '500ms', '')
+ * falls back to 10 minutes. A valid '0s' returns 0.
+ * A non-string (a number or null from an untyped caller) also falls back, matching
+ * the old regex, which stringified its input instead of returning 0 or throwing.
+ */
 export function parseDurationMs(duration: string): number {
-	const regex = /(\d+)(d|h|m|s)/g;
+	const raw: unknown = duration;
+	if (typeof raw !== 'string' || raw.length === 0) return DEFAULT_DURATION_MS;
+
 	let total = 0;
-	let match: RegExpExecArray | null;
-	while ((match = regex.exec(duration)) !== null) {
-		const value = parseInt(match[1]!, 10);
-		switch (match[2]) {
-			case 'd':
-				total += value * 86_400_000;
-				break;
-			case 'h':
-				total += value * 3_600_000;
-				break;
-			case 'm':
-				total += value * 60_000;
-				break;
-			case 's':
-				total += value * 1_000;
-				break;
+	let i = 0;
+	while (i < raw.length) {
+		const start = i;
+		while (i < raw.length) {
+			const code = raw.charCodeAt(i);
+			if (code < 48 || code > 57) break;
+			i++;
 		}
+		if (i === start || i === raw.length) return DEFAULT_DURATION_MS;
+		const unit = UNIT_MS[raw.charAt(i)];
+		if (unit === undefined) return DEFAULT_DURATION_MS;
+		const value = Number.parseInt(raw.slice(start, i), 10);
+		if (!Number.isFinite(value)) return DEFAULT_DURATION_MS;
+		total += value * unit;
+		if (!Number.isFinite(total)) return DEFAULT_DURATION_MS;
+		i++;
 	}
-	return total > 0 ? total : 10 * 60 * 1_000;
+	return total;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -406,10 +421,20 @@ export async function enforcePermission(
 		};
 	}
 
-	// No existing actionable record — create a new pending approval request
+	// No existing actionable record — create a new pending approval request.
+	// A timeout of 0 (parseDurationMs('0s')) would insert a row that is already
+	// expired, so the next call inserts another. Block without writing.
+	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
+	if (!(timeoutMs > 0)) {
+		console.log(
+			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval timeout is ${timeoutMs}ms.`,
+			`\n  Action: ${description}`,
+		);
+		return { result: 'blocked', reason: 'timeout' };
+	}
+
 	const id = uuidv4();
 	const token = randomBytes(32).toString('hex');
-	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
 	const expiresAt = new Date(Date.now() + timeoutMs).toISOString();
 
 	await opts.db.db
