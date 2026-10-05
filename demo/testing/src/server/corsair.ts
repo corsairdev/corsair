@@ -15,7 +15,6 @@ import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
-
 import { sqlite } from '../db';
 
 const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
