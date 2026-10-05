@@ -1,17 +1,24 @@
 // Best-effort sync of fetched records into local entity tables so the
 // documented `<entity>.search()` accessors return fetched data.
 //
-// Two rules keep sync safe:
+// Design rules:
 // - Detail GETs await their write, so a completed fetch guarantees its record
 //   is searchable locally (one local write; negligible latency).
-// - Lists sync in the background and only insert records missing locally, so
-//   list calls never wait on writes and sparse list items never overwrite
-//   detailed stored records.
+// - Sync never fails a read: every store access is guarded, because the
+//   entity accessor exists even when no database is configured (its methods
+//   throw `Database not configured`), and storage itself can fail.
+// - Lists sync in the background and merge stored-wins: each item is re-read
+//   immediately before writing, so a concurrent detail fetch is preserved,
+//   sparse list items enrich rather than erase, and responses never wait.
 
 type EntityTable = {
 	upsertByEntityId(id: string, record: never): Promise<unknown>;
-	findManyByEntityIds(ids: string[]): Promise<unknown[]>;
+	findByEntityId(id: string): Promise<unknown>;
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
 
 // unknown: synced records are provider-defined objects without a fixed shape;
 // each entity table validates its own columns on write.
@@ -23,11 +30,11 @@ export async function syncEntityDetail(
 	if (!table) {
 		return;
 	}
-	await table.upsertByEntityId(id, record as never);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null;
+	try {
+		await table.upsertByEntityId(id, record as never);
+	} catch (error) {
+		console.warn('Failed to sync entity to database:', error);
+	}
 }
 
 // unknown: list items are provider-defined records; only string ids are used
@@ -39,35 +46,30 @@ export function syncListDiscovery(
 	if (!table || !Array.isArray(items)) {
 		return;
 	}
-	const ids: string[] = [];
+	const sparse: Record<string, unknown>[] = [];
 	for (const item of items) {
 		if (isRecord(item) && typeof item.id === 'string') {
-			ids.push(item.id);
+			sparse.push(item);
 		}
 	}
-	if (ids.length === 0) {
+	if (sparse.length === 0) {
 		return;
 	}
 	void (async () => {
-		try {
-			const existing = await table.findManyByEntityIds(ids);
-			const seen = new Set<string>();
-			for (const row of existing) {
-				if (isRecord(row) && typeof row.entity_id === 'string') {
-					seen.add(row.entity_id);
-				}
+		for (const item of sparse) {
+			const id = item.id as string;
+			try {
+				// Fresh read at write time: a detail GET may have stored the
+				// full record after the list response arrived.
+				const current: unknown = await table.findByEntityId(id);
+				const stored = isRecord(current) ? current.data : undefined;
+				// Stored data wins every conflict, so sparse list fields can
+				// only fill gaps and never erase fetched details.
+				const merged = isRecord(stored) ? { ...item, ...stored } : { ...item };
+				await table.upsertByEntityId(id, merged as never);
+			} catch (error) {
+				console.warn('Failed to sync list item to database:', error);
 			}
-			for (const item of items) {
-				if (!isRecord(item) || typeof item.id !== 'string') {
-					continue;
-				}
-				if (!seen.has(item.id)) {
-					seen.add(item.id);
-					await table.upsertByEntityId(item.id, item as never);
-				}
-			}
-		} catch (error) {
-			console.warn('Failed to sync list items to database:', error);
 		}
 	})();
 }

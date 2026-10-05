@@ -141,6 +141,10 @@ describe('TurbotPipes endpoint coverage', () => {
 				findManyByEntityIds: jest.fn(async (ids: string[]) =>
 					ids.filter((id) => rows.has(id)).map((id) => ({ entity_id: id })),
 				),
+				findByEntityId: jest.fn(async (id: string) => {
+					const data = rows.get(id);
+					return data ? { entity_id: id, data } : null;
+				}),
 			};
 			return { rows, table };
 		};
@@ -159,6 +163,20 @@ describe('TurbotPipes endpoint coverage', () => {
 				expect.objectContaining({ handle: 'bob' }),
 			);
 			expect(rows.get('u_1')).toMatchObject({ handle: 'bob' });
+		});
+
+		it('a failing local write never fails a successful read', async () => {
+			const failing = {
+				upsertByEntityId: jest.fn(async () => {
+					throw new Error('Database not configured');
+				}),
+				findByEntityId: jest.fn(async () => null),
+			};
+			const ctx = { ...createMockContext(), db: { user: failing } };
+			mockRequest.mockResolvedValueOnce({ id: 'u_9', handle: 'carol' });
+			await expect(
+				UsersEndpoints.getUser(ctx, { user_handle: 'carol' }),
+			).resolves.toMatchObject({ handle: 'carol' });
 		});
 
 		it('list discovery adds missing records without erasing stored details', async () => {
