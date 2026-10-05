@@ -38,8 +38,8 @@ For a new integration, claim it on the [OSS Integrations page](https://corsair.d
 
 ## Legal
 
-- [Privacy Policy](PRIVACY_POLICY.md)
-- [Terms of Service](TERMS_OF_SERVICE.md)
+- [Privacy Policy](https://corsair.dev/privacy-policy)
+- [Terms of Service](https://corsair.dev/terms-of-service)
 
 ## License
 
