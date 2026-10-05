@@ -86,6 +86,7 @@ export const BaseProviders = [
 	'bigpictureio',
 	'bitbucket',
 	'bitwarden',
+	'blackbaud',
 	'blazemeter',
 	'blocknative',
 	'bluesky',
@@ -435,6 +436,7 @@ export const ProviderDisplayNames = {
 	bigpictureio: 'BigPicture.io',
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
+	blackbaud: 'Blackbaud',
 	blazemeter: 'BlazeMeter',
 	blocknative: 'Blocknative',
 	bluesky: 'Bluesky',
@@ -791,6 +793,7 @@ export type AllProviders =
 	| 'bigpictureio'
 	| 'bitbucket'
 	| 'bitwarden'
+	| 'blackbaud'
 	| 'blazemeter'
 	| 'blocknative'
 	| 'bluesky'
