@@ -1,0 +1,155 @@
+import {
+	isTursoDatabaseUrl,
+	isTursoHost,
+	parseSseBuffer,
+	TursoAPIError,
+	tryGetStoredKey,
+	tursoFetchJson,
+	tursoPipelineHealthCheck,
+} from './client';
+
+describe('parseSseBuffer', () => {
+	it('returns complete frames and keeps the partial tail', () => {
+		const { events, rest } = parseSseBuffer(
+			'data: {"a":1}\n\ndata: {"b":2}\n\ndata: {"c"',
+		);
+		expect(events).toEqual([{ data: '{"a":1}' }, { data: '{"b":2}' }]);
+		expect(rest).toBe('data: {"c"');
+	});
+
+	it('captures a named event', () => {
+		const { events } = parseSseBuffer('event: insert\ndata: {"a":1}\n\n');
+		expect(events).toEqual([{ event: 'insert', data: '{"a":1}' }]);
+	});
+
+	it('joins multi-line data fields', () => {
+		const { events } = parseSseBuffer('data: line1\ndata: line2\n\n');
+		expect(events[0]!.data).toBe('line1\nline2');
+	});
+
+	it('normalizes CRLF frame separators', () => {
+		const { events } = parseSseBuffer('data: {"a":1}\r\n\r\n');
+		expect(events).toEqual([{ data: '{"a":1}' }]);
+	});
+
+	it('ignores comment-only and empty frames', () => {
+		const { events } = parseSseBuffer(': keep-alive\n\n');
+		expect(events).toEqual([]);
+	});
+
+	it('returns nothing for a buffer with no complete frame', () => {
+		const { events, rest } = parseSseBuffer('data: partial');
+		expect(events).toEqual([]);
+		expect(rest).toBe('data: partial');
+	});
+});
+
+describe('isTursoDatabaseUrl', () => {
+	it('accepts https Turso database hosts with root path', () => {
+		expect(isTursoDatabaseUrl('https://mydb-myorg.turso.io')).toBe(true);
+		expect(isTursoDatabaseUrl('https://abc-mydb-org.turso.io/')).toBe(true);
+		expect(isTursoDatabaseUrl('https://turso.io')).toBe(true);
+	});
+
+	it('rejects non-root paths on Turso database hosts', () => {
+		expect(isTursoDatabaseUrl('https://mydb-myorg.turso.io/x')).toBe(false);
+		expect(isTursoDatabaseUrl('https://mydb-myorg.turso.io/path/to/db')).toBe(
+			false,
+		);
+	});
+
+	it('rejects look-alike and non-Turso hosts', () => {
+		expect(isTursoDatabaseUrl('https://evil.com')).toBe(false);
+		expect(isTursoDatabaseUrl('https://evil-turso.io')).toBe(false);
+		expect(isTursoDatabaseUrl('https://turso.io.evil.com')).toBe(false);
+		expect(isTursoDatabaseUrl('https://mydb.turso.io.attacker.net')).toBe(
+			false,
+		);
+	});
+
+	it('rejects plaintext http, which would expose the token in transit', () => {
+		expect(isTursoDatabaseUrl('http://mydb-myorg.turso.io')).toBe(false);
+	});
+
+	it('rejects malformed input', () => {
+		expect(isTursoDatabaseUrl('not-a-url')).toBe(false);
+		expect(isTursoDatabaseUrl('')).toBe(false);
+	});
+});
+
+describe('isTursoHost', () => {
+	it('accepts platform API, region, and database hosts', () => {
+		expect(isTursoHost('https://api.turso.tech/v1/auth/validate')).toBe(true);
+		expect(isTursoHost('https://region.turso.io')).toBe(true);
+		expect(isTursoHost('https://mydb-myorg.turso.io/beta/listen')).toBe(true);
+	});
+
+	it('rejects non-Turso hosts', () => {
+		expect(isTursoHost('https://attacker.com')).toBe(false);
+		expect(isTursoHost('http://api.turso.tech')).toBe(false);
+	});
+});
+
+describe('tursoFetchJson security', () => {
+	it('refuses to send bearer token to non-Turso host', async () => {
+		await expect(
+			tursoFetchJson('https://evil.com/leak', { apiKey: 'secret-token' }),
+		).rejects.toThrow('Refusing to send bearer token to non-Turso host');
+	});
+
+	it('keeps status and retryAfter metadata on thrown fetch errors', async () => {
+		const originalFetch = global.fetch;
+		const exhaustedRetryError = Object.assign(new Error('Too Many Requests'), {
+			status: 429,
+			retryAfter: 1_500,
+		});
+		global.fetch = jest.fn().mockRejectedValueOnce(exhaustedRetryError);
+
+		try {
+			await tursoFetchJson('https://api.turso.tech/v1/auth/validate', {
+				apiKey: 'secret-token',
+			});
+			throw new Error('expected tursoFetchJson to throw');
+		} catch (error) {
+			expect(error).toBeInstanceOf(TursoAPIError);
+			const apiError = error as TursoAPIError;
+			expect(apiError.message).toBe('Too Many Requests');
+			expect(apiError.status).toBe(429);
+			expect(apiError.retryAfter).toBe(1_500);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+});
+
+describe('tursoPipelineHealthCheck security', () => {
+	it('rejects non-Turso database URL immediately', async () => {
+		const result = await tursoPipelineHealthCheck(
+			'https://evil.com',
+			'secret-token',
+		);
+		expect(result).toBe(false);
+	});
+});
+
+describe('tryGetStoredKey', () => {
+	it('returns value when getter succeeds', async () => {
+		const result = await tryGetStoredKey(async () => 'stored-secret');
+		expect(result).toBe('stored-secret');
+	});
+
+	it('returns undefined when no DEK is found', async () => {
+		const result = await tryGetStoredKey(async () => {
+			throw new Error('No DEK found for account');
+		});
+		expect(result).toBeUndefined();
+	});
+
+	it('propagates real operational errors', async () => {
+		await expect(
+			tryGetStoredKey(async () => {
+				throw new Error('Database connection failed');
+			}),
+		).rejects.toThrow('Database connection failed');
+	});
+});
