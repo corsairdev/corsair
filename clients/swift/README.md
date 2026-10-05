@@ -24,18 +24,19 @@ import CorsairCloud
 
 let corsair = CorsairCloud(apiKey: "ck_cloud_…")
 
-// Call any operation on any plugin your runtime has, as user "acme":
-let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
+// Calls run on an instance of the project, as one of your users:
+let users = corsair.instance("users")
+let result = try await users.tenant("acme").call("notion", "pages.searchPage", args: [:])
 
 // ...or decode straight into your own type:
 struct Page: Decodable { let id: String }
 struct SearchResult: Decodable { let results: [Page] }
-let typed = try await corsair.tenant("acme")
+let typed = try await users.tenant("acme")
     .call("notion", "pages.searchPage", as: SearchResult.self)
 
 // Connect a user's account, then check status:
-let link = try await corsair.manage.createConnectLink(plugin: "notion", tenantId: "acme")
-let status = try await corsair.manage.connectionStatus(tenantId: "acme")
+let link = try await users.manage.createConnectLink(plugin: "notion", tenantId: "acme")
+let status = try await users.manage.connectionStatus(tenantId: "acme")
 ```
 
 Non-2xx responses throw `CorsairError` (`code`, `status`, `message`). Full guide:
