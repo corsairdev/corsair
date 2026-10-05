@@ -374,6 +374,13 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 			ctx.key,
 			{ method: 'GET' },
 		);
+		if (response && response.id && ctx.db?.process) {
+			try {
+				await ctx.db.process.upsertByEntityId(response.id, { ...response });
+			} catch (error) {
+				console.warn('Failed to save process to database:', error);
+			}
+		}
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process',

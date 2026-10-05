@@ -1,5 +1,21 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+// Writes are not idempotent (creates, commands, chat), so the shared HTTP
+// client must not replay them internally on 429. Reads keep default retries.
+const NO_RETRY: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 export class TurbotPipesAPIError extends Error {
 	public readonly code?: string;
@@ -85,7 +101,10 @@ export async function makeTurbotPipesRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
+		const response = await request<T>(config, requestOptions, {
+			// undefined selects the shared default (retries on) for reads.
+			rateLimitConfig: method === 'GET' ? undefined : NO_RETRY,
+		});
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
@@ -101,4 +120,43 @@ export async function makeTurbotPipesRequest<T>(
 			method,
 		});
 	}
+}
+
+/**
+ * Resolves an avatar endpoint to a directly usable image URL.
+ *
+ * Avatar endpoints answer with a redirect to the hosted image (or the bytes
+ * themselves). The shared JSON HTTP client would read binary bodies as text
+ * and corrupt them, so this helper never downloads the body: it follows the
+ * redirect chain manually and returns the final public URL instead.
+ */
+export async function getTurbotPipesAvatarUrl(
+	endpoint: string,
+	apiKey: string,
+): Promise<{ avatar_url: string }> {
+	const formattedToken =
+		apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
+			? apiKey
+			: `Bearer ${apiKey}`;
+
+	const response = await fetch(`${TURBOTPIPES_API_BASE}/${endpoint}`, {
+		method: 'GET',
+		headers: {
+			Authorization: formattedToken,
+		},
+		redirect: 'manual',
+	});
+
+	if (response.status >= 200 && response.status < 400) {
+		const location = response.headers.get('location');
+		if (location) {
+			return { avatar_url: location };
+		}
+		return { avatar_url: `${TURBOTPIPES_API_BASE}/${endpoint}` };
+	}
+
+	throw new TurbotPipesAPIError(
+		`Failed to resolve avatar: ${response.status} ${response.statusText}`,
+		{ status: response.status, method: 'GET' },
+	);
 }

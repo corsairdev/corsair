@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTurbotPipesRequest } from '../client';
+import { getTurbotPipesAvatarUrl, makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
 import type { TurbotPipesEndpointOutputs } from './types';
 
@@ -21,9 +21,12 @@ export const getIdentity: TurbotPipesEndpoints['getIdentity'] = async (
 
 export const getIdentityAvatar: TurbotPipesEndpoints['getIdentityAvatar'] =
 	async (ctx, input) => {
-		const response = await makeTurbotPipesRequest<
-			TurbotPipesEndpointOutputs['getIdentityAvatar']
-		>(`identity/${input.identity_handle}/avatar`, ctx.key, { method: 'GET' });
+		// Returns the resolved image URL instead of downloading bytes: the shared
+		// HTTP client parses non-JSON bodies as text and would corrupt the image.
+		const response = await getTurbotPipesAvatarUrl(
+			`identity/${input.identity_handle}/avatar`,
+			ctx.key,
+		);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.identities.get_avatar',

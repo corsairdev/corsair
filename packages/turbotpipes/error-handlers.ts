@@ -18,8 +18,13 @@ export const errorHandlers = {
 		handler: async (error: Error) => {
 			// Only GET is replayed. A 429 on a write is returned as-is,
 			// with no Retry-After wait, to avoid duplicate side effects.
+			// ApiError carries the redacted request options, including method.
 			const method =
-				error instanceof TurbotPipesAPIError ? error.method : undefined;
+				error instanceof TurbotPipesAPIError
+					? error.method
+					: error instanceof ApiError
+						? error.request?.method
+						: undefined;
 			if (method !== undefined && method !== 'GET') {
 				return { maxRetries: 0 };
 			}

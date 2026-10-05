@@ -1391,9 +1391,12 @@ export const StatusOutputSchema = z.object({
 // unknown: generic endpoints return provider-defined JSON objects without a fixed shape.
 export const GenericRecordOutputSchema = z.record(z.string(), z.unknown());
 
-// Avatar endpoints return binary image bytes (`*/*`), not JSON.
-// The shared HTTP client surfaces the body as text; callers receive raw content.
-export const AvatarOutputSchema = z.string();
+// Avatar endpoints redirect to the hosted image (`*/*`), and the shared HTTP
+// client would read those binary bodies as text and corrupt them. The handlers
+// resolve the redirect instead and return the directly usable image URL.
+export const AvatarOutputSchema = z.object({
+	avatar_url: z.string(),
+});
 
 // ── Master Schemas Maps required by Corsair plugin validation ────────────────
 export const TurbotPipesEndpointInputSchemas = {

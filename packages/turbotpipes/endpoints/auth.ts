@@ -101,10 +101,11 @@ export const createSignup: TurbotPipesEndpoints['createSignup'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['createSignup']
 	>('signup', ctx.key, { method: 'POST', body: input });
+	// Log only a presence flag; email addresses are PII and must not persist.
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.create_signup',
-		{ ...input },
+		{ has_email: Boolean(input.email) },
 		'completed',
 	);
 	return response;
@@ -117,10 +118,11 @@ export const initiateLogin: TurbotPipesEndpoints['initiateLogin'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['initiateLogin']
 	>('login', ctx.key, { method: 'POST', body: input });
+	// Log only a presence flag; email addresses are PII and must not persist.
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.auth.initiate_login',
-		{ ...input },
+		{ has_email: Boolean(input.email) },
 		'completed',
 	);
 	return response;
@@ -131,10 +133,11 @@ export const createLoginTokenEmail: TurbotPipesEndpoints['createLoginTokenEmail'
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['createLoginTokenEmail']
 		>('login/token', ctx.key, { method: 'POST', body: input });
+		// Log only a presence flag; email addresses are PII and must not persist.
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.auth.create_login_token_email',
-			{ ...input },
+			{ has_email: Boolean(input.email) },
 			'completed',
 		);
 		return response;

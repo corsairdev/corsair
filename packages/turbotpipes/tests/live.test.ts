@@ -5,6 +5,8 @@ import { ActorEndpoints, TenantsEndpoints, UsersEndpoints } from '../endpoints';
 const API_KEY = process.env.TURBOT_PIPES_API_KEY;
 
 describe('TurbotPipes Live API Tests', () => {
+	// any: stub plugin context for live tests; the Corsair runtime builds real
+	// contexts, tests only need key + authType.
 	const createMockContext = (key: string) => ({
 		key,
 		authType: 'api_key' as const,

@@ -30,6 +30,13 @@ export const getUserWorkspaceDatatank: TurbotPipesEndpoints['getUserWorkspaceDat
 			ctx.key,
 			{ method: 'GET' },
 		);
+		if (response && response.id && ctx.db?.datatank) {
+			try {
+				await ctx.db.datatank.upsertByEntityId(response.id, { ...response });
+			} catch (error) {
+				console.warn('Failed to save datatank to database:', error);
+			}
+		}
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_user_workspace',

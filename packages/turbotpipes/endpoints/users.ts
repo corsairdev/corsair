@@ -140,6 +140,13 @@ export const getUserProcess: TurbotPipesEndpoints['getUserProcess'] = async (
 	>(`user/${input.user_handle}/process/${input.process_id}`, ctx.key, {
 		method: 'GET',
 	});
+	if (response && response.id && ctx.db?.process) {
+		try {
+			await ctx.db.process.upsertByEntityId(response.id, { ...response });
+		} catch (error) {
+			console.warn('Failed to save process to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_process',

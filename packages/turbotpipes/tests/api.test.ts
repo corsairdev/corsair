@@ -27,6 +27,9 @@ jest.mock('corsair/http', () => ({
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
 
+// any: stub plugin context for unit tests. Real contexts are built by the
+// Corsair runtime (keys, db, account); tests only need key + authType, so the
+// remaining fields are intentionally untyped test doubles.
 const createMockContext = () => ({
 	key: 'tpt_test_token_12345',
 	authType: 'api_key' as const,
@@ -81,6 +84,27 @@ describe('TurbotPipes Plugin Integration & API Tests', () => {
 				expect.objectContaining({
 					method: 'GET',
 					url: 'actor',
+				}),
+				expect.objectContaining({
+					rateLimitConfig: undefined,
+				}),
+			);
+		});
+
+		it('disables internal retries for write methods', async () => {
+			mockRequest.mockResolvedValueOnce({ id: 'c_1' });
+			await makeTurbotPipesRequest<any>('user/bob/connection', 'tpt_abc123', {
+				method: 'POST',
+				body: { handle: 'x' },
+			});
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.anything(),
+				expect.objectContaining({
+					rateLimitConfig: expect.objectContaining({
+						enabled: false,
+						maxRetries: 0,
+					}),
 				}),
 			);
 		});
