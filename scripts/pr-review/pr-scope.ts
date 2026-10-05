@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
-	ALLOWED_EXTRA,
 	DOCS_NAV_FILE,
 	detectPlugin,
+	isAllowedExtraFile,
 	isPluginDocsManifestPr,
 	isSamePluginDocs,
 	pluginOf,
@@ -100,7 +100,7 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 		changedFiles.every(
 			(file) =>
 				pluginOf(file) === plugin ||
-				ALLOWED_EXTRA.includes(file) ||
+				isAllowedExtraFile(file, plugin) ||
 				file === DOCS_NAV_FILE ||
 				isSamePluginDocs(file, plugin),
 		)

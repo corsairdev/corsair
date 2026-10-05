@@ -29,13 +29,19 @@ import type {
 } from './endpoints/types';
 import { TeamsEndpointOutputSchemas } from './endpoints/types';
 
-const ACCESS_TOKEN = process.env.TEAMS_ACCESS_TOKEN!;
+const ACCESS_TOKEN = process.env.TEAMS_ACCESS_TOKEN?.trim() ?? '';
+const hasCredentials = Boolean(ACCESS_TOKEN);
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn('Skipping Teams API tests: TEAMS_ACCESS_TOKEN not set');
+}
 const TEST_TEAM_ID = process.env.TEST_TEAMS_TEAM_ID;
 const TEST_CHANNEL_ID = process.env.TEST_TEAMS_CHANNEL_ID;
 const TEST_USER_ID = process.env.TEST_TEAMS_USER_ID;
 const TEST_CHAT_ID = process.env.TEST_TEAMS_CHAT_ID;
 
-describe('Teams API Type Tests', () => {
+describeIf('Teams API Type Tests', () => {
 	describe('teams', () => {
 		it('teamsList returns correct type', async () => {
 			const result = await makeTeamsRequest<TeamsListResponse>(
