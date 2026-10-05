@@ -5,7 +5,9 @@ import { getAllRedirects } from './lib/redirects';
 const config: NextConfig = {
 	reactStrictMode: true,
 	experimental: {
-		cpus: 2,
+		// The build box has 4; 2 left half of it idle during page data and
+		// static generation.
+		cpus: 4,
 		optimizePackageImports: ['fumadocs-ui', 'fumadocs-core', 'lucide-react'],
 		webpackMemoryOptimizations: true,
 	},
