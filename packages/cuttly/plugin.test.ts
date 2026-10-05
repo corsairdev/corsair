@@ -169,4 +169,23 @@ describe('Cutt.ly plugin', () => {
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
+
+	it('routes wrapped transport errors past BAD_REQUEST to DEFAULT', () => {
+		const transport = new CuttlyAPIError('fetch failed');
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(transport)).toBe(false);
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+
+	it('matches HTTP 400 and provider codes as bad requests', () => {
+		expect(
+			errorHandlers.BAD_REQUEST_ERROR.match(
+				new CuttlyAPIError('Bad request', undefined, 400),
+			),
+		).toBe(true);
+		expect(
+			errorHandlers.BAD_REQUEST_ERROR.match(
+				new CuttlyAPIError('Cutt.ly blocked the destination domain', 6),
+			),
+		).toBe(true);
+	});
 });

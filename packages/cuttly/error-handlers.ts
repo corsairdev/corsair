@@ -50,9 +50,12 @@ export const errorHandlers = {
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 400) return true;
+			if (error instanceof CuttlyAPIError && error.status === 400) return true;
 			// Cutt.ly provider codes: 0 unknown stats link, 2 invalid URL/save
 			// failure, 3 taken/missing, 5 validation, 6 blocked domain, 8 quota.
 			// Code 4 (invalid key) is AUTH_ERROR, so it is excluded here.
+			// Message matching stays provider-specific so wrapped transport
+			// errors fall through to DEFAULT instead of BAD_REQUEST.
 			if (
 				error instanceof CuttlyAPIError &&
 				[0, 2, 3, 5, 6, 8].includes(error.code ?? -1)
@@ -61,13 +64,10 @@ export const errorHandlers = {
 			}
 			const msg = error.message.toLowerCase();
 			return (
-				msg.includes('invalid') ||
 				msg.includes('already in use') ||
 				msg.includes('already taken') ||
-				msg.includes('blocked') ||
 				msg.includes('limit reached') ||
-				msg.includes('could not save') ||
-				msg.includes('does not exist')
+				msg.includes('could not save')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
