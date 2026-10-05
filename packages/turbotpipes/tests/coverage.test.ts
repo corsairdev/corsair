@@ -139,7 +139,9 @@ describe('TurbotPipes endpoint coverage', () => {
 					},
 				),
 				findManyByEntityIds: jest.fn(async (ids: string[]) =>
-					ids.filter((id) => rows.has(id)).map((id) => ({ entity_id: id })),
+					ids
+						.filter((id) => rows.has(id))
+						.map((id) => ({ entity_id: id, data: rows.get(id) })),
 				),
 				findByEntityId: jest.fn(async (id: string) => {
 					const data = rows.get(id);
@@ -202,6 +204,14 @@ describe('TurbotPipes endpoint coverage', () => {
 				instance_type: 'db1.shared',
 			});
 			expect(rows.get('w_2')).toMatchObject({ handle: 'dev' });
+			// Steady state performs one bulk existence check and writes only
+			// the missing record: the fully covered stored record is untouched.
+			expect(table.findManyByEntityIds).toHaveBeenCalledWith(['w_1', 'w_2']);
+			expect(table.upsertByEntityId).toHaveBeenCalledTimes(1);
+			expect(table.upsertByEntityId).toHaveBeenCalledWith(
+				'w_2',
+				expect.objectContaining({ handle: 'dev' }),
+			);
 		});
 	});
 
