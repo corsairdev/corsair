@@ -97,8 +97,8 @@ test('plugin-docs.yaml + generated docs skip the plugin gate', () => {
 		...goodInput,
 		changedFiles: [
 			'packages/airtable/plugin-docs.yaml',
-			'docs/plugins/airtable/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		],
 	});
 	assert.equal(r.isPluginPr, false);
@@ -119,8 +119,8 @@ test('R1: same-plugin generated docs pass', () => {
 		changedFiles: [
 			...goodFiles,
 			'packages/onepassword/plugin-docs.yaml',
-			'docs/plugins/onepassword/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/onepassword/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		],
 	});
 	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
@@ -129,7 +129,10 @@ test('R1: same-plugin generated docs pass', () => {
 test('R1: other plugin docs fail', () => {
 	const r = runGate({
 		...goodInput,
-		changedFiles: [...goodFiles, 'docs/plugins/slack/overview.mdx'],
+		changedFiles: [
+			...goodFiles,
+			'apps/docs/content/docs/plugins/slack/overview.mdx',
+		],
 	});
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });

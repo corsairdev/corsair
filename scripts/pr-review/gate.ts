@@ -12,12 +12,12 @@ export const ALLOWED_EXTRA = [
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
-/** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
-export const DOCS_NAV_FILE = 'docs/docs.json';
+/** Plugins sidebar; `generate:docs` adds each plugin to it. */
+export const DOCS_NAV_FILE = 'apps/docs/content/docs/plugins/meta.json';
 
 /** Generated plugin docs for the same plugin (plugin-docs.yaml PRs). */
 export function isSamePluginDocs(file: string, plugin: string): boolean {
-	const prefix = `docs/plugins/${plugin}/`;
+	const prefix = `apps/docs/content/docs/plugins/${plugin}/`;
 	return file.startsWith(prefix);
 }
 
@@ -29,7 +29,9 @@ function pluginDocsYamlOf(file: string): string | null {
 }
 
 function pluginDocsDirOf(file: string): string | null {
-	const name = file.match(/^docs\/plugins\/([^/]+)\//)?.[1];
+	const name = file.match(
+		/^apps\/docs\/content\/docs\/plugins\/([^/]+)\//,
+	)?.[1];
 	if (!name) return null;
 	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
 	return name;

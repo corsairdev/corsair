@@ -1,5 +1,5 @@
 /**
- * Writes plugin reference MDX under `docs/plugins/<pluginId>/` using
+ * Writes plugin reference MDX under `apps/docs/content/docs/plugins/<pluginId>/` using
  * `introspectPluginForDocs` from `packages/corsair`. Uses `tsx` to resolve TS imports.
  *
  * Optional `packages/<plugin>/plugin-docs.yaml` supplies display copy and overview
@@ -51,7 +51,7 @@ type PluginDocsExampleCall =
 
 type PluginDocsFile = {
 	displayName?: string;
-	/** Overrides Mintlify frontmatter `description` when set. */
+	/** Overrides the frontmatter `description` when set. */
 	description?: string;
 	/**
 	 * Brand website hostname used for plugin icons (e.g. `scale.com`).
@@ -123,7 +123,7 @@ type PluginDocsFile = {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function docsRoot(repoRoot: string): string {
-	return join(repoRoot, 'docs/plugins');
+	return join(repoRoot, 'apps/docs/content/docs/plugins');
 }
 
 /** Workspace folders that are not Corsair integration plugins. */
@@ -405,7 +405,7 @@ function authTypeCredentialInstructions(
 	}
 }
 
-/** Mintlify/YAML frontmatter: plain `description: foo: bar` breaks on the second `:`. Use a double-quoted scalar. */
+/** YAML frontmatter: plain `description: foo: bar` breaks on the second `:`. Use a double-quoted scalar. */
 function yamlDoubleQuotedScalar(s: string): string {
 	const oneLine = s.replace(/\r\n|\r|\n/g, ' ');
 	return (
@@ -1060,7 +1060,9 @@ function buildMainMdx(opts: {
 			? hasGetCredentials
 				? `Follow [Get Credentials](${base}/get-credentials) if you need help obtaining keys from the provider.`
 				: `Auth methods depend on how you configure \`${exportKey}({ ... })\` — check the plugin source \`*PluginOptions\` type.`
-			: `<Tabs>
+			: `<Tabs items={[${authOrdered
+					.map((t) => JSON.stringify(authTabLabel(t, recommendedAuth)))
+					.join(', ')}]}>
 ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
@@ -1073,7 +1075,7 @@ ${authOrdered
 			factoryOptions,
 		);
 		const extraNote = factoryNote ? `\n\n${factoryNote}` : '';
-		return `<Tab title="${escapeAttr(label)}">
+		return `<Tab value="${escapeAttr(label)}">
 
 ${note}${credentialsLink}${extraNote}
 
@@ -1227,6 +1229,10 @@ title: Overview
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
 ${intro}
 ${overviewNote ? `\n${overviewNote}\n` : ''}
 **What you get:**
@@ -1237,26 +1243,38 @@ ${bullets.map((b) => `- ${b}`).join('\n')}
 
 <Steps>
 
-<Step title="Install">
-<CodeGroup>
-\`\`\`bash npm
+<Step>
+
+## Install
+<Tabs items={["npm", "yarn", "pnpm", "bun"]}>
+<Tab value="npm">
+\`\`\`bash
 npm install corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash yarn
+</Tab>
+<Tab value="yarn">
+\`\`\`bash
 yarn add corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash pnpm
+</Tab>
+<Tab value="pnpm">
+\`\`\`bash
 pnpm install corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash bun
+</Tab>
+<Tab value="bun">
+\`\`\`bash
 bun add corsair ${npmPackageName}
 \`\`\`
-</CodeGroup>
+</Tab>
+</Tabs>
 
 </Step>
 
-<Step title="Add the plugin">
-\`\`\`ts corsair.ts
+<Step>
+
+## Add the plugin
+\`\`\`ts title="corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { ${exportKey} } from '${npmPackageName}';
@@ -1278,12 +1296,16 @@ Multi-tenancy is the default — scope calls with \`corsair.withTenant(id)\`. Se
 
 </Step>
 
-<Step title="Choose authentication">
+<Step>
+
+## Choose authentication
 ${authTabs}
 
 </Step>
 
-<Step title="Connect a tenant">
+<Step>
+
+## Connect a tenant
 ${connectNote}
 
 \`\`\`ts
@@ -1312,9 +1334,9 @@ See the full list on the [API](${base}/api) page.
 
 ${dbSection}${webhooksSection}## What's next
 
-<CardGroup cols={2}>
+<Cards>
 ${cards.join('\n')}
-</CardGroup>
+</Cards>
 `;
 }
 
@@ -1450,9 +1472,9 @@ function formatSchemaShape(
 		const display = tableTypeDisplay(shape.type);
 		return `**${kind}:** \`${escapeCell(display)}\`
 
-<AccordionGroup>
+<Accordions>
 ${renderTypeAccordionItem(kind, shape.type)}
-</AccordionGroup>
+</Accordions>
 
 `;
 	}
@@ -1471,9 +1493,9 @@ ${renderTypeAccordionItem(kind, shape.type)}
 		.join('\n');
 	const detailsSection =
 		detailBlocks.length > 0
-			? `<AccordionGroup>
+			? `<Accordions>
 ${detailBlocks.join('\n\n')}
-</AccordionGroup>
+</Accordions>
 
 `
 			: '';
@@ -1548,11 +1570,14 @@ title: API
 description: ${yamlDoubleQuotedScalar(apiDescription)}
 ---
 
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from 'fumadocs-ui/components/callout';
+
 Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
-<Info>
+<Callout type="info">
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
-</Info>
+</Callout>
 
 ${sections.join('\n')}
 `;
@@ -1607,11 +1632,13 @@ title: Database
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
+import { Callout } from 'fumadocs-ui/components/callout';
+
 The ${title} plugin syncs data locally. Use \`corsair.${pluginId}.db.<entity>.search({ data, limit?, offset? })\` with the filters listed per entity.
 
-<Info>
+<Callout type="info">
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
-</Info>
+</Callout>
 
 ${blocks.join('\n')}
 `;
@@ -1689,9 +1716,9 @@ function buildWebhooksMdx(
 			if (entry.wh.responseType) {
 				const rt = entry.wh.responseType;
 				if (isObjectLikeType(rt)) {
-					blocks.push('<AccordionGroup>');
+					blocks.push('<Accordions>');
 					blocks.push(renderTypeAccordionItem('Response data', rt));
-					blocks.push('</AccordionGroup>');
+					blocks.push('</Accordions>');
 					blocks.push('');
 				} else {
 					blocks.push(`**Response \`data\`:** \`${escapeCell(rt)}\`\n\n`);
@@ -1714,11 +1741,14 @@ title: Webhooks
 description: ${yamlDoubleQuotedScalar(whDescription)}
 ---
 
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from 'fumadocs-ui/components/callout';
+
 The ${title} plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/${pluginId}/overview) for setup context and the exact URL shape).
 
-<Info>
+<Callout type="info">
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Info>
+</Callout>
 
 ## Webhook map
 
@@ -1726,7 +1756,7 @@ ${overviewLines.join('\n')}
 
 ## HTTP handler setup
 
-\`\`\`ts app/api/webhook/route.ts
+\`\`\`ts title="app/api/webhook/route.ts"
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -1749,8 +1779,8 @@ function pluginMdxExists(pluginDir: string, basename: string): boolean {
 }
 
 /**
- * Ordered list of MDX basenames for docs.json / Mintlify sidebar (matches on-disk names,
- * including legacy `main` / `api-endpoints` until regenerated).
+ * Sidebar order for one plugin, matching the on-disk names (including legacy
+ * `main` / `api-endpoints` until regenerated).
  */
 function orderedPluginPageBasenames(pluginDir: string): string[] {
 	const out: string[] = [];
@@ -1787,112 +1817,87 @@ function orderedPluginPageBasenames(pluginDir: string): string[] {
 	return out;
 }
 
-type DocsNavEntry = string | { group: string; pages: string[] };
-
-/** Sort key for plugin subgroups under navigation → Plugins → Plugins (display name). */
-function pluginNavGroupSortKey(entry: DocsNavEntry): string {
-	if (typeof entry === 'string') {
-		const m = /^plugins\/([^/]+)\//.exec(entry);
-		if (m) return titleCaseSegment(m[1]);
-		return entry;
-	}
-	if (entry && typeof entry === 'object' && 'group' in entry) {
-		return (entry as { group: string }).group;
-	}
-	return '';
-}
-
-function pluginNavEntryMatches(entry: unknown, pluginId: string): boolean {
-	const prefix = `plugins/${pluginId}/`;
-	if (typeof entry === 'string') {
-		return entry.startsWith(prefix);
-	}
-	if (entry && typeof entry === 'object' && 'pages' in entry) {
-		const pages = (entry as { pages: string[] }).pages;
-		return Array.isArray(pages) && pages.some((p) => p.startsWith(prefix));
-	}
-	return false;
-}
-
 /**
- * Lists `plugins/<pluginId>/*.mdx` and updates `docs/docs.json` so the Mintlify sidebar
- * includes every page in Overview → Get credentials (if present) → API → Database → Webhooks → …
- * order, nested under the plugin display name. Re-sorts plugin groups alphabetically by display name.
+ * Writes the plugin's own `meta.json` (page order) and adds it to the Plugins
+ * tab's `meta.json`, which is how Fumadocs builds a sidebar — there is no
+ * central nav file to rewrite.
  */
-function syncPluginDocsJson(
+function syncPluginMeta(
 	repoRoot: string,
 	pluginId: string,
-	displayGroupTitle: string,
+	displayTitle: string,
 ): void {
-	const pluginDir = join(repoRoot, 'docs/plugins', pluginId);
+	const pluginDir = join(docsRoot(repoRoot), pluginId);
 	if (!existsSync(pluginDir)) {
 		return;
 	}
-
-	const ordered = orderedPluginPageBasenames(pluginDir);
-	if (ordered.length === 0) {
+	const pages = orderedPluginPageBasenames(pluginDir);
+	if (pages.length === 0) {
 		return;
 	}
+	writeJson(join(pluginDir, 'meta.json'), { title: displayTitle, pages });
 
-	const pagePaths = ordered.map((b) => `plugins/${pluginId}/${b}`);
-
-	const docsJsonPath = join(repoRoot, 'docs/docs.json');
-	if (!existsSync(docsJsonPath)) {
-		console.warn(
-			`docs.json not found at ${docsJsonPath}; skipping navigation update.`,
-		);
+	const tabMetaPath = join(docsRoot(repoRoot), 'meta.json');
+	if (!existsSync(tabMetaPath)) {
+		console.warn(`${tabMetaPath} not found; skipping sidebar update.`);
 		return;
 	}
-
-	const raw = readFileSync(docsJsonPath, 'utf8');
-	const doc = JSON.parse(raw) as {
-		navigation: {
-			tabs: {
-				tab: string;
-				groups: { group: string; pages: DocsNavEntry[] }[];
-			}[];
-		};
+	const tabMeta = JSON.parse(readFileSync(tabMetaPath, 'utf8')) as {
+		pages?: string[];
 	};
-
-	const pluginsTab = doc.navigation.tabs.find((t) => t.tab === 'Plugins');
-	const pluginsGroup = pluginsTab?.groups.find((g) => g.group === 'Plugins');
-	if (!pluginsGroup?.pages) {
-		console.warn(
-			'Could not find navigation.tabs → Plugins → group "Plugins"; skipping docs.json.',
-		);
+	const entries = tabMeta.pages ?? [];
+	if (entries.includes(pluginId)) {
 		return;
 	}
-
-	const { pages } = pluginsGroup;
-	const originalPluginPagesJson = JSON.stringify(pages);
-	const newEntry: DocsNavEntry =
-		pagePaths.length === 1
-			? pagePaths[0]!
-			: { group: displayGroupTitle, pages: pagePaths };
-
-	const idx = pages.findIndex((e) => pluginNavEntryMatches(e, pluginId));
-	if (idx !== -1) {
-		pages[idx] = newEntry;
-	} else {
-		pages.push(newEntry);
-	}
-
-	pages.sort((a, b) =>
-		pluginNavGroupSortKey(a).localeCompare(
-			pluginNavGroupSortKey(b),
+	// Insert only. The list is ordered by display name, not by plugin id
+	// ("studiobyai21labs" sits under "ElevenLabs Studio"), so re-sorting it by
+	// id would scramble it.
+	const titles = displayTitlesOf(repoRoot, entries);
+	const sortsAfter = (entry: string) =>
+		(titles.get(entry) ?? titleCaseSegment(entry)).localeCompare(
+			displayTitle,
 			undefined,
-			{
-				sensitivity: 'base',
-				numeric: true,
-			},
-		),
-	);
-
-	if (JSON.stringify(pages) === originalPluginPagesJson) {
-		return;
+			{ sensitivity: 'base', numeric: true },
+		) > 0;
+	// Never above a separator, which heads its section.
+	let at = entries.findIndex((e) => !e.startsWith('---'));
+	if (at < 0) at = entries.length;
+	while (
+		at < entries.length &&
+		!entries[at]?.startsWith('---') &&
+		!sortsAfter(entries[at] as string)
+	) {
+		at++;
 	}
+	tabMeta.pages = [...entries.slice(0, at), pluginId, ...entries.slice(at)];
+	writeJson(tabMetaPath, tabMeta);
+}
 
-	writeFileSync(docsJsonPath, `${JSON.stringify(doc, null, 2)}\n`, 'utf8');
+/** Each listed plugin's own `meta.json` title, which is what the order follows. */
+function displayTitlesOf(
+	repoRoot: string,
+	entries: string[],
+): Map<string, string> {
+	const titles = new Map<string, string>();
+	for (const entry of entries) {
+		if (entry.startsWith('---')) continue;
+		const metaPath = join(docsRoot(repoRoot), entry, 'meta.json');
+		if (!existsSync(metaPath)) continue;
+		try {
+			const { title } = JSON.parse(readFileSync(metaPath, 'utf8')) as {
+				title?: string;
+			};
+			if (title) titles.set(entry, title);
+		} catch {
+			// An unreadable meta just falls back to the id-derived title.
+		}
+	}
+	return titles;
+}
+
+/** 2-space JSON with a trailing newline, matching the rest of the repo. */
+function writeJson(path: string, value: unknown): void {
+	writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
 type GeneratePluginDocsOpts = {
@@ -2048,7 +2053,7 @@ async function generatePluginDocsForEntry(
 		unlinkSync(webhooksMdxPath);
 	}
 
-	syncPluginDocsJson(root, pluginId, title);
+	syncPluginMeta(root, pluginId, title);
 
 	const logBits = [
 		`${outDir}`,
