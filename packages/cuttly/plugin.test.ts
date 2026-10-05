@@ -117,6 +117,39 @@ describe('Cutt.ly links', () => {
 			code: 3,
 		});
 	});
+
+	it('rejects already-shortened URLs instead of reporting success', async () => {
+		request.mockResolvedValue({
+			url: { status: 1, shortLink: 'https://cutt.ly/launch' },
+		});
+		await expect(
+			Links.shorten(ctx, { url: 'https://cutt.ly/launch' }),
+		).rejects.toMatchObject({ code: 1 });
+	});
+
+	it('surfaces link update failures as actionable errors', async () => {
+		request.mockResolvedValue({ url: { status: 3 } });
+		await expect(
+			Links.update(ctx, {
+				shortUrl: 'https://cutt.ly/missing',
+				url: 'https://example.com/new-launch',
+			}),
+		).rejects.toMatchObject({ code: 3 });
+	});
+
+	it('requires a destination URL or alias for link updates', async () => {
+		await expect(
+			Links.update(ctx, { shortUrl: 'https://cutt.ly/launch' }),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('surfaces unknown analytics links as actionable errors', async () => {
+		request.mockResolvedValue({ stats: { status: 0 } });
+		await expect(
+			Links.analytics(ctx, { shortUrl: 'https://cutt.ly/missing' }),
+		).rejects.toMatchObject({ code: 0 });
+	});
 });
 
 describe('Cutt.ly plugin', () => {

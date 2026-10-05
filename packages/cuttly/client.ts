@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 
 const CUTTLY_API_BASE = 'https://cutt.ly';
 
+/** Provider error carrying the Cutt.ly status code and HTTP status when known. */
 export class CuttlyAPIError extends Error {
 	constructor(
 		message: string,
@@ -15,6 +16,13 @@ export class CuttlyAPIError extends Error {
 	}
 }
 
+/**
+ * Sends an authenticated GET request to the Cutt.ly Regular API endpoint.
+ *
+ * All operations share GET /api/api.php with the API key plus one
+ * operation parameter (short, edit, or stats); callers map provider
+ * status codes to actionable errors.
+ */
 export async function makeCuttlyRequest<T>(
 	apiKey: string,
 	query: Record<string, string | number | boolean | undefined>,

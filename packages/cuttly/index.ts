@@ -83,7 +83,7 @@ const cuttlyEndpointMeta = {
 	'links.update': {
 		riskLevel: 'write',
 		description:
-			'Update the destination URL for an existing Cutt.ly short link.',
+			'Update the destination URL and/or custom alias for an existing Cutt.ly short link.',
 	},
 	'links.analytics': {
 		riskLevel: 'read',

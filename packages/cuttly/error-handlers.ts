@@ -38,20 +38,37 @@ export const errorHandlers = {
 				return true;
 			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('invalid api key') ||
+				msg.includes('rejected the api key')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 400) return true;
+			// Cutt.ly provider codes: 0 unknown stats link, 2 invalid URL/save
+			// failure, 3 taken/missing, 5 validation, 6 blocked domain, 8 quota.
+			// Code 4 (invalid key) is AUTH_ERROR, so it is excluded here.
 			if (
 				error instanceof CuttlyAPIError &&
-				[2, 3, 4, 5, 6].includes(error.code ?? -1)
+				[0, 2, 3, 5, 6, 8].includes(error.code ?? -1)
 			) {
 				return true;
 			}
-			return error.message.toLowerCase().includes('invalid');
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('invalid') ||
+				msg.includes('already in use') ||
+				msg.includes('already taken') ||
+				msg.includes('blocked') ||
+				msg.includes('limit reached') ||
+				msg.includes('could not save') ||
+				msg.includes('does not exist')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

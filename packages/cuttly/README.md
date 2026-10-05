@@ -14,7 +14,7 @@ pnpm add @corsair-dev/cuttly
 |-----------|--------------|------|-------------|
 | `links.analytics` | `cuttly.api.links.analytics` | `read` | Retrieve click analytics for a Cutt.ly short link. |
 | `links.shorten` | `cuttly.api.links.shorten` | `write` | Create a Cutt.ly short URL with an optional custom alias and QR code. |
-| `links.update` | `cuttly.api.links.update` | `write` | Update the destination URL for an existing Cutt.ly short link. |
+| `links.update` | `cuttly.api.links.update` | `write` | Update the destination URL and/or custom alias for an existing Cutt.ly short link. |
 
 ## Auth
 

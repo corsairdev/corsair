@@ -7,6 +7,7 @@ import {
 } from './types';
 
 const shortenErrors: Record<number, string> = {
+	1: 'The URL is already a shortened Cutt.ly link and cannot be shortened again',
 	2: 'Cutt.ly rejected the destination URL',
 	3: 'The requested Cutt.ly custom alias is already in use',
 	4: 'Cutt.ly rejected the API key',
@@ -21,6 +22,14 @@ const updateErrors: Record<number, string> = {
 	4: 'Cutt.ly rejected the destination URL',
 };
 
+const analyticsErrors: Record<number, string> = {
+	0: 'The Cutt.ly link does not exist',
+	2: 'Cutt.ly rejected the API key',
+};
+
+/**
+ * Throws a CuttlyAPIError unless the provider status is in the accepted set.
+ */
 function assertSuccessfulStatus(
 	status: number,
 	accepted: readonly number[],
@@ -33,6 +42,12 @@ function assertSuccessfulStatus(
 	);
 }
 
+/**
+ * Shortens a destination URL via the Cutt.ly Regular API.
+ *
+ * Only provider status 7 is a successful shortening; every other status
+ * (including 1, already shortened) raises an actionable CuttlyAPIError.
+ */
 export const shorten: CuttlyEndpoints['shorten'] = async (ctx, rawInput) => {
 	const input = CuttlyEndpointInputSchemas.shorten.parse(rawInput);
 	const response = CuttlyEndpointOutputSchemas.shorten.parse(
@@ -44,7 +59,7 @@ export const shorten: CuttlyEndpoints['shorten'] = async (ctx, rawInput) => {
 			noTitle: input.noTitle ? 1 : undefined,
 		}),
 	);
-	assertSuccessfulStatus(response.url.status, [1, 7], shortenErrors);
+	assertSuccessfulStatus(response.url.status, [7], shortenErrors);
 	await logEventFromContext(
 		ctx,
 		'cuttly.links.shorten',
@@ -54,6 +69,12 @@ export const shorten: CuttlyEndpoints['shorten'] = async (ctx, rawInput) => {
 	return response;
 };
 
+/**
+ * Updates the destination URL and/or custom alias of an existing short link.
+ *
+ * Only provider status 1 is a successful edit; all other statuses raise
+ * an actionable CuttlyAPIError.
+ */
 export const update: CuttlyEndpoints['update'] = async (ctx, rawInput) => {
 	const input = CuttlyEndpointInputSchemas.update.parse(rawInput);
 	const response = CuttlyEndpointOutputSchemas.update.parse(
@@ -73,6 +94,12 @@ export const update: CuttlyEndpoints['update'] = async (ctx, rawInput) => {
 	return response;
 };
 
+/**
+ * Retrieves click analytics for a Cutt.ly short link over an optional date range.
+ *
+ * Only provider status 1 returns analytics data; status 0 (unknown link)
+ * and status 2 (invalid key) raise actionable CuttlyAPIErrors.
+ */
 export const analytics: CuttlyEndpoints['analytics'] = async (
 	ctx,
 	rawInput,
@@ -85,7 +112,7 @@ export const analytics: CuttlyEndpoints['analytics'] = async (
 			date_to: input.dateTo,
 		}),
 	);
-	assertSuccessfulStatus(response.stats.status, [1], {});
+	assertSuccessfulStatus(response.stats.status, [1], analyticsErrors);
 	await logEventFromContext(
 		ctx,
 		'cuttly.links.analytics',
