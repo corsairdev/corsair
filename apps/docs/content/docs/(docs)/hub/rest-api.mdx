@@ -90,9 +90,6 @@ When the user finishes connecting, Hub POSTs a signed JSON envelope to your `del
 
 | Header | Value |
 |--------|-------|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `x-corsair-signature` | `sha256=<hex>`, the HMAC-SHA256 of the **raw request body**, keyed with your signing secret |
 | `x-corsair-timestamp` | Unix seconds when Hub sent it; reject if older than a few minutes (replay guard) |
 | `x-corsair-project` | Your project id |

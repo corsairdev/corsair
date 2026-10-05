@@ -93,7 +93,7 @@ Hub lives on the public internet (`auth.corsair.dev`). Your app does not, at lea
 
 **In production**, your app runs on a public HTTPS domain. Hub **POSTs a signed envelope** straight to your registered delivery URL. This is more secure and more reliable for live traffic: the result never passes through the browser URL bar, and your handler verifies every payload with your signing secret before accepting it.
 
-```mermaid
+<Mermaid chart={`
 flowchart TB
     subgraph dev [Development]
         H1[Hub completes OAuth]
@@ -111,7 +111,7 @@ flowchart TB
         A[your-app.com handler]
         H2 -->|signed POST| A
     end
-```
+`} />
 
 Same Hub project, same provider callback URL, but a different delivery path depending on which API key started the flow.
 
@@ -154,9 +154,6 @@ Prefer a separate Hub project unless you intentionally want shared connection da
 | Delivery URL | Resolved for you (or `CORSAIR_DELIVERY_URL`) | Registered in dashboard |
 | How Hub delivers | Signed POST over the Corsair tunnel, or browser redirect (`GET ?d=…`) as fallback | Signed server POST |
 | Dashboard setup | Copy keys, done | Activate delivery URL + copy keys |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `localhost` | Supported | Rejected |
 
 

@@ -56,7 +56,7 @@ Both modes use the same `createLink` API to start a connect flow. Only where the
 
 ## The connect flow in each mode
 
-```mermaid
+<Mermaid chart={`
 sequenceDiagram
     actor User
     participant App as Your App
@@ -79,7 +79,7 @@ sequenceDiagram
     Provider->>Surface: callback ?code
     Surface->>App: delivers result to your handler
     App->>App: tokens encrypted into your DB
-```
+`} />
 
 In both lanes the tokens end up in your database. Hub removes the two pages you would otherwise build, nothing more.
 

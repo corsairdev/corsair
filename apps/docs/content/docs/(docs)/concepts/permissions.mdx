@@ -52,7 +52,7 @@ Every plugin endpoint has a **risk level** (`read`, `write`, or `destructive`). 
 
 Approved actions are **single-use**. Once the endpoint runs successfully, the record moves to `completed` and cannot be replayed.
 
-```mermaid
+<Mermaid chart={`
 sequenceDiagram
     participant Agent
     participant Corsair
@@ -68,7 +68,7 @@ sequenceDiagram
     Agent->>Corsair: retry (or executePermission)
     Corsair->>Corsair: run endpoint with frozen args
     Corsair->>DB: status → completed
-```
+`} />
 
 <Callout type="warn">
 Permissions require a database. Without `corsair_permissions`, any endpoint that needs approval falls back to **deny**.
@@ -173,9 +173,6 @@ psql $env:DATABASE_URL -f permissions.sql
 
 | Column | Purpose |
 | --- | --- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `token` | 64-character hex token embedded in review URLs; the public handle for approve/deny |
 | `plugin` | Plugin id, e.g. `github` |
 | `endpoint` | Dot-notation path, e.g. `repositories.delete` |
@@ -191,9 +188,6 @@ psql $env:DATABASE_URL -f permissions.sql
 Set a default mode per plugin with `permissions.mode`. Each mode maps risk levels to policies:
 
 | Mode | Read | Write | Destructive |
-| --- | --- | --- | --- |
-
-| Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `open` | allow | allow | allow |
 | `cautious` | allow | allow | require_approval |
@@ -215,9 +209,6 @@ Three resolved policies control what happens at call time:
 
 | Policy | Behavior |
 | --- | --- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `allow` | Executes immediately, no approval record |
 | `deny` | Blocked by policy. Logs a message pointing you to the corsair config |
 | `require_approval` | Creates a `pending` record in `corsair_permissions` and blocks until approved |
@@ -250,9 +241,6 @@ Each approval request moves through these states:
 
 | Status | Meaning |
 | --- | --- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `pending` | Waiting for human approval |
 | `approved` | Human signed off, ready to execute (single-use) |
 | `executing` | `executePermission` is running the frozen args |

@@ -23,7 +23,7 @@ Hub stores **zero** of your tenants' tokens. Their access and refresh tokens liv
 
 That split is the point of Hub. Once a tenant connects, the token sits in your database and you call the provider as many times as you want, with no per-call round-trip to Corsair and no usage cap from us. Other integration products keep your users' tokens on their side and meter every call through their gateway. Corsair hands you the tokens and stays out of the path.
 
-```mermaid
+<Mermaid chart={`
 flowchart LR
     Prov[OAuth Provider]
     Hub["Corsair Hub<br/>relays tokens to your app"]
@@ -33,7 +33,7 @@ flowchart LR
     Prov <--> Hub
     Hub <--> App
     App -->|encrypted tokens| DB
-```
+`} />
 
 The same envelope encryption described in [Authentication](/concepts/auth#envelope-encryption) still applies. Each connection gets its own DEK, encrypted with your KEK, and the plaintext credential lives in your database.
 
@@ -117,9 +117,6 @@ The `hub` block carries two required fields:
 
 | Field | Purpose |
 | ----- | ------- |
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `projectApiKey` | Identifies your project and environment (`ck_dev_…` or `ck_prod_…`) |
 | `signingSecret` | Verifies signed deliveries so only your app accepts them |
 

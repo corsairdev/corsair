@@ -11,7 +11,7 @@ Without Hub, the OAuth redirect URI you register with a provider has to match th
 
 With Hub you register **one** callback URL with the provider, `https://auth.corsair.dev/oauth/callback`. Hub receives the callback and delivers the result to your app as a signed server POST. In both [environments](/hub/environments) the wire contract is the same: development reaches your local app through a Corsair-provided tunnel, production reaches your public URL directly. See [Why delivery works differently](/hub/environments#why-delivery-works-differently) for the full picture.
 
-```mermaid
+<Mermaid chart={`
 flowchart LR
     P["OAuth Provider<br/>one registered callback"]
     H[Corsair Hub]
@@ -21,7 +21,7 @@ flowchart LR
     P --> H
     H --> D
     H --> Pr
-```
+`} />
 
 ## Mount your handler
 

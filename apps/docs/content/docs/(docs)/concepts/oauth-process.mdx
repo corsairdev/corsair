@@ -20,7 +20,7 @@ Corsair supports two connect modes:
 
 This page covers **manual mode** in production. The flow uses `client.connect.createLink()`, one API for minting connect URLs.
 
-```mermaid
+<Mermaid chart={`
 sequenceDiagram
     actor User
     participant App as Your App
@@ -36,7 +36,7 @@ sequenceDiagram
     Provider->>App: Redirect to callback with code
     App->>App: oauthCallback
     App->>User: Connected!
-```
+`} />
 
 Corsair handles CSRF protection via HMAC-signed state, token encryption, and automatic refresh before API calls.
 
@@ -371,9 +371,6 @@ export async function oauthCallbackHandler(req: Request, res: Response) {
 
 | Variable | Description |
 |---|---|
-
-| Parameter | Type | Required | Description |
-| --- | --- | --- | --- |
 | `CORSAIR_KEK` | Key-encryption key. Generate with `openssl rand -base64 32`. Never rotate without re-encrypting stored DEKs. |
 | `APP_URL` | Your app's public base URL (e.g. `https://myapp.com`). Used to build `manual.baseUrl` and `manual.redirectUri`. |
 | `NODE_ENV` | Set to `production` to enable HTTPS-only cookies and other hardening elsewhere in your app. |

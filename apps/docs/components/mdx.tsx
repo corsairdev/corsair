@@ -1,6 +1,6 @@
 import {
-	Accordion as FdAccordion,
 	Accordions,
+	Accordion as FdAccordion,
 } from 'fumadocs-ui/components/accordion';
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Card, Cards } from 'fumadocs-ui/components/card';
@@ -10,9 +10,11 @@ import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 import type { ComponentProps } from 'react';
 import { GenerateKEK } from './generate-kek';
+import { Mermaid } from './mermaid';
 import { WindowsEnvVarsNote, WindowsMigrationNote } from './windows-shell';
 
-/** Fumadocs Accordion is an item — wrap lone usage so ported Mintlify pages don't 500. */
+/** Accordion is an item, not a container: wrap a lone one so a page using it
+ *  without Accordions still renders. */
 function Accordion(props: ComponentProps<typeof FdAccordion>) {
 	return (
 		<Accordions type="single" collapsible>
@@ -30,6 +32,7 @@ export function getMDXComponents(components?: MDXComponents) {
 		Card,
 		Cards,
 		GenerateKEK,
+		Mermaid,
 		Step,
 		Steps,
 		Tab,

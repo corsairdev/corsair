@@ -11,7 +11,7 @@ import { Card, Cards } from 'fumadocs-ui/components/card';
 
 ## How it works on Hub
 
-```mermaid
+<Mermaid chart={`
 sequenceDiagram
     participant Agent
     participant Corsair
@@ -29,7 +29,7 @@ sequenceDiagram
     Agent->>Corsair: retry
     Corsair->>Corsair: run endpoint with frozen args
     Corsair->>DB: status → completed
-```
+`} />
 
 The authoritative approval record lives in **your** `corsair_permissions` table. Hub renders the UI and delivers the signed decision to your handler, which writes the outcome to your database. Hub never touches your database. To render the review screen and route the decision, Hub does keep a short-lived session of its own holding the plugin, endpoint, the call arguments shown for review, and the tenant id, until the request is decided or expires. Delivery uses the same [environment-specific transport](/hub/delivery-urls) as connect flows: a signed POST over the Corsair tunnel in development, a signed POST to your public URL in production.
 
