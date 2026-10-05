@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { coassemble } from '@corsair-dev/coassemble';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -15,7 +16,6 @@ import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
-
 import { sqlite } from '../db';
 
 const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
@@ -58,6 +58,10 @@ export const corsair = createCorsair({
 			key: process.env.AGENTQL_API_KEY,
 		}),
 		twilio(),
+		coassemble({
+			key: process.env.COASSEMBLE_API_KEY,
+			workspaceId: process.env.COASSEMBLE_WORKSPACE_ID!,
+		}),
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,

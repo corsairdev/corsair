@@ -329,6 +329,9 @@ importers:
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
+      '@corsair-dev/coassemble':
+        specifier: workspace:*
+        version: link:../../packages/coassemble
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor

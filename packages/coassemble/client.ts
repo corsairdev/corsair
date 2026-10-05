@@ -1,22 +1,19 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class CoassembleAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'CoassembleAPIError';
-	}
-}
+export const COASSEMBLE_API_BASE = 'https://api.coassemble.com/api';
 
-// TODO: Update with your API base URL
-const COASSEMBLE_API_BASE = 'https://api.example.com';
+export function requireWorkspaceId(workspaceId: string | undefined): string {
+	if (!workspaceId) {
+		throw new Error('Coassemble workspace ID is missing');
+	}
+	return workspaceId;
+}
 
 export async function makeCoassembleRequest<T>(
 	endpoint: string,
 	apiKey: string,
+	workspaceId: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
@@ -30,17 +27,15 @@ export async function makeCoassembleRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Authorization: `COASSEMBLE:${workspaceId}:${apiKey}`,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
@@ -49,12 +44,6 @@ export async function makeCoassembleRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new CoassembleAPIError(error.message);
-		}
-		throw new CoassembleAPIError('Unknown error');
-	}
+	// No wrapping: ApiError must propagate so error handlers can read status/retryAfter.
+	return request<T>(config, requestOptions);
 }

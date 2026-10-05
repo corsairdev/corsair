@@ -1,54 +1,54 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+
+import { getClients, getCourses, getTrackings, getUsers } from './endpoints';
+
 import type {
 	CoassembleEndpointInputs,
 	CoassembleEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	CoassembleEndpointInputSchemas,
 	CoassembleEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
 import { CoassembleSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveCoassembleOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCoassembleTenantWebhook } from './webhooks/tenant-matcher';
-import type { CoassembleWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type CoassemblePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+	workspaceId: string;
 	hooks?: InternalCoassemblePlugin['hooks'];
-	webhookHooks?: InternalCoassemblePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof coassembleEndpointsNested>;
 };
 
 export type CoassembleContext = CorsairPluginContext<
 	typeof CoassembleSchema,
-	CoassemblePluginOptions
+	CoassemblePluginOptions,
+	undefined,
+	typeof coassembleAuthConfig
 >;
 
-export type CoassembleKeyBuilderContext =
-	KeyBuilderContext<CoassemblePluginOptions>;
+export type CoassembleKeyBuilderContext = KeyBuilderContext<
+	CoassemblePluginOptions,
+	typeof coassembleAuthConfig
+>;
 
 export type CoassembleBoundEndpoints = BindEndpoints<
 	typeof coassembleEndpointsNested
@@ -62,70 +62,78 @@ type CoassembleEndpoint<K extends keyof CoassembleEndpointOutputs> =
 	>;
 
 export type CoassembleEndpoints = {
-	exampleGet: CoassembleEndpoint<'exampleGet'>;
+	getClients: CoassembleEndpoint<'getClients'>;
+	getCourses: CoassembleEndpoint<'getCourses'>;
+	getTrackings: CoassembleEndpoint<'getTrackings'>;
+	getUsers: CoassembleEndpoint<'getUsers'>;
 };
-
-type CoassembleWebhook<
-	K extends keyof CoassembleWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CoassembleContext, TEvent, CoassembleWebhookOutputs[K]>;
-
-export type CoassembleWebhooks = {
-	example: CoassembleWebhook<'example', ExampleEvent>;
-};
-
-export type CoassembleBoundWebhooks = BindWebhooks<CoassembleWebhooks>;
 
 const coassembleEndpointsNested = {
-	example: {
-		get: Example.get,
+	clients: {
+		get: getClients,
 	},
-} as const;
-
-const coassembleWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	courses: {
+		get: getCourses,
+	},
+	trackings: {
+		get: getTrackings,
+	},
+	users: {
+		get: getUsers,
 	},
 } as const;
 
 export const coassembleEndpointSchemas = {
-	'example.get': {
-		input: CoassembleEndpointInputSchemas.exampleGet,
-		output: CoassembleEndpointOutputSchemas.exampleGet,
+	'clients.get': {
+		input: CoassembleEndpointInputSchemas.getClients,
+		output: CoassembleEndpointOutputSchemas.getClients,
+	},
+	'courses.get': {
+		input: CoassembleEndpointInputSchemas.getCourses,
+		output: CoassembleEndpointOutputSchemas.getCourses,
+	},
+	'trackings.get': {
+		input: CoassembleEndpointInputSchemas.getTrackings,
+		output: CoassembleEndpointOutputSchemas.getTrackings,
+	},
+	'users.get': {
+		input: CoassembleEndpointInputSchemas.getUsers,
+		output: CoassembleEndpointOutputSchemas.getUsers,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof coassembleEndpointsNested
 >;
 
-const coassembleWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof coassembleWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const coassembleEndpointMeta = {
-	'example.get': {
+	'clients.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get a paginated list of Coassemble clients',
+	},
+	'courses.get': {
+		riskLevel: 'read',
+		description: 'Get a paginated list of Coassemble courses',
+	},
+	'trackings.get': {
+		riskLevel: 'read',
+		description: 'Get learner progress tracking for a Coassemble course',
+	},
+	'users.get': {
+		riskLevel: 'read',
+		description: 'Get a paginated list of Coassemble users',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof coassembleEndpointsNested
 >;
 
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
+
 export const coassembleAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
+
+const coassembleWebhooksNested = {} as const;
 
 export type BaseCoassemblePlugin<T extends CoassemblePluginOptions> =
 	CorsairPlugin<
@@ -134,7 +142,8 @@ export type BaseCoassemblePlugin<T extends CoassemblePluginOptions> =
 		typeof coassembleEndpointsNested,
 		typeof coassembleWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof coassembleAuthConfig
 	>;
 
 export type InternalCoassemblePlugin =
@@ -144,58 +153,42 @@ export type ExternalCoassemblePlugin<T extends CoassemblePluginOptions> =
 	BaseCoassemblePlugin<T>;
 
 export function coassemble<const T extends CoassemblePluginOptions>(
-	incomingOptions: CoassemblePluginOptions & T = {} as CoassemblePluginOptions &
-		T,
+	incomingOptions: CoassemblePluginOptions & T,
 ): ExternalCoassemblePlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'coassemble',
 		authConfig: coassembleAuthConfig,
 		schema: CoassembleSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: coassembleEndpointsNested,
 		webhooks: coassembleWebhooksNested,
 		endpointMeta: coassembleEndpointMeta,
 		endpointSchemas: coassembleEndpointSchemas,
-		webhookSchemas: coassembleWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-coassemble-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCoassembleTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCoassembleOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CoassembleKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
+			if (source === 'endpoint') {
+				const res = await ctx.keys?.get_api_key();
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('coassemble', 'api_key');
+				}
+
+				return res;
 			}
 
 			return '';
@@ -206,10 +199,23 @@ export function coassemble<const T extends CoassemblePluginOptions>(
 export type {
 	CoassembleEndpointInputs,
 	CoassembleEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	GetClientsInput,
+	GetClientsResponse,
+	GetCoursesInput,
+	GetCoursesResponse,
+	GetTrackingsInput,
+	GetTrackingsResponse,
+	GetUsersInput,
+	GetUsersResponse,
 } from './endpoints/types';
-export type {
-	CoassembleWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
+
+export {
+	GetClientsInputSchema,
+	GetClientsResponseSchema,
+	GetCoursesInputSchema,
+	GetCoursesResponseSchema,
+	GetTrackingsInputSchema,
+	GetTrackingsResponseSchema,
+	GetUsersInputSchema,
+	GetUsersResponseSchema,
+} from './endpoints/types';

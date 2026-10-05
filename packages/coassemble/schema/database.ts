@@ -1,9 +1,19 @@
-import { z } from 'zod';
+import type { z } from 'zod';
+import {
+	ClientSchema,
+	CourseSchema,
+	TrackingSchema,
+	UserSchema,
+} from '../endpoints/types';
 
-// TODO: Define your database entities here
-// export const CoassembleExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type CoassembleExample = z.infer<typeof CoassembleExample>;
+export const CoassembleClient = ClientSchema;
+export type CoassembleClient = z.infer<typeof CoassembleClient>;
+
+export const CoassembleUser = UserSchema;
+export type CoassembleUser = z.infer<typeof CoassembleUser>;
+
+export const CoassembleCourse = CourseSchema;
+export type CoassembleCourse = z.infer<typeof CoassembleCourse>;
+
+export const CoassembleTracking = TrackingSchema;
+export type CoassembleTracking = z.infer<typeof CoassembleTracking>;
