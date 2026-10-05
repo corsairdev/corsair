@@ -19,19 +19,31 @@ users' accounts once, then make calls.
 ## Set up
 
 You need one thing: your project's **API key**, from the dashboard Overview
-page. It looks like `ck_cloud_…`. The client derives its own URL from the key,
+page. It looks like `ck_cloud_…`. The client derives its own URLs from the key,
 so that's the whole configuration.
 
 <Callout type="warn">
-The API key is a server secret, sent as a bearer token. Keep it on your
-server; never put it in browser code or a mobile app you ship. For the browser,
-see [Server vs. browser](#server-vs-browser).
+The API key is a server secret, sent as a bearer token. It has full authority
+over the project — it can mint access for any tenant — so keep it on your
+server and never put it in browser code or a mobile app you ship. For the
+browser, see [Server vs. browser](#server-vs-browser). For agents, mint an
+[MCP link](/v1-guides/quickstart) instead.
 </Callout>
 
-## Your first call
+## Instances
 
-Install the client for your language and make one call. Every language takes the
-key and nothing else.
+A project holds one or more **instances**. An instance is a runtime with its own
+credential store, so a call scoped to one can never read or write on another.
+A new project starts with one; you name it when you create it.
+
+Every call names an instance and a tenant. The instance decides *where* it runs;
+the tenant decides *who* it runs as.
+
+```ts
+corsair.withInstance('users').withTenant('acme').notion.api.pages.searchPage({})
+```
+
+## Your first call
 
 <Tabs items={["TypeScript", "Python", "Go", "Swift", "curl"]}>
 
@@ -41,8 +53,15 @@ import { corsairCloud } from "corsair";
 
 const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
 
-const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
+const pages = await corsair
+  .withInstance("users")
+  .withTenant("acme")
+  .notion.api.pages.searchPage({});
 ```
+
+`withInstance` resolves the instance's own URL the first time you use it and
+caches it for the life of the client, so naming an instance that does not exist
+fails with the list of ones that do.
 </Tab>
 
 <Tab value="Python">
@@ -52,7 +71,11 @@ import os
 
 corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
 
-pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
+pages = (
+    corsair.with_instance("users")
+    .with_tenant("acme")
+    .call("notion", "pages.searchPage", {})
+)
 ```
 </Tab>
 
@@ -60,7 +83,8 @@ pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
 ```go
 corsair := corsaircloud.New(os.Getenv("CORSAIR_CLOUD_KEY"))
 
-raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})
+raw, err := corsair.Instance("users").Tenant("acme").
+	Call(ctx, "notion", "pages.searchPage", map[string]any{})
 ```
 </Tab>
 
@@ -68,15 +92,34 @@ raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[s
 ```swift
 let corsair = CorsairCloud(apiKey: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_KEY"]!)
 
-let pages = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
+let pages = try await corsair.instance("users").tenant("acme")
+	.call("notion", "pages.searchPage", args: [:])
 ```
 </Tab>
 
 <Tab value="curl">
+Calls run on the **instance's** URL, not the project's. Ask the runtime which
+instances it serves — the slug in each URL is the instance's own, and is not
+the slug in your key. (This is the runtime's own resolution door, not the
+[management API](/v1-guides/overview)'s `/instances`, which lists the same
+instances in the v1 envelope and cannot be called for a tool call.)
+
 ```bash
-# The clients derive the URL from the key; for raw curl, build it from your key's
-# slug (the segment between ck_cloud_ and the first '.'): https://api.corsair.cloud/<slug>/api/corsair
-curl -X POST "https://api.corsair.cloud/<slug>/api/corsair/acme/notion/call/pages.searchPage" \
+curl "https://api.corsair.cloud/<project-slug>/instances" \
+  -H "authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```json
+{ "instances": [
+  { "instanceKey": "users",  "url": "https://api.corsair.cloud/envvzmvdisaboy/api/corsair" },
+  { "instanceKey": "ticket", "url": "https://api.corsair.cloud/envbenplml9nwa/api/corsair" }
+] }
+```
+
+Then call that URL:
+
+```bash
+curl -X POST "https://api.corsair.cloud/envvzmvdisaboy/api/corsair/acme/notion/call/pages.searchPage" \
   -H "authorization: Bearer $CORSAIR_CLOUD_KEY" \
   -H "content-type: application/json" \
   -d '{"args":{}}'
@@ -86,98 +129,105 @@ curl -X POST "https://api.corsair.cloud/<slug>/api/corsair/acme/notion/call/page
 </Tabs>
 
 That runs Notion's `pages.searchPage` as your user "acme" and returns the
-result. It's always one request, `POST /{tenant}/{plugin}/call/{op}` with a
-`{ "args": {...} }` body, so the language clients are thin wrappers over the
-same shape.
+result. Every call is `POST /{tenant}/{plugin}/call/{op}` on an instance URL,
+with an `{ "args": {...} }` body.
 
 ## What is a tenant?
 
-A tenant is one of your users. `withTenant("acme")` (or `with_tenant`, `Tenant`,
-`tenant`) picks which user a call acts as, so it uses that user's connected
-account. One runtime serves all your tenants at once. Building for a single
-user? Pick one tenant id and forget about it.
+A tenant is one of your users. `withTenant("acme")` picks which user a call acts
+as, so it uses that user's connected account. One instance serves all your
+tenants at once. Building for a single user? Pick one tenant id and forget about
+it.
 
 The runtime rejects an empty tenant id rather than guessing, so a call is never
 silently scoped to the wrong user.
 
+A tenant also needs **access** to the instance before it can call anything —
+one line per `instance:tenant`, at `readonly`, `readwrite` or `admin`. Naming a
+tenant that does not exist yet creates it:
+
+```ts
+await corsair.manage.access.set('users:acme', {
+  permission: 'readwrite',
+  email: 'acme@example.com',
+});
+```
+
 ## Map your tenants
 
-The runtime holds the tenants and which accounts each has connected. List them
-to line up against your own users:
+The project holds the tenants and what each has connected. List them to line up
+against your own users:
 
-<Tabs items={["TypeScript", "Python"]}>
-
-<Tab value="TypeScript">
 ```ts
-const tenants = await corsair.manage.tenants.list();
-// [{ id: "acme", connectedPlugins: ["notion"] }, …]
-```
-</Tab>
+const { data } = await corsair.manage.tenants.list();
+// [{ id: 'acme', email: 'acme@example.com', label: null, created: '…' }, …]
 
-<Tab value="Python">
-```python
-tenants = corsair.manage.tenants()
+const lines = await corsair.manage.access.list({ tenant: 'acme' });
+// [{ id: 'users:acme', permission: 'readwrite', connected: ['notion'], expired: [] }]
 ```
-</Tab>
-
-</Tabs>
 
 <Callout type="info">
-`tenants` gives you each tenant's id and connected plugins, `connectionStatus`
-gives the per-plugin auth state, and `manage.permissions.get({ id })` reads a
-permission grant (its scopes and approval status). All redact secrets: you see
-*that* a tenant connected Notion, never their token. Reading a tenant's stored
-*data* rows directly, or pointing the runtime at your own database, comes with
-bring-your-own-DB (coming soon).
+`access.list` reports what each identity has connected and what has lapsed, so
+one call answers "can this user do anything yet". `connections.list` is the same
+information keyed per `instance:integration:tenant`, and
+`manage.permissions.get({ id })` reads a permission grant's scopes and approval
+status. All redact secrets: you see *that* a tenant connected Notion, never
+their token.
 </Callout>
 
 ## Connect a user's account
 
 Before a tenant can call Notion, they have to connect their Notion account.
-Corsair Cloud runs the OAuth. Create a connect link and send your user to it:
+Corsair Cloud runs the OAuth. Create a connect session and send your user to the
+URL it returns:
 
-<Tabs items={["TypeScript", "Python"]}>
-
-<Tab value="TypeScript">
 ```ts
-const link = await corsair.manage.connect.createLink({
-  plugin: "notion",
-  tenantId: "acme",
+const session = await corsair.manage.connect.sessions.create({
+  instance: 'users',
+  tenant: 'acme',
+  integrations: ['notion'],
 });
-// send the user to link.connectUrl
+// redirect the user to session.url — it expires at session.expiresAt
 ```
-</Tab>
 
-<Tab value="Python">
-```python
-link = corsair.manage.create_connect_link("notion", "acme")
-# send the user to link["connectUrl"]
-```
-</Tab>
+Omit `integrations` to offer every integration enabled on the instance. When the
+user finishes authorizing, the runtime stores their token, encrypted at rest
+with a key Corsair holds. Raw provider tokens never sit in your store.
 
-</Tabs>
+Check who is connected any time:
 
-When they finish authorizing, the runtime stores their token, encrypted at rest
-with a key Corsair holds. Raw provider tokens never sit in your store. Check who
-is connected any time:
-
-<Tabs items={["TypeScript", "Python"]}>
-
-<Tab value="TypeScript">
 ```ts
-const status = await corsair.manage.connectionStatus.get({ tenantId: "acme" });
-// { notion: "connected" }
+const { data } = await corsair.manage.connections.list({ tenant: 'acme' });
+// [{ id: 'users:notion:acme', integration: 'notion', status: 'connected' }]
 ```
-</Tab>
 
-<Tab value="Python">
-```python
-status = corsair.manage.connection_status("acme")
-# {"notion": "connected"}
+A `status` of `expired` means the stored credential has lapsed and the tenant
+needs a fresh session. To revoke one:
+
+```ts
+await corsair.manage.connections.delete('users:notion:acme');
 ```
-</Tab>
 
-</Tabs>
+## Give an agent access
+
+An MCP link is a URL scoped to a set of `(instance, tenant, permission)` lines.
+Hand it to Claude, ChatGPT, or your own agent code and that agent acts as that
+user, bounded by those lines — no API key involved:
+
+```ts
+const link = await corsair.manage.mcp.links.mint({
+  recipient: 'acme@example.com',
+  instances: [
+    { instance: 'users', tenant: 'acme', permission: 'readwrite' },
+  ],
+});
+// link.url → https://mcp.corsair.cloud/<project-slug>/<id>/mcp
+```
+
+Every line must already hold an access line. If a link leaks,
+`mcp.links.rotate(id)` issues a new URL against the same access and the old one
+stops working immediately. See the [management API](/v1-guides/overview) for the
+full surface.
 
 ## Server vs. browser
 
@@ -198,8 +248,8 @@ time.
 ## Type hints for your calls (TypeScript)
 
 `corsairCloud` takes no plugin list, since the plugins live on the runtime, so
-by default `corsair.withTenant(t).notion.api…` is typed as `any`. For
-autocomplete, run the CLI once:
+by default `corsair.withInstance(i).withTenant(t).notion.api…` is typed as
+`any`. For autocomplete, run the CLI once:
 
 ```bash
 pnpm corsair cloud pull
@@ -212,14 +262,13 @@ no plugin import to maintain. Coding agents can skip it and list operations with
 
 ## Where calls go
 
-Your call goes straight to the runtime, not through the dashboard. The dashboard
-creates and configures the runtime, then steps out of the request path, so a
-call is one hop out (your code to the runtime) and one hop on (the runtime to the
-provider).
+Two planes, two machines. Management (`manage.*`) is served by the hub at
+`auth.corsair.dev/v1`; calls run on your instance at `api.corsair.cloud`. A
+management write never waits on the runtime — the runtime picks the change up
+within about ten seconds, which is why a call needs no round-trip back to the
+hub.
 
 ## Next steps
 
-- [Python client](/clients/python)
-- [Go client](/clients/go)
-- [Swift client](/clients/swift)
-
+- [Management API](/v1-guides/overview) — provision instances, tenants, access and links
+- [Quickstart](/v1-guides/quickstart) — from a key to a working MCP link

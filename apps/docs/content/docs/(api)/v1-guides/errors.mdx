@@ -20,15 +20,45 @@ Every error returns the same JSON, so you write the handling once:
 on. `message` is for a human. `param` names the offending field when the error
 is about one, and is absent otherwise.
 
+Every response, error or not, carries a `Request-Id` header. Quote it in
+support.
+
 ## Status codes
 
 | Status | type | When |
 |--------|------|------|
-| `400` | `invalid_request_error` | The body or a parameter failed validation (a missing field, a bad permission, an instance or tenant that does not exist in the project). |
+| `400` | `invalid_request_error` | The body or a parameter failed validation — a missing field, a bad permission, a malformed ref, or an instance, tenant or access line that does not exist in the project. |
 | `401` | `authentication_error` | The project key is missing or wrong. |
-| `404` | `not_found` | No such resource in your project. Also what you get when you reference another project's id, so a wrong id never reveals whether it exists elsewhere. |
-| `409` | `conflict` | The write clashes with existing state, such as a duplicate tenant email. |
+| `404` | `not_found` | No such resource in your project. Also what a wrong project slug returns, so it never reveals whether that project exists. |
+| `405` | `invalid_request_error` | The path exists but not for this method (`code: method_not_allowed`). |
+| `409` | `conflict` | The write clashes with existing state — a duplicate tenant email, or an `Idempotency-Key` reused with a different request (`code: idempotency_key_reuse`). |
+| `429` | `rate_limit_error` | Over the per-minute limit for that class of request. Carries `Retry-After` in seconds. |
 | `500` | `api_error` | Something broke on our side. Safe to retry. |
+| `503` | `api_error` | The database was unreachable. Nothing was written, so a retry is safe. |
+
+## Retrying safely
+
+`429` and `500` are the retryable ones. For a minting write, send the same
+`Idempotency-Key` on the retry and you get the original result back rather than
+a second credential:
+
+```bash
+curl -s -X POST "$CORSAIR_BASE/mcp/links" \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Idempotency-Key: dave-link-1" \
+  -d '{ "instances": [ ... ] }'
+```
+
+A replayed response carries `Idempotent-Replay: true`. Keys are scoped to your
+project and held for 24 hours, or until whatever the response returned expires —
+a connect URL that has already lapsed is re-run rather than replayed, so you
+never get a dead link back.
+
+A `500` is deliberately not stored, so the retry is a real attempt rather than a
+replay of the failure.
+
+Reusing a key with a different method, path or body returns `409
+idempotency_key_reuse`. That is a client bug, not something to retry.
 
 ## Handling it
 
@@ -41,13 +71,21 @@ import { corsairCloud } from 'corsair';
 const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
 
 try {
-  await corsair.manage.grants.mint({
-    instances: [{ instance: 'nope', permission: 'readonly', tenant: 'dave' }],
+  await corsair.manage.mcp.links.mint({
+    instances: [
+      { instance: 'nope', tenant: 'usr_8841', permission: 'readonly' },
+    ],
   });
 } catch (err) {
   // err.status === 400, err.message === "no instance 'nope' in this project"
 }
 ```
 
-A `404` on a resource you expect usually means a typo in an id, not a real gap.
-A `409` on tenant creation means the email is already taken by another tenant.
+Two common ones worth recognizing:
+
+- `400 No access for prod:usr_8841` on a mint means the access line isn't there.
+  A link can name a line but never create one — `PUT /access/prod:usr_8841`
+  first.
+- `404` on a resource you expect is usually a typo in a ref. Refs are
+  positional: `instance:tenant` for access, `instance:integration` for an
+  integration, `instance:integration:tenant` for a connection.

@@ -45,7 +45,8 @@ Pick a user (a "tenant"), then call any operation on any plugin your runtime has
 `Call` returns the raw JSON result, which you unmarshal into your own type:
 
 ```go
-raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "roadmap"})
+raw, err := corsair.Instance("users").Tenant("acme").
+	Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "roadmap"})
 if err != nil {
     return err
 }
@@ -88,7 +89,7 @@ if err != nil {
 A non-2xx response comes back as `*corsaircloud.CorsairError`:
 
 ```go
-raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", nil)
+raw, err := corsair.Instance("users").Tenant("acme").Call(ctx, "notion", "pages.searchPage", nil)
 var cerr *corsaircloud.CorsairError
 if errors.As(err, &cerr) && cerr.Code == "not_connected" {
     // send the user through CreateConnectLink first

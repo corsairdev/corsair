@@ -8,25 +8,33 @@ import { Callout } from 'fumadocs-ui/components/callout';
 Every request authenticates with your project key as a bearer token:
 
 ```bash
-curl https://api.corsair.cloud/v1/project \
+curl https://auth.corsair.dev/v1/projects/acme/project \
   -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
 ```
 
-There is nothing else to sign and no second header. The key hashes to exactly
-one project, so the API knows which project you mean without a slug in the path.
+There is nothing else to sign and no second header.
 
 ## The key
 
 A project key looks like `ck_cloud_<slug>.<secret>`. The `<slug>` part is public
-(it also appears in your MCP URLs); the `<secret>` after the dot is the half that
-must stay private. One key carries full management authority over its project:
-it can mint and revoke MCP links, create tenants, and read every connection. So
-treat it like a production database password.
+— it also appears in your MCP and runtime URLs, and in the path above. The
+`<secret>` after the dot is the half that must stay private.
 
-<Callout type="warn" title="Server-side only">
+The slug in the path is cross-checked against the key, so a key can only ever
+answer for its own project. Naming another project's slug returns `404`, not
+`403`: a wrong slug never reveals whether that project exists.
+
+One key carries full management authority over its project. It can mint and
+revoke MCP links for any tenant, grant access, create tenants, read every
+connection, and read back the project key itself. So treat it like a production
+database password.
+
+<Callout type="warn" title="Server-side only, and never to an agent">
 Never ship a `ck_cloud_` key to a browser, a mobile app, or anywhere a user
-could read it. A leaked key lets anyone manage your whole project. If one leaks,
-rotate it from the console and update your backend.
+could read it — a leaked key lets anyone manage your whole project. The same
+goes for agents: a key has no tenant boundary, so an agent that holds one is
+unbounded. Agents get an [MCP link](/v1-guides/quickstart), which is scoped to
+one tenant at one permission.
 </Callout>
 
 ## Reading the key back
@@ -35,7 +43,7 @@ A backend that needs its own key (to render it once in a setup screen, say) can
 read it:
 
 ```bash
-curl https://api.corsair.cloud/v1/keys \
+curl https://auth.corsair.dev/v1/projects/acme/keys \
   -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
 ```
 
@@ -44,21 +52,40 @@ curl https://api.corsair.cloud/v1/keys \
 ```
 
 Authenticating already proves you hold the key, so this returns the same secret
-you sent. Rotation lives in the console, not this endpoint.
+you sent. The response is sent `Cache-Control: no-store`. Rotation lives in the
+console, not this endpoint.
 
 ## The SDK
 
-The SDK takes the key and derives the base URL from it, so the key is the entire
-configuration:
+The SDK takes the key and derives both base URLs from it — the slug picks the
+project, and the two planes resolve to their own hosts — so the key is the
+entire configuration:
 
 ```ts
 import { corsairCloud } from 'corsair';
 
 const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+
+await corsair.manage.project.get();                    // the hub
+await corsair.withInstance('prod').withTenant('usr_8841')
+  .slack.api.chat.postMessage({ channel: '#general', text: 'hi' });
 ```
 
-Pass `managementUrl` only when you are pointing a local or proxied setup
-somewhere other than production.
+Pass `url` to point the data plane at a local or proxied setup; management
+follows to that same host, so a local override never leaves management calls
+aimed at production. Pass `managementUrl` to move only management.
+
+## Rate limits
+
+Requests are counted per project per minute, in three classes:
+
+| Class | Limit | What counts |
+|-------|-------|-------------|
+| read | 1000 | every `GET` |
+| write | 120 | `PUT`, `PATCH`, `DELETE`, and non-minting `POST` |
+| mint | 60 | `POST /instances`, `POST /mcp/links`, `POST /mcp/links/{id}/rotate`, `POST /connect/sessions` |
+
+Over the limit returns `429` with a `Retry-After` header in seconds.
 
 ## Failures
 

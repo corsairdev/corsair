@@ -1,58 +1,36 @@
 ---
 title: Quickstart
-description: From a project key to a working MCP link in three calls.
+description: From a project key to a working MCP link in two calls.
 ---
 
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
 
-This walks the common path: register a user, mint them an MCP link, and check
-what they are connected to. You need a project key (`ck_cloud_…`) from the
-console Overview page, and a project with at least one instance already set up.
+This walks the common path: grant a user access, mint them an MCP link, and get
+them connected. You need a project key (`ck_cloud_…`) from the console Overview
+page, and a project with at least one instance already deployed.
 
-Set the key once:
+Set the key and your project slug once. The slug is the part of the key between
+`ck_cloud_` and the dot:
 
 ```bash
 export CORSAIR_KEY="ck_cloud_acme.xxxxxxxx"
+export CORSAIR_BASE="https://auth.corsair.dev/v1/projects/acme"
 ```
 
-## 1. Create a tenant
+## 1. Grant a user access
 
-A tenant is one of your users. You choose the id.
-
-```bash
-curl -s https://api.corsair.cloud/v1/tenants \
-  -H "Authorization: Bearer $CORSAIR_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{ "tenant_id": "dave", "email": "dave@acme.com" }'
-```
-
-```json
-{ "object": "tenant", "id": "dave", "email": "dave@acme.com", "label": null, "created": "2026-10-01T12:00:00.000Z" }
-```
-
-Creating a tenant that already exists returns it rather than failing, so this is
-safe to call on every login.
-
-## 2. Mint an MCP link
-
-Give Dave admin on his own instance and read-only on the shared feed. The reply
-includes the `url` once; it is a tenant-scoped secret, so store it or hand it
-straight to the agent.
+An access line is one `instance:tenant` at one permission, and it is the only
+thing that grants reach. Naming a tenant that doesn't exist yet creates it, so
+this one call registers Dave and gives him write access on `prod`:
 
 <Tabs items={['curl', 'SDK']}>
 <Tab value="curl">
 ```bash
-curl -s https://api.corsair.cloud/v1/grants \
+curl -s -X PUT "$CORSAIR_BASE/access/prod:usr_8841" \
   -H "Authorization: Bearer $CORSAIR_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-    "recipient": "dave@acme.com",
-    "instances": [
-      { "instance": "users", "permission": "admin", "tenant": "dave" },
-      { "instance": "app",   "permission": "readonly", "tenant": "dave" }
-    ]
-  }'
+  -d '{ "permission": "readwrite", "email": "dave@acme.com", "label": "Dave" }'
 ```
 </Tab>
 <Tab value="SDK">
@@ -61,54 +39,154 @@ import { corsairCloud } from 'corsair';
 
 const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
 
-const grant = await corsair.manage.grants.mint({
+await corsair.manage.access.set('prod:usr_8841', {
+  permission: 'readwrite',
+  email: 'dave@acme.com',
+  label: 'Dave',
+});
+```
+</Tab>
+</Tabs>
+
+```json
+{
+  "object": "access",
+  "id": "prod:usr_8841",
+  "instance": "prod",
+  "tenant": "usr_8841",
+  "label": "Dave",
+  "permission": "readwrite",
+  "connected": [],
+  "expired": []
+}
+```
+
+`connected` is empty because Dave hasn't authorized anything yet — the line
+resolves, but every call through it would fail. Step 3 fixes that.
+
+This is safe to call on every login: an existing line is updated, not
+duplicated.
+
+## 2. Mint an MCP link
+
+A link is a URL scoped to a set of lines. The reply includes the `url`; it is a
+tenant-scoped secret, so store it or hand it straight to the agent.
+
+<Tabs items={['curl', 'SDK']}>
+<Tab value="curl">
+```bash
+curl -s -X POST "$CORSAIR_BASE/mcp/links" \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-link-1" \
+  -d '{
+    "recipient": "dave@acme.com",
+    "instances": [
+      { "instance": "prod", "tenant": "usr_8841", "permission": "readwrite" }
+    ]
+  }'
+```
+</Tab>
+<Tab value="SDK">
+```ts
+const link = await corsair.manage.mcp.links.mint({
   recipient: 'dave@acme.com',
   instances: [
-    { instance: 'users', permission: 'admin', tenant: 'dave' },
-    { instance: 'app', permission: 'readonly', tenant: 'dave' },
+    { instance: 'prod', tenant: 'usr_8841', permission: 'readwrite' },
   ],
+  idempotencyKey: 'dave-link-1',
 });
 
-console.log(grant.url); // https://mcp.corsair.cloud/acme/mcpg_…/mcp
+console.log(link.url); // https://mcp.corsair.cloud/acme/mcpg_…/mcp
 ```
 </Tab>
 </Tabs>
 
 Paste that `url` into Claude or ChatGPT as a custom connector and Dave's tools
-are live. The link acts as Dave everywhere, bounded by the per-instance
-permissions you set.
+are live. The link acts as Dave on every instance it names, bounded by the
+permission on each line.
 
-<Callout type="warn" title="A grant is only as good as its references">
-Every `instance` and `tenant` you name must already exist in the project. Name
-one that does not and the call returns `400` rather than minting a link that
-silently does nothing.
+Two lines can name different tenants, so one link can act as a bot on a shared
+instance and as the person on their own.
+
+<Callout type="warn" title="A link can name a line but never create one">
+Every `(instance, tenant)` pair must already hold an access line. Name one that
+doesn't and the call returns `400 No access for prod:usr_8841` rather than
+minting a URL that silently reaches nothing. That is why step 1 comes first.
 </Callout>
 
-## 3. See who is connected
+If a link leaks, `POST /mcp/links/{id}/rotate` issues a new URL against the same
+access. The old one stops working immediately.
 
-Connections are the (instance, tenant, integration) intersection. Filter by any
-of the three:
+## 3. Get them connected
+
+A connect session is a hosted OAuth URL for one tenant. Redirect them to it and
+they authorize the integration themselves — the credential never passes through
+your code.
 
 <Tabs items={['curl', 'SDK']}>
 <Tab value="curl">
 ```bash
-curl -s "https://api.corsair.cloud/v1/connections?tenant=dave" \
+curl -s -X POST "$CORSAIR_BASE/connect/sessions" \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "instance": "prod", "tenant": "usr_8841", "integrations": ["slack"] }'
+```
+</Tab>
+<Tab value="SDK">
+```ts
+const session = await corsair.manage.connect.sessions.create({
+  instance: 'prod',
+  tenant: 'usr_8841',
+  integrations: ['slack'],
+});
+
+redirect(session.url); // expires at session.expiresAt
+```
+</Tab>
+</Tabs>
+
+```json
+{
+  "object": "connect_session",
+  "url": "https://app.corsair.dev/connect/eyJ0b2tlbiI6…",
+  "expires_at": "2026-10-04T12:10:00.000Z",
+  "instance": "prod",
+  "tenant": "usr_8841"
+}
+```
+
+Omit `integrations` to offer every integration enabled on the instance. Naming
+one keeps a single unconfigured provider from breaking the rest of the sheet.
+
+## 4. Check what landed
+
+Connections are the `(instance, integration, tenant)` intersection. Filter by
+any of the three:
+
+<Tabs items={['curl', 'SDK']}>
+<Tab value="curl">
+```bash
+curl -s "$CORSAIR_BASE/connections?tenant=usr_8841" \
   -H "Authorization: Bearer $CORSAIR_KEY"
 ```
 </Tab>
 <Tab value="SDK">
 ```ts
-const connections = await corsair.manage.connections.list({ tenant: 'dave' });
-// [{ object: 'connection', instance: 'users', tenant: 'dave', integration: 'gmail', status: 'connected' }]
+const { data } = await corsair.manage.connections.list({ tenant: 'usr_8841' });
+// [{ id: 'prod:slack:usr_8841', instance: 'prod', tenant: 'usr_8841',
+//    integration: 'slack', status: 'connected' }]
 ```
 </Tab>
 </Tabs>
 
 A `status` of `expired` means the stored credential's expiry has passed and the
-tenant needs to reconnect that integration.
+tenant needs a fresh connect session. The same information is on the access
+line: `GET /access/prod:usr_8841` reports `connected` and `expired` as lists of
+integration ids, which is the cheaper check if you already hold the ref.
 
 ## Where next
 
-The [full API reference](/v1) documents every endpoint and field. For the
-credential-touching steps (connecting and disconnecting a tenant's integration),
-use the per-instance handle on the SDK, `corsair.withInstance('users').connect`.
+- [Authentication](/v1-guides/authentication) — the key, and what to do with it
+- [Errors](/v1-guides/errors) — one shape, every endpoint
+- [API reference](/v1/project/getProject) — every field on every endpoint

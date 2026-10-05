@@ -37,7 +37,8 @@ let corsair = CorsairCloud(apiKey: ProcessInfo.processInfo.environment["CORSAIR_
 Pick a user (a "tenant"), then call any operation on any plugin your runtime has:
 
 ```swift
-let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: ["query": "roadmap"])
+let result = try await corsair.instance("users").tenant("acme")
+	.call("notion", "pages.searchPage", args: ["query": "roadmap"])
 ```
 
 `tenant("acme")` runs the call as your user "acme". By default `result` is a
@@ -48,7 +49,7 @@ it for you:
 struct Page: Decodable { let id: String }
 struct SearchResult: Decodable { let results: [Page] }
 
-let typed = try await corsair.tenant("acme")
+let typed = try await corsair.instance("users").tenant("acme")
     .call("notion", "pages.searchPage", as: SearchResult.self)
 ```
 
@@ -77,7 +78,7 @@ Any non-2xx response throws `CorsairError`:
 
 ```swift
 do {
-    _ = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
+    _ = try await corsair.instance("users").tenant("acme").call("notion", "pages.searchPage", args: [:])
 } catch let error as CorsairError {
     if error.code == "not_connected" {
         // send the user through createConnectLink first
