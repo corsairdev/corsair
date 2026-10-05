@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { syncListItems } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
@@ -46,6 +47,7 @@ export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaces']
 		>(`user/${user_handle}/workspace`, ctx.key, { method: 'GET', query });
+		await syncListItems(ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_workspaces',
@@ -122,6 +124,7 @@ export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserProcesses']
 		>(`user/${user_handle}/process`, ctx.key, { method: 'GET', query });
+		await syncListItems(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_processes',

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { syncListItems } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getActor: TurbotPipesEndpoints['actorGet'] = async (
@@ -31,6 +32,7 @@ export const listActorWorkspaces: TurbotPipesEndpoints['actorListWorkspaces'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['actorListWorkspaces']
 		>('actor/workspace', ctx.key, { method: 'GET', query: input });
+		await syncListItems(ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_workspaces',
@@ -47,6 +49,7 @@ export const listActorOrgs: TurbotPipesEndpoints['actorListOrgs'] = async (
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['actorListOrgs']
 	>('actor/org', ctx.key, { method: 'GET', query: input });
+	await syncListItems(ctx.db?.org, response?.items);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.actor.list_orgs',
@@ -61,6 +64,7 @@ export const listActorConnections: TurbotPipesEndpoints['actorListConnections'] 
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['actorListConnections']
 		>('actor/conn', ctx.key, { method: 'GET', query: input });
+		await syncListItems(ctx.db?.connection, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.actor.list_connections',

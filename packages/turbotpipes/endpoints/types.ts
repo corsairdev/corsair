@@ -139,9 +139,12 @@ export type GetUserPreferencesInput = z.infer<
 	typeof GetUserPreferencesInputSchema
 >;
 
+// unknown: subscription toggles are a provider-defined map of channel to preference.
+export const EmailSubscriptionsSchema = z.record(z.string(), z.unknown());
+
 export const UpdateUserPreferencesInputSchema = z.object({
 	user_handle: z.string(),
-	email_subscriptions: z.record(z.string(), z.unknown()).optional(),
+	email_subscriptions: EmailSubscriptionsSchema.optional(),
 });
 export type UpdateUserPreferencesInput = z.infer<
 	typeof UpdateUserPreferencesInputSchema
@@ -238,12 +241,15 @@ export const ListOrgUsageInputSchema = z.object({ org_handle: z.string() });
 export type ListOrgUsageInput = z.infer<typeof ListOrgUsageInputSchema>;
 
 // ── Connections Schemas ──────────────────────────────────────────────────────
-// unknown: connection config is provider-defined (e.g. AWS, GCP keys); no fixed shape.
+// unknown: connection and integration configs are provider-defined maps (e.g.
+// AWS/GCP credentials); the provider does not fix a shared shape.
+export const ProviderConfigSchema = z.record(z.string(), z.unknown());
+
 export const CreateUserConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	handle: z.string(),
 	plugin: z.string(),
-	config: z.record(z.string(), z.unknown()).optional(),
+	config: ProviderConfigSchema.optional(),
 });
 export type CreateUserConnectionInput = z.infer<
 	typeof CreateUserConnectionInputSchema
@@ -270,7 +276,7 @@ export const UpdateUserConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	connection_handle: z.string(),
 	handle: z.string().optional(),
-	config: z.record(z.string(), z.unknown()).optional(),
+	config: ProviderConfigSchema.optional(),
 });
 export type UpdateUserConnectionInput = z.infer<
 	typeof UpdateUserConnectionInputSchema
@@ -288,7 +294,7 @@ export const TestUserConnectionInputSchema = z.object({
 	user_handle: z.string(),
 	connection_handle: z.string().optional(),
 	plugin: z.string(),
-	config: z.record(z.string(), z.unknown()),
+	config: ProviderConfigSchema,
 });
 export type TestUserConnectionInput = z.infer<
 	typeof TestUserConnectionInputSchema
@@ -298,7 +304,7 @@ export const CreateOrgConnectionInputSchema = z.object({
 	org_handle: z.string(),
 	handle: z.string(),
 	plugin: z.string(),
-	config: z.record(z.string(), z.unknown()).optional(),
+	config: ProviderConfigSchema.optional(),
 });
 export type CreateOrgConnectionInput = z.infer<
 	typeof CreateOrgConnectionInputSchema
@@ -308,7 +314,7 @@ export const UpdateOrgConnectionInputSchema = z.object({
 	org_handle: z.string(),
 	connection_handle: z.string(),
 	handle: z.string().optional(),
-	config: z.record(z.string(), z.unknown()).optional(),
+	config: ProviderConfigSchema.optional(),
 });
 export type UpdateOrgConnectionInput = z.infer<
 	typeof UpdateOrgConnectionInputSchema

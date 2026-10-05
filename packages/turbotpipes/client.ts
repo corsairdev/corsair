@@ -150,7 +150,12 @@ export async function getTurbotPipesAvatarUrl(
 	if (response.status >= 200 && response.status < 400) {
 		const location = response.headers.get('location');
 		if (location) {
-			return { avatar_url: location };
+			// Location may be relative; resolve it against the API origin so
+			// callers always receive an absolute, directly usable URL.
+			return {
+				avatar_url: new URL(location, `${TURBOTPIPES_API_BASE}/${endpoint}`)
+					.href,
+			};
 		}
 		return { avatar_url: `${TURBOTPIPES_API_BASE}/${endpoint}` };
 	}
