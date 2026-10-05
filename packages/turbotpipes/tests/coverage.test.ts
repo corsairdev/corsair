@@ -133,8 +133,13 @@ describe('TurbotPipes endpoint coverage', () => {
 		const memoryStore = () => {
 			const rows = new Map<string, Record<string, unknown>>();
 			const table = {
+				// Mimics table validation: records without the required
+				// handle are rejected, like a real entity table would.
 				upsertByEntityId: jest.fn(
 					async (id: string, record: Record<string, unknown>) => {
+						if (!('handle' in record)) {
+							throw new Error('missing required handle');
+						}
 						rows.set(id, { ...record });
 					},
 				),
@@ -212,6 +217,19 @@ describe('TurbotPipes endpoint coverage', () => {
 				'w_2',
 				expect.objectContaining({ handle: 'dev' }),
 			);
+		});
+
+		it('one invalid list item does not stop the rest of the page', async () => {
+			const { rows, table } = memoryStore();
+			const ctx = { ...createMockContext(), db: { workspace: table } };
+			mockRequest.mockResolvedValueOnce({
+				items: [{ id: 'w_bad' }, { id: 'w_3', handle: 'prod' }],
+			});
+			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
+			// Flush background discovery writes.
+			await new Promise((resolve) => setTimeout(resolve, 0));
+			expect(rows.get('w_bad')).toBeUndefined();
+			expect(rows.get('w_3')).toMatchObject({ handle: 'prod' });
 		});
 	});
 

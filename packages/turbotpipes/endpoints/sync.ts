@@ -72,26 +72,33 @@ export function syncListDiscovery(
 				storedById.set(row.entity_id, isRecord(data) ? data : {});
 			}
 			for (const item of sparse) {
-				const id = item.id as string;
-				const stored = storedById.get(id);
-				if (!stored) {
-					await table.upsertByEntityId(id, { ...item } as never);
-					continue;
-				}
-				// Stored data wins every conflict: list fields only fill gaps
-				// that stored details do not already cover.
-				const merged = { ...stored };
-				let changed = false;
-				for (const [key, value] of Object.entries(item)) {
-					if (!(key in merged)) {
-						merged[key] = value;
-						changed = true;
+				// Each item is guarded on its own: one invalid item (for
+				// example an id without the required handle) must not stop
+				// the remaining valid items on the page from syncing.
+				try {
+					const id = item.id as string;
+					const stored = storedById.get(id);
+					if (!stored) {
+						await table.upsertByEntityId(id, { ...item } as never);
+						continue;
 					}
-				}
-				// Skip the write when the stored record already covers the
-				// list item, so repeated lists cost one bulk read and no writes.
-				if (changed) {
-					await table.upsertByEntityId(id, merged as never);
+					// Stored data wins every conflict: list fields only fill gaps
+					// that stored details do not already cover.
+					const merged = { ...stored };
+					let changed = false;
+					for (const [key, value] of Object.entries(item)) {
+						if (!(key in merged)) {
+							merged[key] = value;
+							changed = true;
+						}
+					}
+					// Skip the write when the stored record already covers the
+					// list item, so repeated lists cost one bulk read and no writes.
+					if (changed) {
+						await table.upsertByEntityId(id, merged as never);
+					}
+				} catch (error) {
+					console.warn('Failed to sync list item to database:', error);
 				}
 			}
 		} catch (error) {
