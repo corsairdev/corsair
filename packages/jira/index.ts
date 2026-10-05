@@ -515,6 +515,17 @@ export function jira<const T extends JiraPluginOptions>(
 		endpoints: jiraEndpointsNested,
 		webhooks: jiraWebhooksNested,
 		authConfig: jiraAuthConfig,
+		personalData: {
+			// Atlassian requires stored personal data (accountIds) to be reported
+			// for erasure before distribution. These are the entity fields that
+			// hold an accountId; the platform reporting pass reconciles them.
+			entityAccountIdFields: {
+				users: ['accountId'],
+				issues: ['reporterAccountId', 'assigneeAccountId'],
+				comments: ['authorAccountId'],
+				projects: ['leadAccountId'],
+			},
+		},
 		endpointMeta: jiraEndpointMeta,
 		endpointSchemas: jiraEndpointSchemas,
 		webhookSchemas: jiraWebhookSchemas,
