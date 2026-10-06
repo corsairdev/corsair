@@ -1478,6 +1478,7 @@ components:
   parameters:
     Slug:
       name: slug
+      example: acme
       in: path
       required: true
       description: |
@@ -1539,6 +1540,7 @@ components:
               type: string
               enum:
                 - authentication_error
+                - permission_error
                 - invalid_request_error
                 - not_found
                 - conflict
@@ -1807,10 +1809,10 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
+              type: invalid_request_error
+              code: invalid_request
               message: "instances must be a non-empty array"
-              param: "instances"
+              param: instances
     Unauthorized:
       description: The key is missing or invalid.
       content:
@@ -1818,10 +1820,9 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: authentication_error
+              code: unauthorized
+              message: "Invalid or missing project key"
     NotFound:
       description: |
         No such resource, or it belongs to another project. Both answer the
@@ -1831,10 +1832,10 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: not_found
+              code: resource_missing
+              message: "No instance 'staging' in this project"
+              param: instance
     IdempotencyConflict:
       description: |
         `idempotency_key_reuse`. This key was already used for a different
@@ -1844,10 +1845,9 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: conflict
+              code: idempotency_key_reuse
+              message: "This key was already used for a different request"
     RateLimited:
       description: Too many requests for this project.
       headers:
@@ -1859,10 +1859,9 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: rate_limit_error
+              code: rate_limit_exceeded
+              message: "Too many read requests. The limit is 1000 per minute for this project."
     ServiceUnavailable:
       description: |
         The database was unreachable. Nothing was written, so a retry is safe.
@@ -1871,10 +1870,9 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: api_error
+              code: database_unavailable
+              message: "Database unavailable"
     InternalError:
       description: |
         An unhandled server-side failure. Retry with backoff; a minting write
@@ -1885,7 +1883,6 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
           example:
             error:
-              type: "invalid_request_error"
-              code: "invalid_request"
-              message: "instances must be a non-empty array"
-              param: "instances"
+              type: api_error
+              code: internal_error
+              message: "Something went wrong on our end"

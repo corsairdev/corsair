@@ -1,5 +1,5 @@
-import { GithubInfo } from 'fumadocs-ui/components/github-info';
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
+import { GithubStars } from '@/components/github-stars';
 import { CorsairLogo } from '@/components/logo';
 
 export function baseOptions(): BaseLayoutProps {
@@ -34,16 +34,11 @@ export function baseOptions(): BaseLayoutProps {
 				),
 			},
 			// Replaces `githubUrl`, which renders a bare icon. The old Mintlify
-			// navbar showed the star count. GithubInfo stacks two lines, so it
-			// needs centring against the single-line link beside it.
+			// navbar showed the star count.
 			{
 				type: 'custom',
 				on: 'nav',
-				children: (
-					<div className="flex items-center self-center">
-						<GithubInfo owner="corsairdev" repo="corsair" />
-					</div>
-				),
+				children: <GithubStars />,
 			},
 		],
 	};

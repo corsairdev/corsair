@@ -25,16 +25,20 @@ support.
 
 ## Status codes
 
-| Status | type | When |
-|--------|------|------|
-| `400` | `invalid_request_error` | The body or a parameter failed validation: a missing field, a bad permission, a malformed ref, or an instance, tenant or access row that does not exist in the project. |
-| `401` | `authentication_error` | The project key is missing or wrong. |
-| `404` | `not_found` | No such resource in your project. Also what a wrong project slug returns, so it never reveals whether that project exists. |
-| `405` | `invalid_request_error` | The path exists but not for this method (`code: method_not_allowed`). |
-| `409` | `conflict` | The write clashes with existing state: a duplicate tenant email, or an `Idempotency-Key` reused with a different request (`code: idempotency_key_reuse`). |
-| `429` | `rate_limit_error` | Over the per-minute limit for that class of request. Carries `Retry-After` in seconds. |
-| `500` | `api_error` | Server-side failure. Retry with backoff. |
-| `503` | `api_error` | Storage unavailable. The request was not applied, so a retry is safe. |
+| Status | type | code | When |
+|--------|------|------|------|
+| `400` | `invalid_request_error` | `invalid_request` | The body or a parameter failed validation: a missing field, a bad permission, a malformed ref, or an instance, tenant or access row that does not exist in the project. |
+| `401` | `authentication_error` | `unauthorized` | The project key is missing or wrong. |
+| `404` | `not_found` | `resource_missing` | No such resource in your project. Also what a wrong project slug returns, so it never reveals whether that project exists. |
+| `405` | `invalid_request_error` | `method_not_allowed` | The path exists but not for this method. |
+| `409` | `conflict` | `resource_conflict` | The write clashes with existing state, such as a duplicate tenant email. |
+| `409` | `conflict` | `idempotency_key_reuse` | An `Idempotency-Key` was reused with a different request. |
+| `429` | `rate_limit_error` | `rate_limit_exceeded` | Over the per-minute limit for that class of request. Carries `Retry-After` in seconds. |
+| `500` | `api_error` | `internal_error` | Server-side failure. Retry with backoff. |
+| `503` | `api_error` | `database_unavailable` | Storage unavailable. The request was not applied, so a retry is safe. |
+
+`permission_error` is a valid `type` but no endpoint returns it today; a key that
+names another project's slug gets `404`, not `403`.
 
 ## Retrying safely
 
