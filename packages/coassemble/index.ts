@@ -153,7 +153,8 @@ export type ExternalCoassemblePlugin<T extends CoassemblePluginOptions> =
 	BaseCoassemblePlugin<T>;
 
 export function coassemble<const T extends CoassemblePluginOptions>(
-	incomingOptions: CoassemblePluginOptions & T,
+	incomingOptions: CoassemblePluginOptions & T = {} as CoassemblePluginOptions &
+		T,
 ): ExternalCoassemblePlugin<T> {
 	const options = {
 		...incomingOptions,
