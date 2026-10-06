@@ -40,27 +40,38 @@ const RFC850_DATE =
 const ASCTIME_DATE =
 	/^[A-Z][a-z]{2} [A-Z][a-z]{2} [ \d]\d \d{2}:\d{2}:\d{2} \d{4}$/;
 
+// Node's setTimeout ceiling (2^31-1 ms, ~24.8 days). Larger delays fire
+// immediately instead of waiting, so they are treated as invalid and the
+// reset-time or backoff fallback applies.
+const MAX_TIMER_MS = 2_147_483_647;
+
 /**
  * Parses a Retry-After value into milliseconds. RFC 9110 allows only
  * delay-seconds (digits) or an HTTP-date, so anything else, such as "0.5"
- * or "-5", returns undefined.
+ * or "-5", returns undefined. Delays beyond MAX_TIMER_MS are also rejected
+ * because setTimeout cannot represent them and would fire immediately.
  */
 function parseRetryAfter(value: string): number | undefined {
 	const trimmed = value.trim();
+	let delay: number | undefined;
 	if (/^\d+$/.test(trimmed)) {
-		return Number(trimmed) * 1000;
+		delay = Number(trimmed) * 1000;
+	} else {
+		let date: number | undefined;
+		if (IMF_FIXDATE.test(trimmed) || RFC850_DATE.test(trimmed)) {
+			date = Date.parse(trimmed);
+		} else if (ASCTIME_DATE.test(trimmed)) {
+			// asctime carries no zone but is always GMT.
+			date = Date.parse(`${trimmed} GMT`);
+		}
+		if (date !== undefined && Number.isFinite(date)) {
+			delay = Math.max(0, date - Date.now());
+		}
 	}
-	let date: number | undefined;
-	if (IMF_FIXDATE.test(trimmed) || RFC850_DATE.test(trimmed)) {
-		date = Date.parse(trimmed);
-	} else if (ASCTIME_DATE.test(trimmed)) {
-		// asctime carries no zone but is always GMT.
-		date = Date.parse(`${trimmed} GMT`);
-	}
-	if (date === undefined || !Number.isFinite(date)) {
+	if (delay === undefined || delay > MAX_TIMER_MS) {
 		return undefined;
 	}
-	return Math.max(0, date - Date.now());
+	return delay;
 }
 
 export function extractRateLimitInfo(
@@ -92,7 +103,11 @@ export function extractRateLimitInfo(
 				// retry-after is the server's explicit instruction for this response;
 				// the window reset is only a fallback when it is absent (e.g. GitHub
 				// secondary limits send a short retry-after and a reset up to an hour out).
-				if (info.retryAfter === undefined && resetMs > now) {
+				if (
+					info.retryAfter === undefined &&
+					resetMs > now &&
+					resetMs - now <= MAX_TIMER_MS
+				) {
 					info.retryAfter = resetMs - now;
 				}
 			}

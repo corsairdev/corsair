@@ -137,4 +137,60 @@ describe('extractRateLimitInfo', () => {
 		expect(info.retryAfter).toBe(0);
 		expect(calculateRetryDelay(1, info, DEFAULT_RATE_LIMIT_CONFIG)).toBe(0);
 	});
+
+	it('falls back to x-ratelimit-reset when retry-after exceeds the timer ceiling', () => {
+		const resetInAMinute = Math.floor(Date.now() / 1000) + 60;
+
+		const info = extractRateLimitInfo(
+			response429({
+				'retry-after': '2147484',
+				'x-ratelimit-reset': String(resetInAMinute),
+			}),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBeGreaterThan(55_000);
+		expect(info.retryAfter).toBeLessThanOrEqual(60_000);
+	});
+
+	it('ignores a retry-after beyond the timer ceiling when no reset header is sent', () => {
+		const info = extractRateLimitInfo(
+			response429({ 'retry-after': '2147484' }),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBeUndefined();
+		// Without a usable header value the capped exponential backoff applies.
+		expect(calculateRetryDelay(1, info, DEFAULT_RATE_LIMIT_CONFIG)).toBe(1000);
+	});
+
+	it('falls back to x-ratelimit-reset when an HTTP-date retry-after is beyond the timer ceiling', () => {
+		const resetInAMinute = Math.floor(Date.now() / 1000) + 60;
+		const retryInNinetyDays = new Date(
+			Date.now() + 90 * 24 * 3600 * 1000,
+		).toUTCString();
+
+		const info = extractRateLimitInfo(
+			response429({
+				'retry-after': retryInNinetyDays,
+				'x-ratelimit-reset': String(resetInAMinute),
+			}),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBeGreaterThan(55_000);
+		expect(info.retryAfter).toBeLessThanOrEqual(60_000);
+	});
+
+	it('ignores a reset time beyond the timer ceiling', () => {
+		const resetInNinetyDays = Math.floor(Date.now() / 1000) + 90 * 24 * 3600;
+
+		const info = extractRateLimitInfo(
+			response429({ 'x-ratelimit-reset': String(resetInNinetyDays) }),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.rateLimitReset).toBe(resetInNinetyDays * 1000);
+		expect(info.retryAfter).toBeUndefined();
+	});
 });
