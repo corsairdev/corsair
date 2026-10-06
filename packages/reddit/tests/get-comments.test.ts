@@ -52,7 +52,9 @@ function postListing(children: unknown[]): RedditListingRaw {
 	} as unknown as RedditListingRaw;
 }
 
-// No ctx.db: the endpoint skips persistence, so tests observe only the response.
+// Empty ctx cast is intentional: getComments only touches ctx.db?.posts,
+// and these cases omit it, so persistence is skipped via the optional
+// chaining guard in savePostsToDb (endpoints/utils.ts).
 const ctx = {} as never;
 
 describe('posts.getComments', () => {
