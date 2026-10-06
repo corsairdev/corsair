@@ -24,11 +24,23 @@ so that's the whole configuration.
 
 <Callout type="warn">
 The API key is a server secret, sent as a bearer token. It has full authority
-over the project — it can mint access for any tenant — so keep it on your
-server and never put it in browser code or a mobile app you ship. For the
-browser, see [Server vs. browser](#server-vs-browser). For agents, mint an
+over the project; it can mint access for any tenant, so keep it on your server
+and never put it in browser code or a mobile app you ship. For the browser, see
+[Server vs. browser](#server-vs-browser). For agents, mint an
 [MCP link](/v1-guides/quickstart) instead.
 </Callout>
+
+### Which client
+
+`corsairCloud()` is the hosted client. It takes the key and nothing else: no
+plugin array, no database, no KEK, because the plugin set lives on the runtime
+we operate.
+
+`createCorsair()` is the self-hosted SDK. It takes `plugins`, a `database` and a
+`kek`, and runs integrations inside your own process against your own tables.
+
+The dividing line is who runs the runtime. A `ck_cloud_` key belongs to
+`corsairCloud()`.
 
 ## Instances
 
