@@ -19,32 +19,10 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const clients = await corsair.coassemble.api.clients.get({
-		length: 10,
-		page: 0,
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
 	});
-
-	console.log('Coassemble clients:', clients);
-
-	const courses = await corsair.coassemble.api.courses.get({
-		length: 10,
-		page: 0,
-	});
-
-	console.log('Coassemble courses:', courses);
-
-	const users = await corsair.coassemble.api.users.get({
-		length: 10,
-		page: 0,
-	});
-
-	console.log('Coassemble users:', users);
-
-	const tracking = await corsair.coassemble.api.trackings.get({
-		id: Number(process.env.COASSEMBLE_TRACKING_ID),
-	});
-
-	console.log('Coassemble tracking:', tracking);
 };
 
 main().catch((err) => {
