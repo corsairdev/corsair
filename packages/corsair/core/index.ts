@@ -394,6 +394,7 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+export { ManagementApiError } from './management/errors';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
