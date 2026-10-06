@@ -1681,10 +1681,10 @@ function syncPluginMeta(
 	const tabMeta = JSON.parse(readFileSync(tabMetaPath, 'utf8')) as {
 		pages?: string[];
 	};
-	const entries = tabMeta.pages ?? [];
-	if (entries.includes(pluginId)) {
-		return;
-	}
+	// Drop any existing entry and re-place it: the order follows display title,
+	// so a renamed plugin has to move, not just get a new title.
+	const existing = tabMeta.pages ?? [];
+	const entries = existing.filter((e) => e !== pluginId);
 	// Insert only. The list is ordered by display name, not by plugin id
 	// ("studiobyai21labs" sits under "ElevenLabs Studio"), so re-sorting it by
 	// id would scramble it.
@@ -1705,7 +1705,13 @@ function syncPluginMeta(
 	) {
 		at++;
 	}
-	tabMeta.pages = [...entries.slice(0, at), pluginId, ...entries.slice(at)];
+	const next = [...entries.slice(0, at), pluginId, ...entries.slice(at)];
+	if (
+		next.length === existing.length &&
+		next.every((e, i) => e === existing[i])
+	)
+		return;
+	tabMeta.pages = next;
 	writeJson(tabMetaPath, tabMeta);
 }
 

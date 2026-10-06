@@ -22,9 +22,16 @@ export interface ApiOperation {
 	output: SchemaShape;
 }
 
+export interface DbFilter {
+	field: string;
+	type: string;
+	operators: string[];
+}
+
 export interface DbEntity {
 	path: string;
 	entityName: string;
+	filters?: DbFilter[];
 }
 
 export interface WebhookEvent {

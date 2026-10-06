@@ -85,17 +85,24 @@ function pageData(
 		return { title: plugin.displayName, data: overviewData(plugin) };
 	if (leaf === 'api')
 		return { title: `${plugin.displayName} API`, data: apiData(plugin) };
-	if (leaf === 'database')
+	if (leaf === 'database') {
+		const entities = plugin.db ?? [];
 		return {
 			title: `${plugin.displayName} database`,
 			data: {
-				headings: (plugin.db ?? []).map((entity) => ({
+				headings: entities.map((entity) => ({
 					id: anchor(resourceTitle(entity.entityName)),
 					content: entity.entityName,
 				})),
-				contents: [],
+				// Readers search for a filter name, so an entity heading on its own
+				// cannot reach this page.
+				contents: entities.map((entity) => ({
+					heading: anchor(resourceTitle(entity.entityName)),
+					content: (entity.filters ?? []).map((f) => f.field).join(' '),
+				})),
 			},
 		};
+	}
 	const webhooks = plugin.webhooks ?? [];
 	if (webhooks.length === 0) return null;
 	return {
