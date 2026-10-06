@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Tasks from './endpoints/tasks';
+import { TodoistEndpointOutputSchemas } from './endpoints/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -46,15 +47,58 @@ function mockFetch(payload: object) {
 	}) as unknown as typeof global.fetch;
 }
 
+// Shape of the documented 200 response for POST /api/v1/tasks/{task_id}/move
+// (ItemSyncView in https://developer.todoist.com/api/v1), with the moved
+// task's ids swapped in.
 const movedTask = {
+	user_id: '1234567',
 	id: 'task-1',
 	project_id: 'project-2',
 	section_id: null,
 	parent_id: null,
-	content: 'Write report',
+	added_by_uid: '1234567',
+	assigned_by_uid: null,
+	responsible_uid: null,
+	labels: ['priority'],
+	deadline: null,
+	duration: null,
+	is_collapsed: false,
+	checked: false,
+	is_deleted: false,
+	added_at: '2025-01-15T10:30:00Z',
+	completed_at: null,
+	completed_by_uid: null,
+	updated_at: '2025-01-17T10:30:00Z',
+	due: {
+		date: '2025-02-12',
+		is_recurring: false,
+		lang: 'en',
+		string: 'tomorrow',
+	},
+	priority: 1,
+	child_order: 1,
+	order_key: 'a1V',
+	content: 'Buy milk',
+	description: 'Pick up organic milk',
+	note_count: 0,
+	day_order: 1,
+	completed_count: 3,
+	postponed_count: 1,
 };
 
 describe('tasks.move', () => {
+	it('accepts the documented move response as its output', () => {
+		const parsed = TodoistEndpointOutputSchemas.tasksMove.safeParse(movedTask);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data).toMatchObject({
+			id: 'task-1',
+			project_id: 'project-2',
+			section_id: null,
+			parent_id: null,
+		});
+	});
+
 	it('posts to the move route with only the move fields', async () => {
 		mockFetch(movedTask);
 		const { ctx } = makeCtx();
