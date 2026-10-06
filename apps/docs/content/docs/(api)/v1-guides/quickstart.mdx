@@ -6,9 +6,11 @@ description: From a project key to a working MCP link in two calls.
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
 
-This walks the common path: grant a user access, mint them an MCP link, and get
-them connected. You need a project key (`ck_cloud_…`) from the console Overview
-page, and a project with at least one instance already deployed.
+Four calls: grant access, mint an MCP link, start a connect session, read back
+what landed.
+
+Prerequisites: a project key (`ck_cloud_…`) from the console Overview page, and
+an instance whose `url` is non-null in `GET /instances`.
 
 Set the key and your project slug once. The slug is the part of the key between
 `ck_cloud_` and the dot:
@@ -20,9 +22,9 @@ export CORSAIR_BASE="https://auth.corsair.dev/v1/projects/acme"
 
 ## 1. Grant a user access
 
-An access line is one `instance:tenant` at one permission, and it is the only
-thing that grants reach. Naming a tenant that doesn't exist yet creates it, so
-this one call registers Dave and gives him write access on `prod`:
+An access row is one `instance:tenant` at one permission. Naming a tenant that
+does not exist yet creates it, so this one call registers Dave and gives him
+write access on `prod`:
 
 <Tabs items={['curl', 'SDK']}>
 <Tab value="curl">
@@ -61,16 +63,14 @@ await corsair.manage.access.set('prod:usr_8841', {
 }
 ```
 
-`connected` is empty because Dave hasn't authorized anything yet — the line
-resolves, but every call through it would fail. Step 3 fixes that.
-
-This is safe to call on every login: an existing line is updated, not
-duplicated.
+`connected` is empty until Dave authorizes an integration (step 3). `PUT` is an
+upsert, so calling this on every login updates the row rather than duplicating
+it.
 
 ## 2. Mint an MCP link
 
-A link is a URL scoped to a set of lines. The reply includes the `url`; it is a
-tenant-scoped secret, so store it or hand it straight to the agent.
+A link is a URL scoped to a set of access rows. The response includes the `url`,
+which is a tenant-scoped secret: store it or hand it straight to the agent.
 
 <Tabs items={['curl', 'SDK']}>
 <Tab value="curl">
@@ -102,27 +102,24 @@ console.log(link.url); // https://mcp.corsair.cloud/acme/mcpg_…/mcp
 </Tab>
 </Tabs>
 
-Paste that `url` into Claude or ChatGPT as a custom connector and Dave's tools
-are live. The link acts as Dave on every instance it names, bounded by the
-permission on each line.
+Paste `url` into any MCP client as a custom connector. The link resolves each
+call against the row matching that instance, using that row's tenant and
+permission. Rows in one link may name different tenants.
 
-Two lines can name different tenants, so one link can act as a bot on a shared
-instance and as the person on their own.
-
-<Callout type="warn" title="A link can name a line but never create one">
-Every `(instance, tenant)` pair must already hold an access line. Name one that
-doesn't and the call returns `400 No access for prod:usr_8841` rather than
-minting a URL that silently reaches nothing. That is why step 1 comes first.
+<Callout type="warn" title="Minting requires the access row to exist">
+Every `(instance, tenant)` pair must already hold an access row. Naming one that
+does not returns `400 No access for prod:usr_8841`.
 </Callout>
 
-If a link leaks, `POST /mcp/links/{id}/rotate` issues a new URL against the same
-access. The old one stops working immediately.
+If a link leaks, `POST /mcp/links/{id}/rotate` mints a replacement carrying the
+same rows and revokes the old id in the same transaction, so the two are never
+both live.
 
 ## 3. Get them connected
 
-A connect session is a hosted OAuth URL for one tenant. Redirect them to it and
-they authorize the integration themselves — the credential never passes through
-your code.
+`POST /connect/sessions` returns a hosted OAuth URL for one tenant. Redirect the
+tenant to it; the credential is exchanged server-side and never reaches your
+code.
 
 <Tabs items={['curl', 'SDK']}>
 <Tab value="curl">
@@ -156,8 +153,9 @@ redirect(session.url); // expires at session.expiresAt
 }
 ```
 
-Omit `integrations` to offer every integration enabled on the instance. Naming
-one keeps a single unconfigured provider from breaking the rest of the sheet.
+Omit `integrations` to list every integration enabled on the instance. An
+integration missing credentials renders as an error on the sheet, so name the
+ones you need.
 
 ## 4. Check what landed
 
@@ -181,12 +179,9 @@ const { data } = await corsair.manage.connections.list({ tenant: 'usr_8841' });
 </Tabs>
 
 A `status` of `expired` means the stored credential's expiry has passed and the
-tenant needs a fresh connect session. The same information is on the access
-line: `GET /access/prod:usr_8841` reports `connected` and `expired` as lists of
+tenant needs a fresh connect session. The same information is on the access row:
+`GET /access/prod:usr_8841` reports `connected` and `expired` as lists of
 integration ids, which is the cheaper check if you already hold the ref.
 
-## Where next
-
-- [Authentication](/v1-guides/authentication) — the key, and what to do with it
-- [Errors](/v1-guides/errors) — one shape, every endpoint
-- [API reference](/v1/project/getProject) — every field on every endpoint
+Every field on every endpoint is in the
+[API reference](/v1/project/getProject).

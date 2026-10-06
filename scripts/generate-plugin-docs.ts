@@ -22,14 +22,6 @@ import {
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
-import type {
-	DocSchemaShape,
-	DocsApiEndpoint,
-	DocsWebhook,
-	PluginDocsIntrospection,
-} from '../packages/corsair/core/inspect/index.ts';
-import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
-import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 // Shared with the plugin API route, which renders the same Zod→TS strings from
 // the catalog. Two copies would drift.
 import {
@@ -38,6 +30,14 @@ import {
 	resourceTitle,
 	tableTypeDisplay,
 } from '../apps/docs/lib/plugin-type-format.ts';
+import type {
+	DocSchemaShape,
+	DocsApiEndpoint,
+	DocsWebhook,
+	PluginDocsIntrospection,
+} from '../packages/corsair/core/inspect/index.ts';
+import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
+import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';

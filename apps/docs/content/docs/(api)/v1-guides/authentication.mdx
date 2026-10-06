@@ -1,6 +1,6 @@
 ---
 title: Authentication
-description: One project key, sent as a bearer token. That is the whole auth model.
+description: Project keys, the bearer header, scope, and rate limits.
 ---
 
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -12,28 +12,25 @@ curl https://auth.corsair.dev/v1/projects/acme/project \
   -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
 ```
 
-There is nothing else to sign and no second header.
-
 ## The key
 
-A project key looks like `ck_cloud_<slug>.<secret>`. The `<slug>` part is public
-— it also appears in your MCP and runtime URLs, and in the path above. The
-`<secret>` after the dot is the half that must stay private.
+A project key looks like `ck_cloud_<slug>.<secret>`. The `<slug>` is public and
+also appears in your MCP and runtime URLs, and in the path above. The `<secret>`
+after the dot must stay private.
 
 The slug in the path is cross-checked against the key, so a key can only ever
 answer for its own project. Naming another project's slug returns `404`, not
 `403`: a wrong slug never reveals whether that project exists.
 
-One key carries full management authority over its project. It can mint and
-revoke MCP links for any tenant, grant access, create tenants, read every
-connection, and read back the project key itself. So treat it like a production
-database password.
+A project key has no tenant scope and no read-only mode. It can mint and revoke
+MCP links for any tenant, write access rows, create tenants, read every
+connection, and read back the key itself. Store it in a server-side secret
+manager.
 
-<Callout type="warn" title="Server-side only, and never to an agent">
-Never ship a `ck_cloud_` key to a browser, a mobile app, or anywhere a user
-could read it — a leaked key lets anyone manage your whole project. The same
-goes for agents: a key has no tenant boundary, so an agent that holds one is
-unbounded. Agents get an [MCP link](/v1-guides/quickstart), which is scoped to
+<Callout type="warn" title="Server-side only, including agents">
+Never ship a `ck_cloud_` key to a browser, a mobile app, or anywhere a user can
+read it. The same applies to agents: any holder can manage the whole project.
+Give an agent an [MCP link](/v1-guides/quickstart) instead, which is bound to
 one tenant at one permission.
 </Callout>
 
@@ -51,15 +48,14 @@ curl https://auth.corsair.dev/v1/projects/acme/keys \
 { "object": "key", "project_key": "ck_cloud_acme.xxxxxxxx" }
 ```
 
-Authenticating already proves you hold the key, so this returns the same secret
-you sent. The response is sent `Cache-Control: no-store`. Rotation lives in the
-console, not this endpoint.
+The response repeats the key you authenticated with and is sent
+`Cache-Control: no-store`. Rotate keys in the console; there is no rotation
+endpoint.
 
 ## The SDK
 
-The SDK takes the key and derives both base URLs from it — the slug picks the
-project, and the two planes resolve to their own hosts — so the key is the
-entire configuration:
+The SDK derives both base URLs from the key's slug, so `apiKey` is the only
+required option:
 
 ```ts
 import { corsairCloud } from 'corsair';

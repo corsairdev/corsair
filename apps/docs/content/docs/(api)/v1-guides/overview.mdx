@@ -5,27 +5,29 @@ description: Manage your Corsair Cloud project from your own backend over REST, 
 
 import { Callout } from 'fumadocs-ui/components/callout';
 
-The management API is how your backend runs the project. Everything the Corsair
-console does by hand, you can do over HTTP: register the users you serve, enable
-integrations, grant access, hand out MCP links, and read who is connected to
-what.
+```
+Base URL  https://auth.corsair.dev/v1/projects/{slug}
+Auth      Authorization: Bearer ck_cloud_<slug>.<secret>
+```
 
-It pairs with the data plane. The management API shapes the project; the
-[Corsair SDK](/introduction) runs the actual tool calls for a user. A management
-request never runs a tool, and a tool call never changes the project.
+This API reads and writes project configuration: instances, integrations,
+tenants, access rows, MCP links, and connect sessions. Anything the Corsair
+console does by hand, you can do here over HTTP.
+
+It does not run tool calls. An operation for a tenant executes on the
+instance's own URL through the [Corsair SDK](/introduction), and nothing on that
+path can change the project.
 
 ## Two planes, two hosts
 
-The split is real, not conceptual — the two planes run on different machines.
-
 | Host | Serves |
 |---|---|
-| `auth.corsair.dev/v1/projects/{slug}/…` | management — this API, on the hub |
+| `auth.corsair.dev/v1/projects/{slug}/…` | management, this API, on the hub |
 | `api.corsair.cloud/{instance-slug}/api/corsair` | tool calls, on your project's runtime |
 
-A management call never touches your runtime, and never waits on it. It writes
-the project; the runtime picks the change up within about ten seconds, on its
-own schedule.
+A management write returns as soon as the hub commits it. It does not call your
+runtime and does not wait on one, so a write succeeds whether or not the
+instance is deployed.
 
 ## One key, one project
 
@@ -35,42 +37,35 @@ Every request carries one bearer token, your project key:
 Authorization: Bearer ck_cloud_<slug>.<secret>
 ```
 
-The `{slug}` in the path is the same slug the key carries, and the two are
-cross-checked — a key can only ever answer for its own project, and naming
-someone else's slug returns `404`. One key has full authority over one project.
-Keep it on your server, never in a browser or a mobile app. See
-[Authentication](/v1-guides/authentication).
+The `{slug}` in the path must match the slug the key carries. Naming another
+project's slug returns `404`. One key has full authority over one project, with
+no tenant scope and no read-only mode. Keep it server-side, never in a browser
+or a mobile app. See [Authentication](/v1-guides/authentication).
 
-## The objects
-
-A project is a small tree, and the whole API is reading and writing it.
+## Resources
 
 - **Instances** are your runtime boundary. One might be `prod`, another
-  `staging`. Each is credential-isolated, so a call scoped to `staging` can
-  never write on `prod`. An instance's `url` is where its tool calls execute,
-  and is `null` until it is deployed.
+  `staging`. Each is credential-isolated, so a call scoped to `staging` cannot
+  write on `prod`. An instance's `url` is where its tool calls execute, and is
+  `null` until it is deployed.
 - **Integrations** are the providers enabled on one instance, addressed as
-  `instance:integration` (`prod:slack`). Each has an `auth_type` — Corsair's
-  own OAuth app (`managed`) or your own credentials. `GET /integrations/catalog`
+  `instance:integration` (`prod:slack`). Each has an `auth_type`: Corsair's own
+  OAuth app (`managed`) or your own credentials. `GET /integrations/catalog`
   lists every provider Corsair ships and which support `managed`.
 - **Tenants** are the people you serve. You pick the id (`usr_8841`, a user row
   id, whatever you map to). Corsair holds their tokens; you never see them.
-- **Access** is the grammar: one line per `instance:tenant`, at a permission of
-  `readonly`, `readwrite`, or `admin`. Nothing else grants reach. A link can
-  name a line but can never create one.
-- **Connections** are where it gets specific. A connection is one tenant's live
-  auth for one integration on one instance — all three axes at once, addressed
-  as `instance:integration:tenant`. Fix the axes you care about and list the
-  rest: `GET /connections?instance=prod&tenant=usr_8841`.
-- **MCP links** are the agent door. A link is a URL scoped across a set of
-  `(instance, tenant, permission)` lines. You mint one and hand it to Claude,
-  ChatGPT, or your own agent code.
+- **Access** is one row per `instance:tenant`, at a permission of `readonly`,
+  `readwrite`, or `admin`. Minting a link requires the row to exist already.
+- **Connections** are one tenant's auth for one integration on one instance,
+  addressed as `instance:integration:tenant`. Fix the axes you care about and
+  list the rest: `GET /connections?instance=prod&tenant=usr_8841`.
+- **MCP links** are URLs scoped to a set of `(instance, tenant, permission)`
+  rows. Paste one into any MCP client as a custom connector.
 
-<Callout title="Connections are made on the connect sheet">
-You never inject a token through this API. To connect a tenant, create a connect
+<Callout title="No endpoint accepts a token">
+There is no write path for credentials. To connect a tenant, create a connect
 session and redirect them to the URL it returns, so they authorize the
-integration themselves. The management API lists the result and its status; it
-never handles the credential.
+integration themselves. `GET /connections` reads back the result and its status.
 </Callout>
 
 ## Conventions
@@ -82,19 +77,13 @@ Fields are `snake_case`. Lists come back in one envelope, always:
 ```
 
 Page with `limit` and `starting_after`, passing the previous response's
-`next_cursor`. Single objects carry their own `object` and `id`. Every response
-carries a `Request-Id` — quote it in support.
+`next_cursor`. `limit` accepts 1 to 100 and defaults to 100; a higher value is
+clamped to 100 and a non-integer is a `400`. Single objects carry their own
+`object` and `id`. Every response carries a `Request-Id`; quote it in support.
 
 Writes that mint something (`POST /instances`, `POST /mcp/links`,
 `POST /mcp/links/{id}/rotate`, `POST /connect/sessions`) accept an
-`Idempotency-Key` header, so a retried call returns the original result rather
-than minting a second credential.
+`Idempotency-Key` header, so a retried call returns the original result instead
+of minting a second credential.
 
-Errors carry one shape too. Read [Errors](/v1-guides/errors) once and you can
-handle every endpoint.
-
-## Next
-
-Start with the [Quickstart](/v1-guides/quickstart): two calls from a project key
-to a working MCP link. Then browse the full
-[API reference](/v1/project/getProject) for every field on every endpoint.
+Errors use a single shape on every endpoint. See [Errors](/v1-guides/errors).

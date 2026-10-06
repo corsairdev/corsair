@@ -134,10 +134,10 @@ with an `{ "args": {...} }` body.
 
 ## What is a tenant?
 
-A tenant is one of your users. `withTenant("acme")` picks which user a call acts
-as, so it uses that user's connected account. One instance serves all your
-tenants at once. Building for a single user? Pick one tenant id and forget about
-it.
+A tenant is one of your users. `withTenant("acme")` (or `with_tenant` in Python,
+`Tenant` in Go, `tenant` in Swift) picks which user a call acts as, so it uses
+that user's connected account. One instance serves all your tenants at once.
+Building for a single user? Pick one tenant id and forget about it.
 
 The runtime rejects an empty tenant id rather than guessing, so a call is never
 silently scoped to the wrong user.
@@ -167,12 +167,13 @@ const lines = await corsair.manage.access.list({ tenant: 'acme' });
 ```
 
 <Callout type="info">
-`access.list` reports what each identity has connected and what has lapsed, so
-one call answers "can this user do anything yet". `connections.list` is the same
-information keyed per `instance:integration:tenant`, and
-`manage.permissions.get({ id })` reads a permission grant's scopes and approval
-status. All redact secrets: you see *that* a tenant connected Notion, never
-their token.
+`access.list` reports what each identity has connected and what has lapsed.
+`connections.list` is the same information keyed per
+`instance:integration:tenant`, and `manage.permissions.get({ id })` reads a
+permission grant's scopes and approval status. All redact secrets: you see
+*that* a tenant connected Notion, never their token. Reading a tenant's stored
+*data* rows directly, or pointing the runtime at your own database, comes with
+bring-your-own-DB (coming soon).
 </Callout>
 
 ## Connect a user's account
@@ -262,13 +263,19 @@ no plugin import to maintain. Coding agents can skip it and list operations with
 
 ## Where calls go
 
-Two planes, two machines. Management (`manage.*`) is served by the hub at
-`auth.corsair.dev/v1`; calls run on your instance at `api.corsair.cloud`. A
-management write never waits on the runtime — the runtime picks the change up
-within about ten seconds, which is why a call needs no round-trip back to the
-hub.
+Management (`manage.*`) is served by the hub at `auth.corsair.dev/v1`. Calls run
+on your instance at `api.corsair.cloud`, and a management write does not wait on
+the runtime.
+
+Your call goes straight to the runtime, not through the dashboard. The dashboard
+creates and configures the runtime, then steps out of the request path, so a
+call is one hop out (your code to the runtime) and one hop on (the runtime to the
+provider).
 
 ## Next steps
 
-- [Management API](/v1-guides/overview) — provision instances, tenants, access and links
-- [Quickstart](/v1-guides/quickstart) — from a key to a working MCP link
+- [Management API](/v1-guides/overview), to provision instances, tenants, access and links
+- [Quickstart](/v1-guides/quickstart), from a key to a working MCP link
+- [Python client](/clients/python)
+- [Go client](/clients/go)
+- [Swift client](/clients/swift)

@@ -3,7 +3,7 @@ info:
   title: Corsair Cloud Management API
   version: "2026-10-04"
   description: |
-    Manage a Corsair Cloud project from your own backend — the same operations
+    Manage a Corsair Cloud project from your own backend: the same operations
     the Corsair console performs, over HTTP.
 
     ## One key, one project
@@ -11,7 +11,7 @@ info:
     Every request authenticates with a project key, `ck_cloud_<slug>.<secret>`,
     sent as a bearer token. The key identifies the project; the slug in the path
     is cross-checked against it, so a key can only ever answer for its own
-    project. One key has full management authority — keep it server-side.
+    project. One key has full management authority. Keep it server-side.
 
     ## Two planes
 
@@ -33,21 +33,21 @@ info:
     change behaviour.
 
     Every operation is rate limited and so can answer `429`, and any of them
-    can answer `503` if the database is unreachable — nothing is written in
+    can answer `503` if the database is unreachable. Nothing is written in
     that case, so a retry is safe.
 
     ## Idempotency
 
-    The four writes that mint something — a link, a rotated link, a connect
-    session, an instance — accept an `Idempotency-Key` header so a retried
-    request cannot produce a second credential.
+    Four writes mint something: a link, a rotated link, a connect session, and
+    an instance. Each accepts an `Idempotency-Key` header so a retried request
+    cannot produce a second credential.
 
     - The client mints the key. Derive it from something stable you already
       hold (`link-for-order-8841`), not a fresh UUID per attempt.
     - Keys are scoped to `(project, key)`. Another project's identical key never
       collides with yours.
     - A key is replayable for 24 hours, or until the credential in the response
-      expires — whichever comes first. After that it is treated as a brand-new
+      expires, whichever comes first. After that it is treated as a brand-new
       request.
     - A replay returns the original status and body with `Idempotent-Replay:
       true`.
@@ -122,7 +122,7 @@ paths:
       summary: Reveal the project key
       description: |
         Returns the project key in plaintext. The response is marked
-        `no-store` — it is a live credential, so nothing in between may cache
+        `no-store`. It is a live credential, so nothing in between may cache
         it.
       responses:
         "200":
@@ -176,7 +176,7 @@ paths:
       summary: Create an instance
       description: |
         Creates an instance under the given key, or returns the existing one if
-        the key is already taken (`created: false` is not reported — the
+        the key is already taken (`created: false` is not reported; the
         response is the instance either way). A project is limited to 10
         instances.
 
@@ -195,7 +195,7 @@ paths:
                 instance_key:
                   type: string
                   pattern: "^[a-z][a-z0-9-]*$"
-                  description: Lowercase, starts with a letter. No colon — it is half of every access and integration ref.
+                  description: Lowercase, starts with a letter. No colon, since it is half of every access and integration ref.
                   examples: ["live"]
                 credential_source:
                   type: string
@@ -285,7 +285,7 @@ paths:
         Deletes the instance and strips its runtime off the VM. Its access
         lines, connections and webhooks go with it.
 
-        The project's primary instance cannot be deleted — every tenant row is
+        The project's primary instance cannot be deleted. Every tenant row is
         pinned to it. Terminate the runtime to remove a whole project.
       responses:
         "200":
@@ -401,7 +401,7 @@ paths:
         same state.
 
         Credentials are write-only. They are encrypted on the way in and never
-        readable afterwards — the object reports `has_credentials` instead.
+        readable afterwards. The object reports `has_credentials` instead.
         Omitting them on a later write leaves whatever is on file, since you
         cannot resend what you were never given. To replace a credential, send
         the new one.
@@ -447,7 +447,7 @@ paths:
       summary: Remove an integration
       description: |
         Removes the integration from the instance. Tenants' stored credentials
-        for it are kept — disconnecting is per tenant, and re-adding the
+        for it are kept. Disconnecting is per tenant, and re-adding the
         integration finds them intact.
       responses:
         "200":
@@ -492,7 +492,7 @@ paths:
       operationId: createTenant
       summary: Create a tenant
       description: |
-        The id is yours to choose — your own user id is the usual answer. It
+        The id is yours to choose. Your own user id is the usual answer. It
         becomes half of every access ref and a segment of the MCP grammar, so it
         has to survive a URL path.
 
@@ -510,7 +510,7 @@ paths:
                   maxLength: 128
                   pattern: "^[A-Za-z0-9._:~@+-]{1,128}$"
                   description: |
-                    Letters, digits and `. _ : ~ @ + -`. No `/` — a ref
+                    Letters, digits and `. _ : ~ @ + -`. No `/`, since a ref
                     containing one cannot be addressed. Colons are allowed, so
                     `usr_123:work` gives one person two credential sets.
                   examples: ["usr_8841"]
@@ -671,7 +671,7 @@ paths:
       summary: Grant access
       description: |
         Puts a tenant on an instance at a permission, creating the tenant if it
-        is new — so one call is enough to onboard someone.
+        is new, so one call is enough to onboard someone.
 
         This is the only thing that grants reach. A link can *name* a line but
         never create one.
@@ -716,7 +716,7 @@ paths:
       operationId: deleteAccess
       summary: Revoke access
       description: |
-        Revoking a line is what takes a link's access away — the door drops the
+        Revoking a line is what takes a link's access away. The door drops the
         entry, and the link reports it as `lost_access`. Lowering a permission
         does not, since a link carries its own.
       responses:
@@ -906,7 +906,7 @@ paths:
       summary: Mint an MCP link
       description: |
         Returns a URL an agent can be pointed at. **The id in the URL is the
-        credential** — there is no second secret, so treat the whole URL as one.
+        credential**. There is no second secret, so treat the whole URL as one.
 
         Every entry must name a line the tenant already holds. The entry's
         permission is the link's own and may be lower than the line's, but a
@@ -1033,7 +1033,7 @@ paths:
         both live.
 
         The response is a new link with a new id. Refused if the link no longer
-        grants anything — rotating it would reissue a dead URL, so revoke it
+        grants anything. Rotating it would reissue a dead URL, so revoke it
         instead.
       parameters:
         - { $ref: "#/components/parameters/IdempotencyKey" }
@@ -1070,7 +1070,7 @@ components:
       in: path
       required: true
       description: |
-        The project slug. Cross-checked against the key — a key can only answer
+        The project slug. Cross-checked against the key. A key can only answer
         for its own project, and any other slug is a `404`.
       schema: { type: string }
     Limit:
@@ -1082,7 +1082,7 @@ components:
       name: starting_after
       in: query
       description: |
-        The `next_cursor` from the previous page — the id of its last item.
+        The `next_cursor` from the previous page: the id of its last item.
         An id that is not in the list is a `400`.
       schema: { type: string }
     IdempotencyKey:
@@ -1090,7 +1090,7 @@ components:
       in: header
       description: |
         A key of your own, at most 255 characters, so a retry of this request
-        cannot mint a second credential. A longer key is a `400` — truncating it
+        cannot mint a second credential. A longer key is a `400`, since truncating it
         would change its identity.
       schema: { type: string, maxLength: 255 }
 
@@ -1136,7 +1136,7 @@ components:
               description: The specific condition, e.g. `resource_missing`, `idempotency_key_reuse`.
             message:
               type: string
-              description: Human-readable. Not a contract — do not parse it.
+              description: Human-readable. Not a contract. Do not parse it.
             param:
               type: string
               description: The offending field, when one field is at fault.
@@ -1208,7 +1208,7 @@ components:
         url:
           type: ["string", "null"]
           description: |
-            Where this instance executes — the data plane, reached with the
+            Where this instance executes: the data plane, reached with the
             Corsair SDK. Null until the instance is deployed.
 
     Integration:
@@ -1287,7 +1287,7 @@ components:
           enum: [connected, expired]
           description: |
             `connected` includes a credential past its expiry that holds a
-            refresh token — it renews on the next call.
+            refresh token. It renews on the next call.
 
     ConnectSession:
       type: object
@@ -1363,14 +1363,14 @@ components:
           schema: { $ref: "#/components/schemas/Error" }
     NotFound:
       description: |
-        No such resource — or it belongs to another project. Both answer the
+        No such resource, or it belongs to another project. Both answer the
         same, so this API cannot be used to discover what exists elsewhere.
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
     IdempotencyConflict:
       description: |
-        `idempotency_key_reuse` — this key was already used for a different
+        `idempotency_key_reuse`. This key was already used for a different
         request. Use a new key, or resend the original request.
       content:
         application/json:
