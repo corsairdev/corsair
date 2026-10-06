@@ -9,7 +9,7 @@ import {
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
-import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
+import { hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
@@ -70,11 +70,20 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	// A cloud key with somewhere to call means a hosted client was intended.
+	// The hosted runtime also holds a ck_cloud_ key but sets no base URL, and
+	// must keep running in-process, so the URL is what separates the two.
 	if (
 		config.hub?.projectApiKey?.startsWith('ck_cloud_') &&
 		hasCloudBaseUrl(config.hub)
 	) {
-		return buildCloudCorsair(config);
+		throw new Error(
+			'createCorsair: a ck_cloud_ project key with a base URL belongs to corsairCloud.\n\n' +
+				"  import { corsairCloud } from 'corsair';\n" +
+				'  const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });\n' +
+				"  await corsair.withInstance('prod').withTenant('usr_1').slack.api.chat.postMessage({ ... });\n\n" +
+				'Drop hub.baseUrl/CORSAIR_CLOUD_URL and the plugins array: corsairCloud resolves both URLs from the key, and the plugin set lives on the runtime.',
+		);
 	}
 
 	const resolvedDatabase = config.database
