@@ -41,8 +41,11 @@ function makeCtx() {
 		db: { tasks },
 		database: undefined,
 		$getAccountId: async () => 'test-account',
-	} as unknown as TodoistContext;
-	return { ctx, tasks };
+	};
+	// Safe: `move` only reads `ctx.key` and `ctx.db.tasks`. Building a
+	// full `TodoistContext` (key manager, schema, hooks) is not practical
+	// in this unit test.
+	return { ctx: ctx as unknown as TodoistContext, tasks };
 }
 
 let lastUrl = '';
@@ -54,7 +57,7 @@ beforeEach(() => {
 	lastUrl = '';
 	lastMethod = '';
 	lastBody = undefined;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	const stub = async (url: unknown, init?: RequestInit) => {
 		lastUrl = String(url);
 		lastMethod = init?.method ?? 'GET';
 		lastBody = typeof init?.body === 'string' ? init.body : undefined;
@@ -67,7 +70,11 @@ beforeEach(() => {
 			json: async () => movedTask,
 			text: async () => JSON.stringify(movedTask),
 		};
-	}) as unknown as typeof global.fetch;
+	};
+	// Safe: corsair/http types `fetch` as the DOM Fetch API. This stub
+	// only records url/method/body and returns JSON; a complete Response
+	// is not practical here.
+	global.fetch = stub as unknown as typeof global.fetch;
 });
 
 describe('tasks.move', () => {
