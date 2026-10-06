@@ -2,7 +2,6 @@ import { getBreadcrumbItems } from 'fumadocs-core/breadcrumb';
 import type { Root } from 'fumadocs-core/page-tree';
 import type { AdvancedIndex } from 'fumadocs-core/search/server';
 import { createSearchAPI } from 'fumadocs-core/search/server';
-import { pluginIds } from '@/lib/plugin-catalog';
 import { pluginSearchIndex } from '@/lib/search-index';
 import { source } from '@/lib/source';
 
@@ -14,7 +13,10 @@ function breadcrumbsOf(tree: Root, url: string): string[] {
 
 async function searchIndexes(): Promise<AdvancedIndex[]> {
 	const tree = source.getPageTree();
-	const pages = await Promise.all(
+	// Every page comes from getPages(), including the synthetic /plugins/<id>/api
+	// nodes. Appending those separately duplicates their id, and zbsearch rejects
+	// the whole index on the first collision.
+	return Promise.all(
 		source.getPages().map(async (page): Promise<AdvancedIndex> => {
 			const lean = pluginSearchIndex(page.url);
 			if (lean) return lean;
@@ -34,13 +36,6 @@ async function searchIndexes(): Promise<AdvancedIndex[]> {
 			};
 		}),
 	);
-
-	// `/plugins/<id>/api` is a React route with no MDX page, so it is absent from getPages().
-	const apiPages = pluginIds()
-		.map((id) => pluginSearchIndex(`/plugins/${id}/api`))
-		.filter((index): index is AdvancedIndex => index !== null);
-
-	return [...pages, ...apiPages];
 }
 
 // Thunk, so the index is built on the first query rather than at module load.
