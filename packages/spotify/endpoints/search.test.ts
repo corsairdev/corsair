@@ -1,4 +1,5 @@
 import * as client from '../client';
+import type { SpotifyContext } from '../index';
 import { search as artistsSearch } from './artists';
 import { search as playlistsSearch } from './playlists';
 import { search as tracksSearch } from './tracks';
@@ -22,35 +23,52 @@ const mockedRequest =
 		typeof client.makeAuthenticatedSpotifyRequest
 	>;
 
-const ctx = { db: {} } as any;
+// The handlers only hand `ctx` to the mocked request and logger, so an empty `db` is enough.
+const ctx = { db: {} } as unknown as SpotifyContext;
+
+const expectSearchQuery = (query: Record<string, string | number>) =>
+	expect(mockedRequest).toHaveBeenCalledWith('search', ctx, {
+		method: 'GET',
+		query,
+	});
+
+beforeEach(() => {
+	jest.clearAllMocks();
+	mockedRequest.mockResolvedValue({});
+});
 
 // Spotify's search endpoint requires `type` and answers 400 without it, so each
 // search sends its own type when the caller does not pass one.
-describe.each([
-	['tracks.search', tracksSearch, 'track'],
-	['playlists.search', playlistsSearch, 'playlist'],
-	['artists.search', artistsSearch, 'artist'],
-] as const)('%s', (_name, search, type) => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-		mockedRequest.mockResolvedValue({} as never);
+describe('default search type', () => {
+	it("tracks.search defaults type to 'track'", async () => {
+		await tracksSearch(ctx, { q: 'nirvana', limit: 5 });
+		expectSearchQuery({ q: 'nirvana', limit: 5, type: 'track' });
 	});
 
-	it(`defaults type to '${type}'`, async () => {
-		await search(ctx, { q: 'nirvana', limit: 5 });
-
-		expect(mockedRequest).toHaveBeenCalledWith('search', ctx, {
-			method: 'GET',
-			query: { q: 'nirvana', limit: 5, type },
-		});
+	it("playlists.search defaults type to 'playlist'", async () => {
+		await playlistsSearch(ctx, { q: 'nirvana', limit: 5 });
+		expectSearchQuery({ q: 'nirvana', limit: 5, type: 'playlist' });
 	});
 
-	it('keeps an explicit type', async () => {
-		await search(ctx, { q: 'nirvana', type } as never);
+	it("artists.search defaults type to 'artist'", async () => {
+		await artistsSearch(ctx, { q: 'nirvana', limit: 5 });
+		expectSearchQuery({ q: 'nirvana', limit: 5, type: 'artist' });
+	});
+});
 
-		expect(mockedRequest).toHaveBeenCalledWith('search', ctx, {
-			method: 'GET',
-			query: { q: 'nirvana', type },
-		});
+describe('explicit search type', () => {
+	it('tracks.search keeps an explicit type', async () => {
+		await tracksSearch(ctx, { q: 'nirvana', type: 'track' });
+		expectSearchQuery({ q: 'nirvana', type: 'track' });
+	});
+
+	it('playlists.search keeps an explicit type', async () => {
+		await playlistsSearch(ctx, { q: 'nirvana', type: 'playlist' });
+		expectSearchQuery({ q: 'nirvana', type: 'playlist' });
+	});
+
+	it('artists.search keeps an explicit type', async () => {
+		await artistsSearch(ctx, { q: 'nirvana', type: 'artist' });
+		expectSearchQuery({ q: 'nirvana', type: 'artist' });
 	});
 });
