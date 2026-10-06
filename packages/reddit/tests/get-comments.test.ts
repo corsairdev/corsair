@@ -14,6 +14,9 @@ const mockRequest = makeRedditRequest as jest.MockedFunction<
 	typeof makeRedditRequest
 >;
 
+// Fixture cast is intentional: the handler only reads kind, data.after/before
+// and the children array; the full RedditListingRaw child payload is not
+// needed to exercise this path.
 const commentsListing: RedditListingRaw = {
 	kind: 'Listing',
 	data: {
@@ -46,6 +49,8 @@ const commentsListing: RedditListingRaw = {
 } as unknown as RedditListingRaw;
 
 function postListing(children: unknown[]): RedditListingRaw {
+	// Fixture cast is intentional: only the Listing envelope is exercised;
+	// children are passed as raw API-shaped objects.
 	return {
 		kind: 'Listing',
 		data: { after: null, before: null, children },
