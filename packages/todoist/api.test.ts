@@ -199,15 +199,18 @@ describe('Todoist API Type Tests', () => {
 				},
 			});
 
-			try {
-				TodoistEndpointOutputSchemas.tasksQuickAdd.parse(response);
-			} finally {
-				await makeTodoistRequest<TodoistEndpointOutputs['tasksDelete']>(
-					`tasks/${response.id}`,
-					TEST_TOKEN,
-					{ method: 'DELETE' },
-				);
-			}
+			expect(typeof response.id).toBe('string');
+
+			await makeTodoistRequest<TodoistEndpointOutputs['tasksDelete']>(
+				`tasks/${response.id}`,
+				TEST_TOKEN,
+				{ method: 'DELETE' },
+			);
+
+			const parsed = TodoistEndpointOutputSchemas.tasksQuickAdd.parse(response);
+			expect(parsed.content).toContain('Test quick add');
+			expect(parsed.priority).toBe(3);
+			expect(parsed.due).toBeTruthy();
 		});
 
 		it('tasksDelete returns correct type', async () => {
