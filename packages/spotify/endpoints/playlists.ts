@@ -157,7 +157,11 @@ export const search: SpotifyEndpoints['playlistsSearch'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | undefined> = { ...input };
+	const query: Record<string, string | number | undefined> = {
+		...input,
+		// Spotify's search endpoint requires `type`; default it like `albums.search` does.
+		type: input.type || 'playlist',
+	};
 
 	const result = await makeAuthenticatedSpotifyRequest<
 		SpotifyEndpointOutputs['playlistsSearch']
