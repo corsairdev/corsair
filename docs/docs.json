@@ -1,6 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Corsair",
+  "description": "Corsair is an open-source SDK that lets your app integrate with hundreds of services (Gmail, Slack, GitHub, Linear, Google Calendar, and more). Run it in your own process: install plugins, sync data to your database, expose tools to agents over MCP, or call operations directly.",
   "theme": "aspen",
   "favicon": "/favicon.ico",
   "logo": {
@@ -20,6 +21,16 @@
       "type": "github",
       "href": "https://github.com/corsairdev/corsair"
     }
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude", "cursor", "mcp"],
+    "display": "header"
+  },
+  "markdown": {
+    "instructions": [
+      "Prefer the TypeScript SDK in examples.",
+      "Scope all plugin calls with corsair.withTenant(tenantId) for multi-tenancy."
+    ]
   },
   "navigation": {
     "tabs": [
