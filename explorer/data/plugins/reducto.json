@@ -1,0 +1,1043 @@
+{
+  "id": "reducto",
+  "displayName": "Reducto",
+  "description": "Reducto plugin for Corsair",
+  "npmPackageName": "@corsair-dev/reducto",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "reducto.api.account.configureWebhook",
+      "shortPath": "account.configureWebhook",
+      "description": "Open the Svix webhook portal URL for this account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "reducto.api.account.version",
+      "shortPath": "account.version",
+      "description": "Read the Reducto API version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "reducto.api.classify.classify",
+      "shortPath": "classify.classify",
+      "description": "Classify a document against a list of categories",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "classification_schema",
+            "optional": true,
+            "type": "{ category: string, criteria: string[] }[]"
+          },
+          {
+            "key": "category_groups",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "page_range",
+            "optional": true,
+            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[]"
+          },
+          {
+            "key": "document_metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "default | accurate"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_url_result",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ category: string } | { type: url, url: string, result_id: string }"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ num_pages: number, credits?: number | null, num_categories: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.classify.classifyAsync",
+      "shortPath": "classify.classifyAsync",
+      "description": "Start a classify job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "classification_schema",
+            "optional": true,
+            "type": "{ category: string, criteria: string[] }[]"
+          },
+          {
+            "key": "category_groups",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "page_range",
+            "optional": true,
+            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[]"
+          },
+          {
+            "key": "document_metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "default | accurate"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_url_result",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.edit.edit",
+      "shortPath": "edit.edit",
+      "description": "Fill or edit a PDF or DOCX from natural language instructions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_url",
+            "optional": false,
+            "type": "string | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "edit_instructions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edit_options",
+            "optional": true,
+            "type": "{ color?: string, font_size?: number | null, llm_provider_preference?: string | null, enable_overflow_pages?: boolean, flatten?: boolean }"
+          },
+          {
+            "key": "form_schema",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_schema",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ num_pages: number, credits?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.edit.editAsync",
+      "shortPath": "edit.editAsync",
+      "description": "Start an edit job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_url",
+            "optional": false,
+            "type": "string | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "edit_instructions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edit_options",
+            "optional": true,
+            "type": "{ color?: string, font_size?: number | null, llm_provider_preference?: string | null, enable_overflow_pages?: boolean, flatten?: boolean }"
+          },
+          {
+            "key": "form_schema",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.extract.extract",
+      "shortPath": "extract.extract",
+      "description": "Extract fields from a document using a JSON schema",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "parsing",
+            "optional": true,
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "{ schema?: any, system_prompt?: string }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ include_images?: boolean, optimize_for_latency?: boolean, force_url_result?: boolean, array_extract?: boolean, deep_extract?: boolean, citations?: { enabled?: boolean, numerical_confidence?: boolean, parent_block?: string }, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ num_pages: number, credits?: number | null, num_fields: number }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "any[] | {} | { type: url, url: string, result_id: string }"
+          },
+          {
+            "key": "citations",
+            "optional": true,
+            "type": "any[] | { type: url, url: string, result_id: string }"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "studio_link",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.extract.extractAsync",
+      "shortPath": "extract.extractAsync",
+      "description": "Start an extract job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "parsing",
+            "optional": true,
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "{ schema?: any, system_prompt?: string }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ include_images?: boolean, optimize_for_latency?: boolean, force_url_result?: boolean, array_extract?: boolean, deep_extract?: boolean, citations?: { enabled?: boolean, numerical_confidence?: boolean, parent_block?: string }, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+          },
+          {
+            "key": "queue_priority",
+            "optional": true,
+            "type": "auto | standard | batch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete an uploaded file. Free plans return 422 NOT_APPLICABLE; Growth and Enterprise delete it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file and return a reducto:// file id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "extension",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "presigned_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.jobs.cancel",
+      "shortPath": "jobs.cancel",
+      "description": "Cancel a running job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | null | undefined"
+      }
+    },
+    {
+      "path": "reducto.api.jobs.delete",
+      "shortPath": "jobs.delete",
+      "description": "Delete a job and its stored artifacts. Returns 202. Free plans return 422 NOT_APPLICABLE",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_persisted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Retrieve a job status and, when finished, its result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "num_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bucket",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs, page by page, using cursor and limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exclude_configs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ job_id: string, status: string, type: string, raw_config?: string, created_at: string, source?: any | null, num_pages?: number | null, total_pages?: number | null, duration?: number | null, bucket?: any | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.parse.parse",
+      "shortPath": "parse.parse",
+      "description": "Parse a document into chunks of text, tables, and figures with bounding boxes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "enhance",
+            "optional": true,
+            "type": "{ agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }"
+          },
+          {
+            "key": "retrieval",
+            "optional": true,
+            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }"
+          },
+          {
+            "key": "formatting",
+            "optional": true,
+            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }"
+          },
+          {
+            "key": "spreadsheet",
+            "optional": true,
+            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ num_pages: number, credits?: number | null }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ type: full, chunks: { content: string, embed?: string, blocks?: any[] }[] } | { type: url, url: string, result_id: string }"
+          },
+          {
+            "key": "pdf_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "studio_link",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.parse.parseAsync",
+      "shortPath": "parse.parseAsync",
+      "description": "Start a parse job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "enhance",
+            "optional": true,
+            "type": "{ agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }"
+          },
+          {
+            "key": "retrieval",
+            "optional": true,
+            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }"
+          },
+          {
+            "key": "formatting",
+            "optional": true,
+            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }"
+          },
+          {
+            "key": "spreadsheet",
+            "optional": true,
+            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+          },
+          {
+            "key": "queue_priority",
+            "optional": true,
+            "type": "auto | standard | batch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.pipeline.run",
+      "shortPath": "pipeline.run",
+      "description": "Run a Studio pipeline against a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ document_password?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ num_pages: number, credits?: number | null }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.pipeline.runAsync",
+      "shortPath": "pipeline.runAsync",
+      "description": "Start a Studio pipeline job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ document_password?: string | null }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.split.split",
+      "shortPath": "split.split",
+      "description": "Split a document into named sections by page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "parsing",
+            "optional": true,
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+          },
+          {
+            "key": "split_description",
+            "optional": false,
+            "type": "{ name: string, description: string, partition_key?: string | null }[]"
+          },
+          {
+            "key": "split_rules",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ table_cutoff?: truncate | preserve, allow_page_overlap?: boolean, auto_partition?: boolean, deep_split?: boolean, force_url_result?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ num_pages: number, credits?: number | null }"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ splits: { name: string, pages: number[] }[] } | { type: url, url: string, result_id: string } | {}"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reducto.api.split.splitAsync",
+      "shortPath": "split.splitAsync",
+      "description": "Start a split job and return its job id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { file_id: string, presigned_url?: string | null }"
+          },
+          {
+            "key": "parsing",
+            "optional": true,
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+          },
+          {
+            "key": "split_description",
+            "optional": false,
+            "type": "{ name: string, description: string, partition_key?: string | null }[]"
+          },
+          {
+            "key": "split_rules",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ table_cutoff?: truncate | preserve, allow_page_overlap?: boolean, auto_partition?: boolean, deep_split?: boolean, force_url_result?: boolean }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "reducto.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numPages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalPages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "providerCreatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "studioLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

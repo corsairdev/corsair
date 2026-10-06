@@ -6,7 +6,7 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 25,
+    "api": 23,
     "webhooks": 1,
     "db": 4
   },
@@ -626,32 +626,6 @@
       }
     },
     {
-      "path": "gmail.api.messages.delete",
-      "shortPath": "messages.delete",
-      "description": "Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]",
-      "riskLevel": "destructive",
-      "irreversible": true,
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "userId",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "id",
-            "optional": false,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "inline",
-        "type": "void"
-      }
-    },
-    {
       "path": "gmail.api.messages.get",
       "shortPath": "messages.get",
       "description": "Get a specific message",
@@ -1096,32 +1070,6 @@
             "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
           }
         ]
-      }
-    },
-    {
-      "path": "gmail.api.threads.delete",
-      "shortPath": "threads.delete",
-      "description": "Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]",
-      "riskLevel": "destructive",
-      "irreversible": true,
-      "input": {
-        "kind": "object",
-        "fields": [
-          {
-            "key": "userId",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "id",
-            "optional": false,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "inline",
-        "type": "void"
       }
     },
     {
