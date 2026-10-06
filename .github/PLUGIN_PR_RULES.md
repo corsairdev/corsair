@@ -15,6 +15,10 @@ A plugin PR may only touch:
 - `pnpm-lock.yaml`
 - `apps/docs/content/docs/plugins/<plugin>/**` (generated docs for that same plugin)
 - `apps/docs/content/docs/plugins/meta.json` (sidebar; `generate:docs` updates this)
+- `explorer/data/plugins/<plugin>.json` (the catalog entry `/plugins/<plugin>/api`
+  renders from; `generate:docs` refreshes it)
+- `explorer/data/catalog.json` and `apps/docs/lib/plugin-api-examples.json`
+  (shared files `generate:docs` rewrites)
 
 Anything else fails the gate. Use `pnpm generate:plugin` to scaffold — it
 produces exactly this footprint. Docs for a *different* plugin are still out

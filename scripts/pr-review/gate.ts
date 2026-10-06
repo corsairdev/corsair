@@ -9,16 +9,25 @@ export const IGNORED_PACKAGES = [
 export const ALLOWED_EXTRA = [
 	'packages/corsair/core/constants.ts',
 	'pnpm-lock.yaml',
+	// Shared files `generate:docs` rewrites for whichever plugin it ran on.
+	'explorer/data/catalog.json',
+	'apps/docs/lib/plugin-api-examples.json',
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
 /** Plugins sidebar; `generate:docs` adds each plugin to it. */
 export const DOCS_NAV_FILE = 'apps/docs/content/docs/plugins/meta.json';
 
-/** Generated plugin docs for the same plugin (plugin-docs.yaml PRs). */
+/**
+ * Generated plugin docs for the same plugin (plugin-docs.yaml PRs). The
+ * catalog entry counts: `/plugins/<id>/api` renders from it rather than from a
+ * page, so it is generated output like the rest.
+ */
 export function isSamePluginDocs(file: string, plugin: string): boolean {
-	const prefix = `apps/docs/content/docs/plugins/${plugin}/`;
-	return file.startsWith(prefix);
+	return (
+		file.startsWith(`apps/docs/content/docs/plugins/${plugin}/`) ||
+		file === `explorer/data/plugins/${plugin}.json`
+	);
 }
 
 function pluginDocsYamlOf(file: string): string | null {
@@ -29,20 +38,27 @@ function pluginDocsYamlOf(file: string): string | null {
 }
 
 function pluginDocsDirOf(file: string): string | null {
-	const name = file.match(
-		/^apps\/docs\/content\/docs\/plugins\/([^/]+)\//,
-	)?.[1];
+	const name =
+		file.match(/^apps\/docs\/content\/docs\/plugins\/([^/]+)\//)?.[1] ??
+		file.match(/^explorer\/data\/plugins\/([^/]+)\.json$/)?.[1];
 	if (!name) return null;
 	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
 	return name;
 }
+
+/** Shared files `generate:docs` rewrites regardless of which plugin it ran on. */
+const SHARED_GENERATED = [
+	DOCS_NAV_FILE,
+	'explorer/data/catalog.json',
+	'apps/docs/lib/plugin-api-examples.json',
+];
 
 /** yaml +/or generated docs for one plugin, nothing else. Not a plugin-code PR. */
 export function isPluginDocsManifestPr(changedFiles: string[]): boolean {
 	if (changedFiles.length === 0) return false;
 	let plugin: string | null = null;
 	for (const file of changedFiles) {
-		if (file === DOCS_NAV_FILE) continue;
+		if (SHARED_GENERATED.includes(file)) continue;
 		const id = pluginDocsYamlOf(file) ?? pluginDocsDirOf(file);
 		if (!id) return false;
 		if (plugin === null) plugin = id;

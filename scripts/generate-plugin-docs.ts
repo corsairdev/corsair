@@ -11,6 +11,8 @@
  * CLI: `pnpm generate:docs -- --plugin=<id>` · `pnpm generate:docs -- --all` · `pnpm generate:docs:all`
  * (`--all` scans `packages/*` for `@corsair-dev/*` plugins with `index.ts`, excludes corsair/cli/mcp/ui.)
  */
+
+import { execFileSync } from 'node:child_process';
 import {
 	existsSync,
 	mkdirSync,
@@ -2004,6 +2006,34 @@ async function main() {
 	});
 	if (!r.ok) {
 		console.error(r.error);
+		process.exit(1);
+	}
+
+	refreshExplorerCatalog(root);
+}
+
+/**
+ * `/plugins/<id>/api` renders from the catalog, not from a page, so docs that
+ * are generated without it are stale on arrival. The builder scans every
+ * plugin and writes expanded JSON, hence the format pass biome would otherwise
+ * fail on.
+ */
+function refreshExplorerCatalog(root: string): void {
+	const run = (cmd: string, args: string[]) =>
+		execFileSync(cmd, args, { cwd: root, stdio: 'inherit' });
+	try {
+		run('pnpm', [
+			'exec',
+			'tsx',
+			'--conditions=dev-source',
+			'scripts/build-explorer-catalog.ts',
+		]);
+		run('pnpm', ['exec', 'biome', 'format', '--write', 'explorer/data']);
+	} catch {
+		console.error(
+			'\nCatalog refresh failed. The API page reads explorer/data/plugins/<id>.json,\n' +
+				'so run `pnpm build:explorer-catalog` before committing.',
+		);
 		process.exit(1);
 	}
 }

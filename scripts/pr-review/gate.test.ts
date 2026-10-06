@@ -204,3 +204,47 @@ test('nested comment markers cannot survive stripping (CodeQL js/incomplete-mult
 	// After full stripping the description is empty → R3 must fail.
 	assert.ok(r.failures.some((f) => f.rule === 'R3'));
 });
+
+test('generated catalog output for the same plugin is in scope', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'packages/airtable/api.test.ts',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
+			'explorer/data/plugins/airtable.json',
+			'explorer/data/catalog.json',
+			'apps/docs/lib/plugin-api-examples.json',
+		],
+	});
+	assert.deepEqual(
+		r.failures.filter((f) => f.rule === 'R1'),
+		[],
+	);
+});
+
+test("another plugin's catalog entry is still out of scope", () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'explorer/data/plugins/slack.json',
+		],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('docs-only PR with a catalog entry skips the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/plugin-docs.yaml',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'explorer/data/plugins/airtable.json',
+			'explorer/data/catalog.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+	assert.deepEqual(r.failures, []);
+});
