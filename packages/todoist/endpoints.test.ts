@@ -96,6 +96,32 @@ describe('tasks.move', () => {
 		expect(tasks.upsertByEntityId).toHaveBeenCalledWith('task-1', movedTask);
 	});
 
+	it('posts section_id when that is the only destination', async () => {
+		const { ctx } = makeCtx();
+
+		await Tasks.move(ctx, {
+			id: 'task-1',
+			section_id: 'section-3',
+		});
+
+		expect(JSON.parse(lastBody ?? '{}')).toEqual({
+			section_id: 'section-3',
+		});
+	});
+
+	it('posts parent_id when that is the only destination', async () => {
+		const { ctx } = makeCtx();
+
+		await Tasks.move(ctx, {
+			id: 'task-1',
+			parent_id: 'task-9',
+		});
+
+		expect(JSON.parse(lastBody ?? '{}')).toEqual({
+			parent_id: 'task-9',
+		});
+	});
+
 	it('parses the move response with the tasksMove output schema', () => {
 		const parsed = TodoistEndpointOutputSchemas.tasksMove.safeParse(movedTask);
 		expect(parsed.success).toBe(true);
