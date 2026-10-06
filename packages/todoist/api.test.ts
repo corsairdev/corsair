@@ -189,6 +189,27 @@ describe('Todoist API Type Tests', () => {
 			TodoistEndpointOutputSchemas.tasksReopen.parse(result);
 		});
 
+		it('tasksQuickAdd returns correct type', async () => {
+			const response = await makeTodoistRequest<
+				TodoistEndpointOutputs['tasksQuickAdd']
+			>('tasks/quick', TEST_TOKEN, {
+				method: 'POST',
+				body: {
+					text: 'Test quick add from API test tomorrow p2',
+				},
+			});
+
+			try {
+				TodoistEndpointOutputSchemas.tasksQuickAdd.parse(response);
+			} finally {
+				await makeTodoistRequest<TodoistEndpointOutputs['tasksDelete']>(
+					`tasks/${response.id}`,
+					TEST_TOKEN,
+					{ method: 'DELETE' },
+				);
+			}
+		});
+
 		it('tasksDelete returns correct type', async () => {
 			if (!taskId) {
 				const task = await makeTodoistRequest<
