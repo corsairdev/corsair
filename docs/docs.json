@@ -29,7 +29,7 @@
   "markdown": {
     "instructions": [
       "Prefer the TypeScript SDK in examples.",
-      "Scope all plugin calls with corsair.withTenant(tenantId) for multi-tenancy."
+      "When multiTenancy: true, scope plugin calls with corsair.withTenant(tenantId). On single-tenant instances, call plugins directly."
     ]
   },
   "navigation": {
