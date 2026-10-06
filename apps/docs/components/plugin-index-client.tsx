@@ -2,7 +2,7 @@
 
 import { useSearchContext } from 'fumadocs-ui/contexts/search';
 
-export function PluginSearchButton({ total }: { total: number }) {
+export function PluginSearchButton() {
 	const { setOpenSearch, hotKey } = useSearchContext();
 
 	return (
@@ -22,7 +22,7 @@ export function PluginSearchButton({ total }: { total: number }) {
 				<circle cx="11" cy="11" r="7" />
 				<path d="m20 20-3.5-3.5" />
 			</svg>
-			<span className="flex-1">Search {total} integrations</span>
+			<span className="flex-1">Search integrations</span>
 			<kbd className="hidden gap-0.5 font-mono text-[11px] text-fd-muted-foreground sm:flex">
 				{hotKey.map((k) => (
 					<span key={String(k.display)}>{k.display}</span>

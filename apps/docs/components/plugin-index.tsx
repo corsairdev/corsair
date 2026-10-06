@@ -11,7 +11,7 @@ export function PluginIndex() {
 
 	return (
 		<>
-			<PluginSearchButton total={plugins.length} />
+			<PluginSearchButton />
 			<PluginMarks plugins={marks} />
 		</>
 	);
@@ -24,7 +24,7 @@ export function PluginMarks({ plugins }: { plugins: PluginSummary[] }) {
 				<li key={p.id}>
 					<a
 						href={`/plugins/${p.id}/overview`}
-						title={`${p.displayName} — ${p.counts.api} operations`}
+						title={`${p.displayName}: ${p.counts.api} operations`}
 						className="flex items-center gap-2 rounded-md border border-fd-border px-2.5 py-1.5 text-sm text-fd-muted-foreground transition-colors hover:border-fd-foreground/25 hover:text-fd-foreground"
 					>
 						<img
