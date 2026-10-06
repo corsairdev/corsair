@@ -109,10 +109,20 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Project" }
+              example:
+                object: "project"
+                id: "acme"
+                status: "running"
+                instance_count: 2
+                managed_integrations:
+                  limit: 10
+                  used: 3
+                mcp_oauth_url: "https://mcp.corsair.cloud/acme/oauth"
+                created: "2026-10-04T12:00:00.000Z"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/keys:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -135,14 +145,23 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Key" }
+              example:
+                object: "key"
+                project_key: "ck_cloud_acme.xxxxxxxx"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404":
           description: No key has been minted for this project.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/instances:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -166,9 +185,29 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Instance" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "instance",
+                      "id": "prod",
+                      "instance_key": "prod",
+                      "description": "Production",
+                      "writable": true,
+                      "credential_source": "app_owned",
+                      "quota_limit": null,
+                      "quota_window": null,
+                      "url": "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     post:
       tags: [Instances]
@@ -210,16 +249,36 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
         "201":
           description: The instance was created.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/instances/{key}:
     parameters:
@@ -239,9 +298,20 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     patch:
       tags: [Instances]
@@ -272,10 +342,21 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Instances]
@@ -293,15 +374,26 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
         "400":
           description: This is the primary instance.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/integrations:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -329,10 +421,27 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Integration" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "integration",
+                      "id": "prod:slack",
+                      "instance": "prod",
+                      "integration": "slack",
+                      "auth_type": "managed",
+                      "has_credentials": true
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/integrations/catalog:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -363,9 +472,28 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/CatalogIntegration" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "catalog_integration",
+                      "id": "slack",
+                      "name": "Slack",
+                      "auth_types": [
+                        "managed",
+                        "oauth_2"
+                      ],
+                      "managed_available": true
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "401": { $ref: "#/components/responses/Unauthorized" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/integrations/{ref}:
     parameters:
@@ -386,10 +514,18 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Integration" }
+              example:
+                object: "integration"
+                id: "prod:slack"
+                instance: "prod"
+                integration: "slack"
+                auth_type: "managed"
+                has_credentials: true
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     put:
       tags: [Integrations]
@@ -423,14 +559,33 @@ paths:
                     `api_key` and `bot_token` take a static secret.
                 credentials:
                   type: object
+                  writeOnly: true
                   additionalProperties: { type: string }
-                  description: Write-only. Never returned.
+                  description: |
+                    Write-only. Never returned; read `has_credentials` instead.
+
+                    Only `oauth_2` takes integration-level credentials:
+                    `client_id` and `client_secret` are required,
+                    `redirect_url` is optional. `managed`, `api_key` and
+                    `bot_token` take none here. Under `api_key` and
+                    `bot_token` the secret belongs to the tenant, who supplies
+                    it through a connect session.
+                  example:
+                    client_id: "abc123"
+                    client_secret: "s3cr3t"
       responses:
         "200":
           description: The configured integration.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Integration" }
+              example:
+                object: "integration"
+                id: "prod:slack"
+                instance: "prod"
+                integration: "slack"
+                auth_type: "managed"
+                has_credentials: true
         "400":
           description: |
             A malformed ref, an unknown `auth_type`, an instance that has not
@@ -438,8 +593,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Integrations]
@@ -455,11 +617,16 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/tenants:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -483,9 +650,25 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Tenant" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "tenant",
+                      "id": "usr_8841",
+                      "email": "dave@acme.com",
+                      "label": "Dave",
+                      "created": "2026-10-04T12:00:00.000Z"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     post:
       tags: [Tenants]
@@ -525,6 +708,12 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409":
@@ -532,8 +721,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/tenants/{id}:
     parameters:
@@ -552,9 +748,16 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     patch:
       tags: [Tenants]
@@ -576,6 +779,12 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
@@ -584,7 +793,14 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Tenants]
@@ -603,10 +819,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/access:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -636,10 +857,31 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Access" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "access",
+                      "id": "prod:usr_8841",
+                      "instance": "prod",
+                      "tenant": "usr_8841",
+                      "label": "Dave",
+                      "permission": "readwrite",
+                      "connected": [
+                        "slack"
+                      ],
+                      "expired": []
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/access/{ref}:
     parameters:
@@ -660,10 +902,21 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                label: "Dave"
+                permission: "readwrite"
+                connected:
+                  - "slack"
+                expired: []
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     put:
       tags: [Access]
@@ -697,11 +950,30 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: access
+                id: "prod:usr_8841"
+                instance: prod
+                tenant: usr_8841
+                label: Dave
+                permission: readwrite
+                connected: [slack]
+                expired: []
         "201":
           description: The line was created.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                label: "Dave"
+                permission: "readwrite"
+                connected:
+                  - "slack"
+                expired: []
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404":
@@ -709,7 +981,14 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Access]
@@ -725,11 +1004,16 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/connections:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -762,10 +1046,27 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Connection" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "connection",
+                      "id": "prod:slack:usr_8841",
+                      "instance": "prod",
+                      "tenant": "usr_8841",
+                      "integration": "slack",
+                      "status": "connected"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/connections/{ref}:
     parameters:
@@ -786,10 +1087,18 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Connection" }
+              example:
+                object: "connection"
+                id: "prod:slack:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                integration: "slack"
+                status: "connected"
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Connections]
@@ -819,6 +1128,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/connect/sessions:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -858,6 +1168,14 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ConnectSession" }
+              example:
+                object: "connect_session"
+                url: "https://app.corsair.dev/connect/eyJ0b2tlbiI6..."
+                expires_at: "2026-10-04T12:10:00.000Z"
+                instance: "prod"
+                tenant: "usr_8841"
+                integrations:
+                  - "slack"
         "400":
           description: |
             No connectable integration on the instance, or an integration that
@@ -865,10 +1183,16 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/mcp/links:
     parameters: [{ $ref: "#/components/parameters/Slug" }]
@@ -896,9 +1220,33 @@ paths:
                       data:
                         type: array
                         items: { $ref: "#/components/schemas/Link" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "link",
+                      "id": "mcpg_8f21",
+                      "url": "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp",
+                      "recipient": "dave@acme.com",
+                      "created": "2026-10-04T12:00:00.000Z",
+                      "instances": [
+                        {
+                          "instance": "prod",
+                          "tenant": "usr_8841",
+                          "permission": "readwrite",
+                          "lost_access": false
+                        }
+                      ]
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     post:
       tags: [Links]
@@ -935,6 +1283,17 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
         "400":
           description: |
             An entry naming no tenant, an unknown instance or tenant, or a line
@@ -942,10 +1301,16 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/mcp/links/{id}:
     parameters:
@@ -965,9 +1330,21 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     patch:
       tags: [Links]
@@ -995,10 +1372,22 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
     delete:
       tags: [Links]
@@ -1011,10 +1400,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
         "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
   /projects/{slug}/mcp/links/{id}/rotate:
     parameters:
@@ -1043,16 +1437,33 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
         "400":
           description: The link grants nothing, or names an instance or line that is gone.
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
         "429": { $ref: "#/components/responses/RateLimited" }
-
+        "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
 components:
   securitySchemes:
@@ -1098,6 +1509,9 @@ components:
     RequestId:
       description: One id per request. Quote it in support.
       schema: { type: string }
+    IdempotentReplay:
+      description: Present and `true` when this response was replayed from a stored result.
+      schema: { type: boolean }
 
   schemas:
     List:
@@ -1125,7 +1539,7 @@ components:
               type: string
               enum:
                 - authentication_error
-                      - invalid_request_error
+                - invalid_request_error
                 - not_found
                 - conflict
                 - rate_limit_error
@@ -1174,11 +1588,46 @@ components:
             used: { type: integer }
         mcp_oauth_url: { type: ["string", "null"] }
         created: { type: string, format: date-time }
-        instances: { $ref: "#/components/schemas/List" }
-        tenants: { $ref: "#/components/schemas/List" }
-        access: { $ref: "#/components/schemas/List" }
-        connections: { $ref: "#/components/schemas/List" }
-        links: { $ref: "#/components/schemas/List" }
+        instances:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Instance" }
+        tenants:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Tenant" }
+        access:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Access" }
+        connections:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Connection" }
+        links:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Link" }
 
     Key:
       type: object
@@ -1195,8 +1644,8 @@ components:
         id:
           type: string
           description: The instance key. It routes in the MCP grammar, so it is the id here too.
-        instance_key: { type: string }
-        description: { type: ["string", "null"] }
+        instance_key: { type: string, example: prod }
+        description: { type: ["string", "null"], example: Production }
         writable:
           type: boolean
           description: Whether tenants on this instance may run write operations.
@@ -1245,20 +1694,20 @@ components:
       required: [object, id]
       properties:
         object: { type: string, const: tenant }
-        id: { type: string, description: The id you chose. }
-        email: { type: ["string", "null"] }
-        label: { type: ["string", "null"] }
-        created: { type: string, format: date-time }
+        id: { type: string, description: The id you chose., example: usr_8841 }
+        email: { type: ["string", "null"], example: dave@acme.com }
+        label: { type: ["string", "null"], example: Dave }
+        created: { type: string, format: date-time, example: "2026-10-04T12:00:00.000Z" }
 
     Access:
       type: object
       required: [object, id, instance, tenant, permission]
       properties:
         object: { type: string, const: access }
-        id: { type: string, description: "`{instance}:{tenant}`." }
-        instance: { type: string }
-        tenant: { type: string }
-        label: { type: ["string", "null"] }
+        id: { type: string, description: "`{instance}:{tenant}`.", example: "prod:usr_8841" }
+        instance: { type: string, example: prod }
+        tenant: { type: string, example: usr_8841 }
+        label: { type: ["string", "null"], example: Dave }
         permission:
           type: string
           enum: [readonly, readwrite, admin]
@@ -1278,10 +1727,10 @@ components:
       required: [object, id, instance, tenant, integration, status]
       properties:
         object: { type: string, const: connection }
-        id: { type: string, description: "`{instance}:{integration}:{tenant}`." }
-        instance: { type: string }
-        tenant: { type: string }
-        integration: { type: string }
+        id: { type: string, description: "`{instance}:{integration}:{tenant}`.", example: "prod:slack:usr_8841" }
+        instance: { type: string, example: prod }
+        tenant: { type: string, example: usr_8841 }
+        integration: { type: string, example: slack }
         status:
           type: string
           enum: [connected, expired]
@@ -1356,11 +1805,23 @@ components:
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
     Unauthorized:
       description: The key is missing or invalid.
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
     NotFound:
       description: |
         No such resource, or it belongs to another project. Both answer the
@@ -1368,6 +1829,12 @@ components:
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
     IdempotencyConflict:
       description: |
         `idempotency_key_reuse`. This key was already used for a different
@@ -1375,6 +1842,12 @@ components:
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
     RateLimited:
       description: Too many requests for this project.
       headers:
@@ -1384,9 +1857,35 @@ components:
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
     ServiceUnavailable:
       description: |
         The database was unreachable. Nothing was written, so a retry is safe.
       content:
         application/json:
           schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
+    InternalError:
+      description: |
+        An unhandled server-side failure. Retry with backoff; a minting write
+        replayed with the same `Idempotency-Key` re-executes, since 5xx
+        responses are not stored.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: "invalid_request_error"
+              code: "invalid_request"
+              message: "instances must be a non-empty array"
+              param: "instances"
