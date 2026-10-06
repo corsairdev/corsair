@@ -46,8 +46,13 @@ second credential:
 ```bash
 curl -s -X POST "$CORSAIR_BASE/mcp/links" \
   -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
   -H "Idempotency-Key: dave-link-1" \
-  -d '{ "instances": [ ... ] }'
+  -d '{
+    "instances": [
+      { "instance": "prod", "tenant": "usr_8841", "permission": "readwrite" }
+    ]
+  }'
 ```
 
 A replayed response carries `Idempotent-Replay: true`. Keys are project-scoped
@@ -64,10 +69,11 @@ idempotency_key_reuse`. Retrying it returns the same error.
 ## Handling it
 
 Branch on the HTTP status for flow, and read `message` for the detail. In the
-SDK, a non-2xx response throws a `ManagementApiError` carrying the same fields:
+SDK, a non-2xx response throws a `ManagementApiError` with `status`, `code` and
+`message` as own properties; `type` and `param` are on `extra`:
 
 ```ts
-import { corsairCloud } from 'corsair';
+import { corsairCloud, ManagementApiError } from 'corsair';
 
 const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
 
@@ -78,9 +84,18 @@ try {
     ],
   });
 } catch (err) {
-  // err.status === 400, err.message === "no instance 'nope' in this project"
+  if (err instanceof ManagementApiError) {
+    err.status;        // 400
+    err.code;          // 'invalid_request'
+    err.message;       // "no instance 'nope' in this project"
+    err.extra.param;   // 'instances'
+  }
 }
 ```
+
+A network failure or timeout throws the same class with `status: 0` and
+`code: 'internal_error'`. The SDK does not retry; the backoff above is yours to
+write.
 
 Two frequent causes:
 

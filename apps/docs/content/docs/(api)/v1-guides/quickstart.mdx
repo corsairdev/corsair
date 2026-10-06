@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: From a project key to a working MCP link in two calls.
+description: From a project key to a working MCP link in four calls.
 ---
 
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
@@ -138,7 +138,7 @@ const session = await corsair.manage.connect.sessions.create({
   integrations: ['slack'],
 });
 
-redirect(session.url); // expires at session.expiresAt
+// Send the tenant to session.url; it expires at session.expiresAt.
 ```
 </Tab>
 </Tabs>
@@ -149,7 +149,8 @@ redirect(session.url); // expires at session.expiresAt
   "url": "https://app.corsair.dev/connect/eyJ0b2tlbiI6…",
   "expires_at": "2026-10-04T12:10:00.000Z",
   "instance": "prod",
-  "tenant": "usr_8841"
+  "tenant": "usr_8841",
+  "integrations": ["slack"]
 }
 ```
 
@@ -178,8 +179,10 @@ const { data } = await corsair.manage.connections.list({ tenant: 'usr_8841' });
 </Tab>
 </Tabs>
 
-A `status` of `expired` means the stored credential's expiry has passed and the
-tenant needs a fresh connect session. The same information is on the access row:
+A `status` of `expired` means the credential has passed its expiry and cannot
+be refreshed, so the tenant needs a fresh connect session. A credential that is
+past expiry but holds a refresh token still reports `connected` and renews on
+the next call. The same information is on the access row:
 `GET /access/prod:usr_8841` reports `connected` and `expired` as lists of
 integration ids, which is the cheaper check if you already hold the ref.
 

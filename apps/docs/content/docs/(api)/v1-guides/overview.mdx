@@ -23,7 +23,7 @@ path can change the project.
 | Host | Serves |
 |---|---|
 | `auth.corsair.dev/v1/projects/{slug}/…` | management, this API, on the hub |
-| `api.corsair.cloud/{instance-slug}/api/corsair` | tool calls, on your project's runtime |
+| the instance's `url`, on `api.corsair.cloud` | tool calls, on your project's runtime |
 
 A management write returns as soon as the hub commits it. It does not call your
 runtime and does not wait on one, so a write succeeds whether or not the
