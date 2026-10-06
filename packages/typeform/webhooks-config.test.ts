@@ -16,9 +16,9 @@ import { logEventFromContext } from 'corsair/core';
 import { deleteWebhookConfig } from './endpoints/webhooks-config';
 
 /**
- * The factory omits `requireActual`: the built `corsair/core` is ESM and jest
- * cannot transform a package outside its own transform patterns, so loading the
- * real module only to replace one export fails the suite before any assertion.
+ * Bare mock (no `requireActual`): the test only needs `logEventFromContext`,
+ * and stubbing the module outright keeps the suite independent of how much of
+ * `corsair/core` loads at test time.
  */
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
@@ -54,6 +54,9 @@ function makeCtx() {
 		deleteByEntityId: jest.fn(async () => true),
 	};
 
+	// Partial ctx is intentional: deleteWebhookConfig only touches key,
+	// options.accountId and db.webhookConfigs, so a full CorsairContext is
+	// unnecessary for the unit test.
 	const ctx = {
 		key: 'test-typeform-token',
 		options: { accountId: 'acct_1' },
@@ -70,6 +73,8 @@ beforeEach(() => {
 	mockLogEvent.mockClear();
 	lastUrl = '';
 	lastMethod = '';
+	// Minimal Response stub: the client only reads ok/status/url/headers and
+	// json()/text(), so a full Response object is unnecessary.
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		lastUrl = String(url);
 		lastMethod = init?.method ?? 'GET';
