@@ -1990,6 +1990,7 @@ async function main() {
 		console.log(
 			`--all: ${dirs.length - failed}/${dirs.length} plugins ok, ${failed} failed.`,
 		);
+		refreshExplorerCatalog(root);
 		process.exit(failed > 0 ? 1 : 0);
 	}
 

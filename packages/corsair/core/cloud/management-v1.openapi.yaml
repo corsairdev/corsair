@@ -156,10 +156,10 @@ paths:
               schema: { $ref: "#/components/schemas/Error" }
               example:
                 error:
-                  type: "invalid_request_error"
-                  code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  type: "not_found"
+                  code: "resource_missing"
+                  message: "No key minted for this project"
+                  param: "key"
         "429": { $ref: "#/components/responses/RateLimited" }
         "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
@@ -387,8 +387,7 @@ paths:
                 error:
                   type: "invalid_request_error"
                   code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  message: "The primary instance can't be deleted. Terminate the runtime to remove the whole project."
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
 
@@ -597,8 +596,8 @@ paths:
                 error:
                   type: "invalid_request_error"
                   code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  message: "auth_type must be one of managed, oauth_2, api_key, bot_token"
+                  param: "auth_type"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "429": { $ref: "#/components/responses/RateLimited" }
         "500": { $ref: "#/components/responses/InternalError" }
@@ -723,11 +722,10 @@ paths:
               schema: { $ref: "#/components/schemas/Error" }
               example:
                 error:
-                  type: "invalid_request_error"
-                  code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
-
+                  type: "conflict"
+                  code: "resource_conflict"
+                  message: "Tenant 'usr_8841' already exists"
+                  param: "tenant_id"
         "429": { $ref: "#/components/responses/RateLimited" }
         "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
@@ -795,10 +793,9 @@ paths:
               schema: { $ref: "#/components/schemas/Error" }
               example:
                 error:
-                  type: "invalid_request_error"
-                  code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  type: "conflict"
+                  code: "resource_conflict"
+                  message: "Email dave@acme.com is already in use by another tenant in this project"
         "429": { $ref: "#/components/responses/RateLimited" }
         "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
@@ -983,10 +980,10 @@ paths:
               schema: { $ref: "#/components/schemas/Error" }
               example:
                 error:
-                  type: "invalid_request_error"
-                  code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  type: "not_found"
+                  code: "resource_missing"
+                  message: "No instance 'staging' in this project"
+                  param: "instance"
         "429": { $ref: "#/components/responses/RateLimited" }
         "500": { $ref: "#/components/responses/InternalError" }
         "503": { $ref: "#/components/responses/ServiceUnavailable" }
@@ -1187,8 +1184,8 @@ paths:
                 error:
                   type: "invalid_request_error"
                   code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  message: "That integration isn't configured on this instance"
+                  param: "integrations"
         "401": { $ref: "#/components/responses/Unauthorized" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
         "429": { $ref: "#/components/responses/RateLimited" }
@@ -1457,8 +1454,7 @@ paths:
                 error:
                   type: "invalid_request_error"
                   code: "invalid_request"
-                  message: "instances must be a non-empty array"
-                  param: "instances"
+                  message: "This link grants nothing — rotating it would reissue a dead URL. Revoke it and create a new one."
         "401": { $ref: "#/components/responses/Unauthorized" }
         "404": { $ref: "#/components/responses/NotFound" }
         "409": { $ref: "#/components/responses/IdempotencyConflict" }
