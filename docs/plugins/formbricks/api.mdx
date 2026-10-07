@@ -1,0 +1,2115 @@
+---
+title: API
+description: "API reference for Formbricks: every `formbricks.api.*` operation with input and output types."
+---
+
+Every `formbricks.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Action Classes
+
+### create
+
+`actionClasses.create`
+
+Create an action class
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.actionClasses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `type` | `code \| noCode` | Yes | — |
+| `key` | `string` | No | — |
+| `noCodeConfig` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="noCodeConfig full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `key` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `noCodeConfig` | `any` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`actionClasses.list`
+
+List the action classes that can trigger a survey
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.actionClasses.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  key?: string | null,
+  workspaceId?: string | null,
+  noCodeConfig?: any,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Client
+
+### contactsState
+
+`client.contactsState`
+
+Read a respondent's state, creating the contact if the userId is new
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.client.contactsState({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  data?: any,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDisplay
+
+`client.createDisplay`
+
+Record that a survey was displayed to someone
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.client.createDisplay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `surveyId` | `string` | Yes | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `surveyId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+
+
+
+---
+
+### createUser
+
+`client.createUser`
+
+Create a client user
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.client.createUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  data?: any,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### environment
+
+`client.environment`
+
+Read the client environment bundle for a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.client.environment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | — |
+| `expiresAt` | `string` | No | — |
+
+
+
+---
+
+### identifyUser
+
+`client.identifyUser`
+
+Create or identify a client user
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.client.identifyUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  data?: any,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Attribute Keys
+
+### create
+
+`contactAttributeKeys.create`
+
+Create a contact attribute key
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `dataType` | `string` | No | — |
+| `isUnique` | `boolean` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contactAttributeKeys.delete`
+
+Delete a contact attribute key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactAttributeKeyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`contactAttributeKeys.get`
+
+Get a single contact attribute key
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactAttributeKeyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `dataType` | `string` | No | — |
+| `isUnique` | `boolean` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### getClass
+
+`contactAttributeKeys.getClass`
+
+Get an attribute key under the catalog's former "attribute class" name - same route as contactAttributeKeys.get
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.getClass({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactAttributeKeyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `dataType` | `string` | No | — |
+| `isUnique` | `boolean` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contactAttributeKeys.list`
+
+List the contact attribute keys a workspace defines
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  key?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  dataType?: string | null,
+  isUnique?: boolean | null,
+  workspaceId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listClasses
+
+`contactAttributeKeys.listClasses`
+
+List attribute keys under the catalog's former "attribute class" name - same route as contactAttributeKeys.list
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.listClasses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  key?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  dataType?: string | null,
+  isUnique?: boolean | null,
+  workspaceId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contactAttributeKeys.update`
+
+Update a contact attribute key's definition - not any contact's values
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.contactAttributeKeys.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactAttributeKeyId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `dataType` | `string` | No | — |
+| `isUnique` | `boolean` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Contact Attributes
+
+### list
+
+`contactAttributes.list`
+
+List contact attribute values across contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contactAttributes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  attributeKeyId?: string | null,
+  contactId?: string | null,
+  value?: string | null,
+  valueNumber?: number | null,
+  valueDate?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `attributes` | `any` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact, removing a respondent's identity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a single contact
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `attributes` | `any` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### getPerson
+
+`contacts.getPerson`
+
+Get a contact under the catalog's former "person" name - same route as contacts.get
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contacts.getPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `attributes` | `any` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List the contacts in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contacts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  workspaceId?: string | null,
+  attributes?: any,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPeople
+
+`contacts.listPeople`
+
+List contacts under the catalog's former "people" name - same route as contacts.list
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.contacts.listPeople({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  workspaceId?: string | null,
+  attributes?: any,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateAttributes
+
+`contacts.updateAttributes`
+
+Set a contact's attribute values by userId, creating the contact if it is new
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.contacts.updateAttributes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `attributes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  data?: any,
+  expiresAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadBulk
+
+`contacts.uploadBulk`
+
+Create many contacts in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.contacts.uploadBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  attributes: {
+    attributeKey: {
+      key: string,
+      name?: string
+    },
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Health
+
+### check
+
+`health.check`
+
+Check service health
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.health.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `main_database` | `any` | No | — |
+| `cache_database` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`health.list`
+
+Read service health status
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.health.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `main_database` | `any` | No | — |
+| `cache_database` | `any` | No | — |
+
+
+
+---
+
+## Me
+
+### get
+
+`me.get`
+
+Get the API key's identity, workspaces and organization
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.me.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | No | — |
+| `workspacePermissions` | `any[]` | No | — |
+| `environmentPermissions` | `any[]` | No | — |
+| `organizationAccess` | `any` | No | — |
+
+
+
+---
+
+### getAccountInfo
+
+`me.getAccountInfo`
+
+Get account information
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.me.getAccountInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `appSetupCompleted` | `boolean` | No | — |
+| `workspace` | `any` | No | — |
+| `project` | `any` | No | — |
+
+
+
+---
+
+### getManagement
+
+`me.getManagement`
+
+Get the v1 account payload, for a workspace-scoped key only
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.me.getManagement({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `appSetupCompleted` | `boolean` | No | — |
+| `workspace` | `any` | No | — |
+| `project` | `any` | No | — |
+
+
+
+---
+
+## Responses
+
+### create
+
+`responses.create`
+
+Record a survey response
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.responses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `surveyId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `finished` | `boolean` | No | — |
+| `meta` | `object` | No | — |
+| `ttc` | `object` | No | — |
+| `language` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ttc full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `surveyId` | `string` | No | — |
+| `finished` | `boolean` | No | — |
+| `endingId` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `any` | No | — |
+| `ttc` | `any` | No | — |
+| `variables` | `any` | No | — |
+| `contactAttributes` | `any` | No | — |
+| `contact` | `any` | No | — |
+| `singleUseId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `displayId` | `string` | No | — |
+| `tags` | `any[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`responses.delete`
+
+Delete a survey response, erasing a respondent's submitted answers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.responses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`responses.list`
+
+List survey responses, optionally for one survey
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.responses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `surveyId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  surveyId?: string | null,
+  finished?: boolean | null,
+  endingId?: string | null,
+  data?: any,
+  meta?: any,
+  ttc?: any,
+  variables?: any,
+  contactAttributes?: any,
+  contact?: any,
+  singleUseId?: string | null,
+  language?: string | null,
+  displayId?: string | null,
+  tags?: any[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`responses.update`
+
+Update a survey response
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.responses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `finished` | `boolean` | No | — |
+| `variables` | `object` | No | — |
+| `language` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `surveyId` | `string` | No | — |
+| `finished` | `boolean` | No | — |
+| `endingId` | `string` | No | — |
+| `data` | `any` | No | — |
+| `meta` | `any` | No | — |
+| `ttc` | `any` | No | — |
+| `variables` | `any` | No | — |
+| `contactAttributes` | `any` | No | — |
+| `contact` | `any` | No | — |
+| `singleUseId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `displayId` | `string` | No | — |
+| `tags` | `any[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Roles
+
+### list
+
+`roles.list`
+
+List the organization roles a member can hold
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.roles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Storage
+
+### uploadPrivate
+
+`storage.uploadPrivate`
+
+Request an upload for a private respondent file
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.storage.uploadPrivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `fileType` | `string` | Yes | — |
+| `surveyId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signedUrl` | `string` | No | — |
+| `presignedFields` | `any` | No | — |
+| `fileUrl` | `string` | No | — |
+
+
+
+---
+
+### uploadPublic
+
+`storage.uploadPublic`
+
+Request an upload for a public file
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.storage.uploadPublic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `fileType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signedUrl` | `string` | No | — |
+| `presignedFields` | `any` | No | — |
+| `fileUrl` | `string` | No | — |
+
+
+
+---
+
+## Surveys
+
+### create
+
+`surveys.create`
+
+Create a survey
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.surveys.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `questions` | `object[]` | No | — |
+| `welcomeCard` | `object` | No | — |
+| `endings` | `object[]` | No | — |
+| `status` | `string` | No | — |
+| `triggers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="welcomeCard full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="endings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="triggers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `publishOn` | `string` | No | — |
+| `closeOn` | `string` | No | — |
+| `archivedAt` | `string` | No | — |
+| `welcomeCard` | `any` | No | — |
+| `questions` | `any[]` | No | — |
+| `blocks` | `any` | No | — |
+| `endings` | `any[]` | No | — |
+| `hiddenFields` | `any` | No | — |
+| `variables` | `any[]` | No | — |
+| `styling` | `any` | No | — |
+| `languages` | `any[]` | No | — |
+| `surveyClosedMessage` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `displayOption` | `string` | No | — |
+| `recontactDays` | `number` | No | — |
+| `displayLimit` | `number` | No | — |
+| `displayPercentage` | `number` | No | — |
+| `autoClose` | `number` | No | — |
+| `delay` | `number` | No | — |
+| `autoComplete` | `number` | No | — |
+| `isVerifyEmailEnabled` | `boolean` | No | — |
+| `isSingleResponsePerEmailEnabled` | `boolean` | No | — |
+| `isBackButtonHidden` | `boolean` | No | — |
+| `isAutoProgressingEnabled` | `boolean` | No | — |
+| `isCaptureIpEnabled` | `boolean` | No | — |
+| `showLanguageSwitch` | `boolean` | No | — |
+| `redirectUrl` | `string` | No | — |
+| `pin` | `string` | No | — |
+| `singleUse` | `any` | No | — |
+| `recaptcha` | `any` | No | — |
+| `customHeadScripts` | `string` | No | — |
+| `customHeadScriptsMode` | `string` | No | — |
+| `workspaceOverwrites` | `any` | No | — |
+| `projectOverwrites` | `any` | No | — |
+| `triggers` | `any[]` | No | — |
+| `segment` | `any` | No | — |
+| `followUps` | `any[]` | No | — |
+
+
+
+---
+
+### delete
+
+`surveys.delete`
+
+Delete a survey and the responses collected against it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.surveys.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `surveyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`surveys.list`
+
+List the surveys in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.surveys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  status?: string | null,
+  workspaceId?: string | null,
+  createdBy?: string | null,
+  slug?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  publishOn?: string | null,
+  closeOn?: string | null,
+  archivedAt?: string | null,
+  welcomeCard?: any,
+  questions?: any[] | null,
+  blocks?: any,
+  endings?: any[] | null,
+  hiddenFields?: any,
+  variables?: any[] | null,
+  styling?: any,
+  languages?: any[] | null,
+  surveyClosedMessage?: any,
+  metadata?: any,
+  displayOption?: string | null,
+  recontactDays?: number | null,
+  displayLimit?: number | null,
+  displayPercentage?: number | null,
+  autoClose?: number | null,
+  delay?: number | null,
+  autoComplete?: number | null,
+  isVerifyEmailEnabled?: boolean | null,
+  isSingleResponsePerEmailEnabled?: boolean | null,
+  isBackButtonHidden?: boolean | null,
+  isAutoProgressingEnabled?: boolean | null,
+  isCaptureIpEnabled?: boolean | null,
+  showLanguageSwitch?: boolean | null,
+  redirectUrl?: string | null,
+  pin?: string | null,
+  singleUse?: any,
+  recaptcha?: any,
+  customHeadScripts?: string | null,
+  customHeadScriptsMode?: string | null,
+  workspaceOverwrites?: any,
+  projectOverwrites?: any,
+  triggers?: any[] | null,
+  segment?: any,
+  followUps?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`surveys.update`
+
+Update a survey
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.surveys.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `surveyId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `questions` | `object[]` | No | — |
+| `welcomeCard` | `object` | No | — |
+| `endings` | `object[]` | No | — |
+| `triggers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="welcomeCard full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="endings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="triggers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `publishOn` | `string` | No | — |
+| `closeOn` | `string` | No | — |
+| `archivedAt` | `string` | No | — |
+| `welcomeCard` | `any` | No | — |
+| `questions` | `any[]` | No | — |
+| `blocks` | `any` | No | — |
+| `endings` | `any[]` | No | — |
+| `hiddenFields` | `any` | No | — |
+| `variables` | `any[]` | No | — |
+| `styling` | `any` | No | — |
+| `languages` | `any[]` | No | — |
+| `surveyClosedMessage` | `any` | No | — |
+| `metadata` | `any` | No | — |
+| `displayOption` | `string` | No | — |
+| `recontactDays` | `number` | No | — |
+| `displayLimit` | `number` | No | — |
+| `displayPercentage` | `number` | No | — |
+| `autoClose` | `number` | No | — |
+| `delay` | `number` | No | — |
+| `autoComplete` | `number` | No | — |
+| `isVerifyEmailEnabled` | `boolean` | No | — |
+| `isSingleResponsePerEmailEnabled` | `boolean` | No | — |
+| `isBackButtonHidden` | `boolean` | No | — |
+| `isAutoProgressingEnabled` | `boolean` | No | — |
+| `isCaptureIpEnabled` | `boolean` | No | — |
+| `showLanguageSwitch` | `boolean` | No | — |
+| `redirectUrl` | `string` | No | — |
+| `pin` | `string` | No | — |
+| `singleUse` | `any` | No | — |
+| `recaptcha` | `any` | No | — |
+| `customHeadScripts` | `string` | No | — |
+| `customHeadScriptsMode` | `string` | No | — |
+| `workspaceOverwrites` | `any` | No | — |
+| `projectOverwrites` | `any` | No | — |
+| `triggers` | `any[]` | No | — |
+| `segment` | `any` | No | — |
+| `followUps` | `any[]` | No | — |
+
+
+
+---
+
+## Teams
+
+### delete
+
+`teams.delete`
+
+Delete a team, removing the workspace access it granted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `teamId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the teams in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  organizationId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWorkspaceTeams
+
+`teams.listWorkspaceTeams`
+
+List which teams have access to which workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.teams.listWorkspaceTeams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  teamId?: string | null,
+  workspaceId?: string | null,
+  permission?: string | null,
+  projectId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook and receive its signing secret
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `source` | `user \| zapier \| make \| n8n` | Yes | — |
+| `triggers` | `responseFinished \| responseCreated \| responseUpdated[]` | Yes | — |
+| `surveyIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `source` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `triggers` | `string[]` | No | — |
+| `surveyIds` | `string[]` | No | — |
+| `secret` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook, invalidating its signing secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.formbricks.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+| `already_absent` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a single webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `source` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `triggers` | `string[]` | No | — |
+| `surveyIds` | `string[]` | No | — |
+| `secret` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks on a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.formbricks.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  url?: string | null,
+  source?: string | null,
+  workspaceId?: string | null,
+  triggers?: string[] | null,
+  surveyIds?: string[] | null,
+  secret?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.formbricks.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `source` | `user \| zapier \| make \| n8n` | Yes | — |
+| `triggers` | `responseFinished \| responseCreated \| responseUpdated[]` | Yes | — |
+| `surveyIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `source` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `triggers` | `string[]` | No | — |
+| `surveyIds` | `string[]` | No | — |
+| `secret` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+

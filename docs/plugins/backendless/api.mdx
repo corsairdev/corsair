@@ -1,0 +1,875 @@
+---
+title: API
+description: "API reference for Backendless: every `backendless.api.*` operation with input and output types."
+---
+
+Every `backendless.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Counters
+
+### get
+
+`counters.get`
+
+Read a Backendless atomic counter.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.counters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `counterName` | `string` | Yes | — |
+
+
+
+**Output:** `number`
+
+
+---
+
+### reset
+
+`counters.reset`
+
+Reset a Backendless atomic counter.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.backendless.api.counters.reset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `counterName` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### set
+
+`counters.set`
+
+Conditionally update a Backendless atomic counter.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.counters.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `counterName` | `string` | Yes | — |
+| `expected` | `number` | Yes | — |
+| `updated` | `number` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+## Data
+
+### retrieve
+
+`data.retrieve`
+
+Retrieve Backendless database objects.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.data.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableName` | `string` | Yes | — |
+| `objectId` | `string` | No | — |
+| `where` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `properties` | `string[]` | No | — |
+| `excludeProperties` | `string[]` | No | — |
+| `loadRelations` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  objectId?: string,
+  ___class?: string,
+  created?: number,
+  updated?: number | null,
+  ownerId?: string | null
+} | {
+  objectId?: string,
+  ___class?: string,
+  created?: number,
+  updated?: number | null,
+  ownerId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Files
+
+### copy
+
+`files.copy`
+
+Copy a Backendless file or directory.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.files.copy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourcePath` | `string` | Yes | — |
+| `targetPath` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### count
+
+`files.count`
+
+Count Backendless files and directories.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.files.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `pattern` | `string` | No | — |
+| `recursive` | `boolean` | No | — |
+| `directoryCount` | `boolean` | No | — |
+
+
+
+**Output:** `number`
+
+
+---
+
+### createDirectory
+
+`files.createDirectory`
+
+Create a Backendless directory.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.files.createDirectory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a Backendless file.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.backendless.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### deleteDirectory
+
+`files.deleteDirectory`
+
+Delete a Backendless directory.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.backendless.api.files.deleteDirectory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### list
+
+`files.list`
+
+List Backendless files and directories.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `pattern` | `string` | No | — |
+| `sub` | `boolean` | No | — |
+| `pageSize` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  createdOn?: number,
+  publicUrl?: string,
+  size?: number,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### move
+
+`files.move`
+
+Move a Backendless file or directory.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.files.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourcePath` | `string` | Yes | — |
+| `targetPath` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Hive
+
+### create
+
+`hive.create`
+
+Create a Backendless Hive.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.hive.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hiveName` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### keyItems
+
+`hive.keyItems`
+
+Retrieve items from a Backendless Hive list.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.hive.keyItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hiveName` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `index` | `number` | No | — |
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+any[] | string | number | boolean | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### mapPut
+
+`hive.mapPut`
+
+Insert or update a Backendless Hive map value.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.hive.mapPut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hiveName` | `string` | Yes | — |
+| `mapKey` | `string` | Yes | — |
+| `keyName` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### values
+
+`hive.values`
+
+Retrieve values from a Backendless Hive map.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.hive.values({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hiveName` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messaging
+
+### publish
+
+`messaging.publish`
+
+Publish a message to a Backendless channel.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.messaging.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `message` | `any` | Yes | — |
+| `headers` | `object` | No | — |
+| `subtopic` | `string` | No | — |
+| `publishAt` | `string \| number` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errorMessage` | `string` | No | — |
+| `messageId` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+## Permissions
+
+### grant
+
+`permissions.grant`
+
+Grant a Backendless data permission; security-sensitive.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.backendless.api.permissions.grant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableName` | `string` | Yes | — |
+| `permission` | `ADD \| UPDATE \| FIND \| REMOVE \| DESCRIBE \| PERMISSION \| LOAD_RELATIONS \| ADD_RELATION \| DELETE_RELATION \| UPSERT \| *` | Yes | — |
+| `objectId` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `role` | `string` | No | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### revoke
+
+`permissions.revoke`
+
+Revoke a Backendless data permission; security-sensitive.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.backendless.api.permissions.revoke({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableName` | `string` | Yes | — |
+| `permission` | `ADD \| UPDATE \| FIND \| REMOVE \| DESCRIBE \| PERMISSION \| LOAD_RELATIONS \| ADD_RELATION \| DELETE_RELATION \| UPSERT \| *` | Yes | — |
+| `objectId` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `role` | `string` | No | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Delete a Backendless user.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.backendless.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | {
+  deletionTime?: number
+} | null | undefined |
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### find
+
+`users.find`
+
+Find a Backendless user by object ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.users.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `___class` | `string` | No | — |
+| `created` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `ownerId` | `string` | No | — |
+| `user-token` | `string` | No | — |
+
+
+
+---
+
+### login
+
+`users.login`
+
+Log in to Backendless and return a user token.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.users.login({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `stayLoggedIn` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `userToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  objectId: string,
+  email?: string,
+  ___class?: string,
+  created?: number,
+  updated?: number | null,
+  ownerId?: string | null,
+  user-token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logout
+
+`users.logout`
+
+Log out the current Backendless user session.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.users.logout({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### passwordRecovery
+
+`users.passwordRecovery`
+
+Request Backendless password recovery.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.users.passwordRecovery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity` | `string` | Yes | — |
+
+
+
+**Output:** `null \| undefined \| `
+
+
+---
+
+### register
+
+`users.register`
+
+Register a Backendless user.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.users.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `___class` | `string` | No | — |
+| `created` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `ownerId` | `string` | No | — |
+| `user-token` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a Backendless user.
+
+**Risk:** `write`
+
+```ts
+await corsair.backendless.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `properties` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `___class` | `string` | No | — |
+| `created` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `ownerId` | `string` | No | — |
+| `user-token` | `string` | No | — |
+
+
+
+---
+
+### validateToken
+
+`users.validateToken`
+
+Validate a Backendless user token.
+
+**Risk:** `read`
+
+```ts
+await corsair.backendless.api.users.validateToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userToken` | `string` | No | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+

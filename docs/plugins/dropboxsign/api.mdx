@@ -1,0 +1,3451 @@
+---
+title: API
+description: "API reference for Dropbox Sign: every `dropboxsign.api.*` operation with input and output types."
+---
+
+Every `dropboxsign.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### create
+
+`account.create`
+
+Creates a new Dropbox Sign account
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.account.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id?: string,
+  email_address?: string,
+  is_locked?: boolean,
+  is_paid_hs?: boolean,
+  is_paid_hf?: boolean,
+  quotas?: {
+    api_signature_requests_left?: number | null,
+    documents_left?: number | null,
+    templates_total?: number | null,
+    templates_left?: number | null,
+    sms_verifications_left?: number | null,
+    num_fax_pages_left?: number | null
+  },
+  callback_url?: string | null,
+  role_code?: string | null,
+  team_id?: string | null,
+  locale?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`account.get`
+
+Retrieves detailed information about a Dropbox Sign account
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.account.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `email_address` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id?: string,
+  email_address?: string,
+  is_locked?: boolean,
+  is_paid_hs?: boolean,
+  is_paid_hf?: boolean,
+  quotas?: {
+    api_signature_requests_left?: number | null,
+    documents_left?: number | null,
+    templates_total?: number | null,
+    templates_left?: number | null,
+    sms_verifications_left?: number | null,
+    num_fax_pages_left?: number | null
+  },
+  callback_url?: string | null,
+  role_code?: string | null,
+  team_id?: string | null,
+  locale?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`account.update`
+
+Updates Dropbox Sign account settings
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.account.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_url` | `string` | No | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id?: string,
+  email_address?: string,
+  is_locked?: boolean,
+  is_paid_hs?: boolean,
+  is_paid_hf?: boolean,
+  quotas?: {
+    api_signature_requests_left?: number | null,
+    documents_left?: number | null,
+    templates_total?: number | null,
+    templates_left?: number | null,
+    sms_verifications_left?: number | null,
+    num_fax_pages_left?: number | null
+  },
+  callback_url?: string | null,
+  role_code?: string | null,
+  team_id?: string | null,
+  locale?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`account.verify`
+
+Verifies whether a Dropbox Sign account exists
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.account.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  email_address: string
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Apps
+
+### authorize
+
+`apiApps.authorize`
+
+Generates OAuth authorization URL
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.apiApps.authorize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `response_type` | `string` | Yes | — |
+| `state` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`apiApps.create`
+
+Creates a new API App
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.apiApps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `domains` | `string[]` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_app` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="api_app full type">
+
+```ts
+{
+  client_id?: string,
+  name?: string,
+  domain?: string | null,
+  callback_url?: string | null,
+  is_approved?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`apiApps.delete`
+
+Deletes an API App
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.apiApps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`apiApps.get`
+
+Retrieves API App details
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.apiApps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_app` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="api_app full type">
+
+```ts
+{
+  client_id?: string,
+  name?: string,
+  domain?: string | null,
+  callback_url?: string | null,
+  is_approved?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apiApps.list`
+
+Lists API Apps
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.apiApps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_apps` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="api_apps full type">
+
+```ts
+{
+  client_id?: string,
+  name?: string,
+  domain?: string | null,
+  callback_url?: string | null,
+  is_approved?: boolean,
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`apiApps.update`
+
+Updates an existing API App
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.apiApps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `domains` | `string[]` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_app` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="api_app full type">
+
+```ts
+{
+  client_id?: string,
+  name?: string,
+  domain?: string | null,
+  callback_url?: string | null,
+  is_approved?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Send
+
+### createEmbeddedWithTemplate
+
+`bulkSend.createEmbeddedWithTemplate`
+
+Bulk creates embedded signature requests with template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.bulkSend.createEmbeddedWithTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `template_ids` | `string[]` | Yes | — |
+| `signer_file` | `string` | No | — |
+| `signer_list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signer_list full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_job` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_send_job full type">
+
+```ts
+{
+  bulk_send_job_id?: string,
+  total?: number,
+  is_creator?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJob
+
+`bulkSend.getJob`
+
+Gets bulk send job status
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.bulkSend.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_job_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_job` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_send_job full type">
+
+```ts
+{
+  bulk_send_job_id?: string,
+  total?: number,
+  is_creator?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJobs
+
+`bulkSend.listJobs`
+
+Lists bulk send jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.bulkSend.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_jobs` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_send_jobs full type">
+
+```ts
+{
+  bulk_send_job_id?: string,
+  total?: number,
+  is_creator?: boolean,
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendWithTemplate
+
+`bulkSend.sendWithTemplate`
+
+Bulk sends signature requests with template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.bulkSend.sendWithTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `string[]` | Yes | — |
+| `signer_list` | `object[]` | No | — |
+| `title` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signer_list full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_send_job` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bulk_send_job full type">
+
+```ts
+{
+  bulk_send_job_id?: string,
+  total?: number,
+  is_creator?: boolean,
+  created_at?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Drafts
+
+### createEmbeddedUnclaimedWithTemplate
+
+`drafts.createEmbeddedUnclaimedWithTemplate`
+
+Creates embedded unclaimed draft with template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.drafts.createEmbeddedUnclaimedWithTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `template_ids` | `string[]` | Yes | — |
+| `signers` | `object[]` | No | — |
+| `requester_email_address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createUnclaimed
+
+`drafts.createUnclaimed`
+
+Creates an unclaimed draft
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.drafts.createUnclaimed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `send_document \| request_signature` | No | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+| `signers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### editAndResendUnclaimed
+
+`drafts.editAndResendUnclaimed`
+
+Edits and resends an unclaimed draft
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.drafts.editAndResendUnclaimed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `client_id` | `string` | Yes | — |
+| `test_mode` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Embedded
+
+### getSignUrl
+
+`embedded.getSignUrl`
+
+Gets embedded signing URL
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.embedded.getSignUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embedded` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="embedded full type">
+
+```ts
+{
+  sign_url?: string,
+  expires_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTemplateEditUrl
+
+`embedded.getTemplateEditUrl`
+
+Gets embedded template edit URL
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.embedded.getTemplateEditUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `force_signer_roles` | `boolean` | No | — |
+| `force_subject_message` | `boolean` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embedded` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="embedded full type">
+
+```ts
+{
+  edit_url?: string,
+  expires_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fax And Reports
+
+### createReport
+
+`faxAndReports.createReport`
+
+Requests CSV report generation
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.faxAndReports.createReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_type` | `user_activity \| document_status \| sms_activity \| fax_usage[]` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report full type">
+
+```ts
+{
+  success?: string,
+  start_date?: string,
+  end_date?: string,
+  report_type?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteFax
+
+`faxAndReports.deleteFax`
+
+Deletes a fax
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.faxAndReports.deleteFax({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fax_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAreaCodes
+
+`faxAndReports.getAreaCodes`
+
+Gets available fax line area codes
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.faxAndReports.getAreaCodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `city` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listFaxes
+
+`faxAndReports.listFaxes`
+
+Lists faxes
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.faxAndReports.listFaxes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `faxes` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="faxes full type">
+
+```ts
+{
+  fax_id?: string,
+  title?: string,
+  original_title?: string,
+  message?: string | null,
+  created_at?: number,
+  sender?: string,
+  files_url?: string,
+  transmissions?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFaxLines
+
+`faxAndReports.listFaxLines`
+
+Lists fax lines
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.faxAndReports.listFaxLines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Signature Requests
+
+### cancel
+
+`signatureRequests.cancel`
+
+Cancels an incomplete signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createEmbedded
+
+`signatureRequests.createEmbedded`
+
+Creates an embedded signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.createEmbedded({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createEmbeddedWithTemplate
+
+`signatureRequests.createEmbeddedWithTemplate`
+
+Creates an embedded signature request with template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.createEmbeddedWithTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `template_ids` | `string[]` | Yes | — |
+| `title` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### downloadFiles
+
+`signatureRequests.downloadFiles`
+
+Downloads signature request files
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.downloadFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `file_type` | `pdf \| zip` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### editAndResend
+
+`signatureRequests.editAndResend`
+
+Edits and resends a signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.editAndResend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### editAndResendEmbedded
+
+`signatureRequests.editAndResendEmbedded`
+
+Edits and resends an embedded signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.editAndResendEmbedded({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### editAndResendEmbeddedTemplate
+
+`signatureRequests.editAndResendEmbeddedTemplate`
+
+Edits and resends an embedded signature request with template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.editAndResendEmbeddedTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `template_ids` | `string[]` | No | — |
+| `signers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`signatureRequests.get`
+
+Retrieves details of a signature request
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFilesAsDataUri
+
+`signatureRequests.getFilesAsDataUri`
+
+Gets signature request files as Data URI
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.getFilesAsDataUri({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_uri` | `string` | No | — |
+
+
+
+---
+
+### getFilesAsFileUrl
+
+`signatureRequests.getFilesAsFileUrl`
+
+Gets temporary file URL for signature request
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.getFilesAsFileUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | No | — |
+| `expires_at` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`signatureRequests.list`
+
+Lists signature requests
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_requests` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_requests full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### releaseHold
+
+`signatureRequests.releaseHold`
+
+Releases a held signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.releaseHold({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remind
+
+`signatureRequests.remind`
+
+Sends a reminder to a signer
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.remind({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `email_address` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`signatureRequests.send`
+
+Sends a signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  email_address?: string,
+  name?: string,
+  role?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`signatureRequests.update`
+
+Updates signer contact information on signature request
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.signatureRequests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request_id` | `string` | Yes | — |
+| `signature_id` | `string` | No | — |
+| `email_address` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signature_request` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signature_request full type">
+
+```ts
+{
+  signature_request_id?: string,
+  title?: string,
+  original_title?: string,
+  subject?: string,
+  message?: string,
+  is_complete?: boolean,
+  is_declined?: boolean,
+  has_error?: boolean,
+  files_url?: string,
+  details_url?: string,
+  signing_url?: string | null,
+  created_at?: number,
+  signatures?: {
+    signature_id?: string,
+    signer_email_address?: string,
+    signer_name?: string,
+    signer_role?: string | null,
+    order?: number | null,
+    status_code?: string,
+    signed_at?: number | null,
+    last_viewed_at?: number | null,
+    last_reminded_at?: number | null,
+    has_pin?: boolean
+  }[],
+  template_ids?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### addMember
+
+`teams.addMember`
+
+Invites or adds a user to team
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.teams.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `email_address` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  name?: string,
+  team_id?: string,
+  num_members?: number,
+  num_sub_teams?: number,
+  accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_emails?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrent
+
+`teams.getCurrent`
+
+Gets current team membership
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.teams.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  name?: string,
+  team_id?: string,
+  num_members?: number,
+  num_sub_teams?: number,
+  accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_emails?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInfo
+
+`teams.getInfo`
+
+Retrieves team details
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.teams.getInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  name?: string,
+  team_id?: string,
+  num_members?: number,
+  num_sub_teams?: number,
+  accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_emails?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+Lists all accessible teams
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  name?: string,
+  team_id?: string,
+  num_members?: number,
+  num_sub_teams?: number,
+  accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_emails?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`teams.listMembers`
+
+Lists team members
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.teams.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_members` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="team_members full type">
+
+```ts
+{
+  account_id?: string,
+  email_address?: string,
+  is_locked?: boolean,
+  is_paid_hs?: boolean,
+  is_paid_hf?: boolean,
+  quotas?: {
+    api_signature_requests_left?: number | null,
+    documents_left?: number | null,
+    templates_total?: number | null,
+    templates_left?: number | null,
+    sms_verifications_left?: number | null,
+    num_fax_pages_left?: number | null
+  },
+  callback_url?: string | null,
+  role_code?: string | null,
+  team_id?: string | null,
+  locale?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubTeams
+
+`teams.listSubTeams`
+
+Lists sub-teams for a team
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.teams.listSubTeams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  name?: string,
+  team_id?: string,
+  num_members?: number,
+  num_sub_teams?: number,
+  accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_accounts?: {
+    account_id?: string,
+    email_address?: string,
+    is_locked?: boolean,
+    is_paid_hs?: boolean,
+    is_paid_hf?: boolean,
+    quotas?: {
+      api_signature_requests_left?: number | null,
+      documents_left?: number | null,
+      templates_total?: number | null,
+      templates_left?: number | null,
+      sms_verifications_left?: number | null,
+      num_fax_pages_left?: number | null
+    },
+    callback_url?: string | null,
+    role_code?: string | null,
+    team_id?: string | null,
+    locale?: string | null
+  }[],
+  invited_emails?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### addUser
+
+`templates.addUser`
+
+Adds user access to template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `email_address` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`templates.create`
+
+Creates a reusable template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signer_roles` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="signer_roles full type">
+
+```ts
+{
+  name: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createEmbeddedDraft
+
+`templates.createEmbeddedDraft`
+
+Creates an embedded template draft
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.createEmbeddedDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `signer_roles` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `test_mode` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="signer_roles full type">
+
+```ts
+{
+  name: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Deletes a template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`templates.get`
+
+Retrieves a template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFiles
+
+`templates.getFiles`
+
+Downloads template documents
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.templates.getFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `file_type` | `pdf \| zip` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getFilesAsDataUri
+
+`templates.getFilesAsDataUri`
+
+Gets template files as Data URI
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.templates.getFilesAsDataUri({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_uri` | `string` | No | — |
+
+
+
+---
+
+### getFilesAsFileUrl
+
+`templates.getFilesAsFileUrl`
+
+Gets template files as URL
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.templates.getFilesAsFileUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | No | — |
+| `expires_at` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+Lists templates
+
+**Risk:** `read`
+
+```ts
+await corsair.dropboxsign.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+| `list_info` | `object` | No | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="list_info full type">
+
+```ts
+{
+  page?: number,
+  num_pages?: number,
+  num_results?: number,
+  page_size?: number
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`templates.removeUser`
+
+Removes user access from template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `email_address` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFiles
+
+`templates.updateFiles`
+
+Updates files for a template
+
+**Risk:** `write`
+
+```ts
+await corsair.dropboxsign.api.templates.updateFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | — |
+| `files` | `string[]` | No | — |
+| `file_urls` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  template_id?: string,
+  title?: string,
+  message?: string,
+  updated_at?: number,
+  is_creator?: boolean,
+  is_embedded?: boolean,
+  can_edit?: boolean,
+  is_locked?: boolean,
+  signer_roles?: {
+    name?: string,
+    order?: number | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  warning_msg: string,
+  warning_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

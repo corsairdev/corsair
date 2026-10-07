@@ -1,0 +1,151 @@
+---
+title: Next.js
+sidebarTitle: Next.js
+description: Mount Corsair as one catch-all route, read synced data in Server Components, and mutate with Server Actions.
+icon: "/icons/next.svg"
+---
+
+import ClientReact from '/snippets/frameworks/client-react.mdx';
+import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
+
+In the App Router, Corsair fits the model you already use. One file under `app/api` is the whole server surface, Server Components read data at render time, and Server Actions handle the writes. Nothing runs on the client that doesn't have to.
+
+## Install
+
+<Install />
+
+The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect. The full list is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
+## Project layout
+
+```
+app/
+  api/corsair/[[...path]]/route.ts   # the handler
+  issues/page.tsx                    # Server Component reads .db
+  issues/actions.ts                  # Server Action writes .api
+  corsair-client.ts                  # "use client" hook client
+server/corsair.ts                    # createCorsair instance
+```
+
+## Mount the handler
+
+The management API, OAuth callbacks, and Hub's connect delivery all arrive on the same path, so a single catch-all route handler serves them. Mount it once and you never edit it again.
+
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from 'corsair';
+import { corsair } from '@/server/corsair';
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: '/api/corsair',
+});
+```
+
+`@/server/corsair` is your `createCorsair({ ... })` instance. The optional-catch-all segment `[[...path]]` matches `/api/corsair` and everything under it.
+
+## Resolve the tenant
+
+`withTenant` takes any stable string that identifies the current user or org. You produce it from the auth you already run; Corsair never supplies one. Read it at the top of the component and scope from there.
+
+```tsx
+import { corsair } from '@/server/corsair';
+import { getTenantId } from '@/server/tenant'; // YOUR code — reads the signed-in user from your session
+
+const tenant = corsair.withTenant(await getTenantId());
+```
+
+## Read and write
+
+A Server Component reads from `.db` with no network, so the page renders as fast as any database query. Because it's already on the server, you call the tenant directly instead of round-tripping through the route.
+
+```tsx app/issues/page.tsx
+import { corsair } from '@/server/corsair';
+import { getTenantId } from '@/server/tenant';
+import { closeIssue } from './actions';
+
+export default async function IssuesPage() {
+    const tenant = corsair.withTenant(await getTenantId());
+    const issues = await tenant.github.db.issues.search({
+        data: { state: 'open' },
+        limit: 50,
+    });
+
+    return (
+        <ul>
+            {issues.map((issue) => (
+                <li key={issue.id}>
+                    {issue.data.title}
+                    <form action={closeIssue.bind(null, issue.data.number)}>
+                        <button>Close</button>
+                    </form>
+                </li>
+            ))}
+        </ul>
+    );
+}
+```
+
+The Server Action writes through `.api`:
+
+```ts app/issues/actions.ts
+'use server';
+import { revalidatePath } from 'next/cache';
+import { corsair } from '@/server/corsair';
+import { getTenantId } from '@/server/tenant';
+
+export async function closeIssue(issueNumber: number) {
+    const tenant = corsair.withTenant(await getTenantId());
+    await tenant.github.api.issues.update({
+        owner: 'acme',
+        repo: 'app',
+        issueNumber,
+        state: 'closed',
+    });
+    revalidatePath('/issues');
+}
+```
+
+## Refresh after a write
+
+The `.api` call above upserts the response into your database, so `.db` is already current. `revalidatePath('/issues')` just re-runs the Server Component, and the closed issue is gone from the list, with no cache to invalidate by hand.
+
+## Connect a tenant
+
+The read and write paths above assume a tenant has already connected GitHub. That flow is client-side, so create the React hook client once in a `"use client"` module and call the hooks from any component.
+
+<ClientReact />
+
+## Go green
+
+```bash
+npm run dev
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy to Vercel as you would any App Router app. The mounted `/api/corsair` route becomes the delivery URL Hub calls in production, with no separate service to stand up.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The full `.db` read / `.api` write pattern, with refresh and webhooks.
+  </Card>
+  <Card title="React hooks" icon="react" href="/adapters/react">
+    Every hook the client factory returns, with types and examples.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

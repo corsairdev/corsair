@@ -1,0 +1,165 @@
+---
+title: Overview
+description: "Product analytics platform for event tracking, feature flags, session replay, and experiments."
+---
+
+Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 5 typed API operations
+- 1 synced entity (`events`) for fast `.search()` / `.list()`
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/posthog
+```
+```bash yarn
+yarn add corsair @corsair-dev/posthog
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/posthog
+```
+```bash bun
+bun add corsair @corsair-dev/posthog
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { posthog } from '@corsair-dev/posthog';
+
+export const corsair = createCorsair({
+	plugins: [
+		posthog(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/posthog/get-credentials).
+
+```ts
+posthog()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'posthog',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read**
+
+_No read-style endpoint inferred; pick any operation from the [API](/plugins/posthog/api) reference._
+
+
+**Capture an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.eventCreate({ distinct_id: 'abc123', event: 'corsair_example' });
+```
+
+
+See the full list on the [API](/plugins/posthog/api) page.
+
+## Query synced data
+
+Search synced events without hitting PostHog.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.posthog.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `events`. See [Database](/plugins/posthog/database) for filters and operators.
+
+## Webhooks
+
+Fires when a PostHog event is captured.
+
+```ts
+posthog({
+    webhookHooks: {
+        events: {
+            captured: {
+                after: async (ctx, result) => {
+                    console.log('PostHog event captured:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/posthog/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/posthog/api">
+    Every `posthog.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/posthog/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/posthog/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/posthog/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

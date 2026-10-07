@@ -1,0 +1,156 @@
+---
+title: Overview
+description: "Workplace collaboration hub for chat, meetings, channels, and Microsoft 365 team communication."
+---
+
+Use **Microsoft Teams** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 25 typed API operations
+- 5 synced entities (`channels`, `chats`, `members`, `messages`, `teams`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/teams
+```
+```bash yarn
+yarn add corsair @corsair-dev/teams
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/teams
+```
+```bash bun
+bun add corsair @corsair-dev/teams
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { teams } from '@corsair-dev/teams';
+
+export const corsair = createCorsair({
+	plugins: [
+		teams({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **Microsoft Teams** — your tenants connect through Hub when they sign in.
+
+```ts
+teams({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Microsoft Teams OAuth app.
+
+```ts
+teams()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'teams',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`channels.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.get({});
+```
+
+
+**`channels.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.create({});
+```
+
+
+See the full list on the [API](/plugins/teams/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.teams.db.<entity>.search()` and `.list()`: `channels`, `chats`, `members`, `messages`, `teams`.
+
+See [Database](/plugins/teams/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/teams/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/teams/api">
+    Every `teams.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/teams/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/teams/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

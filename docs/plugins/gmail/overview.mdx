@@ -1,0 +1,166 @@
+---
+title: Overview
+description: "Google email service for sending, reading, organizing messages, labels, and inbox automation."
+---
+
+Use **Gmail** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 25 typed API operations
+- 4 synced entities (`drafts`, `labels`, `messages`, `threads`) for fast `.search()` / `.list()`
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gmail
+```
+```bash yarn
+yarn add corsair @corsair-dev/gmail
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gmail
+```
+```bash bun
+bun add corsair @corsair-dev/gmail
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gmail } from '@corsair-dev/gmail';
+
+export const corsair = createCorsair({
+	plugins: [
+		gmail(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Gmail OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/gmail/get-credentials).
+
+```ts
+gmail()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gmail',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List messages**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.list({});
+```
+
+
+**Send an email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.send({ raw: 'RnJvbTogbWVAZXhhbXBsZS5jb20NClRvOiB0ZWFtbWF0ZUBleGFtcGxlLmNvbQ0KU3ViamVjdDogSGVsbG8gZnJvbSBDb3JzYWlyDQpDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXRmLTgNCg0KSGVsbG8gZnJvbSBDb3JzYWly' });
+```
+
+
+See the full list on the [API](/plugins/gmail/api) page.
+
+## Query synced data
+
+Search synced messages without hitting Gmail.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.messages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `drafts`, `labels`, `messages`, `threads`. See [Database](/plugins/gmail/database) for filters and operators.
+
+## Webhooks
+
+Fires when a Gmail message is received, deleted, or has its labels changed.
+
+```ts
+gmail({
+    webhookHooks: {
+        messageChanged: {
+            after: async (ctx, result) => {
+                console.log('Gmail event:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/gmail/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gmail/api">
+    Every `gmail.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/gmail/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/gmail/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/gmail/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

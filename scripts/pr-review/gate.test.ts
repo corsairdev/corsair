@@ -248,3 +248,45 @@ test('docs-only PR with a catalog entry skips the plugin gate', () => {
 	assert.equal(r.isPluginPr, false);
 	assert.deepEqual(r.failures, []);
 });
+
+test('mintlify docs for the same plugin are in scope', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'packages/airtable/api.test.ts',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/plugins/airtable/api.mdx',
+			'docs/docs.json',
+			'explorer/data/plugins/airtable.json',
+		],
+	});
+	assert.deepEqual(
+		r.failures.filter((f) => f.rule === 'R1'),
+		[],
+	);
+});
+
+test("another plugin's mintlify docs are still out of scope", () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: ['packages/airtable/index.ts', 'docs/plugins/slack/api.mdx'],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('docs-only PR writing both trees skips the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/plugin-docs.yaml',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+	assert.deepEqual(r.failures, []);
+});

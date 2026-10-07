@@ -1,0 +1,136 @@
+---
+title: Overview
+description: "Fitness tracking network for runs, rides, activities, segments, and athlete social data."
+---
+
+Use **Strava** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 27 typed API operations
+- 9 synced entities (`activities`, `athletes`, `clubs`, `gears`, `laps`, `routes`, and 3 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/strava
+```
+```bash yarn
+yarn add corsair @corsair-dev/strava
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/strava
+```
+```bash bun
+bun add corsair @corsair-dev/strava
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { strava } from '@corsair-dev/strava';
+
+export const corsair = createCorsair({
+	plugins: [
+		strava(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Strava OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/strava/get-credentials).
+
+```ts
+strava()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'strava',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`activities.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.strava.api.activities.get({});
+```
+
+
+**`activities.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.strava.api.activities.create({});
+```
+
+
+See the full list on the [API](/plugins/strava/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.strava.db.<entity>.search()` and `.list()`: `activities`, `athletes`, `clubs`, `gears`, `laps`, `routes`, `segmentEfforts`, `segments`, `uploads`.
+
+See [Database](/plugins/strava/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/strava/api">
+    Every `strava.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/strava/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/strava/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

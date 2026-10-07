@@ -1,0 +1,41 @@
+---
+title: Claude Agent SDK
+icon: "/icons/claude.svg"
+description: Use Corsair with the Claude Agent SDK via an in-process MCP server, no HTTP transport needed.
+---
+
+Use `ClaudeProvider` to connect Corsair to the [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk) with an in-process MCP server. No HTTP transport needed.
+
+## Install
+
+```bash
+npm install @anthropic-ai/claude-agent-sdk @corsair-dev/mcp
+```
+
+## Usage
+
+```ts agent.ts
+import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
+import { ClaudeProvider } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const provider = new ClaudeProvider();
+const tools = await provider.build({ corsair });
+const server = createSdkMcpServer({ name: 'corsair', tools });
+
+const stream = query({
+    prompt: 'List my GitHub repos with the most open issues.',
+    options: {
+        model: 'claude-opus-4-6',
+        mcpServers: { corsair: server },
+    },
+});
+
+for await (const event of stream) {
+    if ('result' in event) process.stdout.write(event.result);
+}
+```
+
+`ClaudeProvider.build()` is async. It dynamically imports the Claude Agent SDK as an optional peer dependency.
+
+The Claude Agent SDK handles the tool-call loop automatically via `query()`.

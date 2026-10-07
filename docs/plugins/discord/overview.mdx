@@ -1,0 +1,168 @@
+---
+title: Overview
+description: "Community chat platform for servers, channels, voice, bots, and real-time group messaging."
+---
+
+Use **Discord** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 16 typed API operations
+- 4 synced entities (`channels`, `guilds`, `members`, `messages`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/discord
+```
+```bash yarn
+yarn add corsair @corsair-dev/discord
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/discord
+```
+```bash bun
+bun add corsair @corsair-dev/discord
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { discord } from '@corsair-dev/discord';
+
+export const corsair = createCorsair({
+	plugins: [
+		discord(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/discord/get-credentials).
+
+```ts
+discord()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'discord',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List channels**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.discord.api.channels.list({ guild_id: '123456789' });
+```
+
+
+**Send a message**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.discord.api.messages.send({ channel_id: '123456789', content: 'Hello from Corsair!' });
+```
+
+
+See the full list on the [API](/plugins/discord/api) page.
+
+## Query synced data
+
+Search synced channels without hitting Discord.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.channels.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `channels`, `guilds`, `members`, `messages`. See [Database](/plugins/discord/database) for filters and operators.
+
+## Webhooks
+
+Fires when a user invokes a slash command or context-menu action.
+
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            applicationCommand: {
+                after: async (ctx, result) => {
+                    console.log('Discord application command:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/discord/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/discord/api">
+    Every `discord.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/discord/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/discord/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/discord/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

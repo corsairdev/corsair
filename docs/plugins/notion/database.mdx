@@ -1,0 +1,136 @@
+---
+title: Database
+description: "Notion local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Notion plugin syncs data locally. Use `corsair.notion.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Blocks
+
+Path: `notion.db.blocks.search`
+
+```ts
+const rows = await corsair.notion.db.blocks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `object` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_edited_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived` | `boolean` | equals |
+| `has_children` | `boolean` | equals |
+| `parent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Databases
+
+Path: `notion.db.databases.search`
+
+```ts
+const rows = await corsair.notion.db.databases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `object` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_edited_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_inline` | `boolean` | equals |
+| `archived` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `properties_json` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pages
+
+Path: `notion.db.pages.search`
+
+```ts
+const rows = await corsair.notion.db.pages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `object` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_edited_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived` | `boolean` | equals |
+| `is_locked` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `database_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `properties_json` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `notion.db.users.search`
+
+```ts
+const rows = await corsair.notion.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `object` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

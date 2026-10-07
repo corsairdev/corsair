@@ -1,0 +1,234 @@
+---
+title: Database
+description: "Stripe local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Stripe plugin syncs data locally. Use `corsair.stripe.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Balance
+
+Path: `stripe.db.balance.search`
+
+```ts
+const rows = await corsair.stripe.db.balance.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `livemode` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Charges
+
+Path: `stripe.db.charges.search`
+
+```ts
+const rows = await corsair.stripe.db.charges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `paid` | `boolean` | equals |
+| `refunded` | `boolean` | equals |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `payment_intent` | `string` | equals, contains, startsWith, endsWith, in |
+| `failure_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `failure_message` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Coupons
+
+Path: `stripe.db.coupons.search`
+
+```ts
+const rows = await corsair.stripe.db.coupons.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount_off` | `number` | equals, gt, gte, lt, lte, in |
+| `percent_off` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration_in_months` | `number` | equals, gt, gte, lt, lte, in |
+| `max_redemptions` | `number` | equals, gt, gte, lt, lte, in |
+| `times_redeemed` | `number` | equals, gt, gte, lt, lte, in |
+| `valid` | `boolean` | equals |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `livemode` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Customers
+
+Path: `stripe.db.customers.search`
+
+```ts
+const rows = await corsair.stripe.db.customers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `livemode` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payment Intents
+
+Path: `stripe.db.paymentIntents.search`
+
+```ts
+const rows = await corsair.stripe.db.paymentIntents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `payment_method` | `string` | equals, contains, startsWith, endsWith, in |
+| `client_secret` | `string` | equals, contains, startsWith, endsWith, in |
+| `canceled_at` | `number` | equals, gt, gte, lt, lte, in |
+| `cancellation_reason` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Prices
+
+Path: `stripe.db.prices.search`
+
+```ts
+const rows = await corsair.stripe.db.prices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `nickname` | `string` | equals, contains, startsWith, endsWith, in |
+| `product` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `livemode` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sources
+
+Path: `stripe.db.sources.search`
+
+```ts
+const rows = await corsair.stripe.db.sources.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `livemode` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

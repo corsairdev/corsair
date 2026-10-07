@@ -1,0 +1,188 @@
+---
+title: Database
+description: "Linear local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Linear plugin syncs data locally. Use `corsair.linear.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Comments
+
+Path: `linear.db.comments.search`
+
+```ts
+const rows = await corsair.linear.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueId` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `editedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `archivedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Issues
+
+Path: `linear.db.issues.search`
+
+```ts
+const rows = await corsair.linear.db.issues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `estimate` | `number` | equals, gt, gte, lt, lte, in |
+| `sortOrder` | `number` | equals, gt, gte, lt, lte, in |
+| `number` | `number` | equals, gt, gte, lt, lte, in |
+| `identifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `stateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `assigneeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `creatorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `cycleId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueDate` | `date` | equals, before, after, between |
+| `startedAt` | `date` | equals, before, after, between |
+| `completedAt` | `date` | equals, before, after, between |
+| `canceledAt` | `date` | equals, before, after, between |
+| `triagedAt` | `date` | equals, before, after, between |
+| `snoozedUntilAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `archivedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `linear.db.projects.search`
+
+```ts
+const rows = await corsair.linear.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `sortOrder` | `number` | equals, gt, gte, lt, lte, in |
+| `startDate` | `date` | equals, before, after, between |
+| `targetDate` | `date` | equals, before, after, between |
+| `completedAt` | `date` | equals, before, after, between |
+| `canceledAt` | `date` | equals, before, after, between |
+| `leadId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `archivedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `linear.db.teams.search`
+
+```ts
+const rows = await corsair.linear.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `archivedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `linear.db.users.search`
+
+```ts
+const rows = await corsair.linear.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatarUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `admin` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

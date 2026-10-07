@@ -1,0 +1,54 @@
+---
+title: Database
+description: "AeroLeads local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The AeroLeads plugin syncs data locally. Use `corsair.aeroleads.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Linkedin Details
+
+Path: `aeroleads.db.linkedinDetails.search`
+
+```ts
+const rows = await corsair.aeroleads.db.linkedinDetails.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkedin_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_company_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_company_linkedin_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `cb_rank` | `string` | equals, contains, startsWith, endsWith, in |
+| `db_logo_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_picture_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `job_title_detailed_role_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_founded_year_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_facebook_url_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_twitter_url_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_current_technologies_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `emails_s2` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_numbers_s2` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

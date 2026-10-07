@@ -1,0 +1,2684 @@
+---
+title: API
+description: "API reference for CircleCI: every `circleci.api.*` operation with input and output types."
+---
+
+Every `circleci.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contexts
+
+### create
+
+`contexts.create`
+
+Create a context (REST)
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.contexts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `ownerType` | `organization \| account` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### createRestriction
+
+`contexts.createRestriction`
+
+Add a restriction to a context
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.contexts.createRestriction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `restrictionType` | `project \| expression \| group` | Yes | — |
+| `restrictionValue` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `restriction_type` | `string` | No | — |
+| `restriction_value` | `string` | No | — |
+| `project_id` | `string` | No | — |
+
+
+
+---
+
+### deleteRestriction
+
+`contexts.deleteRestriction`
+
+Remove a restriction from a context
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.contexts.deleteRestriction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `restrictionId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`contexts.get`
+
+Retrieve a context by id
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.contexts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### listEnvVars
+
+`contexts.listEnvVars`
+
+List a context's environment variables
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.contexts.listEnvVars({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  variable?: string | null,
+  truncated_value?: string | null,
+  context_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsertEnvVar
+
+`contexts.upsertEnvVar`
+
+Add or update a context environment variable (REST)
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.contexts.upsertEnvVar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `variable` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variable` | `string` | No | — |
+| `truncated_value` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Contexts Graph QL
+
+### create
+
+`contextsGraphQL.create`
+
+Create a context (GraphQL)
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.contextsGraphQL.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextName` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `ownerType` | `organization \| account` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contextsGraphQL.delete`
+
+Permanently delete a context and its environment variables (GraphQL)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.contextsGraphQL.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### query
+
+`contextsGraphQL.query`
+
+Retrieve a context by id (GraphQL)
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.contextsGraphQL.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+
+### removeEnvVar
+
+`contextsGraphQL.removeEnvVar`
+
+Remove a context environment variable (GraphQL)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.contextsGraphQL.removeEnvVar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `variable` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### storeEnvVar
+
+`contextsGraphQL.storeEnvVar`
+
+Add or update a context environment variable (GraphQL)
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.contextsGraphQL.storeEnvVar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contextId` | `string` | Yes | — |
+| `variable` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create an organization group
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Permanently delete an organization group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.groups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`groups.get`
+
+Retrieve an organization group
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List an organization's groups
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### branches
+
+`insights.branches`
+
+List branches with workflow runs
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.branches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `workflowName` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### flakyTests
+
+`insights.flakyTests`
+
+Get flaky tests for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.flakyTests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### orgSummary
+
+`insights.orgSummary`
+
+Get org-wide summary metrics with trends
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.orgSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlug` | `string` | Yes | — |
+| `reportingWindow` | `string` | No | — |
+| `projectNames` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pagesSummary
+
+`insights.pagesSummary`
+
+Get summary metrics and trends for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.pagesSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `reportingWindow` | `string` | No | — |
+| `branches` | `string[]` | No | — |
+| `workflowNames` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### planMetrics
+
+`insights.planMetrics`
+
+Get plan/credit-usage metrics by project and org for a date range (same route as insights.orgSummary)
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.planMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlug` | `string` | Yes | — |
+| `reportingWindow` | `string` | No | — |
+| `projectNames` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### projectWorkflows
+
+`insights.projectWorkflows`
+
+Get summary metrics for all of a project's workflows
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.insights.projectWorkflows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `reportingWindow` | `string` | No | — |
+| `branch` | `string` | No | — |
+| `allBranches` | `boolean` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Jobs
+
+### getArtifacts
+
+`jobs.getArtifacts`
+
+List a job's stored artifacts by number
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.jobs.getArtifacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vcsType` | `gh \| bb` | Yes | — |
+| `username` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `buildNumber` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  path?: string | null,
+  pretty_path?: string | null,
+  node_index?: number | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDetails
+
+`jobs.getDetails`
+
+Fetch a job's status, timing and executor by number
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.jobs.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vcsType` | `gh \| bb` | Yes | — |
+| `username` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `buildNumber` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `build_num` | `number` | No | — |
+| `branch` | `string` | No | — |
+| `status` | `string` | No | — |
+| `lifecycle` | `string` | No | — |
+| `outcome` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `stop_time` | `string` | No | — |
+| `build_time_millis` | `number` | No | — |
+| `workflows` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workflows full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTestMetadata
+
+`jobs.getTestMetadata`
+
+Fetch a job's stored test results by number
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.jobs.getTestMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vcsType` | `gh \| bb` | Yes | — |
+| `username` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `buildNumber` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string | null,
+  source?: string | null,
+  run_time?: number | null,
+  file?: string | null,
+  result?: string | null,
+  name?: string | null,
+  classname?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Namespace
+
+### delete
+
+`namespace.delete`
+
+Permanently delete a namespace and all its orbs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.namespace.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteAlias
+
+`namespace.deleteAlias`
+
+Remove a namespace alias (GraphQL)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.namespace.deleteAlias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### queryExists
+
+`namespace.queryExists`
+
+Check whether a namespace name exists
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.namespace.queryExists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### rename
+
+`namespace.rename`
+
+Rename a namespace
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.namespace.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `newName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Orb Allowlist
+
+### create
+
+`orbAllowlist.create`
+
+Add a URL orb allow-list entry
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.orbAllowlist.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlugOrId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `prefix` | `string` | Yes | — |
+| `auth` | `github-oauth \| bitbucket-oauth \| github-app \| none` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`orbAllowlist.delete`
+
+Remove a URL orb allow-list entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.orbAllowlist.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlugOrId` | `string` | Yes | — |
+| `entryId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Orbs
+
+### getDetails
+
+`orbs.getDetails`
+
+Fetch an orb's metadata and versions
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `versions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  id?: string | null,
+  version?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVersion
+
+`orbs.getVersion`
+
+Fetch one orb version
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.getVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orbVersionRef` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `version` | `string` | No | — |
+| `source` | `string` | No | — |
+
+
+
+---
+
+### listCategories
+
+`orbs.listCategories`
+
+List orb categories
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.listCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNamespaceOrbs
+
+`orbs.listNamespaceOrbs`
+
+List orbs in a namespace
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.listNamespaceOrbs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespaceId` | `string` | No | — |
+| `certified` | `boolean` | No | — |
+| `private` | `boolean` | No | — |
+| `pageCursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  is_private?: boolean | null,
+  is_listed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  next?: string | null,
+  prev?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOrbs
+
+`orbs.listOrbs`
+
+List orbs across the registry
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.listOrbs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  isPrivate?: boolean | null,
+  versions?: {
+    id?: string | null,
+    version?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryCategoryId
+
+`orbs.queryCategoryId`
+
+Fetch a category's id by name
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.queryCategoryId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### queryExists
+
+`orbs.queryExists`
+
+Check whether an orb exists
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.queryExists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+| `isPrivate` | `boolean` | No | — |
+
+
+
+---
+
+### queryId
+
+`orbs.queryId`
+
+Fetch an orb's id by name
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.queryId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `versions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  id?: string | null,
+  version?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryLatestVersion
+
+`orbs.queryLatestVersion`
+
+Fetch an orb's latest published version
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.queryLatestVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+### querySource
+
+`orbs.querySource`
+
+Fetch an orb version's source YAML
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.querySource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orbVersionRef` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `version` | `string` | No | — |
+| `source` | `string` | No | — |
+
+
+
+---
+
+### validateConfig
+
+`orbs.validateConfig`
+
+Validate orb YAML
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.orbs.validateConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orbYaml` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+| `sourceYaml` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Retrieve an organization by id (GraphQL)
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.organization.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Pipeline Definitions
+
+### get
+
+`pipelineDefinitions.get`
+
+Retrieve a pipeline definition
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.pipelineDefinitions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `pipelineDefinitionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `config_source` | `object` | No | — |
+| `checkout_source` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config_source full type">
+
+```ts
+{
+  provider?: string | null,
+  repo?: {
+    full_name?: string | null,
+    external_id?: string | null
+  } | null,
+  file_path?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="checkout_source full type">
+
+```ts
+{
+  provider?: string | null,
+  repo?: {
+    full_name?: string | null,
+    external_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pipelineDefinitions.list`
+
+List a project's pipeline definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.pipelineDefinitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  created_at?: string | null,
+  config_source?: {
+    provider?: string | null,
+    repo?: {
+      full_name?: string | null,
+      external_id?: string | null
+    } | null,
+    file_path?: string | null
+  } | null,
+  checkout_source?: {
+    provider?: string | null,
+    repo?: {
+      full_name?: string | null,
+      external_id?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pipelines
+
+### getConfig
+
+`pipelines.getConfig`
+
+Fetch a pipeline's config
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.pipelines.getConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipelineId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List pipelines for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.pipelines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlug` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `mine` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  project_slug?: string | null,
+  number?: number | null,
+  state?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger?: {
+  } | null,
+  vcs?: {
+  } | null,
+  errors?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`pipelines.listForProject`
+
+List a project's pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.pipelines.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `branch` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  project_slug?: string | null,
+  number?: number | null,
+  state?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  trigger?: {
+  } | null,
+  vcs?: {
+  } | null,
+  errors?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trigger
+
+`pipelines.trigger`
+
+Start a new pipeline run on a branch or tag
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.pipelines.trigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `branch` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `project_slug` | `string` | No | — |
+| `number` | `number` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `trigger` | `object` | No | — |
+| `vcs` | `object` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="vcs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Project Env Vars
+
+### create
+
+`projectEnvVars.create`
+
+Create a project environment variable
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.projectEnvVars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | No | — |
+| `created-at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projectEnvVars.delete`
+
+Delete a project environment variable
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.projectEnvVars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`projectEnvVars.list`
+
+List a project's environment variables
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.projectEnvVars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name: string,
+  value?: string | null,
+  created-at?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Follow a repository as a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlugOrId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `organization_slug` | `string` | No | — |
+| `vcs_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="vcs_info full type">
+
+```ts
+{
+  vcs_url?: string | null,
+  provider?: string | null,
+  default_branch?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently remove a project and its settings
+
+**Risk:** `destructive`
+
+```ts
+await corsair.circleci.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`projects.get`
+
+Retrieve a project by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `organization_slug` | `string` | No | — |
+| `vcs_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="vcs_info full type">
+
+```ts
+{
+  vcs_url?: string | null,
+  provider?: string | null,
+  default_branch?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Runners
+
+### list
+
+`runners.list`
+
+List self-hosted runners
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.runners.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | No | — |
+| `resourceClass` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  hostname?: string | null,
+  name?: string | null,
+  first_connected?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### list
+
+`schedules.list`
+
+List a project's scheduled pipeline triggers
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.schedules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  project-slug?: string | null,
+  created-at?: string | null,
+  updated-at?: string | null,
+  actor?: {
+    id?: string | null,
+    avatar_url?: string | null,
+    login?: string | null,
+    name?: string | null
+  } | null,
+  parameters?: {
+  } | null,
+  timetable?: {
+    per-hour?: number | null,
+    hours-of-day?: number[] | null,
+    days-of-week?: string[] | null,
+    days-of-month?: number[] | null,
+    months?: string[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage Export
+
+### create
+
+`usageExport.create`
+
+Create a usage export job
+
+**Risk:** `write`
+
+```ts
+await corsair.circleci.api.usageExport.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+| `sharedOrgIds` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`usageExport.get`
+
+Retrieve a usage export job
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.usageExport.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string` | Yes | — |
+| `usageExportJobId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User
+
+### getCurrent
+
+`user.getCurrent`
+
+Read the authenticated user's own profile
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.user.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `login` | `string` | No | — |
+| `name` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+
+### getInfo
+
+`user.getInfo`
+
+Read another user's profile by id
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.user.getInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `login` | `string` | No | — |
+| `name` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+
+### listCollaborations
+
+`user.listCollaborations`
+
+List organizations the caller can collaborate on
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.user.listCollaborations({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  vcs_type?: string | null,
+  name?: string | null,
+  slug?: string | null,
+  avatar_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workflows
+
+### getSummary
+
+`workflows.getSummary`
+
+Get metrics and trends for a workflow
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.workflows.getSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `workflowName` | `string` | Yes | — |
+| `branch` | `string` | No | — |
+| `allBranches` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listByPipelineId
+
+`workflows.listByPipelineId`
+
+List a pipeline's workflows
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.workflows.listByPipelineId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipelineId` | `string` | Yes | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  pipeline_id?: string | null,
+  pipeline_number?: number | null,
+  project_slug?: string | null,
+  created_at?: string | null,
+  stopped_at?: string | null,
+  started_by?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJobs
+
+`workflows.listJobs`
+
+Get summary metrics for a workflow's jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.workflows.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `workflowName` | `string` | Yes | — |
+| `reportingWindow` | `string` | No | — |
+| `branch` | `string` | No | — |
+| `allBranches` | `boolean` | No | — |
+| `jobName` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTestMetrics
+
+`workflows.listTestMetrics`
+
+Get test metrics for a workflow
+
+**Risk:** `read`
+
+```ts
+await corsair.circleci.api.workflows.listTestMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectSlug` | `string` | Yes | — |
+| `workflowName` | `string` | Yes | — |
+| `branch` | `string` | No | — |
+| `allBranches` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

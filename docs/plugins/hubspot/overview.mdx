@@ -1,0 +1,198 @@
+---
+title: Overview
+description: "CRM and marketing platform for contacts, deals, tickets, email, and sales automation."
+---
+
+Use **HubSpot** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 35 typed API operations
+- 5 synced entities (`companies`, `contacts`, `deals`, `engagements`, `tickets`) for fast `.search()` / `.list()`
+- 12 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/hubspot
+```
+```bash yarn
+yarn add corsair @corsair-dev/hubspot
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/hubspot
+```
+```bash bun
+bun add corsair @corsair-dev/hubspot
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { hubspot } from '@corsair-dev/hubspot';
+
+export const corsair = createCorsair({
+	plugins: [
+		hubspot({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **HubSpot** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
+
+```ts
+hubspot({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="API Key">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
+
+```ts
+hubspot()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your HubSpot OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
+
+```ts
+hubspot({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'hubspot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get contacts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.getMany({});
+```
+
+
+**Create a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.create({});
+```
+
+
+See the full list on the [API](/plugins/hubspot/api) page.
+
+## Query synced data
+
+Search synced contacts without hitting HubSpot.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `contacts`, `deals`, `engagements`, `tickets`. See [Database](/plugins/hubspot/database) for filters and operators.
+
+## Webhooks
+
+Fires when a new contact is created in HubSpot.
+
+```ts
+hubspot({
+    webhookHooks: {
+        contactCreated: {
+            after: async (ctx, result) => {
+                console.log('HubSpot contact created:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/hubspot/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/hubspot/api">
+    Every `hubspot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/hubspot/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/hubspot/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/hubspot/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

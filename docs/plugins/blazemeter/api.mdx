@@ -1,0 +1,7122 @@
+---
+title: API
+description: "API reference for BlazeMeter: every `blazemeter.api.*` operation with input and output types."
+---
+
+Every `blazemeter.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### list
+
+`accounts.list`
+
+List accounts available to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `sort` | `any[]` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    displayName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Asset Dependencies
+
+### create
+
+`assetDependencies.create`
+
+Create a dependency from one workspace asset to another
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.assetDependencies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `targetDepId` | `string` | Yes | — |
+| `dependencyType` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forAsset
+
+`assetDependencies.forAsset`
+
+List dependencies belonging to an asset
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assetDependencies.forAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assetDependencies.get`
+
+Get one asset dependency by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assetDependencies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`assetDependencies.list`
+
+List workspace asset dependencies
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assetDependencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `wsId` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `sourceDepId` | `string` | No | — |
+| `targetDepId` | `string` | No | — |
+| `sourceDepType` | `string` | No | — |
+| `targetDepType` | `string` | No | — |
+| `dependencyType` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`assetDependencies.remove`
+
+Delete an asset dependency by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.assetDependencies.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+### removeMatching
+
+`assetDependencies.removeMatching`
+
+Delete asset dependencies matching source, target, and type filters
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.assetDependencies.removeMatching({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wsId` | `number` | Yes | — |
+| `sourceDepId` | `string` | No | — |
+| `targetDepId` | `string` | No | — |
+| `sourceDepType` | `string` | No | — |
+| `targetDepType` | `string` | No | — |
+| `dependencyType` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateForAsset
+
+`assetDependencies.updateForAsset`
+
+Replace dependencies for an asset
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.assetDependencies.updateForAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `dependencies` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Assets
+
+### create
+
+`assets.create`
+
+Create an Asset Repository asset
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.assets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `metadata` | `object` | No | — |
+| `packageId` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  packageId?: string | null,
+  metadata?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdBy?: number | null,
+  updatedBy?: number | null,
+  dependencies?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### data
+
+`assets.data`
+
+Get stored data for an asset
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assets.data({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  fileName?: string | null,
+  contentType?: string | null,
+  content?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assets.get`
+
+Get a workspace asset by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | — |
+| `withData` | `boolean` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `withDependencies` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  packageId?: string | null,
+  metadata?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdBy?: number | null,
+  updatedBy?: number | null,
+  dependencies?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`assets.list`
+
+List Asset Repository assets in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.assets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `any[]` | No | — |
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortDir` | `string` | No | — |
+| `withData` | `boolean` | No | — |
+| `withSystem` | `boolean` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `withAccShared` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  packageId?: string | null,
+  metadata?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdBy?: number | null,
+  updatedBy?: number | null,
+  dependencies?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`assets.remove`
+
+Delete a workspace asset
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.assets.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`assets.update`
+
+Update a workspace asset
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.assets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `assetId` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `packageId` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `dependencies` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dependencies full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  packageId?: string | null,
+  metadata?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdBy?: number | null,
+  updatedBy?: number | null,
+  dependencies?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadData
+
+`assets.uploadData`
+
+Upload data content to an asset
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.assets.uploadData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | No | — |
+| `wsId` | `number` | Yes | — |
+| `assetId` | `string` | Yes | — |
+| `fileContent` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fileContent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  type?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  packageId?: string | null,
+  metadata?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdBy?: number | null,
+  updatedBy?: number | null,
+  dependencies?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generator
+
+### cardIssuers
+
+`generator.cardIssuers`
+
+List available credit-card issuer generators
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.generator.cardIssuers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  name?: string | null,
+  lengths?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### functions
+
+`generator.functions`
+
+List available synthetic-data generator functions
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.generator.functions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  name?: string | null,
+  category?: string | null,
+  description?: string | null,
+  signature?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### seedLists
+
+`generator.seedLists`
+
+List available generator seed lists
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.generator.seedLists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  name?: string | null,
+  fileName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Info
+
+### health
+
+`info.health`
+
+Get Asset Repository service health
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.info.health({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  status?: string | null,
+  healthy?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### version
+
+`info.version`
+
+Get Asset Repository build information
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.info.version({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  version?: string | null,
+  branch?: string | null,
+  commit?: string | null,
+  build?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Masters
+
+### stop
+
+`masters.stop`
+
+Gracefully stop a running master execution
+
+**Risk:** `destructive`
+
+```ts
+await corsair.blazemeter.api.masters.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `master_id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### summary
+
+`masters.summary`
+
+Get request statistics for a master test run
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.masters.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `master_id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  summary?: {
+    avg?: number | null,
+    bytes?: number | null,
+    concurrency?: number | null,
+    duration?: number | null,
+    durationIsNotConfigured?: boolean | null,
+    failed?: number | null,
+    first?: number | null,
+    hits?: number | null,
+    id?: string | null,
+    last?: number | null,
+    lb?: string | null,
+    tp90?: number | null,
+    min?: number | null,
+    max?: number | null,
+    histogram?: {
+    } | null
+  }[] | null,
+  jmeterLogSummary?: any[] | null,
+  jmeterLogTypeSummary?: any[] | null,
+  maxUsers?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Multi Tests
+
+### create
+
+`multiTests.create`
+
+Create a multi-test in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.multiTests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `collectionType` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  collectionType?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  creatorClientId?: string | null,
+  shouldSendReportEmail?: boolean | null,
+  projectId?: number | null,
+  filesToSplit?: any[] | null,
+  dataFiles?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`multiTests.get`
+
+Get a multi-test by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.multiTests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionId` | `number` | Yes | — |
+| `populateTests` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  collectionType?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  creatorClientId?: string | null,
+  shouldSendReportEmail?: boolean | null,
+  projectId?: number | null,
+  filesToSplit?: any[] | null,
+  dataFiles?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`multiTests.list`
+
+List multi-tests in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.multiTests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `sort` | `any[]` | No | — |
+| `limit` | `number` | No | — |
+| `projectId` | `number` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  collectionType?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  creatorClientId?: string | null,
+  shouldSendReportEmail?: boolean | null,
+  projectId?: number | null,
+  filesToSplit?: any[] | null,
+  dataFiles?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Packages
+
+### create
+
+`packages.create`
+
+Create an Asset Repository package
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.packages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `wsId` | `number` | Yes | — |
+| `version` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `dependencies` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dependencies full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  version?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  dependencies?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dependencies
+
+`packages.dependencies`
+
+List package dependencies
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.packages.dependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### export
+
+`packages.export`
+
+Export one package as a zip archive
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.packages.export({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  url?: string | null,
+  fileName?: string | null,
+  contentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exportMany
+
+`packages.exportMany`
+
+Export multiple workspace packages as a zip archive
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.packages.exportMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wsId` | `number` | Yes | — |
+| `packageIds` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  url?: string | null,
+  fileName?: string | null,
+  contentType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`packages.get`
+
+Get a workspace package
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.packages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `withDependencies` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  version?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  dependencies?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`packages.import`
+
+Import a package zip into a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.packages.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `force` | `boolean` | No | — |
+| `overrides` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  version?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  dependencies?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`packages.list`
+
+List packages in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.packages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `any[]` | No | — |
+| `skip` | `number` | No | — |
+| `wsId` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortDir` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  version?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  dependencies?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`packages.remove`
+
+Delete a workspace package
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.packages.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`packages.update`
+
+Update a workspace package
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.packages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `version` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `dependencies` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dependencies full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  displayName?: string | null,
+  version?: string | null,
+  accountId?: number | null,
+  workspaceId?: number | null,
+  dependencies?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDependencies
+
+`packages.updateDependencies`
+
+Replace package dependencies
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.packages.updateDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pId` | `string` | Yes | — |
+| `wsId` | `number` | Yes | — |
+| `dependencies` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  sourceId?: string | null,
+  targetId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Private Locations
+
+### create
+
+`privateLocations.create`
+
+Create a private execution location
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.privateLocations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `slots` | `number` | No | — |
+| `funcIds` | `any[]` | Yes | — |
+| `accountId` | `number` | Yes | — |
+| `engineXms` | `number` | No | — |
+| `engineXmx` | `number` | No | — |
+| `consoleXms` | `number` | No | — |
+| `consoleXmx` | `number` | No | — |
+| `overrideCPU` | `number` | No | — |
+| `workspacesId` | `any[]` | Yes | — |
+| `overrideMemory` | `number` | No | — |
+| `threadsPerEngine` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  userId?: number | null,
+  consoleXms?: number | null,
+  consoleXmx?: number | null,
+  engineXms?: number | null,
+  engineXmx?: number | null,
+  threadsPerEngine?: number | null,
+  slots?: number | null,
+  type?: string | null,
+  funcIds?: string[] | null,
+  hidden?: boolean | null,
+  disabled?: boolean | null,
+  created?: number | null,
+  updated?: number | null,
+  accountId?: number | null,
+  shipsId?: any[] | null,
+  workspacesId?: any[] | null,
+  ships?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAgent
+
+`privateLocations.createAgent`
+
+Create an agent in a private location
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.privateLocations.createAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `address` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  address?: string | null,
+  publicIpAddress?: string | null,
+  state?: string | null,
+  lastHeartBeat?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`privateLocations.list`
+
+List private execution locations
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.privateLocations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `types` | `any[]` | No | — |
+| `accountId` | `number` | No | — |
+| `workspaceId` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  userId?: number | null,
+  consoleXms?: number | null,
+  consoleXmx?: number | null,
+  engineXms?: number | null,
+  engineXmx?: number | null,
+  threadsPerEngine?: number | null,
+  slots?: number | null,
+  type?: string | null,
+  funcIds?: string[] | null,
+  hidden?: boolean | null,
+  disabled?: boolean | null,
+  created?: number | null,
+  updated?: number | null,
+  accountId?: number | null,
+  shipsId?: any[] | null,
+  workspacesId?: any[] | null,
+  ships?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeWorkspace
+
+`privateLocations.removeWorkspace`
+
+Remove a workspace from a private location
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.privateLocations.removeWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `harborId` | `string` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project in a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  description?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  workspaceId?: number | null,
+  testsCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get project details
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  description?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  workspaceId?: number | null,
+  testsCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `sort` | `any[]` | No | — |
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `accountId` | `number` | No | — |
+| `workspaceId` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  description?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  workspaceId?: number | null,
+  testsCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`projects.remove`
+
+Delete a project, optionally forcing removal of contained data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.projects.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `force` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `projectId` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `workspaceId` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  description?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  workspaceId?: number | null,
+  testsCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+List execution regions and locations
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.regions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  title?: string | null,
+  provider?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### create
+
+`schedules.create`
+
+Create a cron schedule for a test or multi-test
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.schedules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cron` | `string` | Yes | — |
+| `testId` | `number` | No | — |
+| `testCollectionId` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  cron?: string | null,
+  nextRun?: number | null,
+  enabled?: boolean | null,
+  type?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  testId?: number | null,
+  testCollectionId?: number | null,
+  createdById?: number | null,
+  lastUpdatedById?: number | null,
+  nextExecutions?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`schedules.get`
+
+Get a schedule by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.schedules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  cron?: string | null,
+  nextRun?: number | null,
+  enabled?: boolean | null,
+  type?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  testId?: number | null,
+  testCollectionId?: number | null,
+  createdById?: number | null,
+  lastUpdatedById?: number | null,
+  nextExecutions?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`schedules.list`
+
+List schedules with scope and pagination filters
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.schedules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `testId` | `number` | No | — |
+| `enabled` | `boolean` | No | — |
+| `accountId` | `number` | No | — |
+| `projectId` | `number` | No | — |
+| `workspaceId` | `number` | No | — |
+| `collectionId` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  cron?: string | null,
+  nextRun?: number | null,
+  enabled?: boolean | null,
+  type?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  testId?: number | null,
+  testCollectionId?: number | null,
+  createdById?: number | null,
+  lastUpdatedById?: number | null,
+  nextExecutions?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`schedules.remove`
+
+Delete a test schedule
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.schedules.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`schedules.update`
+
+Enable or disable a schedule
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.schedules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | Yes | — |
+| `schedule_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  cron?: string | null,
+  nextRun?: number | null,
+  enabled?: boolean | null,
+  type?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  testId?: number | null,
+  testCollectionId?: number | null,
+  createdById?: number | null,
+  lastUpdatedById?: number | null,
+  nextExecutions?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### execute
+
+`search.execute`
+
+Search BlazeMeter entities using filters, selected fields, and ordering
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.search.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `entity` | `string` | Yes | — |
+| `fields` | `any[]` | No | — |
+| `filters` | `object` | No | — |
+| `ordering` | `any[]` | No | — |
+| `accountId` | `any` | No | — |
+| `workspaceId` | `any` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string | null,
+  type?: string | null,
+  projectId?: number | null,
+  userId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metadata
+
+`search.metadata`
+
+Get searchable entities, fields, relations, and operators
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.search.metadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  entities?: any[] | null,
+  fields?: {
+  } | null,
+  relationships?: {
+  } | null,
+  operators?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Service Mock Templates
+
+### get
+
+`serviceMockTemplates.get`
+
+Get a virtual-service template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.serviceMockTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `number` | Yes | — |
+| `serviceMockTemplateId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  created?: string | null,
+  createdBy?: string | null,
+  updated?: string | null,
+  updatedBy?: string | null,
+  liveSystemHost?: string | null,
+  liveSystemPort?: number | null,
+  noMatchingRequestPreference?: string | null,
+  noMatchingRequestTxnId?: number | null,
+  thinkTime?: number | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  mockServiceTransactions?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`serviceMockTemplates.list`
+
+List virtual-service templates in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.serviceMockTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  created?: string | null,
+  createdBy?: string | null,
+  updated?: string | null,
+  updatedBy?: string | null,
+  liveSystemHost?: string | null,
+  liveSystemPort?: number | null,
+  noMatchingRequestPreference?: string | null,
+  noMatchingRequestTxnId?: number | null,
+  thinkTime?: number | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  mockServiceTransactions?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`serviceMockTemplates.update`
+
+Update a virtual-service template
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.serviceMockTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `thinkTime` | `number` | No | — |
+| `templateId` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `liveSystemHost` | `string` | No | — |
+| `liveSystemPort` | `number` | No | — |
+| `endpointPreference` | `string` | No | — |
+| `noMatchingRequestPreference` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  created?: string | null,
+  createdBy?: string | null,
+  updated?: string | null,
+  updatedBy?: string | null,
+  liveSystemHost?: string | null,
+  liveSystemPort?: number | null,
+  noMatchingRequestPreference?: string | null,
+  noMatchingRequestTxnId?: number | null,
+  thinkTime?: number | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  mockServiceTransactions?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shared Folders
+
+### list
+
+`sharedFolders.list`
+
+List shared folders in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.sharedFolders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string | null,
+  workspaceId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a workspace tag
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  label?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List Mock Services tags
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  label?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Test Data
+
+### generate
+
+`testData.generate`
+
+Generate test data from an inline model
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.testData.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `entityName` | `string` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateFromModel
+
+`testData.generateFromModel`
+
+Generate synthetic records from a stored data model
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.testData.generateFromModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelId` | `string` | Yes | — |
+| `numRecords` | `number` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getModel
+
+`testData.getModel`
+
+Get a data model by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.testData.getModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataModelId` | `string` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null,
+  description?: string | null,
+  type?: string | null,
+  kind?: string | null,
+  repeat?: number | null,
+  properties?: {
+  } | null,
+  requirements?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`testData.publish`
+
+Publish generated data through a Test Data orchestration target
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.testData.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `attributes` | `object` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  type?: string | null,
+  data?: {
+  } | null,
+  attributes?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateModel
+
+`testData.validateModel`
+
+Validate a workspace data model
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.testData.validateModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `data_model_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  isValid?: boolean | null,
+  entities?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tests
+
+### create
+
+`tests.create`
+
+Create a performance or functional test
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `configuration` | `object` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`tests.duplicate`
+
+Duplicate a test and its configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.duplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### files
+
+`tests.files`
+
+List files attached to a test
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.tests.files({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `testId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  lastModified?: number | null,
+  name?: string | null,
+  size?: number | null,
+  link?: string | null,
+  linkExpire?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tests.get`
+
+Get test details
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.tests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+} | {
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tests.list`
+
+List tests by workspace or project
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.tests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `sort` | `any[]` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `platform` | `string` | No | — |
+| `projectId` | `number` | No | — |
+| `workspaceId` | `number` | No | — |
+| `hasExecutions` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`tests.remove`
+
+Delete a test
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.tests.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `testId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### removeFile
+
+`tests.removeFile`
+
+Delete an uploaded test asset file
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.tests.removeFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `testId` | `number` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### start
+
+`tests.start`
+
+Start a configured test
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `testId` | `number` | Yes | — |
+| `isDebugRun` | `boolean` | No | — |
+| `delayedStart` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  testId?: number | null,
+  projectId?: number | null,
+  sessionsId?: string[] | null,
+  locations?: string[] | null,
+  executions?: any[] | null,
+  isDebugRun?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`tests.stop`
+
+Stop every active execution for a test
+
+**Risk:** `destructive`
+
+```ts
+await corsair.blazemeter.api.tests.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`tests.update`
+
+Update a test configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `test_id` | `number` | Yes | — |
+| `configuration` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  description?: string | null,
+  isNewTest?: boolean | null,
+  lastRunTime?: number | null,
+  userId?: number | null,
+  creatorClientId?: string | null,
+  overrideExecutions?: any[] | null,
+  executions?: any[] | null,
+  hasThreadGroupsToOverride?: boolean | null,
+  hasNonRegularThreadGroup?: boolean | null,
+  shouldSendReportEmail?: boolean | null,
+  dependencies?: any,
+  tags?: {
+    id?: number | null,
+    label?: string | null
+  }[] | null,
+  created?: number | null,
+  updated?: number | null,
+  projectId?: number | null,
+  lastUpdatedById?: number | null,
+  configuration?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadFile
+
+`tests.uploadFile`
+
+Upload a script, data file, or configuration to a test
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | No | — |
+| `testId` | `number` | Yes | — |
+| `fileContent` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fileContent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  lastModified?: number | null,
+  name?: string | null,
+  size?: number | null,
+  link?: string | null,
+  linkExpire?: number | null
+} | {
+  lastModified?: number | null,
+  name?: string | null,
+  size?: number | null,
+  link?: string | null,
+  linkExpire?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`tests.validate`
+
+Start validation for a test configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.tests.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `testId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  success?: boolean | null,
+  files?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validations
+
+`tests.validations`
+
+Get test-file validation results
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.tests.validations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `testId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string | null,
+  fileName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### convert
+
+`transactions.convert`
+
+Convert Swagger, HAR, YAML, or other transaction input to BlazeMeter DSL
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.transactions.convert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | No | — |
+| `verbose` | `boolean` | No | — |
+| `fileContent` | `object` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fileContent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  nativeId?: string | null,
+  priority?: number | null,
+  requestDsl?: {
+    body?: {
+      key?: string | null,
+      matcherName?: string | null,
+      matchingValue?: string | null
+    }[] | null,
+    cookies?: {
+      key?: string | null,
+      matcherName?: string | null,
+      matchingValue?: string | null
+    }[] | null,
+    credentials?: {
+      username?: string | null,
+      password?: string | null
+    } | null,
+    headers?: {
+      key?: string | null,
+      matcherName?: string | null,
+      matchingValue?: string | null
+    }[] | null,
+    host?: string | null,
+    method?: string | null,
+    path?: string | null,
+    queryParams?: {
+      key?: string | null,
+      matcherName?: string | null,
+      matchingValue?: string | null
+    }[] | null,
+    url?: {
+      key?: string | null,
+      matcherName?: string | null,
+      matchingValue?: string | null
+    } | null
+  } | null,
+  responseDsl?: {
+    binary?: boolean | null,
+    charset?: string | null,
+    content?: string | null,
+    contentType?: string | null,
+    headers?: {
+      name?: string | null,
+      value?: string | null
+    }[] | null,
+    proxyUrl?: string | null,
+    status?: number | null,
+    statusMessage?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`transactions.create`
+
+Create service-virtualization transactions in a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.transactions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `number` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `transactions` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  link?: string | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  tags?: string[] | null,
+  dsl?: {
+  } | null
+} | {
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  link?: string | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  tags?: string[] | null,
+  dsl?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List service-virtualization transactions in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiVersion` | `number` | No | — |
+| `error` | `any` | No | — |
+| `limit` | `number` | No | — |
+| `link` | `string` | No | — |
+| `requestId` | `string` | No | — |
+| `result` | `object[]` | Yes | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  link?: string | null,
+  serviceId?: number | null,
+  serviceName?: string | null,
+  tags?: string[] | null,
+  dsl?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### activeSessions
+
+`user.activeSessions`
+
+List active test sessions for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.user.activeSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  testId?: number | null,
+  projectId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`user.get`
+
+Get the authenticated user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.user.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  access?: number | null,
+  login?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  timezone?: number | null,
+  enabled?: boolean | null,
+  roles?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invites
+
+`user.invites`
+
+List pending user invitations
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.user.invites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | number,
+  email?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projects
+
+`user.projects`
+
+List projects available to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.user.projects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  description?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  workspaceId?: number | null,
+  testsCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### register
+
+`user.register`
+
+Register a BlazeMeter user account
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.user.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `lastName` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `firstName` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  access?: number | null,
+  login?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  timezone?: number | null,
+  enabled?: boolean | null,
+  roles?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### terminateSessions
+
+`user.terminateSessions`
+
+Immediately terminate selected active sessions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.blazemeter.api.user.terminateSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_ids` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+## Workspaces
+
+### get
+
+`workspaces.get`
+
+Get workspace details
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  enabled?: boolean | null,
+  dedicatedIpsEnabled?: boolean | null,
+  privateLocationsEnabled?: boolean | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    displayName?: string | null
+  } | null,
+  membersCount?: number | null,
+  allowance?: {
+    amount?: number | null,
+    type?: string | null
+  } | null,
+  accountId?: number | null,
+  locations?: {
+    id?: string | null,
+    title?: string | null,
+    name?: string | null,
+    provider?: string | null,
+    limits?: {
+      threadsPerEngine?: number | null,
+      concurrency?: number | null,
+      engines?: number | null,
+      duration?: number | null
+    } | null,
+    capabilities?: {
+      dedicatedIps?: boolean | null
+    } | null,
+    sandbox?: boolean | null,
+    purposes?: {
+      load?: boolean | null,
+      functional?: boolean | null,
+      grid?: boolean | null,
+      serviceMock?: boolean | null
+    } | null
+  }[] | null,
+  activeMember?: {
+    id?: number | null,
+    email?: string | null,
+    displayName?: string | null,
+    roles?: string[] | null,
+    enabled?: boolean | null,
+    access?: number | null
+  } | null,
+  features?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List workspaces for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `enabled` | `boolean` | No | — |
+| `accountId` | `number` | Yes | — |
+| `textFilter` | `string` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  userId?: number | null,
+  created?: number | null,
+  updated?: number | null,
+  enabled?: boolean | null,
+  dedicatedIpsEnabled?: boolean | null,
+  privateLocationsEnabled?: boolean | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    displayName?: string | null
+  } | null,
+  membersCount?: number | null,
+  allowance?: {
+    amount?: number | null,
+    type?: string | null
+  } | null,
+  accountId?: number | null,
+  locations?: {
+    id?: string | null,
+    title?: string | null,
+    name?: string | null,
+    provider?: string | null,
+    limits?: {
+      threadsPerEngine?: number | null,
+      concurrency?: number | null,
+      engines?: number | null,
+      duration?: number | null
+    } | null,
+    capabilities?: {
+      dedicatedIps?: boolean | null
+    } | null,
+    sandbox?: boolean | null,
+    purposes?: {
+      load?: boolean | null,
+      functional?: boolean | null,
+      grid?: boolean | null,
+      serviceMock?: boolean | null
+    } | null
+  }[] | null,
+  activeMember?: {
+    id?: number | null,
+    email?: string | null,
+    displayName?: string | null,
+    roles?: string[] | null,
+    enabled?: boolean | null,
+    access?: number | null
+  } | null,
+  features?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeLogs
+
+`workspaces.removeLogs`
+
+Delete master execution logs from a workspace
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.workspaces.removeLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `masterIds` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### removeManagers
+
+`workspaces.removeManagers`
+
+Remove managers from a workspace
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.blazemeter.api.workspaces.removeManagers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `managersIds` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `boolean` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### terminateMasters
+
+`workspaces.terminateMasters`
+
+Terminate active master executions in a workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.blazemeter.api.workspaces.terminateMasters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `dryRun` | `boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `number[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+### updateUser
+
+`workspaces.updateUser`
+
+Update a workspace user role and enabled status
+
+**Risk:** `write`
+
+```ts
+await corsair.blazemeter.api.workspaces.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `any[]` | Yes | — |
+| `userId` | `number` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `workspaceId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  login?: number | null,
+  access?: number | null,
+  roles?: string[] | null,
+  enabled?: boolean | null,
+  lastAccess?: number | null,
+  type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users
+
+`workspaces.users`
+
+List users in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.blazemeter.api.workspaces.users({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `any[]` | No | — |
+| `enabled` | `boolean` | No | — |
+| `textFilter` | `string` | No | — |
+| `workspaceId` | `number` | Yes | — |
+| `excludeRoles` | `any[]` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hidden` | `number` | No | — |
+| `api_version` | `number` | No | — |
+| `error` | `any` | No | — |
+| `result` | `object[]` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  displayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  login?: number | null,
+  access?: number | null,
+  roles?: string[] | null,
+  enabled?: boolean | null,
+  lastAccess?: number | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

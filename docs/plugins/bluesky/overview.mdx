@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Decentralized social network for posting feeds, follows, and public conversations."
+---
+
+Use **Bluesky** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 4 typed API operations
+- 1 synced entity (`posts`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/bluesky
+```
+```bash yarn
+yarn add corsair @corsair-dev/bluesky
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/bluesky
+```
+```bash bun
+bun add corsair @corsair-dev/bluesky
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bluesky } from '@corsair-dev/bluesky';
+
+export const corsair = createCorsair({
+	plugins: [
+		bluesky(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+bluesky()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bluesky',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`feeds.getTimeline`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.feeds.getTimeline({});
+```
+
+
+**`posts.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.posts.create({});
+```
+
+
+See the full list on the [API](/plugins/bluesky/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.bluesky.db.<entity>.search()` and `.list()`: `posts`.
+
+See [Database](/plugins/bluesky/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/bluesky/api">
+    Every `bluesky.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/bluesky/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

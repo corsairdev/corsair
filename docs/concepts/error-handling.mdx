@@ -1,0 +1,141 @@
+---
+title: Error handling
+description: Graceful error handling with intelligent retry strategies.
+---
+
+Corsair catches all API errors and routes them through a hierarchical error handling system. You can define handlers at multiple levels, and Corsair will use the most specific one available.
+
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { slack } from "@corsair-dev/slack";
+
+export const corsair = createCorsair({
+    plugins: [
+        slack({
+            authType: "api_key",
+            credentials: { botToken: "xoxb-..." },
+            errorHandlers: {
+                RATE_LIMIT_ERROR: {
+                    match: (error) => error.message.includes("rate_limited"),
+                    handler: async (error, context) => ({
+                        maxRetries: 5,
+                        retryStrategy: "exponential_backoff_jitter",
+                    }),
+                },
+            },
+        }),
+    ],
+});
+```
+
+## Error handler hierarchy
+
+Corsair checks for error handlers in this order:
+
+1. **Plugin-specific error**: e.g., Slack rate limit handler
+2. **Root-level error**: e.g., global rate limit handler for all integrations
+3. **Plugin default**: e.g., default Slack error handler
+4. **Root default**: default handler for all integrations
+5. **Corsair fallback**: built-in handler that fails gracefully
+
+This means you only need to define handlers for the cases you care about.
+
+## Plugin-level handler
+
+Handle errors specific to a single integration.
+
+```ts corsair.ts
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error) => error.message.includes("rate_limited"),
+            handler: async (error, context) => {
+                console.log(`Slack rate limited on ${context.operation}`);
+                return {
+                    maxRetries: 3,
+                    retryStrategy: "exponential_backoff_jitter",
+                };
+            },
+        },
+    },
+})
+```
+
+## Root-level handler
+
+Handle errors across all integrations.
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    plugins: [slack({ ... }), linear({ ... })],
+    errorHandlers: {
+        RATE_LIMIT_ERROR: {
+            match: (error) => {
+                const msg = error.message.toLowerCase();
+                return msg.includes("rate_limited") || msg.includes("429");
+            },
+            handler: async (error, context) => {
+                console.log(`Rate limit on ${context.operation}`);
+                return { maxRetries: 5 };
+            },
+        },
+    },
+});
+```
+
+## Default handler
+
+Catch any error that doesn't match a specific handler.
+
+```ts corsair.ts
+slack({
+    authType: "api_key",
+    credentials: { botToken: "xoxb-..." },
+    errorHandlers: {
+        DEFAULT: {
+            match: () => true,
+            handler: async (error, context) => {
+                console.error(`Unhandled error: ${error.message}`);
+                return { maxRetries: 0 };
+            },
+        },
+    },
+})
+```
+
+## No handler needed
+
+You don't have to define any error handlers. Corsair provides sensible defaults that ensure your application fails gracefully. Start simple and add handlers as needed.
+
+```ts corsair.ts
+// This works fine — Corsair handles errors gracefully by default
+export const corsair = createCorsair({
+    plugins: [slack({ authType: "api_key", credentials: { botToken: "xoxb-..." } })],
+});
+```
+
+## Retry strategies
+
+When returning from an error handler, you can specify:
+
+- `maxRetries`: number of retry attempts
+- `retryStrategy`: `"exponential_backoff_jitter"` or other strategies
+
+```ts
+handler: async (error, context) => ({
+    maxRetries: 5,
+    retryStrategy: "exponential_backoff_jitter",
+})
+```
+
+## Reconnect and auth-missing
+
+The handlers above cover errors from a *connected* integration. When a tenant hasn't connected a plugin yet, or a stored token can no longer be refreshed, Corsair throws a typed error carrying the connect link instead:
+
+- `AuthMissingError` — no usable credential for the tenant. Send them through a connect flow.
+- `ReconnectRequiredError` — a stored connection went stale (for example, a revoked refresh token). Same fix: reconnect.
+
+In a React app, [Corsair Connect](/adapters/react#corsair-connect) turns both into a connect dialog automatically — you don't catch them by hand — and resumes the call when you wrap it in `call`. Anywhere else, read `error.connectUrl` and route the user there.
+

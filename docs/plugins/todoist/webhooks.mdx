@@ -1,0 +1,429 @@
+---
+title: Webhooks
+description: "Todoist incoming webhooks: event paths, payloads, and response data."
+---
+
+The Todoist plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/todoist/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `items`
+  - `added` (`items.added`)
+  - `completed` (`items.completed`)
+  - `deleted` (`items.deleted`)
+  - `uncompleted` (`items.uncompleted`)
+  - `updated` (`items.updated`)
+- `notes`
+  - `added` (`notes.added`)
+  - `deleted` (`notes.deleted`)
+  - `updated` (`notes.updated`)
+- `projects`
+  - `added` (`projects.added`)
+  - `archived` (`projects.archived`)
+  - `deleted` (`projects.deleted`)
+  - `unarchived` (`projects.unarchived`)
+  - `updated` (`projects.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Items
+
+### Added
+
+`items.added`
+
+A new task was added
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        items: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Completed
+
+`items.completed`
+
+A task was completed
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        items: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`items.deleted`
+
+A task was deleted
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        items: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Uncompleted
+
+`items.uncompleted`
+
+A completed task was uncompleted
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        items: {
+            uncompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`items.updated`
+
+A task was updated
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        items: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Notes
+
+### Added
+
+`notes.added`
+
+A new note/comment was added
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        notes: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`notes.deleted`
+
+A note/comment was deleted
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        notes: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`notes.updated`
+
+A note/comment was updated
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        notes: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Projects
+
+### Added
+
+`projects.added`
+
+A new project was created
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        projects: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Archived
+
+`projects.archived`
+
+A project was archived
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        projects: {
+            archived: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`projects.deleted`
+
+A project was deleted
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        projects: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unarchived
+
+`projects.unarchived`
+
+A project was unarchived
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        projects: {
+            unarchived: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`projects.updated`
+
+A project was updated
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+todoist({
+    webhookHooks: {
+        projects: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

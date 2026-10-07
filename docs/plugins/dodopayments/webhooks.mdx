@@ -1,0 +1,424 @@
+---
+title: Webhooks
+description: "Dodo Payments incoming webhooks: event paths, payloads, and response data."
+---
+
+The Dodo Payments plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/dodopayments/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `payments`
+  - `failed` (`payments.failed`)
+  - `succeeded` (`payments.succeeded`)
+- `refunds`
+  - `succeeded` (`refunds.succeeded`)
+- `subscriptions`
+  - `active` (`subscriptions.active`)
+  - `cancelled` (`subscriptions.cancelled`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Payments
+
+### Failed
+
+`payments.failed`
+
+A Dodo payment failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `payment.failed` | Yes | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  amount: number,
+  currency: string,
+  status: string,
+  customer_id?: string | null,
+  subscription_id?: string | null,
+  billing?: {
+  } | null,
+  payment_link?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: payment.failed,
+  created_at?: string,
+  data: {
+    id: string,
+    amount: number,
+    currency: string,
+    status: string,
+    customer_id?: string | null,
+    subscription_id?: string | null,
+    billing?: {
+    } | null,
+    payment_link?: string | null,
+    created_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+dodopayments({
+    webhookHooks: {
+        payments: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Succeeded
+
+`payments.succeeded`
+
+A Dodo payment succeeded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `payment.succeeded` | Yes | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  amount: number,
+  currency: string,
+  status: string,
+  customer_id?: string | null,
+  subscription_id?: string | null,
+  billing?: {
+  } | null,
+  payment_link?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: payment.succeeded,
+  created_at?: string,
+  data: {
+    id: string,
+    amount: number,
+    currency: string,
+    status: string,
+    customer_id?: string | null,
+    subscription_id?: string | null,
+    billing?: {
+    } | null,
+    payment_link?: string | null,
+    created_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+dodopayments({
+    webhookHooks: {
+        payments: {
+            succeeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Refunds
+
+### Succeeded
+
+`refunds.succeeded`
+
+A Dodo refund succeeded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `refund.succeeded` | Yes | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  payment_id: string,
+  amount: number,
+  status: string,
+  reason?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: refund.succeeded,
+  created_at?: string,
+  data: {
+    id: string,
+    payment_id: string,
+    amount: number,
+    status: string,
+    reason?: string | null,
+    created_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+dodopayments({
+    webhookHooks: {
+        refunds: {
+            succeeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Subscriptions
+
+### Active
+
+`subscriptions.active`
+
+A Dodo subscription became active
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `subscription.active` | Yes | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  plan_id?: string | null,
+  status: string,
+  billing_cycle?: {
+  } | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: subscription.active,
+  created_at?: string,
+  data: {
+    id: string,
+    customer_id: string,
+    plan_id?: string | null,
+    status: string,
+    billing_cycle?: {
+    } | null,
+    created_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+dodopayments({
+    webhookHooks: {
+        subscriptions: {
+            active: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Cancelled
+
+`subscriptions.cancelled`
+
+A Dodo subscription was cancelled
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `subscription.cancelled` | Yes | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  plan_id?: string | null,
+  status: string,
+  billing_cycle?: {
+  } | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: subscription.cancelled,
+  created_at?: string,
+  data: {
+    id: string,
+    customer_id: string,
+    plan_id?: string | null,
+    status: string,
+    billing_cycle?: {
+    } | null,
+    created_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+dodopayments({
+    webhookHooks: {
+        subscriptions: {
+            cancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

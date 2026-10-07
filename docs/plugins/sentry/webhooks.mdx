@@ -1,0 +1,1025 @@
+---
+title: Webhooks
+description: "Sentry incoming webhooks: event paths, payloads, and response data."
+---
+
+The Sentry plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/sentry/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `alerts`
+  - `eventAlert` (`alerts.eventAlert`)
+  - `metricAlert` (`alerts.metricAlert`)
+- `comments`
+  - `created` (`comments.created`)
+  - `deleted` (`comments.deleted`)
+  - `updated` (`comments.updated`)
+- `errors`
+  - `created` (`errors.created`)
+- `issues`
+  - `assigned` (`issues.assigned`)
+  - `created` (`issues.created`)
+  - `resolved` (`issues.resolved`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Alerts
+
+### Event Alert
+
+`alerts.eventAlert`
+
+An issue alert rule was triggered
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `triggered` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | No | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event: {
+    event_id?: string,
+    title?: string,
+    message?: string,
+    platform?: string | null,
+    level?: string | null,
+    url?: string
+  },
+  triggered_rule?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: triggered,
+  data: {
+    event: {
+      event_id?: string,
+      title?: string,
+      message?: string,
+      platform?: string | null,
+      level?: string | null,
+      url?: string
+    },
+    triggered_rule?: string
+  },
+  actor?: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        alerts: {
+            eventAlert: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Metric Alert
+
+`alerts.metricAlert`
+
+A metric alert was triggered
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `triggered` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | No | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  metric_alert: {
+    id?: string,
+    title?: string,
+    alert_rule?: {
+      id?: number,
+      name?: string
+    },
+    status?: string,
+    date_triggered?: string
+  },
+  description_title?: string,
+  description_text?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: triggered,
+  data: {
+    metric_alert: {
+      id?: string,
+      title?: string,
+      alert_rule?: {
+        id?: number,
+        name?: string
+      },
+      status?: string,
+      date_triggered?: string
+    },
+    description_title?: string,
+    description_text?: string
+  },
+  actor?: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        alerts: {
+            metricAlert: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Comments
+
+### Created
+
+`comments.created`
+
+A comment was added to an issue
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `created` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  comment_id?: string,
+  issue_id?: string,
+  project_slug?: string,
+  comment?: string,
+  timestamp?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: created,
+  data: {
+    comment_id?: string,
+    issue_id?: string,
+    project_slug?: string,
+    comment?: string,
+    timestamp?: string
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        comments: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`comments.deleted`
+
+A comment was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `deleted` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  comment_id?: string,
+  issue_id?: string,
+  project_slug?: string,
+  comment?: string,
+  timestamp?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: deleted,
+  data: {
+    comment_id?: string,
+    issue_id?: string,
+    project_slug?: string,
+    comment?: string,
+    timestamp?: string
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        comments: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`comments.updated`
+
+A comment was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `updated` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  comment_id?: string,
+  issue_id?: string,
+  project_slug?: string,
+  comment?: string,
+  timestamp?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: updated,
+  data: {
+    comment_id?: string,
+    issue_id?: string,
+    project_slug?: string,
+    comment?: string,
+    timestamp?: string
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        comments: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Errors
+
+### Created
+
+`errors.created`
+
+A new error event was captured in Sentry
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `created` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | No | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  error: {
+    event_id?: string,
+    title?: string,
+    platform?: string | null,
+    level?: string | null,
+    url?: string,
+    culprit?: string | null,
+    project?: string | null,
+    message?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: created,
+  data: {
+    error: {
+      event_id?: string,
+      title?: string,
+      platform?: string | null,
+      level?: string | null,
+      url?: string,
+      culprit?: string | null,
+      project?: string | null,
+      message?: string | null
+    }
+  },
+  actor?: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        errors: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Issues
+
+### Assigned
+
+`issues.assigned`
+
+An issue was assigned to a user or team
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `assigned` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  issue: {
+    id: string,
+    shortId: string,
+    title: string,
+    culprit?: string | null,
+    level?: string | null,
+    status: string,
+    platform?: string | null,
+    type?: string | null,
+    permalink?: string | null,
+    firstSeen?: string | null,
+    lastSeen?: string | null,
+    assignedTo?: {
+      id?: string,
+      name?: string,
+      type?: string
+    } | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: assigned,
+  data: {
+    issue: {
+      id: string,
+      shortId: string,
+      title: string,
+      culprit?: string | null,
+      level?: string | null,
+      status: string,
+      platform?: string | null,
+      type?: string | null,
+      permalink?: string | null,
+      firstSeen?: string | null,
+      lastSeen?: string | null,
+      assignedTo?: {
+        id?: string,
+        name?: string,
+        type?: string
+      } | null
+    }
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        issues: {
+            assigned: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`issues.created`
+
+A new issue was created in Sentry
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `created` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  issue: {
+    id: string,
+    shortId: string,
+    title: string,
+    culprit?: string | null,
+    level?: string | null,
+    status: string,
+    platform?: string | null,
+    type?: string | null,
+    permalink?: string | null,
+    firstSeen?: string | null,
+    lastSeen?: string | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: created,
+  data: {
+    issue: {
+      id: string,
+      shortId: string,
+      title: string,
+      culprit?: string | null,
+      level?: string | null,
+      status: string,
+      platform?: string | null,
+      type?: string | null,
+      permalink?: string | null,
+      firstSeen?: string | null,
+      lastSeen?: string | null
+    }
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        issues: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resolved
+
+`issues.resolved`
+
+An issue was resolved
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `resolved` | Yes | — |
+| `data` | `object` | Yes | — |
+| `actor` | `object` | Yes | — |
+| `installation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  issue: {
+    id: string,
+    shortId: string,
+    title: string,
+    culprit?: string | null,
+    level?: string | null,
+    status: string,
+    platform?: string | null,
+    type?: string | null,
+    permalink?: string | null,
+    firstSeen?: string | null,
+    lastSeen?: string | null
+  },
+  resolution_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="actor full type">
+
+```ts
+{
+  type: string,
+  id?: number,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="installation full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: resolved,
+  data: {
+    issue: {
+      id: string,
+      shortId: string,
+      title: string,
+      culprit?: string | null,
+      level?: string | null,
+      status: string,
+      platform?: string | null,
+      type?: string | null,
+      permalink?: string | null,
+      firstSeen?: string | null,
+      lastSeen?: string | null
+    },
+    resolution_type?: string
+  },
+  actor: {
+    type: string,
+    id?: number,
+    name?: string
+  },
+  installation?: {
+    uuid: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+sentry({
+    webhookHooks: {
+        issues: {
+            resolved: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

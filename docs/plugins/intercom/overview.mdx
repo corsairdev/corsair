@@ -1,0 +1,146 @@
+---
+title: Overview
+description: "Customer messaging platform for support chat, product tours, and user engagement."
+---
+
+Use **Intercom** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 51 typed API operations
+- 5 synced entities (`admins`, `articles`, `companies`, `contacts`, `conversations`) for fast `.search()` / `.list()`
+- 7 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/intercom
+```
+```bash yarn
+yarn add corsair @corsair-dev/intercom
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/intercom
+```
+```bash bun
+bun add corsair @corsair-dev/intercom
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { intercom } from '@corsair-dev/intercom';
+
+export const corsair = createCorsair({
+	plugins: [
+		intercom(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/intercom/get-credentials).
+
+```ts
+intercom()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'intercom',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`admins.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.get({});
+```
+
+
+**`admins.setAway`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.setAway({});
+```
+
+
+See the full list on the [API](/plugins/intercom/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.intercom.db.<entity>.search()` and `.list()`: `admins`, `articles`, `companies`, `contacts`, `conversations`.
+
+See [Database](/plugins/intercom/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **7** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/intercom/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/intercom/api">
+    Every `intercom.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/intercom/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/intercom/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/intercom/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

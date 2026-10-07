@@ -1,0 +1,3678 @@
+---
+title: Webhooks
+description: "Box incoming webhooks: event paths, payloads, and response data."
+---
+
+The Box plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/box/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `collaborations`
+  - `accepted` (`collaborations.accepted`)
+  - `created` (`collaborations.created`)
+  - `rejected` (`collaborations.rejected`)
+  - `removed` (`collaborations.removed`)
+  - `updated` (`collaborations.updated`)
+- `comments`
+  - `created` (`comments.created`)
+  - `deleted` (`comments.deleted`)
+  - `updated` (`comments.updated`)
+- `files`
+  - `copied` (`files.copied`)
+  - `deleted` (`files.deleted`)
+  - `downloaded` (`files.downloaded`)
+  - `locked` (`files.locked`)
+  - `moved` (`files.moved`)
+  - `previewed` (`files.previewed`)
+  - `renamed` (`files.renamed`)
+  - `restored` (`files.restored`)
+  - `trashed` (`files.trashed`)
+  - `unlocked` (`files.unlocked`)
+  - `uploaded` (`files.uploaded`)
+- `folders`
+  - `copied` (`folders.copied`)
+  - `created` (`folders.created`)
+  - `deleted` (`folders.deleted`)
+  - `downloaded` (`folders.downloaded`)
+  - `moved` (`folders.moved`)
+  - `renamed` (`folders.renamed`)
+  - `restored` (`folders.restored`)
+  - `trashed` (`folders.trashed`)
+- `metadata`
+  - `instanceCreated` (`metadata.instanceCreated`)
+  - `instanceDeleted` (`metadata.instanceDeleted`)
+  - `instanceUpdated` (`metadata.instanceUpdated`)
+- `sharedLinks`
+  - `created` (`sharedLinks.created`)
+  - `deleted` (`sharedLinks.deleted`)
+  - `updated` (`sharedLinks.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Collaborations
+
+### Accepted
+
+`collaborations.accepted`
+
+A collaboration invitation was accepted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COLLABORATION.ACCEPTED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COLLABORATION.ACCEPTED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        collaborations: {
+            accepted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`collaborations.created`
+
+A new collaboration was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COLLABORATION.CREATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COLLABORATION.CREATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        collaborations: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Rejected
+
+`collaborations.rejected`
+
+A collaboration invitation was rejected
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COLLABORATION.REJECTED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COLLABORATION.REJECTED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        collaborations: {
+            rejected: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Removed
+
+`collaborations.removed`
+
+A collaboration was removed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COLLABORATION.REMOVED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COLLABORATION.REMOVED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        collaborations: {
+            removed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`collaborations.updated`
+
+A collaboration was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COLLABORATION.UPDATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COLLABORATION.UPDATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        collaborations: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Comments
+
+### Created
+
+`comments.created`
+
+A comment was created on a file
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COMMENT.CREATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COMMENT.CREATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        comments: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`comments.deleted`
+
+A comment was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COMMENT.DELETED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COMMENT.DELETED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        comments: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`comments.updated`
+
+A comment was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `COMMENT.UPDATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: COMMENT.UPDATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        comments: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Files
+
+### Copied
+
+`files.copied`
+
+A file was copied to another location
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.COPIED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.COPIED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            copied: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`files.deleted`
+
+A file was permanently deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.DELETED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.DELETED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Downloaded
+
+`files.downloaded`
+
+A file was downloaded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.DOWNLOADED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.DOWNLOADED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            downloaded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Locked
+
+`files.locked`
+
+A file was locked
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.LOCKED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.LOCKED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            locked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Moved
+
+`files.moved`
+
+A file was moved to another folder
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.MOVED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.MOVED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            moved: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Previewed
+
+`files.previewed`
+
+A file was previewed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.PREVIEWED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.PREVIEWED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            previewed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Renamed
+
+`files.renamed`
+
+A file was renamed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.RENAMED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.RENAMED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            renamed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Restored
+
+`files.restored`
+
+A file was restored from trash
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.RESTORED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.RESTORED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            restored: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Trashed
+
+`files.trashed`
+
+A file was moved to trash
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.TRASHED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.TRASHED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            trashed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unlocked
+
+`files.unlocked`
+
+A file lock was removed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.UNLOCKED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.UNLOCKED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            unlocked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Uploaded
+
+`files.uploaded`
+
+A new file was uploaded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FILE.UPLOADED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FILE.UPLOADED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        files: {
+            uploaded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Folders
+
+### Copied
+
+`folders.copied`
+
+A folder was copied to another location
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.COPIED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.COPIED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            copied: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`folders.created`
+
+A new folder was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.CREATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.CREATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`folders.deleted`
+
+A folder was permanently deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.DELETED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.DELETED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Downloaded
+
+`folders.downloaded`
+
+A folder was downloaded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.DOWNLOADED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.DOWNLOADED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            downloaded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Moved
+
+`folders.moved`
+
+A folder was moved to another location
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.MOVED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.MOVED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            moved: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Renamed
+
+`folders.renamed`
+
+A folder was renamed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.RENAMED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.RENAMED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            renamed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Restored
+
+`folders.restored`
+
+A folder was restored from trash
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.RESTORED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.RESTORED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            restored: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Trashed
+
+`folders.trashed`
+
+A folder was moved to trash
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `FOLDER.TRASHED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: FOLDER.TRASHED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        folders: {
+            trashed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Metadata
+
+### Instance Created
+
+`metadata.instanceCreated`
+
+A metadata instance was created on a file or folder
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `METADATA_INSTANCE.CREATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: METADATA_INSTANCE.CREATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        metadata: {
+            instanceCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Instance Deleted
+
+`metadata.instanceDeleted`
+
+A metadata instance was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `METADATA_INSTANCE.DELETED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: METADATA_INSTANCE.DELETED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        metadata: {
+            instanceDeleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Instance Updated
+
+`metadata.instanceUpdated`
+
+A metadata instance was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `METADATA_INSTANCE.UPDATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: METADATA_INSTANCE.UPDATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        metadata: {
+            instanceUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Shared Links
+
+### Created
+
+`sharedLinks.created`
+
+A shared link was created for a file or folder
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `SHARED_LINK.CREATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: SHARED_LINK.CREATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        sharedLinks: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`sharedLinks.deleted`
+
+A shared link was removed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `SHARED_LINK.DELETED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: SHARED_LINK.DELETED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        sharedLinks: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`sharedLinks.updated`
+
+A shared link settings were updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webhook_event` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `trigger` | `SHARED_LINK.UPDATED` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `created_by` | `object` | Yes | — |
+| `source` | `object` | Yes | — |
+| `additional_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  type: webhook,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="additional_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: webhook_event,
+  id: string,
+  created_at: string,
+  trigger: SHARED_LINK.UPDATED,
+  webhook: {
+    type: webhook,
+    id: string
+  },
+  created_by: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  source: {
+  },
+  additional_info?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+box({
+    webhookHooks: {
+        sharedLinks: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

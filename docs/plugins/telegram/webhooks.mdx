@@ -1,0 +1,309 @@
+---
+title: Webhooks
+description: "Telegram incoming webhooks: event paths, payloads, and response data."
+---
+
+The Telegram plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/telegram/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `callbackQuery`
+  - `callbackQuery` (`callbackQuery.callbackQuery`)
+- `channelPost`
+  - `channelPost` (`channelPost.channelPost`)
+- `editedChannelPost`
+  - `editedChannelPost` (`editedChannelPost.editedChannelPost`)
+- `editedMessage`
+  - `editedMessage` (`editedMessage.editedMessage`)
+- `inlineQuery`
+  - `inlineQuery` (`inlineQuery.inlineQuery`)
+- `message`
+  - `message` (`message.message`)
+- `poll`
+  - `poll` (`poll.poll`)
+- `preCheckoutQuery`
+  - `preCheckoutQuery` (`preCheckoutQuery.preCheckoutQuery`)
+- `shippingQuery`
+  - `shippingQuery` (`shippingQuery.shippingQuery`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Callback Query
+
+### Callback Query
+
+`callbackQuery.callbackQuery`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        callbackQuery: {
+            callbackQuery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Channel Post
+
+### Channel Post
+
+`channelPost.channelPost`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        channelPost: {
+            channelPost: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Edited Channel Post
+
+### Edited Channel Post
+
+`editedChannelPost.editedChannelPost`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        editedChannelPost: {
+            editedChannelPost: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Edited Message
+
+### Edited Message
+
+`editedMessage.editedMessage`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        editedMessage: {
+            editedMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Inline Query
+
+### Inline Query
+
+`inlineQuery.inlineQuery`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        inlineQuery: {
+            inlineQuery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message
+
+### Message
+
+`message.message`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        message: {
+            message: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Poll
+
+### Poll
+
+`poll.poll`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        poll: {
+            poll: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Pre Checkout Query
+
+### Pre Checkout Query
+
+`preCheckoutQuery.preCheckoutQuery`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        preCheckoutQuery: {
+            preCheckoutQuery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Shipping Query
+
+### Shipping Query
+
+`shippingQuery.shippingQuery`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+telegram({
+    webhookHooks: {
+        shippingQuery: {
+            shippingQuery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

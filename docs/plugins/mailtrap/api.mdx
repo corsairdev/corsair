@@ -1,0 +1,2387 @@
+---
+title: API
+description: "API reference for Mailtrap: every `mailtrap.api.*` operation with input and output types."
+---
+
+Every `mailtrap.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getBillingUsage
+
+`account.getBillingUsage`
+
+Get billing usage against the account's testing/sending/marketing plan limits
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.account.getBillingUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billing` | `object` | No | — |
+| `testing` | `object` | No | — |
+| `sending` | `object` | No | — |
+| `marketing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  cycle_start?: string | null,
+  cycle_end?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="testing full type">
+
+```ts
+{
+  plan?: {
+    name?: string | null
+  } | null,
+  usage?: {
+    sent_messages_count?: {
+      current?: number | null,
+      limit?: number | null
+    } | null,
+    forwarded_messages_count?: {
+      current?: number | null,
+      limit?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="sending full type">
+
+```ts
+{
+  plan?: {
+    name?: string | null
+  } | null,
+  usage?: {
+    sent_messages_count?: {
+      current?: number | null,
+      limit?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="marketing full type">
+
+```ts
+{
+  plan?: {
+    name?: string | null
+  } | null,
+  usage?: {
+    sent_messages_count?: {
+      current?: number | null,
+      limit?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPermissionResources
+
+`account.getPermissionResources`
+
+Get every resource (inboxes, projects, domains, billing, account) the token has admin access to, nested by hierarchy
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.account.getPermissionResources({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `lazy[]`
+
+
+---
+
+### listAccounts
+
+`account.listAccounts`
+
+List Mailtrap accounts the token can access
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.account.listAccounts({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  access_levels?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contact Fields
+
+### create
+
+`contactFields.create`
+
+Create a custom contact field
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contactFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `merge_tag` | `string` | Yes | — |
+| `data_type` | `text \| number \| boolean \| date` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `merge_tag` | `string` | No | — |
+| `data_type` | `text \| number \| boolean \| date` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`contactFields.delete`
+
+Permanently delete a custom contact field, dropping its stored values off every contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.contactFields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`contactFields.get`
+
+Get a custom contact field by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contactFields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `merge_tag` | `string` | No | — |
+| `data_type` | `text \| number \| boolean \| date` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`contactFields.list`
+
+List custom contact fields
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contactFields.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  merge_tag?: string | null,
+  data_type?: text | number | boolean | date | null,
+  created_at?: number | null,
+  updated_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contactFields.update`
+
+Update a custom contact field
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contactFields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `merge_tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `merge_tag` | `string` | No | — |
+| `data_type` | `text \| number \| boolean \| date` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+
+
+
+---
+
+## Contact Lists
+
+### create
+
+`contactLists.create`
+
+Create a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contactLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contactLists.delete`
+
+Permanently delete a contact list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.contactLists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`contactLists.get`
+
+Get a contact list by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contactLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`contactLists.list`
+
+List contact lists
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contactLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contactLists.update`
+
+Rename a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contactLists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `fields` | `object` | No | — |
+| `list_ids` | `number[]` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `list_ids` | `number[]` | No | — |
+| `status` | `subscribed \| unsubscribed` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createEvent
+
+`contacts.createEvent`
+
+Record a custom event against a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contacts.createEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | No | — |
+| `contact_email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createExport
+
+`contacts.createExport`
+
+Start an async export of contacts matching a filter
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contacts.createExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  name: string,
+  operator: equal | not_equal | contains | not_contains | is_empty | is_not_empty,
+  value: string | number | boolean | string[] | number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `started \| created \| finished` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by id or email
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `list_ids` | `number[]` | No | — |
+| `status` | `subscribed \| unsubscribed` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExport
+
+`contacts.getExport`
+
+Get the status/download URL of a contact export job
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contacts.getExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `export_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `started \| created \| finished` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### getImport
+
+`contacts.getImport`
+
+Get the status of a contact import job
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.contacts.getImport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `created \| started \| finished \| failed` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `created_contacts_count` | `number` | No | — |
+| `updated_contacts_count` | `number` | No | — |
+| `contacts_over_limit_count` | `number` | No | — |
+
+
+
+---
+
+### import
+
+`contacts.import`
+
+Bulk-import contacts, upserting by email
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contacts.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+  },
+  list_ids_included?: number[],
+  list_ids_excluded?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `created \| started \| finished \| failed` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `created_contacts_count` | `number` | No | — |
+| `updated_contacts_count` | `number` | No | — |
+| `contacts_over_limit_count` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact by id or email
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `fields` | `object` | No | — |
+| `list_ids` | `number[]` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+| `list_ids_included` | `number[]` | No | — |
+| `list_ids_excluded` | `number[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `list_ids` | `number[]` | No | — |
+| `status` | `subscribed \| unsubscribed` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Templates
+
+### create
+
+`emailTemplates.create`
+
+Create an email template
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.emailTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `category` | `string` | Yes | — |
+| `body_html` | `string` | Yes | — |
+| `body_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `category` | `string` | No | — |
+| `body_html` | `string` | No | — |
+| `body_text` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`emailTemplates.delete`
+
+Permanently delete an email template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.emailTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`emailTemplates.get`
+
+Get an email template by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.emailTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `category` | `string` | No | — |
+| `body_html` | `string` | No | — |
+| `body_text` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emailTemplates.list`
+
+List email templates
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.emailTemplates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  uuid?: string | null,
+  name: string,
+  subject?: string | null,
+  category?: string | null,
+  body_html?: string | null,
+  body_text?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`emailTemplates.update`
+
+Update an email template
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.emailTemplates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `category` | `string` | No | — |
+| `body_html` | `string` | No | — |
+| `body_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `category` | `string` | No | — |
+| `body_html` | `string` | No | — |
+| `body_text` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Inboxes
+
+### clean
+
+`inboxes.clean`
+
+Delete every message in a sandbox inbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.inboxes.clean({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+| `max_size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `email_username` | `string` | No | — |
+| `email_username_enabled` | `boolean` | No | — |
+| `sent_messages_count` | `number` | No | — |
+| `forwarded_messages_count` | `number` | No | — |
+| `used` | `boolean` | No | — |
+| `forward_from_email_address` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `pop3_domain` | `string` | No | — |
+| `email_domain` | `string` | No | — |
+| `api_domain` | `string` | No | — |
+| `smtp_ports` | `number[]` | No | — |
+| `pop3_ports` | `number[]` | No | — |
+| `emails_count` | `number` | No | — |
+| `emails_unread_count` | `number` | No | — |
+| `last_message_sent_at` | `string` | No | — |
+| `max_message_size` | `number` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`inboxes.get`
+
+Get an inbox's attributes, including its SMTP credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.inboxes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+| `max_size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `email_username` | `string` | No | — |
+| `email_username_enabled` | `boolean` | No | — |
+| `sent_messages_count` | `number` | No | — |
+| `forwarded_messages_count` | `number` | No | — |
+| `used` | `boolean` | No | — |
+| `forward_from_email_address` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `pop3_domain` | `string` | No | — |
+| `email_domain` | `string` | No | — |
+| `api_domain` | `string` | No | — |
+| `smtp_ports` | `number[]` | No | — |
+| `pop3_ports` | `number[]` | No | — |
+| `emails_count` | `number` | No | — |
+| `emails_unread_count` | `number` | No | — |
+| `last_message_sent_at` | `string` | No | — |
+| `max_message_size` | `number` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inboxes.list`
+
+List sandbox inboxes
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.inboxes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  username?: string | null,
+  password?: string | null,
+  max_size?: number | null,
+  status?: string | null,
+  email_username?: string | null,
+  email_username_enabled?: boolean | null,
+  sent_messages_count?: number | null,
+  forwarded_messages_count?: number | null,
+  used?: boolean | null,
+  forward_from_email_address?: string | null,
+  project_id?: number | null,
+  domain?: string | null,
+  pop3_domain?: string | null,
+  email_domain?: string | null,
+  api_domain?: string | null,
+  smtp_ports?: number[] | null,
+  pop3_ports?: number[] | null,
+  emails_count?: number | null,
+  emails_unread_count?: number | null,
+  last_message_sent_at?: string | null,
+  max_message_size?: number | null,
+  permissions?: {
+    can_read?: boolean | null,
+    can_update?: boolean | null,
+    can_destroy?: boolean | null,
+    can_leave?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markAsRead
+
+`inboxes.markAsRead`
+
+Mark every message in a sandbox inbox as read
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.inboxes.markAsRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+| `max_size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `email_username` | `string` | No | — |
+| `email_username_enabled` | `boolean` | No | — |
+| `sent_messages_count` | `number` | No | — |
+| `forwarded_messages_count` | `number` | No | — |
+| `used` | `boolean` | No | — |
+| `forward_from_email_address` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `pop3_domain` | `string` | No | — |
+| `email_domain` | `string` | No | — |
+| `api_domain` | `string` | No | — |
+| `smtp_ports` | `number[]` | No | — |
+| `pop3_ports` | `number[]` | No | — |
+| `emails_count` | `number` | No | — |
+| `emails_unread_count` | `number` | No | — |
+| `last_message_sent_at` | `string` | No | — |
+| `max_message_size` | `number` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetCredentials
+
+`inboxes.resetCredentials`
+
+Reset an inbox's SMTP credentials, invalidating the previous ones
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.inboxes.resetCredentials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+| `max_size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `email_username` | `string` | No | — |
+| `email_username_enabled` | `boolean` | No | — |
+| `sent_messages_count` | `number` | No | — |
+| `forwarded_messages_count` | `number` | No | — |
+| `used` | `boolean` | No | — |
+| `forward_from_email_address` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `pop3_domain` | `string` | No | — |
+| `email_domain` | `string` | No | — |
+| `api_domain` | `string` | No | — |
+| `smtp_ports` | `number[]` | No | — |
+| `pop3_ports` | `number[]` | No | — |
+| `emails_count` | `number` | No | — |
+| `emails_unread_count` | `number` | No | — |
+| `last_message_sent_at` | `string` | No | — |
+| `max_message_size` | `number` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`inboxes.update`
+
+Update an inbox's name and/or email username
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.inboxes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email_username` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | No | — |
+| `password` | `string` | No | — |
+| `max_size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `email_username` | `string` | No | — |
+| `email_username_enabled` | `boolean` | No | — |
+| `sent_messages_count` | `number` | No | — |
+| `forwarded_messages_count` | `number` | No | — |
+| `used` | `boolean` | No | — |
+| `forward_from_email_address` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `pop3_domain` | `string` | No | — |
+| `email_domain` | `string` | No | — |
+| `api_domain` | `string` | No | — |
+| `smtp_ports` | `number[]` | No | — |
+| `pop3_ports` | `number[]` | No | — |
+| `emails_count` | `number` | No | — |
+| `emails_unread_count` | `number` | No | — |
+| `last_message_sent_at` | `string` | No | — |
+| `max_message_size` | `number` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### getHtml
+
+`messages.getHtml`
+
+Get the formatted HTML body of a message
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.messages.getHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+| `message_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a sandbox inbox
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inbox_id` | `number` | Yes | — |
+| `last_id` | `number` | No | — |
+| `page` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  inbox_id?: number | null,
+  subject?: string | null,
+  sent_at?: string | null,
+  from_email?: string | null,
+  from_name?: string | null,
+  to_email?: string | null,
+  to_name?: string | null,
+  email_size?: number | null,
+  is_read?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  html_body_size?: number | null,
+  text_body_size?: number | null,
+  human_size?: string | null,
+  html_path?: string | null,
+  txt_path?: string | null,
+  raw_path?: string | null,
+  download_path?: string | null,
+  html_source_path?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project and every inbox in it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project and its inboxes by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `share_links` | `object` | No | — |
+| `inboxes` | `object[]` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="share_links full type">
+
+```ts
+{
+  admin?: string | null,
+  viewer?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="inboxes full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  username?: string | null,
+  password?: string | null,
+  max_size?: number | null,
+  status?: string | null,
+  email_username?: string | null,
+  email_username_enabled?: boolean | null,
+  sent_messages_count?: number | null,
+  forwarded_messages_count?: number | null,
+  used?: boolean | null,
+  forward_from_email_address?: string | null,
+  project_id?: number | null,
+  domain?: string | null,
+  pop3_domain?: string | null,
+  email_domain?: string | null,
+  api_domain?: string | null,
+  smtp_ports?: number[] | null,
+  pop3_ports?: number[] | null,
+  emails_count?: number | null,
+  emails_unread_count?: number | null,
+  last_message_sent_at?: string | null,
+  max_message_size?: number | null,
+  permissions?: {
+    can_read?: boolean | null,
+    can_update?: boolean | null,
+    can_destroy?: boolean | null,
+    can_leave?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects and their sandbox inboxes
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  share_links?: {
+    admin?: string | null,
+    viewer?: string | null
+  } | null,
+  inboxes?: {
+    id: number,
+    name: string,
+    username?: string | null,
+    password?: string | null,
+    max_size?: number | null,
+    status?: string | null,
+    email_username?: string | null,
+    email_username_enabled?: boolean | null,
+    sent_messages_count?: number | null,
+    forwarded_messages_count?: number | null,
+    used?: boolean | null,
+    forward_from_email_address?: string | null,
+    project_id?: number | null,
+    domain?: string | null,
+    pop3_domain?: string | null,
+    email_domain?: string | null,
+    api_domain?: string | null,
+    smtp_ports?: number[] | null,
+    pop3_ports?: number[] | null,
+    emails_count?: number | null,
+    emails_unread_count?: number | null,
+    last_message_sent_at?: string | null,
+    max_message_size?: number | null,
+    permissions?: {
+      can_read?: boolean | null,
+      can_update?: boolean | null,
+      can_destroy?: boolean | null,
+      can_leave?: boolean | null
+    } | null
+  }[] | null,
+  permissions?: {
+    can_read?: boolean | null,
+    can_update?: boolean | null,
+    can_destroy?: boolean | null,
+    can_leave?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Rename a project
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `share_links` | `object` | No | — |
+| `inboxes` | `object[]` | No | — |
+| `permissions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="share_links full type">
+
+```ts
+{
+  admin?: string | null,
+  viewer?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="inboxes full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  username?: string | null,
+  password?: string | null,
+  max_size?: number | null,
+  status?: string | null,
+  email_username?: string | null,
+  email_username_enabled?: boolean | null,
+  sent_messages_count?: number | null,
+  forwarded_messages_count?: number | null,
+  used?: boolean | null,
+  forward_from_email_address?: string | null,
+  project_id?: number | null,
+  domain?: string | null,
+  pop3_domain?: string | null,
+  email_domain?: string | null,
+  api_domain?: string | null,
+  smtp_ports?: number[] | null,
+  pop3_ports?: number[] | null,
+  emails_count?: number | null,
+  emails_unread_count?: number | null,
+  last_message_sent_at?: string | null,
+  max_message_size?: number | null,
+  permissions?: {
+    can_read?: boolean | null,
+    can_update?: boolean | null,
+    can_destroy?: boolean | null,
+    can_leave?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="permissions full type">
+
+```ts
+{
+  can_read?: boolean | null,
+  can_update?: boolean | null,
+  can_destroy?: boolean | null,
+  can_leave?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sending Domains
+
+### create
+
+`sendingDomains.create`
+
+Register a sending domain for DNS verification
+
+**Risk:** `write`
+
+```ts
+await corsair.mailtrap.api.sendingDomains.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `domain_name` | `string` | Yes | — |
+| `demo` | `boolean` | No | — |
+| `inbound_enabled` | `boolean` | No | — |
+| `inbound_verified` | `boolean` | No | — |
+| `open_tracking_enabled` | `boolean` | No | — |
+| `click_tracking_enabled` | `boolean` | No | — |
+| `auto_unsubscribe_link_enabled` | `boolean` | No | — |
+| `custom_domain_tracking_enabled` | `boolean` | No | — |
+| `health_alerts_enabled` | `boolean` | No | — |
+| `critical_alerts_enabled` | `boolean` | No | — |
+| `alert_recipient_email` | `string` | No | — |
+| `dns_records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dns_records full type">
+
+```ts
+{
+  key?: string | null,
+  domain?: string | null,
+  name?: string | null,
+  type?: string | null,
+  value?: string | null,
+  status?: string | null,
+  actual?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sendingDomains.delete`
+
+Permanently remove a sending domain
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailtrap.api.sendingDomains.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`sendingDomains.get`
+
+Get a sending domain by id, including its DNS records
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.sendingDomains.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `domain_name` | `string` | Yes | — |
+| `demo` | `boolean` | No | — |
+| `inbound_enabled` | `boolean` | No | — |
+| `inbound_verified` | `boolean` | No | — |
+| `open_tracking_enabled` | `boolean` | No | — |
+| `click_tracking_enabled` | `boolean` | No | — |
+| `auto_unsubscribe_link_enabled` | `boolean` | No | — |
+| `custom_domain_tracking_enabled` | `boolean` | No | — |
+| `health_alerts_enabled` | `boolean` | No | — |
+| `critical_alerts_enabled` | `boolean` | No | — |
+| `alert_recipient_email` | `string` | No | — |
+| `dns_records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dns_records full type">
+
+```ts
+{
+  key?: string | null,
+  domain?: string | null,
+  name?: string | null,
+  type?: string | null,
+  value?: string | null,
+  status?: string | null,
+  actual?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sendingDomains.list`
+
+List sending domains
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.sendingDomains.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  domain_name: string,
+  demo?: boolean | null,
+  inbound_enabled?: boolean | null,
+  inbound_verified?: boolean | null,
+  open_tracking_enabled?: boolean | null,
+  click_tracking_enabled?: boolean | null,
+  auto_unsubscribe_link_enabled?: boolean | null,
+  custom_domain_tracking_enabled?: boolean | null,
+  health_alerts_enabled?: boolean | null,
+  critical_alerts_enabled?: boolean | null,
+  alert_recipient_email?: string | null,
+  dns_records?: {
+    key?: string | null,
+    domain?: string | null,
+    name?: string | null,
+    type?: string | null,
+    value?: string | null,
+    status?: string | null,
+    actual?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Stats
+
+### byCategories
+
+`stats.byCategories`
+
+Get sending stats broken down by category
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.stats.byCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+| `sending_domain_ids` | `number[]` | No | — |
+| `sending_streams` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `email_service_providers` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  category?: string | null,
+  stats: {
+    delivery_count?: number | null,
+    delivery_rate?: number | null,
+    bounce_count?: number | null,
+    bounce_rate?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null,
+    spam_count?: number | null,
+    spam_rate?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### byDate
+
+`stats.byDate`
+
+Get sending stats broken down by day
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.stats.byDate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+| `sending_domain_ids` | `number[]` | No | — |
+| `sending_streams` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `email_service_providers` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  date?: string | null,
+  stats: {
+    delivery_count?: number | null,
+    delivery_rate?: number | null,
+    bounce_count?: number | null,
+    bounce_rate?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null,
+    spam_count?: number | null,
+    spam_rate?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### byDomains
+
+`stats.byDomains`
+
+Get sending stats broken down by sending domain
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.stats.byDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+| `sending_domain_ids` | `number[]` | No | — |
+| `sending_streams` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `email_service_providers` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sending_domain_id?: number | null,
+  stats: {
+    delivery_count?: number | null,
+    delivery_rate?: number | null,
+    bounce_count?: number | null,
+    bounce_rate?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null,
+    spam_count?: number | null,
+    spam_rate?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### byEsp
+
+`stats.byEsp`
+
+Get sending stats broken down by recipient email service provider
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.stats.byEsp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+| `sending_domain_ids` | `number[]` | No | — |
+| `sending_streams` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `email_service_providers` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email_service_provider?: string | null,
+  stats: {
+    delivery_count?: number | null,
+    delivery_rate?: number | null,
+    bounce_count?: number | null,
+    bounce_rate?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null,
+    spam_count?: number | null,
+    spam_rate?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`stats.get`
+
+Get aggregated sending stats for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.stats.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | Yes | — |
+| `end_date` | `string` | Yes | — |
+| `sending_domain_ids` | `number[]` | No | — |
+| `sending_streams` | `string[]` | No | — |
+| `categories` | `string[]` | No | — |
+| `email_service_providers` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivery_count` | `number` | No | — |
+| `delivery_rate` | `number` | No | — |
+| `bounce_count` | `number` | No | — |
+| `bounce_rate` | `number` | No | — |
+| `open_count` | `number` | No | — |
+| `open_rate` | `number` | No | — |
+| `click_count` | `number` | No | — |
+| `click_rate` | `number` | No | — |
+| `spam_count` | `number` | No | — |
+| `spam_rate` | `number` | No | — |
+
+
+
+---
+
+## Suppressions
+
+### list
+
+`suppressions.list`
+
+List (and optionally search) suppressed email addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.mailtrap.api.suppressions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type?: hard bounce | spam complaint | unsubscription | manual import | null,
+  created_at?: string | null,
+  email: string,
+  sending_stream?: transactional | bulk | null,
+  domain_name?: string | null,
+  message_bounce_category?: string | null,
+  message_category?: string | null,
+  message_client_ip?: string | null,
+  message_created_at?: string | null,
+  message_outgoing_ip?: string | null,
+  message_recipient_mx_name?: string | null,
+  message_sender_email?: string | null,
+  message_subject?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

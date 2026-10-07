@@ -1,0 +1,146 @@
+---
+title: Overview
+description: "Frontend cloud platform for deploying sites, serverless functions, and edge web applications."
+---
+
+Use **Vercel** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 14 typed API operations
+- 6 synced entities (`aliases`, `deployments`, `domains`, `envs`, `projects`, `teams`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/vercel
+```
+```bash yarn
+yarn add corsair @corsair-dev/vercel
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/vercel
+```
+```bash bun
+bun add corsair @corsair-dev/vercel
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { vercel } from '@corsair-dev/vercel';
+
+export const corsair = createCorsair({
+	plugins: [
+		vercel(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/vercel/get-credentials).
+
+```ts
+vercel()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'vercel',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`aliases.getAliases`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.aliases.getAliases({});
+```
+
+
+**`aliases.assignAlias`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.aliases.assignAlias({});
+```
+
+
+See the full list on the [API](/plugins/vercel/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.vercel.db.<entity>.search()` and `.list()`: `aliases`, `deployments`, `domains`, `envs`, `projects`, `teams`.
+
+See [Database](/plugins/vercel/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/vercel/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/vercel/api">
+    Every `vercel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/vercel/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/vercel/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/vercel/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

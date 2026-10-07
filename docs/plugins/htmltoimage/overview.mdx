@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Screenshot API for converting HTML, URLs, and templates into PNG or JPEG images."
+---
+
+Use **HTML to Image** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 3 typed API operations
+- 2 synced entities (`accounts`, `renders`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/htmltoimage
+```
+```bash yarn
+yarn add corsair @corsair-dev/htmltoimage
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/htmltoimage
+```
+```bash bun
+bun add corsair @corsair-dev/htmltoimage
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { htmltoimage } from '@corsair-dev/htmltoimage';
+
+export const corsair = createCorsair({
+	plugins: [
+		htmltoimage(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+htmltoimage()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'htmltoimage',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.checkUsage`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.htmltoimage.api.account.checkUsage({});
+```
+
+
+**`html.convertToImage`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.htmltoimage.api.html.convertToImage({});
+```
+
+
+See the full list on the [API](/plugins/htmltoimage/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.htmltoimage.db.<entity>.search()` and `.list()`: `accounts`, `renders`.
+
+See [Database](/plugins/htmltoimage/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/htmltoimage/api">
+    Every `htmltoimage.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/htmltoimage/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

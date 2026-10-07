@@ -1991,6 +1991,7 @@ async function main() {
 			`--all: ${dirs.length - failed}/${dirs.length} plugins ok, ${failed} failed.`,
 		);
 		refreshExplorerCatalog(root);
+		writeMintlifyDocs(root, process.argv.slice(2));
 		process.exit(failed > 0 ? 1 : 0);
 	}
 
@@ -2017,6 +2018,40 @@ async function main() {
 	}
 
 	refreshExplorerCatalog(root);
+	writeMintlifyDocs(root, process.argv.slice(2));
+}
+
+/**
+ * TEMPORARY — remove with `docs/` at the Mintlify cutover. Mintlify still
+ * serves docs.corsair.dev, so a plugin PR has to write both trees or the live
+ * site silently stops tracking the plugins.
+ */
+function writeMintlifyDocs(root: string, argv: string[]): void {
+	try {
+		execFileSync(
+			'pnpm',
+			[
+				'exec',
+				'tsx',
+				'--conditions=dev-source',
+				'scripts/generate-plugin-docs-mintlify.ts',
+				...argv,
+			],
+			{ cwd: root, stdio: 'inherit' },
+		);
+		// The Mintlify generator writes expanded JSON; the committed nav is
+		// biome-formatted, so without this every run shows as a diff.
+		execFileSync('pnpm', ['exec', 'biome', 'format', '--write', 'docs'], {
+			cwd: root,
+			stdio: 'inherit',
+		});
+	} catch {
+		console.error(
+			'\nMintlify docs generation failed. docs/ still serves docs.corsair.dev,\n' +
+				'so commit only once both trees are written.',
+		);
+		process.exit(1);
+	}
 }
 
 /**

@@ -1,0 +1,11 @@
+```ts src/pages/api/corsair/[...path].ts
+import { managementHandler } from 'corsair';
+import { corsair } from '../../../server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const GET = ({ request }) => handler(request);
+export const POST = ({ request }) => handler(request);
+export const prerender = false;
+```
+
+<Warning>Set `prerender = false` so the Corsair route runs on the server, not at build time.</Warning>

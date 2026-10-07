@@ -1,0 +1,172 @@
+---
+title: Overview
+description: "Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data."
+---
+
+Use **Airtable** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 9 typed API operations
+- 2 synced entities (`bases`, `records`) for fast `.search()` / `.list()`
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/airtable
+```
+```bash yarn
+yarn add corsair @corsair-dev/airtable
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/airtable
+```
+```bash bun
+bun add corsair @corsair-dev/airtable
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { airtable } from '@corsair-dev/airtable';
+
+export const corsair = createCorsair({
+	plugins: [
+		airtable(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/airtable/get-credentials).
+
+```ts
+airtable()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'airtable',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List accessible bases**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.bases.getMany({});
+```
+
+
+**Create a record**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.create({
+	baseId: 'appXXXXXXXXXXXXXX',
+	tableIdOrName: 'tblXXXXXXXXXXXXXX',
+	fields: { Name: 'Ada Lovelace' },
+});
+```
+
+
+See the full list on the [API](/plugins/airtable/api) page.
+
+## Query synced data
+
+Search synced Airtable records without calling the API again.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.airtable.db.records.search({
+	data: { tableId: 'tblXXXXXXXXXXXXXX' },
+	limit: 20,
+});
+```
+
+Synced entities: `bases`, `records`. See [Database](/plugins/airtable/database) for filters and operators.
+
+## Webhooks
+
+React when an Airtable base sends a change notification.
+
+```ts
+airtable({
+    webhookHooks: {
+        events: {
+            event: {
+                after: async (ctx, result) => {
+                    console.log('Airtable event:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/airtable/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/airtable/api">
+    Every `airtable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/airtable/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/airtable/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/airtable/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

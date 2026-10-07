@@ -1,0 +1,538 @@
+---
+title: API
+description: "API reference for ElevenLabs Studio: every `studiobyai21labs.api.*` operation with input and output types."
+---
+
+Every `studiobyai21labs.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### completions
+
+`chat.completions`
+
+Generate a Jamba chat completion from a conversation history
+
+**Risk:** `write`
+
+```ts
+await corsair.studiobyai21labs.api.chat.completions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `tools` | `object[]` | No | — |
+| `documents` | `object[]` | No | — |
+| `response_format` | `object` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `n` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content?: string | null,
+  tool_calls?: {
+    id: string,
+    type: string,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  tool_call_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: {
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="documents full type">
+
+```ts
+{
+  content: string,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text | json_object
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message?: {
+    role?: string,
+    content?: string | null,
+    tool_calls?: any[]
+  },
+  finish_reason?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number,
+  completion_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Library
+
+### delete
+
+`library.delete`
+
+Delete a library file
+
+**Risk:** `write`
+
+```ts
+await corsair.studiobyai21labs.api.library.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### download
+
+`library.download`
+
+Get a signed download URL for a library file
+
+**Risk:** `read`
+
+```ts
+await corsair.studiobyai21labs.api.library.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### get
+
+`library.get`
+
+Get metadata for a library file
+
+**Risk:** `read`
+
+```ts
+await corsair.studiobyai21labs.api.library.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `errorCode` | `string` | No | — |
+| `errorMessage` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`library.list`
+
+List workspace library files with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.studiobyai21labs.api.library.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `status` | `DB_RECORD_CREATED \| UPLOADED \| UPLOAD_FAILED \| PROCESSED \| PROCESSING_FAILED` | No | — |
+| `label` | `string \| string[]` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  created_at?: string,
+  labels?: string[],
+  errorCode?: string,
+  errorMessage?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`library.update`
+
+Update a library file public URL or labels
+
+**Risk:** `write`
+
+```ts
+await corsair.studiobyai21labs.api.library.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `publicUrl` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### upload
+
+`library.upload`
+
+Upload a file or register a public URL in the library
+
+**Risk:** `write`
+
+```ts
+await corsair.studiobyai21labs.api.library.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string \| custom` | No | — |
+| `fileName` | `string` | No | — |
+| `path` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `publicUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Maestro
+
+### createRun
+
+`maestro.createRun`
+
+Create an AI21 Maestro run
+
+**Risk:** `write`
+
+```ts
+await corsair.studiobyai21labs.api.maestro.createRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object[]` | Yes | — |
+| `system_prompt` | `string` | No | — |
+| `requirements` | `object[]` | No | — |
+| `tools` | `object[]` | No | — |
+| `models` | `string[]` | No | — |
+| `budget` | `low \| medium \| high` | No | — |
+| `include` | `data_sources \| requirements_result[]` | No | — |
+| `response_language` | `arabic \| dutch \| english \| french \| german \| hebrew \| italian \| portuguese \| spanish` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | {
+  role: user | assistant,
+  content: string
+}[]
+```
+</Accordion>
+
+<Accordion title="requirements full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  is_mandatory?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+(
+  {
+    type: mcp,
+    server_label: string,
+    server_url: string,
+    headers?: {
+    },
+    allowed_tools?: string[]
+  } | {
+    type: http,
+    function: {
+      name: string,
+      description?: string,
+      parameters?: {
+      }
+    },
+    endpoint: {
+      url: string,
+      headers?: {
+      }
+    }
+  } | {
+    type: file_search,
+    labels?: string[],
+    file_ids?: string[]
+  } | {
+    type: web_search,
+    urls?: string[]
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `completed \| failed \| in_progress` | No | — |
+| `result` | `any` | No | — |
+| `requirements_result` | `object` | No | — |
+| `data_sources` | `object` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requirements_result full type">
+
+```ts
+{
+  score?: number,
+  finish_reason?: string,
+  requirements?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="data_sources full type">
+
+```ts
+{
+  web_search?: any[],
+  file_search?: any[],
+  tool_calls?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveRun
+
+`maestro.retrieveRun`
+
+Retrieve an AI21 Maestro run by id
+
+**Risk:** `read`
+
+```ts
+await corsair.studiobyai21labs.api.maestro.retrieveRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `completed \| failed \| in_progress` | No | — |
+| `result` | `any` | No | — |
+| `requirements_result` | `object` | No | — |
+| `data_sources` | `object` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requirements_result full type">
+
+```ts
+{
+  score?: number,
+  finish_reason?: string,
+  requirements?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="data_sources full type">
+
+```ts
+{
+  web_search?: any[],
+  file_search?: any[],
+  tool_calls?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

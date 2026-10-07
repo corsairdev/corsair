@@ -1,0 +1,278 @@
+---
+title: API
+description: "API reference for AgentQL: every `agentql.api.*` operation with input and output types."
+---
+
+Every `agentql.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Browser Sessions
+
+### createRemoteBrowserSession
+
+`browserSessions.createRemoteBrowserSession`
+
+Tool to create a remote browser session. Use when you need to run browser automation on remote infrastructure.
+
+**Risk:** `write`
+
+```ts
+await corsair.agentql.api.browserSessions.createRemoteBrowserSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `browser_ua_preset` | `windows \| macos \| linux` | No | — |
+| `browser_profile` | `light \| stealth \| tf-browser` | No | — |
+| `inactivity_timeout_seconds` | `number` | No | — |
+| `proxy` | `object` | No | — |
+| `shutdown_mode` | `on_disconnect \| on_inactivity_timeout` | No | — |
+| `sub_user_id` | `string` | No | — |
+| `branding` | `boolean` | No | — |
+| `browser_startup_url` | `string \| about:blank` | No | — |
+
+<AccordionGroup>
+<Accordion title="proxy full type">
+
+```ts
+{
+  type?: tetra,
+  country_code?: string
+} | {
+  type?: custom,
+  url: string,
+  username?: string | null,
+  password?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `cdp_url` | `string` | Yes | — |
+| `base_url` | `string` | Yes | — |
+
+
+
+---
+
+## Data
+
+### query
+
+`data.query`
+
+Tool to query structured data as JSON from a web page using an AgentQL query or natural language prompt. Use after defining your query or prompt and a URL or HTML.
+
+**Risk:** `read`
+
+```ts
+await corsair.agentql.api.data.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+  wait_for?: number,
+  is_scroll_to_bottom_enabled?: boolean,
+  mode?: fast | standard,
+  is_screenshot_enabled?: boolean,
+  browser_profile?: light | stealth | tf-browser,
+  proxy?: {
+    type?: tetra,
+    country_code?: string
+  } | {
+    type?: custom,
+    url: string,
+    username?: string | null,
+    password?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  generated_query?: string | null,
+  screenshot?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryDocument
+
+`data.queryDocument`
+
+Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.
+
+**Risk:** `read`
+
+```ts
+await corsair.agentql.api.data.queryDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | — |
+| `fileName` | `string` | No | — |
+| `query` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+  mode?: fast | standard
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string,
+  generated_query?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Usage
+
+### get
+
+`usage.get`
+
+Retrieves API usage statistics and subscription limits for the AgentQL account. Returns current billing cycle dates, lifetime usage limits, API key usage counts, and total account usage. Useful for monitoring quota consumption and planning usage. No parameters required - uses the authenticated API key from connection settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.agentql.api.usage.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_subscription?: {
+    lifetime_usage_limit?: number | null,
+    current_cycle_free_usage_limit?: number | null,
+    current_cycle_start?: string,
+    current_cycle_end?: string
+  } | null,
+  api_key_usage: {
+    current_cycle?: number | null,
+    lifetime?: number
+  },
+  total_account_usage: {
+    current_cycle?: number | null,
+    lifetime?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,686 @@
+---
+title: API
+description: "API reference for TickTick: every `ticktick.api.*` operation with input and output types."
+---
+
+Every `ticktick.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Oauth
+
+### generateAuthUrl
+
+`oauth.generateAuthUrl`
+
+Generate TickTick OAuth2 authorization URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.oauth.generateAuthUrl({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.ticktick.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `viewMode` | `list \| kanban \| timeline` | No | — |
+| `kind` | `TASK \| NOTE` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `closed` | `boolean` | No | — |
+| `viewMode` | `list \| kanban \| timeline` | No | — |
+| `kind` | `TASK \| NOTE` | No | — |
+| `groupId` | `string` | No | — |
+| `permission` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project and its tasks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ticktick.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `closed` | `boolean` | No | — |
+| `viewMode` | `list \| kanban \| timeline` | No | — |
+| `kind` | `TASK \| NOTE` | No | — |
+| `groupId` | `string` | No | — |
+| `permission` | `string` | No | — |
+
+
+
+---
+
+### getData
+
+`projects.getData`
+
+Get a project with its tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.projects.getData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+| `columns` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  color?: string | null,
+  sortOrder?: number | null,
+  closed?: boolean | null,
+  viewMode?: list | kanban | timeline | null,
+  kind?: TASK | NOTE | null,
+  groupId?: string | null,
+  permission?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: string,
+  projectId?: string | null,
+  title: string,
+  content?: string | null,
+  desc?: string | null,
+  priority?: number | null,
+  status?: -1 | 0 | 2 | null,
+  dueDate?: string | null,
+  startDate?: string | null,
+  completedTime?: string | null,
+  timeZone?: string | null,
+  isAllDay?: boolean | null,
+  columnId?: string | null,
+  parentId?: string | null,
+  sortOrder?: number | null,
+  reminders?: string[] | null,
+  tags?: string[] | null,
+  repeatFlag?: string | null,
+  items?: {
+    id?: string,
+    title: string,
+    status: number,
+    startDate?: string,
+    isAllDay?: boolean
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="columns full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  sortOrder?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`projects.getMany`
+
+Get user projects (TickTick omits Inbox)
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.projects.getMany({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  color?: string | null,
+  sortOrder?: number | null,
+  closed?: boolean | null,
+  viewMode?: list | kanban | timeline | null,
+  kind?: TASK | NOTE | null,
+  groupId?: string | null,
+  permission?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update project details
+
+**Risk:** `write`
+
+```ts
+await corsair.ticktick.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `viewMode` | `list \| kanban \| timeline` | No | — |
+| `kind` | `TASK \| NOTE` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `closed` | `boolean` | No | — |
+| `viewMode` | `list \| kanban \| timeline` | No | — |
+| `kind` | `TASK \| NOTE` | No | — |
+| `groupId` | `string` | No | — |
+| `permission` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### complete
+
+`tasks.complete`
+
+Mark a task as complete
+
+**Risk:** `write`
+
+```ts
+await corsair.ticktick.api.tasks.complete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`tasks.create`
+
+Create a new task
+
+**Risk:** `write`
+
+```ts
+await corsair.ticktick.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `dueDate` | `string` | No | ISO 8601 datetime, e.g. '2019-11-13T03:00:00+0000' |
+| `startDate` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  status: number,
+  startDate?: string,
+  isAllDay?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `completedTime` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `columnId` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `reminders` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `repeatFlag` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  status: number,
+  startDate?: string,
+  isAllDay?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Permanently delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ticktick.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by project and ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `completedTime` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `columnId` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `reminders` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `repeatFlag` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  status: number,
+  startDate?: string,
+  isAllDay?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAll
+
+`tasks.listAll`
+
+List open tasks across listed user projects (excludes Inbox)
+
+**Risk:** `read`
+
+```ts
+await corsair.ticktick.api.tasks.listAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  projectId?: string | null,
+  title: string,
+  content?: string | null,
+  desc?: string | null,
+  priority?: number | null,
+  status?: -1 | 0 | 2 | null,
+  dueDate?: string | null,
+  startDate?: string | null,
+  completedTime?: string | null,
+  timeZone?: string | null,
+  isAllDay?: boolean | null,
+  columnId?: string | null,
+  parentId?: string | null,
+  sortOrder?: number | null,
+  reminders?: string[] | null,
+  tags?: string[] | null,
+  repeatFlag?: string | null,
+  items?: {
+    id?: string,
+    title: string,
+    status: number,
+    startDate?: string,
+    isAllDay?: boolean
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update an existing task
+
+**Risk:** `write`
+
+```ts
+await corsair.ticktick.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `number` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `columnId` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  status: number,
+  startDate?: string,
+  isAllDay?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `completedTime` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `columnId` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `sortOrder` | `number` | No | — |
+| `reminders` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `repeatFlag` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  status: number,
+  startDate?: string,
+  isAllDay?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

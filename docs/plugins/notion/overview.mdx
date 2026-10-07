@@ -1,0 +1,203 @@
+---
+title: Overview
+description: "All-in-one workspace for notes, databases, wikis, tasks, and team documentation."
+---
+
+Use **Notion** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 14 typed API operations
+- 4 synced entities (`blocks`, `databases`, `pages`, `users`) for fast `.search()` / `.list()`
+- 3 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/notion
+```
+```bash yarn
+yarn add corsair @corsair-dev/notion
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/notion
+```
+```bash bun
+bun add corsair @corsair-dev/notion
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { notion } from '@corsair-dev/notion';
+
+export const corsair = createCorsair({
+	plugins: [
+		notion({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **Notion** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/notion/get-credentials).
+
+```ts
+notion({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="API Key">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/notion/get-credentials).
+
+```ts
+notion()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Notion OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/notion/get-credentials).
+
+```ts
+notion({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'notion',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search pages**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.pages.searchPage({});
+```
+
+
+**Create a new page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.pages.createPage({
+	parent: { type: 'database_id', database_id: 'd9824bdc-8445-4327-be8b-5b47500af6ce' },
+});
+```
+
+
+See the full list on the [API](/plugins/notion/api) page.
+
+## Query synced data
+
+Search synced pages without hitting Notion's API.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.pages.search({
+	data: { archived: false },
+	limit: 50,
+});
+```
+
+Synced entities: `blocks`, `databases`, `pages`, `users`. See [Database](/plugins/notion/database) for filters and operators.
+
+## Webhooks
+
+Fires when a page is created in a Notion database.
+
+```ts
+notion({
+    webhookHooks: {
+        databasePages: {
+            pageCreated: {
+                after: async (ctx, result) => {
+                    const pageId = result.data?.entity?.id;
+                    console.log('New Notion page created with ID:', pageId);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/notion/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/notion/api">
+    Every `notion.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/notion/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/notion/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/notion/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

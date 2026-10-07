@@ -1,0 +1,133 @@
+---
+title: Overview
+description: "Stock market data API for real-time and historical end-of-day exchange prices worldwide."
+---
+
+Use **Marketstack** through Corsair: one client, typed API calls, local DB sync.
+
+This plugin calls Marketstack's v2 API over HTTPS
+(`https://api.marketstack.com/v2`), since every request carries your
+`access_key` as a query parameter. HTTPS is available on every Marketstack
+plan, including free — no paid plan is required.
+
+**What you get:**
+
+- 10 typed API operations
+- 6 synced entities (`currencies`, `dividends`, `eodBars`, `exchanges`, `splits`, `tickers`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/marketstack
+```
+```bash yarn
+yarn add corsair @corsair-dev/marketstack
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/marketstack
+```
+```bash bun
+bun add corsair @corsair-dev/marketstack
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { marketstack } from '@corsair-dev/marketstack';
+
+export const corsair = createCorsair({
+	plugins: [
+		marketstack(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+marketstack()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'marketstack',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`currencies.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.marketstack.api.currencies.list({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/marketstack/api) reference._
+
+
+See the full list on the [API](/plugins/marketstack/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.marketstack.db.<entity>.search()` and `.list()`: `currencies`, `dividends`, `eodBars`, `exchanges`, `splits`, `tickers`.
+
+See [Database](/plugins/marketstack/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/marketstack/api">
+    Every `marketstack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/marketstack/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

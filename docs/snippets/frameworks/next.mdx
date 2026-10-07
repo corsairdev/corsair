@@ -1,0 +1,10 @@
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from 'corsair';
+import { corsair } from '@/server/corsair';
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: '/api/corsair',
+});
+```
+
+<Note>Pages Router? Export a catch-all API route at `pages/api/corsair/[...path].ts` and forward `req`/`res` through the same `toNextJsHandler`. The App Router is the supported default.</Note>

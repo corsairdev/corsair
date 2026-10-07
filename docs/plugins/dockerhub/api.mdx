@@ -1,0 +1,702 @@
+---
+title: API
+description: "API reference for Docker Hub: every `dockerhub.api.*` operation with input and output types."
+---
+
+Every `dockerhub.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Images
+
+### get
+
+`images.get`
+
+Get image variant by digest
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `digest` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`images.list`
+
+List platform image variants (from tags)
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organizations
+
+### addMember
+
+`organizations.addMember`
+
+Invite a member to an organization (bulk invite API)
+
+**Risk:** `write`
+
+```ts
+await corsair.dockerhub.api.organizations.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `member` | `string` | Yes | — |
+| `role` | `member \| owner \| editor` | No | — |
+| `team` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### create
+
+`organizations.create`
+
+Create a Docker Hub organization
+
+**Risk:** `write`
+
+```ts
+await corsair.dockerhub.api.organizations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `fullName` | `string` | No | — |
+| `company` | `string` | No | — |
+| `location` | `string` | No | — |
+| `profileUrl` | `string` | No | — |
+| `gravatarEmail` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### delete
+
+`organizations.delete`
+
+Delete an organization (idempotent)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.organizations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAccessTokens
+
+`organizations.listAccessTokens`
+
+List organization access tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.organizations.listAccessTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listMembers
+
+`organizations.listMembers`
+
+List organization members
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.organizations.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeMember
+
+`organizations.removeMember`
+
+Remove a member from an organization
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.organizations.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Repositories
+
+### create
+
+`repositories.create`
+
+Create a repository under a namespace
+
+**Risk:** `write`
+
+```ts
+await corsair.dockerhub.api.repositories.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `fullDescription` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### delete
+
+`repositories.delete`
+
+Delete a repository (idempotent)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.repositories.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`repositories.get`
+
+Get repository metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.repositories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`repositories.list`
+
+List repositories under a namespace
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.repositories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Tags
+
+### delete
+
+`tags.delete`
+
+Delete a repository tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a specific repository tag
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags for a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Teams
+
+### delete
+
+`teams.delete`
+
+Delete a team (idempotent)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `teamname` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`teams.get`
+
+Get team details
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `teamname` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams (groups) in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listMembers
+
+`teams.listMembers`
+
+List team members
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.teams.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `teamname` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeMember
+
+`teams.removeMember`
+
+Remove a member from a team
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.teams.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgname` | `string` | Yes | — |
+| `teamname` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a repository webhook with hook URL
+
+**Risk:** `write`
+
+```ts
+await corsair.dockerhub.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `webhookName` | `string` | Yes | — |
+| `hookUrl` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a repository webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dockerhub.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a repository webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List repository webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.dockerhub.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+

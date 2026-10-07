@@ -1,0 +1,2947 @@
+---
+title: API
+description: "API reference for Webflow: every `webflow.api.*` operation with input and output types."
+---
+
+Every `webflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### createAssetFolder
+
+`assets.createAssetFolder`
+
+Create a new asset folder within a site
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.assets.createAssetFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteAsset
+
+`assets.deleteAsset`
+
+Permanently delete an asset from a site
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.assets.deleteAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | Yes | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAsset
+
+`assets.getAsset`
+
+Get details about a specific asset including content type, size, and hosted URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.assets.getAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | Yes | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAssetFolder
+
+`assets.getAssetFolder`
+
+Get details about a specific asset folder including its assets and parent folder
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.assets.getAssetFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | Yes | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAssetFolders
+
+`assets.listAssetFolders`
+
+List all asset folders within a site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.assets.listAssetFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAssets
+
+`assets.listAssets`
+
+List all assets uploaded to a site with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.assets.listAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### uploadAsset
+
+`assets.uploadAsset`
+
+Register an asset upload and receive a pre-signed S3 upload URL. The file itself is uploaded to S3 in a second step
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.assets.uploadAsset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Collection Fields
+
+### createCollectionField
+
+`collectionFields.createCollectionField`
+
+Create a custom field in a collection. Fields must be created one at a time
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionFields.createCollectionField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCollectionField
+
+`collectionFields.deleteCollectionField`
+
+Permanently delete a custom field from a collection schema
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.collectionFields.deleteCollectionField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateCollectionField
+
+`collectionFields.updateCollectionField`
+
+Update a custom field's display name, help text, or required status
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionFields.updateCollectionField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Collection Items
+
+### createBulkCollectionItems
+
+`collectionItems.createBulkCollectionItems`
+
+Create up to 100 collection items in a single request across multiple locales
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.createBulkCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createCollectionItem
+
+`collectionItems.createCollectionItem`
+
+Create a staged item in a collection. Field data keys must use the collection schema field slugs
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.createCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createLiveCollectionItem
+
+`collectionItems.createLiveCollectionItem`
+
+Create an item published immediately to the live site, bypassing the staged workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.createLiveCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCollectionItem
+
+`collectionItems.deleteCollectionItem`
+
+Permanently delete a single item from a collection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.collectionItems.deleteCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCollectionItems
+
+`collectionItems.deleteCollectionItems`
+
+Delete multiple collection items in a single request
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.collectionItems.deleteCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollectionItem
+
+`collectionItems.getCollectionItem`
+
+Get a single staged collection item by id
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.collectionItems.getCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getLiveCollectionItem
+
+`collectionItems.getLiveCollectionItem`
+
+Get the published version of a collection item
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.collectionItems.getLiveCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listCollectionItems
+
+`collectionItems.listCollectionItems`
+
+List items in a collection with pagination and filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.collectionItems.listCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### publishCollectionItems
+
+`collectionItems.publishCollectionItems`
+
+Publish staged collection items to the live site
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.publishCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### unpublishLiveCollectionItem
+
+`collectionItems.unpublishLiveCollectionItem`
+
+Unpublish a live item and revert it to draft status. The item stays in the collection
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.unpublishLiveCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### unpublishLiveCollectionItems
+
+`collectionItems.unpublishLiveCollectionItems`
+
+Unpublish up to 100 live items and set them to draft. Items stay in the collection
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.unpublishLiveCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateCollectionItem
+
+`collectionItems.updateCollectionItem`
+
+Update a staged collection item's field values, draft status, or archive status
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.updateCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateCollectionItemLegacy
+
+`collectionItems.updateCollectionItemLegacy`
+
+Deprecated: update staged collection items via the bulk items endpoint. Use updateCollectionItem instead
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.updateCollectionItemLegacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateLiveCollectionItem
+
+`collectionItems.updateLiveCollectionItem`
+
+Update a live collection item, publishing changes immediately to the production site
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.updateLiveCollectionItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateLiveCollectionItems
+
+`collectionItems.updateLiveCollectionItems`
+
+Update up to 100 published items in a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collectionItems.updateLiveCollectionItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Collections
+
+### createCollection
+
+`collections.createCollection`
+
+Create a new CMS collection in a site
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.collections.createCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCollection
+
+`collections.deleteCollection`
+
+Permanently delete a collection and all its items
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.collections.deleteCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCollection
+
+`collections.getCollection`
+
+Get a collection including its full field schema
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.collections.getCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listCollections
+
+`collections.listCollections`
+
+List all CMS collections for a site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.collections.listCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Comments
+
+### listCommentThreads
+
+`comments.listCommentThreads`
+
+List all comment threads for a site. New comments may take up to 5 minutes to appear
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.comments.listCommentThreads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Components
+
+### getComponentProperties
+
+`components.getComponentProperties`
+
+Get the default property values of a component definition
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.components.getComponentProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | Yes | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Ecommerce
+
+### fulfillOrder
+
+`ecommerce.fulfillOrder`
+
+Mark an order as fulfilled
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.ecommerce.fulfillOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | Yes | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getItemInventory
+
+`ecommerce.getItemInventory`
+
+Get current inventory levels for a SKU item
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.ecommerce.getItemInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrder
+
+`ecommerce.getOrder`
+
+Get detailed information about a specific order including customer, items, and payment status
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.ecommerce.getOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | Yes | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listOrders
+
+`ecommerce.listOrders`
+
+List all orders for a site with status filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.ecommerce.listOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### refundOrder
+
+`ecommerce.refundOrder`
+
+Refund an order, reversing the Stripe charge and setting the order status to refunded
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.ecommerce.refundOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | Yes | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### unfulfillOrder
+
+`ecommerce.unfulfillOrder`
+
+Mark a previously fulfilled order as unfulfilled
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.ecommerce.unfulfillOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | Yes | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateItemInventory
+
+`ecommerce.updateItemInventory`
+
+Update inventory levels for a SKU item, either directly or incrementally
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.ecommerce.updateItemInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | Yes | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | Yes | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateOrder
+
+`ecommerce.updateOrder`
+
+Update specific fields of an existing order such as fulfillment details and internal notes
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.ecommerce.updateOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | Yes | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Forms
+
+### listFormSubmissions
+
+`forms.listFormSubmissions`
+
+List form submissions for a site with pagination and optional filtering by form element id
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.forms.listFormSubmissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Pages
+
+### getPage
+
+`pages.getPage`
+
+Get page metadata including title, slug, SEO and Open Graph settings
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.pages.getPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | Yes | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getPageDom
+
+`pages.getPageDom`
+
+Get page content nodes for a static page, including text, image, form, search-button, and component-instance nodes. This is not the complete DOM
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.pages.getPageDom({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | Yes | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listPages
+
+`pages.listPages`
+
+List all static and CMS-driven pages for a site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.pages.listPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updatePageMetadata
+
+`pages.updatePageMetadata`
+
+Update page-level metadata including SEO and Open Graph fields
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.pages.updatePageMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | Yes | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Sites
+
+### getCustomDomains
+
+`sites.getCustomDomains`
+
+List all custom domains configured for a site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.sites.getCustomDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSite
+
+`sites.getSite`
+
+Get detailed information about a specific site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.sites.getSite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSites
+
+`sites.listSites`
+
+List all Webflow sites accessible to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.sites.listSites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### publishSite
+
+`sites.publishSite`
+
+Publish a site, making staged changes live. Rate limited to 1 successful publish per minute
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.sites.publishSite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSite
+
+`sites.updateSite`
+
+Update site properties such as name and parent folder (Enterprise workspaces only)
+
+**Risk:** `write`
+
+```ts
+await corsair.webflow.api.sites.updateSite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Token
+
+### getTokenAuthorizedBy
+
+`token.getTokenAuthorizedBy`
+
+Get information about the user who authorized the access token
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.token.getTokenAuthorizedBy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Webhooks
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Remove a webhook by id
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.webflow.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listWebhooks
+
+`webhooks.listWebhooks`
+
+List all app-created webhooks registered for a site
+
+**Risk:** `read`
+
+```ts
+await corsair.webflow.api.webhooks.listWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `field_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder_id` | `string` | No | — |
+| `page_id` | `string` | No | — |
+| `component_id` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `webhook_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

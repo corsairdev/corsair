@@ -1,0 +1,15 @@
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+export const corsair = createCorsair({
+    plugins: [github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    manual: {
+        baseUrl: `${appUrl}/connect`,
+        redirectUri: `${appUrl}/api/oauth/callback`,
+        approvalBaseUrl: `${appUrl}/approve`,
+    },
+});
+```

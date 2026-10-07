@@ -1,0 +1,169 @@
+---
+title: Overview
+description: "DevOps platform for Git repos, CI/CD pipelines, issues, and complete software delivery."
+---
+
+Use **GitLab** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 62 typed API operations
+- 11 synced entities (`branches`, `commits`, `groups`, `issues`, `labels`, `mergeRequests`, and 5 more) for fast `.search()` / `.list()`
+- 5 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gitlab
+```
+```bash yarn
+yarn add corsair @corsair-dev/gitlab
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gitlab
+```
+```bash bun
+bun add corsair @corsair-dev/gitlab
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gitlab } from '@corsair-dev/gitlab';
+
+export const corsair = createCorsair({
+	plugins: [
+		gitlab({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **GitLab** — your tenants connect through Hub when they sign in.
+
+```ts
+gitlab({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="API Key">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+gitlab()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your GitLab OAuth app.
+
+```ts
+gitlab({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gitlab',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`branches.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.get({});
+```
+
+
+**`branches.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.create({});
+```
+
+
+See the full list on the [API](/plugins/gitlab/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.gitlab.db.<entity>.search()` and `.list()`: `branches`, `commits`, `groups`, `issues`, `labels`, `mergeRequests`, `milestones`, `pipelines`, `projects`, `releases`, `users`.
+
+See [Database](/plugins/gitlab/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **5** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/gitlab/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gitlab/api">
+    Every `gitlab.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/gitlab/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/gitlab/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

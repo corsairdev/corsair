@@ -1,0 +1,247 @@
+---
+title: Webhooks
+description: "Instagram incoming webhooks: event paths, payloads, and response data."
+---
+
+The Instagram plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/instagram/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `comments` (`comments`)
+- `messageReceived` (`messageReceived`)
+- `url_verification` (`url_verification`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Comments
+
+### Comments
+
+`comments`
+
+Represents an Instagram comment webhook event containing information about a comment, including the commenter, media, comment text, and related metadata.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `instagram` | Yes | — |
+| `entry` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entry full type">
+
+```ts
+{
+  id: string,
+  time: number,
+  changes: {
+    field: comments,
+    value: {
+      from: {
+        id: string,
+        username: string
+      },
+      comment_id?: string,
+      parent_id?: string,
+      text?: string,
+      media: {
+        id: string,
+        ad_id?: string,
+        ad_title?: string,
+        original_media_id?: string,
+        media_product_type?: string
+      }
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  timestamp?: string,
+  username?: string,
+  type: comments
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instagram({
+    webhookHooks: {
+        comments: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Received
+
+### Message Received
+
+`messageReceived`
+
+A Instagram message was received, sent or seen
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `instagram` | Yes | — |
+| `entry` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entry full type">
+
+```ts
+{
+  id: string,
+  time: number,
+  messaging: {
+    sender: {
+      id: string
+    },
+    recipient: {
+      id: string
+    },
+    timestamp: number,
+    message?: {
+      mid?: string,
+      text?: string,
+      is_echo?: boolean
+    },
+    reaction?: {
+      mid: string,
+      action: string,
+      reaction: string,
+      emoji: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: messageReceived,
+  accountId?: string,
+  senderId?: string,
+  recipientId?: string,
+  messageId: string,
+  text?: string,
+  timestamp?: number,
+  isEcho: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instagram({
+    webhookHooks: {
+        messageReceived: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Url Verification
+
+### Url Verification
+
+`url_verification`
+
+Represents a webhook URL verification challenge from Meta. Used to verify that the webhook endpoint is owned and controlled by the application.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `subscribe` | Yes | — |
+| `verify_token` | `string` | Yes | — |
+| `challenge` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: url_verification,
+  challenge: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instagram({
+    webhookHooks: {
+        url_verification: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

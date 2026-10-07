@@ -1,0 +1,1488 @@
+---
+title: Database
+description: "ActiveCampaign local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ActiveCampaign plugin syncs data locally. Use `corsair.activecampaign.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Account Contacts
+
+Path: `activecampaign.db.accountContacts.search`
+
+```ts
+const rows = await corsair.activecampaign.db.accountContacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `account` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Account Custom Field Meta
+
+Path: `activecampaign.db.accountCustomFieldMeta.search`
+
+```ts
+const rows = await corsair.activecampaign.db.accountCustomFieldMeta.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldLabel` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldType` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldDefault` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldDefaultCurrency` | `string` | equals, contains, startsWith, endsWith, in |
+| `personalization` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Accounts
+
+Path: `activecampaign.db.accounts.search`
+
+```ts
+const rows = await corsair.activecampaign.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Addresses
+
+Path: `activecampaign.db.addresses.search`
+
+```ts
+const rows = await corsair.activecampaign.db.addresses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `address1` | `string` | equals, contains, startsWith, endsWith, in |
+| `address2` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `district` | `string` | equals, contains, startsWith, endsWith, in |
+| `zip` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `allgroup` | `string` | equals, contains, startsWith, endsWith, in |
+| `smsName` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Automations
+
+Path: `activecampaign.db.automations.search`
+
+```ts
+const rows = await corsair.activecampaign.db.automations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `entered` | `string` | equals, contains, startsWith, endsWith, in |
+| `exited` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Brandings
+
+Path: `activecampaign.db.brandings.search`
+
+```ts
+const rows = await corsair.activecampaign.db.brandings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteName` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupid` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteLogo` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteLogoSmall` | `string` | equals, contains, startsWith, endsWith, in |
+| `favicon` | `string` | equals, contains, startsWith, endsWith, in |
+| `copyright` | `string` | equals, contains, startsWith, endsWith, in |
+| `license` | `string` | equals, contains, startsWith, endsWith, in |
+| `help` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `headerHtmlValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `headerTextValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `footerHtmlValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `footerTextValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `publicTemplateCss` | `string` | equals, contains, startsWith, endsWith, in |
+| `publicTemplateHtm` | `string` | equals, contains, startsWith, endsWith, in |
+| `adminTemplateCss` | `string` | equals, contains, startsWith, endsWith, in |
+| `adminTemplateHtm` | `string` | equals, contains, startsWith, endsWith, in |
+| `admin_template_css_backup` | `string` | equals, contains, startsWith, endsWith, in |
+| `admin_template_htm_backup` | `string` | equals, contains, startsWith, endsWith, in |
+| `zendeskWidgetEnabled` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Calendars
+
+Path: `activecampaign.db.calendars.search`
+
+```ts
+const rows = await corsair.activecampaign.db.calendars.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `token` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `notification` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Campaigns
+
+Path: `activecampaign.db.campaigns.search`
+
+```ts
+const rows = await corsair.activecampaign.db.campaigns.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `sdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ldate` | `string` | equals, contains, startsWith, endsWith, in |
+| `send_amt` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_amt` | `string` | equals, contains, startsWith, endsWith, in |
+| `opens` | `string` | equals, contains, startsWith, endsWith, in |
+| `uniqueopens` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkclicks` | `string` | equals, contains, startsWith, endsWith, in |
+| `uniquelinkclicks` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscriberclicks` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubscribes` | `string` | equals, contains, startsWith, endsWith, in |
+| `hardbounces` | `string` | equals, contains, startsWith, endsWith, in |
+| `softbounces` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Connections
+
+Path: `activecampaign.db.connections.search`
+
+```ts
+const rows = await corsair.activecampaign.db.connections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `service` | `string` | equals, contains, startsWith, endsWith, in |
+| `serviceName` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `logoUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionType` | `string` | equals, contains, startsWith, endsWith, in |
+| `planTier` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastSync` | `string` | equals, contains, startsWith, endsWith, in |
+| `sync_request_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `sync_start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `credentialExpiration` | `string` | equals, contains, startsWith, endsWith, in |
+| `disconnectDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contact Lists
+
+Path: `activecampaign.db.contactLists.search`
+
+```ts
+const rows = await corsair.activecampaign.db.contactLists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `list` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `form` | `string` | equals, contains, startsWith, endsWith, in |
+| `seriesid` | `string` | equals, contains, startsWith, endsWith, in |
+| `sdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `responder` | `string` | equals, contains, startsWith, endsWith, in |
+| `sync` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubreason` | `string` | equals, contains, startsWith, endsWith, in |
+| `campaign` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip4Sub` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip4Unsub` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip4_last` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceid` | `string` | equals, contains, startsWith, endsWith, in |
+| `autosyncLog` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubscribeAutomation` | `string` | equals, contains, startsWith, endsWith, in |
+| `automation` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `activecampaign.db.contacts.search`
+
+```ts
+const rows = await corsair.activecampaign.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgid` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgname` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `adate` | `string` | equals, contains, startsWith, endsWith, in |
+| `edate` | `string` | equals, contains, startsWith, endsWith, in |
+| `hash` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip` | `string` | equals, contains, startsWith, endsWith, in |
+| `ua` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `anonymized` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_local` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `segmentio_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `bounced_hard` | `string` | equals, contains, startsWith, endsWith, in |
+| `bounced_soft` | `string` | equals, contains, startsWith, endsWith, in |
+| `bounced_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentcnt` | `string` | equals, contains, startsWith, endsWith, in |
+| `rating_tstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `socialdata_lastcheck` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `mpp_tracking` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_click_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_open_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_mpp_open_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `best_send_hour` | `string` | equals, contains, startsWith, endsWith, in |
+| `sms_consent` | `string` | equals, contains, startsWith, endsWith, in |
+| `sms_consent_updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `whatsapp_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `whatsapp_username` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contact Tags
+
+Path: `activecampaign.db.contactTags.search`
+
+```ts
+const rows = await corsair.activecampaign.db.contactTags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Custom Object Schemas
+
+Path: `activecampaign.db.customObjectSchemas.search`
+
+```ts
+const rows = await corsair.activecampaign.db.customObjectSchemas.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Custom Field Meta
+
+Path: `activecampaign.db.dealCustomFieldMeta.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealCustomFieldMeta.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldLabel` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldType` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldDefault` | `string` | equals, contains, startsWith, endsWith, in |
+| `fieldDefaultCurrency` | `string` | equals, contains, startsWith, endsWith, in |
+| `personalization` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedTimestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Groups
+
+Path: `activecampaign.db.dealGroups.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `allgroups` | `string` | equals, contains, startsWith, endsWith, in |
+| `allusers` | `string` | equals, contains, startsWith, endsWith, in |
+| `autoassign` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `count` | `string` | equals, contains, startsWith, endsWith, in |
+| `win_probability_initialize_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Roles
+
+Path: `activecampaign.db.dealRoles.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealRoles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deals
+
+Path: `activecampaign.db.deals.search`
+
+```ts
+const rows = await corsair.activecampaign.db.deals.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+| `stage` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `nextdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `edate` | `string` | equals, contains, startsWith, endsWith, in |
+| `hash` | `string` | equals, contains, startsWith, endsWith, in |
+| `nextdealid` | `string` | equals, contains, startsWith, endsWith, in |
+| `nexttaskid` | `string` | equals, contains, startsWith, endsWith, in |
+| `activitycount` | `string` | equals, contains, startsWith, endsWith, in |
+| `winProbabilityMdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Stages
+
+Path: `activecampaign.db.dealStages.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealStages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+| `order` | `string` | equals, contains, startsWith, endsWith, in |
+| `width` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `dealOrder` | `string` | equals, contains, startsWith, endsWith, in |
+| `cardRegion1` | `string` | equals, contains, startsWith, endsWith, in |
+| `cardRegion2` | `string` | equals, contains, startsWith, endsWith, in |
+| `cardRegion3` | `string` | equals, contains, startsWith, endsWith, in |
+| `cardRegion4` | `string` | equals, contains, startsWith, endsWith, in |
+| `cardRegion5` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Tasks
+
+Path: `activecampaign.db.dealTasks.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealTasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `note` | `string` | equals, contains, startsWith, endsWith, in |
+| `relid` | `string` | equals, contains, startsWith, endsWith, in |
+| `reltype` | `string` | equals, contains, startsWith, endsWith, in |
+| `dealtasktype` | `string` | equals, contains, startsWith, endsWith, in |
+| `duedate` | `string` | equals, contains, startsWith, endsWith, in |
+| `done` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `edate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deal Task Types
+
+Path: `activecampaign.db.dealTaskTypes.search`
+
+```ts
+const rows = await corsair.activecampaign.db.dealTaskTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `defduration` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_order` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Ecom Customers
+
+Path: `activecampaign.db.ecomCustomers.search`
+
+```ts
+const rows = await corsair.activecampaign.db.ecomCustomers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionid` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalid` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalRevenue` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalOrders` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalProducts` | `string` | equals, contains, startsWith, endsWith, in |
+| `avgRevenuePerOrder` | `string` | equals, contains, startsWith, endsWith, in |
+| `avgProductCategory` | `string` | equals, contains, startsWith, endsWith, in |
+| `acceptsMarketing` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Event Tracking Events
+
+Path: `activecampaign.db.eventTrackingEvents.search`
+
+```ts
+const rows = await corsair.activecampaign.db.eventTrackingEvents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Field Options
+
+Path: `activecampaign.db.fieldOptions.search`
+
+```ts
+const rows = await corsair.activecampaign.db.fieldOptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `field` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderid` | `string` | equals, contains, startsWith, endsWith, in |
+| `isdefault` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Field Rels
+
+Path: `activecampaign.db.fieldRels.search`
+
+```ts
+const rows = await corsair.activecampaign.db.fieldRels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `field` | `string` | equals, contains, startsWith, endsWith, in |
+| `relid` | `string` | equals, contains, startsWith, endsWith, in |
+| `dorder` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Fields
+
+Path: `activecampaign.db.fields.search`
+
+```ts
+const rows = await corsair.activecampaign.db.fields.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `descript` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `perstag` | `string` | equals, contains, startsWith, endsWith, in |
+| `defval` | `string` | equals, contains, startsWith, endsWith, in |
+| `isrequired` | `string` | equals, contains, startsWith, endsWith, in |
+| `show_in_list` | `string` | equals, contains, startsWith, endsWith, in |
+| `visible` | `string` | equals, contains, startsWith, endsWith, in |
+| `service` | `string` | equals, contains, startsWith, endsWith, in |
+| `ordernum` | `string` | equals, contains, startsWith, endsWith, in |
+| `rows` | `string` | equals, contains, startsWith, endsWith, in |
+| `cols` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Field Values
+
+Path: `activecampaign.db.fieldValues.search`
+
+```ts
+const rows = await corsair.activecampaign.db.fieldValues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `field` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Forms
+
+Path: `activecampaign.db.forms.search`
+
+```ts
+const rows = await corsair.activecampaign.db.forms.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `action` | `string` | equals, contains, startsWith, endsWith, in |
+| `layout` | `string` | equals, contains, startsWith, endsWith, in |
+| `style` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Group Limits
+
+Path: `activecampaign.db.groupLimits.search`
+
+```ts
+const rows = await corsair.activecampaign.db.groupLimits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupid` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitContact` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitList` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitCampaign` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitCampaignType` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitMail` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitMailType` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitUser` | `string` | equals, contains, startsWith, endsWith, in |
+| `limitAttachment` | `string` | equals, contains, startsWith, endsWith, in |
+| `abuseRatio` | `string` | equals, contains, startsWith, endsWith, in |
+| `forceSenderInfo` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Group Members
+
+Path: `activecampaign.db.groupMembers.search`
+
+```ts
+const rows = await corsair.activecampaign.db.groupMembers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Groups
+
+Path: `activecampaign.db.groups.search`
+
+```ts
+const rows = await corsair.activecampaign.db.groups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `descript` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_admin` | `string` | equals, contains, startsWith, endsWith, in |
+| `sdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubscribelink` | `string` | equals, contains, startsWith, endsWith, in |
+| `optinconfirm` | `string` | equals, contains, startsWith, endsWith, in |
+| `socialdata` | `string` | equals, contains, startsWith, endsWith, in |
+| `reqApproval` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## List Groups
+
+Path: `activecampaign.db.listGroups.search`
+
+```ts
+const rows = await corsair.activecampaign.db.listGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `list` | `string` | equals, contains, startsWith, endsWith, in |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_list_add` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_list_edit` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_list_delete` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_list_filter` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_list_sync` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_message_add` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_message_edit` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_message_delete` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_message_send` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_subscriber_add` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_subscriber_edit` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_subscriber_delete` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_subscriber_import` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_subscriber_approve` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lists
+
+Path: `activecampaign.db.lists.search`
+
+```ts
+const rows = await corsair.activecampaign.db.lists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `stringid` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `string` | equals, contains, startsWith, endsWith, in |
+| `deletestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `active_subscribers` | `string` | equals, contains, startsWith, endsWith, in |
+| `non_deleted_subscribers` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscription_notify` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubscription_notify` | `string` | equals, contains, startsWith, endsWith, in |
+| `require_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `get_unsubscribe_reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `to_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `optinoptout` | `string` | equals, contains, startsWith, endsWith, in |
+| `optinmessageid` | `string` | equals, contains, startsWith, endsWith, in |
+| `optoutconf` | `string` | equals, contains, startsWith, endsWith, in |
+| `carboncopy` | `string` | equals, contains, startsWith, endsWith, in |
+| `fulladdress` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_addr1` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_addr2` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_city` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_state` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_zip` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_country` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `sender_reminder` | `string` | equals, contains, startsWith, endsWith, in |
+| `send_last_broadcast` | `string` | equals, contains, startsWith, endsWith, in |
+| `analytics_domains` | `string` | equals, contains, startsWith, endsWith, in |
+| `analytics_source` | `string` | equals, contains, startsWith, endsWith, in |
+| `analytics_ua` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitter_token` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitter_token_secret` | `string` | equals, contains, startsWith, endsWith, in |
+| `facebook_session` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_tracking` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_analytics_read` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_analytics_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_twitter` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_facebook` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_embed_image` | `string` | equals, contains, startsWith, endsWith, in |
+| `p_use_captcha` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `activecampaign.db.messages.search`
+
+```ts
+const rows = await corsair.activecampaign.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `preheader_text` | `string` | equals, contains, startsWith, endsWith, in |
+| `fromname` | `string` | equals, contains, startsWith, endsWith, in |
+| `fromemail` | `string` | equals, contains, startsWith, endsWith, in |
+| `reply2` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlfetch` | `string` | equals, contains, startsWith, endsWith, in |
+| `textfetch` | `string` | equals, contains, startsWith, endsWith, in |
+| `charset` | `string` | equals, contains, startsWith, endsWith, in |
+| `encoding` | `string` | equals, contains, startsWith, endsWith, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `language_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `hidden` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ed_instanceid` | `string` | equals, contains, startsWith, endsWith, in |
+| `ed_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_predictive_content` | `string` | equals, contains, startsWith, endsWith, in |
+| `preview_mime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Notes
+
+Path: `activecampaign.db.notes.search`
+
+```ts
+const rows = await corsair.activecampaign.db.notes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `note` | `string` | equals, contains, startsWith, endsWith, in |
+| `reltype` | `string` | equals, contains, startsWith, endsWith, in |
+| `relid` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_draft` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Personalizations
+
+Path: `activecampaign.db.personalizations.search`
+
+```ts
+const rows = await corsair.activecampaign.db.personalizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `locked` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `udate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Saved Responses
+
+Path: `activecampaign.db.savedResponses.search`
+
+```ts
+const rows = await corsair.activecampaign.db.savedResponses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scores
+
+Path: `activecampaign.db.scores.search`
+
+```ts
+const rows = await corsair.activecampaign.db.scores.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `descript` | `string` | equals, contains, startsWith, endsWith, in |
+| `reltype` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Segments
+
+Path: `activecampaign.db.segments.search`
+
+```ts
+const rows = await corsair.activecampaign.db.segments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `logic` | `string` | equals, contains, startsWith, endsWith, in |
+| `hidden` | `string` | equals, contains, startsWith, endsWith, in |
+| `seriesid` | `string` | equals, contains, startsWith, endsWith, in |
+| `segmentid_v2` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `activecampaign.db.tags.search`
+
+```ts
+const rows = await corsair.activecampaign.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `tagType` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscriber_count` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Task Outcomes
+
+Path: `activecampaign.db.taskOutcomes.search`
+
+```ts
+const rows = await corsair.activecampaign.db.taskOutcomes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentiment` | `string` | equals, contains, startsWith, endsWith, in |
+| `disabled` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_utc_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `activecampaign.db.templates.search`
+
+```ts
+const rows = await corsair.activecampaign.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryid` | `string` | equals, contains, startsWith, endsWith, in |
+| `userid` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `mdate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `activecampaign.db.users.search`
+
+```ts
+const rows = await corsair.activecampaign.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `signature` | `string` | equals, contains, startsWith, endsWith, in |
+| `lang` | `string` | equals, contains, startsWith, endsWith, in |
+| `localZoneid` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `activecampaign.db.webhooks.search`
+
+```ts
+const rows = await corsair.activecampaign.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `listid` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `deactivated_date` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

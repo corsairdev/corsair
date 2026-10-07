@@ -1,0 +1,4019 @@
+---
+title: API
+description: "API reference for Brex: every `brex.api.*` operation with input and output types."
+---
+
+Every `brex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### getCash
+
+`accounts.getCash`
+
+Get a cash account by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.getCash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCashPrimary
+
+`accounts.getCashPrimary`
+
+Get the primary cash account
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.getCashPrimary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCard
+
+`accounts.listCard`
+
+List card accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.listCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCardStatements
+
+`accounts.listCardStatements`
+
+List finalized primary card statements
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.listCardStatements({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCash
+
+`accounts.listCash`
+
+List cash deposit accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.listCash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCashStatements
+
+`accounts.listCashStatements`
+
+List finalized cash account statements
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.accounts.listCashStatements({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Budget Programs
+
+### list
+
+`budgetPrograms.list`
+
+List budget programs
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.budgetPrograms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Budgets
+
+### archive
+
+`budgets.archive`
+
+Archive a budget
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.budgets.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`budgets.create`
+
+Create a budget
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.budgets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`budgets.get`
+
+Get a budget by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.budgets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`budgets.list`
+
+List budgets
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.budgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`budgets.update`
+
+Update a budget
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.budgets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Cards
+
+### create
+
+`cards.create`
+
+Create a card and assign it to a user
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.cards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `object` | Yes | — |
+| `card_name` | `string` | Yes | — |
+| `card_type` | `string` | Yes | — |
+| `limit_type` | `string` | Yes | — |
+| `idempotency_key` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`cards.get`
+
+Get a card by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.cards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getPan
+
+`cards.getPan`
+
+Get card number, CVV, and expiration
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.cards.getPan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`cards.list`
+
+List cards, optionally by user_id
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.cards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `user_id` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`cards.update`
+
+Update card spend_controls for limit_type=CARD
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.cards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateStatus
+
+`cards.updateStatus`
+
+Lock, unlock, or terminate a card
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.cards.updateStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `action` | `lock \| unlock \| terminate \| LOCK \| UNLOCK \| TERMINATE` | Yes | — |
+| `lock_reason` | `string \| number \| boolean` | No | — |
+| `reason` | `string \| number \| boolean` | No | — |
+| `description` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Company
+
+### get
+
+`company.get`
+
+Get the company for the current token
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.company.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Departments
+
+### create
+
+`departments.create`
+
+Create a department
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.departments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`departments.get`
+
+Get a department by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.departments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`departments.list`
+
+List departments
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.departments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Expenses
+
+### get
+
+`expenses.get`
+
+Get an expense by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.expenses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand[]` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCard
+
+`expenses.getCard`
+
+Get a card expense (deprecated official path)
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.expenses.getCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `string` | Yes | — |
+| `expand[]` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`expenses.list`
+
+List expenses
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.expenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `user_id` | `string \| number \| boolean` | No | — |
+| `budget_id` | `string \| number \| boolean` | No | — |
+| `status` | `string \| number \| boolean` | No | — |
+| `purchased_at_start` | `string \| number \| boolean` | No | — |
+| `purchased_at_end` | `string \| number \| boolean` | No | — |
+| `payment_posted_at_start` | `string \| number \| boolean` | No | — |
+| `payment_posted_at_end` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listByBudget
+
+`expenses.listByBudget`
+
+List expenses for a budget_id
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.expenses.listByBudget({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `payment_posted_at_start` | `string \| number \| boolean` | No | — |
+| `payment_posted_at_end` | `string \| number \| boolean` | No | — |
+| `budget_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`expenses.update`
+
+Update a card expense
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.expenses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.fields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Delete a custom field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.fields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`fields.get`
+
+Get a custom field by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.fields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`fields.list`
+
+List custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.fields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Field Values
+
+### create
+
+`fieldValues.create`
+
+Create custom field values (up to 1000)
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.fieldValues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `string` | Yes | — |
+| `values` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`fieldValues.delete`
+
+Delete custom field values (up to 1000)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.fieldValues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `string` | Yes | — |
+| `values` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`fieldValues.get`
+
+Get a field value by field ID and value ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.fieldValues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `string` | Yes | — |
+| `brex_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`fieldValues.list`
+
+List values for a custom field
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.fieldValues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `string` | Yes | — |
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `brex_id` | `string \| number \| boolean` | No | — |
+| `value_id` | `string \| number \| boolean` | No | — |
+| `remote_id` | `string \| number \| boolean` | No | — |
+| `value` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`fieldValues.update`
+
+Update custom field values (up to 1000)
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.fieldValues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_id` | `string` | Yes | — |
+| `values` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Legal Entities
+
+### get
+
+`legalEntities.get`
+
+Get a legal entity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.legalEntities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`legalEntities.list`
+
+List legal entities
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.legalEntities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Locations
+
+### create
+
+`locations.create`
+
+Create a location
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.locations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`locations.get`
+
+Get a location by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.locations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`locations.list`
+
+List locations
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Receipts
+
+### match
+
+`receipts.match`
+
+Create a receipt-match upload URI
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.receipts.match({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### upload
+
+`receipts.upload`
+
+Create a receipt upload URI for a card expense
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.receipts.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `string` | Yes | — |
+| `receipt_name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Referrals
+
+### create
+
+`referrals.create`
+
+Create a referral and application link
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.referrals.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createDocument
+
+`referrals.createDocument`
+
+Create a referral document upload URI
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.referrals.createDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`referrals.get`
+
+Get a referral by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.referrals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`referrals.list`
+
+List active referrals
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.referrals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Spend Limits
+
+### archive
+
+`spendLimits.archive`
+
+Archive a spend limit
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.spendLimits.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`spendLimits.create`
+
+Create a spend limit
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.spendLimits.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_policy_id` | `string` | Yes | — |
+| `authorization_settings` | `object` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="authorization_settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`spendLimits.get`
+
+Get a spend limit by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.spendLimits.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`spendLimits.list`
+
+List spend limits
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.spendLimits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`spendLimits.update`
+
+Update a spend limit
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.spendLimits.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Spend Limits V1
+
+### create
+
+`spendLimitsV1.create`
+
+Create a v1 spend limit (legacy /v1/budgets)
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.spendLimitsV1.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`spendLimitsV1.update`
+
+Update a v1 spend limit (legacy /v1/budgets)
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.spendLimitsV1.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Titles
+
+### create
+
+`titles.create`
+
+Create a job title
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.titles.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`titles.get`
+
+Get a job title by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.titles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`titles.list`
+
+List job titles
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.titles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Transactions
+
+### byAmountRange
+
+`transactions.byAmountRange`
+
+Filter settled card transactions by USD amount after official paging
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.transactions.byAmountRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `min_amount` | `number` | Yes | — |
+| `max_amount` | `number` | Yes | — |
+| `posted_at_start` | `string \| number \| boolean` | No | — |
+| `posted_at_end` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### byDescription
+
+`transactions.byDescription`
+
+Filter settled card transactions by description after official paging
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.transactions.byDescription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `description` | `string` | Yes | — |
+| `posted_at_start` | `string \| number \| boolean` | No | — |
+| `posted_at_end` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getById
+
+`transactions.getById`
+
+Find a settled card transaction by ID by paging official list results
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.transactions.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`transactions.list`
+
+List settled card transactions. Date filters are client-side after paging.
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Transfers
+
+### list
+
+`transfers.list`
+
+List transfers
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.transfers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Trips
+
+### list
+
+`trips.list`
+
+List trips
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.trips.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `user_id` | `string \| number \| boolean` | No | — |
+| `starts_at_start` | `string \| number \| boolean` | No | — |
+| `starts_at_end` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Invite a user as an employee
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`users.get`
+
+Get a user by ID, or /me when id is "me"
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getLimit
+
+`users.getLimit`
+
+Get the monthly spend limit for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.users.getLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMe
+
+`users.getMe`
+
+Get the user for the current access token
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.users.getMe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`users.list`
+
+List users in the Brex account
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `email` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setLimit
+
+`users.setLimit`
+
+Set monthly_limit in cents, or null to remove it
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.users.setLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `monthly_limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user; omitted fields stay unchanged
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Vendors
+
+### create
+
+`vendors.create`
+
+Create a vendor
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.vendors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`vendors.delete`
+
+Delete a vendor
+
+**Risk:** `destructive`
+
+```ts
+await corsair.brex.api.vendors.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`vendors.get`
+
+Get a vendor by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.vendors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`vendors.list`
+
+List vendors
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.vendors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `name` | `string \| number \| boolean` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`vendors.update`
+
+Update a vendor
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.vendors.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Webhook Groups
+
+### addMembers
+
+`webhookGroups.addMembers`
+
+Add webhook subscriptions to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.webhookGroups.addMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `webhook_ids` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`webhookGroups.create`
+
+Create a webhook group (partners)
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.webhookGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`webhookGroups.get`
+
+Get a webhook group (partners)
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhookGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`webhookGroups.list`
+
+List webhook groups (partners)
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhookGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listMembers
+
+`webhookGroups.listMembers`
+
+List webhook group members
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhookGroups.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `event_types` | `any[]` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string \| number \| boolean` | No | — |
+| `limit` | `number` | No | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listSecrets
+
+`webhooks.listSecrets`
+
+List webhook signing secrets
+
+**Risk:** `read`
+
+```ts
+await corsair.brex.api.webhooks.listSecrets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.brex.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+

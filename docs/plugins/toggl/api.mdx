@@ -1,0 +1,3007 @@
+---
+title: API
+description: "API reference for Toggl Track: every `toggl.api.*` operation with input and output types."
+---
+
+Every `toggl.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### archive
+
+`clients.archive`
+
+Archive a client
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.clients.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  wid?: number | null,
+  name: string,
+  notes?: string | null,
+  archived?: boolean | null,
+  creator_id?: number | null,
+  at?: string | null
+} | {
+  items?: number[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`clients.create`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.clients.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `wid` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `creator_id` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`clients.delete`
+
+Delete a client
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.clients.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`clients.get`
+
+Get a client by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.clients.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `wid` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `creator_id` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`clients.list`
+
+List clients in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.clients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `status` | `active \| archived \| both` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  wid?: number | null,
+  name: string,
+  notes?: string | null,
+  archived?: boolean | null,
+  creator_id?: number | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`clients.update`
+
+Update or archive a client
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.clients.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `wid` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `notes` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `creator_id` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Me
+
+### disableProductEmails
+
+`me.disableProductEmails`
+
+Unsubscribe the account from Toggl product emails
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.me.disableProductEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `disable_code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### disableWeeklyReport
+
+`me.disableWeeklyReport`
+
+Unsubscribe the account from the weekly report email
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.me.disableWeeklyReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`me.get`
+
+Get the authenticated Toggl user
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `with_related_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fullname` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `toggl_accounts_id` | `string` | No | — |
+| `user_account_id` | `number` | No | — |
+| `default_workspace_id` | `number` | No | — |
+| `beginning_of_week` | `number` | No | — |
+| `image_url` | `string` | No | — |
+| `country_id` | `number` | No | — |
+| `has_password` | `boolean` | No | — |
+| `openid_email` | `string` | No | — |
+| `openid_enabled` | `boolean` | No | — |
+| `oauth_providers` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### getClients
+
+`me.getClients`
+
+List clients across all workspaces the user can access
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getClients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  wid?: number | null,
+  name: string,
+  notes?: string | null,
+  archived?: boolean | null,
+  creator_id?: number | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLocation
+
+`me.getLocation`
+
+Get the last known location of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getLocation({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `city` | `string` | No | — |
+| `city_lat_long` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `country_name` | `string` | No | — |
+
+
+
+---
+
+### getLogged
+
+`me.getLogged`
+
+Check that the API token is valid
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getLogged({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### getPreferences
+
+`me.getPreferences`
+
+Get the authenticated user preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getPreferences({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BeginningOfWeek` | `number` | No | — |
+| `timeofday_format` | `string` | No | — |
+| `date_format` | `string` | No | — |
+| `duration_format` | `string` | No | — |
+| `record_timeline` | `boolean` | No | — |
+| `send_product_emails` | `boolean` | No | — |
+| `send_timer_notifications` | `boolean` | No | — |
+| `send_weekly_report` | `boolean` | No | — |
+| `pg_time_zone_name` | `string` | No | — |
+| `alpha_features` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="alpha_features full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProjects
+
+`me.getProjects`
+
+List projects across all workspaces the user can access
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  client_id?: number | null,
+  name: string,
+  is_private?: boolean | null,
+  active?: boolean | null,
+  billable?: boolean | null,
+  color?: string | null,
+  currency?: string | null,
+  rate?: number | null,
+  estimated_hours?: number | null,
+  actual_hours?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  template?: boolean | null,
+  recurring?: boolean | null,
+  server_deleted_at?: string | null,
+  created_at?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getQuota
+
+`me.getQuota`
+
+Get remaining API request quota per organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getQuota({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  organization_id?: number | null,
+  remaining: number,
+  total: number,
+  resets_in_secs?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTags
+
+`me.getTags`
+
+List tags across all workspaces the user can access
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  name: string,
+  creator_id?: number | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTasks
+
+`me.getTasks`
+
+List tasks across all workspaces the user can access
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.me.getTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  project_id?: number | null,
+  user_id?: number | null,
+  name: string,
+  active?: boolean | null,
+  estimated_seconds?: number | null,
+  tracked_seconds?: number | null,
+  server_deleted_at?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`me.update`
+
+Update the authenticated user profile
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.me.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fullname` | `string` | No | — |
+| `email` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `beginning_of_week` | `number` | No | — |
+| `default_workspace_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fullname` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `toggl_accounts_id` | `string` | No | — |
+| `user_account_id` | `number` | No | — |
+| `default_workspace_id` | `number` | No | — |
+| `beginning_of_week` | `number` | No | — |
+| `image_url` | `string` | No | — |
+| `country_id` | `number` | No | — |
+| `has_password` | `boolean` | No | — |
+| `openid_email` | `string` | No | — |
+| `openid_enabled` | `boolean` | No | — |
+| `oauth_providers` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### updatePreferences
+
+`me.updatePreferences`
+
+Update the authenticated user preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.me.updatePreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeofday_format` | `string` | No | — |
+| `date_format` | `string` | No | — |
+| `duration_format` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BeginningOfWeek` | `number` | No | — |
+| `timeofday_format` | `string` | No | — |
+| `date_format` | `string` | No | — |
+| `duration_format` | `string` | No | — |
+| `record_timeline` | `boolean` | No | — |
+| `send_product_emails` | `boolean` | No | — |
+| `send_timer_notifications` | `boolean` | No | — |
+| `send_weekly_report` | `boolean` | No | — |
+| `pg_time_zone_name` | `string` | No | — |
+| `alpha_features` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="alpha_features full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### create
+
+`organizations.create`
+
+Create an organization and its first workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.organizations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `workspace_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `pricing_plan_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `is_multi_workspace_enabled` | `boolean` | No | — |
+| `max_workspaces` | `number` | No | — |
+| `admin` | `boolean` | No | — |
+| `owner` | `boolean` | No | — |
+| `trial_info` | `any` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### createGroup
+
+`organizations.createGroup`
+
+Create a group in an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.organizations.createGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | No | — |
+| `id` | `number` | No | — |
+| `organization_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `users` | `object[]` | No | — |
+| `workspaces` | `object[]` | No | — |
+| `at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="workspaces full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createInvitation
+
+`organizations.createInvitation`
+
+Invite people to an organization by email
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.organizations.createInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+| `emails` | `string[]` | Yes | — |
+| `workspaces` | `object[]` | No | — |
+| `prevent_email_notification` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspaces full type">
+
+```ts
+{
+  workspace_id: number,
+  admin?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteGroup
+
+`organizations.deleteGroup`
+
+Delete an organization group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.organizations.deleteGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+| `group_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `pricing_plan_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `is_multi_workspace_enabled` | `boolean` | No | — |
+| `max_workspaces` | `number` | No | — |
+| `admin` | `boolean` | No | — |
+| `owner` | `boolean` | No | — |
+| `trial_info` | `any` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### getGroups
+
+`organizations.getGroups`
+
+List groups in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.getGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  group_id?: number | null,
+  id?: number | null,
+  organization_id?: number | null,
+  name: string,
+  users?: {
+  }[] | null,
+  workspaces?: {
+  }[] | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPlans
+
+`organizations.getPlans`
+
+Get billing and plan details for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.getPlans({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSubscriptionPlans
+
+`organizations.getSubscriptionPlans`
+
+List subscription plans available to an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.getSubscriptionPlans({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUsers
+
+`organizations.getUsers`
+
+List users in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.getUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+| `filter` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `only_admins` | `boolean` | No | — |
+| `groups` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  user_id?: number | null,
+  organization_id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  admin?: boolean | null,
+  owner?: boolean | null,
+  joined?: boolean | null,
+  inactive?: boolean | null,
+  workspaces?: {
+  }[] | null,
+  groups?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWorkspaces
+
+`organizations.getWorkspaces`
+
+List workspaces in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.organizations.getWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  organization_id?: number | null,
+  name: string,
+  premium?: boolean | null,
+  business_ws?: boolean | null,
+  admin?: boolean | null,
+  role?: string | null,
+  default_currency?: string | null,
+  default_hourly_rate?: number | null,
+  only_admins_may_create_projects?: boolean | null,
+  only_admins_may_create_tags?: boolean | null,
+  only_admins_see_billable_rates?: boolean | null,
+  rounding?: number | null,
+  rounding_minutes?: number | null,
+  suspended_at?: string | null,
+  server_deleted_at?: string | null,
+  logo_url?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`organizations.update`
+
+Rename an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.organizations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `pricing_plan_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `is_multi_workspace_enabled` | `boolean` | No | — |
+| `max_workspaces` | `number` | No | — |
+| `admin` | `boolean` | No | — |
+| `owner` | `boolean` | No | — |
+| `trial_info` | `any` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Projects
+
+### addUser
+
+`projects.addUser`
+
+Add a user to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.projects.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `manager` | `boolean` | No | — |
+| `rate` | `number` | No | — |
+| `labour_cost` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `workspace_id` | `number` | No | — |
+| `manager` | `boolean` | No | — |
+| `rate` | `number` | No | — |
+| `labour_cost` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `client_id` | `number` | No | — |
+| `active` | `boolean` | No | — |
+| `is_private` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `color` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `estimated_hours` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `is_private` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `color` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `rate` | `number` | No | — |
+| `estimated_hours` | `number` | No | — |
+| `actual_hours` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `template` | `boolean` | No | — |
+| `recurring` | `boolean` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project and its time entries
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### deleteGroup
+
+`projects.deleteGroup`
+
+Delete a project group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.projects.deleteGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_group_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `is_private` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `color` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `rate` | `number` | No | — |
+| `estimated_hours` | `number` | No | — |
+| `actual_hours` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `template` | `boolean` | No | — |
+| `recurring` | `boolean` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  client_id?: number | null,
+  name: string,
+  is_private?: boolean | null,
+  active?: boolean | null,
+  billable?: boolean | null,
+  color?: string | null,
+  currency?: string | null,
+  rate?: number | null,
+  estimated_hours?: number | null,
+  actual_hours?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  template?: boolean | null,
+  recurring?: boolean | null,
+  server_deleted_at?: string | null,
+  created_at?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `active` | `boolean` | No | — |
+| `is_private` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `is_private` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `color` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `rate` | `number` | No | — |
+| `estimated_hours` | `number` | No | — |
+| `actual_hours` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `template` | `boolean` | No | — |
+| `recurring` | `boolean` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Reference
+
+### getCountries
+
+`reference.getCountries`
+
+List countries Toggl supports, with VAT settings
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getCountries({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  country_code?: string | null,
+  vat_applicable?: boolean | null,
+  vat_percentage?: number | null,
+  vat_regex?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCountrySubdivisions
+
+`reference.getCountrySubdivisions`
+
+List states or provinces for a country id from getCountries
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getCountrySubdivisions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country_subdivision_id?: number | null,
+  country_id?: number | null,
+  name: string,
+  iso_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCurrencies
+
+`reference.getCurrencies`
+
+List currencies Toggl supports
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getCurrencies({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  currency_id?: number | null,
+  iso_code: string,
+  symbol?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getKeys
+
+`reference.getKeys`
+
+Get the JWKS keyset used to verify Toggl JWTs
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getKeys({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keys full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimezoneOffsets
+
+`reference.getTimezoneOffsets`
+
+List timezones with their UTC offsets
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getTimezoneOffsets({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  utc: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTimezones
+
+`reference.getTimezones`
+
+List timezones Toggl supports
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.reference.getTimezones({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Smail
+
+### sendContact
+
+`smail.sendContact`
+
+Send an email to a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.smail.sendContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### sendDemo
+
+`smail.sendDemo`
+
+Send a product demo request email
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.smail.sendDemo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `company` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### sendMeet
+
+`smail.sendMeet`
+
+Send a meeting invitation email
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.smail.sendMeet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `location` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `creator_id` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `tag_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  name: string,
+  creator_id?: number | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `tag_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `creator_id` | `number` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `estimated_seconds` | `number` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `estimated_seconds` | `number` | No | — |
+| `tracked_seconds` | `number` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `task_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `task_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `estimated_seconds` | `number` | No | — |
+| `tracked_seconds` | `number` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | No | — |
+| `active` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  project_id?: number | null,
+  user_id?: number | null,
+  name: string,
+  active?: boolean | null,
+  estimated_seconds?: number | null,
+  tracked_seconds?: number | null,
+  server_deleted_at?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `task_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `estimated_seconds` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `estimated_seconds` | `number` | No | — |
+| `tracked_seconds` | `number` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Time Entries
+
+### bulkEdit
+
+`timeEntries.bulkEdit`
+
+Bulk edit up to 100 time entries with JSON Patch
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.timeEntries.bulkEdit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `time_entry_ids` | `number[]` | Yes | — |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: add | remove | replace,
+  path: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `number[]` | No | — |
+| `failure` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="failure full type">
+
+```ts
+{
+  id?: number | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`timeEntries.create`
+
+Create or start a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.timeEntries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `start` | `string` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `stop` | `string` | No | — |
+| `created_with` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | Yes | — |
+| `billable` | `boolean` | No | — |
+| `duronly` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.timeEntries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Get a time entry by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.timeEntries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | Yes | — |
+| `billable` | `boolean` | No | — |
+| `duronly` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### getCurrent
+
+`timeEntries.getCurrent`
+
+Get the currently running time entry, if any
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.timeEntries.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | Yes | — |
+| `billable` | `boolean` | No | — |
+| `duronly` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List the current user time entries
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.timeEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string \| string` | No | — |
+| `end_date` | `string \| string` | No | — |
+| `since` | `number` | No | — |
+| `before` | `string \| string` | No | — |
+| `meta` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  workspace_id?: number | null,
+  project_id?: number | null,
+  task_id?: number | null,
+  user_id?: number | null,
+  description?: string | null,
+  start: string,
+  stop?: string | null,
+  duration: number,
+  billable?: boolean | null,
+  duronly?: boolean | null,
+  tags?: string[] | null,
+  tag_ids?: number[] | null,
+  server_deleted_at?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stop
+
+`timeEntries.stop`
+
+Stop a running time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.timeEntries.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | Yes | — |
+| `billable` | `boolean` | No | — |
+| `duronly` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.timeEntries.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `time_entry_id` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `start` | `string` | No | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `workspace_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `start` | `string` | Yes | — |
+| `stop` | `string` | No | — |
+| `duration` | `number` | Yes | — |
+| `billable` | `boolean` | No | — |
+| `duronly` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### deleteSubscription
+
+`webhooks.deleteSubscription`
+
+Delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.toggl.api.webhooks.deleteSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `subscription_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### getEventFilters
+
+`webhooks.getEventFilters`
+
+List event types available for webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.webhooks.getEventFilters({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStatus
+
+`webhooks.getStatus`
+
+Check the Toggl webhooks service status
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.webhooks.getStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### listSubscriptions
+
+`webhooks.listSubscriptions`
+
+List webhook subscriptions for a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.webhooks.listSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  subscription_id?: number | null,
+  workspace_id?: number | null,
+  user_id?: number | null,
+  url_callback?: string | null,
+  enabled?: boolean | null,
+  description?: string | null,
+  event_filters?: {
+  }[] | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workspaces
+
+### get
+
+`workspaces.get`
+
+Get a workspace by id
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `organization_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `premium` | `boolean` | No | — |
+| `business_ws` | `boolean` | No | — |
+| `admin` | `boolean` | No | — |
+| `role` | `string` | No | — |
+| `default_currency` | `string` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `only_admins_may_create_projects` | `boolean` | No | — |
+| `only_admins_may_create_tags` | `boolean` | No | — |
+| `only_admins_see_billable_rates` | `boolean` | No | — |
+| `rounding` | `number` | No | — |
+| `rounding_minutes` | `number` | No | — |
+| `suspended_at` | `string` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+
+### getLogo
+
+`workspaces.getLogo`
+
+Get the workspace logo URL
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.workspaces.getLogo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logo` | `string` | No | — |
+
+
+
+---
+
+### getPreferences
+
+`workspaces.getPreferences`
+
+Get workspace preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.workspaces.getPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `initial_pricing_plan` | `number` | No | — |
+| `hide_start_end_times` | `boolean` | No | — |
+
+
+
+---
+
+### getUsers
+
+`workspaces.getUsers`
+
+List users in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.workspaces.getUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  user_id?: number | null,
+  workspace_id?: number | null,
+  admin?: boolean | null,
+  active?: boolean | null,
+  email?: string | null,
+  name?: string | null,
+  role?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List workspaces the user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.toggl.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  organization_id?: number | null,
+  name: string,
+  premium?: boolean | null,
+  business_ws?: boolean | null,
+  admin?: boolean | null,
+  role?: string | null,
+  default_currency?: string | null,
+  default_hourly_rate?: number | null,
+  only_admins_may_create_projects?: boolean | null,
+  only_admins_may_create_tags?: boolean | null,
+  only_admins_see_billable_rates?: boolean | null,
+  rounding?: number | null,
+  rounding_minutes?: number | null,
+  suspended_at?: string | null,
+  server_deleted_at?: string | null,
+  logo_url?: string | null,
+  at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Update workspace settings
+
+**Risk:** `write`
+
+```ts
+await corsair.toggl.api.workspaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `default_currency` | `string` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `only_admins_may_create_projects` | `boolean` | No | — |
+| `only_admins_may_create_tags` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `organization_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `premium` | `boolean` | No | — |
+| `business_ws` | `boolean` | No | — |
+| `admin` | `boolean` | No | — |
+| `role` | `string` | No | — |
+| `default_currency` | `string` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `only_admins_may_create_projects` | `boolean` | No | — |
+| `only_admins_may_create_tags` | `boolean` | No | — |
+| `only_admins_see_billable_rates` | `boolean` | No | — |
+| `rounding` | `number` | No | — |
+| `rounding_minutes` | `number` | No | — |
+| `suspended_at` | `string` | No | — |
+| `server_deleted_at` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `at` | `string` | No | — |
+
+
+
+---
+

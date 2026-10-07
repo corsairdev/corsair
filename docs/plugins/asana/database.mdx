@@ -1,0 +1,235 @@
+---
+title: Database
+description: "Asana local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Asana plugin syncs data locally. Use `corsair.asana.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Projects
+
+Path: `asana.db.projects.search`
+
+```ts
+const rows = await corsair.asana.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `html_notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived` | `boolean` | equals |
+| `completed` | `boolean` | equals |
+| `due_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `public` | `boolean` | equals |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `permalink_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_view` | `string` | equals, contains, startsWith, endsWith, in |
+| `privacy_setting` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sections
+
+Path: `asana.db.sections.search`
+
+```ts
+const rows = await corsair.asana.db.sections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Stories
+
+Path: `asana.db.stories.search`
+
+```ts
+const rows = await corsair.asana.db.stories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `html_text` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_subtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `liked` | `boolean` | equals |
+| `num_likes` | `number` | equals, gt, gte, lt, lte, in |
+| `is_edited` | `boolean` | equals |
+| `is_pinned` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `asana.db.tags.search`
+
+```ts
+const rows = await corsair.asana.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `permalink_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `asana.db.tasks.search`
+
+```ts
+const rows = await corsair.asana.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `html_notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `completed` | `boolean` | equals |
+| `due_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `due_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `assignee_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_subtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `completed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `liked` | `boolean` | equals |
+| `num_likes` | `number` | equals, gt, gte, lt, lte, in |
+| `num_subtasks` | `number` | equals, gt, gte, lt, lte, in |
+| `permalink_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `approval_status` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `asana.db.teams.search`
+
+```ts
+const rows = await corsair.asana.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `html_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `permalink_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `asana.db.users.search`
+
+```ts
+const rows = await corsair.asana.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `gid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

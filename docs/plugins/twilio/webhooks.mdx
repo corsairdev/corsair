@@ -1,0 +1,244 @@
+---
+title: Webhooks
+description: "Twilio incoming webhooks: event paths, payloads, and response data."
+---
+
+The Twilio plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/twilio/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `call`
+  - `statusUpdate` (`call.statusUpdate`)
+- `message`
+  - `received` (`message.received`)
+  - `statusUpdate` (`message.statusUpdate`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Call
+
+### Status Update
+
+`call.statusUpdate`
+
+A call status changed (ringing, in-progress, completed, etc.)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CallSid` | `string` | Yes | — |
+| `AccountSid` | `string` | Yes | — |
+| `From` | `string` | Yes | — |
+| `To` | `string` | Yes | — |
+| `CallStatus` | `queued \| ringing \| in-progress \| completed \| busy \| no-answer \| canceled \| failed` | Yes | — |
+| `Direction` | `string` | No | — |
+| `Duration` | `string` | No | — |
+| `CallDuration` | `string` | No | — |
+| `ApiVersion` | `string` | No | — |
+| `Timestamp` | `string` | No | — |
+| `SequenceNumber` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  CallSid: string,
+  AccountSid: string,
+  From: string,
+  To: string,
+  CallStatus: queued | ringing | in-progress | completed | busy | no-answer | canceled | failed,
+  Direction?: string,
+  Duration?: string,
+  CallDuration?: string,
+  ApiVersion?: string,
+  Timestamp?: string,
+  SequenceNumber?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+twilio({
+    webhookHooks: {
+        call: {
+            statusUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message
+
+### Received
+
+`message.received`
+
+An incoming SMS/MMS message was received
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `MessageSid` | `string` | Yes | — |
+| `SmsSid` | `string` | No | — |
+| `AccountSid` | `string` | Yes | — |
+| `MessagingServiceSid` | `string` | No | — |
+| `From` | `string` | Yes | — |
+| `To` | `string` | Yes | — |
+| `Body` | `string` | Yes | — |
+| `NumMedia` | `string` | Yes | — |
+| `NumSegments` | `string` | No | — |
+| `SmsStatus` | `string` | No | — |
+| `ApiVersion` | `string` | No | — |
+| `FromCity` | `string` | No | — |
+| `FromState` | `string` | No | — |
+| `FromCountry` | `string` | No | — |
+| `FromZip` | `string` | No | — |
+| `ToCity` | `string` | No | — |
+| `ToState` | `string` | No | — |
+| `ToCountry` | `string` | No | — |
+| `ToZip` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  MessageSid: string,
+  SmsSid?: string,
+  AccountSid: string,
+  MessagingServiceSid?: string,
+  From: string,
+  To: string,
+  Body: string,
+  NumMedia: string,
+  NumSegments?: string,
+  SmsStatus?: string,
+  ApiVersion?: string,
+  FromCity?: string,
+  FromState?: string,
+  FromCountry?: string,
+  FromZip?: string,
+  ToCity?: string,
+  ToState?: string,
+  ToCountry?: string,
+  ToZip?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+twilio({
+    webhookHooks: {
+        message: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Update
+
+`message.statusUpdate`
+
+A message delivery status changed (sent, delivered, failed, etc.)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `MessageSid` | `string` | Yes | — |
+| `AccountSid` | `string` | Yes | — |
+| `From` | `string` | Yes | — |
+| `To` | `string` | Yes | — |
+| `MessageStatus` | `accepted \| queued \| sending \| sent \| delivered \| undelivered \| failed \| receiving \| received \| read` | Yes | — |
+| `ErrorCode` | `string` | No | — |
+| `ErrorMessage` | `string` | No | — |
+| `ApiVersion` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  MessageSid: string,
+  AccountSid: string,
+  From: string,
+  To: string,
+  MessageStatus: accepted | queued | sending | sent | delivered | undelivered | failed | receiving | received | read,
+  ErrorCode?: string,
+  ErrorMessage?: string,
+  ApiVersion?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+twilio({
+    webhookHooks: {
+        message: {
+            statusUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,176 @@
+---
+title: Overview
+description: "Scheduling service for creating events, managing calendars, and checking availability."
+---
+
+Use **Google Calendar** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 6 typed API operations
+- 2 synced entities (`calendars`, `events`) for fast `.search()` / `.list()`
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlecalendar
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlecalendar
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlecalendar
+```
+```bash bun
+bun add corsair @corsair-dev/googlecalendar
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+
+export const corsair = createCorsair({
+	plugins: [
+		googlecalendar(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Calendar OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/googlecalendar/get-credentials).
+
+```ts
+googlecalendar()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googlecalendar',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get availability**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.calendar.getAvailability({
+	timeMin: '2026-01-01T00:00:00Z',
+	timeMax: '2026-01-07T23:59:59Z',
+	items: [{ id: 'primary' }],
+});
+```
+
+
+**Create an event**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.create({
+	event: {
+		summary: 'Team Sync',
+		start: { dateTime: '2026-01-02T10:00:00Z' },
+		end: { dateTime: '2026-01-02T11:00:00Z' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/googlecalendar/api) page.
+
+## Query synced data
+
+Search synced events without hitting Google Calendar.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlecalendar.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `calendars`, `events`. See [Database](/plugins/googlecalendar/database) for filters and operators.
+
+## Webhooks
+
+Fires when a Google Calendar event is created, updated, or deleted.
+
+```ts
+googlecalendar({
+    webhookHooks: {
+        onEventChanged: {
+            after: async (ctx, result) => {
+                console.log('Google Calendar event changed:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/googlecalendar/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googlecalendar/api">
+    Every `googlecalendar.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/googlecalendar/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/googlecalendar/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/googlecalendar/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

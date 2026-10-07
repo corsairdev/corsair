@@ -1,0 +1,1387 @@
+---
+title: API
+description: "API reference for ClickMeeting: every `clickmeeting.api.*` operation with input and output types."
+---
+
+Every `clickmeeting.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chats
+
+### getChatDetails
+
+`chats.getChatDetails`
+
+Retrieve details of a specific chat session
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.chats.getChatDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | number,
+  author?: string,
+  text?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getChats
+
+`chats.getChats`
+
+Retrieve a list of all chat sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.chats.getChats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  conference_id?: string | number,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Conferences
+
+### createConference
+
+`conferences.createConference`
+
+Create a new ClickMeeting conference or webinar
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.conferences.createConference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Conference room name |
+| `room_type` | `meeting \| webinar` | No | — |
+| `permanent_room` | `boolean` | No | — |
+| `access_type` | `number` | No | 1: open, 2: password, 3: token |
+| `password` | `string` | No | Required when access_type is 2 (password-protected) |
+| `starts_at` | `string` | No | Scheduled start date/time (YYYY-MM-DD HH:MM:SS) |
+| `duration` | `string` | No | Duration in H:MM format, e.g. 1:20 |
+| `timezone` | `string` | No | — |
+| `lobby_description` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="room full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  room_type?: string,
+  status?: string,
+  room_url?: string,
+  permanent_room?: number | boolean,
+  access_type?: number,
+  starts_at?: string,
+  duration?: number | string,
+  timezone?: string,
+  lobby_description?: string,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteConference
+
+`conferences.deleteConference`
+
+Delete a specific conference room
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.conferences.deleteConference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### generateAutologinUrl
+
+`conferences.generateAutologinUrl`
+
+Generate an autologin hash for a conference participant
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.conferences.generateAutologinUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `email` | `string` | Yes | — |
+| `nickname` | `string` | Yes | — |
+| `role` | `listener \| presenter \| moderator \| guest_speaker \| host` | No | — |
+| `password` | `string` | No | Required when room is password-protected |
+| `token` | `string` | No | Required when room is token-protected |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `autologin_hash` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### getConferenceDetails
+
+`conferences.getConferenceDetails`
+
+Retrieve detailed information about a specific conference room
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.conferences.getConferenceDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | Conference / Room ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="conference full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  room_type?: string,
+  status?: string,
+  room_url?: string,
+  permanent_room?: number | boolean,
+  access_type?: number,
+  starts_at?: string,
+  duration?: number | string,
+  timezone?: string,
+  lobby_description?: string,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConferenceFiles
+
+`conferences.getConferenceFiles`
+
+Retrieve list of files uploaded to a specific conference room
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.conferences.getConferenceFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  size?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getConferences
+
+`conferences.getConferences`
+
+Retrieve a list of conference rooms filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.conferences.getConferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `active \| inactive` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  room_type?: string,
+  status?: string,
+  room_url?: string,
+  permanent_room?: number | boolean,
+  access_type?: number,
+  starts_at?: string,
+  duration?: number | string,
+  timezone?: string,
+  lobby_description?: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getConferenceSkins
+
+`conferences.getConferenceSkins`
+
+Retrieve list of available conference room skins
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.conferences.getConferenceSkins({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sendInvitation
+
+`conferences.sendInvitation`
+
+Send invitation emails to participants for a conference
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.conferences.sendInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `lang` | `string` | Yes | Language code for the invitation email (e.g. en, pl) |
+| `attendees` | `string[]` | Yes | List of attendee email addresses |
+| `role` | `listener \| presenter` | No | — |
+| `template` | `advanced \| basic` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `queued` | `number` | No | — |
+| `failed` | `number` | No | — |
+
+
+
+---
+
+### updateConference
+
+`conferences.updateConference`
+
+Update an existing conference room parameters
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.conferences.updateConference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `room_type` | `meeting \| webinar` | No | — |
+| `permanent_room` | `boolean` | No | — |
+| `access_type` | `number` | No | — |
+| `password` | `string` | No | Required when access_type is 2 |
+| `starts_at` | `string` | No | — |
+| `duration` | `string` | No | Duration in H:MM format, e.g. 1:20 |
+| `timezone` | `string` | No | — |
+| `lobby_description` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `room_type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `room_url` | `string` | No | — |
+| `permanent_room` | `number \| boolean` | No | — |
+| `access_type` | `number` | No | — |
+| `starts_at` | `string` | No | — |
+| `duration` | `number \| string` | No | — |
+| `timezone` | `string` | No | — |
+| `lobby_description` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+## Files
+
+### deleteFile
+
+`files.deleteFile`
+
+Delete a file from the ClickMeeting file library
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.files.deleteFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### downloadFile
+
+`files.downloadFile`
+
+Download file content from the ClickMeeting file library
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.files.downloadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | — |
+| `download_url` | `string` | No | — |
+
+
+
+---
+
+### getFileDetails
+
+`files.getFileDetails`
+
+Retrieve detailed information about a specific file
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.files.getFileDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `size` | `string \| number` | No | — |
+| `created_at` | `string` | No | — |
+| `download_url` | `string` | No | — |
+
+
+
+---
+
+### getFileLibrary
+
+`files.getFileLibrary`
+
+Retrieve a list of files from ClickMeeting file library
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.files.getFileLibrary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  size?: string | number,
+  created_at?: string,
+  download_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### uploadFile
+
+`files.uploadFile`
+
+Upload a file to the ClickMeeting file library
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.files.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | File name |
+| `content` | `string` | Yes | File content (base64-encoded string, or raw string when encoding is "raw") |
+| `encoding` | `base64 \| raw` | No | Content encoding discriminator ("base64" or "raw", defaults to "base64") |
+| `conference_id` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Recordings
+
+### deleteRecording
+
+`recordings.deleteRecording`
+
+Delete a specific recording from a conference room
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.recordings.deleteRecording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `recordingId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteRecordings
+
+`recordings.deleteRecordings`
+
+Delete all recordings for a conference room
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.recordings.deleteRecordings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `deleted_count` | `number` | No | — |
+
+
+
+---
+
+### getSessionRecordings
+
+`recordings.getSessionRecordings`
+
+Retrieve all recordings for a conference room
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.recordings.getSessionRecordings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  duration?: number,
+  recording_url?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Registrations
+
+### createContact
+
+`registrations.createContact`
+
+Create a new contact in your ClickMeeting account
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.registrations.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `city` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `email` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### getRegistrations
+
+`registrations.getRegistrations`
+
+Retrieve registrations for a conference room by status
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.registrations.getRegistrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `status` | `all \| waiting \| confirmed \| rejected` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  status?: string,
+  registered_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRegistrationsByStatus
+
+`registrations.listRegistrationsByStatus`
+
+Retrieve registered participants filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.registrations.listRegistrationsByStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `status` | `all \| waiting \| confirmed \| rejected` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  status?: string,
+  registered_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### registerParticipant
+
+`registrations.registerParticipant`
+
+Register a participant for a conference room
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.registrations.registerParticipant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `registration` | `object` | Yes | Participant registration fields (e.g. first_name, last_name, email) |
+
+<AccordionGroup>
+<Accordion title="registration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registration_hash` | `string` | No | — |
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Sessions
+
+### generateSessionPdfReport
+
+`sessions.generateSessionPdfReport`
+
+Generate a PDF report containing analytics for a session
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.sessions.generateSessionPdfReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `sessionId` | `string \| number` | Yes | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `report_url` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getConferenceSessions
+
+`sessions.getConferenceSessions`
+
+Retrieve past sessions for a conference room
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.sessions.getConferenceSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  starts_at?: string,
+  duration?: number | string,
+  attendees_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSessionAttendees
+
+`sessions.getSessionAttendees`
+
+Retrieve list of attendees who participated in a session
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.sessions.getSessionAttendees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `sessionId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  nickname?: string,
+  email?: string,
+  role?: string,
+  duration?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSessionDetails
+
+`sessions.getSessionDetails`
+
+Retrieve detailed statistics for a specific past conference session
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.sessions.getSessionDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `sessionId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `starts_at` | `string` | No | — |
+| `duration` | `number \| string` | No | — |
+| `attendees_count` | `number` | No | — |
+
+
+
+---
+
+### getSessionRegistrations
+
+`sessions.getSessionRegistrations`
+
+Retrieve registrations for a specific session
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.sessions.getSessionRegistrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `sessionId` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  status?: string,
+  registered_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tokens
+
+### createAccessTokens
+
+`tokens.createAccessTokens`
+
+Generate access tokens for conference participants
+
+**Risk:** `write`
+
+```ts
+await corsair.clickmeeting.api.tokens.createAccessTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `how_many` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_tokens` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="access_tokens full type">
+
+```ts
+{
+  token?: string,
+  email?: string,
+  sent_to_email?: string | null,
+  first_use_date?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTokenByEmail
+
+`tokens.getTokenByEmail`
+
+Retrieve access tokens assigned to a specific email address
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.tokens.getTokenByEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_tokens` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="access_tokens full type">
+
+```ts
+{
+  token?: string,
+  email?: string,
+  sent_to_email?: string | null,
+  first_use_date?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAccessTokens
+
+`tokens.listAccessTokens`
+
+Retrieve all generated access tokens for a conference
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.tokens.listAccessTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roomId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_tokens` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="access_tokens full type">
+
+```ts
+{
+  token?: string,
+  email?: string,
+  sent_to_email?: string | null,
+  first_use_date?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Utility
+
+### getPhoneGateways
+
+`utility.getPhoneGateways`
+
+Retrieve available phone dial-in numbers for ClickMeeting webinars
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.utility.getPhoneGateways({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string,
+  country_name?: string,
+  phone?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPing
+
+`utility.getPing`
+
+Check ClickMeeting API service status
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.utility.getPing({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ping` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### getTimeZoneList
+
+`utility.getTimeZoneList`
+
+Retrieve all available time zones supported by ClickMeeting
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.utility.getTimeZoneList({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTimeZoneListByCountry
+
+`utility.getTimeZoneListByCountry`
+
+Retrieve available time zones for a specific country
+
+**Risk:** `read`
+
+```ts
+await corsair.clickmeeting.api.utility.getTimeZoneListByCountry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | ISO 3166-1 alpha-2 country code (e.g. US) |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

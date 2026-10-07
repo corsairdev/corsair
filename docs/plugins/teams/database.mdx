@@ -1,0 +1,172 @@
+---
+title: Database
+description: "Microsoft Teams local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Microsoft Teams plugin syncs data locally. Use `corsair.teams.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Channels
+
+Path: `teams.db.channels.search`
+
+```ts
+const rows = await corsair.teams.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `membershipType` | `string` | equals, contains, startsWith, endsWith, in |
+| `isFavoriteByDefault` | `boolean` | equals |
+| `createdDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Chats
+
+Path: `teams.db.chats.search`
+
+```ts
+const rows = await corsair.teams.db.chats.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `topic` | `string` | equals, contains, startsWith, endsWith, in |
+| `chatType` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `tenantId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdatedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Members
+
+Path: `teams.db.members.search`
+
+```ts
+const rows = await corsair.teams.db.members.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `tenantId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `teams.db.messages.search`
+
+```ts
+const rows = await corsair.teams.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `chatId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `replyToId` | `string` | equals, contains, startsWith, endsWith, in |
+| `messageType` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `deletedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `bodyContent` | `string` | equals, contains, startsWith, endsWith, in |
+| `bodyContentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `fromUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fromUserDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `teams.db.teams.search`
+
+```ts
+const rows = await corsair.teams.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `internalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `classification` | `string` | equals, contains, startsWith, endsWith, in |
+| `specialization` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `webUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `isArchived` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

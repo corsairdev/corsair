@@ -1,0 +1,4102 @@
+---
+title: API
+description: "API reference for Hugging Face: every `huggingface.api.*` operation with input and output types."
+---
+
+Every `huggingface.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### deleteNotifications
+
+`account.deleteNotifications`
+
+Delete notifications by discussion ids or filters
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.account.deleteNotifications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussionIds` | `string[]` | No | — |
+| `applyToAll` | `boolean` | No | — |
+| `filter` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWhoami
+
+`account.getWhoami`
+
+Get authenticated Hugging Face user info
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.account.getWhoami({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### listNotifications
+
+`account.listNotifications`
+
+List notifications for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.account.listNotifications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `read` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a new collection
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.collections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `namespace` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `private` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`collections.list`
+
+List collections on the Hub
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | — |
+| `item` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Datasets
+
+### checkUploadMethod
+
+`datasets.checkUploadMethod`
+
+Check LFS vs regular upload method for dataset files
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.checkUploadMethod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `files` | `object[]` | Yes | — |
+| `gitAttributes` | `string` | No | — |
+| `gitIgnore` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  size: number,
+  sample: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### checkValidity
+
+`datasets.checkValidity`
+
+Check whether a dataset is valid on the Hub viewer
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.checkValidity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createBranch
+
+`datasets.createBranch`
+
+Create a branch on a dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.createBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `startingPoint` | `string` | No | — |
+| `emptyBranch` | `boolean` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createCommit
+
+`datasets.createCommit`
+
+Create a commit on a dataset (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.createCommit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `parentCommit` | `string` | No | — |
+| `createPr` | `boolean` | No | — |
+| `hotReload` | `boolean` | No | — |
+| `format` | `json \| ndjson` | No | — |
+| `files` | `object[]` | No | — |
+| `deletedEntries` | `object[]` | No | — |
+| `lfsFiles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  content?: string,
+  encoding?: utf-8 | base64,
+  oldPath?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="deletedEntries full type">
+
+```ts
+{
+  path: string
+}[]
+```
+</Accordion>
+
+<Accordion title="lfsFiles full type">
+
+```ts
+{
+  path: string,
+  oid?: string,
+  algo?: sha256,
+  size?: number,
+  oldPath?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createSqlConsoleEmbed
+
+`datasets.createSqlConsoleEmbed`
+
+Create a SQL Console embed for a dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.createSqlConsoleEmbed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `repoType` | `dataset` | Yes | — |
+| `title` | `string` | No | — |
+| `sql` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createTag
+
+`datasets.createTag`
+
+Create a tag on a dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranch
+
+`datasets.deleteBranch`
+
+Delete a branch on a dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.datasets.deleteBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteTag
+
+`datasets.deleteTag`
+
+Delete a tag on a dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.datasets.deleteTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### filterRows
+
+`datasets.filterRows`
+
+Filter dataset rows with SQL-like where clause
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.filterRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `split` | `string` | Yes | — |
+| `where` | `string` | Yes | — |
+| `orderby` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `length` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`datasets.get`
+
+Get dataset repository info
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | No | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCompare
+
+`datasets.getCompare`
+
+Compare two revisions of a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getCompare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCroissant
+
+`datasets.getCroissant`
+
+Get Croissant JSON-LD metadata for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getCroissant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getFirstRows
+
+`datasets.getFirstRows`
+
+Get first ~100 rows of a dataset split
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getFirstRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `split` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getInfo
+
+`datasets.getInfo`
+
+Get dataset info (features, splits, citation)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJwt
+
+`datasets.getJwt`
+
+Get JWT for a dataset repo
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getJwt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `write` | `boolean` | No | — |
+| `expireAt` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getLeaderboard
+
+`datasets.getLeaderboard`
+
+Get evaluation leaderboard for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getLeaderboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getNotebook
+
+`datasets.getNotebook`
+
+Get notebook URL from a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getNotebook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolve
+
+`datasets.getResolve`
+
+Resolve a file from a dataset (follows redirects / XET info)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getResolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolveCache
+
+`datasets.getResolveCache`
+
+Resolve a file from dataset cache
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getResolveCache({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRows
+
+`datasets.getRows`
+
+Get a slice of dataset rows (offset/length)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `split` | `string` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `length` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getScan
+
+`datasets.getScan`
+
+Get security scan status for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getScan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSize
+
+`datasets.getSize`
+
+Get dataset size (rows and bytes)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getSize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getStatistics
+
+`datasets.getStatistics`
+
+Get statistics for a dataset split
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `split` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTagsByType
+
+`datasets.getTagsByType`
+
+Get dataset tags grouped by type
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getTagsByType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTreeSize
+
+`datasets.getTreeSize`
+
+Get repository tree size for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getTreeSize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getXetReadToken
+
+`datasets.getXetReadToken`
+
+Get XET read token for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.getXetReadToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### handleAccessRequest
+
+`datasets.handleAccessRequest`
+
+Accept/reject gated dataset access request
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.handleAccessRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `user` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `status` | `accepted \| rejected \| pending` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`datasets.list`
+
+List datasets on the Hub
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `author` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `-1 \| 1 \| string` | No | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+| `full` | `boolean` | No | — |
+| `config` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAccessRequests
+
+`datasets.listAccessRequests`
+
+List access requests for a gated dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listAccessRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `status` | `pending \| accepted \| rejected` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listCommits
+
+`datasets.listCommits`
+
+List commits for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listParquetFiles
+
+`datasets.listParquetFiles`
+
+List Parquet files for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listParquetFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listPathsInfo
+
+`datasets.listPathsInfo`
+
+List path metadata in a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listPathsInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `paths` | `string[]` | Yes | — |
+| `expand` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listRefs
+
+`datasets.listRefs`
+
+List refs (branches/tags) for a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listRefs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `includePullRequests` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSplits
+
+`datasets.listSplits`
+
+List dataset configurations and splits
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.listSplits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | No | — |
+| `split` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### search
+
+`datasets.search`
+
+Full-text search within a dataset split
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.datasets.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `split` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `length` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### squashCommits
+
+`datasets.squashCommits`
+
+Squash all commits in a dataset ref (irreversible)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.datasets.squashCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSettings
+
+`datasets.updateSettings`
+
+Update settings for a dataset repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+| `gated` | `boolean \| string` | No | — |
+| `discussionsDisabled` | `boolean` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSqlConsoleEmbed
+
+`datasets.updateSqlConsoleEmbed`
+
+Update a SQL Console embed
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.datasets.updateSqlConsoleEmbed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `repoType` | `dataset` | Yes | — |
+| `embedId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `sql` | `string` | No | — |
+| `private` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Discussions
+
+### changeStatus
+
+`discussions.changeStatus`
+
+Open or close a discussion
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.discussions.changeStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+| `status` | `open \| closed` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### create
+
+`discussions.create`
+
+Create a discussion on a repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.discussions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `pullRequest` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createComment
+
+`discussions.createComment`
+
+Comment on a discussion
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.discussions.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### delete
+
+`discussions.delete`
+
+Delete a discussion
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.discussions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`discussions.get`
+
+Get discussion details
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.discussions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`discussions.list`
+
+List discussions for a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.discussions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `status` | `open \| closed \| all` | No | — |
+| `type` | `discussion \| pull_request` | No | — |
+| `p` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### pin
+
+`discussions.pin`
+
+Pin or unpin a discussion
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.discussions.pin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+| `pinned` | `boolean` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateTitle
+
+`discussions.updateTitle`
+
+Update discussion title
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.discussions.updateTitle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `discussionNum` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Docs
+
+### list
+
+`docs.list`
+
+List available Hugging Face documentation
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.docs.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### search
+
+`docs.search`
+
+Search Hugging Face documentation
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.docs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `product` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Endpoints
+
+### deleteNetworkCidr
+
+`endpoints.deleteNetworkCidr`
+
+Delete a network CIDR list entry for Inference Endpoints
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.endpoints.deleteNetworkCidr({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `cidr` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`endpoints.list`
+
+List Inference Endpoints for a namespace
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.endpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listVendors
+
+`endpoints.listVendors`
+
+List cloud provider vendors for Inference Endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.endpoints.listVendors({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Inference
+
+### chatCompletion
+
+`inference.chatCompletion`
+
+Generate chat completion via Inference Providers (OpenAI-compatible)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.inference.chatCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `temperature` | `number` | No | — |
+| `maxTokens` | `number` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### embeddings
+
+`inference.embeddings`
+
+Generate text embeddings via Inference Providers
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.inference.embeddings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `string \| string[]` | Yes | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Jobs
+
+### getHardware
+
+`jobs.getHardware`
+
+List available Jobs hardware
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.jobs.getHardware({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Models
+
+### checkUploadMethod
+
+`models.checkUploadMethod`
+
+Check LFS vs regular upload method for model files
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.checkUploadMethod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `files` | `object[]` | Yes | — |
+| `gitAttributes` | `string` | No | — |
+| `gitIgnore` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  size: number,
+  sample: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createBranch
+
+`models.createBranch`
+
+Create a branch on a model
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.models.createBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `startingPoint` | `string` | No | — |
+| `emptyBranch` | `boolean` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createCommit
+
+`models.createCommit`
+
+Create a commit on a model (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.models.createCommit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `parentCommit` | `string` | No | — |
+| `createPr` | `boolean` | No | — |
+| `hotReload` | `boolean` | No | — |
+| `format` | `json \| ndjson` | No | — |
+| `files` | `object[]` | No | — |
+| `deletedEntries` | `object[]` | No | — |
+| `lfsFiles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  content?: string,
+  encoding?: utf-8 | base64,
+  oldPath?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="deletedEntries full type">
+
+```ts
+{
+  path: string
+}[]
+```
+</Accordion>
+
+<Accordion title="lfsFiles full type">
+
+```ts
+{
+  path: string,
+  oid?: string,
+  algo?: sha256,
+  size?: number,
+  oldPath?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createTag
+
+`models.createTag`
+
+Create a tag on a model
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.models.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranch
+
+`models.deleteBranch`
+
+Delete a branch on a model
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.models.deleteBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteTag
+
+`models.deleteTag`
+
+Delete a tag on a model
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.models.deleteTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`models.get`
+
+Get model repository info
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | No | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCompare
+
+`models.getCompare`
+
+Compare two revisions of a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getCompare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJwt
+
+`models.getJwt`
+
+Get JWT for a model repo
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getJwt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `write` | `boolean` | No | — |
+| `expireAt` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getNotebook
+
+`models.getNotebook`
+
+Get notebook URL from a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getNotebook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolve
+
+`models.getResolve`
+
+Resolve a file from a model (follows redirects / XET info)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getResolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolveCache
+
+`models.getResolveCache`
+
+Resolve a file from model cache
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getResolveCache({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getScan
+
+`models.getScan`
+
+Get security scan status for a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getScan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTagsByType
+
+`models.getTagsByType`
+
+Get model tags grouped by type
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getTagsByType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTreeSize
+
+`models.getTreeSize`
+
+Get repository tree size for a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getTreeSize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getXetReadToken
+
+`models.getXetReadToken`
+
+Get XET read token for a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.getXetReadToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`models.list`
+
+List models on the Hub
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `author` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `-1 \| 1 \| string` | No | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+| `full` | `boolean` | No | — |
+| `config` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listCommits
+
+`models.listCommits`
+
+List commits for a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.listCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listPathsInfo
+
+`models.listPathsInfo`
+
+List path metadata in a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.listPathsInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `paths` | `string[]` | Yes | — |
+| `expand` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listRefs
+
+`models.listRefs`
+
+List refs (branches/tags) for a model
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.models.listRefs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `includePullRequests` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSettings
+
+`models.updateSettings`
+
+Update settings for a model repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.models.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+| `gated` | `boolean \| string` | No | — |
+| `discussionsDisabled` | `boolean` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organizations
+
+### getAvatar
+
+`organizations.getAvatar`
+
+Get organization avatar
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.organizations.getAvatar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMembers
+
+`organizations.getMembers`
+
+List organization members
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.organizations.getMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `search` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSocials
+
+`organizations.getSocials`
+
+Get organization social handles
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.organizations.getSocials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Papers
+
+### claimAuthorship
+
+`papers.claimAuthorship`
+
+Claim authorship of a paper
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.papers.claimAuthorship({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paperId` | `string` | Yes | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createComment
+
+`papers.createComment`
+
+Comment on a paper
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.papers.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paperId` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createCommentReply
+
+`papers.createCommentReply`
+
+Reply to a paper comment
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.papers.createCommentReply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paperId` | `string` | Yes | — |
+| `commentId` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createIndex
+
+`papers.createIndex`
+
+Index an arXiv paper by id
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.papers.createIndex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paperId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDaily
+
+`papers.getDaily`
+
+Get daily papers
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.papers.getDaily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### search
+
+`papers.search`
+
+Search papers (hybrid semantic/full-text)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.papers.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Repos
+
+### create
+
+`repos.create`
+
+Create a model, dataset, or Space repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.repos.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `model \| dataset \| space` | Yes | — |
+| `private` | `boolean` | No | — |
+| `sdk` | `string` | No | — |
+| `hardware` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolve
+
+`repos.getResolve`
+
+Resolve a file in any repository type
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.repos.getResolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listFiles
+
+`repos.listFiles`
+
+List repository file tree with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.repos.listFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+| `expand` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### requestAccess
+
+`repos.requestAccess`
+
+Request access to a gated repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.repos.requestAccess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoType` | `model \| dataset \| space` | Yes | — |
+| `repoId` | `string` | Yes | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Settings
+
+### createWebhook
+
+`settings.createWebhook`
+
+Create a settings webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.settings.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `watched` | `object[]` | No | — |
+| `domains` | `string[]` | No | — |
+| `secret` | `string` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="watched full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteWebhook
+
+`settings.deleteWebhook`
+
+Delete a settings webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.settings.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getBillingUsageV2
+
+`settings.getBillingUsageV2`
+
+Get billing usage for a custom date range (unix timestamps)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.getBillingUsageV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJobsUsage
+
+`settings.getJobsUsage`
+
+Get Jobs usage and billing for current subscription period
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.getJobsUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### getLiveBillingUsage
+
+`settings.getLiveBillingUsage`
+
+Get live billing usage stream snapshot
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.getLiveBillingUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### getMcp
+
+`settings.getMcp`
+
+Get MCP tools configuration for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.getMcp({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### getWebhook
+
+`settings.getWebhook`
+
+Get a webhook by id
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.getWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listWebhooks
+
+`settings.listWebhooks`
+
+List all webhooks in settings
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.settings.listWebhooks({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### updateNotifications
+
+`settings.updateNotifications`
+
+Update notification settings for the authenticated user
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.settings.updateNotifications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWatch
+
+`settings.updateWatch`
+
+Update watch settings (orgs/users/repos to follow)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.settings.updateWatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `add` | `object[]` | No | — |
+| `remove` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="add full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="remove full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWebhook
+
+`settings.updateWebhook`
+
+Update an existing settings webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.settings.updateWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `watched` | `object[]` | No | — |
+| `domains` | `string[]` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="watched full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWebhookStatus
+
+`settings.updateWebhookStatus`
+
+Enable or disable a webhook (action: enable|disable)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.settings.updateWebhookStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `action` | `enable \| disable` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Spaces
+
+### checkUploadMethod
+
+`spaces.checkUploadMethod`
+
+Check LFS vs regular upload method for space files
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.checkUploadMethod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `files` | `object[]` | Yes | — |
+| `gitAttributes` | `string` | No | — |
+| `gitIgnore` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  size: number,
+  sample: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createBranch
+
+`spaces.createBranch`
+
+Create a branch on a space
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.createBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `startingPoint` | `string` | No | — |
+| `emptyBranch` | `boolean` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createCommit
+
+`spaces.createCommit`
+
+Create a commit on a space (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.createCommit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `parentCommit` | `string` | No | — |
+| `createPr` | `boolean` | No | — |
+| `hotReload` | `boolean` | No | — |
+| `format` | `json \| ndjson` | No | — |
+| `files` | `object[]` | No | — |
+| `deletedEntries` | `object[]` | No | — |
+| `lfsFiles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  path: string,
+  content?: string,
+  encoding?: utf-8 | base64,
+  oldPath?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="deletedEntries full type">
+
+```ts
+{
+  path: string
+}[]
+```
+</Accordion>
+
+<Accordion title="lfsFiles full type">
+
+```ts
+{
+  path: string,
+  oid?: string,
+  algo?: sha256,
+  size?: number,
+  oldPath?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createSecret
+
+`spaces.createSecret`
+
+Create or update a Space secret
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.createSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createTag
+
+`spaces.createTag`
+
+Create a tag on a space
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### createVariable
+
+`spaces.createVariable`
+
+Create or update a Space variable
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.createVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranch
+
+`spaces.deleteBranch`
+
+Delete a branch on a space
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.spaces.deleteBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `branch` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSecret
+
+`spaces.deleteSecret`
+
+Delete a Space secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.spaces.deleteSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteTag
+
+`spaces.deleteTag`
+
+Delete a tag on a space
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.spaces.deleteTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteVariable
+
+`spaces.deleteVariable`
+
+Delete a Space variable
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.spaces.deleteVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`spaces.get`
+
+Get space repository info
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | No | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCompare
+
+`spaces.getCompare`
+
+Compare two revisions of a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getCompare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `compare` | `string` | Yes | e.g. main...other or sha1...sha2 |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getEvents
+
+`spaces.getEvents`
+
+Stream Space status events (SSE snapshot)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJwt
+
+`spaces.getJwt`
+
+Get JWT for a space repo
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getJwt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `write` | `boolean` | No | — |
+| `expireAt` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMetrics
+
+`spaces.getMetrics`
+
+Get live Space metrics (SSE snapshot)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getNotebook
+
+`spaces.getNotebook`
+
+Get notebook URL from a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getNotebook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolve
+
+`spaces.getResolve`
+
+Resolve a file from a space (follows redirects / XET info)
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getResolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResolveCache
+
+`spaces.getResolveCache`
+
+Resolve a file from space cache
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getResolveCache({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `xetFileInfo` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getScan
+
+`spaces.getScan`
+
+Get security scan status for a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getScan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | namespace/repo |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTreeSize
+
+`spaces.getTreeSize`
+
+Get repository tree size for a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getTreeSize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getXetReadToken
+
+`spaces.getXetReadToken`
+
+Get XET read token for a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.getXetReadToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getXetWriteToken
+
+`spaces.getXetWriteToken`
+
+Get XET write token for a Space
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.getXetWriteToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`spaces.list`
+
+List spaces on the Hub
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `author` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `direction` | `-1 \| 1 \| string` | No | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+| `full` | `boolean` | No | — |
+| `config` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listCommits
+
+`spaces.listCommits`
+
+List commits for a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.listCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `p` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listHardware
+
+`spaces.listHardware`
+
+List available Space hardware configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.listHardware({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### listLfsFiles
+
+`spaces.listLfsFiles`
+
+List LFS files in a Space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.listLfsFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listPathsInfo
+
+`spaces.listPathsInfo`
+
+List path metadata in a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.listPathsInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `paths` | `string[]` | Yes | — |
+| `expand` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listRefs
+
+`spaces.listRefs`
+
+List refs (branches/tags) for a space
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.spaces.listRefs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `includePullRequests` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### squashCommits
+
+`spaces.squashCommits`
+
+Squash all commits in a Space ref (irreversible)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.huggingface.api.spaces.squashCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSettings
+
+`spaces.updateSettings`
+
+Update settings for a space repository
+
+**Risk:** `write`
+
+```ts
+await corsair.huggingface.api.spaces.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoId` | `string` | Yes | — |
+| `private` | `boolean` | No | — |
+| `gated` | `boolean \| string` | No | — |
+| `discussionsDisabled` | `boolean` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Trending
+
+### get
+
+`trending.get`
+
+Get trending repositories
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.trending.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `model \| dataset \| space` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Users
+
+### getAvatar
+
+`users.getAvatar`
+
+Get user avatar URL
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.users.getAvatar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOverview
+
+`users.getOverview`
+
+Get user profile overview
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.users.getOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSocials
+
+`users.getSocials`
+
+Get user social handles
+
+**Risk:** `read`
+
+```ts
+await corsair.huggingface.api.users.getSocials({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+

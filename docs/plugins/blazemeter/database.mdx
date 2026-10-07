@@ -1,0 +1,258 @@
+---
+title: Database
+description: "BlazeMeter local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The BlazeMeter plugin syncs data locally. Use `corsair.blazemeter.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `blazemeter.db.accounts.search`
+
+```ts
+const rows = await corsair.blazemeter.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Assets
+
+Path: `blazemeter.db.assets.search`
+
+```ts
+const rows = await corsair.blazemeter.db.assets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `number` | equals, gt, gte, lt, lte, in |
+| `workspaceId` | `number` | equals, gt, gte, lt, lte, in |
+| `packageId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdBy` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedBy` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Packages
+
+Path: `blazemeter.db.packages.search`
+
+```ts
+const rows = await corsair.blazemeter.db.packages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `number` | equals, gt, gte, lt, lte, in |
+| `workspaceId` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `blazemeter.db.projects.search`
+
+```ts
+const rows = await corsair.blazemeter.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `workspaceId` | `number` | equals, gt, gte, lt, lte, in |
+| `testsCount` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tests
+
+Path: `blazemeter.db.tests.search`
+
+```ts
+const rows = await corsair.blazemeter.db.tests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `isNewTest` | `boolean` | equals |
+| `lastRunTime` | `number` | equals, gt, gte, lt, lte, in |
+| `userId` | `number` | equals, gt, gte, lt, lte, in |
+| `creatorClientId` | `string` | equals, contains, startsWith, endsWith, in |
+| `hasThreadGroupsToOverride` | `boolean` | equals |
+| `hasNonRegularThreadGroup` | `boolean` | equals |
+| `shouldSendReportEmail` | `boolean` | equals |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `projectId` | `number` | equals, gt, gte, lt, lte, in |
+| `lastUpdatedById` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `blazemeter.db.users.search`
+
+```ts
+const rows = await corsair.blazemeter.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `access` | `number` | equals, gt, gte, lt, lte, in |
+| `login` | `number` | equals, gt, gte, lt, lte, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `number` | equals, gt, gte, lt, lte, in |
+| `enabled` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspaces
+
+Path: `blazemeter.db.workspaces.search`
+
+```ts
+const rows = await corsair.blazemeter.db.workspaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `enabled` | `boolean` | equals |
+| `dedicatedIpsEnabled` | `boolean` | equals |
+| `privateLocationsEnabled` | `boolean` | equals |
+| `membersCount` | `number` | equals, gt, gte, lt, lte, in |
+| `accountId` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspace Users
+
+Path: `blazemeter.db.workspaceUsers.search`
+
+```ts
+const rows = await corsair.blazemeter.db.workspaceUsers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `login` | `number` | equals, gt, gte, lt, lte, in |
+| `access` | `number` | equals, gt, gte, lt, lte, in |
+| `enabled` | `boolean` | equals |
+| `lastAccess` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -1,0 +1,340 @@
+---
+title: Database
+description: "Docker Hub local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Docker Hub plugin syncs data locally. Use `corsair.dockerhub.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Images
+
+Path: `dockerhub.db.images.search`
+
+```ts
+const rows = await corsair.dockerhub.db.images.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `architecture` | `string` | equals, contains, startsWith, endsWith, in |
+| `features` | `string` | equals, contains, startsWith, endsWith, in |
+| `variant` | `string` | equals, contains, startsWith, endsWith, in |
+| `digest` | `string` | equals, contains, startsWith, endsWith, in |
+| `os` | `string` | equals, contains, startsWith, endsWith, in |
+| `os_features` | `string` | equals, contains, startsWith, endsWith, in |
+| `os_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_pulled` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_pushed` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invites
+
+Path: `dockerhub.db.invites.search`
+
+```ts
+const rows = await corsair.dockerhub.db.invites.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `inviter_username` | `string` | equals, contains, startsWith, endsWith, in |
+| `invitee` | `string` | equals, contains, startsWith, endsWith, in |
+| `org` | `string` | equals, contains, startsWith, endsWith, in |
+| `team` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Org Access Tokens
+
+Path: `dockerhub.db.orgAccessTokens.search`
+
+```ts
+const rows = await corsair.dockerhub.db.orgAccessTokens.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_active` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_used_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `dockerhub.db.organizations.search`
+
+```ts
+const rows = await corsair.dockerhub.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgname` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `badge` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_joined` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Org Members
+
+Path: `dockerhub.db.orgMembers.search`
+
+```ts
+const rows = await corsair.dockerhub.db.orgMembers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_joined` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_guest` | `boolean` | equals |
+| `primary_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_logged_in_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_seen_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_desktop_version` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Repositories
+
+Path: `dockerhub.db.repositories.search`
+
+```ts
+const rows = await corsair.dockerhub.db.repositories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `namespace` | `string` | equals, contains, startsWith, endsWith, in |
+| `repository_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `number` | equals, gt, gte, lt, lte, in |
+| `status_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_private` | `boolean` | equals |
+| `is_automated` | `boolean` | equals |
+| `star_count` | `number` | equals, gt, gte, lt, lte, in |
+| `pull_count` | `number` | equals, gt, gte, lt, lte, in |
+| `last_updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_registered` | `string` | equals, contains, startsWith, endsWith, in |
+| `collaborator_count` | `number` | equals, gt, gte, lt, lte, in |
+| `affiliation` | `string` | equals, contains, startsWith, endsWith, in |
+| `hub_user` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_starred` | `boolean` | equals |
+| `full_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `storage_size` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `dockerhub.db.tags.search`
+
+```ts
+const rows = await corsair.dockerhub.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `repository` | `number` | equals, gt, gte, lt, lte, in |
+| `creator` | `number` | equals, gt, gte, lt, lte, in |
+| `last_updater` | `number` | equals, gt, gte, lt, lte, in |
+| `last_updater_username` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_size` | `number` | equals, gt, gte, lt, lte, in |
+| `digest` | `string` | equals, contains, startsWith, endsWith, in |
+| `media_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `content_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_last_pulled` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_last_pushed` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Team Members
+
+Path: `dockerhub.db.teamMembers.search`
+
+```ts
+const rows = await corsair.dockerhub.db.teamMembers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_joined` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `dockerhub.db.teams.search`
+
+```ts
+const rows = await corsair.dockerhub.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `member_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `dockerhub.db.users.search`
+
+```ts
+const rows = await corsair.dockerhub.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_joined` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

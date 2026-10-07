@@ -1,0 +1,4041 @@
+---
+title: API
+description: "API reference for Agenty: every `agenty.api.*` operation with input and output types."
+---
+
+Every `agenty.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agents
+
+### agentsControllerCreateAgent
+
+`agents.agentsControllerCreateAgent`
+
+Creates a new Agenty agent for web scraping, change detection, crawling, map monitoring, or brand monitoring. Use this tool to set up automated data extraction agents. Requires: - name: A descriptive name for the agent - type: One of 'scraping', 'changedetection', 'crawling', 'mapmonitoring', 'brandmonitoring' - config: Configuration object with url, browser, and collections defining what data to extract The config.collections array contains field definitions with CSS selectors or other extraction methods. Each field specifies what data to extract and how (TEXT content, ATTR for attributes, etc.). Optional: Set start=true to immediately run the agent after creation, or configure a scheduler for recurring runs. Returns the created agent with its unique agent_id for future reference.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.agents.agentsControllerCreateAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `icon` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `any[]` | No | — |
+| `type` | `string` | No | — |
+| `start` | `boolean` | No | — |
+| `config` | `object` | Yes | — |
+| `scripts` | `object` | No | — |
+| `user_id` | `number` | No | — |
+| `version` | `number` | No | — |
+| `agent_id` | `string` | No | — |
+| `is_public` | `boolean` | No | — |
+| `scheduler` | `object` | No | — |
+| `account_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `is_managed` | `boolean` | No | — |
+| `project_id` | `number` | No | — |
+| `updated_at` | `string` | No | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="scripts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="scheduler full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### agentsControllerGetTemplates
+
+`agents.agentsControllerGetTemplates`
+
+Tool to fetch all public agent templates and sample agents. Use when listing available templates for users to select.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.agents.agentsControllerGetTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### agentsDeleteById
+
+`agents.agentsDeleteById`
+
+Tool to delete a single agent by its ID. Use when you need to permanently remove an agent after confirming it exists.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.agents.agentsDeleteById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### agentsGetAll
+
+`agents.agentsGetAll`
+
+Tool to fetch all active agents under an account. Use after authenticating when you need to list agents with pagination and sorting.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.agents.agentsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### agentsGetById
+
+`agents.agentsGetById`
+
+Retrieves complete details of a specific agent including its configuration, input settings, scheduler, and metadata. Use this tool when you need to: - View full agent configuration and settings - Check agent type and current version - Access scheduler and script configurations - Verify agent status before executing jobs - Retrieve agent metadata for updates or cloning
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.agents.agentsGetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### agentsUpdateById
+
+`agents.agentsUpdateById`
+
+Updates an existing agent's configuration, settings, and metadata. Use this tool to modify an agent's properties such as name, type, config, tags, scheduler, scripts, or visibility settings. The API only returns the fields that were updated in the response, not the complete agent object. To get the full updated agent details, use the 'Get Agent by ID' action after updating. Example uses: - "Update agent abc123 to change its name to 'Production Scraper'" - "Enable scheduling for agent xyz789 with a cron expression '0 */6 * * *'" - "Update agent def456 config to scrape a different URL"
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.agents.agentsUpdateById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `icon` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `any[]` | No | — |
+| `type` | `string` | No | — |
+| `config` | `object` | Yes | — |
+| `scripts` | `object` | No | — |
+| `user_id` | `number` | No | — |
+| `version` | `number` | No | — |
+| `agent_id` | `string` | Yes | — |
+| `is_public` | `boolean` | No | — |
+| `scheduler` | `object` | No | — |
+| `account_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `is_managed` | `boolean` | No | — |
+| `project_id` | `number` | No | — |
+| `updated_at` | `string` | No | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="scripts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="scheduler full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### copyAgent
+
+`agents.copyAgent`
+
+Tool to copy an existing agent by its ID, creating a duplicate with optionally a new name. Use when you need to duplicate an agent's configuration to create a similar agent without starting from scratch.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.agents.copyAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### transferAgentOwnership
+
+`agents.transferAgentOwnership`
+
+Tool to transfer agent ownership to another Agenty account. Use when you need to move an agent to a different user's account by specifying their email address.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.agents.transferAgentOwnership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Api Keys
+
+### apiKeysControllerCreateApiKeys
+
+`apiKeys.apiKeysControllerCreateApiKeys`
+
+Creates a new API key for programmatic access to the Agenty API. The generated API key can be used to authenticate API requests with different permission levels (Owner, Admin, or Manager). The key is returned in the response and should be securely stored as it provides access to your Agenty account.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysControllerCreateApiKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `role` | `string` | No | — |
+| `is_enabled` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysDeleteById
+
+`apiKeys.apiKeysDeleteById`
+
+Delete an API key by its unique identifier. Use this tool to permanently revoke access for a specific API key. The key_id can be obtained from the "Get all API keys" or "Create API key" actions. This action cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysDeleteById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysDownload
+
+`apiKeys.apiKeysDownload`
+
+Tool to download all API keys under an account in CSV format. Use when you need a complete list of API keys for export or backup.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysDownload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysGetAll
+
+`apiKeys.apiKeysGetAll`
+
+Tool to retrieve all API keys under an account. Use after authentication when you need to list API keys with pagination and sorting.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysGetById
+
+`apiKeys.apiKeysGetById`
+
+Retrieves detailed information about a specific API key by its ID. Use this action when you need to: - Get the full details of an API key including its value, role, and status - Verify the existence and properties of a specific API key - Check if an API key is enabled or disabled The key_id can be obtained from the 'Get all API keys' action or when creating a new API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysGetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysResetById
+
+`apiKeys.apiKeysResetById`
+
+Resets (regenerates) the secret value of an existing API key. The old secret becomes invalid immediately. Important: This action only confirms the reset was successful but does NOT return the new secret. After resetting, use the 'Get API Key By ID' action to retrieve the new secret value. Use this when you need to: - Rotate API key secrets for security - Invalidate a compromised API key and generate a new secret - Update credentials as part of security maintenance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysResetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### apiKeysUpdateById
+
+`apiKeys.apiKeysUpdateById`
+
+Updates an existing API key's name and role by its unique identifier. This action allows you to modify the display name and permission level of an API key. Only the name and role fields can be updated; other properties are read-only. After updating, the action automatically fetches and returns the complete updated API key details. Use this when you need to: - Rename an API key for better identification - Change the permission level (Owner, Admin, or Manager) of an API key - Update multiple properties of an API key at once
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.apiKeys.apiKeysUpdateById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `role` | `string` | No | — |
+| `key_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### changeApiKeyStatusById
+
+`apiKeys.changeApiKeyStatusById`
+
+Toggles the enabled/disabled status of an API key. This endpoint switches the key between enabled and disabled states - if the key is currently enabled, it will be disabled, and vice versa. Returns a confirmation message upon successful status change. Use this after retrieving the key_id from the list or get API key endpoints.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.apiKeys.changeApiKeyStatusById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Browser
+
+### captureScreenshot
+
+`browser.captureScreenshot`
+
+Tool to capture a full-page or visible screenshot of any webpage URL. Use when you need to capture visual representation of a webpage as an image file. The screenshot is captured using browser automation with default settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.browser.captureScreenshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### captureScreenshotWithOptions
+
+`browser.captureScreenshotWithOptions`
+
+Tool to capture webpage screenshots with extensive customization options including full-page capture, image format, quality settings, viewport configuration, and post-processing. Use when you need to take screenshots of web pages with specific requirements for size, format, or rendering behavior.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.captureScreenshotWithOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `options` | `object` | No | — |
+| `blockAds` | `boolean` | No | — |
+| `viewport` | `object` | No | — |
+| `anonymous` | `object` | No | — |
+| `userAgent` | `string` | No | — |
+| `manipulate` | `object` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="viewport full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="anonymous full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="manipulate full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### convertUrlToPdf
+
+`browser.convertUrlToPdf`
+
+Tool to convert a webpage URL to a PDF document. Use when you need to generate a PDF file from a web page for archival, reporting, or offline viewing purposes.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.browser.convertUrlToPdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### convertUrlToPdfWithOptions
+
+`browser.convertUrlToPdfWithOptions`
+
+Tool to convert a URL or raw HTML to PDF with customizable options. Use when you need to generate PDFs with specific formatting requirements like custom page sizes, margins, headers/footers, or orientation. Supports both URL-based and HTML content conversion.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.convertUrlToPdfWithOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `html` | `string` | No | — |
+| `rotate` | `number` | No | — |
+| `options` | `object` | No | — |
+| `anonymous` | `object` | No | — |
+| `block_ads` | `boolean` | No | — |
+| `user_agent` | `string` | No | — |
+| `goto_options` | `object` | No | — |
+| `emulate_media` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="anonymous full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="goto_options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### extractBrowserStructuredData
+
+`browser.extractBrowserStructuredData`
+
+Tool to auto-extract structured data from a webpage including schema.org, RDFa, Microdata, and JSON-LD formats. Use when you need to automatically extract semantic markup from web pages without writing custom scraping rules. The API returns organized structured data in four categories: metatags, microdata, rdfa, and jsonld.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.extractBrowserStructuredData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `gotoOptions` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### extractStructuredData
+
+`browser.extractStructuredData`
+
+Tool to auto-extract structured data from a webpage URL. Use when you need to extract schema.org, RDFa, Microdata, or JSON-LD structured data from web pages.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.browser.extractStructuredData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getBrowserRedirects
+
+`browser.getBrowserRedirects`
+
+Tool to get the complete redirect chain for a URL. Use when you need to trace how a URL redirects, including both server-side (HTTP 3xx redirects) and client-side redirects (JavaScript, meta tags). Returns an ordered list of all redirect steps from the original URL to the final destination.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.browser.getBrowserRedirects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getPageContent
+
+`browser.getPageContent`
+
+Tool to fetch the complete HTML content of any webpage URL. Use this when you need to retrieve the full HTML source code of a page, including content rendered after JavaScript execution. The API navigates to the URL using proxies and captures the page's source content.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.browser.getPageContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getPageContentWithOptions
+
+`browser.getPageContentWithOptions`
+
+Tool to fetch HTML content of a webpage with custom options including ad blocking. Use this when you need to retrieve the full HTML source of a webpage, particularly for web scraping or content analysis tasks. The tool supports ad blocking to speed up page loads and reduce unnecessary content.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.getPageContentWithOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `block_ads` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getRedirectsWithOptions
+
+`browser.getRedirectsWithOptions`
+
+Tool to get the complete redirect chain of a URL with custom navigation options. Use when you need to trace URL redirects including both server-side (3xx) and client-side redirects (JavaScript, meta tags). Supports custom timeout and navigation wait conditions to ensure all redirects are captured.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.getRedirectsWithOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `gotoOptions` | `object` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### scrapeWebpageData
+
+`browser.scrapeWebpageData`
+
+Tool to scrape data from any webpage using jQuery/CSS selectors. Use when you need to extract specific data from web pages by defining jQuery selector expressions. Each query field maps a name to a jQuery expression (e.g., "$('h1').text()" extracts the h1 text). The browser will load the page, execute JavaScript, and run your jQuery queries to extract the data.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.browser.scrapeWebpageData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `debug` | `object` | No | — |
+| `query` | `object` | Yes | — |
+| `blockAds` | `boolean` | No | — |
+| `userAgent` | `string` | No | — |
+| `gotoOptions` | `object` | No | — |
+| `body` | `any` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="debug full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="gotoOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Connections
+
+### connectionsGetAll
+
+`connections.connectionsGetAll`
+
+Retrieves all connections from your Agenty account. Supports pagination via limit/offset and sorting by field name. Returns an empty list if no connections exist.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.connections.connectionsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Dashboard
+
+### dashboardGetReportsUsage
+
+`dashboard.dashboardGetReportsUsage`
+
+Tool to fetch account reports like pages used by agent, date, and product. Use when analyzing usage over a date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.dashboard.dashboardGetReportsUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `end` | `string` | No | — |
+| `start` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Inputs
+
+### inputsGetByAgentId
+
+`inputs.inputsGetByAgentId`
+
+Retrieves the input configuration for a specific agent by its ID. Returns the input source type (URL, manual list, saved list reference, or another agent's output) and associated configuration details. Use this to inspect an agent's current input setup before modifying it or starting a job, or to verify what data sources an agent will process.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.inputs.inputsGetByAgentId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### inputsUpdateByAgentId
+
+`inputs.inputsUpdateByAgentId`
+
+Updates the input configuration for a specific agent in Agenty. This tool modifies where an agent gets its input data from. You can configure the agent to: - Pull from a URL feed (type='url') - Use a manually specified list of URLs (type='manual') - Reference data from an Agenty list (type='list') - Use output from another agent (type='agent') Use this after creating or identifying an agent to set up its data source before running jobs.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.inputs.inputsUpdateByAgentId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `data` | `any[]` | No | — |
+| `type` | `string` | No | — |
+| `field` | `string` | No | — |
+| `agent_id` | `string` | Yes | — |
+| `collection` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Jobs
+
+### downloadAgentResult
+
+`jobs.downloadAgentResult`
+
+Tool to download agent results by agent ID in CSV, TSV or JSON format. Use when you need to export or analyze agent execution results as a file.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.downloadAgentResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `format` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `agent_id` | `string` | Yes | — |
+| `collection` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAgentResult
+
+`jobs.getAgentResult`
+
+Tool to get the most recent result data for an agent. Use when you need to retrieve and view the scraped/collected data from an agent's latest execution. Returns result data with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.getAgentResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `agent_id` | `string` | Yes | — |
+| `collection` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJobResult
+
+`jobs.getJobResult`
+
+Tool to get the result data from a completed job. Use when you need to retrieve and view the scraped/collected data from a finished job. Returns result data with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.getJobResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `format` | `string` | No | — |
+| `job_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `collection` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsDownload
+
+`jobs.jobsDownload`
+
+Tool to download all jobs in CSV format. Use when you need a complete list of jobs for export or analysis.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsDownload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `agent_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsDownloadFilesById
+
+`jobs.jobsDownloadFilesById`
+
+Tool to download output files by job ID. Use when you need to fetch a specific output file after a job completes.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsDownloadFilesById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `job_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsDownloadResultById
+
+`jobs.jobsDownloadResultById`
+
+Tool to download the agent output result by job ID. Use when you need to fetch the final output of a completed job in CSV, TSV, or JSON format.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsDownloadResultById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `format` | `string` | No | — |
+| `job_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `collection` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsGetAll
+
+`jobs.jobsGetAll`
+
+Tool to fetch all jobs under an account. Use when you need to view and filter the list of jobs with pagination and sorting.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `agent_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsGetById
+
+`jobs.jobsGetById`
+
+Retrieves comprehensive details about a specific job including its status, progress metrics (pages processed/succeeded/failed), timing information (created/started/completed times), resource consumption (page credits), and any error messages. Use this action to check job status, monitor execution progress, or diagnose job failures. Returns complete job metadata needed before downloading results.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsGetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsGetLogsById
+
+`jobs.jobsGetLogsById`
+
+Tool to fetch logs for a given job by its ID. Use when you need to review or debug job execution logs with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsGetLogsById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `job_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsListFilesById
+
+`jobs.jobsListFilesById`
+
+Lists all output files generated by a specific job. Returns file names and sizes for available downloads including CSV/JSON/TSV data exports and compressed logs. Use this after a job completes to discover what output files are available before downloading them.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.jobs.jobsListFilesById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsStart
+
+`jobs.jobsStart`
+
+Tool to start a new agent job. Use when you need to trigger execution of an existing agent.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.jobs.jobsStart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### jobsStopById
+
+`jobs.jobsStopById`
+
+Tool to stop a running job by job ID. Use when you need to halt an in-progress job before it completes. Confirm the job ID beforehand to avoid unintended stops.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.jobs.jobsStopById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Lists
+
+### addListRows
+
+`lists.addListRows`
+
+Tool to add new rows to a list. Use when you need to insert one or more data rows into an existing list. Column names in row objects must match the list's schema.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.lists.addListRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteListRow
+
+`lists.deleteListRow`
+
+Tool to delete a specific row from a list by its unique identifier. Use when you need to permanently remove a single row from a list.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.lists.deleteListRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteListRows
+
+`lists.deleteListRows`
+
+Tool to delete specific rows from a list by their IDs. Use when you need to remove one or more rows from a list by providing their unique identifiers.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.lists.deleteListRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any[]` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### downloadListRows
+
+`lists.downloadListRows`
+
+Tool to download list rows as CSV file. Use when you need to export or backup all rows from a specific list.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.downloadListRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListById
+
+`lists.getListById`
+
+Retrieves detailed information about a specific list by its ID. Use this action when you need to: - Get the full details of a list including its name, description, and metadata - Verify the existence of a specific list - Check when a list was created or last updated - Access additional data associated with a list The list_id can be obtained from the 'Get all lists' action or when creating a new list.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.getListById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getListRowById
+
+`lists.getListRowById`
+
+Tool to fetch a specific row by its ID from a list. Use when you need to retrieve a single data entry from a list using its unique identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.getListRowById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsClearRows
+
+`lists.listsClearRows`
+
+Tool to clear all rows in a list by its ID. Use when you need to wipe out all data in a list before re-populating (e.g., "Clear all rows in list 123").
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.lists.listsClearRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsControllerCreateList
+
+`lists.listsControllerCreateList`
+
+Tool to create a new list. Use after preparing the list name and optional description. Example: "Create a list named 'Contacts' with description 'Potential leads'."
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.lists.listsControllerCreateList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsDeleteById
+
+`lists.listsDeleteById`
+
+Tool to delete a specific list by its ID. Use when you need to permanently remove a list after confirming it exists.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.lists.listsDeleteById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsDownload
+
+`lists.listsDownload`
+
+Tool to download all lists in CSV format. Use when you need a complete set of lists for export or backup.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.listsDownload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsGetAll
+
+`lists.listsGetAll`
+
+Tool to retrieve all lists under an account. Use after authentication when you need to list lists with pagination and sorting.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.listsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsGetRowsById
+
+`lists.listsGetRowsById`
+
+Tool to fetch all rows in a specified list. Use when you need to retrieve all data entries from a list with optional pagination and sorting. Example: "Fetch rows from list '61db...' with limit=50".
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.lists.listsGetRowsById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsUpdateById
+
+`lists.listsUpdateById`
+
+Tool to update a list's name and optionally description by list ID. The name field is always required. Use when you need to modify list metadata after confirming its ID. Example: "Update list 123 with name 'My Updated List' and description 'New description'".
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.lists.listsUpdateById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listsUploadCsv
+
+`lists.listsUploadCsv`
+
+Tool to upload a CSV file to an Agenty list for bulk import of data rows. Use this action when you need to: - Import multiple rows of data into an existing list from a CSV file - Bulk update list data - Add structured tabular data to a list Prerequisites: The target list must already exist. Use the 'Create List' action first if needed.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.lists.listsUploadCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateListRow
+
+`lists.updateListRow`
+
+Tool to update a specific row in a list by list ID and row ID. Use when you need to modify existing data in a list row. The row_data must include the '_id' field and any column fields (col1, col2, etc.) you want to update.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.lists.updateListRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `list_id` | `string \| number` | Yes | — |
+| `row_data` | `object` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="row_data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Projects
+
+### deleteProject
+
+`projects.deleteProject`
+
+Tool to delete a project by its ID. Use when you need to permanently remove a project. This action cannot be undone, so ensure the project ID is correct before deletion.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.projects.deleteProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectById
+
+`projects.getProjectById`
+
+Retrieves complete details of a specific project by its ID, including name, description, creator information, and timestamps. Use this to get project metadata before adding agents, checking project existence, or verifying project details for updates.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.projects.getProjectById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### projectsAddAgents
+
+`projects.projectsAddAgents`
+
+Add one or more agents to an Agenty project to organize and group related agents together. This action associates agents with a project, allowing better organization and management of your automation workflows. The response includes the complete updated project information with all associated agents. Prerequisites: - Project must exist (use projects_get_all to find valid project IDs) - Agent(s) must exist (use agents_get_all to find valid agent IDs) Example usage: "Add agents ['tx8lubfbun', 'o3xuc2n8es'] to project 7"
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.projects.projectsAddAgents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_ids` | `string[]` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### projectsControllerCreateProject
+
+`projects.projectsControllerCreateProject`
+
+Creates a new project in Agenty. Use this to initialize a project with a name and optional description.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.projects.projectsControllerCreateProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### projectsGetAll
+
+`projects.projectsGetAll`
+
+Retrieve all projects in the authenticated user's account. Returns a paginated list of projects with metadata (total count, pagination info). Use this to discover available projects, check project existence, or get project IDs for other operations. Supports sorting by fields like 'name' or 'created_at'.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.projects.projectsGetAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeAgentFromProject
+
+`projects.removeAgentFromProject`
+
+Remove an agent from an Agenty project. Use when you need to disassociate an agent from a project while keeping both the agent and project intact. The agent will no longer be part of the project's organization structure.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.projects.removeAgentFromProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProject
+
+`projects.updateProject`
+
+Update an existing project's name and description in Agenty. Use this to modify project details such as changing the project name or updating its description.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.projects.updateProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Scheduler
+
+### deleteSchedule
+
+`scheduler.deleteSchedule`
+
+Tool to delete a schedule for an agent by its agent ID. Use when you need to remove scheduled automation for a specific agent.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.scheduler.deleteSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSchedule
+
+`scheduler.getSchedule`
+
+Tool to retrieve the schedule configuration for a specific agent. Use when you need to check the current scheduling settings for an agent.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.scheduler.getSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### toggleSchedule
+
+`scheduler.toggleSchedule`
+
+Tool to toggle schedule on/off for an agent. Use when you need to enable or disable an agent's scheduled execution without modifying other agent settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.scheduler.toggleSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | Yes | — |
+| `agent_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSchedule
+
+`scheduler.updateSchedule`
+
+Updates the schedule configuration for a specific agent. Use when you need to modify how often an agent runs automatically.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.scheduler.updateSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `agent_id` | `string` | Yes | — |
+| `frequency` | `number` | No | — |
+| `expression` | `string` | No | — |
+| `is_enabled` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Users
+
+### downloadUsers
+
+`users.downloadUsers`
+
+Tool to download users list in CSV format. Use when you need to export or backup the complete list of team members and users.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.users.downloadUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAllTeamMembers
+
+`users.getAllTeamMembers`
+
+Tool to retrieve all team members (users) under an account. Use after authentication when you need to list team members with pagination, sorting, and search filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.users.getAllTeamMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getUserById
+
+`users.getUserById`
+
+Tool to retrieve detailed information about a user by their ID. Use this to fetch user profile data including email, role, status, and activity timestamps.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.users.getUserById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateUserById
+
+`users.updateUserById`
+
+Tool to update a user's information by user ID. Use this to modify user properties including email, role, status, name, and subscription settings. Email, role, and status are required fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.users.updateUserById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `role` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `avatar` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `user_id` | `number` | Yes | — |
+| `is_email_verified` | `boolean` | No | — |
+| `is_email_subscribed` | `boolean` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Workflows
+
+### createWorkflow
+
+`workflows.createWorkflow`
+
+Creates a new workflow in Agenty to automate actions based on agent events. Use this to set up automated responses like sending emails, triggering webhooks, or notifications when specific agent events occur (e.g., job completed, job failed).
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.workflows.createWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `agents` | `object` | Yes | — |
+| `actions` | `any[]` | Yes | — |
+| `trigger` | `object` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agents full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="trigger full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteWorkflow
+
+`workflows.deleteWorkflow`
+
+Tool to delete a workflow by its ID. Use when you need to permanently remove a workflow after confirming it exists.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.agenty.api.workflows.deleteWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### downloadWorkflows
+
+`workflows.downloadWorkflows`
+
+Tool to download all workflows in CSV format. Use when you need to export or backup all workflows from your account. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.workflows.downloadWorkflows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getWorkflowById
+
+`workflows.getWorkflowById`
+
+Retrieves complete details of a specific workflow by its ID. Use this to view workflow configuration including agents, triggers, and actions before updating or deleting.
+
+**Risk:** `read`
+
+```ts
+await corsair.agenty.api.workflows.getWorkflowById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### patchWorkflow
+
+`workflows.patchWorkflow`
+
+Tool to partially update a workflow by ID. Use when you need to update specific fields of a workflow without replacing the entire workflow object. This action performs a PATCH operation, allowing you to update only the fields you specify (e.g., just the name) without affecting other workflow properties. Currently supports updating the workflow name.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.workflows.patchWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateWorkflow
+
+`workflows.updateWorkflow`
+
+Tool to update an existing workflow's configuration by workflow ID. Use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. Workflows automate responses to agent events such as job completion, errors, or change detection. Common use cases include sending notifications, triggering webhooks, or updating external systems.
+
+**Risk:** `write`
+
+```ts
+await corsair.agenty.api.workflows.updateWorkflow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `agents` | `object` | Yes | — |
+| `actions` | `any[]` | Yes | — |
+| `trigger` | `object` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agents full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="trigger full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

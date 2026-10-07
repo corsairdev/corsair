@@ -19,6 +19,9 @@ A plugin PR may only touch:
   renders from; `generate:docs` refreshes it)
 - `explorer/data/catalog.json` and `apps/docs/lib/plugin-api-examples.json`
   (shared files `generate:docs` rewrites)
+- `docs/plugins/<plugin>/**` and `docs/docs.json` — Mintlify still serves
+  docs.corsair.dev, so `generate:docs` writes that tree too. Both go away at
+  the cutover.
 
 Anything else fails the gate. Use `pnpm generate:plugin` to scaffold — it
 produces exactly this footprint. Docs for a *different* plugin are still out

@@ -1,0 +1,292 @@
+---
+title: API
+description: "API reference for Tavily: every `tavily.api.*` operation with input and output types."
+---
+
+Every `tavily.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Crawl
+
+### crawl
+
+`crawl.crawl`
+
+Crawl a website starting from a root URL
+
+**Risk:** `read`
+
+```ts
+await corsair.tavily.api.crawl.crawl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `max_depth` | `number` | No | — |
+| `max_breadth` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `instructions` | `string` | No | — |
+| `select_paths` | `string[]` | No | — |
+| `select_domains` | `string[]` | No | — |
+| `exclude_paths` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `allow_external` | `boolean` | No | — |
+| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media[]` | No | — |
+| `extract_depth` | `basic \| advanced` | No | — |
+| `format` | `markdown \| text` | No | — |
+| `include_images` | `boolean` | No | — |
+| `include_favicon` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `failed_results` | `object[]` | No | — |
+| `response_time` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  raw_content: string,
+  images?: string[],
+  favicon?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="failed_results full type">
+
+```ts
+{
+  url: string,
+  error: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Extract
+
+### extract
+
+`extract.extract`
+
+Extract content from one or more URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.tavily.api.extract.extract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string \| string[]` | Yes | — |
+| `include_images` | `boolean` | No | — |
+| `extract_depth` | `basic \| advanced` | No | — |
+| `format` | `markdown \| text` | No | — |
+| `include_favicon` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `failed_results` | `object[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  raw_content: string,
+  images?: string[],
+  favicon?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="failed_results full type">
+
+```ts
+{
+  url: string,
+  error: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Map
+
+### map
+
+`map.map`
+
+Map all URLs on a website starting from a root URL
+
+**Risk:** `read`
+
+```ts
+await corsair.tavily.api.map.map({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `max_depth` | `number` | No | — |
+| `max_breadth` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `instructions` | `string` | No | — |
+| `select_paths` | `string[]` | No | — |
+| `select_domains` | `string[]` | No | — |
+| `exclude_paths` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `allow_external` | `boolean` | No | — |
+| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `results` | `string[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `request_id` | `string` | No | — |
+
+
+
+---
+
+## Search
+
+### search
+
+`search.search`
+
+Search the web using Tavily
+
+**Risk:** `read`
+
+```ts
+await corsair.tavily.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `search_depth` | `advanced \| basic \| fast \| ultra-fast` | No | — |
+| `chunks_per_source` | `number` | No | — |
+| `max_results` | `number` | No | — |
+| `topic` | `general \| news \| finance` | No | — |
+| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `include_answer` | `boolean \| basic \| advanced` | No | — |
+| `include_raw_content` | `boolean \| markdown \| text` | No | — |
+| `include_images` | `boolean` | No | — |
+| `include_image_descriptions` | `boolean` | No | — |
+| `include_favicon` | `boolean` | No | — |
+| `include_domains` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `country` | `string` | No | — |
+| `auto_parameters` | `boolean` | No | — |
+| `include_usage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `answer` | `string` | No | — |
+| `images` | `object[]` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | No | — |
+| `auto_parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  url: string,
+  content: string,
+  score: number,
+  raw_content?: string | null,
+  favicon?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+
+<Accordion title="auto_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

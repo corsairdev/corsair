@@ -1,0 +1,184 @@
+---
+title: Webhooks
+description: "Asana incoming webhooks: event paths, payloads, and response data."
+---
+
+The Asana plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/asana/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `challenge`
+  - `challenge` (`challenge.challenge`)
+- `tasks`
+  - `taskEvent` (`tasks.taskEvent`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Challenge
+
+### Challenge
+
+`challenge.challenge`
+
+Asana initial webhook verification handshake via X-Hook-Secret header
+
+**Payload:** _empty object_
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  hookSecret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+asana({
+    webhookHooks: {
+        challenge: {
+            challenge: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tasks
+
+### Task Event
+
+`tasks.taskEvent`
+
+A task event occurred — task was added, changed, or removed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  action: string,
+  created_at?: string,
+  resource?: {
+    gid: string,
+    resource_type: task,
+    resource_subtype?: string,
+    name?: string
+  },
+  parent?: {
+    gid: string,
+    resource_type?: string,
+    resource_subtype?: string,
+    name?: string
+  } | null,
+  user?: {
+    gid: string,
+    resource_type?: string,
+    name?: string
+  } | null,
+  change?: {
+    field?: string,
+    action?: string,
+    new_value?: any,
+    added_value?: any,
+    removed_value?: any
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: string,
+  created_at?: string,
+  resource?: {
+    gid: string,
+    resource_type?: string,
+    resource_subtype?: string,
+    name?: string
+  },
+  parent?: {
+    gid: string,
+    resource_type?: string,
+    resource_subtype?: string,
+    name?: string
+  } | null,
+  user?: {
+    gid: string,
+    resource_type?: string,
+    name?: string
+  } | null,
+  change?: {
+    field?: string,
+    action?: string,
+    new_value?: any,
+    added_value?: any,
+    removed_value?: any
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+asana({
+    webhookHooks: {
+        tasks: {
+            taskEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

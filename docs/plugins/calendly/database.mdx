@@ -1,0 +1,345 @@
+---
+title: Database
+description: "Calendly local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Calendly plugin syncs data locally. Use `corsair.calendly.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Activity Log Entries
+
+Path: `calendly.db.activityLogEntries.search`
+
+```ts
+const rows = await corsair.calendly.db.activityLogEntries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `action` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `occurred_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `namespace` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Event Types
+
+Path: `calendly.db.eventTypes.search`
+
+```ts
+const rows = await corsair.calendly.db.eventTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduling_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `description_plain` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Groups
+
+Path: `calendly.db.groups.search`
+
+```ts
+const rows = await corsair.calendly.db.groups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_count` | `number` | equals, gt, gte, lt, lte, in |
+| `scheduling_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invitees
+
+Path: `calendly.db.invitees.search`
+
+```ts
+const rows = await corsair.calendly.db.invitees.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `event` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Org Invitations
+
+Path: `calendly.db.orgInvitations.search`
+
+```ts
+const rows = await corsair.calendly.db.orgInvitations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_sent_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Org Memberships
+
+Path: `calendly.db.orgMemberships.search`
+
+```ts
+const rows = await corsair.calendly.db.orgMemberships.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Outgoing Communications
+
+Path: `calendly.db.outgoingCommunications.search`
+
+```ts
+const rows = await corsair.calendly.db.outgoingCommunications.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `sent_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Routing Forms
+
+Path: `calendly.db.routingForms.search`
+
+```ts
+const rows = await corsair.calendly.db.routingForms.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scheduled Events
+
+Path: `calendly.db.scheduledEvents.search`
+
+```ts
+const rows = await corsair.calendly.db.scheduledEvents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `end_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `calendly.db.users.search`
+
+```ts
+const rows = await corsair.calendly.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduling_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhook Subscriptions
+
+Path: `calendly.db.webhookSubscriptions.search`
+
+```ts
+const rows = await corsair.calendly.db.webhookSubscriptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `scope` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -1,0 +1,127 @@
+---
+title: API
+description: "API reference for ImgBB: every `imgbb.api.*` operation with input and output types."
+---
+
+Every `imgbb.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### getApiKey
+
+`auth.getApiKey`
+
+Confirm an ImgBB API key is configured for this account and return a masked preview of it
+
+**Risk:** `read`
+
+```ts
+await corsair.imgbb.api.auth.getApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configured` | `boolean` | Yes | Whether an ImgBB API key is configured for this account |
+| `keyPreview` | `string` | Yes | Last 4 characters of the configured key, for identification only |
+
+
+
+---
+
+## Images
+
+### upload
+
+`images.upload`
+
+Upload an image to ImgBB and return the hosted image URLs and metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.imgbb.api.images.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string \| custom \| custom \| custom` | Yes | Base64-encoded image data, image URL, or binary data (Blob, File, Buffer, Uint8Array) up to 32 MB per the ImgBB API |
+| `name` | `string` | No | Optional display name for the file |
+| `expiration` | `number` | No | Optional auto-delete window in seconds (60-15552000). Omit to keep the image indefinitely. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `url_viewer` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `display_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `size` | `number` | No | — |
+| `time` | `number` | No | — |
+| `expiration` | `number` | No | — |
+| `image` | `object` | No | — |
+| `thumb` | `object` | No | — |
+| `medium` | `object` | No | — |
+| `delete_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  filename?: string,
+  name?: string,
+  mime?: string,
+  extension?: string,
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="thumb full type">
+
+```ts
+{
+  filename?: string,
+  name?: string,
+  mime?: string,
+  extension?: string,
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="medium full type">
+
+```ts
+{
+  filename?: string,
+  name?: string,
+  mime?: string,
+  extension?: string,
+  url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

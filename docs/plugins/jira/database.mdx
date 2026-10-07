@@ -1,0 +1,197 @@
+---
+title: Database
+description: "Jira local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Jira plugin syncs data locally. Use `corsair.jira.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Boards
+
+Path: `jira.db.boards.search`
+
+```ts
+const rows = await corsair.jira.db.boards.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `number` | equals, gt, gte, lt, lte, in |
+| `projectKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Comments
+
+Path: `jira.db.comments.search`
+
+```ts
+const rows = await corsair.jira.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Issues
+
+Path: `jira.db.issues.search`
+
+```ts
+const rows = await corsair.jira.db.issues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `assigneeAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `assigneeDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `reporterAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `reporterDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueType` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `jira.db.projects.search`
+
+```ts
+const rows = await corsair.jira.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectTypeKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `leadAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `leadDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sprints
+
+Path: `jira.db.sprints.search`
+
+```ts
+const rows = await corsair.jira.db.sprints.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `goal` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `originBoardId` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `jira.db.users.search`
+
+```ts
+const rows = await corsair.jira.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `timeZone` | `string` | equals, contains, startsWith, endsWith, in |
+| `locale` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

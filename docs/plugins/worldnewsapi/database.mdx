@@ -1,0 +1,134 @@
+---
+title: Database
+description: "World News API local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The World News API plugin syncs data locally. Use `corsair.worldnewsapi.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Articles
+
+Path: `worldnewsapi.db.articles.search`
+
+```ts
+const rows = await corsair.worldnewsapi.db.articles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `video` | `string` | equals, contains, startsWith, endsWith, in |
+| `publish_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_country` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentiment` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Extracted Articles
+
+Path: `worldnewsapi.db.extractedArticles.search`
+
+```ts
+const rows = await corsair.worldnewsapi.db.extractedArticles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `video` | `string` | equals, contains, startsWith, endsWith, in |
+| `publish_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_country` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentiment` | `number` | equals, gt, gte, lt, lte, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Geo Coordinates
+
+Path: `worldnewsapi.db.geoCoordinates.search`
+
+```ts
+const rows = await corsair.worldnewsapi.db.geoCoordinates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `latitude` | `number` | equals, gt, gte, lt, lte, in |
+| `longitude` | `number` | equals, gt, gte, lt, lte, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sources
+
+Path: `worldnewsapi.db.sources.search`
+
+```ts
+const rows = await corsair.worldnewsapi.db.sources.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `searchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

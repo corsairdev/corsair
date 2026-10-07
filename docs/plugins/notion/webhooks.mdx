@@ -1,0 +1,340 @@
+---
+title: Webhooks
+description: "Notion incoming webhooks: event paths, payloads, and response data."
+---
+
+The Notion plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/notion/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `databasePages`
+  - `pageCreated` (`databasePages.pageCreated`)
+  - `pageUpdated` (`databasePages.pageUpdated`)
+- `verification` (`verification`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Database Pages
+
+### Page Created
+
+`databasePages.pageCreated`
+
+A page was created in a database
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+| `integration_id` | `string` | Yes | — |
+| `type` | `page.created` | Yes | — |
+| `authors` | `object[]` | Yes | — |
+| `accessible_by` | `object[]` | Yes | — |
+| `entity` | `object` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authors full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  type?: string,
+  name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="accessible_by full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  type?: string,
+  name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="entity full type">
+
+```ts
+{
+  id: string,
+  object: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  page_id: string,
+  database_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  timestamp: string,
+  workspace_id: string,
+  subscription_id: string,
+  integration_id: string,
+  type: page.created,
+  authors: {
+    id: string,
+    object: string,
+    type?: string,
+    name?: string,
+    avatar_url?: string
+  }[],
+  accessible_by: {
+    id: string,
+    object: string,
+    type?: string,
+    name?: string,
+    avatar_url?: string
+  }[],
+  entity: {
+    id: string,
+    object: string
+  },
+  data: {
+    page_id: string,
+    database_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+notion({
+    webhookHooks: {
+        databasePages: {
+            pageCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Page Updated
+
+`databasePages.pageUpdated`
+
+A page was updated in a database
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+| `integration_id` | `string` | Yes | — |
+| `type` | `page.updated` | Yes | — |
+| `authors` | `object[]` | Yes | — |
+| `accessible_by` | `object[]` | Yes | — |
+| `entity` | `object` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authors full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  type?: string,
+  name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="accessible_by full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  type?: string,
+  name?: string,
+  avatar_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="entity full type">
+
+```ts
+{
+  id: string,
+  object: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  page_id: string,
+  database_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  timestamp: string,
+  workspace_id: string,
+  subscription_id: string,
+  integration_id: string,
+  type: page.updated,
+  authors: {
+    id: string,
+    object: string,
+    type?: string,
+    name?: string,
+    avatar_url?: string
+  }[],
+  accessible_by: {
+    id: string,
+    object: string,
+    type?: string,
+    name?: string,
+    avatar_url?: string
+  }[],
+  entity: {
+    id: string,
+    object: string
+  },
+  data: {
+    page_id: string,
+    database_id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+notion({
+    webhookHooks: {
+        databasePages: {
+            pageUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Verification
+
+### Verification
+
+`verification`
+
+Notion URL verification — respond to confirm the webhook endpoint
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verification_token` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: url_verification,
+  verification_token: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+notion({
+    webhookHooks: {
+        verification: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

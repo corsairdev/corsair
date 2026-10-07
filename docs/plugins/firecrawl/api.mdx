@@ -1,0 +1,995 @@
+---
+title: API
+description: "API reference for Firecrawl: every `firecrawl.api.*` operation with input and output types."
+---
+
+Every `firecrawl.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### cancel
+
+`agent.cancel`
+
+Cancel an in-flight agent job
+
+**Risk:** `write`
+
+```ts
+await corsair.firecrawl.api.agent.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`agent.get`
+
+Get status for an agent job
+
+**Risk:** `read`
+
+```ts
+await corsair.firecrawl.api.agent.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `status` | `processing \| completed \| failed` | No | — |
+| `data` | `object` | No | — |
+| `model` | `spark-1-pro \| spark-1-mini` | No | — |
+| `error` | `string` | No | — |
+| `expiresAt` | `string` | No | — |
+| `creditsUsed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`agent.start`
+
+Start an agentic extraction job
+
+**Risk:** `write`
+
+```ts
+await corsair.firecrawl.api.agent.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | — |
+| `urls` | `string[]` | No | — |
+| `schema` | `object` | No | — |
+| `maxCredits` | `number` | No | — |
+| `strictConstrainToURLs` | `boolean` | No | — |
+| `model` | `spark-1-mini \| spark-1-pro` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | No | — |
+
+
+
+---
+
+## Crawl
+
+### cancel
+
+`crawl.cancel`
+
+Cancel an in-flight crawl job
+
+**Risk:** `write`
+
+```ts
+await corsair.firecrawl.api.crawl.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `status` | `cancelled` | No | — |
+
+
+
+---
+
+### get
+
+`crawl.get`
+
+Get status and results for a crawl job
+
+**Risk:** `read`
+
+```ts
+await corsair.firecrawl.api.crawl.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `status` | `string` | No | — |
+| `total` | `number` | No | — |
+| `completed` | `number` | No | — |
+| `creditsUsed` | `number` | No | — |
+| `expiresAt` | `string` | No | — |
+| `next` | `string` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  html?: string | null,
+  rawHtml?: string | null,
+  links?: string[],
+  screenshot?: string | null,
+  metadata?: {
+    title?: string | string[],
+    description?: string | string[],
+    language?: string | string[] | null,
+    keywords?: string | string[],
+    sourceURL?: string,
+    url?: string,
+    scrapeId?: string,
+    statusCode?: number,
+    contentType?: string,
+    error?: string | null,
+    ogLocaleAlternate?: string[],
+    concurrencyLimited?: boolean,
+    concurrencyQueueDurationMs?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`crawl.start`
+
+Start a recursive crawl from a base URL
+
+**Risk:** `write`
+
+```ts
+await corsair.firecrawl.api.crawl.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `excludePaths` | `string[]` | No | — |
+| `includePaths` | `string[]` | No | — |
+| `maxDiscoveryDepth` | `number` | No | — |
+| `sitemap` | `skip \| include \| only` | No | — |
+| `ignoreQueryParameters` | `boolean` | No | — |
+| `regexOnFullURL` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `crawlEntireDomain` | `boolean` | No | — |
+| `allowExternalLinks` | `boolean` | No | — |
+| `allowSubdomains` | `boolean` | No | — |
+| `delay` | `number` | No | — |
+| `maxConcurrency` | `number` | No | — |
+| `webhook` | `object` | No | — |
+| `scrapeOptions` | `object` | No | — |
+| `zeroDataRetention` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  url: string,
+  headers?: {
+  },
+  metadata?: {
+  },
+  events?: completed | page | failed | started[]
+}
+```
+</Accordion>
+
+<Accordion title="scrapeOptions full type">
+
+```ts
+{
+  formats?: (
+    markdown | summary | html | rawHtml | links | images | audio | {
+      type: markdown
+    } | {
+      type: summary
+    } | {
+      type: html
+    } | {
+      type: rawHtml
+    } | {
+      type: links
+    } | {
+      type: images
+    } | {
+      type: audio
+    } | {
+      type: screenshot,
+      fullPage?: boolean,
+      quality?: number,
+      viewport?: {
+        width: number,
+        height: number
+      }
+    } | {
+      type: json,
+      schema?: {
+      },
+      prompt?: string
+    } | {
+      type: changeTracking,
+      modes?: git-diff | json[],
+      schema?: {
+      },
+      prompt?: string,
+      tag?: string | null
+    } | {
+      type: branding
+    }
+  )[],
+  onlyMainContent?: boolean,
+  includeTags?: string[],
+  excludeTags?: string[],
+  maxAge?: number,
+  minAge?: number,
+  headers?: {
+  },
+  waitFor?: number,
+  mobile?: boolean,
+  skipTlsVerification?: boolean,
+  timeout?: number,
+  parsers?: {
+    type: pdf,
+    mode?: fast | auto | ocr,
+    maxPages?: number
+  }[],
+  actions?: (
+    {
+      type: wait,
+      milliseconds: number
+    } | {
+      type: wait,
+      selector: string
+    } | {
+      type: screenshot,
+      fullPage?: boolean,
+      quality?: number,
+      viewport?: {
+        width: number,
+        height: number
+      }
+    } | {
+      type: click,
+      selector: string,
+      all?: boolean
+    } | {
+      type: write,
+      text: string
+    } | {
+      type: press,
+      key: string
+    } | {
+      type: scroll,
+      direction?: up | down,
+      selector?: string
+    } | {
+      type: scrape
+    } | {
+      type: executeJavascript,
+      script: string
+    } | {
+      type: pdf,
+      format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger,
+      landscape?: boolean,
+      scale?: number
+    }
+  )[],
+  location?: {
+    country?: string,
+    languages?: string[]
+  },
+  removeBase64Images?: boolean,
+  blockAds?: boolean,
+  proxy?: basic | enhanced | auto,
+  storeInCache?: boolean,
+  profile?: {
+    name: string,
+    saveChanges?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Map
+
+### run
+
+`map.run`
+
+Map all URLs discovered from a site
+
+**Risk:** `read`
+
+```ts
+await corsair.firecrawl.api.map.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `search` | `string` | No | — |
+| `sitemap` | `skip \| include \| only` | No | — |
+| `includeSubdomains` | `boolean` | No | — |
+| `ignoreQueryParameters` | `boolean` | No | — |
+| `ignoreCache` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  country?: string,
+  languages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  url: string,
+  title?: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrape
+
+### run
+
+`scrape.run`
+
+Scrape a single URL (markdown, JSON, etc.)
+
+**Risk:** `read`
+
+```ts
+await corsair.firecrawl.api.scrape.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `formats` | `object[]` | No | — |
+| `onlyMainContent` | `boolean` | No | — |
+| `includeTags` | `string[]` | No | — |
+| `excludeTags` | `string[]` | No | — |
+| `maxAge` | `number` | No | — |
+| `minAge` | `number` | No | — |
+| `headers` | `object` | No | — |
+| `waitFor` | `number` | No | — |
+| `mobile` | `boolean` | No | — |
+| `skipTlsVerification` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `parsers` | `object[]` | No | — |
+| `actions` | `object[]` | No | — |
+| `location` | `object` | No | — |
+| `removeBase64Images` | `boolean` | No | — |
+| `blockAds` | `boolean` | No | — |
+| `proxy` | `basic \| enhanced \| auto` | No | — |
+| `storeInCache` | `boolean` | No | — |
+| `profile` | `object` | No | — |
+| `zeroDataRetention` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="formats full type">
+
+```ts
+(
+  markdown | summary | html | rawHtml | links | images | audio | {
+    type: markdown
+  } | {
+    type: summary
+  } | {
+    type: html
+  } | {
+    type: rawHtml
+  } | {
+    type: links
+  } | {
+    type: images
+  } | {
+    type: audio
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    quality?: number,
+    viewport?: {
+      width: number,
+      height: number
+    }
+  } | {
+    type: json,
+    schema?: {
+    },
+    prompt?: string
+  } | {
+    type: changeTracking,
+    modes?: git-diff | json[],
+    schema?: {
+    },
+    prompt?: string,
+    tag?: string | null
+  } | {
+    type: branding
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parsers full type">
+
+```ts
+{
+  type: pdf,
+  mode?: fast | auto | ocr,
+  maxPages?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+(
+  {
+    type: wait,
+    milliseconds: number
+  } | {
+    type: wait,
+    selector: string
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    quality?: number,
+    viewport?: {
+      width: number,
+      height: number
+    }
+  } | {
+    type: click,
+    selector: string,
+    all?: boolean
+  } | {
+    type: write,
+    text: string
+  } | {
+    type: press,
+    key: string
+  } | {
+    type: scroll,
+    direction?: up | down,
+    selector?: string
+  } | {
+    type: scrape
+  } | {
+    type: executeJavascript,
+    script: string
+  } | {
+    type: pdf,
+    format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger,
+    landscape?: boolean,
+    scale?: number
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  country?: string,
+  languages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  name: string,
+  saveChanges?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  summary?: string | null,
+  html?: string | null,
+  rawHtml?: string | null,
+  screenshot?: string | null,
+  audio?: string | null,
+  links?: string[],
+  actions?: {
+    screenshots?: string[],
+    scrapes?: {
+      url?: string,
+      html?: string
+    }[],
+    javascriptReturns?: {
+      type?: string,
+      value?: any
+    }[],
+    pdfs?: string[]
+  } | null,
+  metadata?: {
+    title?: string | string[],
+    description?: string | string[],
+    language?: string | string[] | null,
+    keywords?: string | string[],
+    sourceURL?: string,
+    url?: string,
+    scrapeId?: string,
+    statusCode?: number,
+    contentType?: string,
+    error?: string | null,
+    ogLocaleAlternate?: string[],
+    concurrencyLimited?: boolean,
+    concurrencyQueueDurationMs?: number
+  },
+  warning?: string | null,
+  changeTracking?: {
+    previousScrapeAt?: string | null,
+    changeStatus?: new | same | changed | removed,
+    visibility?: visible | hidden,
+    diff?: string | null,
+    json?: {
+    } | null
+  } | null,
+  branding?: {
+  } | null,
+  json?: any,
+  images?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### run
+
+`search.run`
+
+Search the web and retrieve page content
+
+**Risk:** `read`
+
+```ts
+await corsair.firecrawl.api.search.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sources` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+| `tbs` | `string` | No | — |
+| `location` | `string` | No | — |
+| `country` | `string` | No | — |
+| `timeout` | `number` | No | — |
+| `ignoreInvalidURLs` | `boolean` | No | — |
+| `enterprise` | `anon \| zdr[]` | No | — |
+| `scrapeOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+(
+  {
+    type: web,
+    tbs?: string,
+    location?: string
+  } | {
+    type: images
+  } | {
+    type: news
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+(
+  {
+    type: github
+  } | {
+    type: research
+  } | {
+    type: pdf
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="scrapeOptions full type">
+
+```ts
+{
+  formats?: (
+    markdown | summary | html | rawHtml | links | images | audio | {
+      type: markdown
+    } | {
+      type: summary
+    } | {
+      type: html
+    } | {
+      type: rawHtml
+    } | {
+      type: links
+    } | {
+      type: images
+    } | {
+      type: audio
+    } | {
+      type: screenshot,
+      fullPage?: boolean,
+      quality?: number,
+      viewport?: {
+        width: number,
+        height: number
+      }
+    } | {
+      type: json,
+      schema?: {
+      },
+      prompt?: string
+    } | {
+      type: changeTracking,
+      modes?: git-diff | json[],
+      schema?: {
+      },
+      prompt?: string,
+      tag?: string | null
+    } | {
+      type: branding
+    }
+  )[],
+  onlyMainContent?: boolean,
+  includeTags?: string[],
+  excludeTags?: string[],
+  maxAge?: number,
+  minAge?: number,
+  headers?: {
+  },
+  waitFor?: number,
+  mobile?: boolean,
+  skipTlsVerification?: boolean,
+  timeout?: number,
+  parsers?: {
+    type: pdf,
+    mode?: fast | auto | ocr,
+    maxPages?: number
+  }[],
+  actions?: (
+    {
+      type: wait,
+      milliseconds: number
+    } | {
+      type: wait,
+      selector: string
+    } | {
+      type: screenshot,
+      fullPage?: boolean,
+      quality?: number,
+      viewport?: {
+        width: number,
+        height: number
+      }
+    } | {
+      type: click,
+      selector: string,
+      all?: boolean
+    } | {
+      type: write,
+      text: string
+    } | {
+      type: press,
+      key: string
+    } | {
+      type: scroll,
+      direction?: up | down,
+      selector?: string
+    } | {
+      type: scrape
+    } | {
+      type: executeJavascript,
+      script: string
+    } | {
+      type: pdf,
+      format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger,
+      landscape?: boolean,
+      scale?: number
+    }
+  )[],
+  location?: {
+    country?: string,
+    languages?: string[]
+  },
+  removeBase64Images?: boolean,
+  blockAds?: boolean,
+  proxy?: basic | enhanced | auto,
+  storeInCache?: boolean,
+  profile?: {
+    name: string,
+    saveChanges?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | No | — |
+| `warning` | `string` | No | — |
+| `id` | `string` | No | — |
+| `creditsUsed` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  web?: {
+    title?: string,
+    description?: string,
+    url?: string,
+    markdown?: string | null,
+    html?: string | null,
+    rawHtml?: string | null,
+    links?: string[],
+    screenshot?: string | null,
+    audio?: string | null,
+    category?: string,
+    metadata?: {
+      title?: string | string[],
+      description?: string | string[],
+      language?: string | string[] | null,
+      keywords?: string | string[],
+      sourceURL?: string,
+      url?: string,
+      scrapeId?: string,
+      statusCode?: number,
+      contentType?: string,
+      error?: string | null,
+      ogLocaleAlternate?: string[],
+      concurrencyLimited?: boolean,
+      concurrencyQueueDurationMs?: number
+    }
+  }[],
+  images?: {
+    title?: string,
+    imageUrl?: string,
+    imageWidth?: number,
+    imageHeight?: number,
+    url?: string,
+    position?: number
+  }[],
+  news?: {
+    title?: string,
+    snippet?: string,
+    url?: string,
+    date?: string,
+    imageUrl?: string,
+    position?: number,
+    markdown?: string | null,
+    html?: string | null,
+    rawHtml?: string | null,
+    links?: string[],
+    screenshot?: string | null,
+    audio?: string | null,
+    metadata?: {
+      title?: string | string[],
+      description?: string | string[],
+      language?: string | string[] | null,
+      keywords?: string | string[],
+      sourceURL?: string,
+      url?: string,
+      scrapeId?: string,
+      statusCode?: number,
+      contentType?: string,
+      error?: string | null,
+      ogLocaleAlternate?: string[],
+      concurrencyLimited?: boolean,
+      concurrencyQueueDurationMs?: number
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

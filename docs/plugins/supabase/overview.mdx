@@ -1,0 +1,153 @@
+---
+title: Overview
+description: "Open-source Firebase alternative with Postgres, auth, storage, and realtime backend services."
+---
+
+Use **Supabase** through Corsair: one client, typed API calls, local DB sync.
+
+Supabase exposes project, database, auth, functions, storage, and infrastructure workflows. Use Corsair permissions for destructive actions such as deleting projects, resetting branches, restoring backups, or changing network restrictions.
+
+**What you get:**
+
+- 121 typed API operations
+- 7 synced entities (`apiKeys`, `branches`, `buckets`, `functions`, `migrations`, `organizations`, and 1 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supabase
+```
+```bash yarn
+yarn add corsair @corsair-dev/supabase
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supabase
+```
+```bash bun
+bun add corsair @corsair-dev/supabase
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { supabase } from '@corsair-dev/supabase';
+
+export const corsair = createCorsair({
+	plugins: [
+		supabase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/supabase/get-credentials).
+
+```ts
+supabase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Supabase OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/supabase/get-credentials).
+
+```ts
+supabase({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supabase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`advisors.getPerformanceAdvisors`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.advisors.getPerformanceAdvisors({});
+```
+
+
+**`auth.createProjectSigningKey`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.createProjectSigningKey({});
+```
+
+
+See the full list on the [API](/plugins/supabase/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.supabase.db.<entity>.search()` and `.list()`: `apiKeys`, `branches`, `buckets`, `functions`, `migrations`, `organizations`, `projects`.
+
+See [Database](/plugins/supabase/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supabase/api">
+    Every `supabase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/supabase/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/supabase/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

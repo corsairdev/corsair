@@ -1,0 +1,1524 @@
+---
+title: API
+description: "API reference for UniOne: every `unione.api.*` operation with input and output types."
+---
+
+Every `unione.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domain
+
+### delete
+
+`domain.delete`
+
+Tool to delete a sender domain from the account. Use only when you are certain: the domain must be re-added and re-verified to send from it again.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.unione.api.domain.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### manage
+
+`domain.manage`
+
+Tool to inspect and verify sender domains: fetch DNS records, trigger a verification or DKIM check, or list domains. Deleting a domain is a separate tool.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.domain.manage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `get_dns_records \| validate_verification \| validate_dkim \| list` | Yes | — |
+| `domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `verification-record` | `any` | No | — |
+| `dkim` | `any` | No | — |
+| `domains` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain: string,
+  verification-record?: {
+    value?: string,
+    status?: string
+  },
+  dkim?: {
+    key?: string,
+    status?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### list
+
+`email.list`
+
+Tool to start an export of email events in a time range. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the download URLs. It does not return events directly.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `all_projects` | `boolean` | No | — |
+| `filter` | `object` | No | — |
+| `dump_fields` | `string[]` | No | — |
+| `format` | `csv \| csv_gzip` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  job_id?: string,
+  status?: string,
+  delivery_status?: string,
+  email?: string,
+  email_from?: string,
+  domain?: string,
+  campaign_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `dump_id` | `string` | No | — |
+
+
+
+---
+
+### schedule
+
+`email.schedule`
+
+Tool to send a transactional email at a future time, at most 24 hours ahead. Same as email.send plus a send_at timestamp.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.schedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `object[]` | Yes | — |
+| `from_email` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `from_name` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `reply_to_name` | `string` | No | — |
+| `body` | `object` | No | — |
+| `template_id` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `template_engine` | `string` | No | — |
+| `global_substitutions` | `object` | No | — |
+| `global_metadata` | `object` | No | — |
+| `track_links` | `number` | No | — |
+| `track_read` | `number` | No | — |
+| `send_at` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  substitutions?: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  html?: string,
+  plaintext?: string,
+  amp?: string
+}
+```
+</Accordion>
+
+<Accordion title="global_substitutions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="global_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `job_id` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `failed_emails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="failed_emails full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`email.send`
+
+Tool to send a transactional email immediately. Requires recipients, from_email, subject, and either a body or a template_id.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `object[]` | Yes | — |
+| `from_email` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `from_name` | `string` | No | — |
+| `reply_to` | `string` | No | — |
+| `reply_to_name` | `string` | No | — |
+| `body` | `object` | No | — |
+| `template_id` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `template_engine` | `string` | No | — |
+| `global_substitutions` | `object` | No | — |
+| `global_metadata` | `object` | No | — |
+| `track_links` | `number` | No | — |
+| `track_read` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  substitutions?: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  html?: string,
+  plaintext?: string,
+  amp?: string
+}
+```
+</Accordion>
+
+<Accordion title="global_substitutions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="global_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `job_id` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `failed_emails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="failed_emails full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### statistics
+
+`email.statistics`
+
+Tool to start a per-day aggregate export of send statistics. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the result. It does not return statistics directly.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.statistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `dump_id` | `string` | No | — |
+
+
+
+---
+
+### subscribe
+
+`email.subscribe`
+
+Tool to resubscribe a recipient who previously unsubscribed. Use when you need to restore a user subscription status after they opt in again.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.subscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_email` | `string` | Yes | — |
+| `to_email` | `string` | Yes | — |
+| `from_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### unsubscribe
+
+`email.unsubscribe`
+
+Tool to unsubscribe an email from future emails. Use when you need to stop all further transactional emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.email.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `created` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Email Validation
+
+### batch
+
+`emailValidation.batch`
+
+Tool to validate a list of email addresses. UniOne has no bulk method, so each address costs one validation from the account quota. Addresses that fail are returned with status "error" rather than failing the whole batch.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.emailValidation.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  status?: string,
+  email?: string,
+  result?: string,
+  cause?: string,
+  validity?: number,
+  local_part?: string,
+  domain?: string,
+  mx_found?: boolean,
+  mx_record?: string | number,
+  did_you_mean?: string,
+  processed_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Event Dump
+
+### create
+
+`eventDump.create`
+
+Tool to create an asynchronous CSV event dump. Use when you need to export transactional email events for a specified time window.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.eventDump.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `all_projects` | `boolean` | No | — |
+| `filter` | `object` | No | — |
+| `dump_fields` | `string[]` | No | — |
+| `aggregate` | `string` | No | — |
+| `delimiter` | `string` | No | — |
+| `format` | `csv \| csv_gzip` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  job_id?: string,
+  status?: string,
+  delivery_status?: string,
+  email?: string,
+  email_from?: string,
+  domain?: string,
+  campaign_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `dump_id` | `string` | No | — |
+
+
+
+---
+
+### createForJob
+
+`eventDump.createForJob`
+
+Tool to export the delivery events of one send job. UniOne has no method that reads a job directly, so this creates an event dump filtered by job_id and returns a dump_id to poll with eventDump.get.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.eventDump.createForJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `start_time` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `email` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `dump_id` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`eventDump.delete`
+
+Tool to delete an event dump file and remove it from the queue or storage. Use when you need to clean up an existing event dump by its dump_id.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unione.api.eventDump.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dump_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`eventDump.get`
+
+Tool to retrieve the status and download URLs of an event dump. Use when you need to check if a dump is ready and get its files.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.eventDump.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dump_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `event_dump` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_dump full type">
+
+```ts
+{
+  dump_id: string,
+  dump_status?: string,
+  files?: {
+    url: string,
+    size?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`eventDump.list`
+
+Tool to retrieve the full list of event dumps. Use when you need to view all existing event-dump tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.eventDump.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `event_dumps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_dumps full type">
+
+```ts
+{
+  dump_id: string,
+  dump_status?: string,
+  files?: {
+    url: string,
+    size?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppression
+
+### delete
+
+`suppression.delete`
+
+Tool to remove an email from the suppression list. Use when you need to re-enable sending emails to an address that was previously unsubscribed or suppressed.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.suppression.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`suppression.get`
+
+Tool to check if an email is suppressed and retrieve the reason and date. Use when verifying why an email cannot receive messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.suppression.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `all_projects` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `email` | `string` | No | — |
+| `suppressions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="suppressions full type">
+
+```ts
+{
+  email?: string,
+  project_id?: string,
+  cause?: string,
+  source?: string,
+  is_deletable?: boolean,
+  created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`suppression.list`
+
+Tool to return the suppression list since a given date. Use when auditing bounced, unsubscribed, or blocked recipients.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.suppression.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cause` | `string` | No | — |
+| `source` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `count` | `number` | No | — |
+| `suppressions` | `object[]` | No | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="suppressions full type">
+
+```ts
+{
+  email?: string,
+  project_id?: string,
+  cause?: string,
+  source?: string,
+  is_deletable?: boolean,
+  created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System
+
+### info
+
+`system.info`
+
+Tool to retrieve account details and the current billing period: emails included and sent, validations included and used. Use before sending large campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.system.info({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `email` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `project_name` | `string` | No | — |
+| `project_accounting` | `object` | No | — |
+| `accounting` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="project_accounting full type">
+
+```ts
+{
+  email_counter?: number,
+  email_counter_limit?: number,
+  email_counter_mode?: any
+}
+```
+</Accordion>
+
+<Accordion title="accounting full type">
+
+```ts
+{
+  period_start?: string,
+  period_end?: string,
+  emails_included?: number,
+  emails_sent?: number,
+  validations_included?: number,
+  validations_used?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ping
+
+`system.ping`
+
+Tool to check API connectivity and that the API key is accepted. Use as a health check before a batch of operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.system.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Tag
+
+### delete
+
+`tag.delete`
+
+Tool to delete a specific tag. Use when you have confirmed the tag ID you wish to remove.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unione.api.tag.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tag.list`
+
+Tool to retrieve all user-defined tags. Use when you need to fetch the full list of tags after authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.tag.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tag_id: number,
+  tag: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Template
+
+### delete
+
+`template.delete`
+
+Tool to delete a template by ID. Use when you need to permanently remove a template from the account.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.unione.api.template.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`template.get`
+
+Tool to get template properties by ID. Use when you need to retrieve the full template configuration and content for a specific template.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.template.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  editor_type?: string,
+  template_engine?: string,
+  global_substitutions?: {
+  },
+  global_metadata?: {
+  },
+  body?: {
+    html?: string,
+    plaintext?: string,
+    amp?: string
+  },
+  subject?: string,
+  from_email?: string,
+  from_name?: string,
+  reply_to?: string,
+  reply_to_name?: string,
+  track_links?: number,
+  track_read?: number,
+  headers?: {
+  },
+  attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[],
+  inline_attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`template.list`
+
+Tool to list email templates. Use when you need to retrieve available templates for transactional emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.template.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `templates` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  editor_type?: string,
+  template_engine?: string,
+  global_substitutions?: {
+  },
+  global_metadata?: {
+  },
+  body?: {
+    html?: string,
+    plaintext?: string,
+    amp?: string
+  },
+  subject?: string,
+  from_email?: string,
+  from_name?: string,
+  reply_to?: string,
+  reply_to_name?: string,
+  track_links?: number,
+  track_read?: number,
+  headers?: {
+  },
+  attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[],
+  inline_attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`template.set`
+
+Tool to set or update an email template. Use when you need to create or modify transactional email templates before sending messages.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.template.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  editor_type?: string,
+  template_engine?: string,
+  global_substitutions?: {
+  },
+  global_metadata?: {
+  },
+  body?: {
+    html?: string,
+    plaintext?: string,
+    amp?: string
+  },
+  subject?: string,
+  from_email?: string,
+  from_name?: string,
+  reply_to?: string,
+  reply_to_name?: string,
+  track_links?: number,
+  track_read?: number,
+  headers?: {
+  },
+  attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[],
+  inline_attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  editor_type?: string,
+  template_engine?: string,
+  global_substitutions?: {
+  },
+  global_metadata?: {
+  },
+  body?: {
+    html?: string,
+    plaintext?: string,
+    amp?: string
+  },
+  subject?: string,
+  from_email?: string,
+  from_name?: string,
+  reply_to?: string,
+  reply_to_name?: string,
+  track_links?: number,
+  track_read?: number,
+  headers?: {
+  },
+  attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[],
+  inline_attachments?: {
+    type: string,
+    name: string,
+    content: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook
+
+### delete
+
+`webhook.delete`
+
+Tool to delete a webhook event notification handler by its URL. Use when you need to stop receiving callback notifications for a specific webhook.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.unione.api.webhook.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`webhook.get`
+
+Tool to retrieve webhook configuration by its URL. Use when you need to check the current settings of an event notification handler.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.webhook.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `object` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id?: string | number | null,
+  url: string,
+  status?: string | null,
+  event_format?: string | null,
+  delivery_info?: number | null,
+  single_event?: number | null,
+  max_parallel?: number | null,
+  updated_at?: string | null,
+  events?: {
+    spam_block?: string[] | null,
+    email_status?: string[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhook.list`
+
+Tool to list every webhook configured on the account. Use when you need to see all event notification handlers and their settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.webhook.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: string | number | null,
+  url: string,
+  status?: string | null,
+  event_format?: string | null,
+  delivery_info?: number | null,
+  single_event?: number | null,
+  max_parallel?: number | null,
+  updated_at?: string | null,
+  events?: {
+    spam_block?: string[] | null,
+    email_status?: string[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`webhook.set`
+
+Tool to set or edit a webhook event notification handler. Use when you need to configure your webhook for event callbacks.
+
+**Risk:** `write`
+
+```ts
+await corsair.unione.api.webhook.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `event_format` | `string` | No | — |
+| `delivery_info` | `number` | No | — |
+| `single_event` | `number` | No | — |
+| `max_parallel` | `number` | No | — |
+| `events` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  spam_block?: string[] | null,
+  email_status?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `object` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id?: string | number | null,
+  url: string,
+  status?: string | null,
+  event_format?: string | null,
+  delivery_info?: number | null,
+  single_event?: number | null,
+  max_parallel?: number | null,
+  updated_at?: string | null,
+  events?: {
+    spam_block?: string[] | null,
+    email_status?: string[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### types
+
+`webhook.types`
+
+Tool to list the event names accepted by webhook.set. Returns a static list published in the UniOne callback docs; it makes no API call.
+
+**Risk:** `read`
+
+```ts
+await corsair.unione.api.webhook.types({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_status` | `string[]` | Yes | — |
+| `spam_block` | `string[]` | Yes | — |
+
+
+
+---
+

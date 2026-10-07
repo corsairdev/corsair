@@ -1,0 +1,229 @@
+---
+title: Database
+description: "Sentry local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Sentry plugin syncs data locally. Use `corsair.sentry.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Comments
+
+Path: `sentry.db.comments.search`
+
+```ts
+const rows = await corsair.sentry.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `issue_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+| `timestamp` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Events
+
+Path: `sentry.db.events.search`
+
+```ts
+const rows = await corsair.sentry.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `eventID` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `date` | equals, before, after, between |
+| `dateReceived` | `date` | equals, before, after, between |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupID` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Issues
+
+Path: `sentry.db.issues.search`
+
+```ts
+const rows = await corsair.sentry.db.issues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `culprit` | `string` | equals, contains, startsWith, endsWith, in |
+| `permalink` | `string` | equals, contains, startsWith, endsWith, in |
+| `level` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `count` | `string` | equals, contains, startsWith, endsWith, in |
+| `userCount` | `number` | equals, gt, gte, lt, lte, in |
+| `firstSeen` | `date` | equals, before, after, between |
+| `lastSeen` | `date` | equals, before, after, between |
+| `isPublic` | `boolean` | equals |
+| `isBookmarked` | `boolean` | equals |
+| `hasSeen` | `boolean` | equals |
+| `isSubscribed` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `sentry.db.organizations.search`
+
+```ts
+const rows = await corsair.sentry.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `date` | equals, before, after, between |
+| `isEarlyAdopter` | `boolean` | equals |
+| `require2FA` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `sentry.db.projects.search`
+
+```ts
+const rows = await corsair.sentry.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `date` | equals, before, after, between |
+| `isBookmarked` | `boolean` | equals |
+| `isMember` | `boolean` | equals |
+| `hasAccess` | `boolean` | equals |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `team` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Releases
+
+Path: `sentry.db.releases.search`
+
+```ts
+const rows = await corsair.sentry.db.releases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortVersion` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `date` | equals, before, after, between |
+| `dateReleased` | `date` | equals, before, after, between |
+| `firstEvent` | `date` | equals, before, after, between |
+| `lastEvent` | `date` | equals, before, after, between |
+| `newGroups` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `sentry.db.teams.search`
+
+```ts
+const rows = await corsair.sentry.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `date` | equals, before, after, between |
+| `isMember` | `boolean` | equals |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `hasAccess` | `boolean` | equals |
+| `isPending` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

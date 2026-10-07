@@ -1,0 +1,140 @@
+---
+title: Database
+description: "Discord local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Discord plugin syncs data locally. Use `corsair.discord.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Channels
+
+Path: `discord.db.channels.search`
+
+```ts
+const rows = await corsair.discord.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+| `guild_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `topic` | `string` | equals, contains, startsWith, endsWith, in |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `parent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Guilds
+
+Path: `discord.db.guilds.search`
+
+```ts
+const rows = await corsair.discord.db.guilds.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `approximate_member_count` | `number` | equals, gt, gte, lt, lte, in |
+| `approximate_presence_count` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `premium_tier` | `number` | equals, gt, gte, lt, lte, in |
+| `preferred_locale` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Members
+
+Path: `discord.db.members.search`
+
+```ts
+const rows = await corsair.discord.db.members.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `guild_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `nick` | `string` | equals, contains, startsWith, endsWith, in |
+| `joined_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `premium_since` | `string` | equals, contains, startsWith, endsWith, in |
+| `deaf` | `boolean` | equals |
+| `mute` | `boolean` | equals |
+| `pending` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `discord.db.messages.search`
+
+```ts
+const rows = await corsair.discord.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `edited_timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `tts` | `boolean` | equals |
+| `mention_everyone` | `boolean` | equals |
+| `pinned` | `boolean` | equals |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+| `flags` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `authorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `thread_ts` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

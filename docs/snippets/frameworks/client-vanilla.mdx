@@ -1,0 +1,40 @@
+<Steps>
+
+<Step title="Create the client">
+
+```ts corsair-client.ts
+import { createCorsairClient } from "corsair";
+
+export const client = createCorsairClient({ baseURL: "/api/corsair" });
+```
+
+`createCorsairClient` is a typed fetch wrapper over the management API, no React required. Use it from your frontend, a worker, or a script. Every route is typed against its response. Full surface on the [Vanilla Client](/adapters/client) reference.
+
+</Step>
+
+<Step title="Read what's connected">
+
+```ts connections.ts
+const status = await client.connectionStatus.get({ tenantId: "acme" });
+// { github: 'connected', slack: 'not_connected', notion: 'missing_credentials' }
+```
+
+`connectionStatus.get` returns a map of plugin id to `connected | missing_credentials | not_connected`, so you can show what's live and what still needs connecting.
+
+</Step>
+
+<Step title="Mint a connect link">
+
+```ts connect.ts
+const { connectUrl } = await client.connect.createLink({
+    plugin: "github",
+    tenantId: "acme",
+});
+window.location.href = connectUrl; // send the user to Hub's hosted connect page
+```
+
+Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database. You never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
+
+</Step>
+
+</Steps>

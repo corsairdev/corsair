@@ -1,0 +1,112 @@
+---
+title: Connect / OAuth
+description: Connect users to Slack, GitHub, and other plugins with Hub and one createLink API.
+---
+
+When a user clicks "Connect GitHub" in your dashboard, your backend calls `client.connect.createLink()`, redirects them to the returned `connectUrl`, and Corsair handles the rest. Hub hosts the connect page and OAuth callback. You mount a delivery endpoint and redirect.
+
+See [Hub overview](/hub/overview) for how the relay works. This page is the API reference.
+
+## Response shape
+
+Every `createLink` call returns:
+
+```ts
+type ConnectLink = {
+  connectUrl: string;   // redirect the user's browser here
+  expiresAt?: string;   // ISO timestamp — always set in practice
+};
+```
+
+Redirect to `connectUrl`. That is the entire client-side contract.
+
+## Setup
+
+```ts server.ts
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database,
+  kek,
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+  },
+});
+```
+
+Use a **development** key (`ck_dev_…`) locally and a **production** key (`ck_prod_…`) when deployed. See [Environments](/hub/environments).
+
+Mount one route (optional catch-all so bare `/api/corsair` hits hub delivery too):
+
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server";
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+  basePath: "/api/corsair",
+});
+```
+
+`toNextJsHandler` serves hub delivery and the management API on subpaths (`/ok`, `/connect/links`, etc.).
+
+Hub optional overrides:
+
+| Field | Purpose |
+| ----- | ------- |
+| `plugin` | Optional. Omit to show all configured plugins |
+| `oauthMode` | Optional. Inferred from plugin `authType` when omitted |
+| `providerName` | Optional. Override provider display name in Hub UI |
+
+Hub delivers results to your handler. In development the SDK auto-detects the delivery URL; in production it uses the URL registered in the [Hub dashboard](/hub/dashboard).
+
+## Create a connect link
+
+```ts backend.ts
+const { connectUrl } = await client.connect.createLink({
+  plugin: "github",
+  tenantId: "acme",
+});
+window.location.href = connectUrl;
+```
+
+In React:
+
+```tsx connect-button.tsx
+function ConnectGithub({ tenantId }: { tenantId: string }) {
+  const { mutate, loading } = useCreateConnectLink();
+
+  return (
+    <button
+      disabled={loading}
+      onClick={async () => {
+        const link = await mutate({ plugin: "github", tenantId });
+        if (link) window.location.href = link.connectUrl;
+      }}
+    >
+      Connect GitHub
+    </button>
+  );
+}
+```
+
+## Checking connection status
+
+After a successful connect, `useConnectionStatus({ tenantId })` reflects the new state:
+
+```tsx status.tsx
+const { data, refetch } = useConnectionStatus({ tenantId: "acme" });
+// data: { github: 'connected', slack: 'not_connected', ... }
+```
+
+Call `refetch()` after connect completes to update the dashboard.
+
+## Errors
+
+| Status | `error` | When |
+| ------ | ------- | ---- |
+| 500 | `connect_not_configured` | `hub` config was not passed to `createCorsair` |
+| 500 | `database_not_configured` | `database` and `kek` required to issue connect links |
+| 400 | `missing_credentials` | Plugin OAuth client id / secret not configured |
+| 400 | `hub_mode` | `resolve` or `oauthCallback` called when only `hub` is configured |
+
+All client errors surface as `CorsairClientError` with these `code` values.

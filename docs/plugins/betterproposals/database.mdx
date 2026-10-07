@@ -1,0 +1,271 @@
+---
+title: Database
+description: "Better Proposals local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Better Proposals plugin syncs data locally. Use `corsair.betterproposals.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Brands
+
+Path: `betterproposals.db.brands.search`
+
+```ts
+const rows = await corsair.betterproposals.db.brands.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxLabel` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxAmount` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Companies
+
+Path: `betterproposals.db.companies.search`
+
+```ts
+const rows = await corsair.betterproposals.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyCRMID` | `string` | equals, contains, startsWith, endsWith, in |
+| `DateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Covers
+
+Path: `betterproposals.db.covers.search`
+
+```ts
+const rows = await corsair.betterproposals.db.covers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Headline` | `string` | equals, contains, startsWith, endsWith, in |
+| `Subheader` | `string` | equals, contains, startsWith, endsWith, in |
+| `BGColour` | `string` | equals, contains, startsWith, endsWith, in |
+| `TextColour` | `string` | equals, contains, startsWith, endsWith, in |
+| `TextAlign` | `string` | equals, contains, startsWith, endsWith, in |
+| `ButtonStyle` | `string` | equals, contains, startsWith, endsWith, in |
+| `ButtonText` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Currencies
+
+Path: `betterproposals.db.currencies.search`
+
+```ts
+const rows = await corsair.betterproposals.db.currencies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencySymbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Document Types
+
+Path: `betterproposals.db.documentTypes.search`
+
+```ts
+const rows = await corsair.betterproposals.db.documentTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `TypeName` | `string` | equals, contains, startsWith, endsWith, in |
+| `TypeColour` | `string` | equals, contains, startsWith, endsWith, in |
+| `TypeNameSingular` | `string` | equals, contains, startsWith, endsWith, in |
+| `TypeIcon` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Merge Tags
+
+Path: `betterproposals.db.mergeTags.search`
+
+```ts
+const rows = await corsair.betterproposals.db.mergeTags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `Fallback` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Proposals
+
+Path: `betterproposals.db.proposals.search`
+
+```ts
+const rows = await corsair.betterproposals.db.proposals.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyCRMID` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `CurrencySymbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `DateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `Preview` | `string` | equals, contains, startsWith, endsWith, in |
+| `ProposalView` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Quotes
+
+Path: `betterproposals.db.quotes.search`
+
+```ts
+const rows = await corsair.betterproposals.db.quotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuoteAmount` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuoteTotal` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Settings
+
+Path: `betterproposals.db.settings.search`
+
+```ts
+const rows = await corsair.betterproposals.db.settings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxLabel` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaxAmount` | `string` | equals, contains, startsWith, endsWith, in |
+| `TimeZone` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `betterproposals.db.templates.search`
+
+```ts
+const rows = await corsair.betterproposals.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `TemplateName` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

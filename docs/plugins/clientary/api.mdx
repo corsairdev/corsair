@@ -1,0 +1,4014 @@
+---
+title: API
+description: "API reference for Clientary: every `clientary.api.*` operation with input and output types."
+---
+
+Every `clientary.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### create
+
+`clients.create`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.clients.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Client name |
+| `number` | `string` | No | Client number (unique) |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+### delete
+
+`clients.delete`
+
+Delete a client and all associated projects, invoices, estimates, and contacts
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.clients.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Client ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`clients.get`
+
+Get a client by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.clients.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Client ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`clients.list`
+
+List clients
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.clients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `updated_since` | `string` | No | Only return clients updated since this date (YYYY-MM-DD) |
+| `sort` | `date` | No | Sort by most recently created |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `clients` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="clients full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  city?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  state?: string | null,
+  website?: string | null,
+  description?: string | null,
+  invoice_extra_fields?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`clients.update`
+
+Update a client
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.clients.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Client ID |
+| `name` | `string` | No | Client name |
+| `number` | `string` | No | Client number (unique) |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client the contact belongs to |
+| `name` | `string` | Yes | Contact name |
+| `email` | `string` | Yes | Contact email |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Contact ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Contact ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  name: string,
+  email?: string | null,
+  title?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  ext?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForClient
+
+`contacts.listForClient`
+
+List contacts belonging to a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.contacts.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope contacts by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  name: string,
+  email?: string | null,
+  title?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  ext?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Contact ID |
+| `name` | `string` | No | Contact name |
+| `email` | `string` | No | Contact email |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+## Estimates
+
+### create
+
+`estimates.create`
+
+Create an estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.estimates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | No | Estimate number (autoincrements) |
+| `date` | `string` | Yes | Estimate date (YYYY-MM-DD) |
+| `currency_code` | `string` | Yes | ISO currency code, e.g. USD |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `status` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `summary` | `string` | No | — |
+| `estimate_items_attributes` | `object[]` | No | Estimate line items |
+
+<AccordionGroup>
+<Accordion title="estimate_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `estimate_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="estimate_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`estimates.delete`
+
+Delete an estimate
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.estimates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Estimate ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`estimates.get`
+
+Get an estimate by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.estimates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Estimate ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `estimate_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="estimate_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`estimates.list`
+
+List estimates
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.estimates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `estimates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimates full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  client_id?: number | null,
+  note?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  estimate_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForClient
+
+`estimates.listForClient`
+
+List estimates belonging to a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.estimates.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope estimates by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `estimates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimates full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  client_id?: number | null,
+  note?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  estimate_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`estimates.listForProject`
+
+List estimates belonging to a project
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.estimates.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project ID to scope estimates by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `estimates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimates full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  client_id?: number | null,
+  note?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  estimate_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`estimates.send`
+
+Send an estimate via email
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.estimates.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Estimate ID to send |
+| `recipients` | `string[]` | Yes | Recipient email addresses |
+| `subject` | `string` | No | Email subject line |
+| `message` | `string` | No | Email body message |
+| `send_copy` | `boolean \| number` | No | Send a copy to the sending user |
+| `attach_pdf` | `boolean \| number` | No | Attach a PDF of the estimate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sent` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### update
+
+`estimates.update`
+
+Update an estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.estimates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Estimate ID |
+| `number` | `number` | No | Estimate number (autoincrements) |
+| `date` | `string` | No | Estimate date (YYYY-MM-DD) |
+| `currency_code` | `string` | No | ISO currency code, e.g. USD |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `status` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `summary` | `string` | No | — |
+| `estimate_items_attributes` | `object[]` | No | Estimate line items |
+
+<AccordionGroup>
+<Accordion title="estimate_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `estimate_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="estimate_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Expenses
+
+### create
+
+`expenses.create`
+
+Create an expense
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.expenses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | Expense amount |
+| `description` | `string` | No | — |
+| `incurred_on` | `string` | No | Date incurred (YYYY-MM-DD) |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `invoice_id` | `number` | No | — |
+| `invoice_item_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `amount` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `incurred_on` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`expenses.delete`
+
+Delete an expense
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.expenses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Expense ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`expenses.get`
+
+Get an expense by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.expenses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Expense ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `invoice_id` | `number` | No | — |
+| `invoice_item_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `amount` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `incurred_on` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`expenses.list`
+
+List expenses
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.expenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_date` | `string` | No | Start of date range (YYYY-MM-DD) |
+| `to_date` | `string` | No | End of date range (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | Yes | — |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `expenses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  project_id?: number | null,
+  invoice_id?: number | null,
+  invoice_item_id?: number | null,
+  user_id?: number | null,
+  amount: number,
+  description?: string | null,
+  incurred_on: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForClient
+
+`expenses.listForClient`
+
+List expenses belonging to a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.expenses.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope expenses by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | Yes | — |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `expenses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  project_id?: number | null,
+  invoice_id?: number | null,
+  invoice_item_id?: number | null,
+  user_id?: number | null,
+  amount: number,
+  description?: string | null,
+  incurred_on: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`expenses.listForProject`
+
+List expenses belonging to a project
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.expenses.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project ID to scope expenses by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | Yes | — |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `expenses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  project_id?: number | null,
+  invoice_id?: number | null,
+  invoice_item_id?: number | null,
+  user_id?: number | null,
+  amount: number,
+  description?: string | null,
+  incurred_on: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`expenses.update`
+
+Update an expense
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.expenses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Expense ID |
+| `amount` | `number` | No | Expense amount |
+| `description` | `string` | No | — |
+| `incurred_on` | `string` | No | Date incurred (YYYY-MM-DD) |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `invoice_id` | `number` | No | — |
+| `invoice_item_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `amount` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `incurred_on` | `string` | Yes | — |
+
+
+
+---
+
+## Hours
+
+### create
+
+`hours.create`
+
+Log hours to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.hours.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project to log hours against |
+| `hours` | `number` | Yes | Number of hours logged |
+| `title` | `string` | Yes | Title of the logged work |
+| `description` | `string` | No | — |
+| `date` | `string` | No | Date logged (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `hours` | `number` | Yes | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `billed?` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`hours.delete`
+
+Delete an hours entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.hours.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Hours entry ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`hours.get`
+
+Get an hours entry by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.hours.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Hours entry ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `hours` | `number` | Yes | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `billed?` | `boolean` | No | — |
+
+
+
+---
+
+### listForProject
+
+`hours.listForProject`
+
+List hours logged against a project
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.hours.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project ID to scope hours by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `filter` | `billed \| unbilled` | No | Narrow to billed or unbilled hours |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hours` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hours full type">
+
+```ts
+{
+  id: number,
+  project_id: number,
+  user_id?: number | null,
+  title: string,
+  description?: string | null,
+  date: string,
+  hours: number,
+  rate?: number | null,
+  cost?: number | null,
+  billed??: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`hours.update`
+
+Update an hours entry
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.hours.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Hours entry ID |
+| `hours` | `number` | No | Number of hours logged |
+| `title` | `string` | No | Title of the logged work |
+| `description` | `string` | No | — |
+| `date` | `string` | No | Date logged (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `user_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `hours` | `number` | Yes | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `billed?` | `boolean` | No | — |
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create an invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.invoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | No | Invoice number (autoincrements) |
+| `date` | `string` | Yes | Invoice date (YYYY-MM-DD) |
+| `due_date` | `string` | Yes | Invoice due date (YYYY-MM-DD) |
+| `currency_code` | `string` | Yes | ISO currency code, e.g. USD |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `po` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `status` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `summary` | `string` | No | — |
+| `invoice_items_attributes` | `object[]` | No | Invoice line items |
+
+<AccordionGroup>
+<Accordion title="invoice_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `po` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `balance` | `number` | Yes | — |
+| `total_payments` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `invoice_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+| `recurring_schedules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  id: number,
+  amount: number,
+  note?: string | null,
+  received_on: string,
+  invoice_id?: number | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="recurring_schedules full type">
+
+```ts
+{
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete an invoice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.invoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Invoice ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Get an invoice by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Invoice ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `po` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `balance` | `number` | Yes | — |
+| `total_payments` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `invoice_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+| `recurring_schedules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  id: number,
+  amount: number,
+  note?: string | null,
+  received_on: string,
+  invoice_id?: number | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="recurring_schedules full type">
+
+```ts
+{
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `updated_since` | `string` | No | Only return invoices updated since this date (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  due_date?: string | null,
+  client_id?: number | null,
+  note?: string | null,
+  po?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  balance: number,
+  total_payments: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  invoice_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[],
+  payments?: {
+    id: number,
+    amount: number,
+    note?: string | null,
+    received_on: string,
+    invoice_id?: number | null,
+    updated_at?: string | null
+  }[],
+  recurring_schedules?: {
+    id: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForClient
+
+`invoices.listForClient`
+
+List invoices belonging to a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.invoices.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope invoices by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  due_date?: string | null,
+  client_id?: number | null,
+  note?: string | null,
+  po?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  balance: number,
+  total_payments: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  invoice_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[],
+  payments?: {
+    id: number,
+    amount: number,
+    note?: string | null,
+    received_on: string,
+    invoice_id?: number | null,
+    updated_at?: string | null
+  }[],
+  recurring_schedules?: {
+    id: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`invoices.listForProject`
+
+List invoices belonging to a project
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.invoices.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project ID to scope invoices by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  due_date?: string | null,
+  client_id?: number | null,
+  note?: string | null,
+  po?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  balance: number,
+  total_payments: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  invoice_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[],
+  payments?: {
+    id: number,
+    amount: number,
+    note?: string | null,
+    received_on: string,
+    invoice_id?: number | null,
+    updated_at?: string | null
+  }[],
+  recurring_schedules?: {
+    id: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForRecurring
+
+`invoices.listForRecurring`
+
+List invoices generated by a recurring schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.invoices.listForRecurring({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recurring_id` | `number` | Yes | Recurring schedule ID to scope invoices by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  title?: string | null,
+  date: string,
+  due_date?: string | null,
+  client_id?: number | null,
+  note?: string | null,
+  po?: string | null,
+  status: number,
+  currency_code: string,
+  subtotal: number,
+  total_cost: number,
+  balance: number,
+  total_payments: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  summary?: string | null,
+  invoice_items?: {
+    id: number,
+    title: string,
+    price: number | string,
+    quantity: number,
+    taxable?: boolean
+  }[],
+  payments?: {
+    id: number,
+    amount: number,
+    note?: string | null,
+    received_on: string,
+    invoice_id?: number | null,
+    updated_at?: string | null
+  }[],
+  recurring_schedules?: {
+    id: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`invoices.send`
+
+Send an invoice via email
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.invoices.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Estimate ID to send |
+| `recipients` | `string[]` | Yes | Recipient email addresses |
+| `subject` | `string` | No | Email subject line |
+| `message` | `string` | No | Email body message |
+| `send_copy` | `boolean \| number` | No | Send a copy to the sending user |
+| `attach_pdf` | `boolean \| number` | No | Attach a PDF of the estimate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sent` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update an invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.invoices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Invoice ID |
+| `number` | `number` | No | Invoice number (autoincrements) |
+| `date` | `string` | No | Invoice date (YYYY-MM-DD) |
+| `due_date` | `string` | No | Invoice due date (YYYY-MM-DD) |
+| `currency_code` | `string` | No | ISO currency code, e.g. USD |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `po` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `status` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `summary` | `string` | No | — |
+| `invoice_items_attributes` | `object[]` | No | Invoice line items |
+
+<AccordionGroup>
+<Accordion title="invoice_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+| `client_id` | `number` | No | — |
+| `note` | `string` | No | — |
+| `po` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `balance` | `number` | Yes | — |
+| `total_payments` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `summary` | `string` | No | — |
+| `invoice_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+| `recurring_schedules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_items full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  price: number | string,
+  quantity: number,
+  taxable?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  id: number,
+  amount: number,
+  note?: string | null,
+  received_on: string,
+  invoice_id?: number | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="recurring_schedules full type">
+
+```ts
+{
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### create
+
+`leads.create`
+
+Create a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.leads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Client name |
+| `number` | `string` | No | Client number (unique) |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.leads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Lead ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Get a lead by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.leads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Lead ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`leads.list`
+
+List leads
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.leads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `sort` | `name \| oldest` | No | Sort by name or oldest first |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `leads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="leads full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  city?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  state?: string | null,
+  website?: string | null,
+  description?: string | null,
+  invoice_extra_fields?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leads.update`
+
+Update a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.leads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Lead ID |
+| `name` | `string` | No | Client name |
+| `number` | `string` | No | Client number (unique) |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `city` | `string` | No | — |
+| `address` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `state` | `string` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `invoice_extra_fields` | `any` | No | — |
+
+
+
+---
+
+## Payment Profiles
+
+### create
+
+`paymentProfiles.create`
+
+Create a payment profile for a client
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.paymentProfiles.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client to attach the payment profile to |
+| `stripe_customer_id` | `string` | Yes | Stripe customer ID |
+| `stripe_source_id` | `string` | Yes | Stripe source ID |
+| `last_four_digits` | `string` | Yes | Last four digits of the card |
+| `name` | `string` | Yes | Cardholder name |
+| `expiration_date` | `string` | Yes | Card expiration date (YYYY-MM-DD) |
+| `card_type` | `string` | No | Card brand, e.g. Visa |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `gateway` | `string` | Yes | — |
+| `gateway_token` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `expiration_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`paymentProfiles.delete`
+
+Delete a payment profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.paymentProfiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client the payment profile belongs to |
+| `id` | `number` | Yes | Payment profile ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### listForClient
+
+`paymentProfiles.listForClient`
+
+List payment profiles for a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.paymentProfiles.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope payment profiles by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `payment_profiles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payment_profiles full type">
+
+```ts
+{
+  id: number,
+  client_id: number,
+  name: string,
+  gateway: string,
+  gateway_token?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  expiration_date?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Record a payment
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.payments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | Invoice to apply the payment to |
+| `amount` | `number` | No | Payment amount |
+| `note` | `string` | No | Payment note |
+| `payment_profile_id` | `number` | No | Auto-charge this payment profile for the outstanding balance |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `invoice_id` | `number` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `received_on` | `string` | Yes | — |
+| `transaction_id` | `string` | No | — |
+| `transaction_fee_amount` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`payments.delete`
+
+Delete (void) a payment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.payments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | Invoice the payment belongs to |
+| `id` | `number` | Yes | Payment ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List payments
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `sort` | `created_at` | No | Sort by record creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | Yes | — |
+| `page_count` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+{
+  id: number,
+  invoice_id: number,
+  amount: number,
+  note?: string | null,
+  received_on: string,
+  transaction_id?: string | null,
+  transaction_fee_amount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Project name |
+| `number` | `string` | No | Project number (unique) |
+| `rate` | `number` | Yes | Hourly rate (or total cost for fixed amount) |
+| `client_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `status` | `number` | No | — |
+| `budget_type` | `0 \| 1` | No | 0 = total budgeted hours, 1 = total budgeted amount |
+| `project_type` | `0 \| 2` | No | 0 = hourly rate, 2 = fixed amount |
+| `budget` | `number` | No | — |
+| `currency_code` | `string` | No | — |
+| `start_date` | `string` | No | Start date (YYYY-MM-DD) |
+| `end_date` | `string` | No | End date (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `budget_type` | `number` | Yes | — |
+| `project_type` | `number` | Yes | — |
+| `budget` | `number` | No | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `worked_hours` | `number` | No | — |
+| `unbilled_hours` | `number` | No | — |
+| `currency_code` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `client` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  city?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  state?: string | null,
+  website?: string | null,
+  description?: string | null,
+  invoice_extra_fields?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Project ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Project ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `budget_type` | `number` | Yes | — |
+| `project_type` | `number` | Yes | — |
+| `budget` | `number` | No | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `worked_hours` | `number` | No | — |
+| `unbilled_hours` | `number` | No | — |
+| `currency_code` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `client` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  city?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  state?: string | null,
+  website?: string | null,
+  description?: string | null,
+  invoice_extra_fields?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+| `filter` | `all` | No | Include closed projects (default: active/billable only) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  description?: string | null,
+  status: number,
+  budget_type: number,
+  project_type: number,
+  budget?: number | null,
+  rate?: number | null,
+  cost?: number | null,
+  worked_hours?: number | null,
+  unbilled_hours?: number | null,
+  currency_code?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  client?: {
+    id: number,
+    number?: string | null,
+    name: string,
+    city?: string | null,
+    address?: string | null,
+    address_2?: string | null,
+    zip?: string | null,
+    country?: string | null,
+    state?: string | null,
+    website?: string | null,
+    description?: string | null,
+    invoice_extra_fields?: any | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForClient
+
+`projects.listForClient`
+
+List projects belonging to a client
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.projects.listForClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | Client ID to scope projects by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  description?: string | null,
+  status: number,
+  budget_type: number,
+  project_type: number,
+  budget?: number | null,
+  rate?: number | null,
+  cost?: number | null,
+  worked_hours?: number | null,
+  unbilled_hours?: number | null,
+  currency_code?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  client?: {
+    id: number,
+    number?: string | null,
+    name: string,
+    city?: string | null,
+    address?: string | null,
+    address_2?: string | null,
+    zip?: string | null,
+    country?: string | null,
+    state?: string | null,
+    website?: string | null,
+    description?: string | null,
+    invoice_extra_fields?: any | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Project ID |
+| `name` | `string` | No | Project name |
+| `number` | `string` | No | Project number (unique) |
+| `rate` | `number` | No | Hourly rate (or total cost for fixed amount) |
+| `client_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `status` | `number` | No | — |
+| `budget_type` | `0 \| 1` | No | 0 = total budgeted hours, 1 = total budgeted amount |
+| `project_type` | `0 \| 2` | No | 0 = hourly rate, 2 = fixed amount |
+| `budget` | `number` | No | — |
+| `currency_code` | `string` | No | — |
+| `start_date` | `string` | No | Start date (YYYY-MM-DD) |
+| `end_date` | `string` | No | End date (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `budget_type` | `number` | Yes | — |
+| `project_type` | `number` | Yes | — |
+| `budget` | `number` | No | — |
+| `rate` | `number` | No | — |
+| `cost` | `number` | No | — |
+| `worked_hours` | `number` | No | — |
+| `unbilled_hours` | `number` | No | — |
+| `currency_code` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `client` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  name: string,
+  city?: string | null,
+  address?: string | null,
+  address_2?: string | null,
+  zip?: string | null,
+  country?: string | null,
+  state?: string | null,
+  website?: string | null,
+  description?: string | null,
+  invoice_extra_fields?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recurring
+
+### create
+
+`recurring.create`
+
+Create a recurring schedule
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.recurring.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `number` | No | Schedule number (autoincrements) |
+| `next_date` | `string` | Yes | Next invoice date (YYYY-MM-DD) |
+| `due_period` | `number` | Yes | Due in N days |
+| `currency_code` | `string` | Yes | ISO currency code, e.g. USD |
+| `time_interval` | `number` | Yes | Frequency (1=weekly ... 11=every 4 months) |
+| `client_id` | `number` | Yes | Client billed by this schedule |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `status` | `number` | No | — |
+| `action` | `number` | No | 0=send, 1=draft, 2=autobill |
+| `unlimited` | `boolean` | No | — |
+| `occurrences_remaining` | `number` | No | — |
+| `payment_profile_id` | `number` | No | — |
+| `po` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `recurring_schedule_items_attributes` | `object[]` | No | Recurring schedule line items |
+
+<AccordionGroup>
+<Accordion title="recurring_schedule_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `action` | `number` | Yes | — |
+| `time_interval` | `number` | Yes | — |
+| `due_period` | `number` | Yes | — |
+| `next_date` | `string` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `unlimited` | `boolean` | Yes | — |
+| `occurrences_remaining` | `number` | No | — |
+| `payment_profile_id` | `number` | No | — |
+| `po` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `client` | `any` | No | — |
+| `recurring_schedule_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recurring_schedule_items full type">
+
+```ts
+{
+  id: number,
+  recurring_schedule_id?: number | null,
+  title: string,
+  price?: string | null,
+  quantity: number,
+  item_type: number,
+  taxable??: boolean,
+  secondary_tax??: boolean,
+  tertiary_tax??: boolean,
+  total_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`recurring.delete`
+
+Delete a recurring schedule
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.recurring.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Recurring schedule ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`recurring.get`
+
+Get a recurring schedule by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.recurring.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Recurring schedule ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `action` | `number` | Yes | — |
+| `time_interval` | `number` | Yes | — |
+| `due_period` | `number` | Yes | — |
+| `next_date` | `string` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `unlimited` | `boolean` | Yes | — |
+| `occurrences_remaining` | `number` | No | — |
+| `payment_profile_id` | `number` | No | — |
+| `po` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `client` | `any` | No | — |
+| `recurring_schedule_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recurring_schedule_items full type">
+
+```ts
+{
+  id: number,
+  recurring_schedule_id?: number | null,
+  title: string,
+  price?: string | null,
+  quantity: number,
+  item_type: number,
+  taxable??: boolean,
+  secondary_tax??: boolean,
+  tertiary_tax??: boolean,
+  total_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`recurring.list`
+
+List recurring schedules
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.recurring.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | Yes | — |
+| `page_count` | `number` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `recurring` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recurring full type">
+
+```ts
+{
+  id: number,
+  client_id: number,
+  number?: string | null,
+  title: string,
+  note?: string | null,
+  status: number,
+  action: number,
+  time_interval: number,
+  due_period: number,
+  next_date: string,
+  currency_code: string,
+  unlimited: boolean,
+  occurrences_remaining?: number | null,
+  payment_profile_id?: number | null,
+  po?: string | null,
+  summary?: string | null,
+  subtotal: number,
+  total_cost: number,
+  tax: number,
+  tax2: number,
+  tax3: number,
+  tax_label?: string | null,
+  tax2_label?: string | null,
+  tax3_label?: string | null,
+  compound_tax: boolean,
+  updated_at?: string | null,
+  client?: any | null,
+  recurring_schedule_items?: {
+    id: number,
+    recurring_schedule_id?: number | null,
+    title: string,
+    price?: string | null,
+    quantity: number,
+    item_type: number,
+    taxable??: boolean,
+    secondary_tax??: boolean,
+    tertiary_tax??: boolean,
+    total_tax?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`recurring.update`
+
+Update a recurring schedule
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.recurring.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Recurring schedule ID |
+| `number` | `number` | No | Schedule number (autoincrements) |
+| `next_date` | `string` | No | Next invoice date (YYYY-MM-DD) |
+| `due_period` | `number` | No | Due in N days |
+| `currency_code` | `string` | No | ISO currency code, e.g. USD |
+| `time_interval` | `number` | No | Frequency (1=weekly ... 11=every 4 months) |
+| `client_id` | `number` | No | Client billed by this schedule |
+| `title` | `string` | No | — |
+| `note` | `string` | No | — |
+| `status` | `number` | No | — |
+| `action` | `number` | No | 0=send, 1=draft, 2=autobill |
+| `unlimited` | `boolean` | No | — |
+| `occurrences_remaining` | `number` | No | — |
+| `payment_profile_id` | `number` | No | — |
+| `po` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax3` | `number` | No | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | No | — |
+| `recurring_schedule_items_attributes` | `object[]` | No | Recurring schedule line items |
+
+<AccordionGroup>
+<Accordion title="recurring_schedule_items_attributes full type">
+
+```ts
+{
+  id?: number,
+  _destroy?: boolean,
+  title?: string,
+  quantity?: number,
+  price?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `status` | `number` | Yes | — |
+| `action` | `number` | Yes | — |
+| `time_interval` | `number` | Yes | — |
+| `due_period` | `number` | Yes | — |
+| `next_date` | `string` | Yes | — |
+| `currency_code` | `string` | Yes | — |
+| `unlimited` | `boolean` | Yes | — |
+| `occurrences_remaining` | `number` | No | — |
+| `payment_profile_id` | `number` | No | — |
+| `po` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `subtotal` | `number` | Yes | — |
+| `total_cost` | `number` | Yes | — |
+| `tax` | `number` | Yes | — |
+| `tax2` | `number` | Yes | — |
+| `tax3` | `number` | Yes | — |
+| `tax_label` | `string` | No | — |
+| `tax2_label` | `string` | No | — |
+| `tax3_label` | `string` | No | — |
+| `compound_tax` | `boolean` | Yes | — |
+| `updated_at` | `string` | No | — |
+| `client` | `any` | No | — |
+| `recurring_schedule_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recurring_schedule_items full type">
+
+```ts
+{
+  id: number,
+  recurring_schedule_id?: number | null,
+  title: string,
+  price?: string | null,
+  quantity: number,
+  item_type: number,
+  taxable??: boolean,
+  secondary_tax??: boolean,
+  tertiary_tax??: boolean,
+  total_tax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Staff
+
+### get
+
+`staff.get`
+
+Get a staff member by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.staff.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Staff user ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `title` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `ext` | `string` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`staff.list`
+
+List staff members
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.staff.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `staff` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="staff full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  name: string,
+  email?: string | null,
+  title?: string | null,
+  phone?: string | null,
+  mobile?: string | null,
+  ext?: string | null,
+  avatar?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Task title |
+| `description` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `due_date` | `string` | No | Due date (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `complete` | `boolean` | Yes | — |
+| `completed_at` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.clientary.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Task ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Task ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `complete` | `boolean` | Yes | — |
+| `completed_at` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | Yes | — |
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  project_id?: number | null,
+  user_id?: number | null,
+  assignee_id?: number | null,
+  title: string,
+  description?: string | null,
+  complete: boolean,
+  completed_at?: string | null,
+  due_date?: string | null,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`tasks.listForProject`
+
+List tasks belonging to a project
+
+**Risk:** `read`
+
+```ts
+await corsair.clientary.api.tasks.listForProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | Project ID to scope tasks by |
+| `page` | `number` | No | Page number (starts at 1) |
+| `page_size` | `number` | No | Results per page (max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | Yes | — |
+| `page_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  client_id?: number | null,
+  project_id?: number | null,
+  user_id?: number | null,
+  assignee_id?: number | null,
+  title: string,
+  description?: string | null,
+  complete: boolean,
+  completed_at?: string | null,
+  due_date?: string | null,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.clientary.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Task ID |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `due_date` | `string` | No | — |
+| `complete` | `boolean` | No | Mark the task complete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `complete` | `boolean` | Yes | — |
+| `completed_at` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+

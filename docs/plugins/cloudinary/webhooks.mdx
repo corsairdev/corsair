@@ -1,0 +1,846 @@
+---
+title: Webhooks
+description: "Cloudinary incoming webhooks: event paths, payloads, and response data."
+---
+
+The Cloudinary plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/cloudinary/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `delete`
+  - `delete` (`delete.delete`)
+- `eager`
+  - `eager` (`eager.eager`)
+- `folder`
+  - `createFolder` (`folder.createFolder`)
+  - `deleteFolder` (`folder.deleteFolder`)
+  - `move` (`folder.move`)
+- `other`
+  - `accessControlChanged` (`other.accessControlChanged`)
+  - `explode` (`other.explode`)
+  - `relatedAssets` (`other.relatedAssets`)
+- `rename`
+  - `rename` (`rename.rename`)
+- `resource`
+  - `resourceContextChanged` (`resource.resourceContextChanged`)
+  - `resourceMetadataChanged` (`resource.resourceMetadataChanged`)
+  - `resourceTagsChanged` (`resource.resourceTagsChanged`)
+- `upload`
+  - `upload` (`upload.upload`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Delete
+
+### Delete
+
+`delete.delete`
+
+Notification when an asset is deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `delete` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `public_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: delete,
+  request_id?: string,
+  signature_key?: string,
+  asset_id?: string,
+  public_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        delete: {
+            delete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Eager
+
+### Eager
+
+`eager.eager`
+
+Notification when eager transformations complete
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `eager` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `eager` | `object[]` | No | — |
+| `batch_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `public_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="eager full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: eager,
+  request_id?: string,
+  signature_key?: string,
+  eager?: {
+  }[],
+  batch_id?: string,
+  asset_id?: string,
+  public_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        eager: {
+            eager: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Folder
+
+### Create Folder
+
+`folder.createFolder`
+
+Notification when a folder is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `create_folder` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `folder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  path?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: create_folder,
+  request_id?: string,
+  signature_key?: string,
+  folder?: {
+    path?: string,
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        folder: {
+            createFolder: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delete Folder
+
+`folder.deleteFolder`
+
+Notification when a folder is deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `delete_folder` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `folder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  path?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: delete_folder,
+  request_id?: string,
+  signature_key?: string,
+  folder?: {
+    path?: string,
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        folder: {
+            deleteFolder: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Move
+
+`folder.move`
+
+Notification when an asset is moved between folders
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `move` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `asset_folder` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: move,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string,
+  asset_folder?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        folder: {
+            move: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Other
+
+### Access Control Changed
+
+`other.accessControlChanged`
+
+Notification when asset access control changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `access_control_changed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: access_control_changed,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        other: {
+            accessControlChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Explode
+
+`other.explode`
+
+Notification when explode processing completes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `explode` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: explode,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        other: {
+            explode: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Related Assets
+
+`other.relatedAssets`
+
+Notification when related assets change
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `related_assets` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `public_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: related_assets,
+  request_id?: string,
+  signature_key?: string,
+  asset_id?: string,
+  public_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        other: {
+            relatedAssets: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Rename
+
+### Rename
+
+`rename.rename`
+
+Notification when an asset is renamed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `rename` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `from_public_id` | `string` | No | — |
+| `to_public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: rename,
+  request_id?: string,
+  signature_key?: string,
+  from_public_id?: string,
+  to_public_id?: string,
+  asset_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        rename: {
+            rename: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Resource
+
+### Resource Context Changed
+
+`resource.resourceContextChanged`
+
+Notification when resource context metadata changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `resource_context_changed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: resource_context_changed,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string,
+  context?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        resource: {
+            resourceContextChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resource Metadata Changed
+
+`resource.resourceMetadataChanged`
+
+Notification when structured metadata changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `resource_metadata_changed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: resource_metadata_changed,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        resource: {
+            resourceMetadataChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resource Tags Changed
+
+`resource.resourceTagsChanged`
+
+Notification when resource tags change
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `resource_tags_changed` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `public_id` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: resource_tags_changed,
+  request_id?: string,
+  signature_key?: string,
+  public_id?: string,
+  asset_id?: string,
+  tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        resource: {
+            resourceTagsChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Upload
+
+### Upload
+
+`upload.upload`
+
+Notification when an upload completes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_type` | `upload` | Yes | — |
+| `request_id` | `string` | No | — |
+| `signature_key` | `string` | No | — |
+| `asset_id` | `string` | No | — |
+| `public_id` | `string` | Yes | — |
+| `resource_type` | `string` | No | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `version` | `number` | No | — |
+| `url` | `string` | No | — |
+| `secure_url` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `bytes` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  notification_type: upload,
+  request_id?: string,
+  signature_key?: string,
+  asset_id?: string,
+  public_id: string,
+  resource_type?: string,
+  type?: string,
+  format?: string,
+  version?: number,
+  url?: string,
+  secure_url?: string,
+  width?: number,
+  height?: number,
+  bytes?: number,
+  tags?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cloudinary({
+    webhookHooks: {
+        upload: {
+            upload: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

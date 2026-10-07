@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Open-source password manager for secure credential storage and team secret sharing."
+---
+
+Use **Bitwarden** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 6 typed API operations
+- 4 synced entities (`ciphers`, `collections`, `members`, `organizations`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/bitwarden
+```
+```bash yarn
+yarn add corsair @corsair-dev/bitwarden
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/bitwarden
+```
+```bash bun
+bun add corsair @corsair-dev/bitwarden
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bitwarden } from '@corsair-dev/bitwarden';
+
+export const corsair = createCorsair({
+	plugins: [
+		bitwarden(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Bitwarden OAuth app.
+
+```ts
+bitwarden()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bitwarden',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`collections.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bitwarden.api.collections.get({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/bitwarden/api) reference._
+
+
+See the full list on the [API](/plugins/bitwarden/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.bitwarden.db.<entity>.search()` and `.list()`: `ciphers`, `collections`, `members`, `organizations`.
+
+See [Database](/plugins/bitwarden/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/bitwarden/api">
+    Every `bitwarden.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/bitwarden/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

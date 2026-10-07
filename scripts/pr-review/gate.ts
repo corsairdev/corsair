@@ -12,11 +12,15 @@ export const ALLOWED_EXTRA = [
 	// Shared files `generate:docs` rewrites for whichever plugin it ran on.
 	'explorer/data/catalog.json',
 	'apps/docs/lib/plugin-api-examples.json',
+	'docs/docs.json',
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
 /** Plugins sidebar; `generate:docs` adds each plugin to it. */
 export const DOCS_NAV_FILE = 'apps/docs/content/docs/plugins/meta.json';
+
+/** Mintlify's nav, written by the same command until the cutover. */
+export const MINTLIFY_NAV_FILE = 'docs/docs.json';
 
 /**
  * Generated plugin docs for the same plugin (plugin-docs.yaml PRs). The
@@ -26,6 +30,9 @@ export const DOCS_NAV_FILE = 'apps/docs/content/docs/plugins/meta.json';
 export function isSamePluginDocs(file: string, plugin: string): boolean {
 	return (
 		file.startsWith(`apps/docs/content/docs/plugins/${plugin}/`) ||
+		// Mintlify still serves docs.corsair.dev, so generate:docs writes it too.
+		// Remove with the docs/ tree at cutover.
+		file.startsWith(`docs/plugins/${plugin}/`) ||
 		file === `explorer/data/plugins/${plugin}.json`
 	);
 }
@@ -40,6 +47,7 @@ function pluginDocsYamlOf(file: string): string | null {
 function pluginDocsDirOf(file: string): string | null {
 	const name =
 		file.match(/^apps\/docs\/content\/docs\/plugins\/([^/]+)\//)?.[1] ??
+		file.match(/^docs\/plugins\/([^/]+)\//)?.[1] ??
 		file.match(/^explorer\/data\/plugins\/([^/]+)\.json$/)?.[1];
 	if (!name) return null;
 	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
@@ -49,6 +57,7 @@ function pluginDocsDirOf(file: string): string | null {
 /** Shared files `generate:docs` rewrites regardless of which plugin it ran on. */
 const SHARED_GENERATED = [
 	DOCS_NAV_FILE,
+	MINTLIFY_NAV_FILE,
 	'explorer/data/catalog.json',
 	'apps/docs/lib/plugin-api-examples.json',
 ];

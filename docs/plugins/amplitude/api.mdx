@@ -1,0 +1,883 @@
+---
+title: API
+description: "API reference for Amplitude: every `amplitude.api.*` operation with input and output types."
+---
+
+Every `amplitude.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Annotations
+
+### create
+
+`annotations.create`
+
+Create a new chart annotation on a specific date
+
+**Risk:** `write`
+
+```ts
+await corsair.amplitude.api.annotations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `app_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  date: string,
+  label: string,
+  details?: string,
+  app_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`annotations.list`
+
+List all chart annotations for the project
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.annotations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  date: string,
+  label: string,
+  details?: string,
+  app_id?: number,
+  source?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Charts
+
+### get
+
+`charts.get`
+
+Get the data results for a specific chart by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.charts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chart_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `seriesLabels` | `string[]` | No | — |
+| `title` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  series?: {
+    type?: string,
+    values?: any[]
+  }[],
+  xValues?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cohorts
+
+### create
+
+`cohorts.create`
+
+Create a new static cohort from a list of user or device IDs
+
+**Risk:** `write`
+
+```ts
+await corsair.amplitude.api.cohorts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `app_id` | `number` | Yes | — |
+| `id_type` | `BY_AMP_ID \| BY_USER_ID \| BY_DEVICE_ID` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+| `owners` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `published` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cohort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cohort full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  size?: number,
+  last_computed?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`cohorts.get`
+
+Get details for a specific cohort by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.cohorts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cohort_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cohort` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cohort full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  owners?: string[],
+  description?: string | null,
+  published?: boolean,
+  archived?: boolean,
+  app_id?: number,
+  size?: number,
+  last_computed?: number,
+  last_modified?: number,
+  is_predefined?: boolean,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMembers
+
+`cohorts.getMembers`
+
+Retrieve the member download for a cohort export request
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.cohorts.getMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `zip_url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`cohorts.list`
+
+List all cohorts in the project
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.cohorts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cohorts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="cohorts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  owners?: string[],
+  description?: string | null,
+  published?: boolean,
+  archived?: boolean,
+  app_id?: number,
+  size?: number | null,
+  last_computed?: number,
+  last_modified?: number,
+  is_predefined?: boolean,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dashboards
+
+### get
+
+`dashboards.get`
+
+Get details and chart list for a specific dashboard
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.dashboards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboard_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboard` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dashboard full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  description?: string,
+  created?: string,
+  lastUpdated?: string,
+  createdBy?: string,
+  published?: boolean,
+  charts?: {
+    id: string,
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`dashboards.list`
+
+List all dashboards in the project
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.dashboards.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dashboards full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  description?: string,
+  created?: string,
+  lastUpdated?: string,
+  createdBy?: string,
+  published?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### getList
+
+`events.getList`
+
+List all event types tracked in the project
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.events.getList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  event_type?: string,
+  display_name?: string,
+  totals?: number,
+  totals_delta?: number,
+  hidden?: boolean,
+  deleted?: boolean,
+  non_active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### identifyUser
+
+`events.identifyUser`
+
+Set or update user properties via the Identify API
+
+**Risk:** `write`
+
+```ts
+await corsair.amplitude.api.events.identifyUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key` | `string` | Yes | — |
+| `identification` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identification full type">
+
+```ts
+{
+  user_id?: string,
+  device_id?: string,
+  user_properties: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### upload
+
+`events.upload`
+
+Upload one or more events to Amplitude via HTTP API v2
+
+**Risk:** `write`
+
+```ts
+await corsair.amplitude.api.events.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key` | `string` | Yes | — |
+| `events` | `object[]` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event_type: string,
+  user_id?: string,
+  device_id?: string,
+  time?: number,
+  event_properties?: {
+  },
+  user_properties?: {
+  },
+  app_version?: string,
+  platform?: string,
+  os_name?: string,
+  os_version?: string,
+  device_brand?: string,
+  device_manufacturer?: string,
+  device_model?: string,
+  carrier?: string,
+  country?: string,
+  region?: string,
+  city?: string,
+  language?: string,
+  ip?: string,
+  insert_id?: string,
+  session_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  min_id_length?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `events_ingested` | `number` | No | — |
+| `payload_size_bytes` | `number` | No | — |
+| `server_upload_time` | `number` | No | — |
+
+
+
+---
+
+### uploadBatch
+
+`events.uploadBatch`
+
+Batch upload events to Amplitude
+
+**Risk:** `write`
+
+```ts
+await corsair.amplitude.api.events.uploadBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key` | `string` | Yes | — |
+| `events` | `object[]` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event_type: string,
+  user_id?: string,
+  device_id?: string,
+  time?: number,
+  event_properties?: {
+  },
+  user_properties?: {
+  },
+  app_version?: string,
+  platform?: string,
+  os_name?: string,
+  os_version?: string,
+  device_brand?: string,
+  device_manufacturer?: string,
+  device_model?: string,
+  carrier?: string,
+  country?: string,
+  region?: string,
+  city?: string,
+  language?: string,
+  ip?: string,
+  insert_id?: string,
+  session_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  min_id_length?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | Yes | — |
+| `events_ingested` | `number` | No | — |
+| `payload_size_bytes` | `number` | No | — |
+| `server_upload_time` | `number` | No | — |
+
+
+
+---
+
+## Exports
+
+### getData
+
+`exports.getData`
+
+Export raw event data for a given time range as a zip archive
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.exports.getData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### getActivity
+
+`users.getActivity`
+
+Get recent event activity for a specific user
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.users.getActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | No | — |
+| `userData` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event_type?: string,
+  event_time?: string,
+  event_properties?: {
+  },
+  session_id?: number,
+  amplitude_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="userData full type">
+
+```ts
+{
+  num_events?: number,
+  num_sessions?: number,
+  first_used?: string,
+  last_used?: string,
+  canonical_amplitude_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Get the profile and properties for a specific user
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.users.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `amplitude_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userData` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="userData full type">
+
+```ts
+{
+  user_id?: string,
+  amplitude_id?: number,
+  canonical_amplitude_id?: number,
+  merged_amplitude_ids?: number[],
+  is_identified?: boolean,
+  user_properties?: {
+  },
+  country?: string,
+  region?: string,
+  city?: string,
+  language?: string,
+  platform?: string,
+  os?: string,
+  device?: string,
+  last_seen?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`users.search`
+
+Search for users by user ID or device ID
+
+**Risk:** `read`
+
+```ts
+await corsair.amplitude.api.users.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matches` | `object[]` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="matches full type">
+
+```ts
+{
+  amplitude_id: number,
+  user_id?: string,
+  last_seen?: number,
+  is_identified?: boolean,
+  country?: string,
+  city?: string,
+  platform?: string,
+  os?: string,
+  device?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

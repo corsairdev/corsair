@@ -1,0 +1,902 @@
+---
+title: Webhooks
+description: "Trello incoming webhooks: event paths, payloads, and response data."
+---
+
+The Trello plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/trello/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `cards`
+  - `cardCreated` (`cards.cardCreated`)
+  - `cardUpdated` (`cards.cardUpdated`)
+- `comments`
+  - `commentCreated` (`comments.commentCreated`)
+- `lists`
+  - `listCreated` (`lists.listCreated`)
+  - `listUpdated` (`lists.listUpdated`)
+- `members`
+  - `memberAddedToCard` (`members.memberAddedToCard`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Cards
+
+### Card Created
+
+`cards.cardCreated`
+
+A card was created on a board
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: createCard,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    list?: {
+      id: string,
+      name?: string
+    },
+    card?: {
+      id: string,
+      name?: string,
+      idList?: string,
+      idBoard?: string,
+      idShort?: number,
+      shortLink?: string,
+      desc?: string,
+      due?: string | null,
+      dueComplete?: boolean,
+      closed?: boolean,
+      pos?: number
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: createCard,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      list?: {
+        id: string,
+        name?: string
+      },
+      card?: {
+        id: string,
+        name?: string,
+        idList?: string,
+        idBoard?: string,
+        idShort?: number,
+        shortLink?: string,
+        desc?: string,
+        due?: string | null,
+        dueComplete?: boolean,
+        closed?: boolean,
+        pos?: number
+      }
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        cards: {
+            cardCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Card Updated
+
+`cards.cardUpdated`
+
+A card was updated (name, desc, due date, labels, etc.)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: updateCard,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    list?: {
+      id: string,
+      name?: string
+    },
+    card?: {
+      id: string,
+      name?: string,
+      idList?: string,
+      idBoard?: string,
+      idShort?: number,
+      shortLink?: string,
+      desc?: string,
+      due?: string | null,
+      dueComplete?: boolean,
+      closed?: boolean,
+      pos?: number
+    },
+    listBefore?: {
+      id: string,
+      name?: string
+    },
+    listAfter?: {
+      id: string,
+      name?: string
+    },
+    old?: {
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: updateCard,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      list?: {
+        id: string,
+        name?: string
+      },
+      card?: {
+        id: string,
+        name?: string,
+        idList?: string,
+        idBoard?: string,
+        idShort?: number,
+        shortLink?: string,
+        desc?: string,
+        due?: string | null,
+        dueComplete?: boolean,
+        closed?: boolean,
+        pos?: number
+      },
+      listBefore?: {
+        id: string,
+        name?: string
+      },
+      listAfter?: {
+        id: string,
+        name?: string
+      },
+      old?: {
+      }
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        cards: {
+            cardUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Comments
+
+### Comment Created
+
+`comments.commentCreated`
+
+A comment was added to a card
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: commentCard,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    card?: {
+      id: string,
+      name?: string,
+      idList?: string,
+      idBoard?: string,
+      idShort?: number,
+      shortLink?: string,
+      desc?: string,
+      due?: string | null,
+      dueComplete?: boolean,
+      closed?: boolean,
+      pos?: number
+    },
+    list?: {
+      id: string,
+      name?: string
+    },
+    text?: string,
+    textData?: any | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: commentCard,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      card?: {
+        id: string,
+        name?: string,
+        idList?: string,
+        idBoard?: string,
+        idShort?: number,
+        shortLink?: string,
+        desc?: string,
+        due?: string | null,
+        dueComplete?: boolean,
+        closed?: boolean,
+        pos?: number
+      },
+      list?: {
+        id: string,
+        name?: string
+      },
+      text?: string,
+      textData?: any | null
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        comments: {
+            commentCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Lists
+
+### List Created
+
+`lists.listCreated`
+
+A new list was created on a board
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: createList,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    list?: {
+      id: string,
+      name?: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: createList,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      list?: {
+        id: string,
+        name?: string
+      }
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        lists: {
+            listCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### List Updated
+
+`lists.listUpdated`
+
+A list was updated (name, closed status, etc.)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: updateList,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    list?: {
+      id: string,
+      name?: string
+    },
+    old?: {
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: updateList,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      list?: {
+        id: string,
+        name?: string
+      },
+      old?: {
+      }
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        lists: {
+            listUpdated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Members
+
+### Member Added To Card
+
+`members.memberAddedToCard`
+
+A member was added to a card
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `object` | Yes | — |
+| `model` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="action full type">
+
+```ts
+{
+  id: string,
+  idMemberCreator: string,
+  type: addMemberToCard,
+  date: string,
+  memberCreator?: {
+    id: string,
+    activityBlocked?: boolean,
+    avatarHash?: string | null,
+    avatarUrl?: string | null,
+    fullName?: string,
+    idMemberReferrer?: string | null,
+    initials?: string,
+    nonPublicAvailable?: boolean,
+    username?: string
+  },
+  data: {
+    board?: {
+      id: string,
+      name?: string,
+      shortLink?: string
+    },
+    card?: {
+      id: string,
+      name?: string,
+      idList?: string,
+      idBoard?: string,
+      idShort?: number,
+      shortLink?: string,
+      desc?: string,
+      due?: string | null,
+      dueComplete?: boolean,
+      closed?: boolean,
+      pos?: number
+    },
+    idMember?: string,
+    member?: {
+      id: string,
+      username?: string,
+      fullName?: string,
+      avatarUrl?: string | null,
+      initials?: string
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: {
+    id: string,
+    idMemberCreator: string,
+    type: addMemberToCard,
+    date: string,
+    memberCreator?: {
+      id: string,
+      activityBlocked?: boolean,
+      avatarHash?: string | null,
+      avatarUrl?: string | null,
+      fullName?: string,
+      idMemberReferrer?: string | null,
+      initials?: string,
+      nonPublicAvailable?: boolean,
+      username?: string
+    },
+    data: {
+      board?: {
+        id: string,
+        name?: string,
+        shortLink?: string
+      },
+      card?: {
+        id: string,
+        name?: string,
+        idList?: string,
+        idBoard?: string,
+        idShort?: number,
+        shortLink?: string,
+        desc?: string,
+        due?: string | null,
+        dueComplete?: boolean,
+        closed?: boolean,
+        pos?: number
+      },
+      idMember?: string,
+      member?: {
+        id: string,
+        username?: string,
+        fullName?: string,
+        avatarUrl?: string | null,
+        initials?: string
+      }
+    }
+  },
+  model: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+trello({
+    webhookHooks: {
+        members: {
+            memberAddedToCard: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

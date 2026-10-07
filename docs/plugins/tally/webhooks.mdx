@@ -1,0 +1,126 @@
+---
+title: Webhooks
+description: "Tally incoming webhooks: event paths, payloads, and response data."
+---
+
+The Tally plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/tally/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `formResponse`
+  - `formResponse` (`formResponse.formResponse`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Form Response
+
+### Form Response
+
+`formResponse.formResponse`
+
+A new form response was submitted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+| `eventType` | `FORM_RESPONSE` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  responseId?: string,
+  submissionId: string,
+  respondentId?: string | null,
+  formId: string,
+  formName?: string,
+  createdAt?: string,
+  fields: {
+    key: string,
+    label?: string,
+    type?: string,
+    value?: any,
+    options?: any[],
+    rows?: any[],
+    columns?: any[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventId: string,
+  eventType: FORM_RESPONSE,
+  createdAt: string,
+  data: {
+    responseId?: string,
+    submissionId: string,
+    respondentId?: string | null,
+    formId: string,
+    formName?: string,
+    createdAt?: string,
+    fields: {
+      key: string,
+      label?: string,
+      type?: string,
+      value?: any,
+      options?: any[],
+      rows?: any[],
+      columns?: any[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+tally({
+    webhookHooks: {
+        formResponse: {
+            formResponse: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
