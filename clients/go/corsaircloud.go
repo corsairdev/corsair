@@ -10,7 +10,9 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -22,6 +24,9 @@ type Client struct {
 	baseURL string
 	http    *http.Client
 	initErr error
+
+	instancesMu sync.Mutex
+	instances   map[string]string
 }
 
 // Option configures a Client.
@@ -103,14 +108,84 @@ func New(apiKey string, opts ...Option) *Client {
 	return c
 }
 
+// Instance scopes calls to one instance of the project. Calls run there, not
+// on the project URL, which serves only Tenants and GetPermission and answers
+// 501 for anything else.
+func (c *Client) Instance(name string) *InstanceClient {
+	return &InstanceClient{client: c, name: name}
+}
+
+// instanceURL resolves an instance name to its own URL, once per client.
+func (c *Client) instanceURL(ctx context.Context, name string) (string, error) {
+	if name == "" {
+		return "", fmt.Errorf("corsaircloud: instance name must be a non-empty string")
+	}
+	// Held across the resolve so concurrent callers share one request; sendTo
+	// does not re-enter this lock.
+	c.instancesMu.Lock()
+	defer c.instancesMu.Unlock()
+	if c.instances == nil {
+		root := strings.TrimSuffix(c.baseURL, "/api/corsair")
+		data, err := c.sendTo(ctx, root, http.MethodGet, []string{"instances"}, nil, nil)
+		if err != nil {
+			return "", err
+		}
+		var found struct {
+			Instances []struct {
+				InstanceKey string `json:"instanceKey"`
+				URL         string `json:"url"`
+			} `json:"instances"`
+		}
+		if err := json.Unmarshal(data, &found); err != nil {
+			return "", err
+		}
+		c.instances = make(map[string]string, len(found.Instances))
+		for _, i := range found.Instances {
+			c.instances[i.InstanceKey] = strings.TrimRight(i.URL, "/")
+		}
+	}
+	u, ok := c.instances[name]
+	if !ok {
+		names := make([]string, 0, len(c.instances))
+		for k := range c.instances {
+			names = append(names, k)
+		}
+		sort.Strings(names)
+		available := strings.Join(names, ", ")
+		if available == "" {
+			available = "(none)"
+		}
+		return "", fmt.Errorf("corsaircloud: no instance %q — available: %s", name, available)
+	}
+	if err := assertSecureBaseURL(u); err != nil {
+		return "", err
+	}
+	return u, nil
+}
+
+// InstanceClient scopes calls and credential operations to one instance. Each
+// instance has its own credential store.
+type InstanceClient struct {
+	client *Client
+	name   string
+}
+
 // Tenant scopes calls to a tenant for plugin op invocation.
-func (c *Client) Tenant(id string) *TenantClient {
-	return &TenantClient{client: c, tenantID: id}
+func (i *InstanceClient) Tenant(id string) *TenantClient {
+	return &TenantClient{instance: i, tenantID: id}
+}
+
+func (i *InstanceClient) send(ctx context.Context, method string, path []string, query url.Values, body any) (json.RawMessage, error) {
+	base, err := i.client.instanceURL(ctx, i.name)
+	if err != nil {
+		return nil, err
+	}
+	return i.client.sendTo(ctx, base, method, path, query, body)
 }
 
 // ConnectionStatus returns each plugin's connection state for a tenant.
-func (c *Client) ConnectionStatus(ctx context.Context, tenantID string) (map[string]string, error) {
-	data, err := c.send(ctx, http.MethodGet, []string{"connection-status"}, url.Values{"tenantId": {tenantID}}, nil)
+func (i *InstanceClient) ConnectionStatus(ctx context.Context, tenantID string) (map[string]string, error) {
+	data, err := i.send(ctx, http.MethodGet, []string{"connection-status"}, url.Values{"tenantId": {tenantID}}, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -123,12 +198,12 @@ func (c *Client) ConnectionStatus(ctx context.Context, tenantID string) (map[str
 
 // CreateConnectLink starts an OAuth connect flow for a plugin/tenant pair.
 // redirectURI is optional — pass "" to omit it.
-func (c *Client) CreateConnectLink(ctx context.Context, plugin, tenantID, redirectURI string) (ConnectLink, error) {
+func (i *InstanceClient) CreateConnectLink(ctx context.Context, plugin, tenantID, redirectURI string) (ConnectLink, error) {
 	body := map[string]string{"plugin": plugin, "tenantId": tenantID}
 	if redirectURI != "" {
 		body["redirectUri"] = redirectURI
 	}
-	data, err := c.send(ctx, http.MethodPost, []string{"connect", "links"}, nil, body)
+	data, err := i.send(ctx, http.MethodPost, []string{"connect", "links"}, nil, body)
 	if err != nil {
 		return ConnectLink{}, err
 	}
@@ -140,9 +215,9 @@ func (c *Client) CreateConnectLink(ctx context.Context, plugin, tenantID, redire
 }
 
 // Disconnect removes a plugin's credentials for a tenant.
-func (c *Client) Disconnect(ctx context.Context, plugin, tenantID string) error {
+func (i *InstanceClient) Disconnect(ctx context.Context, plugin, tenantID string) error {
 	body := map[string]string{"plugin": plugin, "tenantId": tenantID}
-	_, err := c.send(ctx, http.MethodPost, []string{"disconnect"}, nil, body)
+	_, err := i.send(ctx, http.MethodPost, []string{"disconnect"}, nil, body)
 	return err
 }
 
@@ -178,9 +253,9 @@ func (c *Client) GetPermission(ctx context.Context, id string) (json.RawMessage,
 	return c.send(ctx, http.MethodGet, []string{"permissions", id}, nil, nil)
 }
 
-// TenantClient invokes plugin ops scoped to one tenant.
+// TenantClient invokes plugin ops scoped to one tenant on one instance.
 type TenantClient struct {
-	client   *Client
+	instance *InstanceClient
 	tenantID string
 }
 
@@ -213,7 +288,7 @@ func (t *TenantClient) Call(ctx context.Context, plugin, op string, args any) (j
 		// `any`), which is a non-nil interface but still marshals to null.
 		args = map[string]any{}
 	}
-	raw, err := t.client.send(ctx, http.MethodPost, []string{t.tenantID, plugin, "call", op}, nil, map[string]any{"args": args})
+	raw, err := t.instance.send(ctx, http.MethodPost, []string{t.tenantID, plugin, "call", op}, nil, map[string]any{"args": args})
 	if err != nil {
 		return nil, err
 	}
@@ -266,6 +341,10 @@ type errorBody struct {
 }
 
 func (c *Client) send(ctx context.Context, method string, path []string, query url.Values, body any) (json.RawMessage, error) {
+	return c.sendTo(ctx, c.baseURL, method, path, query, body)
+}
+
+func (c *Client) sendTo(ctx context.Context, base, method string, path []string, query url.Values, body any) (json.RawMessage, error) {
 	if c.initErr != nil {
 		return nil, c.initErr
 	}
@@ -273,7 +352,7 @@ func (c *Client) send(ctx context.Context, method string, path []string, query u
 	for i, p := range path {
 		escaped[i] = url.PathEscape(p)
 	}
-	u := c.baseURL + "/" + strings.Join(escaped, "/")
+	u := base + "/" + strings.Join(escaped, "/")
 	if len(query) > 0 {
 		u += "?" + query.Encode()
 	}

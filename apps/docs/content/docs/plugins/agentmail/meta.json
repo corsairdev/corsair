@@ -1,0 +1,4 @@
+{
+  "title": "AgentMail",
+  "pages": ["overview", "api", "database", "webhooks"]
+}

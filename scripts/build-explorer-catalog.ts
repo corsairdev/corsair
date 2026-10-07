@@ -384,13 +384,22 @@ async function main(): Promise<void> {
 	const pluginsDir = join(outDir, 'plugins');
 	mkdirSync(pluginsDir, { recursive: true });
 
-	const activePluginIds = new Set(plugins.map((p) => p.id));
-	for (const fileName of readdirSync(pluginsDir)) {
-		if (!fileName.endsWith('.json')) continue;
-		const pluginId = fileName.slice(0, -'.json'.length);
-		if (!activePluginIds.has(pluginId)) {
-			unlinkSync(join(pluginsDir, fileName));
+	// A plugin that failed to introspect is absent from `plugins`, so pruning
+	// against it would delete a working plugin's entry on a transient error —
+	// and the API page renders from that file. Prune only a clean scan.
+	if (failures.length === 0) {
+		const activePluginIds = new Set(plugins.map((p) => p.id));
+		for (const fileName of readdirSync(pluginsDir)) {
+			if (!fileName.endsWith('.json')) continue;
+			const pluginId = fileName.slice(0, -'.json'.length);
+			if (!activePluginIds.has(pluginId)) {
+				unlinkSync(join(pluginsDir, fileName));
+			}
 		}
+	} else {
+		console.error(
+			`[explorer:catalog] ${failures.length} plugin(s) failed; skipping prune so no entry is lost.`,
+		);
 	}
 
 	for (const plugin of plugins) {

@@ -1,0 +1,4 @@
+{
+  "title": "Spotify",
+  "pages": ["overview", "get-credentials", "api", "database"]
+}

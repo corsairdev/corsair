@@ -1,0 +1,4 @@
+{
+  "title": "Slack",
+  "pages": ["overview", "get-credentials", "api", "database", "webhooks"]
+}

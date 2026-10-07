@@ -1,0 +1,4 @@
+{
+  "title": "Resend",
+  "pages": ["overview", "get-credentials", "api", "database", "webhooks"]
+}

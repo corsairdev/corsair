@@ -97,8 +97,8 @@ test('plugin-docs.yaml + generated docs skip the plugin gate', () => {
 		...goodInput,
 		changedFiles: [
 			'packages/airtable/plugin-docs.yaml',
-			'docs/plugins/airtable/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		],
 	});
 	assert.equal(r.isPluginPr, false);
@@ -119,8 +119,8 @@ test('R1: same-plugin generated docs pass', () => {
 		changedFiles: [
 			...goodFiles,
 			'packages/onepassword/plugin-docs.yaml',
-			'docs/plugins/onepassword/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/onepassword/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		],
 	});
 	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
@@ -129,7 +129,10 @@ test('R1: same-plugin generated docs pass', () => {
 test('R1: other plugin docs fail', () => {
 	const r = runGate({
 		...goodInput,
-		changedFiles: [...goodFiles, 'docs/plugins/slack/overview.mdx'],
+		changedFiles: [
+			...goodFiles,
+			'apps/docs/content/docs/plugins/slack/overview.mdx',
+		],
 	});
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
@@ -200,4 +203,90 @@ test('nested comment markers cannot survive stripping (CodeQL js/incomplete-mult
 	const r = runGate({ ...goodInput, prBody: body });
 	// After full stripping the description is empty → R3 must fail.
 	assert.ok(r.failures.some((f) => f.rule === 'R3'));
+});
+
+test('generated catalog output for the same plugin is in scope', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'packages/airtable/api.test.ts',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
+			'explorer/data/plugins/airtable.json',
+			'explorer/data/catalog.json',
+			'apps/docs/lib/plugin-api-examples.json',
+		],
+	});
+	assert.deepEqual(
+		r.failures.filter((f) => f.rule === 'R1'),
+		[],
+	);
+});
+
+test("another plugin's catalog entry is still out of scope", () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'explorer/data/plugins/slack.json',
+		],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('docs-only PR with a catalog entry skips the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/plugin-docs.yaml',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'explorer/data/plugins/airtable.json',
+			'explorer/data/catalog.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+	assert.deepEqual(r.failures, []);
+});
+
+test('mintlify docs for the same plugin are in scope', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/index.ts',
+			'packages/airtable/api.test.ts',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/plugins/airtable/api.mdx',
+			'docs/docs.json',
+			'explorer/data/plugins/airtable.json',
+		],
+	});
+	assert.deepEqual(
+		r.failures.filter((f) => f.rule === 'R1'),
+		[],
+	);
+});
+
+test("another plugin's mintlify docs are still out of scope", () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: ['packages/airtable/index.ts', 'docs/plugins/slack/api.mdx'],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('docs-only PR writing both trees skips the plugin gate', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/airtable/plugin-docs.yaml',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+	assert.deepEqual(r.failures, []);
 });

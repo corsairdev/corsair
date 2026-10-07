@@ -14,6 +14,9 @@ func newTestServer(t *testing.T, handler http.HandlerFunc) (*Client, func()) {
 	t.Helper()
 	srv := httptest.NewServer(handler)
 	c := New("ck_cloud_test", WithURL(srv.URL))
+	// Calls run on an instance; seeding the map keeps these tests on their own
+	// assertion instead of the resolution round trip (covered separately).
+	c.instances = map[string]string{"users": srv.URL}
 	return c, srv.Close
 }
 
@@ -32,7 +35,7 @@ func TestCallBuildsRequestAndReturnsData(t *testing.T) {
 	})
 	defer close()
 
-	raw, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", map[string]any{"q": "hi"})
+	raw, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", map[string]any{"q": "hi"})
 	if err != nil {
 		t.Fatalf("Call returned error: %v", err)
 	}
@@ -75,7 +78,7 @@ func TestConnectionStatusParsesMap(t *testing.T) {
 	})
 	defer close()
 
-	status, err := c.ConnectionStatus(context.Background(), "acme")
+	status, err := c.Instance("users").ConnectionStatus(context.Background(), "acme")
 	if err != nil {
 		t.Fatalf("ConnectionStatus returned error: %v", err)
 	}
@@ -92,7 +95,7 @@ func TestErrorBodyMapsToCorsairError(t *testing.T) {
 	})
 	defer close()
 
-	_, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", map[string]any{})
+	_, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", map[string]any{})
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -119,7 +122,7 @@ func TestErrorBodyMapsToCorsairError(t *testing.T) {
 
 func TestSendRejectsNonHTTPSBaseURL(t *testing.T) {
 	c := New("ck_cloud_test", WithURL("http://attacker.example"))
-	_, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil)
+	_, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil)
 	if err == nil {
 		t.Fatal("expected error for non-https base URL")
 	}
@@ -132,7 +135,7 @@ func TestDerivesURLFromKey(t *testing.T) {
 	}
 	// A key with no derivable slug and no WithURL errors at call time.
 	c2 := New("not-a-cloud-key")
-	if _, err := c2.Tenant("acme").Call(context.Background(), "notion", "op", nil); err == nil {
+	if _, err := c2.Instance("users").Tenant("acme").Call(context.Background(), "notion", "op", nil); err == nil {
 		t.Fatal("expected error when no URL can be resolved from the key")
 	}
 }
@@ -144,7 +147,7 @@ func TestSendAllowsLoopbackHTTP(t *testing.T) {
 	})
 	defer close()
 
-	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+	if _, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
 		t.Fatalf("expected loopback http to be allowed, got %v", err)
 	}
 }
@@ -159,7 +162,7 @@ func TestCallNilArgsSendsEmptyObject(t *testing.T) {
 	})
 	defer close()
 
-	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+	if _, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
 		t.Fatalf("Call returned error: %v", err)
 	}
 	if string(gotBody["args"]) != "{}" {
@@ -169,7 +172,7 @@ func TestCallNilArgsSendsEmptyObject(t *testing.T) {
 
 func TestCallEmptyTenantErrors(t *testing.T) {
 	c := New("ck_cloud_x", WithURL("https://vm.corsair.cloud"))
-	if _, err := c.Tenant("").Call(context.Background(), "slack", "send", nil); err == nil {
+	if _, err := c.Instance("users").Tenant("").Call(context.Background(), "slack", "send", nil); err == nil {
 		t.Fatal("expected an error for an empty tenant id")
 	}
 }
@@ -186,7 +189,7 @@ func TestCallTypedNilArgsSendsEmptyObject(t *testing.T) {
 
 	// A typed nil map is a non-nil interface but still marshals to null.
 	var typedNil map[string]any
-	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", typedNil); err != nil {
+	if _, err := c.Instance("users").Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", typedNil); err != nil {
 		t.Fatalf("Call returned error: %v", err)
 	}
 	if string(gotBody["args"]) != "{}" {
@@ -203,7 +206,7 @@ func TestCallEscapesPathSegments(t *testing.T) {
 	})
 	defer close()
 
-	if _, err := c.Tenant("a/b").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+	if _, err := c.Instance("users").Tenant("a/b").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
 		t.Fatalf("Call returned error: %v", err)
 	}
 	if !strings.Contains(gotRequestURI, "a%2Fb") {
@@ -225,7 +228,7 @@ func TestCreateConnectLinkAndDisconnect(t *testing.T) {
 	})
 	defer close()
 
-	link, err := c.CreateConnectLink(context.Background(), "notion", "acme", "")
+	link, err := c.Instance("users").CreateConnectLink(context.Background(), "notion", "acme", "")
 	if err != nil {
 		t.Fatalf("CreateConnectLink error: %v", err)
 	}
@@ -233,7 +236,7 @@ func TestCreateConnectLinkAndDisconnect(t *testing.T) {
 		t.Errorf("link = %+v", link)
 	}
 
-	if err := c.Disconnect(context.Background(), "notion", "acme"); err != nil {
+	if err := c.Instance("users").Disconnect(context.Background(), "notion", "acme"); err != nil {
 		t.Fatalf("Disconnect error: %v", err)
 	}
 }
@@ -266,5 +269,56 @@ func TestTenantsAndCreateTenant(t *testing.T) {
 	}
 	if created.ID != "beta" {
 		t.Errorf("created = %+v", created)
+	}
+}
+
+// The project URL serves only Tenants/GetPermission, so a call must first
+// resolve the instance's own URL and go there.
+func TestInstanceResolvesItsOwnURL(t *testing.T) {
+	var paths []string
+	var srvURL string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		paths = append(paths, r.URL.Path)
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path == "/instances" {
+			_, _ = w.Write([]byte(`{"instances":[{"instanceKey":"users","url":"` + srvURL + `/envusers/api/corsair"}]}`))
+			return
+		}
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	}))
+	defer srv.Close()
+	srvURL = srv.URL
+
+	c := New("ck_cloud_test", WithURL(srv.URL+"/api/corsair"))
+	if _, err := c.Instance("users").Tenant("acme").
+		Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+		t.Fatalf("Call: %v", err)
+	}
+
+	// Two hops: resolve on the project root, then call on the instance's own
+	// path. A single hop would mean the call went to the project URL, which
+	// answers 501.
+	want := []string{"/instances", "/envusers/api/corsair/acme/notion/call/pages.searchPage"}
+	if len(paths) != len(want) || paths[0] != want[0] || paths[1] != want[1] {
+		t.Fatalf("requested %v, want %v", paths, want)
+	}
+}
+
+func TestUnknownInstanceListsAvailable(t *testing.T) {
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {})
+	defer close()
+
+	_, err := c.Instance("nope").Tenant("acme").Call(context.Background(), "notion", "op", nil)
+	if err == nil || !strings.Contains(err.Error(), "available: users") {
+		t.Fatalf("error = %v, want it to list the available instances", err)
+	}
+}
+
+func TestEmptyInstanceNameRejected(t *testing.T) {
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {})
+	defer close()
+
+	if _, err := c.Instance("").Tenant("acme").Call(context.Background(), "notion", "op", nil); err == nil {
+		t.Fatal("expected an error for an empty instance name")
 	}
 }

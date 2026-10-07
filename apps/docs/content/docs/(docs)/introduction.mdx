@@ -1,0 +1,51 @@
+---
+title: Introduction
+description: Open-source integration layer for agents and apps.
+full: true
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+
+Corsair is an open-source integration layer for apps and agents. Connect to GitHub, Slack, Gmail, and 350+ other services through one syntax. Corsair handles OAuth, token refresh, webhooks, and rate limits.
+
+You run it inside your own app. Credentials stay encrypted in your database. [Hub](/hub/overview) hosts connect pages and OAuth callbacks so you don't build those public URLs yourself.
+
+Install plugins, wire up Corsair once, then call any integration the same way:
+
+```ts title="corsair.ts"
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database: db,
+  kek: process.env.CORSAIR_KEK!,
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+  },
+});
+```
+
+```ts title="route.ts"
+await corsair.github.api.issues.create({ owner: 'acme', repo: 'app', title: 'Bug' });
+await corsair.slack.api.messages.post({ channel: 'C123', text: 'On it.' });
+```
+
+## Get started
+
+<Cards>
+  <Card title="Quick start" href="/quick-start">
+    Empty project to a connected integration in five steps.
+  </Card>
+  <Card title="Set up with your agent" href="/getting-started/set-up-with-your-agent">
+    One prompt for your coding agent to wire Corsair in.
+  </Card>
+  <Card title="Pick your framework" href="/frameworks/next">
+    Next, Node, Express, Hono, SvelteKit, Remix, Astro. Mount the route in yours.
+  </Card>
+  <Card title="Browse plugins" href="/guides/plugins">
+    Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.
+  </Card>
+</Cards>

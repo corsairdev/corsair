@@ -14,7 +14,7 @@ pip install corsair-cloud
 
 Grab your API key (`ck_cloud_…`) from your project's Overview page in the
 dashboard. The client derives its URL from the key, so it's the only value you
-pass. Then make a call as one of your users.
+pass. Name an instance of the project, then make a call as one of your users.
 
 ```python
 import os
@@ -22,12 +22,13 @@ from corsair_cloud import CorsairCloud, CorsairError
 
 corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
 
-# Call any operation on any plugin your runtime has, as user "acme":
-pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {"query": "roadmap"})
+# Calls run on an instance of the project, as one of your users:
+users = corsair.with_instance("users")
+pages = users.with_tenant("acme").call("notion", "pages.searchPage", {"query": "roadmap"})
 
 # Connect a user's account (send them to the link, then check status):
-link = corsair.manage.create_connect_link("notion", "acme")
-status = corsair.manage.connection_status("acme")   # {"notion": "connected"}
+link = users.manage.create_connect_link("notion", "acme")
+status = users.manage.connection_status("acme")   # {"notion": "connected"}
 ```
 
 Non-2xx responses raise `CorsairError`. Branch on `.code` (`not_connected`,
@@ -35,7 +36,7 @@ Non-2xx responses raise `CorsairError`. Branch on `.code` (`not_connected`,
 
 ```python
 try:
-    corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
+    corsair.with_instance("users").with_tenant("acme").call("notion", "pages.searchPage", {})
 except CorsairError as e:
     if e.code == "not_connected":
         ...  # send the user through create_connect_link first

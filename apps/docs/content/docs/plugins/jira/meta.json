@@ -1,0 +1,4 @@
+{
+  "title": "Jira",
+  "pages": ["overview", "get-credentials", "api", "database", "webhooks"]
+}

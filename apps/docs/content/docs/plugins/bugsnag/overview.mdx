@@ -1,0 +1,162 @@
+---
+title: Overview
+description: "Error monitoring platform for tracking application crashes and stability across releases."
+---
+
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Use **Bugsnag** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 61 typed API operations
+- 4 synced entities (`collaborators`, `organizations`, `projects`, `teams`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step>
+
+## Install
+
+<Tabs items={["npm", "yarn", "pnpm", "bun"]}>
+
+<Tab value="npm">
+```bash
+npm install corsair @corsair-dev/bugsnag
+```
+</Tab>
+
+<Tab value="yarn">
+```bash
+yarn add corsair @corsair-dev/bugsnag
+```
+</Tab>
+
+<Tab value="pnpm">
+```bash
+pnpm install corsair @corsair-dev/bugsnag
+```
+</Tab>
+
+<Tab value="bun">
+```bash
+bun add corsair @corsair-dev/bugsnag
+```
+</Tab>
+
+</Tabs>
+
+</Step>
+
+<Step>
+
+## Add the plugin
+
+```ts title="corsair.ts"
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bugsnag } from '@corsair-dev/bugsnag';
+
+export const corsair = createCorsair({
+	plugins: [
+		bugsnag(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step>
+
+## Choose authentication
+
+<Tabs items={["API Key (Recommended)"]}>
+<Tab value="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+bugsnag()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step>
+
+## Connect a tenant
+
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bugsnag',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`collaborators.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.get({});
+```
+
+
+**`collaborators.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.delete({});
+```
+
+
+See the full list on the [API](/plugins/bugsnag/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.bugsnag.db.<entity>.search()` and `.list()`: `collaborators`, `organizations`, `projects`, `teams`.
+
+See [Database](/plugins/bugsnag/database) for filters and operators.
+
+## What's next
+
+<Cards>
+  <Card title="API reference" href="/plugins/bugsnag/api">
+    Every `bugsnag.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/bugsnag/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</Cards>
+

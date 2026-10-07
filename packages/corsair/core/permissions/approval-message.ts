@@ -41,8 +41,11 @@ export function buildManualApprovalUrl(
 	approvalBaseUrl: string,
 	token: string,
 ): string {
-	const base = approvalBaseUrl.replace(/\/+$/, '');
-	return `${base}/${token}`;
+	// Trimmed by index rather than /\/+$/, which backtracks across a long run
+	// of slashes that is not at the end.
+	let end = approvalBaseUrl.length;
+	while (end > 0 && approvalBaseUrl[end - 1] === '/') end--;
+	return `${approvalBaseUrl.slice(0, end)}/${token}`;
 }
 
 export function formatDefaultApprovalMessage(approvalUrl: string): string {

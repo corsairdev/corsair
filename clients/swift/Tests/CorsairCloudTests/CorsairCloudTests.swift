@@ -57,6 +57,14 @@ struct CorsairCloudTests {
 		return CorsairCloud(apiKey: "ck_cloud_x", url: base, session: URLSession(configuration: config))
 	}
 
+	/// Calls run on an instance. Seeding the resolver keeps each test on its own
+	/// assertion instead of the resolution round trip, which is covered below.
+	private func makeInstance() async -> InstanceClient {
+		let client = makeClient()
+		await client.resolver.seed(["users": base])
+		return client.instance("users")
+	}
+
 	@Test func callBuildsUrlBearerBodyAndUnwrapsData() async throws {
 		var seenURL: URL?
 		var seenAuth: String?
@@ -66,7 +74,7 @@ struct CorsairCloudTests {
 			let body = #"{"data":{"ok":true}}"#.data(using: .utf8)!
 			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
 		}
-		let out = try await makeClient()
+		let out = try await makeInstance()
 			.tenant("acme")
 			.call("notion", "pages.searchPage", args: ["query": "hi"])
 
@@ -89,12 +97,13 @@ struct CorsairCloudTests {
 			apiKey: "ck_cloud_x",
 			url: URL(string: "https://vm.corsair.cloud/env/api/corsair/")!,
 			session: URLSession(configuration: config))
+		await client.resolver.seed(["users": base])
 		MockURLProtocol.handler = { req in
 			seenURL = req.url
 			let body = #"{"data":{}}"#.data(using: .utf8)!
 			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
 		}
-		_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+		_ = try await client.instance("users").tenant("acme").call("notion", "pages.searchPage")
 
 		#expect(
 			seenURL?.absoluteString
@@ -107,7 +116,7 @@ struct CorsairCloudTests {
 			let body = #"{"notion":"connected","slack":"not_connected"}"#.data(using: .utf8)!
 			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
 		}
-		let status = try await makeClient().manage.connectionStatus(tenantId: "acme")
+		let status = try await makeInstance().manage.connectionStatus(tenantId: "acme")
 		#expect(status["notion"] == "connected")
 		#expect(status["slack"] == "not_connected")
 	}
@@ -116,7 +125,7 @@ struct CorsairCloudTests {
 		let insecure = URL(string: "http://attacker.example")!
 		let client = CorsairCloud(apiKey: "ck_cloud_x", url: insecure)
 		do {
-			_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+			_ = try await client.instance("users").tenant("acme").call("notion", "pages.searchPage")
 			Issue.record("expected throw")
 		} catch is InsecureBaseURLError {
 			// expected
@@ -128,11 +137,12 @@ struct CorsairCloudTests {
 		let config = URLSessionConfiguration.ephemeral
 		config.protocolClasses = [MockURLProtocol.self]
 		let client = CorsairCloud(apiKey: "ck_cloud_x", url: loopback, session: URLSession(configuration: config))
+		await client.resolver.seed(["users": loopback])
 		MockURLProtocol.handler = { req in
 			let body = #"{"data":{}}"#.data(using: .utf8)!
 			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
 		}
-		_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+		_ = try await client.instance("users").tenant("acme").call("notion", "pages.searchPage")
 	}
 
 	@Test func callEscapesReservedCharactersInPathSegments() async throws {
@@ -142,7 +152,7 @@ struct CorsairCloudTests {
 			let body = #"{"data":{}}"#.data(using: .utf8)!
 			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
 		}
-		_ = try await makeClient().tenant("a/b").call("notion", "pages.searchPage")
+		_ = try await makeInstance().tenant("a/b").call("notion", "pages.searchPage")
 
 		#expect(
 			seenURL?.absoluteString
@@ -155,7 +165,7 @@ struct CorsairCloudTests {
 			return (HTTPURLResponse(url: req.url!, statusCode: 401, httpVersion: nil, headerFields: nil)!, body)
 		}
 		do {
-			_ = try await makeClient().tenant("acme").call("notion", "pages.searchPage")
+			_ = try await makeInstance().tenant("acme").call("notion", "pages.searchPage")
 			Issue.record("expected throw")
 		} catch let error as CorsairError {
 			#expect(error.code == "not_connected")
@@ -170,7 +180,42 @@ struct CorsairCloudTests {
 		// No derivable slug and no url -> unresolved, throws at call time.
 		let bad = CorsairCloud(apiKey: "not-a-cloud-key")
 		await #expect(throws: UnresolvedURLError.self) {
-			_ = try await bad.tenant("acme").call("notion", "op")
+			_ = try await bad.instance("users").tenant("acme").call("notion", "op")
+		}
+	}
+
+	// The project URL serves only tenants/permission, so a call has to resolve
+	// the instance's own URL and go there.
+	@Test func resolvesTheInstanceURLBeforeCalling() async throws {
+		var paths: [String] = []
+		MockURLProtocol.handler = { req in
+			paths.append(req.url!.path)
+			let body =
+				req.url!.path.hasSuffix("/instances")
+				? #"{"instances":[{"instanceKey":"users","url":"https://vm.corsair.cloud/envusers/api/corsair"}]}"#
+				: #"{"data":{}}"#
+			return (
+				HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!,
+				body.data(using: .utf8)!
+			)
+		}
+		_ = try await makeClient().instance("users").tenant("acme")
+			.call("notion", "pages.searchPage")
+
+		#expect(paths == ["/env/instances", "/envusers/api/corsair/acme/notion/call/pages.searchPage"])
+	}
+
+	@Test func unknownInstanceNamesTheAvailableOnes() async throws {
+		let client = makeClient()
+		await client.resolver.seed(["users": base])
+		await #expect(throws: UnknownInstanceError(name: "nope", available: "users")) {
+			try await client.instance("nope").tenant("acme").call("notion", "op")
+		}
+	}
+
+	@Test func emptyInstanceNameIsRejected() async throws {
+		await #expect(throws: EmptyInstanceNameError()) {
+			try await makeClient().instance("").tenant("acme").call("notion", "op")
 		}
 	}
 }

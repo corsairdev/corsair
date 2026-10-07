@@ -9,14 +9,15 @@ import corsaircloud "github.com/corsairdev/corsair/clients/go"
 // The URL is derived from the key; pass corsaircloud.WithURL(...) only for dev.
 corsair := corsaircloud.New("ck_cloud_…")
 
-// Call any operation on any plugin your runtime has, as user "acme":
-raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})
+// Calls run on an instance of the project, as one of your users:
+users := corsair.Instance("users")
+raw, err := users.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})
 var pages NotionPages
 _ = json.Unmarshal(raw, &pages)
 
 // Connect a user's account, then check status:
-link, _ := corsair.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
-status, _ := corsair.ConnectionStatus(ctx, "acme")
+link, _ := users.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
+status, _ := users.ConnectionStatus(ctx, "acme")
 ```
 
 A non-2xx response comes back as `*corsaircloud.CorsairError` (`Code`, `Message`,

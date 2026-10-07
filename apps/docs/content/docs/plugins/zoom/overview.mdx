@@ -1,0 +1,199 @@
+---
+title: Overview
+description: "Video conferencing platform for meetings, webinars, recordings, and calendar scheduling."
+---
+
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Use **Zoom** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 17 typed API operations
+- 6 synced entities (`archiveFiles`, `devices`, `meetings`, `participants`, `recordings`, `webinars`) for fast `.search()` / `.list()`
+- 8 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step>
+
+## Install
+
+<Tabs items={["npm", "yarn", "pnpm", "bun"]}>
+
+<Tab value="npm">
+```bash
+npm install corsair @corsair-dev/zoom
+```
+</Tab>
+
+<Tab value="yarn">
+```bash
+yarn add corsair @corsair-dev/zoom
+```
+</Tab>
+
+<Tab value="pnpm">
+```bash
+pnpm install corsair @corsair-dev/zoom
+```
+</Tab>
+
+<Tab value="bun">
+```bash
+bun add corsair @corsair-dev/zoom
+```
+</Tab>
+
+</Tabs>
+
+</Step>
+
+<Step>
+
+## Add the plugin
+
+```ts title="corsair.ts"
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zoom } from '@corsair-dev/zoom';
+
+export const corsair = createCorsair({
+	plugins: [
+		zoom(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step>
+
+## Choose authentication
+
+<Tabs items={["OAuth 2.0 (Recommended)"]}>
+<Tab value="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Zoom OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/zoom/get-credentials).
+
+```ts
+zoom()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step>
+
+## Connect a tenant
+
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zoom',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List meetings**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.list({});
+```
+
+
+**Create a meeting**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.create({ topic: 'Corsair standup', duration: 30 });
+```
+
+
+See the full list on the [API](/plugins/zoom/api) page.
+
+## Query synced data
+
+Search synced meetings without hitting Zoom.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.meetings.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `archiveFiles`, `devices`, `meetings`, `participants`, `recordings`, `webinars`. See [Database](/plugins/zoom/database) for filters and operators.
+
+## Webhooks
+
+Fires when a Zoom meeting is created.
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Zoom meeting created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/zoom/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<Cards>
+  <Card title="API reference" href="/plugins/zoom/api">
+    Every `zoom.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/zoom/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/zoom/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/zoom/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</Cards>
+

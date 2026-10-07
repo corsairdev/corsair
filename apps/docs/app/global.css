@@ -1,0 +1,403 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/black.css";
+@import "../css/corsair.css";
+@import "fumadocs-ui/css/preset.css";
+@import "fumadocs-openapi/css/preset.css";
+
+@source "../node_modules/fumadocs-ui/dist/**/*.js";
+@source "../node_modules/fumadocs-openapi/dist/**/*.js";
+
+@theme {
+	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+	--font-mono: var(--font-geist-mono), ui-monospace, monospace;
+	--text-small: 0.8125rem;
+	--text-base: 0.9375rem;
+	--text-md: 1rem;
+}
+
+:root {
+	--fd-layout-width: 88rem;
+	--fd-header-height: 3.5rem;
+	--content-gap: 2rem;
+	--corsair-ink: #141414;
+	--text-primary: var(--color-fd-foreground);
+	--text-muted: var(--color-fd-muted-foreground);
+	--scrollbar-thumb: var(--color-fd-border);
+	--scrollbar-thumb-hover: var(--color-fd-ring);
+	--scrollbar-track: transparent;
+}
+
+:root:not(.dark) {
+	--gradient-a: color-mix(in oklch, hsl(220 14% 88%) 28%, transparent);
+	--gradient-b: color-mix(in oklch, hsl(0 0% 92%) 50%, transparent);
+}
+
+.dark {
+	--gradient-a: color-mix(in oklch, hsl(220 12% 14%) 22%, transparent);
+	--gradient-b: color-mix(in oklch, hsl(0 0% 10%) 40%, transparent);
+}
+
+.docs-gradient-bg {
+	background-color: var(--color-fd-background);
+	background-image:
+		radial-gradient(
+			ellipse 80% 50% at 50% -10%,
+			var(--gradient-a),
+			transparent 70%
+		), linear-gradient(180deg, transparent 0%, var(--gradient-b) 100%);
+}
+
+.docs-surface {
+	background-color: transparent;
+}
+
+@layer base {
+	html,
+	body {
+		overscroll-behavior: none;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: calc(var(--fd-header-height, 3.5rem) + 1.5rem);
+		text-rendering: optimizeLegibility;
+		font-synthesis: none;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	body {
+		@apply bg-fd-background font-sans text-fd-foreground antialiased;
+		font-feature-settings:
+			"kern" 1,
+			"liga" 1,
+			"calt" 1;
+	}
+
+	code,
+	kbd,
+	samp,
+	pre {
+		@apply font-mono;
+	}
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-thumb);
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--scrollbar-thumb-hover);
+}
+
+#nd-docs-layout {
+	--fd-sidebar-width: 17.75rem;
+	background: transparent !important;
+}
+
+#nd-docs-layout > main,
+#nd-page {
+	background: transparent;
+}
+
+/* Sim-style floating sidebar — transparent chrome, content breathes */
+#nd-sidebar,
+[data-sidebar-placeholder],
+aside#nd-sidebar {
+	background: transparent !important;
+	border: none !important;
+}
+
+#nd-sidebar [data-radix-scroll-area-viewport] {
+	mask: none !important;
+	-webkit-mask: none !important;
+}
+
+@media (min-width: 1024px) {
+	#nd-docs-layout::before {
+		content: "";
+		position: fixed;
+		top: var(--fd-header-height);
+		bottom: 0;
+		left: calc(
+			var(--fd-sidebar-width) +
+			max(1rem, (100vw - var(--fd-layout-width)) / 2) -
+			1rem
+		);
+		width: 1px;
+		background: var(--color-fd-border);
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	main[data-main] {
+		padding-left: var(--content-gap);
+		padding-right: var(--content-gap);
+		padding-bottom: 4rem;
+	}
+}
+
+/* Framework icons — monochrome */
+.framework-icon,
+img[src*="/icons/"] {
+	filter: brightness(0);
+}
+
+.dark .framework-icon,
+.dark img[src*="/icons/"] {
+	filter: brightness(0) invert(1);
+}
+
+/* Page title — crisp, tight, sans (Better Auth pattern) */
+#nd-page > header h1,
+[data-docs-title] {
+	@apply font-sans text-fd-foreground;
+	font-size: 1.75rem;
+	font-weight: 450;
+	letter-spacing: -0.03em;
+	line-height: 1.15;
+	margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+	#nd-page > header h1,
+	[data-docs-title] {
+		font-size: 2rem;
+	}
+}
+
+#nd-page > header p {
+	@apply text-[0.9375rem] leading-relaxed text-fd-muted-foreground;
+	max-width: 42rem;
+}
+
+/* Heading ramp is 1.6 : 1.33 : 1 against the 15px body. Geist has no optical-size
+   axis, so the negative tracking that grows with size is the compensation. */
+.prose {
+	--tw-prose-body: var(--text-secondary);
+	--tw-prose-headings: var(--text-primary);
+	--tw-prose-links: var(--color-fd-primary);
+	--tw-prose-code: var(--color-fd-foreground);
+	max-width: none;
+	font-size: var(--text-base);
+	line-height: 1.75;
+}
+
+.prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply font-sans text-fd-foreground;
+	font-size: 1.5rem;
+	font-weight: 450;
+	letter-spacing: -0.025em;
+	line-height: 1.333;
+	margin-top: 4rem;
+	margin-bottom: 1rem;
+}
+
+.prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply font-sans text-fd-foreground;
+	font-size: 1.25rem;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+	line-height: 1.4;
+	margin-top: 2.5rem;
+	margin-bottom: 0.75rem;
+}
+
+/* <Steps> nests h2/h3 inside a step; the 24px/56px treatment breaks that layout. */
+.fd-steps .fd-step :where(h2, h3) {
+	font-size: 1rem;
+	font-weight: 550;
+	letter-spacing: -0.015em;
+	line-height: 1.5;
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+}
+
+.prose
+	:where(li > strong:first-child):not(
+		:where([class~="not-prose"], [class~="not-prose"] *)
+	) {
+	@apply font-medium text-fd-foreground;
+}
+
+.prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply font-sans text-fd-foreground;
+	font-size: 1rem;
+	font-weight: 550;
+	letter-spacing: -0.015em;
+	line-height: 1.5;
+	margin-top: 1.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply text-fd-foreground/90;
+}
+
+.prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply font-medium text-fd-foreground;
+	text-decoration: underline;
+	text-decoration-color: var(--color-fd-border);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+
+.prose
+	:where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+	text-decoration-color: var(--color-fd-foreground);
+}
+
+.prose
+	:where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):not(
+		pre code
+	) {
+	@apply rounded-sm bg-fd-muted px-1.5 py-0.5 font-mono text-[0.8125rem] font-normal;
+}
+
+.prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	@apply rounded-none border border-fd-border;
+}
+
+.prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	font-size: 0.8125rem;
+	line-height: 1.45;
+	background: transparent;
+	border-collapse: collapse;
+	border-radius: 0;
+}
+
+.prose :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	font-weight: 500;
+	background: transparent;
+	border-bottom: 1px solid var(--color-fd-border);
+}
+
+.prose :where(td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	font-variant-numeric: tabular-nums;
+	border-bottom: 1px solid var(--color-fd-border);
+	padding-block: 0.625rem;
+}
+
+.prose
+	:where(tr:last-child td):not(
+		:where([class~="not-prose"], [class~="not-prose"] *)
+	) {
+	border-bottom: none;
+}
+
+/* A long union in Type must not squeeze the name into two lines. */
+.prose :where(td:first-child):not(:where([class~="not-prose"] *)) {
+	white-space: nowrap;
+}
+
+.prose :where(td):not(:where([class~="not-prose"] *)) code {
+	overflow-wrap: anywhere;
+}
+
+.prose code:not(pre code),
+.prose a {
+	overflow-wrap: anywhere;
+}
+
+/* Code blocks — flat, sharp (Better Auth pattern) */
+figure:has(.shiki),
+figure.shiki,
+[data-slot="tabs"]:has(.shiki),
+.bg-fd-card:has(.shiki) {
+	border-radius: 0 !important;
+	overflow: hidden;
+}
+
+.dark .shiki,
+.dark figure:has(pre),
+.dark figure.shiki {
+	background-color: var(--code-surface) !important;
+	border-color: var(--color-fd-border);
+}
+
+.dark [role="tabpanel"]:has(.shiki) {
+	background-color: var(--code-surface) !important;
+}
+
+/* Sidebar + nav polish */
+#nd-sidebar {
+	@apply text-[13px];
+}
+
+#nd-sidebar a {
+	@apply tracking-[-0.01em];
+}
+
+#nd-subnav,
+[data-toc] {
+	backdrop-filter: blur(10px);
+}
+
+#nd-toc h3,
+#nd-toc [class*="title"] {
+	@apply text-[13px] font-medium text-fd-muted-foreground;
+}
+
+#nd-toc a {
+	@apply text-[13px] text-fd-muted-foreground transition-colors;
+}
+
+#nd-toc a[data-active="true"] {
+	@apply font-medium text-fd-foreground;
+}
+
+/* Cards — Sim-style flat tiles */
+[data-card] {
+	@apply rounded-none border-fd-border bg-fd-card;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+}
+
+[data-card]:hover {
+	border-color: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 18%,
+		var(--color-fd-border)
+	);
+	background-color: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 3%,
+		var(--color-fd-card)
+	);
+}
+
+/* Prev/next footer */
+#nd-page article > div.\@container > a {
+	@apply font-mono text-xs;
+}
+
+/* Search dialog polish */
+[data-search-dialog] kbd,
+[cmdk-root] kbd {
+	@apply rounded border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[10px];
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

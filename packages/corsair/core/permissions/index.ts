@@ -105,25 +105,28 @@ export function evaluatePermission(
 
 /** Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds. */
 export function parseDurationMs(duration: string): number {
-	const regex = /(\d+)(d|h|m|s)/g;
+	// Scanned by index rather than /(\d+)(d|h|m|s)/g, which retries every
+	// position inside a long digit run that no unit follows.
+	const UNITS: Record<string, number> = {
+		d: 86_400_000,
+		h: 3_600_000,
+		m: 60_000,
+		s: 1_000,
+	};
 	let total = 0;
-	let match: RegExpExecArray | null;
-	while ((match = regex.exec(duration)) !== null) {
-		const value = parseInt(match[1]!, 10);
-		switch (match[2]) {
-			case 'd':
-				total += value * 86_400_000;
-				break;
-			case 'h':
-				total += value * 3_600_000;
-				break;
-			case 'm':
-				total += value * 60_000;
-				break;
-			case 's':
-				total += value * 1_000;
-				break;
+	let i = 0;
+	while (i < duration.length) {
+		const start = i;
+		while (i < duration.length && duration[i]! >= '0' && duration[i]! <= '9')
+			i++;
+		if (i === start) {
+			i++;
+			continue;
 		}
+		const unit = UNITS[duration[i] ?? ''];
+		if (unit === undefined) continue;
+		total += parseInt(duration.slice(start, i), 10) * unit;
+		i++;
 	}
 	return total > 0 ? total : 10 * 60 * 1_000;
 }

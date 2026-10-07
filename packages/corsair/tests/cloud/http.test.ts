@@ -44,6 +44,20 @@ describe('cloudRequest', () => {
 		).rejects.toMatchObject({ code: 'not_connected' });
 	});
 
+	it('maps an unauthorized response to a typed 401', async () => {
+		const t = transportWith(
+			new Response(
+				JSON.stringify({ error: 'unauthorized', message: 'bad key' }),
+				{ status: 401 },
+			),
+		);
+		await expect(
+			cloudRequest(t, 'POST', '/default/slack/call/messages.post', {
+				args: {},
+			}),
+		).rejects.toMatchObject({ status: 401, code: 'unauthorized' });
+	});
+
 	it('tolerates a trailing slash on baseUrl and a leading slash on path', async () => {
 		const t: CloudTransport = {
 			baseUrl: 'https://vm.example/proj/api/corsair/',

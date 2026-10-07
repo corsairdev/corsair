@@ -1,0 +1,41 @@
+{
+  "carbone": {
+    "status.get": "{}",
+    "templates.upload": "{ template: 'UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==' }",
+    "templates.list": "{ id: 'tmpl_1234567890abcdef', cursor: 0 }",
+    "templates.download": "{ templateId: 'tmpl_1234567890abcdef' }",
+    "templates.update": "{\n\ttemplateId: 'tmpl_1234567890abcdef',\n\tname: 'Updated invoice template',\n\tcategory: 'Finance',\n\ttags: ['invoices', 'v2'],\n}",
+    "templates.delete": "{ templateId: 'tmpl_1234567890abcdef' }",
+    "templates.listCategories": "{}",
+    "templates.listTags": "{}",
+    "render.generateReport": "{\n\ttemplateId: 'tmpl_1234567890abcdef',\n\tdata: { customer: 'Acme Corp', amount: 1250 },\n\tconvertTo: 'pdf',\n}",
+    "render.renderDirect": "{\n\ttemplate: 'UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==',\n\tdata: { customer: 'Acme Corp', amount: 1250 },\n\tconvertTo: 'pdf',\n}",
+    "version.set": "{ version: '5' }"
+  },
+  "filevine": {
+    "contacts.attach": "{ projectId: 123, contactId: 456 }",
+    "contacts.create": "{ firstName: 'John', organization: 'Acme' }",
+    "contacts.get": "{ contactId: 456 }",
+    "contacts.list": "{ limit: 50 }",
+    "deadlines.create": "{ projectId: 123, name: 'Filing', dueDate: '2026-12-01T00:00:00Z' }",
+    "deadlines.list": "{ projectId: 123, limit: 50 }",
+    "documents.get": "{ documentId: 123 }",
+    "documents.list": "{ projectId: 123, limit: 50 }",
+    "documents.upload": "{ projectId: 123, filename: 'contract.pdf', file: new Blob(['content']) }",
+    "identity.getAccessToken": "{ token: 'PAT_xxx' }",
+    "identity.getUserOrgsWithToken": "{}",
+    "notes.create": "{ projectId: 123, body: 'Hello' }",
+    "notes.list": "{ projectId: 123, limit: 50 }",
+    "notes.update": "{ noteId: 123, body: 'Updated' }",
+    "projects.create": "{ projectTypeId: 1, projectName: 'Test', clientId: 456 }",
+    "projects.get": "{ projectId: 123 }",
+    "projects.list": "{ limit: 50 }",
+    "projects.update": "{ projectId: 123, phaseName: 'Discovery' }",
+    "tasks.create": "{ projectId: 123, title: 'Review', assigneeId: 456 }",
+    "tasks.list": "{ projectId: 123, limit: 50 }",
+    "tasks.update": "{ taskId: 123, status: 'completed' }",
+    "webhooks.create": "{\n\tname: 'Hook',\n\tendpoint: 'https://example.com/hook',\n\tevents: ['project.created'],\n}",
+    "webhooks.delete": "{ subscriptionId: 'sub_123' }",
+    "webhooks.list": "{}"
+  }
+}

@@ -25,8 +25,8 @@ test('keeps plugin-code PRs in the plugin lane when they regenerate that plugin 
 	assert.deepEqual(
 		classifyPrScope([
 			'packages/airtable/index.ts',
-			'docs/plugins/airtable/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		]),
 		{ lane: 'plugin', plugin: 'airtable' },
 	);
@@ -67,8 +67,8 @@ test('skips heavy checks for plugin-docs.yaml and generated plugin docs', () => 
 	assert.deepEqual(
 		classifyPrScope([
 			'packages/airtable/plugin-docs.yaml',
-			'docs/plugins/airtable/overview.mdx',
-			'docs/docs.json',
+			'apps/docs/content/docs/plugins/airtable/overview.mdx',
+			'apps/docs/content/docs/plugins/meta.json',
 		]),
 		{ lane: 'skip-heavy' },
 	);

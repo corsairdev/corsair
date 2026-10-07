@@ -1,0 +1,4 @@
+{
+  "title": "Strava",
+  "pages": ["overview", "get-credentials", "api", "database"]
+}

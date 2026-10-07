@@ -1,0 +1,20 @@
+---
+title: Plugins
+description: Reference docs for every Corsair integration.
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { PluginIndex } from '@/components/plugin-index';
+
+Every integration ships as `@corsair-dev/<plugin>` and documents the same five
+pages: overview, API, database, webhooks, and credentials.
+
+<PluginIndex />
+
+## Start here
+
+<Cards>
+  <Card title="Install a plugin" href="/guides/plugins" description="Add the package, register it on your Corsair instance, configure credentials." />
+  <Card title="Connect an account" href="/management/connect" description="Mint a connect link so a tenant authorizes the provider themselves." />
+  <Card title="Write your own" href="/guides/create-your-own-plugin" description="Scaffold a plugin against a provider Corsair does not cover yet." />
+</Cards>

@@ -1,0 +1,4 @@
+{
+  "title": "Supabase",
+  "pages": ["overview", "get-credentials", "api", "database"]
+}

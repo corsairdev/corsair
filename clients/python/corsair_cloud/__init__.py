@@ -14,7 +14,14 @@ from dataclasses import dataclass
 from typing import Any
 from urllib.parse import quote, urlencode, urlsplit
 
-__all__ = ["CorsairCloud", "CorsairError", "TenantClient", "Manage"]
+__all__ = [
+    "CorsairCloud",
+    "CorsairError",
+    "InstanceClient",
+    "InstanceManage",
+    "Manage",
+    "TenantClient",
+]
 
 _LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
 _DEFAULT_TIMEOUT = 30.0
@@ -76,17 +83,37 @@ class CorsairCloud:
         self.api_key = api_key
         self.base_url = base.rstrip("/")
         self.timeout = timeout
+        # name -> instance URL, resolved once on first use.
+        self._instances: dict[str, str] | None = None
 
-    def with_tenant(self, tenant_id: str) -> "TenantClient":
-        # Reject an empty tenant up front (matches the TS client's withTenant);
-        # otherwise it builds a request path with a missing segment and misroutes.
-        if not tenant_id:
-            raise ValueError("with_tenant: tenant_id must be a non-empty string")
-        return TenantClient(self, tenant_id)
+    def with_instance(self, name: str) -> "InstanceClient":
+        # Calls run on an instance, not on the project: the project URL serves
+        # only tenants and permissions and answers 501 for anything else.
+        if not name:
+            raise ValueError("with_instance: name must be a non-empty string")
+        return InstanceClient(self, name)
 
     @property
     def manage(self) -> "Manage":
         return Manage(self)
+
+    def _instance_url(self, name: str) -> str:
+        if self._instances is None:
+            root = self.base_url
+            if root.endswith("/api/corsair"):
+                root = root[: -len("/api/corsair")]
+            found = self._request_to(root, "GET", ["instances"])
+            self._instances = {
+                i["instanceKey"]: i["url"] for i in found.get("instances", [])
+            }
+        url = self._instances.get(name)
+        if not url:
+            available = ", ".join(sorted(self._instances)) or "(none)"
+            raise ValueError(
+                f'with_instance("{name}"): no such instance — available: {available}'
+            )
+        _assert_secure_url(url)
+        return url.rstrip("/")
 
     def _request(
         self,
@@ -95,7 +122,17 @@ class CorsairCloud:
         query: dict[str, str] | None = None,
         body: dict[str, Any] | None = None,
     ) -> Any:
-        url = self.base_url + "/" + "/".join(path)
+        return self._request_to(self.base_url, method, path, query, body)
+
+    def _request_to(
+        self,
+        base: str,
+        method: str,
+        path: list[str],
+        query: dict[str, str] | None = None,
+        body: dict[str, Any] | None = None,
+    ) -> Any:
+        url = base + "/" + "/".join(path)
         if query:
             url += "?" + urlencode(query)
         data = json.dumps(body).encode() if body is not None else None
@@ -121,13 +158,45 @@ class CorsairCloud:
             ) from None
 
 
-class TenantClient:
-    def __init__(self, client: CorsairCloud, tenant_id: str) -> None:
+class InstanceClient:
+    """One instance of a project. Its URL is resolved on first use."""
+
+    def __init__(self, client: CorsairCloud, name: str) -> None:
         self._client = client
+        self._name = name
+
+    @property
+    def _base(self) -> str:
+        return self._client._instance_url(self._name)
+
+    def with_tenant(self, tenant_id: str) -> "TenantClient":
+        # Reject an empty tenant up front; otherwise it builds a request path
+        # with a missing segment and misroutes.
+        if not tenant_id:
+            raise ValueError("with_tenant: tenant_id must be a non-empty string")
+        return TenantClient(self, tenant_id)
+
+    @property
+    def manage(self) -> "InstanceManage":
+        return InstanceManage(self)
+
+    def _request(
+        self,
+        method: str,
+        path: list[str],
+        query: dict[str, str] | None = None,
+        body: dict[str, Any] | None = None,
+    ) -> Any:
+        return self._client._request_to(self._base, method, path, query, body)
+
+
+class TenantClient:
+    def __init__(self, instance: InstanceClient, tenant_id: str) -> None:
+        self._instance = instance
         self._tenant_id = tenant_id
 
     def call(self, plugin: str, op: str, args: dict[str, Any] | None = None) -> Any:
-        result = self._client._request(
+        result = self._instance._request(
             "POST",
             [quote(self._tenant_id, safe=""), quote(plugin, safe=""), "call", quote(op, safe="")],
             body={"args": args or {}},
@@ -135,12 +204,15 @@ class TenantClient:
         return result["data"]
 
 
-class Manage:
-    def __init__(self, client: CorsairCloud) -> None:
-        self._client = client
+class InstanceManage:
+    """Credential-touching operations. Each instance has its own store, so
+    these are scoped to one instance rather than to the project."""
+
+    def __init__(self, instance: InstanceClient) -> None:
+        self._instance = instance
 
     def connection_status(self, tenant_id: str) -> dict[str, str]:
-        return self._client._request(
+        return self._instance._request(
             "GET", ["connection-status"], query={"tenantId": tenant_id}
         )
 
@@ -150,12 +222,19 @@ class Manage:
         body: dict[str, Any] = {"plugin": plugin, "tenantId": tenant_id}
         if redirect_uri is not None:
             body["redirectUri"] = redirect_uri
-        return self._client._request("POST", ["connect", "links"], body=body)
+        return self._instance._request("POST", ["connect", "links"], body=body)
 
     def disconnect(self, plugin: str, tenant_id: str) -> None:
-        self._client._request(
+        self._instance._request(
             "POST", ["disconnect"], body={"plugin": plugin, "tenantId": tenant_id}
         )
+
+
+class Manage:
+    """Project-level reads. The project URL serves only these."""
+
+    def __init__(self, client: CorsairCloud) -> None:
+        self._client = client
 
     def tenants(self) -> list[dict[str, Any]]:
         return self._client._request("GET", ["tenants"])

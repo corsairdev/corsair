@@ -56,7 +56,16 @@ export async function cloudRequest<T>(
 	method: string,
 	path: string,
 	body?: unknown,
+	// Additive escape hatch: the v1 hub API nests its error envelope
+	// (`{error:{type,code,message}}`) unlike the flat runtime shape mapCloudError
+	// expects, and POST /grants takes an Idempotency-Key header. Every existing
+	// caller omits this and keeps the old behavior.
+	opts?: {
+		headers?: Record<string, string>;
+		mapError?: (status: number, body: unknown) => ManagementApiError;
+	},
 ): Promise<T> {
+	const mapError = opts?.mapError ?? mapCloudError;
 	const doFetch = transport.fetch ?? globalThis.fetch;
 	const timeoutMs = transport.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 	const controller = new AbortController();
@@ -75,6 +84,7 @@ export async function cloudRequest<T>(
 			headers: {
 				authorization: `Bearer ${transport.apiKey}`,
 				'content-type': 'application/json',
+				...opts?.headers,
 			},
 			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: controller.signal,
@@ -103,7 +113,7 @@ export async function cloudRequest<T>(
 		parsed = undefined;
 	}
 
-	if (!res.ok) throw mapCloudError(res.status, parsed);
+	if (!res.ok) throw mapError(res.status, parsed);
 	if (parsed === undefined) {
 		throw new ManagementApiError(
 			res.status,

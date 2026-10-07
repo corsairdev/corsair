@@ -1,0 +1,1884 @@
+openapi: 3.1.0
+info:
+  title: Corsair Cloud Management API
+  version: "2026-10-04"
+  description: |
+    Manage a Corsair Cloud project from your own backend: the same operations
+    the Corsair console performs, over HTTP.
+
+    ## One key, one project
+
+    Every request authenticates with a project key, `ck_cloud_<slug>.<secret>`,
+    sent as a bearer token. The key identifies the project; the slug in the path
+    is cross-checked against it, so a key can only ever answer for its own
+    project. One key has full management authority. Keep it server-side.
+
+    ## Two planes
+
+    This is the *control* plane: it manages integrations, tenants, access, links
+    and instances. It does not proxy calls into a runtime. Running an operation
+    for a tenant happens on the instance's own URL (`instance.url`), through the
+    Corsair SDK.
+
+    ## Conventions
+
+    Request and response fields are `snake_case`. Every single resource carries
+    an `object` tag and an `id`. Lists are `{ object: "list", data, has_more,
+    next_cursor }` and page with `limit` and `starting_after`.
+
+    Every response carries `Request-Id`. Quote it in support.
+
+    Every response also echoes `Corsair-Version`. Send one to record which
+    contract you built against; nothing is pinned to it yet, so it does not
+    change behaviour.
+
+    Every operation is rate limited and so can answer `429`, and any of them
+    can answer `503` if the database is unreachable. Nothing is written in
+    that case, so a retry is safe.
+
+    ## Idempotency
+
+    Four writes mint something: a link, a rotated link, a connect session, and
+    an instance. Each accepts an `Idempotency-Key` header so a retried request
+    cannot produce a second credential.
+
+    - The client mints the key. Derive it from something stable you already
+      hold (`link-for-order-8841`), not a fresh UUID per attempt.
+    - Keys are scoped to `(project, key)`. Another project's identical key never
+      collides with yours.
+    - A key is replayable for 24 hours, or until the credential in the response
+      expires, whichever comes first. After that it is treated as a brand-new
+      request.
+    - A replay returns the original status and body with `Idempotent-Replay:
+      true`.
+    - The same key with a *different* request is `409 idempotency_key_reuse`.
+    - Client errors (4xx) replay. Server errors (5xx) are not stored, so a
+      retry after one is a real attempt.
+
+    There is no ratified standard for this header, so these semantics are ours.
+
+    ## Rate limits
+
+    Per project, per minute: 1000 reads, 120 writes, 60 mints. A `429` carries
+    `Retry-After` in seconds.
+
+servers:
+  - url: https://auth.corsair.dev/v1
+    description: Production
+
+security:
+  - projectKey: []
+
+tags:
+  - name: Project
+    description: The project, its rollup status, and its embedded sublists.
+  - name: Keys
+    description: The project key.
+  - name: Instances
+    description: A project's instances. Each is credential-isolated and has its own runtime.
+  - name: Integrations
+    description: Which providers an instance can use, and how each authenticates.
+  - name: Tenants
+    description: Your end-users, as project-scoped identities.
+  - name: Access
+    description: A tenant's membership of an instance at a permission. The only thing that grants reach.
+  - name: Connections
+    description: A tenant's live auth for one integration on one instance.
+  - name: Connect
+    description: Authorization sessions a tenant completes to connect their own accounts.
+  - name: Links
+    description: MCP URLs. The id in the URL is the credential.
+
+paths:
+  /projects/{slug}/project:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Project]
+      operationId: getProject
+      summary: Retrieve the project
+      description: |
+        The project with its instances, tenants, access lines, connections and
+        links embedded, so a dashboard paints from one call. Each embedded list
+        is a real list envelope capped at 100 entries; page the collection
+        endpoint when a project outgrows that. Embedded lists carry no cursor.
+      responses:
+        "200":
+          description: The project.
+          headers:
+            Request-Id: { $ref: "#/components/headers/RequestId" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Project" }
+              example:
+                object: "project"
+                id: "acme"
+                status: "running"
+                instance_count: 2
+                managed_integrations:
+                  limit: 10
+                  used: 3
+                mcp_oauth_url: "https://mcp.corsair.cloud/acme/oauth"
+                created: "2026-10-04T12:00:00.000Z"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/keys:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Keys]
+      operationId: getKeys
+      summary: Reveal the project key
+      description: |
+        Returns the project key in plaintext. The response is marked
+        `no-store`. It is a live credential, so nothing in between may cache
+        it.
+      responses:
+        "200":
+          description: The project key.
+          headers:
+            Cache-Control:
+              description: Always `no-store`.
+              schema: { type: string }
+            Request-Id: { $ref: "#/components/headers/RequestId" }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Key" }
+              example:
+                object: "key"
+                project_key: "ck_cloud_acme.xxxxxxxx"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404":
+          description: No key has been minted for this project.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "not_found"
+                  code: "resource_missing"
+                  message: "No key minted for this project"
+                  param: "key"
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/instances:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Instances]
+      operationId: listInstances
+      summary: List instances
+      parameters:
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of instances.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Instance" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "instance",
+                      "id": "prod",
+                      "instance_key": "prod",
+                      "description": "Production",
+                      "writable": true,
+                      "credential_source": "app_owned",
+                      "quota_limit": null,
+                      "quota_window": null,
+                      "url": "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    post:
+      tags: [Instances]
+      operationId: createInstance
+      summary: Create an instance
+      description: |
+        Creates an instance under the given key, or returns the existing one if
+        the key is already taken (`created: false` is not reported; the
+        response is the instance either way). A project is limited to 10
+        instances.
+
+        The instance has no runtime until it is deployed, so `url` is null at
+        first.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instance_key]
+              properties:
+                instance_key:
+                  type: string
+                  pattern: "^[a-z][a-z0-9-]*$"
+                  description: Lowercase, starts with a letter. No colon, since it is half of every access and integration ref.
+                  examples: ["live"]
+                credential_source:
+                  type: string
+                  enum: [app_owned, user_owned]
+                  description: Whether tenants connect their own accounts or the app's.
+      responses:
+        "200":
+          description: |
+            The instance already existed under this key and is returned
+            unchanged. Creating is idempotent by key, so a retry is safe even
+            without an `Idempotency-Key`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+        "201":
+          description: The instance was created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/IdempotencyConflict" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/instances/{key}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: key
+        in: path
+        required: true
+        description: The instance key.
+        schema: { type: string }
+    get:
+      tags: [Instances]
+      operationId: getInstance
+      summary: Retrieve an instance
+      responses:
+        "200":
+          description: The instance.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    patch:
+      tags: [Instances]
+      operationId: updateInstance
+      summary: Update an instance
+      description: |
+        Partial, but not empty: an omitted field is left alone, so setting a
+        description never touches policy, and a body naming none of the three
+        is a 400 rather than a no-op 200.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              minProperties: 1
+              properties:
+                description: { type: ["string", "null"] }
+                writable:
+                  type: boolean
+                  description: Whether tenants on this instance may run write operations.
+                credential_source:
+                  type: string
+                  enum: [app_owned, user_owned]
+      responses:
+        "200":
+          description: The updated instance.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Instance" }
+              example:
+                object: "instance"
+                id: "prod"
+                instance_key: "prod"
+                description: "Production"
+                writable: true
+                credential_source: "app_owned"
+                quota_limit: null
+                quota_window: null
+                url: "https://api.corsair.cloud/envvzmvdisaboy/api/corsair"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Instances]
+      operationId: deleteInstance
+      summary: Delete an instance
+      description: |
+        Deletes the instance and strips its runtime off the VM. Its access
+        lines, connections and webhooks go with it.
+
+        The project's primary instance cannot be deleted. Every tenant row is
+        pinned to it. Terminate the runtime to remove a whole project.
+      responses:
+        "200":
+          description: The instance was deleted.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
+        "400":
+          description: This is the primary instance.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "The primary instance can't be deleted. Terminate the runtime to remove the whole project."
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/integrations:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Integrations]
+      operationId: listIntegrations
+      summary: List configured integrations
+      parameters:
+        - name: instance
+          in: query
+          description: Only integrations configured on this instance.
+          schema: { type: string }
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of integrations.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Integration" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "integration",
+                      "id": "prod:slack",
+                      "instance": "prod",
+                      "integration": "slack",
+                      "auth_type": "managed",
+                      "has_credentials": true
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/integrations/catalog:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Integrations]
+      operationId: listCatalog
+      summary: List available integrations
+      description: |
+        Every integration that can be configured, and whether each has a
+        Corsair-owned OAuth app behind it.
+
+        `managed_available` is a property of the integration, not of your plan.
+        How many managed integrations your plan may select is reported as
+        `managed_integrations` on the project.
+      parameters:
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: The catalog.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/CatalogIntegration" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "catalog_integration",
+                      "id": "slack",
+                      "name": "Slack",
+                      "auth_types": [
+                        "managed",
+                        "oauth_2"
+                      ],
+                      "managed_available": true
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/integrations/{ref}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: ref
+        in: path
+        required: true
+        description: "`{instance}:{integration}`, e.g. `live:slack`."
+        schema: { type: string }
+        examples: ["live:slack"]
+    get:
+      tags: [Integrations]
+      operationId: getIntegration
+      summary: Retrieve an integration
+      responses:
+        "200":
+          description: The integration.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Integration" }
+              example:
+                object: "integration"
+                id: "prod:slack"
+                instance: "prod"
+                integration: "slack"
+                auth_type: "managed"
+                has_credentials: true
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    put:
+      tags: [Integrations]
+      operationId: putIntegration
+      summary: Configure an integration
+      description: |
+        Adds the integration to the instance, or reconfigures it. Idempotent:
+        the ref names the thing, so sending the same body twice lands in the
+        same state.
+
+        Credentials are write-only. They are encrypted on the way in and never
+        readable afterwards. The object reports `has_credentials` instead.
+        Omitting them on a later write leaves whatever is on file, since you
+        cannot resend what you were never given. To replace a credential, send
+        the new one.
+
+        The change takes effect on the instance's next apply, usually within a
+        minute.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auth_type:
+                  type: string
+                  enum: [managed, oauth_2, api_key, bot_token]
+                  description: |
+                    `managed` uses Corsair's own OAuth app. `oauth_2` uses yours.
+                    `api_key` and `bot_token` take a static secret.
+                credentials:
+                  type: object
+                  writeOnly: true
+                  additionalProperties: { type: string }
+                  description: |
+                    Write-only. Never returned; read `has_credentials` instead.
+
+                    Only `oauth_2` takes integration-level credentials:
+                    `client_id` and `client_secret` are required,
+                    `redirect_url` is optional. `managed`, `api_key` and
+                    `bot_token` take none here. Under `api_key` and
+                    `bot_token` the secret belongs to the tenant, who supplies
+                    it through a connect session.
+                  example:
+                    client_id: "abc123"
+                    client_secret: "s3cr3t"
+      responses:
+        "200":
+          description: The configured integration.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Integration" }
+              example:
+                object: "integration"
+                id: "prod:slack"
+                instance: "prod"
+                integration: "slack"
+                auth_type: "managed"
+                has_credentials: true
+        "400":
+          description: |
+            A malformed ref, an unknown `auth_type`, an instance that has not
+            been deployed, or a managed integration your plan does not allow.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "auth_type must be one of managed, oauth_2, api_key, bot_token"
+                  param: "auth_type"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Integrations]
+      operationId: deleteIntegration
+      summary: Remove an integration
+      description: |
+        Removes the integration from the instance. Tenants' stored credentials
+        for it are kept. Disconnecting is per tenant, and re-adding the
+        integration finds them intact.
+      responses:
+        "200":
+          description: The integration was removed.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/tenants:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Tenants]
+      operationId: listTenants
+      summary: List tenants
+      parameters:
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of tenants.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Tenant" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "tenant",
+                      "id": "usr_8841",
+                      "email": "dave@acme.com",
+                      "label": "Dave",
+                      "created": "2026-10-04T12:00:00.000Z"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    post:
+      tags: [Tenants]
+      operationId: createTenant
+      summary: Create a tenant
+      description: |
+        The id is yours to choose. Your own user id is the usual answer. It
+        becomes half of every access ref and a segment of the MCP grammar, so it
+        has to survive a URL path.
+
+        A colliding id is a `409`. Use `PATCH` to change an existing tenant.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id]
+              properties:
+                tenant_id:
+                  type: string
+                  maxLength: 128
+                  pattern: "^[A-Za-z0-9._:~@+-]{1,128}$"
+                  description: |
+                    Letters, digits and `. _ : ~ @ + -`. No `/`, since a ref
+                    containing one cannot be addressed. Colons are allowed, so
+                    `usr_123:work` gives one person two credential sets.
+                  examples: ["usr_8841"]
+                email:
+                  type: string
+                  format: email
+                  description: Unique per project. Used to bind an invite to this tenant.
+                label: { type: string }
+      responses:
+        "201":
+          description: The tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409":
+          description: The id is taken, or the email belongs to another tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "conflict"
+                  code: "resource_conflict"
+                  message: "Tenant 'usr_8841' already exists"
+                  param: "tenant_id"
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/tenants/{id}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [Tenants]
+      operationId: getTenant
+      summary: Retrieve a tenant
+      responses:
+        "200":
+          description: The tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    patch:
+      tags: [Tenants]
+      operationId: updateTenant
+      summary: Update a tenant
+      description: Partial. An omitted field is left alone; a field of the wrong type is a `400`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string, format: email }
+                label: { type: string }
+      responses:
+        "200":
+          description: The updated tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+              example:
+                object: "tenant"
+                id: "usr_8841"
+                email: "dave@acme.com"
+                label: "Dave"
+                created: "2026-10-04T12:00:00.000Z"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: The email belongs to another tenant in this project.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "conflict"
+                  code: "resource_conflict"
+                  message: "Email dave@acme.com is already in use by another tenant in this project"
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Tenants]
+      operationId: deleteTenant
+      summary: Delete a tenant
+      description: |
+        Takes the tenant's access lines and its stored credentials with it, and
+        prunes it from every link that named it. A link left with no entries is
+        revoked rather than kept as a URL that reaches nothing.
+
+        Tenant ids are yours and reusable, so nothing survives that re-creating
+        the same id could restore.
+      responses:
+        "200":
+          description: The tenant was deleted.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/access:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Access]
+      operationId: listAccess
+      summary: List access lines
+      parameters:
+        - name: instance
+          in: query
+          schema: { type: string }
+        - name: tenant
+          in: query
+          schema: { type: string }
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of access lines.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Access" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "access",
+                      "id": "prod:usr_8841",
+                      "instance": "prod",
+                      "tenant": "usr_8841",
+                      "label": "Dave",
+                      "permission": "readwrite",
+                      "connected": [
+                        "slack"
+                      ],
+                      "expired": []
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/access/{ref}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: ref
+        in: path
+        required: true
+        description: "`{instance}:{tenant}`, split on the first colon."
+        schema: { type: string }
+        examples: ["live:usr_8841"]
+    get:
+      tags: [Access]
+      operationId: getAccess
+      summary: Retrieve an access line
+      responses:
+        "200":
+          description: The access line.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                label: "Dave"
+                permission: "readwrite"
+                connected:
+                  - "slack"
+                expired: []
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    put:
+      tags: [Access]
+      operationId: putAccess
+      summary: Grant access
+      description: |
+        Puts a tenant on an instance at a permission, creating the tenant if it
+        is new, so one call is enough to onboard someone.
+
+        This is the only thing that grants reach. A link can *name* a line but
+        never create one.
+
+        `label` and `email` belong to the tenant, not the line, so setting them
+        here changes them on every line that tenant holds.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [permission]
+              properties:
+                permission:
+                  type: string
+                  enum: [readonly, readwrite, admin]
+                email: { type: string, format: email }
+                label: { type: string }
+      responses:
+        "200":
+          description: The line already existed and was updated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: access
+                id: "prod:usr_8841"
+                instance: prod
+                tenant: usr_8841
+                label: Dave
+                permission: readwrite
+                connected: [slack]
+                expired: []
+        "201":
+          description: The line was created.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Access" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                label: "Dave"
+                permission: "readwrite"
+                connected:
+                  - "slack"
+                expired: []
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404":
+          description: No such instance.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "not_found"
+                  code: "resource_missing"
+                  message: "No instance 'staging' in this project"
+                  param: "instance"
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Access]
+      operationId: deleteAccess
+      summary: Revoke access
+      description: |
+        Revoking a line is what takes a link's access away. The door drops the
+        entry, and the link reports it as `lost_access`. Lowering a permission
+        does not, since a link carries its own.
+      responses:
+        "200":
+          description: The line was revoked.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/connections:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Connections]
+      operationId: listConnections
+      summary: List connections
+      parameters:
+        - name: instance
+          in: query
+          schema: { type: string }
+        - name: tenant
+          in: query
+          schema: { type: string }
+        - name: integration
+          in: query
+          schema: { type: string }
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of connections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Connection" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "connection",
+                      "id": "prod:slack:usr_8841",
+                      "instance": "prod",
+                      "tenant": "usr_8841",
+                      "integration": "slack",
+                      "status": "connected"
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/connections/{ref}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: ref
+        in: path
+        required: true
+        description: "`{instance}:{integration}:{tenant}`. Everything after the second colon is the tenant."
+        schema: { type: string }
+        examples: ["live:slack:usr_8841"]
+    get:
+      tags: [Connections]
+      operationId: getConnection
+      summary: Retrieve a connection
+      responses:
+        "200":
+          description: The connection.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Connection" }
+              example:
+                object: "connection"
+                id: "prod:slack:usr_8841"
+                instance: "prod"
+                tenant: "usr_8841"
+                integration: "slack"
+                status: "connected"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Connections]
+      operationId: deleteConnection
+      summary: Disconnect
+      description: |
+        The credential stops existing in Corsair, so nothing can act with it
+        again.
+
+        This does not revoke the grant upstream. Whatever the tenant authorized
+        in Slack or Linear remains theirs to remove there.
+      responses:
+        "200":
+          description: The connection was deleted.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Deleted"
+                  - type: object
+                    properties:
+                      revoked_upstream:
+                        type: boolean
+                        description: Always false. The provider-side grant is untouched.
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/connect/sessions:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    post:
+      tags: [Connect]
+      operationId: createConnectSession
+      summary: Open a connect session
+      description: |
+        Returns a URL to send your tenant so they can authorize their own
+        accounts. The same flow the console sends.
+
+        The URL expires. Mint a new session rather than storing it.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instance, tenant]
+              properties:
+                instance: { type: string }
+                tenant: { type: string }
+                integrations:
+                  type: array
+                  items: { type: string }
+                  description: |
+                    Limit the session to these integrations. Omitted means every
+                    integration configured on the instance.
+                delivery_url:
+                  type: string
+                  description: Where to send the tenant once they finish.
+      responses:
+        "201":
+          description: The session.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConnectSession" }
+              example:
+                object: "connect_session"
+                url: "https://app.corsair.dev/connect/eyJ0b2tlbiI6..."
+                expires_at: "2026-10-04T12:10:00.000Z"
+                instance: "prod"
+                tenant: "usr_8841"
+                integrations:
+                  - "slack"
+        "400":
+          description: |
+            No connectable integration on the instance, or an integration that
+            is not configured there.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "That integration isn't configured on this instance"
+                  param: "integrations"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/IdempotencyConflict" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/mcp/links:
+    parameters: [{ $ref: "#/components/parameters/Slug" }]
+    get:
+      tags: [Links]
+      operationId: listLinks
+      summary: List MCP links
+      parameters:
+        - name: tenant
+          in: query
+          description: Only links with an entry for this tenant.
+          schema: { type: string }
+        - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/StartingAfter" }
+      responses:
+        "200":
+          description: A list of links.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Link" }
+              example:
+                {
+                  "object": "list",
+                  "data": [
+                    {
+                      "object": "link",
+                      "id": "mcpg_8f21",
+                      "url": "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp",
+                      "recipient": "dave@acme.com",
+                      "created": "2026-10-04T12:00:00.000Z",
+                      "instances": [
+                        {
+                          "instance": "prod",
+                          "tenant": "usr_8841",
+                          "permission": "readwrite",
+                          "lost_access": false
+                        }
+                      ]
+                    }
+                  ],
+                  "has_more": false,
+                  "next_cursor": null
+                }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    post:
+      tags: [Links]
+      operationId: createLink
+      summary: Mint an MCP link
+      description: |
+        Returns a URL an agent can be pointed at. **The id in the URL is the
+        credential**. There is no second secret, so treat the whole URL as one.
+
+        Every entry must name a line the tenant already holds. The entry's
+        permission is the link's own and may be lower than the line's, but a
+        link can never grant access that was not already there.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [instances]
+              properties:
+                instances:
+                  type: array
+                  minItems: 1
+                  items: { $ref: "#/components/schemas/LinkEntryInput" }
+                recipient:
+                  type: string
+                  description: A label for whoever holds this link. Yours, not shown to the agent.
+                  examples: ["claude-desktop"]
+      responses:
+        "201":
+          description: The link.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
+        "400":
+          description: |
+            An entry naming no tenant, an unknown instance or tenant, or a line
+            the tenant does not hold.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "instances must be a non-empty array"
+                  param: "instances"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/IdempotencyConflict" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/mcp/links/{id}:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: id
+        in: path
+        required: true
+        description: The link id, which is also its credential.
+        schema: { type: string }
+    get:
+      tags: [Links]
+      operationId: getLink
+      summary: Retrieve an MCP link
+      responses:
+        "200":
+          description: The link.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    patch:
+      tags: [Links]
+      operationId: updateLink
+      summary: Update an MCP link
+      description: |
+        Partial. An omitted `instances` leaves the entries alone, so renaming a
+        link is `{ "recipient": "..." }` and not a resend of every entry.
+
+        The URL does not change. To invalidate it, rotate or delete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient: { type: ["string", "null"] }
+                instances:
+                  type: array
+                  items: { $ref: "#/components/schemas/LinkEntryInput" }
+      responses:
+        "200":
+          description: The updated link.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+    delete:
+      tags: [Links]
+      operationId: deleteLink
+      summary: Revoke an MCP link
+      description: The URL stops resolving immediately. The tenant's access lines are untouched.
+      responses:
+        "200":
+          description: The link was revoked.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Deleted" }
+              example:
+                object: "access"
+                id: "prod:usr_8841"
+                deleted: true
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+  /projects/{slug}/mcp/links/{id}/rotate:
+    parameters:
+      - { $ref: "#/components/parameters/Slug" }
+      - name: id
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Links]
+      operationId: rotateLink
+      summary: Rotate an MCP link
+      description: |
+        What to call when a URL leaks. Mints a replacement carrying the same
+        entries and revokes the old id in one transaction, so the two are never
+        both live.
+
+        The response is a new link with a new id. Refused if the link no longer
+        grants anything. Rotating it would reissue a dead URL, so revoke it
+        instead.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      responses:
+        "201":
+          description: The replacement link.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Link" }
+              example:
+                object: "link"
+                id: "mcpg_8f21"
+                url: "https://mcp.corsair.cloud/acme/mcpg_8f21/mcp"
+                recipient: "dave@acme.com"
+                created: "2026-10-04T12:00:00.000Z"
+                instances:
+                  - instance: "prod"
+                    tenant: "usr_8841"
+                    permission: "readwrite"
+                    lost_access: false
+        "400":
+          description: The link grants nothing, or names an instance or line that is gone.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              example:
+                error:
+                  type: "invalid_request_error"
+                  code: "invalid_request"
+                  message: "This link grants nothing — rotating it would reissue a dead URL. Revoke it and create a new one."
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/IdempotencyConflict" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "500": { $ref: "#/components/responses/InternalError" }
+        "503": { $ref: "#/components/responses/ServiceUnavailable" }
+components:
+  securitySchemes:
+    projectKey:
+      type: http
+      scheme: bearer
+      description: |
+        The project key, `ck_cloud_<slug>.<secret>`, as
+        `Authorization: Bearer <key>`. Reveal it with `GET /keys` or from the
+        console.
+
+  parameters:
+    Slug:
+      name: slug
+      example: acme
+      in: path
+      required: true
+      description: |
+        The project slug. Cross-checked against the key. A key can only answer
+        for its own project, and any other slug is a `404`.
+      schema: { type: string }
+    Limit:
+      name: limit
+      in: query
+      description: 1–100. Values above 100 are clamped; a non-integer is a `400`.
+      schema: { type: integer, minimum: 1, maximum: 100, default: 100 }
+    StartingAfter:
+      name: starting_after
+      in: query
+      description: |
+        The `next_cursor` from the previous page: the id of its last item.
+        An id that is not in the list is a `400`.
+      schema: { type: string }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      description: |
+        A key of your own, at most 255 characters, so a retry of this request
+        cannot mint a second credential. A longer key is a `400`, since truncating it
+        would change its identity.
+      schema: { type: string, maxLength: 255 }
+
+  headers:
+    RequestId:
+      description: One id per request. Quote it in support.
+      schema: { type: string }
+    IdempotentReplay:
+      description: Present and `true` when this response was replayed from a stored result.
+      schema: { type: boolean }
+
+  schemas:
+    List:
+      type: object
+      required: [object, data, has_more, next_cursor]
+      properties:
+        object: { type: string, const: list }
+        data: { type: array, items: {} }
+        has_more:
+          type: boolean
+          description: Whether more items exist after this page.
+        next_cursor:
+          type: ["string", "null"]
+          description: Pass as `starting_after` for the next page. Null on the last page, and always null on an embedded list.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [type, code, message]
+          properties:
+            type:
+              type: string
+              enum:
+                - authentication_error
+                - permission_error
+                - invalid_request_error
+                - not_found
+                - conflict
+                - rate_limit_error
+                - api_error
+              description: The category. Branch on this, not on the message.
+            code:
+              type: string
+              description: The specific condition, e.g. `resource_missing`, `idempotency_key_reuse`.
+            message:
+              type: string
+              description: Human-readable. Not a contract. Do not parse it.
+            param:
+              type: string
+              description: The offending field, when one field is at fault.
+            doc_url: { type: string }
+            request_id: { type: string }
+
+    Deleted:
+      type: object
+      required: [object, id, deleted]
+      properties:
+        object: { type: string }
+        id: { type: string }
+        deleted: { type: boolean, const: true }
+
+    Project:
+      type: object
+      required: [object, id, status]
+      properties:
+        object: { type: string, const: project }
+        id:
+          type: ["string", "null"]
+          description: The project slug.
+        status:
+          type: string
+          enum: [pending, applying, running, stopped, error]
+          description: A rollup across the project's instances. `error` if any instance failed its last apply.
+        instance_count: { type: integer }
+        managed_integrations:
+          type: object
+          description: Your plan's ceiling on managed-OAuth integrations, and how many are in use.
+          properties:
+            limit:
+              type: ["integer", "null"]
+              description: Null means unlimited.
+            used: { type: integer }
+        mcp_oauth_url: { type: ["string", "null"] }
+        created: { type: string, format: date-time }
+        instances:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Instance" }
+        tenants:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Tenant" }
+        access:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Access" }
+        connections:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Connection" }
+        links:
+          allOf:
+            - $ref: "#/components/schemas/List"
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items: { $ref: "#/components/schemas/Link" }
+
+    Key:
+      type: object
+      required: [object, project_key]
+      properties:
+        object: { type: string, const: key }
+        project_key: { type: string }
+
+    Instance:
+      type: object
+      required: [object, id, instance_key]
+      properties:
+        object: { type: string, const: instance }
+        id:
+          type: string
+          description: The instance key. It routes in the MCP grammar, so it is the id here too.
+        instance_key: { type: string, example: prod }
+        description: { type: ["string", "null"], example: Production }
+        writable:
+          type: boolean
+          description: Whether tenants on this instance may run write operations.
+        credential_source:
+          type: ["string", "null"]
+          enum: [app_owned, user_owned, null]
+        quota_limit: { type: ["integer", "null"] }
+        quota_window: { type: ["string", "null"] }
+        url:
+          type: ["string", "null"]
+          description: |
+            Where this instance executes: the data plane, reached with the
+            Corsair SDK. Null until the instance is deployed.
+
+    Integration:
+      type: object
+      required: [object, id, instance, integration, auth_type, has_credentials]
+      properties:
+        object: { type: string, const: integration }
+        id: { type: string, description: "`{instance}:{integration}`." }
+        instance: { type: string }
+        integration: { type: string }
+        auth_type:
+          type: string
+          enum: [managed, oauth_2, api_key, bot_token]
+        has_credentials:
+          type: boolean
+          description: Whether a secret is on file. The secret itself is never returned.
+
+    CatalogIntegration:
+      type: object
+      required: [object, id, name, auth_types, managed_available]
+      properties:
+        object: { type: string, const: catalog_integration }
+        id: { type: string }
+        name: { type: string }
+        auth_types:
+          type: array
+          items: { type: string }
+        managed_available:
+          type: boolean
+          description: A Corsair-owned OAuth app exists for this integration.
+
+    Tenant:
+      type: object
+      required: [object, id]
+      properties:
+        object: { type: string, const: tenant }
+        id: { type: string, description: The id you chose., example: usr_8841 }
+        email: { type: ["string", "null"], example: dave@acme.com }
+        label: { type: ["string", "null"], example: Dave }
+        created: { type: string, format: date-time, example: "2026-10-04T12:00:00.000Z" }
+
+    Access:
+      type: object
+      required: [object, id, instance, tenant, permission]
+      properties:
+        object: { type: string, const: access }
+        id: { type: string, description: "`{instance}:{tenant}`.", example: "prod:usr_8841" }
+        instance: { type: string, example: prod }
+        tenant: { type: string, example: usr_8841 }
+        label: { type: ["string", "null"], example: Dave }
+        permission:
+          type: string
+          enum: [readonly, readwrite, admin]
+        connected:
+          type: array
+          items: { type: string }
+          description: Integrations this tenant has authorized on this instance.
+        expired:
+          type: array
+          items: { type: string }
+          description: |
+            Integrations whose credential has expired and cannot refresh. Calls
+            through them fail until the tenant reconnects.
+
+    Connection:
+      type: object
+      required: [object, id, instance, tenant, integration, status]
+      properties:
+        object: { type: string, const: connection }
+        id: { type: string, description: "`{instance}:{integration}:{tenant}`.", example: "prod:slack:usr_8841" }
+        instance: { type: string, example: prod }
+        tenant: { type: string, example: usr_8841 }
+        integration: { type: string, example: slack }
+        status:
+          type: string
+          enum: [connected, expired]
+          description: |
+            `connected` includes a credential past its expiry that holds a
+            refresh token. It renews on the next call.
+
+    ConnectSession:
+      type: object
+      required: [object, url, expires_at, instance, tenant, integrations]
+      properties:
+        object: { type: string, const: connect_session }
+        url:
+          type: string
+          description: Send your tenant here. Expires.
+        expires_at: { type: string, format: date-time }
+        instance: { type: string }
+        tenant: { type: string }
+        integrations:
+          type: array
+          items: { type: string }
+          description: What this session can connect.
+
+    LinkEntryInput:
+      type: object
+      required: [instance, tenant, permission]
+      properties:
+        instance: { type: string }
+        tenant:
+          type: string
+          description: |
+            Required. An entry naming no tenant is refused at the door, so
+            accepting one would mint a link that reaches nothing.
+        permission:
+          type: string
+          enum: [readonly, readwrite, admin]
+          description: This link's permission on that line. May be lower than the line's, never higher.
+
+    Link:
+      type: object
+      required: [object, id, url, instances]
+      properties:
+        object: { type: string, const: link }
+        id:
+          type: string
+          description: Also the credential in `url`.
+        recipient: { type: ["string", "null"] }
+        url:
+          type: string
+          description: Point an MCP client here. The id in the path is the only secret.
+        instances:
+          type: array
+          items:
+            type: object
+            properties:
+              instance: { type: string }
+              tenant: { type: string }
+              permission:
+                type: string
+                enum: [readonly, readwrite, admin]
+              lost_access:
+                type: boolean
+                description: |
+                  The access line behind this entry is gone, so the entry no
+                  longer reaches anything. The URL still resolves; this entry
+                  does not. Re-grant the line to restore it.
+        created: { type: string, format: date-time }
+
+  responses:
+    BadRequest:
+      description: The request was malformed. `error.param` names the field when one is at fault.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: invalid_request_error
+              code: invalid_request
+              message: "instances must be a non-empty array"
+              param: instances
+    Unauthorized:
+      description: The key is missing or invalid.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: authentication_error
+              code: unauthorized
+              message: "Invalid or missing project key"
+    NotFound:
+      description: |
+        No such resource, or it belongs to another project. Both answer the
+        same, so this API cannot be used to discover what exists elsewhere.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: not_found
+              code: resource_missing
+              message: "No instance 'staging' in this project"
+              param: instance
+    IdempotencyConflict:
+      description: |
+        `idempotency_key_reuse`. This key was already used for a different
+        request. Use a new key, or resend the original request.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: conflict
+              code: idempotency_key_reuse
+              message: "This key was already used for a different request"
+    RateLimited:
+      description: Too many requests for this project.
+      headers:
+        Retry-After:
+          description: Seconds until the window resets.
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: rate_limit_error
+              code: rate_limit_exceeded
+              message: "Too many read requests. The limit is 1000 per minute for this project."
+    ServiceUnavailable:
+      description: |
+        The database was unreachable. Nothing was written, so a retry is safe.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: api_error
+              code: database_unavailable
+              message: "Database unavailable"
+    InternalError:
+      description: |
+        An unhandled server-side failure. Retry with backoff; a minting write
+        replayed with the same `Idempotency-Key` re-executes, since 5xx
+        responses are not stored.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          example:
+            error:
+              type: api_error
+              code: internal_error
+              message: "Something went wrong on our end"

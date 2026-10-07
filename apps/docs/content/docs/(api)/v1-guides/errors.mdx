@@ -1,0 +1,110 @@
+---
+title: Errors
+description: One error shape across every endpoint, with conventional HTTP status codes.
+---
+
+Every error returns this JSON body:
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "invalid_request",
+    "message": "instances must be a non-empty array",
+    "param": "instances"
+  }
+}
+```
+
+`type` is the broad category. `code` is a stable machine string you can branch
+on. `message` is for a human. `param` names the offending field when the error
+is about one, and is absent otherwise.
+
+Every response, error or not, carries a `Request-Id` header. Quote it in
+support.
+
+## Status codes
+
+| Status | type | code | When |
+|--------|------|------|------|
+| `400` | `invalid_request_error` | `invalid_request` | The body or a parameter failed validation: a missing field, a bad permission, a malformed ref, or an instance, tenant or access row that does not exist in the project. |
+| `401` | `authentication_error` | `unauthorized` | The project key is missing or wrong. |
+| `404` | `not_found` | `resource_missing` | No such resource in your project. Also what a wrong project slug returns, so it never reveals whether that project exists. |
+| `405` | `invalid_request_error` | `method_not_allowed` | The path exists but not for this method. |
+| `409` | `conflict` | `resource_conflict` | The write clashes with existing state, such as a duplicate tenant email. |
+| `409` | `conflict` | `idempotency_key_reuse` | An `Idempotency-Key` was reused with a different request. |
+| `429` | `rate_limit_error` | `rate_limit_exceeded` | Over the per-minute limit for that class of request. Carries `Retry-After` in seconds. |
+| `500` | `api_error` | `internal_error` | Server-side failure. Retry with backoff. |
+| `503` | `api_error` | `database_unavailable` | Storage unavailable. The request was not applied, so a retry is safe. |
+
+`permission_error` is a valid `type` but no endpoint returns it today; a key that
+names another project's slug gets `404`, not `403`.
+
+## Retrying safely
+
+Retry on `429`, `500`, and `503`. Honour `Retry-After` on a `429`; use
+exponential backoff otherwise. For a minting write, send the same
+`Idempotency-Key` on the retry to get the original result back instead of a
+second credential:
+
+```bash
+curl -s -X POST "$CORSAIR_BASE/mcp/links" \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-link-1" \
+  -d '{
+    "instances": [
+      { "instance": "prod", "tenant": "usr_8841", "permission": "readwrite" }
+    ]
+  }'
+```
+
+A replayed response carries `Idempotent-Replay: true`. Keys are project-scoped
+and held for 24 hours, or until the stored result expires, whichever comes
+first. A replay whose stored connect URL has already expired re-executes instead
+of replaying.
+
+Responses with status `500` are not stored, so a retry with the same key
+re-executes.
+
+Reusing a key with a different method, path, or body returns `409
+idempotency_key_reuse`. Retrying it returns the same error.
+
+## Handling it
+
+Branch on the HTTP status for flow, and read `message` for the detail. In the
+SDK, a non-2xx response throws a `ManagementApiError` with `status`, `code` and
+`message` as own properties; `type` and `param` are on `extra`:
+
+```ts
+import { corsairCloud, ManagementApiError } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+
+try {
+  await corsair.manage.mcp.links.mint({
+    instances: [
+      { instance: 'nope', tenant: 'usr_8841', permission: 'readonly' },
+    ],
+  });
+} catch (err) {
+  if (err instanceof ManagementApiError) {
+    err.status;        // 400
+    err.code;          // 'invalid_request'
+    err.message;       // "no instance 'nope' in this project"
+    err.extra.param;   // 'instances'
+  }
+}
+```
+
+A network failure or timeout throws the same class with `status: 0` and
+`code: 'internal_error'`. The SDK does not retry; the backoff above is yours to
+write.
+
+Two frequent causes:
+
+- `400 No access for prod:usr_8841` on a mint means the access row does not
+  exist. Minting cannot create one; call `PUT /access/prod:usr_8841` first.
+- `404` on a resource you expect is usually a typo in a ref. Refs are
+  positional: `instance:tenant` for access, `instance:integration` for an
+  integration, `instance:integration:tenant` for a connection.

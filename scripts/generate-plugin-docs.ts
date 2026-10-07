@@ -1,5 +1,5 @@
 /**
- * Writes plugin reference MDX under `docs/plugins/<pluginId>/` using
+ * Writes plugin reference MDX under `apps/docs/content/docs/plugins/<pluginId>/` using
  * `introspectPluginForDocs` from `packages/corsair`. Uses `tsx` to resolve TS imports.
  *
  * Optional `packages/<plugin>/plugin-docs.yaml` supplies display copy and overview
@@ -11,6 +11,8 @@
  * CLI: `pnpm generate:docs -- --plugin=<id>` · `pnpm generate:docs -- --all` · `pnpm generate:docs:all`
  * (`--all` scans `packages/*` for `@corsair-dev/*` plugins with `index.ts`, excludes corsair/cli/mcp/ui.)
  */
+
+import { execFileSync } from 'node:child_process';
 import {
 	existsSync,
 	mkdirSync,
@@ -22,6 +24,14 @@ import {
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+// Shared with the plugin API route, which renders the same Zod→TS strings from
+// the catalog. Two copies would drift.
+import {
+	isObjectLikeType,
+	prettifyTypeBlock,
+	resourceTitle,
+	tableTypeDisplay,
+} from '../apps/docs/lib/plugin-type-format.ts';
 import type {
 	DocSchemaShape,
 	DocsApiEndpoint,
@@ -51,7 +61,7 @@ type PluginDocsExampleCall =
 
 type PluginDocsFile = {
 	displayName?: string;
-	/** Overrides Mintlify frontmatter `description` when set. */
+	/** Overrides the frontmatter `description` when set. */
 	description?: string;
 	/**
 	 * Brand website hostname used for plugin icons (e.g. `scale.com`).
@@ -123,7 +133,7 @@ type PluginDocsFile = {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function docsRoot(repoRoot: string): string {
-	return join(repoRoot, 'docs/plugins');
+	return join(repoRoot, 'apps/docs/content/docs/plugins');
 }
 
 /** Workspace folders that are not Corsair integration plugins. */
@@ -405,7 +415,7 @@ function authTypeCredentialInstructions(
 	}
 }
 
-/** Mintlify/YAML frontmatter: plain `description: foo: bar` breaks on the second `:`. Use a double-quoted scalar. */
+/** YAML frontmatter: plain `description: foo: bar` breaks on the second `:`. Use a double-quoted scalar. */
 function yamlDoubleQuotedScalar(s: string): string {
 	const oneLine = s.replace(/\r\n|\r|\n/g, ' ');
 	return (
@@ -1060,7 +1070,9 @@ function buildMainMdx(opts: {
 			? hasGetCredentials
 				? `Follow [Get Credentials](${base}/get-credentials) if you need help obtaining keys from the provider.`
 				: `Auth methods depend on how you configure \`${exportKey}({ ... })\` — check the plugin source \`*PluginOptions\` type.`
-			: `<Tabs>
+			: `<Tabs items={[${authOrdered
+					.map((t) => JSON.stringify(authTabLabel(t, recommendedAuth)))
+					.join(', ')}]}>
 ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
@@ -1073,7 +1085,7 @@ ${authOrdered
 			factoryOptions,
 		);
 		const extraNote = factoryNote ? `\n\n${factoryNote}` : '';
-		return `<Tab title="${escapeAttr(label)}">
+		return `<Tab value="${escapeAttr(label)}">
 
 ${note}${credentialsLink}${extraNote}
 
@@ -1227,6 +1239,10 @@ title: Overview
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
 ${intro}
 ${overviewNote ? `\n${overviewNote}\n` : ''}
 **What you get:**
@@ -1237,26 +1253,38 @@ ${bullets.map((b) => `- ${b}`).join('\n')}
 
 <Steps>
 
-<Step title="Install">
-<CodeGroup>
-\`\`\`bash npm
+<Step>
+
+## Install
+<Tabs items={["npm", "yarn", "pnpm", "bun"]}>
+<Tab value="npm">
+\`\`\`bash
 npm install corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash yarn
+</Tab>
+<Tab value="yarn">
+\`\`\`bash
 yarn add corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash pnpm
+</Tab>
+<Tab value="pnpm">
+\`\`\`bash
 pnpm install corsair ${npmPackageName}
 \`\`\`
-\`\`\`bash bun
+</Tab>
+<Tab value="bun">
+\`\`\`bash
 bun add corsair ${npmPackageName}
 \`\`\`
-</CodeGroup>
+</Tab>
+</Tabs>
 
 </Step>
 
-<Step title="Add the plugin">
-\`\`\`ts corsair.ts
+<Step>
+
+## Add the plugin
+\`\`\`ts title="corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { ${exportKey} } from '${npmPackageName}';
@@ -1278,12 +1306,16 @@ Multi-tenancy is the default — scope calls with \`corsair.withTenant(id)\`. Se
 
 </Step>
 
-<Step title="Choose authentication">
+<Step>
+
+## Choose authentication
 ${authTabs}
 
 </Step>
 
-<Step title="Connect a tenant">
+<Step>
+
+## Connect a tenant
 ${connectNote}
 
 \`\`\`ts
@@ -1312,9 +1344,9 @@ See the full list on the [API](${base}/api) page.
 
 ${dbSection}${webhooksSection}## What's next
 
-<CardGroup cols={2}>
+<Cards>
 ${cards.join('\n')}
-</CardGroup>
+</Cards>
 `;
 }
 
@@ -1326,94 +1358,8 @@ function escapeCell(s: string | undefined): string {
 		.replace(/\r?\n/g, '<br />');
 }
 
-/** Inline Zod→TS strings use `{ ... }` for objects; used to simplify table cells. */
-function isObjectLikeType(type: string): boolean {
-	return type.includes('{');
-}
-
-/** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
-function tableTypeDisplay(type: string): string {
-	const t = type.trim();
-	if (!isObjectLikeType(t)) return type;
-	if (/\[\]\s*$/.test(t)) return 'object[]';
-	return 'object';
-}
-
 function escapeAttr(s: string): string {
 	return s.replace(/"/g, '&quot;');
-}
-
-function prettifyTypeBlock(type: string): string {
-	const unit = '  ';
-	let out = '';
-	let depth = 0;
-	let i = 0;
-	const n = type.length;
-
-	const appendIndent = () => {
-		out += unit.repeat(depth);
-	};
-
-	while (i < n) {
-		const ch = type[i]!;
-
-		// Array suffix `[]` (e.g. `{ a: string }[]`) — keep on one line, not `}[\n]`
-		if (ch === '[' && type[i + 1] === ']') {
-			out += '[]';
-			i += 2;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '{' || ch === '[' || ch === '(') {
-			out += ch;
-			depth += 1;
-			out += '\n';
-			appendIndent();
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '}' || ch === ']' || ch === ')') {
-			depth = Math.max(0, depth - 1);
-			out = out.replace(/[ \t]+$/g, '');
-			if (!out.endsWith('\n')) out += '\n';
-			appendIndent();
-			out += ch;
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === ',') {
-			out += ',';
-			out += '\n';
-			appendIndent();
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '|') {
-			out = out.replace(/[ \t]+$/g, '');
-			out += ' | ';
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (/\s/.test(ch)) {
-			if (!out.endsWith(' ') && !out.endsWith('\n')) out += ' ';
-			i += 1;
-			continue;
-		}
-
-		out += ch;
-		i += 1;
-	}
-
-	return out.trim();
 }
 
 function renderTypeAccordionItem(label: string, fullType: string): string {
@@ -1423,20 +1369,6 @@ function renderTypeAccordionItem(label: string, fullType: string): string {
 ${prettifyTypeBlock(fullType)}
 \`\`\`
 </Accordion>`;
-}
-
-function titleCaseSegment(s: string): string {
-	if (s.length === 0) return s;
-	return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function resourceTitle(resource: string): string {
-	return resource
-		.replace(/([a-z])([A-Z])/g, '$1 $2')
-		.split(/[\s._]+/)
-		.filter(Boolean)
-		.map(titleCaseSegment)
-		.join(' ');
 }
 
 function formatSchemaShape(
@@ -1450,9 +1382,9 @@ function formatSchemaShape(
 		const display = tableTypeDisplay(shape.type);
 		return `**${kind}:** \`${escapeCell(display)}\`
 
-<AccordionGroup>
+<Accordions>
 ${renderTypeAccordionItem(kind, shape.type)}
-</AccordionGroup>
+</Accordions>
 
 `;
 	}
@@ -1471,9 +1403,9 @@ ${renderTypeAccordionItem(kind, shape.type)}
 		.join('\n');
 	const detailsSection =
 		detailBlocks.length > 0
-			? `<AccordionGroup>
+			? `<Accordions>
 ${detailBlocks.join('\n\n')}
-</AccordionGroup>
+</Accordions>
 
 `
 			: '';
@@ -1484,77 +1416,6 @@ ${detailBlocks.join('\n\n')}
 ${rows}
 
 ${detailsSection}
-`;
-}
-
-function groupKey(shortPath: string): string {
-	const i = shortPath.indexOf('.');
-	return i === -1 ? shortPath : shortPath.slice(0, i);
-}
-
-function methodKey(shortPath: string): string {
-	const i = shortPath.indexOf('.');
-	return i === -1 ? shortPath : shortPath.slice(i + 1);
-}
-
-function buildApiMdx(
-	pluginId: string,
-	title: string,
-	data: PluginDocsIntrospection,
-	apiExamples: PluginDocsFile['apiExamples'],
-): string {
-	const byGroup = new Map<string, typeof data.api>();
-	for (const ep of data.api) {
-		const g = groupKey(ep.shortPath);
-		if (!byGroup.has(g)) byGroup.set(g, []);
-		byGroup.get(g)!.push(ep);
-	}
-	const groupNames = [...byGroup.keys()].sort((a, b) => a.localeCompare(b));
-
-	const sections: string[] = [];
-	for (const g of groupNames) {
-		const endpoints = byGroup.get(g)!;
-		endpoints.sort((a, b) => a.shortPath.localeCompare(b.shortPath));
-		sections.push(`## ${resourceTitle(g)}`);
-		sections.push('');
-		for (const ep of endpoints) {
-			const method = methodKey(ep.shortPath);
-			const risk =
-				ep.riskLevel !== undefined
-					? `\n\n**Risk:** \`${ep.riskLevel}\`${ep.irreversible ? ' · **Irreversible**' : ''}`
-					: '';
-			const desc = ep.description ? `\n\n${ep.description}` : '';
-			sections.push(`### ${method}`);
-			sections.push('');
-			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);
-			sections.push('');
-			const [, ...pathParts] = ep.path.split('.');
-			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
-			const callArgs = formatApiEndpointCallArgs(apiExamples?.[ep.shortPath]);
-			sections.push('```ts');
-			sections.push(`await ${callExpr}(${callArgs});`);
-			sections.push('```');
-			sections.push('');
-			sections.push(formatSchemaShape(ep.input, 'Input'));
-			sections.push(formatSchemaShape(ep.output, 'Output'));
-			sections.push('---');
-			sections.push('');
-		}
-	}
-
-	const apiDescription = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
-	return `---
-title: API
-description: ${yamlDoubleQuotedScalar(apiDescription)}
----
-
-Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
-
-<Info>
-**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
-</Info>
-
-${sections.join('\n')}
 `;
 }
 
@@ -1607,11 +1468,13 @@ title: Database
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
+import { Callout } from 'fumadocs-ui/components/callout';
+
 The ${title} plugin syncs data locally. Use \`corsair.${pluginId}.db.<entity>.search({ data, limit?, offset? })\` with the filters listed per entity.
 
-<Info>
+<Callout type="info">
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
-</Info>
+</Callout>
 
 ${blocks.join('\n')}
 `;
@@ -1689,9 +1552,9 @@ function buildWebhooksMdx(
 			if (entry.wh.responseType) {
 				const rt = entry.wh.responseType;
 				if (isObjectLikeType(rt)) {
-					blocks.push('<AccordionGroup>');
+					blocks.push('<Accordions>');
 					blocks.push(renderTypeAccordionItem('Response data', rt));
-					blocks.push('</AccordionGroup>');
+					blocks.push('</Accordions>');
 					blocks.push('');
 				} else {
 					blocks.push(`**Response \`data\`:** \`${escapeCell(rt)}\`\n\n`);
@@ -1714,11 +1577,14 @@ title: Webhooks
 description: ${yamlDoubleQuotedScalar(whDescription)}
 ---
 
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from 'fumadocs-ui/components/callout';
+
 The ${title} plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/${pluginId}/overview) for setup context and the exact URL shape).
 
-<Info>
+<Callout type="info">
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
-</Info>
+</Callout>
 
 ## Webhook map
 
@@ -1726,7 +1592,7 @@ ${overviewLines.join('\n')}
 
 ## HTTP handler setup
 
-\`\`\`ts app/api/webhook/route.ts
+\`\`\`ts title="app/api/webhook/route.ts"
 import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -1749,8 +1615,8 @@ function pluginMdxExists(pluginDir: string, basename: string): boolean {
 }
 
 /**
- * Ordered list of MDX basenames for docs.json / Mintlify sidebar (matches on-disk names,
- * including legacy `main` / `api-endpoints` until regenerated).
+ * Sidebar order for one plugin, matching the on-disk names (including legacy
+ * `main` until regenerated). `api` has no file; a route renders it.
  */
 function orderedPluginPageBasenames(pluginDir: string): string[] {
 	const out: string[] = [];
@@ -1763,8 +1629,8 @@ function orderedPluginPageBasenames(pluginDir: string): string[] {
 
 	push('get-credentials');
 
-	if (pluginMdxExists(pluginDir, 'api')) push('api');
-	else if (pluginMdxExists(pluginDir, 'api-endpoints')) push('api-endpoints');
+	// No file: `/plugins/<id>/api` is rendered from the catalog by a route.
+	out.push('api');
 
 	push('database');
 	push('webhooks');
@@ -1787,112 +1653,140 @@ function orderedPluginPageBasenames(pluginDir: string): string[] {
 	return out;
 }
 
-type DocsNavEntry = string | { group: string; pages: string[] };
-
-/** Sort key for plugin subgroups under navigation → Plugins → Plugins (display name). */
-function pluginNavGroupSortKey(entry: DocsNavEntry): string {
-	if (typeof entry === 'string') {
-		const m = /^plugins\/([^/]+)\//.exec(entry);
-		if (m) return titleCaseSegment(m[1]);
-		return entry;
-	}
-	if (entry && typeof entry === 'object' && 'group' in entry) {
-		return (entry as { group: string }).group;
-	}
-	return '';
-}
-
-function pluginNavEntryMatches(entry: unknown, pluginId: string): boolean {
-	const prefix = `plugins/${pluginId}/`;
-	if (typeof entry === 'string') {
-		return entry.startsWith(prefix);
-	}
-	if (entry && typeof entry === 'object' && 'pages' in entry) {
-		const pages = (entry as { pages: string[] }).pages;
-		return Array.isArray(pages) && pages.some((p) => p.startsWith(prefix));
-	}
-	return false;
-}
-
 /**
- * Lists `plugins/<pluginId>/*.mdx` and updates `docs/docs.json` so the Mintlify sidebar
- * includes every page in Overview → Get credentials (if present) → API → Database → Webhooks → …
- * order, nested under the plugin display name. Re-sorts plugin groups alphabetically by display name.
+ * Writes the plugin's own `meta.json` (page order) and adds it to the Plugins
+ * tab's `meta.json`, which is how Fumadocs builds a sidebar — there is no
+ * central nav file to rewrite.
  */
-function syncPluginDocsJson(
+function syncPluginMeta(
 	repoRoot: string,
 	pluginId: string,
-	displayGroupTitle: string,
+	displayTitle: string,
 ): void {
-	const pluginDir = join(repoRoot, 'docs/plugins', pluginId);
+	const pluginDir = join(docsRoot(repoRoot), pluginId);
 	if (!existsSync(pluginDir)) {
 		return;
 	}
-
-	const ordered = orderedPluginPageBasenames(pluginDir);
-	if (ordered.length === 0) {
+	const pages = orderedPluginPageBasenames(pluginDir);
+	if (pages.length === 0) {
 		return;
 	}
+	writeJson(join(pluginDir, 'meta.json'), { title: displayTitle, pages });
 
-	const pagePaths = ordered.map((b) => `plugins/${pluginId}/${b}`);
-
-	const docsJsonPath = join(repoRoot, 'docs/docs.json');
-	if (!existsSync(docsJsonPath)) {
-		console.warn(
-			`docs.json not found at ${docsJsonPath}; skipping navigation update.`,
-		);
+	const tabMetaPath = join(docsRoot(repoRoot), 'meta.json');
+	if (!existsSync(tabMetaPath)) {
+		console.warn(`${tabMetaPath} not found; skipping sidebar update.`);
 		return;
 	}
-
-	const raw = readFileSync(docsJsonPath, 'utf8');
-	const doc = JSON.parse(raw) as {
-		navigation: {
-			tabs: {
-				tab: string;
-				groups: { group: string; pages: DocsNavEntry[] }[];
-			}[];
-		};
+	const tabMeta = JSON.parse(readFileSync(tabMetaPath, 'utf8')) as {
+		pages?: string[];
 	};
-
-	const pluginsTab = doc.navigation.tabs.find((t) => t.tab === 'Plugins');
-	const pluginsGroup = pluginsTab?.groups.find((g) => g.group === 'Plugins');
-	if (!pluginsGroup?.pages) {
-		console.warn(
-			'Could not find navigation.tabs → Plugins → group "Plugins"; skipping docs.json.',
-		);
-		return;
-	}
-
-	const { pages } = pluginsGroup;
-	const originalPluginPagesJson = JSON.stringify(pages);
-	const newEntry: DocsNavEntry =
-		pagePaths.length === 1
-			? pagePaths[0]!
-			: { group: displayGroupTitle, pages: pagePaths };
-
-	const idx = pages.findIndex((e) => pluginNavEntryMatches(e, pluginId));
-	if (idx !== -1) {
-		pages[idx] = newEntry;
-	} else {
-		pages.push(newEntry);
-	}
-
-	pages.sort((a, b) =>
-		pluginNavGroupSortKey(a).localeCompare(
-			pluginNavGroupSortKey(b),
+	// Drop any existing entry and re-place it: the order follows display title,
+	// so a renamed plugin has to move, not just get a new title.
+	const existing = tabMeta.pages ?? [];
+	const entries = existing.filter((e) => e !== pluginId);
+	// Insert only. The list is ordered by display name, not by plugin id
+	// ("studiobyai21labs" sits under "ElevenLabs Studio"), so re-sorting it by
+	// id would scramble it.
+	const titles = displayTitlesOf(repoRoot, entries);
+	const sortsAfter = (entry: string) =>
+		(titles.get(entry) ?? titleCaseSegment(entry)).localeCompare(
+			displayTitle,
 			undefined,
-			{
-				sensitivity: 'base',
-				numeric: true,
-			},
-		),
-	);
-
-	if (JSON.stringify(pages) === originalPluginPagesJson) {
+			{ sensitivity: 'base', numeric: true },
+		) > 0;
+	// Never above a separator, which heads its section.
+	let at = entries.findIndex((e) => !e.startsWith('---'));
+	if (at < 0) at = entries.length;
+	while (
+		at < entries.length &&
+		!entries[at]?.startsWith('---') &&
+		!sortsAfter(entries[at] as string)
+	) {
+		at++;
+	}
+	const next = [...entries.slice(0, at), pluginId, ...entries.slice(at)];
+	if (
+		next.length === existing.length &&
+		next.every((e, i) => e === existing[i])
+	)
 		return;
+	tabMeta.pages = next;
+	writeJson(tabMetaPath, tabMeta);
+}
+
+/** Each listed plugin's own `meta.json` title, which is what the order follows. */
+function displayTitlesOf(
+	repoRoot: string,
+	entries: string[],
+): Map<string, string> {
+	const titles = new Map<string, string>();
+	for (const entry of entries) {
+		if (entry.startsWith('---')) continue;
+		const metaPath = join(docsRoot(repoRoot), entry, 'meta.json');
+		if (!existsSync(metaPath)) continue;
+		try {
+			const { title } = JSON.parse(readFileSync(metaPath, 'utf8')) as {
+				title?: string;
+			};
+			if (title) titles.set(entry, title);
+		} catch {
+			// An unreadable meta just falls back to the id-derived title.
+		}
+	}
+	return titles;
+}
+
+/** 2-space JSON with a trailing newline, matching the rest of the repo. */
+function writeJson(path: string, value: unknown): void {
+	writeFileSync(path, `${formatJson(value)}\n`, 'utf8');
+}
+
+/**
+ * Curated call arguments for the API reference, which is a route reading the
+ * explorer catalog — and the catalog carries schemas, not hand-written examples.
+ * One file so `--plugin=<id>` can merge into it without a full `--all` run.
+ */
+function syncApiExamples(
+	repoRoot: string,
+	pluginId: string,
+	apiExamples: PluginDocsFile['apiExamples'],
+): void {
+	const path = join(repoRoot, 'apps/docs/lib/plugin-api-examples.json');
+	const all: Record<string, Record<string, string>> = existsSync(path)
+		? JSON.parse(readFileSync(path, 'utf8'))
+		: {};
+
+	const rendered: Record<string, string> = {};
+	for (const [shortPath, raw] of Object.entries(apiExamples ?? {})) {
+		const args = formatApiEndpointCallArgs(raw);
+		if (args) rendered[shortPath] = args;
 	}
 
-	writeFileSync(docsJsonPath, `${JSON.stringify(doc, null, 2)}\n`, 'utf8');
+	if (Object.keys(rendered).length > 0) all[pluginId] = rendered;
+	else delete all[pluginId];
+
+	writeJson(path, Object.fromEntries(Object.entries(all).sort()));
+}
+
+/**
+ * 2-space JSON with short arrays on one line, which is what biome's formatter
+ * produces — `pnpm lint` fails on these files otherwise, and a plugin PR would
+ * have to remember to run `lint:fix` after `generate:docs`.
+ */
+function formatJson(value: unknown): string {
+	const LINE_WIDTH = 80;
+	return JSON.stringify(value, null, 2).replace(
+		/^(\s*)("[^"]*": )?\[\n([\s\S]*?)\n\s*\](,?)$/gm,
+		(whole, indent: string, key = '', body: string, comma: string) => {
+			const items = body
+				.split('\n')
+				.map((l) => l.trim().replace(/,$/, ''))
+				.join(', ');
+			const line = `${indent}${key}[${items}]${comma}`;
+			return line.length <= LINE_WIDTH && !items.includes('{') ? line : whole;
+		},
+	);
 }
 
 type GeneratePluginDocsOpts = {
@@ -2026,11 +1920,10 @@ async function generatePluginDocsForEntry(
 		);
 	}
 
-	writeFileSync(
-		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData, docsConfig.apiExamples),
-		'utf8',
-	);
+	const legacyApiPage = join(outDir, 'api.mdx');
+	if (existsSync(legacyApiPage)) {
+		unlinkSync(legacyApiPage);
+	}
 	writeFileSync(
 		join(outDir, 'database.mdx'),
 		buildDbMdx(pluginId, title, docData),
@@ -2048,7 +1941,8 @@ async function generatePluginDocsForEntry(
 		unlinkSync(webhooksMdxPath);
 	}
 
-	syncPluginDocsJson(root, pluginId, title);
+	syncPluginMeta(root, pluginId, title);
+	syncApiExamples(root, pluginId, docsConfig.apiExamples);
 
 	const logBits = [
 		`${outDir}`,
@@ -2096,6 +1990,8 @@ async function main() {
 		console.log(
 			`--all: ${dirs.length - failed}/${dirs.length} plugins ok, ${failed} failed.`,
 		);
+		refreshExplorerCatalog(root);
+		writeMintlifyDocs(root, process.argv.slice(2));
 		process.exit(failed > 0 ? 1 : 0);
 	}
 
@@ -2118,6 +2014,68 @@ async function main() {
 	});
 	if (!r.ok) {
 		console.error(r.error);
+		process.exit(1);
+	}
+
+	refreshExplorerCatalog(root);
+	writeMintlifyDocs(root, process.argv.slice(2));
+}
+
+/**
+ * TEMPORARY — remove with `docs/` at the Mintlify cutover. Mintlify still
+ * serves docs.corsair.dev, so a plugin PR has to write both trees or the live
+ * site silently stops tracking the plugins.
+ */
+function writeMintlifyDocs(root: string, argv: string[]): void {
+	try {
+		execFileSync(
+			'pnpm',
+			[
+				'exec',
+				'tsx',
+				'--conditions=dev-source',
+				'scripts/generate-plugin-docs-mintlify.ts',
+				...argv,
+			],
+			{ cwd: root, stdio: 'inherit' },
+		);
+		// The Mintlify generator writes expanded JSON; the committed nav is
+		// biome-formatted, so without this every run shows as a diff.
+		execFileSync('pnpm', ['exec', 'biome', 'format', '--write', 'docs'], {
+			cwd: root,
+			stdio: 'inherit',
+		});
+	} catch {
+		console.error(
+			'\nMintlify docs generation failed. docs/ still serves docs.corsair.dev,\n' +
+				'so commit only once both trees are written.',
+		);
+		process.exit(1);
+	}
+}
+
+/**
+ * `/plugins/<id>/api` renders from the catalog, not from a page, so docs that
+ * are generated without it are stale on arrival. The builder scans every
+ * plugin and writes expanded JSON, hence the format pass biome would otherwise
+ * fail on.
+ */
+function refreshExplorerCatalog(root: string): void {
+	const run = (cmd: string, args: string[]) =>
+		execFileSync(cmd, args, { cwd: root, stdio: 'inherit' });
+	try {
+		run('pnpm', [
+			'exec',
+			'tsx',
+			'--conditions=dev-source',
+			'scripts/build-explorer-catalog.ts',
+		]);
+		run('pnpm', ['exec', 'biome', 'format', '--write', 'explorer/data']);
+	} catch {
+		console.error(
+			'\nCatalog refresh failed. The API page reads explorer/data/plugins/<id>.json,\n' +
+				'so run `pnpm build:explorer-catalog` before committing.',
+		);
 		process.exit(1);
 	}
 }

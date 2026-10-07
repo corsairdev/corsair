@@ -1,0 +1,89 @@
+---
+title: Authentication
+description: Project keys, the bearer header, scope, and rate limits.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Every request authenticates with your project key as a bearer token:
+
+```bash
+curl https://auth.corsair.dev/v1/projects/acme/project \
+  -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
+```
+
+## The key
+
+A project key looks like `ck_cloud_<slug>.<secret>`. The `<slug>` is public and
+also appears in your MCP and runtime URLs, and in the path above. The `<secret>`
+after the dot must stay private.
+
+The slug in the path is cross-checked against the key, so a key can only ever
+answer for its own project. Naming another project's slug returns `404`, not
+`403`: a wrong slug never reveals whether that project exists.
+
+A project key has no tenant scope and no read-only mode. It can mint and revoke
+MCP links for any tenant, write access rows, create tenants, read every
+connection, and read back the key itself. Store it in a server-side secret
+manager.
+
+<Callout type="warn" title="Server-side only, including agents">
+Never ship a `ck_cloud_` key to a browser, a mobile app, or anywhere a user can
+read it. The same applies to agents: any holder can manage the whole project.
+Give an agent an [MCP link](/v1-guides/quickstart) instead, which is bound to
+one tenant at one permission.
+</Callout>
+
+## Reading the key back
+
+A backend that needs its own key (to render it once in a setup screen, say) can
+read it:
+
+```bash
+curl https://auth.corsair.dev/v1/projects/acme/keys \
+  -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
+```
+
+```json
+{ "object": "key", "project_key": "ck_cloud_acme.xxxxxxxx" }
+```
+
+The response repeats the key you authenticated with and is sent
+`Cache-Control: no-store`. Rotate keys in the console; there is no rotation
+endpoint.
+
+## The SDK
+
+The SDK derives both base URLs from the key's slug, so `apiKey` is the only
+required option:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+
+await corsair.manage.project.get();                    // the hub
+await corsair.withInstance('prod').withTenant('usr_8841')
+  .slack.api.chat.postMessage({ channel: '#general', text: 'hi' });
+```
+
+Pass `url` to point the data plane at a local or proxied setup; management
+follows to that same host, so a local override never leaves management calls
+aimed at production. Pass `managementUrl` to move only management.
+
+## Rate limits
+
+Requests are counted per project per minute, in three classes:
+
+| Class | Limit | What counts |
+|-------|-------|-------------|
+| read | 1000 | every `GET` |
+| write | 120 | `PUT`, `PATCH`, `DELETE`, and non-minting `POST` |
+| mint | 60 | `POST /instances`, `POST /mcp/links`, `POST /mcp/links/{id}/rotate`, `POST /connect/sessions` |
+
+Over the limit returns `429` with a `Retry-After` header in seconds.
+
+## Failures
+
+A missing or wrong key returns `401` with an `authentication_error`. See
+[Errors](/v1-guides/errors) for the shape.

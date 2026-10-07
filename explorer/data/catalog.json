@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-23T03:38:50.249Z",
-  "corsairVersion": "0.1.137",
+  "generatedAt": "2026-10-06T13:54:04.305Z",
+  "corsairVersion": "0.1.139",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -2786,7 +2786,7 @@
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 25,
+        "api": 23,
         "webhooks": 1,
         "db": 4
       }
@@ -2877,7 +2877,7 @@
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 35,
+        "api": 37,
         "webhooks": 1,
         "db": 1
       }
@@ -3895,6 +3895,21 @@
         "api": 19,
         "webhooks": 0,
         "db": 4
+      }
+    },
+    {
+      "id": "reducto",
+      "displayName": "Reducto",
+      "description": "Reducto plugin for Corsair",
+      "npmPackageName": "@corsair-dev/reducto",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 20,
+        "webhooks": 0,
+        "db": 1
       }
     },
     {
@@ -48153,12 +48168,6 @@
     {
       "pluginId": "gmail",
       "kind": "api",
-      "shortPath": "messages.delete",
-      "haystack": "messages.delete gmail.api.messages.delete permanently delete a message [destructive · irreversible] destructive"
-    },
-    {
-      "pluginId": "gmail",
-      "kind": "api",
       "shortPath": "messages.get",
       "haystack": "messages.get gmail.api.messages.get get a specific message read"
     },
@@ -48191,12 +48200,6 @@
       "kind": "api",
       "shortPath": "messages.untrash",
       "haystack": "messages.untrash gmail.api.messages.untrash restore a message from the trash write"
-    },
-    {
-      "pluginId": "gmail",
-      "kind": "api",
-      "shortPath": "threads.delete",
-      "haystack": "threads.delete gmail.api.threads.delete permanently delete a thread [destructive · irreversible] destructive"
     },
     {
       "pluginId": "gmail",
@@ -49282,13 +49285,19 @@
       "pluginId": "googledocs",
       "kind": "api",
       "shortPath": "documents.getDocument",
-      "haystack": "documents.getdocument googledocs.api.documents.getdocument retrieve a google doc by id read"
+      "haystack": "documents.getdocument googledocs.api.documents.getdocument retrieve a google doc by id (set includetabscontent for multi-tab documents) read"
     },
     {
       "pluginId": "googledocs",
       "kind": "api",
       "shortPath": "documents.getDocumentPlaintext",
-      "haystack": "documents.getdocumentplaintext googledocs.api.documents.getdocumentplaintext retrieve a google doc as best-effort plain text read"
+      "haystack": "documents.getdocumentplaintext googledocs.api.documents.getdocumentplaintext retrieve a google doc as plain text; optional tabid, tabtitle, or tabindex for a specific tab read"
+    },
+    {
+      "pluginId": "googledocs",
+      "kind": "api",
+      "shortPath": "documents.listDocumentTabs",
+      "haystack": "documents.listdocumenttabs googledocs.api.documents.listdocumenttabs list tab id, title, and hierarchy for a google doc (includes nested tabs) read"
     },
     {
       "pluginId": "googledocs",
@@ -49331,6 +49340,12 @@
       "kind": "api",
       "shortPath": "documents.updateExistingDocument",
       "haystack": "documents.updateexistingdocument googledocs.api.documents.updateexistingdocument apply batchupdate edits (insert/delete/format) to a google doc write"
+    },
+    {
+      "pluginId": "googledocs",
+      "kind": "api",
+      "shortPath": "sheets.readValues",
+      "haystack": "sheets.readvalues googledocs.api.sheets.readvalues read cell values from a spreadsheet (sheets api via spreadsheets.readonly) read"
     },
     {
       "pluginId": "googledocs",
@@ -63281,6 +63296,126 @@
       "kind": "api",
       "shortPath": "users.getSubmitted",
       "haystack": "users.getsubmitted reddit.api.users.getsubmitted get a user's submitted posts read"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "account.configureWebhook",
+      "haystack": "account.configurewebhook reducto.api.account.configurewebhook open the svix webhook portal url for this account write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "account.version",
+      "haystack": "account.version reducto.api.account.version read the reducto api version read"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "classify.classify",
+      "haystack": "classify.classify reducto.api.classify.classify classify a document against a list of categories write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "classify.classifyAsync",
+      "haystack": "classify.classifyasync reducto.api.classify.classifyasync start a classify job and return its job id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "edit.edit",
+      "haystack": "edit.edit reducto.api.edit.edit fill or edit a pdf or docx from natural language instructions write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "edit.editAsync",
+      "haystack": "edit.editasync reducto.api.edit.editasync start an edit job and return its job id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "extract.extract",
+      "haystack": "extract.extract reducto.api.extract.extract extract fields from a document using a json schema write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "extract.extractAsync",
+      "haystack": "extract.extractasync reducto.api.extract.extractasync start an extract job and return its job id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete reducto.api.files.delete delete an uploaded file. free plans return 422 not_applicable; growth and enterprise delete it destructive"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload reducto.api.files.upload upload a file and return a reducto:// file id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "jobs.cancel",
+      "haystack": "jobs.cancel reducto.api.jobs.cancel cancel a running job destructive"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "jobs.delete",
+      "haystack": "jobs.delete reducto.api.jobs.delete delete a job and its stored artifacts. returns 202. free plans return 422 not_applicable destructive"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "jobs.get",
+      "haystack": "jobs.get reducto.api.jobs.get retrieve a job status and, when finished, its result read"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "jobs.list",
+      "haystack": "jobs.list reducto.api.jobs.list list jobs, page by page, using cursor and limit read"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "parse.parse",
+      "haystack": "parse.parse reducto.api.parse.parse parse a document into chunks of text, tables, and figures with bounding boxes write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "parse.parseAsync",
+      "haystack": "parse.parseasync reducto.api.parse.parseasync start a parse job and return its job id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "pipeline.run",
+      "haystack": "pipeline.run reducto.api.pipeline.run run a studio pipeline against a document write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "pipeline.runAsync",
+      "haystack": "pipeline.runasync reducto.api.pipeline.runasync start a studio pipeline job and return its job id write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "split.split",
+      "haystack": "split.split reducto.api.split.split split a document into named sections by page write"
+    },
+    {
+      "pluginId": "reducto",
+      "kind": "api",
+      "shortPath": "split.splitAsync",
+      "haystack": "split.splitasync reducto.api.split.splitasync start a split job and return its job id write"
     },
     {
       "pluginId": "removebg",

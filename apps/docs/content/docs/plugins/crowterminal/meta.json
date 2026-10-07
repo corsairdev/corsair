@@ -1,0 +1,4 @@
+{
+  "title": "Crow Terminal",
+  "pages": ["overview", "api", "database", "webhooks"]
+}
