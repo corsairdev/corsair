@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import type { CoassembleContext } from './index';
 
 export const COASSEMBLE_API_BASE = 'https://api.coassemble.com/api';
 
@@ -8,6 +9,13 @@ export function requireWorkspaceId(workspaceId: string | undefined): string {
 		throw new Error('Coassemble workspace ID is missing');
 	}
 	return workspaceId;
+}
+
+export async function resolveWorkspaceId(
+	ctx: Pick<CoassembleContext, 'options' | 'keys'>,
+): Promise<string> {
+	const stored = await ctx.keys?.get_workspace_id();
+	return requireWorkspaceId(stored || ctx.options.workspaceId);
 }
 
 export async function makeCoassembleRequest<T>(
@@ -35,7 +43,7 @@ export async function makeCoassembleRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
+		url: endpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body

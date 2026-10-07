@@ -1,15 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 
-import { makeCoassembleRequest } from '../client';
+import { makeCoassembleRequest, resolveWorkspaceId } from '../client';
 import type { CoassembleEndpoints } from '../index';
 import type { CoassembleEndpointOutputs } from './types';
 
 export const get: CoassembleEndpoints['getCourses'] = async (ctx, input) => {
-	const workspaceId = ctx.options.workspaceId;
-
-	if (!workspaceId) {
-		throw new Error('Coassemble workspace ID is missing');
-	}
+	const workspaceId = await resolveWorkspaceId(ctx);
 
 	const response = await makeCoassembleRequest<
 		CoassembleEndpointOutputs['getCourses']

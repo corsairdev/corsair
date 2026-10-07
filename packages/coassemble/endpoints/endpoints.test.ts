@@ -8,6 +8,7 @@ import { get as getTrackings } from './tracking';
 import { get as getUsers } from './user';
 
 jest.mock('../client', () => ({
+	...jest.requireActual('../client'),
 	makeCoassembleRequest: jest.fn(),
 }));
 
@@ -27,13 +28,19 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 
-// The endpoints only read `key` and `options`, so the tests supply just those.
-type TestContextFields = Pick<CoassembleContext, 'key' | 'options'>;
+// The endpoints only read `key`, `options` and `keys`, so the tests supply just those.
+type TestContextFields = Pick<CoassembleContext, 'key' | 'options'> & {
+	keys: { get_workspace_id: () => Promise<string | null | undefined> };
+};
 
-function makeCtx(workspaceId: string): CoassembleContext {
+function makeCtx(
+	workspaceId: string,
+	storedWorkspaceId?: string,
+): CoassembleContext {
 	const fields: TestContextFields = {
 		key: 'test-api-key',
 		options: { workspaceId },
+		keys: { get_workspace_id: async () => storedWorkspaceId },
 	};
 	return fields as CoassembleContext;
 }
@@ -158,7 +165,35 @@ describe('Coassemble endpoints', () => {
 		);
 	});
 
-	it('throws when workspace ID is missing', async () => {
+	it('prefers the per-account workspace ID over the plugin option', async () => {
+		await getClients(makeCtx('workspace-123', 'tenant-ws'), {});
+
+		expect(mockMakeRequest).toHaveBeenCalledWith(
+			'v1/headless/clients',
+			'test-api-key',
+			'tenant-ws',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+	});
+
+	it('works with only a per-account workspace ID and no plugin option', async () => {
+		await getClients(makeCtx('', 'tenant-ws'), {});
+
+		expect(mockMakeRequest).toHaveBeenCalledWith(
+			'v1/headless/clients',
+			'test-api-key',
+			'tenant-ws',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+	});
+
+	it('throws when no workspace ID is available anywhere', async () => {
 		await expect(getClients(makeCtx(''), {})).rejects.toThrow(
 			'Coassemble workspace ID is missing',
 		);

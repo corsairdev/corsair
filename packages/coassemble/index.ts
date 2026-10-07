@@ -32,7 +32,7 @@ import { CoassembleSchema } from './schema';
 export type CoassemblePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	workspaceId: string;
+	workspaceId?: string;
 	hooks?: InternalCoassemblePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof coassembleEndpointsNested>;
@@ -129,7 +129,7 @@ const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
 export const coassembleAuthConfig = {
 	api_key: {
-		account: [] as const,
+		account: ['workspace_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
