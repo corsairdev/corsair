@@ -379,7 +379,11 @@ function matchPattern(
 		const p = pSegs[i]!;
 		const a = aSegs[i]!;
 		if (p.startsWith(':')) {
-			params[p.slice(1)] = decodeURIComponent(a);
+			try {
+				params[p.slice(1)] = decodeURIComponent(a);
+			} catch {
+				return null;
+			}
 		} else if (p !== a) {
 			return null;
 		}
