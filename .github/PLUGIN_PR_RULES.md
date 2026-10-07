@@ -27,9 +27,10 @@ Anything else fails the gate. Use `pnpm generate:plugin` to scaffold — it
 produces exactly this footprint. Docs for a *different* plugin are still out
 of scope.
 
-PRs that only touch `packages/<plugin>/plugin-docs.yaml` and/or
-`apps/docs/content/docs/plugins/<plugin>/**` (and that tab's `meta.json` if
-generate added the plugin)
+PRs that only touch `packages/<plugin>/plugin-docs.yaml` and/or that plugin's
+generated output — `apps/docs/content/docs/plugins/<plugin>/**`,
+`docs/plugins/<plugin>/**`, `explorer/data/plugins/<plugin>.json`, and the nav
+and catalog files `generate:docs` rewrites —
 are docs PRs: the plugin gate is skipped (no demo video / R2–R4), and CI
 uses the documentation skip-heavy lane.
 
