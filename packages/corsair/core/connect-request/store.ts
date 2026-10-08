@@ -146,6 +146,24 @@ type LiveRequest = ConnectRequest & {
 	accountId: string;
 };
 
+function parseConnectRequestPayload(
+	payload: unknown,
+): Record<string, unknown> | null {
+	let parsed = payload;
+	if (typeof payload === 'string') {
+		try {
+			parsed = JSON.parse(payload);
+		} catch {
+			return null;
+		}
+	}
+
+	if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+		return null;
+	}
+	return parsed as Record<string, unknown>;
+}
+
 /**
  * The account's live connect-request, or null when its newest connect event is a
  * clear or the request has aged past ttlMs. created_at is a strict per-account
@@ -177,10 +195,8 @@ async function latestConnectEventForAccount(
 			: Date.parse(String(latest.created_at));
 	if (now - requestedAtMs > ttlMs) return null;
 
-	const payload =
-		typeof latest.payload === 'string'
-			? (JSON.parse(latest.payload) as Record<string, unknown>)
-			: ((latest.payload ?? {}) as Record<string, unknown>);
+	const payload = parseConnectRequestPayload(latest.payload);
+	if (!payload) return null;
 	const plugin = payload.plugin;
 	const connectUrl = payload.connectUrl;
 	if (typeof plugin !== 'string' || typeof connectUrl !== 'string') return null;
