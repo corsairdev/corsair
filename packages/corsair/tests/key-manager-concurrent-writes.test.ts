@@ -154,6 +154,38 @@ describe('key manager decryption failures', () => {
 		}
 	});
 
+	it('can explicitly discard an undecryptable integration config for recovery', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const dek = await seedOutlookAccount(database);
+			await database.db
+				.updateTable('corsair_integrations')
+				.set({
+					config: {
+						client_id: encryptConfig({ value: 'client-id' }, dek).value,
+						client_secret: 'corrupted-value',
+					},
+				})
+				.where('name', '=', 'outlook')
+				.execute();
+
+			const km = createIntegrationKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				kek: KEK,
+				database,
+			});
+
+			await km.issue_new_dek({ discardConfig: true });
+			await km.set_client_id('replacement-client-id');
+
+			expect(await km.get_client_id()).toBe('replacement-client-id');
+			expect(await km.get_client_secret()).toBeNull();
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('does not overwrite account config when it cannot be decrypted', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {

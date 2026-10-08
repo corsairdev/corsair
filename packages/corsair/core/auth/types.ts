@@ -168,10 +168,13 @@ export type BaseKeyManager = {
 	get_dek: () => Promise<string>;
 
 	/**
-	 * Issue a new DEK and re-encrypt all associated secrets
+	 * Issue a new DEK and re-encrypt all associated secrets.
+	 *
+	 * Set discardConfig only to recover from an undecryptable stored config. This
+	 * permanently discards the old secrets so replacement credentials can be set.
 	 * @returns The new DEK (for reference, not typically needed)
 	 */
-	issue_new_dek: () => Promise<string>;
+	issue_new_dek: (options?: { discardConfig?: boolean }) => Promise<string>;
 };
 
 /**

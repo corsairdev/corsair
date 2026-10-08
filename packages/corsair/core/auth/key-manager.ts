@@ -220,13 +220,14 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 	const manager = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
+		issue_new_dek: async ({ discardConfig = false } = {}) => {
 			const integration = await ctx.getIntegration();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// Recovery intentionally starts with an empty config after corruption.
+			// Normal rotation decrypts before any write, preserving the old row on failure.
 			let newConfig: Record<string, string> = {};
-			if (integration.dek) {
+			if (integration.dek && !discardConfig) {
 				const oldDek = await decryptDEK(integration.dek, kek);
 				const config = integration.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
@@ -502,13 +503,14 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const manager: Record<string, unknown> = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
+		issue_new_dek: async ({ discardConfig = false } = {}) => {
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// Recovery intentionally starts with an empty config after corruption.
+			// Normal rotation decrypts before any write, preserving the old row on failure.
 			let newConfig: Record<string, string> = {};
-			if (account.dek) {
+			if (account.dek && !discardConfig) {
 				const oldDek = await decryptDEK(account.dek, kek);
 				const config = account.config as Record<string, string>;
 				if (config && Object.keys(config).length > 0) {
