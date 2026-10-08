@@ -70,7 +70,11 @@ describe('connect-request store', () => {
 		}
 	});
 
-	it('ignores a malformed persisted request payload', async () => {
+	it.each([
+		['malformed JSON', '{'],
+		['parsed null', 'null'],
+		['parsed array', '[]'],
+	])('ignores a %s persisted request payload', async (kind, payload) => {
 		const { database, cleanup } = createTestDatabase();
 		try {
 			await seedAccount(database, 'acme', 'linear');
@@ -78,13 +82,13 @@ describe('connect-request store', () => {
 			await database.db
 				.insertInto('corsair_events')
 				.values({
-					id: 'malformed-connect-request',
+					id: `invalid-connect-request-${kind}`,
 					created_at: now,
 					updated_at: now,
 					account_id: 'acct-acme-linear',
 					event_type: 'connect.request',
 					// Simulate a corrupted persisted row that bypassed the typed API.
-					payload: '{' as unknown as Record<string, unknown>,
+					payload: payload as unknown as Record<string, unknown>,
 				})
 				.execute();
 

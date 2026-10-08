@@ -146,6 +146,10 @@ type LiveRequest = ConnectRequest & {
 	accountId: string;
 };
 
+/**
+ * Payload is unknown because persisted event rows may predate the current schema
+ * or have been corrupted outside the typed write path.
+ */
 function parseConnectRequestPayload(
 	payload: unknown,
 ): Record<string, unknown> | null {
