@@ -70,6 +70,29 @@ describe('connect-request store', () => {
 		}
 	});
 
+	it('ignores a malformed persisted request payload', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			const now = new Date();
+			await database.db
+				.insertInto('corsair_events')
+				.values({
+					id: 'malformed-connect-request',
+					created_at: now,
+					updated_at: now,
+					account_id: 'acct-acme-linear',
+					event_type: 'connect.request',
+					payload: '{',
+				})
+				.execute();
+
+			await expect(readConnectRequest(database, 'acme')).resolves.toBeNull();
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('returns the oldest live request across plugins — FIFO, does not drift', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
