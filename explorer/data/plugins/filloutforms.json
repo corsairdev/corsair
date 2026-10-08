@@ -1,0 +1,1344 @@
+{
+  "id": "filloutforms",
+  "displayName": "Fillout",
+  "description": "Form builder for creating advanced surveys, quizzes, and data collection workflows.",
+  "npmPackageName": "@corsair-dev/filloutforms",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "form_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "form_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "filloutforms.api.databases.create",
+      "shortPath": "databases.create",
+      "description": "Create a Zite database with tables and fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ name: string, fields: { type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: {} }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: {}, order: number }[], views: { id: string, name: string, type: string, config?: {} }[], url: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.databases.delete",
+      "shortPath": "databases.delete",
+      "description": "Permanently delete a Zite database",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.databases.get",
+      "shortPath": "databases.get",
+      "description": "List Zite databases for the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, url?: string }[]"
+      }
+    },
+    {
+      "path": "filloutforms.api.databases.getById",
+      "shortPath": "databases.getById",
+      "description": "Get a Zite database with tables, fields, and views",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ id: string, name: string, order: number, primaryFieldId: string, fields: { id: string, name: string, type: string, template: {}, order: number }[], views: { id: string, name: string, type: string, config?: {} }[], url: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Add a field to a Zite table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Permanently delete a Zite field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a Zite field name or template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.forms.getFormMetadata",
+      "shortPath": "forms.getFormMetadata",
+      "description": "Get form metadata including questions and configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "questions",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string }[]"
+          },
+          {
+            "key": "calculations",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "urlParameters",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quiz",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.forms.getForms",
+      "shortPath": "forms.getForms",
+      "description": "List all Fillout forms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ formId: string, name: string }[]"
+      }
+    },
+    {
+      "path": "filloutforms.api.oauth.authorize",
+      "shortPath": "oauth.authorize",
+      "description": "Generate the Fillout OAuth authorization URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirectUri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorizationUrl",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a Zite record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Permanently delete a Zite record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.records.getById",
+      "shortPath": "records.getById",
+      "description": "Get a Zite record by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.records.list",
+      "shortPath": "records.list",
+      "description": "List Zite records with filter, sort, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ id: string, data: {}, fields: {}, createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update fields on a Zite record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.submissions.create",
+      "shortPath": "submissions.create",
+      "description": "Create new form submissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "{ questions: { id: string, value: any }[], urlParameters?: { id: string, name: string, value: string }[], submissionTime?: string, lastUpdatedAt?: string, scheduling?: {}[], payments?: {}[], login?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.submissions.delete",
+      "shortPath": "submissions.delete",
+      "description": "Delete a form submission by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.submissions.getById",
+      "shortPath": "submissions.getById",
+      "description": "Get a single submission by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "submissionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeEditLink",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submission",
+            "optional": false,
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.submissions.list",
+      "shortPath": "submissions.list",
+      "description": "List form submissions with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "finished | in_progress"
+          },
+          {
+            "key": "includeEditLink",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePreview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": false,
+            "type": "{ submissionId: string, submissionTime: string, lastUpdatedAt?: string, questions: { id: string, name: string, type: string, value: any }[], calculations?: { id: string, name: string, type: number | text | duration, value: string }[], urlParameters?: { id: string, name: string, value: string }[], scheduling?: {}[], payments?: {}[], quiz?: {}, login?: {} }[]"
+          },
+          {
+            "key": "totalResponses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.tables.create",
+      "shortPath": "tables.create",
+      "description": "Create a table in a Zite database",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source, name: string, template: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "primaryFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string, template: {}, order: number }[]"
+          },
+          {
+            "key": "views",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string, config?: {} }[]"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.tables.delete",
+      "shortPath": "tables.delete",
+      "description": "Permanently delete a Zite table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.tables.update",
+      "shortPath": "tables.update",
+      "description": "Update Zite table properties such as name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "primaryFieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string, template: {}, order: number }[]"
+          },
+          {
+            "key": "views",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string, config?: {} }[]"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.token.invalidate",
+      "shortPath": "token.invalidate",
+      "description": "Invalidate/revoke an OAuth access token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.webhooks.createDatabase",
+      "shortPath": "webhooks.createDatabase",
+      "description": "Create a Zite database webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "record.created | record.updated | record.deleted | table.created | table.updated | table.deleted | field.created | field.updated | field.deleted[]"
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.webhooks.createForm",
+      "shortPath": "webhooks.createForm",
+      "description": "Create a Fillout form submission webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.webhooks.deleteDatabase",
+      "shortPath": "webhooks.deleteDatabase",
+      "description": "Delete a Zite database webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filloutforms.api.webhooks.listDatabase",
+      "shortPath": "webhooks.listDatabase",
+      "description": "List Zite database webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: number, url: string, events: string[], active: boolean, tableIds?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filloutforms.api.webhooks.removeForm",
+      "shortPath": "webhooks.removeForm",
+      "description": "Remove a Fillout form webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "filloutforms.db.databases.search",
+      "entityName": "databases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filloutforms.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filloutforms.db.records.search",
+      "entityName": "records",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filloutforms.db.submissions.search",
+      "entityName": "submissions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "submissionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "submissionTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filloutforms.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

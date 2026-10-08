@@ -1,0 +1,4831 @@
+{
+  "id": "webflow",
+  "displayName": "Webflow",
+  "description": "Visual web design platform for building, hosting, and managing responsive marketing sites.",
+  "npmPackageName": "@corsair-dev/webflow",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "webflow.api.assets.createAssetFolder",
+      "shortPath": "assets.createAssetFolder",
+      "description": "Create a new asset folder within a site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.deleteAsset",
+      "shortPath": "assets.deleteAsset",
+      "description": "Permanently delete an asset from a site",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.getAsset",
+      "shortPath": "assets.getAsset",
+      "description": "Get details about a specific asset including content type, size, and hosted URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.getAssetFolder",
+      "shortPath": "assets.getAssetFolder",
+      "description": "Get details about a specific asset folder including its assets and parent folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.listAssetFolders",
+      "shortPath": "assets.listAssetFolders",
+      "description": "List all asset folders within a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.listAssets",
+      "shortPath": "assets.listAssets",
+      "description": "List all assets uploaded to a site with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.assets.uploadAsset",
+      "shortPath": "assets.uploadAsset",
+      "description": "Register an asset upload and receive a pre-signed S3 upload URL. The file itself is uploaded to S3 in a second step",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionFields.createCollectionField",
+      "shortPath": "collectionFields.createCollectionField",
+      "description": "Create a custom field in a collection. Fields must be created one at a time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionFields.deleteCollectionField",
+      "shortPath": "collectionFields.deleteCollectionField",
+      "description": "Permanently delete a custom field from a collection schema",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionFields.updateCollectionField",
+      "shortPath": "collectionFields.updateCollectionField",
+      "description": "Update a custom field's display name, help text, or required status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.createBulkCollectionItems",
+      "shortPath": "collectionItems.createBulkCollectionItems",
+      "description": "Create up to 100 collection items in a single request across multiple locales",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.createCollectionItem",
+      "shortPath": "collectionItems.createCollectionItem",
+      "description": "Create a staged item in a collection. Field data keys must use the collection schema field slugs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.createLiveCollectionItem",
+      "shortPath": "collectionItems.createLiveCollectionItem",
+      "description": "Create an item published immediately to the live site, bypassing the staged workflow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.deleteCollectionItem",
+      "shortPath": "collectionItems.deleteCollectionItem",
+      "description": "Permanently delete a single item from a collection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.deleteCollectionItems",
+      "shortPath": "collectionItems.deleteCollectionItems",
+      "description": "Delete multiple collection items in a single request",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.getCollectionItem",
+      "shortPath": "collectionItems.getCollectionItem",
+      "description": "Get a single staged collection item by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.getLiveCollectionItem",
+      "shortPath": "collectionItems.getLiveCollectionItem",
+      "description": "Get the published version of a collection item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.listCollectionItems",
+      "shortPath": "collectionItems.listCollectionItems",
+      "description": "List items in a collection with pagination and filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.publishCollectionItems",
+      "shortPath": "collectionItems.publishCollectionItems",
+      "description": "Publish staged collection items to the live site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.unpublishLiveCollectionItem",
+      "shortPath": "collectionItems.unpublishLiveCollectionItem",
+      "description": "Unpublish a live item and revert it to draft status. The item stays in the collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.unpublishLiveCollectionItems",
+      "shortPath": "collectionItems.unpublishLiveCollectionItems",
+      "description": "Unpublish up to 100 live items and set them to draft. Items stay in the collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.updateCollectionItem",
+      "shortPath": "collectionItems.updateCollectionItem",
+      "description": "Update a staged collection item's field values, draft status, or archive status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.updateCollectionItemLegacy",
+      "shortPath": "collectionItems.updateCollectionItemLegacy",
+      "description": "Deprecated: update staged collection items via the bulk items endpoint. Use updateCollectionItem instead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.updateLiveCollectionItem",
+      "shortPath": "collectionItems.updateLiveCollectionItem",
+      "description": "Update a live collection item, publishing changes immediately to the production site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collectionItems.updateLiveCollectionItems",
+      "shortPath": "collectionItems.updateLiveCollectionItems",
+      "description": "Update up to 100 published items in a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collections.createCollection",
+      "shortPath": "collections.createCollection",
+      "description": "Create a new CMS collection in a site",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collections.deleteCollection",
+      "shortPath": "collections.deleteCollection",
+      "description": "Permanently delete a collection and all its items",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collections.getCollection",
+      "shortPath": "collections.getCollection",
+      "description": "Get a collection including its full field schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.collections.listCollections",
+      "shortPath": "collections.listCollections",
+      "description": "List all CMS collections for a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.comments.listCommentThreads",
+      "shortPath": "comments.listCommentThreads",
+      "description": "List all comment threads for a site. New comments may take up to 5 minutes to appear",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.components.getComponentProperties",
+      "shortPath": "components.getComponentProperties",
+      "description": "Get the default property values of a component definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.fulfillOrder",
+      "shortPath": "ecommerce.fulfillOrder",
+      "description": "Mark an order as fulfilled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.getItemInventory",
+      "shortPath": "ecommerce.getItemInventory",
+      "description": "Get current inventory levels for a SKU item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.getOrder",
+      "shortPath": "ecommerce.getOrder",
+      "description": "Get detailed information about a specific order including customer, items, and payment status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.listOrders",
+      "shortPath": "ecommerce.listOrders",
+      "description": "List all orders for a site with status filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.refundOrder",
+      "shortPath": "ecommerce.refundOrder",
+      "description": "Refund an order, reversing the Stripe charge and setting the order status to refunded",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.unfulfillOrder",
+      "shortPath": "ecommerce.unfulfillOrder",
+      "description": "Mark a previously fulfilled order as unfulfilled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.updateItemInventory",
+      "shortPath": "ecommerce.updateItemInventory",
+      "description": "Update inventory levels for a SKU item, either directly or incrementally",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.ecommerce.updateOrder",
+      "shortPath": "ecommerce.updateOrder",
+      "description": "Update specific fields of an existing order such as fulfillment details and internal notes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.forms.listFormSubmissions",
+      "shortPath": "forms.listFormSubmissions",
+      "description": "List form submissions for a site with pagination and optional filtering by form element id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.pages.getPage",
+      "shortPath": "pages.getPage",
+      "description": "Get page metadata including title, slug, SEO and Open Graph settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.pages.getPageDom",
+      "shortPath": "pages.getPageDom",
+      "description": "Get page content nodes for a static page, including text, image, form, search-button, and component-instance nodes. This is not the complete DOM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.pages.listPages",
+      "shortPath": "pages.listPages",
+      "description": "List all static and CMS-driven pages for a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.pages.updatePageMetadata",
+      "shortPath": "pages.updatePageMetadata",
+      "description": "Update page-level metadata including SEO and Open Graph fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.sites.getCustomDomains",
+      "shortPath": "sites.getCustomDomains",
+      "description": "List all custom domains configured for a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.sites.getSite",
+      "shortPath": "sites.getSite",
+      "description": "Get detailed information about a specific site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.sites.listSites",
+      "shortPath": "sites.listSites",
+      "description": "List all Webflow sites accessible to the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.sites.publishSite",
+      "shortPath": "sites.publishSite",
+      "description": "Publish a site, making staged changes live. Rate limited to 1 successful publish per minute",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.sites.updateSite",
+      "shortPath": "sites.updateSite",
+      "description": "Update site properties such as name and parent folder (Enterprise workspaces only)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.token.getTokenAuthorizedBy",
+      "shortPath": "token.getTokenAuthorizedBy",
+      "description": "Get information about the user who authorized the access token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.webhooks.deleteWebhook",
+      "shortPath": "webhooks.deleteWebhook",
+      "description": "Remove a webhook by id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "webflow.api.webhooks.listWebhooks",
+      "shortPath": "webhooks.listWebhooks",
+      "description": "List all app-created webhooks registered for a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "component_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "webflow.db.assetFolders.search",
+      "entityName": "assetFolders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentFolder",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.assets.search",
+      "entityName": "assets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "siteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hostedUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalFileName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.collectionItems.search",
+      "entityName": "collectionItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cmsLocaleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastPublished",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDraft",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.collections.search",
+      "entityName": "collections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "singularName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.orders.search",
+      "entityName": "orders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "acceptedOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fulfilledOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "refundedOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastUpdated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.sites.search",
+      "entityName": "sites",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "previewUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastPublished",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "webflow.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggerType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

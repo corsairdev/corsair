@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Clients,
 	Me,
@@ -608,7 +609,7 @@ const togglEndpointMeta = {
 	},
 	'clients.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a client [DESTRUCTIVE]',
+		description: 'Delete a client',
 	},
 	'projects.list': {
 		riskLevel: 'read',
@@ -619,7 +620,7 @@ const togglEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Update a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project and its time entries [DESTRUCTIVE]',
+		description: 'Delete a project and its time entries',
 	},
 	'tasks.list': { riskLevel: 'read', description: 'List tasks in a project' },
 	'tasks.get': { riskLevel: 'read', description: 'Get a task by id' },
@@ -627,14 +628,14 @@ const togglEndpointMeta = {
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
 	'tasks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task [DESTRUCTIVE]',
+		description: 'Delete a task',
 	},
 	'tags.list': { riskLevel: 'read', description: 'List tags in a workspace' },
 	'tags.create': { riskLevel: 'write', description: 'Create a tag' },
 	'tags.update': { riskLevel: 'write', description: 'Rename a tag' },
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag [DESTRUCTIVE]',
+		description: 'Delete a tag',
 	},
 	'timeEntries.list': {
 		riskLevel: 'read',
@@ -662,7 +663,7 @@ const togglEndpointMeta = {
 	},
 	'timeEntries.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a time entry [DESTRUCTIVE]',
+		description: 'Delete a time entry',
 	},
 	'me.getLogged': {
 		riskLevel: 'read',
@@ -738,7 +739,7 @@ const togglEndpointMeta = {
 	},
 	'organizations.deleteGroup': {
 		riskLevel: 'destructive',
-		description: 'Delete an organization group [DESTRUCTIVE]',
+		description: 'Delete an organization group',
 	},
 	'organizations.getUsers': {
 		riskLevel: 'read',
@@ -770,7 +771,7 @@ const togglEndpointMeta = {
 	},
 	'projects.deleteGroup': {
 		riskLevel: 'destructive',
-		description: 'Delete a project group [DESTRUCTIVE]',
+		description: 'Delete a project group',
 	},
 	'timeEntries.bulkEdit': {
 		riskLevel: 'write',
@@ -790,7 +791,7 @@ const togglEndpointMeta = {
 	},
 	'webhooks.deleteSubscription': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook subscription [DESTRUCTIVE]',
+		description: 'Delete a webhook subscription',
 	},
 	'smail.sendDemo': {
 		riskLevel: 'write',
@@ -862,6 +863,10 @@ export function toggl<const T extends TogglPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the Toggl API token. Throws AuthMissingError when the stored
+		 * key is missing, so the request is not sent as Basic auth of `:api_token`.
+		 */
 		keyBuilder: async (ctx: TogglKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -869,7 +874,10 @@ export function toggl<const T extends TogglPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('toggl', 'api_key');
+				}
+				return res;
 			}
 
 			return '';

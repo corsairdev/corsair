@@ -1,0 +1,1165 @@
+{
+  "id": "betterproposals",
+  "displayName": "Better Proposals",
+  "description": "Proposal software for creating, sending, and tracking client sales documents online.",
+  "npmPackageName": "@corsair-dev/betterproposals",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "betterproposals.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a new company record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, DemoCompany?: string | number | null, CompanyName: string, CompanyCRMID?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DeletedBy?: string | number | null } | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get details for a specific company by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, DemoCompany?: string | number | null, CompanyName: string, CompanyCRMID?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DeletedBy?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "Get all companies in the account with optional pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, DemoCompany?: string | number | null, CompanyName: string, CompanyCRMID?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DeletedBy?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.currencies.get",
+      "shortPath": "currencies.get",
+      "description": "Get details for a specific currency by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, CurrencyName?: string | null, CurrencySymbol?: string | null, CurrencyCode?: string | null, ZeroDecimal?: string | number | null, StripeSupport?: string | number | null, PaypalSupport?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.currencies.list",
+      "shortPath": "currencies.list",
+      "description": "Get all currencies supported in Better Proposals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, CurrencyName?: string | null, CurrencySymbol?: string | null, CurrencyCode?: string | null, ZeroDecimal?: string | number | null, StripeSupport?: string | number | null, PaypalSupport?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.documentTypes.create",
+      "shortPath": "documentTypes.create",
+      "description": "Create a new document type with name and colour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TypeName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "TypeColour",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, TypeName: string, TypeIcon?: string | null, TypeColour?: string | null, TypeNameSingular?: string | null, CategoryIcon?: string | null, DisplayOrder?: string | number | null, NumberOfOutstandingDocuments?: number | null, NumberOfTemplates?: number | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DateDeleted?: string | null, DeletedBy?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.documentTypes.list",
+      "shortPath": "documentTypes.list",
+      "description": "Get all document types available in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, TypeName: string, TypeIcon?: string | null, TypeColour?: string | null, TypeNameSingular?: string | null, CategoryIcon?: string | null, DisplayOrder?: string | number | null, NumberOfOutstandingDocuments?: number | null, NumberOfTemplates?: number | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DateDeleted?: string | null, DeletedBy?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.createCover",
+      "shortPath": "proposals.createCover",
+      "description": "Create a proposal cover design with custom colours, headline, and button",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BrandID",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "CoverName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BGColour",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "Headline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Subheader",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextColour",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TextAlign",
+            "optional": true,
+            "type": "left | center | right | string"
+          },
+          {
+            "key": "ButtonStyle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ButtonText",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ID?: string | number, Name?: string | null, BrandID?: string | number | null, Headline?: string | null, Subheader?: string | null, BGColour?: string | null, TextColour?: string | null, TextAlign?: string | null, ButtonStyle?: string | null, ButtonText?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.get",
+      "shortPath": "proposals.get",
+      "description": "Get detailed information for a specific proposal by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proposal_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getCount",
+      "shortPath": "proposals.getCount",
+      "description": "Get total proposal count across account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getNew",
+      "shortPath": "proposals.getNew",
+      "description": "Get new proposals that have not yet been sent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getOpened",
+      "shortPath": "proposals.getOpened",
+      "description": "Get proposals that have been opened by recipients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getPaid",
+      "shortPath": "proposals.getPaid",
+      "description": "Get proposals that have been paid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getSent",
+      "shortPath": "proposals.getSent",
+      "description": "Get sent proposals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.getSigned",
+      "shortPath": "proposals.getSigned",
+      "description": "Get signed proposals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.proposals.list",
+      "shortPath": "proposals.list",
+      "description": "Get all proposals with optional pagination and document type filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AssignedTo?: string | number | null, BrandID?: string | number | null, ViewType?: string | null, CurrencyCode?: string | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TaxPercentage?: string | null, TaxName?: string | null, Amount?: string | null, AmountDesc?: string | null, Paid?: string | number | null, DatePaid?: string | null, CoverID?: string | number | null, TypeID?: string | number | null, Description?: string | null, SubjectLine?: string | null, PersonalMessage?: string | null, CustomerJourneyID?: string | number | null, DateCreated?: string | null, SignOrder?: string | number | null, OriginalDateSent?: string | null, DateSent?: string | null, QuoteID?: string | number | null, Signed?: string | number | null, SignedName?: string | null, SignedDate?: string | null, SignedTime?: string | null, EditLock?: string | number | null, ProposalPassword?: string | null, CompanyName?: string | null, CompanyCRMID?: string | null, OneOffTotal?: string | null, MonthlyTotal?: string | null, QuarterlyTotal?: string | null, AnnualTotal?: string | null, SignedFirstName?: string | null, SignedSurname?: string | null, SignedEmail?: string | null, CurrencyName?: string | null, CurrencySymbol?: string | null, CRMOpportunityID?: string | number | null, Preview?: string | null, ProposalView?: string | null, Contacts?: { Email?: string | null, FirstName?: string | null, Surname?: string | null, Link?: string | null, Signature?: boolean | string | number | null }[] | null, PriceTables?: { ID?: string | number | null, Title?: string | null, Show?: boolean | null, ForceClientChoice?: boolean | null, DateCreated?: string | null, DisplayOrder?: string | number | null, Items?: { ID?: string | number | null, Label?: string | null, Description?: string | null, Date?: string | null, PriceType?: string | null, UnitCost?: string | null, Cost?: string | null, RecurringType?: string | null, MonthlyCost?: string | null, ShowQuantity?: boolean | null, CanClientSetQuantity?: boolean | null, Quantity?: string | number | null, isQuantityLimited?: boolean | null, QuantityMin?: string | number | null, QuantityMax?: string | number | null, Optional?: boolean | null, Selected?: boolean | null, Selectable?: boolean | null, Discount?: boolean | string | number | null, DiscountType?: boolean | string | number | null, DiscountAmount?: string | null, TableDiscount?: boolean | string | number | null, TableDiscountType?: boolean | string | number | null, TableDiscountAmount?: string | null, TaxExemptionStatus?: boolean | null, DisplayOrder?: string | number | null }[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.quotes.get",
+      "shortPath": "quotes.get",
+      "description": "Get details for a specific quote by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quote_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, Status?: string | number | null, MarkDead?: string | number | null, MarkedDeadBy?: string | number | null, DateMarkedDead?: string | null, CompanyID?: string | number | null, QuoteAmount?: string | null, MonthlyAmount?: string | null, QuarterlyAmount?: string | null, AnnualAmount?: string | null, VatAmount?: string | null, QuoteTotal?: string | null, CreatedBy?: string | number | null, DateCreated?: string | null, DateEdited?: string | null, EditedBy?: string | number | null, DateAccepted?: string | null, DateCompleted?: string | null, Archived?: string | number | null, ArchivedBy?: string | number | null, DateArchived?: string | null, Deleted?: string | number | null, DeletedBy?: string | number | null, DateDeleted?: string | null } | any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.quotes.list",
+      "shortPath": "quotes.list",
+      "description": "Get all quotes with optional pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, Status?: string | number | null, MarkDead?: string | number | null, MarkedDeadBy?: string | number | null, DateMarkedDead?: string | null, CompanyID?: string | number | null, QuoteAmount?: string | null, MonthlyAmount?: string | null, QuarterlyAmount?: string | null, AnnualAmount?: string | null, VatAmount?: string | null, QuoteTotal?: string | null, CreatedBy?: string | number | null, DateCreated?: string | null, DateEdited?: string | null, EditedBy?: string | number | null, DateAccepted?: string | null, DateCompleted?: string | null, Archived?: string | number | null, ArchivedBy?: string | number | null, DateArchived?: string | null, Deleted?: string | number | null, DeletedBy?: string | number | null, DateDeleted?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.settings.get",
+      "shortPath": "settings.get",
+      "description": "Get account settings including tax and timezone information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID?: string | number | null, AccountID?: string | number | null, CurrencyID?: string | number | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, TimeZone?: string | null, CustomerJourneysActive?: string | number | null, CustomerJourneysDefault?: string | number | null, EditedBy?: string | number | null, DateEdited?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.settings.getBrand",
+      "shortPath": "settings.getBrand",
+      "description": "Get brand settings including default currency, tax, and company styling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID?: string | number | null, AccountID?: string | number | null, Default?: string | number | null, PageTitle?: string | null, Name?: string | null, CurrencyID?: string | number | null, Tax?: string | number | null, TaxLabel?: string | null, TaxAmount?: string | null, ShowBadge?: string | number | null, CompanyName?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.settings.listMergeTags",
+      "shortPath": "settings.listMergeTags",
+      "description": "List custom merge tags configured in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, Name?: string | null, Tag?: string | null, Fallback?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Archived?: string | number | null, DateArchived?: string | null, ArchivedBy?: string | number | null, CRMSync?: string | number | null, CRMTagName?: string | null, CRMTagId?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get details for a specific proposal template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, CoverID?: string | number | null, BrandID?: string | number | null, TemplateName?: string | null, Description?: string | null, QuoteAmount?: string | null, MonthlyAmount?: string | null, QuarterlyAmount?: string | null, AnnualAmount?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Default?: string | number | null, Deleted?: string | number | null, IndustryID?: string | number | null, SampleTemplate?: string | number | null, FromMarketplace?: string | number | null, CategoryID?: string | number | null } | any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "betterproposals.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "Get all proposal templates with optional pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ID: string | number, AccountID?: string | number | null, CoverID?: string | number | null, BrandID?: string | number | null, TemplateName?: string | null, Description?: string | null, QuoteAmount?: string | null, MonthlyAmount?: string | null, QuarterlyAmount?: string | null, AnnualAmount?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Default?: string | number | null, Deleted?: string | number | null, IndustryID?: string | number | null, SampleTemplate?: string | number | null, FromMarketplace?: string | number | null, CategoryID?: string | number | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "betterproposals.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CompanyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxLabel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxAmount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CompanyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CompanyCRMID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.covers.search",
+      "entityName": "covers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Headline",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Subheader",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BGColour",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TextColour",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TextAlign",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ButtonStyle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ButtonText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.currencies.search",
+      "entityName": "currencies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencySymbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.documentTypes.search",
+      "entityName": "documentTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TypeName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TypeColour",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TypeNameSingular",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TypeIcon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.mergeTags.search",
+      "entityName": "mergeTags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Fallback",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.proposals.search",
+      "entityName": "proposals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CompanyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CompanyCRMID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CurrencySymbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Preview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ProposalView",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.quotes.search",
+      "entityName": "quotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuoteAmount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuoteTotal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.settings.search",
+      "entityName": "settings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxLabel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TaxAmount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TimeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "betterproposals.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TemplateName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

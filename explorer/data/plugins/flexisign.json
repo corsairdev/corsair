@@ -1,0 +1,70 @@
+{
+  "id": "flexisign",
+  "displayName": "Flexisign",
+  "description": "Flexisign plugin for Corsair",
+  "npmPackageName": "@corsair-dev/flexisign",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "flexisign.api.list.templates",
+      "shortPath": "list.templates",
+      "description": "List all available document templates in FlexiSign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ list: { _id: string, name: string }[], meta: { total: number, limit: number, page: number, pages: number, previousPage?: number | null, nextPage?: number | null } }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

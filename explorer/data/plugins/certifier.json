@@ -1,0 +1,700 @@
+{
+  "id": "certifier",
+  "displayName": "Certifier",
+  "description": "Digital credential platform for issuing certificates, badges, and verifiable achievements.",
+  "npmPackageName": "@corsair-dev/certifier",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "certifier.api.attributes.list",
+      "shortPath": "attributes.list",
+      "description": "List attribute definitions available for credentials, with pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, tag?: string, name?: string, type?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.credentialInteractions.list",
+      "shortPath": "credentialInteractions.list",
+      "description": "List credential interaction events, optionally filtered by credential.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credentialId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, credentialId?: string, eventType?: string, triggeredBy?: string, triggeredAt?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.credentials.createIssueSend",
+      "shortPath": "credentials.createIssueSend",
+      "description": "Create, issue, and send a credential in a single request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "{ name: string, email: string }"
+          },
+          {
+            "key": "issueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publicId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": true,
+            "type": "{ id?: string, name?: string, email?: string }"
+          },
+          {
+            "key": "issueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.credentials.list",
+      "shortPath": "credentials.list",
+      "description": "List credentials with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: {}, customAttributes?: {}, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.credentials.search",
+      "shortPath": "credentials.search",
+      "description": "Search credentials with AND/OR/NOT filters, sort, and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property: id | createdAt | updatedAt | issueDate | expiryDate, order: asc | desc }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, publicId?: string, groupId?: string, status?: string, recipient?: { id?: string, name?: string, email?: string }, issueDate?: string | null, expiryDate?: string | null, attributes?: {}, customAttributes?: {}, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.credentials.send",
+      "shortPath": "credentials.send",
+      "description": "Send an issued credential by email.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deliveryMethod",
+            "optional": false,
+            "type": "email"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publicId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": true,
+            "type": "{ id?: string, name?: string, email?: string }"
+          },
+          {
+            "key": "issueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.designs.list",
+      "shortPath": "designs.list",
+      "description": "List certificate and badge design templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, type?: string, previewUrl?: string | null, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.emailTemplates.list",
+      "shortPath": "emailTemplates.list",
+      "description": "List email templates used for credential delivery.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, subject?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "certifier.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List credential templates (groups) with pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, designIds?: string[], certificateDesignId?: string | null, badgeDesignId?: string | null, emailTemplateId?: string | null, createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "certifier.db.attributes.search",
+      "entityName": "attributes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "certifier.db.credentialInteractions.search",
+      "entityName": "credentialInteractions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "credentialId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eventType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggeredBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggeredAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "certifier.db.credentials.search",
+      "entityName": "credentials",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publicId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "groupId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expiryDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "certifier.db.designs.search",
+      "entityName": "designs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "previewUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "certifier.db.emailTemplates.search",
+      "entityName": "emailTemplates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "certifier.db.groups.search",
+      "entityName": "groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "certificateDesignId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "badgeDesignId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailTemplateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

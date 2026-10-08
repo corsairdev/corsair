@@ -1,0 +1,446 @@
+{
+  "id": "workiom",
+  "displayName": "Workiom",
+  "description": "No-code work management platform combining databases, automations, and team workflows.",
+  "npmPackageName": "@corsair-dev/workiom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "workiom.api.apps.getAll",
+      "shortPath": "apps.getAll",
+      "description": "List Workiom apps via GET /api/services/app/Apps/GetAll",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string, description?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workiom.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get a list's fields, views, and filters via GET /api/services/app/Lists/Get",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "Fields | Views | Filters[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: number, name: string, description?: string, dataType?: number }[]"
+          },
+          {
+            "key": "views",
+            "optional": true,
+            "type": "{ id?: number, name?: string, listId?: string, isDefault?: boolean, viewType?: number, filters?: { fieldId: number, operator: number, value?: any }[] }[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ fieldId: number, operator: number, value?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workiom.api.lists.getAll",
+      "shortPath": "lists.getAll",
+      "description": "Get all lists in a Workiom app via GET /api/services/app/Lists/GetAll",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string",
+            "description": "Workiom app UUID from the app URL or Apps/GetAll"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, appId?: string, name: string, description?: string, fields?: { id: number, name: string, description?: string, dataType?: number }[], views?: { id?: number, name?: string, listId?: string, isDefault?: boolean, viewType?: number, filters?: { fieldId: number, operator: number, value?: any }[] }[], filters?: { fieldId: number, operator: number, value?: any }[] }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workiom.api.records.create",
+      "shortPath": "records.create",
+      "description": "Create a list record via POST /api/services/app/Data/Create?listId=",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{}",
+            "description": "Field ID keys to values, per list metadata"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workiom.api.records.getAll",
+      "shortPath": "records.getAll",
+      "description": "Get list records with sort, pagination, and filters via POST /api/services/app/Data/All",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sorting",
+            "optional": true,
+            "type": "string",
+            "description": "Official sort string, e.g. '11284 ASC' or '11284 DESC'"
+          },
+          {
+            "key": "maxResultCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skipCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ fieldId: number, operator: number, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ _id?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workiom.api.records.update",
+      "shortPath": "records.update",
+      "description": "Replace a list record via PUT /api/services/app/Data/Update?listId=&id=",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record",
+            "optional": false,
+            "type": "{}",
+            "description": "Full record body; PUT replaces the record"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "workiom.db.apps.search",
+      "entityName": "apps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.fields.search",
+      "entityName": "fields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dataType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.filters.search",
+      "entityName": "filters",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fieldId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "operator",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "appId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.recordPages.search",
+      "entityName": "recordPages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.records.search",
+      "entityName": "records",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workiom.db.views.search",
+      "entityName": "views",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "listId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDefault",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewType",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,859 @@
+---
+title: Webhooks
+description: "Canny incoming webhooks: event paths, payloads, and response data."
+---
+
+The Canny plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/canny/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `comments`
+  - `created` (`comments.created`)
+- `posts`
+  - `created` (`posts.created`)
+  - `statusChanged` (`posts.statusChanged`)
+- `votes`
+  - `created` (`votes.created`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Comments
+
+### Created
+
+`comments.created`
+
+Occurs when a new comment is created in Canny
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | Yes | — |
+| `objectType` | `comment` | Yes | — |
+| `type` | `comment.created` | Yes | — |
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  author: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  },
+  board?: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  created: string,
+  deleteStatus?: string | null,
+  imageURLs?: string[],
+  internal?: boolean,
+  likeCount?: number,
+  parentID?: string | null,
+  post?: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  },
+  value: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  created: string,
+  objectType: comment,
+  type: comment.created,
+  object: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board?: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    created: string,
+    deleteStatus?: string | null,
+    imageURLs?: string[],
+    internal?: boolean,
+    likeCount?: number,
+    parentID?: string | null,
+    post?: {
+      id: string,
+      author: {
+        id: string,
+        created: string,
+        email?: string | null,
+        name: string,
+        userID?: string | null,
+        url: string,
+        isAdmin: boolean,
+        avatarURL?: string | null
+      },
+      board: {
+        id: string,
+        created: string,
+        isPrivate: boolean,
+        name: string,
+        postCount: number,
+        privateComments?: boolean,
+        token?: string,
+        url: string
+      },
+      category?: {
+        id: string,
+        name: string,
+        url?: string,
+        postCount?: number,
+        parentID?: string | null
+      } | null,
+      commentCount: number,
+      created: string,
+      details?: string,
+      eta?: string | null,
+      imageURLs?: string[],
+      score: number,
+      status: string,
+      tags?: {
+        id: string,
+        name: string,
+        url?: string,
+        postCount?: number
+      }[],
+      title: string,
+      url: string,
+      owner?: {
+        id: string,
+        created: string,
+        email?: string | null,
+        name: string,
+        userID?: string | null,
+        url: string,
+        isAdmin: boolean,
+        avatarURL?: string | null
+      } | null,
+      customFields?: {
+      }
+    },
+    value: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canny({
+    webhookHooks: {
+        comments: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Posts
+
+### Created
+
+`posts.created`
+
+Occurs when a new post is created in Canny
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | Yes | — |
+| `objectType` | `post` | Yes | — |
+| `type` | `post.created` | Yes | — |
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  author: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  },
+  board: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  category?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number,
+    parentID?: string | null
+  } | null,
+  commentCount: number,
+  created: string,
+  details?: string,
+  eta?: string | null,
+  imageURLs?: string[],
+  score: number,
+  status: string,
+  tags?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number
+  }[],
+  title: string,
+  url: string,
+  owner?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  } | null,
+  customFields?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  created: string,
+  objectType: post,
+  type: post.created,
+  object: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canny({
+    webhookHooks: {
+        posts: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Changed
+
+`posts.statusChanged`
+
+Occurs when a post's status is changed in Canny
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | Yes | — |
+| `objectType` | `post` | Yes | — |
+| `type` | `post.status_changed` | Yes | — |
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  author: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  },
+  board: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  category?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number,
+    parentID?: string | null
+  } | null,
+  commentCount: number,
+  created: string,
+  details?: string,
+  eta?: string | null,
+  imageURLs?: string[],
+  score: number,
+  status: string,
+  tags?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number
+  }[],
+  title: string,
+  url: string,
+  owner?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  } | null,
+  customFields?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  created: string,
+  objectType: post,
+  type: post.status_changed,
+  object: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canny({
+    webhookHooks: {
+        posts: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Votes
+
+### Created
+
+`votes.created`
+
+Occurs when a new vote is cast in Canny
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | Yes | — |
+| `objectType` | `vote` | Yes | — |
+| `type` | `vote.created` | Yes | — |
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  board?: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  by?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  } | null,
+  created: string,
+  post?: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  },
+  voter?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  created: string,
+  objectType: vote,
+  type: vote.created,
+  object: {
+    id: string,
+    board?: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    by?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    created: string,
+    post?: {
+      id: string,
+      author: {
+        id: string,
+        created: string,
+        email?: string | null,
+        name: string,
+        userID?: string | null,
+        url: string,
+        isAdmin: boolean,
+        avatarURL?: string | null
+      },
+      board: {
+        id: string,
+        created: string,
+        isPrivate: boolean,
+        name: string,
+        postCount: number,
+        privateComments?: boolean,
+        token?: string,
+        url: string
+      },
+      category?: {
+        id: string,
+        name: string,
+        url?: string,
+        postCount?: number,
+        parentID?: string | null
+      } | null,
+      commentCount: number,
+      created: string,
+      details?: string,
+      eta?: string | null,
+      imageURLs?: string[],
+      score: number,
+      status: string,
+      tags?: {
+        id: string,
+        name: string,
+        url?: string,
+        postCount?: number
+      }[],
+      title: string,
+      url: string,
+      owner?: {
+        id: string,
+        created: string,
+        email?: string | null,
+        name: string,
+        userID?: string | null,
+        url: string,
+        isAdmin: boolean,
+        avatarURL?: string | null
+      } | null,
+      customFields?: {
+      }
+    },
+    voter?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canny({
+    webhookHooks: {
+        votes: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -16,21 +16,32 @@ Corsair acts as a secure intermediary between your AI agents and external APIs. 
 
 ## Documentation Index
 
-### Getting Started
-- [Introduction](/docs/introduction): Introduction to Corsair.
-- [Quickstart](/docs/getting-started/quickstart): Set up Corsair in minutes.
+The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.dev/llms.txt).
 
-### Core Concepts
-- [API Keys](/docs/concepts/api-key): Managing API key integrations.
-- [OAuth](/docs/concepts/oauth): Setting up OAuth credentials and authorization flows.
-- [Webhooks](/docs/guides/webhooks): Configuring and handling webhooks.
-- [Workflows](/docs/guides/workflows): Multi-step agent execution workflows.
+### Getting started
+- [Introduction](https://docs.corsair.dev/introduction): What Corsair is and when to use it.
+- [Quick start](https://docs.corsair.dev/quick-start): A working integration in five steps, powered by Hub.
+- [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent): One prompt from an empty app to a connected integration.
 
-### Platform & Architecture
-- [Model Context Protocol (MCP)](/docs/mcp-adapters/overview): Connecting Corsair to Anthropic, OpenAI, or LangChain agents via MCP.
-- [Studio](/docs/studio/overview): Using the Corsair Studio dashboard.
-- [Production Deployments](/docs/production/oauth-process): Configuring production OAuth callbacks.
+### Frameworks & adapters
+- [Frameworks](https://docs.corsair.dev/frameworks/next): Mount Corsair on Next.js, Express, Hono, Remix, and more.
+- [React hooks & Corsair Connect](https://docs.corsair.dev/adapters/react): Typed React hooks plus `<CorsairProvider>`, which opens a connect dialog and resumes the failed work when a tenant isn't connected.
+- [Vanilla client](https://docs.corsair.dev/adapters/client): Typed fetch wrapper for the management API, any JS runtime.
 
-### Plugins & Integrations
-- [Built-in Plugins](/docs/guides/plugins): List of supported plugins (e.g. GitHub, Slack, Hubspot, Zendesk, Calendly, Bitwarden, Zoom).
-- [Creating Custom Plugins](/docs/guides/create-your-own-plugin): How to scaffold and write a new integration plugin.
+### Core concepts
+- [Auth](https://docs.corsair.dev/concepts/auth): OAuth, API keys, and bot tokens, handled automatically.
+- [Permissions](https://docs.corsair.dev/concepts/permissions): Gate destructive agent actions behind human approval.
+- [Multi-tenancy](https://docs.corsair.dev/concepts/multi-tenancy): Per-tenant credentials and data from one flag.
+- [Database](https://docs.corsair.dev/concepts/database): Six tables, always-fresh integration data, tenant-scoped.
+- [Webhooks](https://docs.corsair.dev/concepts/webhooks): One verified endpoint for every provider event.
+- [Error handling](https://docs.corsair.dev/concepts/error-handling): Retry strategies and the typed AuthMissingError / ReconnectRequiredError.
+
+### Use with AI
+- [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
+
+### Hub
+- [Overview](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals — stores none of your credentials.
+
+### Plugins & integrations
+- [Plugins](https://docs.corsair.dev/guides/plugins): Hundreds of integrations (GitHub, Slack, HubSpot, Zendesk, Calendly, Zoom, and more).
+- [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin): Scaffold and write a new integration plugin.

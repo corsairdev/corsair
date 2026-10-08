@@ -1,0 +1,1855 @@
+{
+  "id": "spotify",
+  "displayName": "Spotify",
+  "description": "Music streaming platform for playlists, tracks, albums, artists, and listening data APIs.",
+  "npmPackageName": "@corsair-dev/spotify",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "spotify.api.albums.get",
+      "shortPath": "albums.get",
+      "description": "Get info about an album",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "album_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total_tracks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "available_markets",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "external_urls",
+            "optional": true,
+            "type": "{ spotify?: string }"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "release_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "release_date_precision",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "artists",
+            "optional": true,
+            "type": "{ id: string, name: string, external_urls?: { spotify?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.albums.getNewReleases",
+      "shortPath": "albums.getNewReleases",
+      "description": "Get new album releases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albums",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.albums.getTracks",
+      "shortPath": "albums.getTracks",
+      "description": "Get tracks from an album",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.albums.search",
+      "shortPath": "albums.search",
+      "description": "Search for albums",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "album"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albums",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.artists.get",
+      "shortPath": "artists.get",
+      "description": "Get info about an artist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_urls",
+            "optional": true,
+            "type": "{ spotify?: string }"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ total?: number }"
+          },
+          {
+            "key": "genres",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "popularity",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.artists.getAlbums",
+      "shortPath": "artists.getAlbums",
+      "description": "Get albums by an artist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_groups",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.artists.getRelatedArtists",
+      "shortPath": "artists.getRelatedArtists",
+      "description": "Get artists related to an artist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "artists",
+            "optional": true,
+            "type": "{ id: string, name: string, external_urls?: { spotify?: string }, followers?: { total?: number }, genres?: string[], href?: string, images?: { url: string, height?: number | null, width?: number | null }[], popularity?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.artists.getTopTracks",
+      "shortPath": "artists.getTopTracks",
+      "description": "Get top tracks for an artist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "{ id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.artists.search",
+      "shortPath": "artists.search",
+      "description": "Search for artists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "artist"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "artists",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, external_urls?: { spotify?: string }, followers?: { total?: number }, genres?: string[], href?: string, images?: { url: string, height?: number | null, width?: number | null }[], popularity?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.library.getLikedTracks",
+      "shortPath": "library.getLikedTracks",
+      "description": "Get the current user's liked tracks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ added_at?: string, track?: { id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.myData.getFollowedArtists",
+      "shortPath": "myData.getFollowedArtists",
+      "description": "Get artists followed by the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "artist"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "artists",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, cursors?: { after?: string | null }, total?: number, items?: { id: string, name: string, external_urls?: { spotify?: string }, followers?: { total?: number }, genres?: string[], href?: string, images?: { url: string, height?: number | null, width?: number | null }[], popularity?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.player.addToQueue",
+      "shortPath": "player.addToQueue",
+      "description": "Add a track to the playback queue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.getCurrentlyPlaying",
+      "shortPath": "player.getCurrentlyPlaying",
+      "description": "Get the currently playing track",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_types",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "{ external_urls?: { spotify?: string }, href?: string, type?: string, uri?: string }"
+          },
+          {
+            "key": "progress_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_playing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "{ id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number }"
+          },
+          {
+            "key": "currently_playing_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ disallows?: { resuming?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.player.getRecentlyPlayed",
+      "shortPath": "player.getRecentlyPlayed",
+      "description": "Get recently played tracks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ track?: { id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number }, played_at?: string, context?: { type?: string, href?: string, external_urls?: { spotify?: string }, uri?: string } | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursors",
+            "optional": true,
+            "type": "{ after?: string, before?: string }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.player.pause",
+      "shortPath": "player.pause",
+      "description": "Pause playback",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.resume",
+      "shortPath": "player.resume",
+      "description": "Resume playback",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.setVolume",
+      "shortPath": "player.setVolume",
+      "description": "Set the playback volume",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volume_percent",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.skipToNext",
+      "shortPath": "player.skipToNext",
+      "description": "Skip to the next track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.skipToPrevious",
+      "shortPath": "player.skipToPrevious",
+      "description": "Skip to the previous track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.player.startPlayback",
+      "shortPath": "player.startPlayback",
+      "description": "Start playback of specified content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uris",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ position?: number, uri?: string }"
+          },
+          {
+            "key": "position_ms",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spotify.api.playlists.addItem",
+      "shortPath": "playlists.addItem",
+      "description": "Add a track to a playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uris",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.create",
+      "shortPath": "playlists.create",
+      "description": "Create a new playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collaborative",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collaborative",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, display_name?: string, external_urls?: { spotify?: string } }"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ total?: number }"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "{ href?: string, total?: number }"
+          },
+          {
+            "key": "external_urls",
+            "optional": true,
+            "type": "{ spotify?: string }"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.get",
+      "shortPath": "playlists.get",
+      "description": "Get info about a playlist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additional_types",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collaborative",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, display_name?: string, external_urls?: { spotify?: string } }"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{ total?: number }"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "tracks",
+            "optional": true,
+            "type": "{ href?: string, total?: number }"
+          },
+          {
+            "key": "external_urls",
+            "optional": true,
+            "type": "{ spotify?: string }"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.getTracks",
+      "shortPath": "playlists.getTracks",
+      "description": "Get tracks in a playlist",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "additional_types",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ added_at?: string, added_by?: { id?: string }, is_local?: boolean, track?: { id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.getUserPlaylists",
+      "shortPath": "playlists.getUserPlaylists",
+      "description": "Get the current user's playlists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.removeItem",
+      "shortPath": "playlists.removeItem",
+      "description": "Remove a track from a playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tracks",
+            "optional": false,
+            "type": "{ uri: string }[]"
+          },
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.playlists.search",
+      "shortPath": "playlists.search",
+      "description": "Search for playlists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "playlist"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "playlists",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, description?: string | null, public?: boolean, collaborative?: boolean, owner?: { id: string, display_name?: string, external_urls?: { spotify?: string } }, followers?: { total?: number }, images?: { url: string, height?: number | null, width?: number | null }[], tracks?: { href?: string, total?: number }, external_urls?: { spotify?: string }, href?: string } | null[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.tracks.get",
+      "shortPath": "tracks.get",
+      "description": "Get info about a track",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artists",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          },
+          {
+            "key": "album",
+            "optional": true,
+            "type": "{ id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }"
+          },
+          {
+            "key": "duration_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "explicit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "external_urls",
+            "optional": true,
+            "type": "{ spotify?: string }"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_local",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "popularity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.tracks.getAudioFeatures",
+      "shortPath": "tracks.getAudioFeatures",
+      "description": "Get audio features for a track",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "danceability",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "energy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "loudness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "speechiness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "acousticness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instrumentalness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "liveness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "valence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tempo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "time_signature",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotify.api.tracks.search",
+      "shortPath": "tracks.search",
+      "description": "Search for tracks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "track"
+          },
+          {
+            "key": "market",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tracks",
+            "optional": false,
+            "type": "{ href?: string, limit?: number, next?: string | null, offset?: number, previous?: string | null, total?: number, items?: { id: string, name: string, artists?: { id: string, name: string }[], album?: { id: string, name: string, album_type: string, total_tracks?: number, available_markets?: string[], external_urls?: { spotify?: string }, href?: string, images?: { url: string, height?: number | null, width?: number | null }[], release_date?: string, release_date_precision?: string, artists?: { id: string, name: string, external_urls?: { spotify?: string } }[] }, duration_ms?: number, explicit?: boolean, external_urls?: { spotify?: string }, href?: string, is_local?: boolean, popularity?: number, preview_url?: string | null, track_number?: number }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "spotify.db.albums.search",
+      "entityName": "albums",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "album_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_tracks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "release_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "release_date_precision",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "spotify.db.artists.search",
+      "entityName": "artists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "popularity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "spotify.db.playlistItems.search",
+      "entityName": "playlistItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "playlist_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "track_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "added_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_local",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "spotify.db.playlists.search",
+      "entityName": "playlists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "collaborative",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "spotify.db.tracks.search",
+      "entityName": "tracks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration_ms",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "explicit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_local",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "popularity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "preview_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "track_number",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "spotify.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "id": "bonsai",
+  "displayName": "Bonsai",
+  "description": "Freelance business management for contracts, invoices, proposals, and client billing.",
+  "npmPackageName": "@corsair-dev/bonsai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bonsai.api.clusters.get",
+      "shortPath": "clusters.get",
+      "description": "Get Bonsai cluster details by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cluster",
+            "optional": false,
+            "type": "{ slug: string, name: string, uri: string, plan: { slug: string, uri: string }, release: { version: string, slug: string, package_name: string, service_type: string, uri: string }, space: { path: string, region: string, uri: string }, stats: { docs: number, shards_used: number, data_bytes_used: number }, access: { host: string, port: number, scheme: string }, state: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bonsai.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Retrieve space details by path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private_network",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "cloud",
+            "optional": false,
+            "type": "{ provider: string, region: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bonsai.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List all spaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spaces",
+            "optional": false,
+            "type": "{ path: string, private_network: boolean, cloud: { provider: string, region: string } }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

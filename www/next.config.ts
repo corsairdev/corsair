@@ -12,11 +12,6 @@ const nextConfig: NextConfig = {
 	async redirects() {
 		return [
 			{
-				source: '/integrations/:slug',
-				destination: '/oss/:slug',
-				permanent: true,
-			},
-			{
 				source: '/oss/waitlist',
 				destination: '/oss',
 				permanent: true,

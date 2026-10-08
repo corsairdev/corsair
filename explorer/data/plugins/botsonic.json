@@ -1,0 +1,226 @@
+{
+  "id": "botsonic",
+  "displayName": "Botsonic",
+  "description": "No-code AI chatbot builder trained on your content for customer support automation.",
+  "npmPackageName": "@corsair-dev/botsonic",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "botsonic.api.generateResponse.post",
+      "shortPath": "generateResponse.post",
+      "description": "Generate a response from a Botsonic chatbot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starter_question_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_business_api_request",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_integration_request",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "integration_user_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_unique_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_type",
+            "optional": true,
+            "type": "text | html | markdown | mrkdwn"
+          },
+          {
+            "key": "chat_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "full_history",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chat_history",
+            "optional": true,
+            "type": "{ message?: string, sent?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "answer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "chat_history",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "generated_images",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "follow_up_questions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "human_handoff_status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_options",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "chat_ended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "end_chat_feedback",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botsonic.api.getAllFaqs.get",
+      "shortPath": "getAllFaqs.get",
+      "description": "Retrieve all FAQs for a Botsonic bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "id | bot_id | question | answer | error_reason | status | characters | migration_status | created_at | updated_at"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | number, question?: string, answer?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

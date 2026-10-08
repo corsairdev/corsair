@@ -432,7 +432,7 @@ const vapiEndpointMeta = {
 	},
 	'assistants.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi assistant [DESTRUCTIVE]',
+		description: 'Delete a Vapi assistant',
 	},
 	'calls.list': {
 		riskLevel: 'read',
@@ -452,7 +452,7 @@ const vapiEndpointMeta = {
 	},
 	'calls.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi call [DESTRUCTIVE]',
+		description: 'Delete a Vapi call',
 	},
 	'phoneNumbers.list': {
 		riskLevel: 'read',
@@ -472,7 +472,7 @@ const vapiEndpointMeta = {
 	},
 	'phoneNumbers.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi phone number [DESTRUCTIVE]',
+		description: 'Delete a Vapi phone number',
 	},
 	'squads.list': {
 		riskLevel: 'read',
@@ -492,7 +492,7 @@ const vapiEndpointMeta = {
 	},
 	'squads.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi squad [DESTRUCTIVE]',
+		description: 'Delete a Vapi squad',
 	},
 	'tools.list': {
 		riskLevel: 'read',
@@ -512,7 +512,7 @@ const vapiEndpointMeta = {
 	},
 	'tools.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi tool [DESTRUCTIVE]',
+		description: 'Delete a Vapi tool',
 	},
 	'files.list': {
 		riskLevel: 'read',
@@ -528,7 +528,7 @@ const vapiEndpointMeta = {
 	},
 	'files.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi file [DESTRUCTIVE]',
+		description: 'Delete a Vapi file',
 	},
 	'knowledgeBases.list': {
 		riskLevel: 'read',
@@ -548,7 +548,7 @@ const vapiEndpointMeta = {
 	},
 	'knowledgeBases.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Vapi knowledge base [DESTRUCTIVE]',
+		description: 'Delete a Vapi knowledge base',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof vapiEndpointsNested>;
 

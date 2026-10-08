@@ -1,0 +1,304 @@
+{
+  "id": "ocrwebservice",
+  "displayName": "OCR Web Service",
+  "description": "Cloud OCR service for converting PDFs and images into searchable text content.",
+  "npmPackageName": "@corsair-dev/ocrwebservice",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ocrwebservice.api.account.getCredentials",
+      "shortPath": "account.getCredentials",
+      "description": "Extract the OCR Web Service username from stored credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ocrwebservice.api.account.getInformation",
+      "shortPath": "account.getInformation",
+      "description": "Retrieve remaining pages, subscription plan, and expiration date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AvailablePages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "MaxPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "LastProcessingTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SubcriptionPlan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExpirationDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ocrwebservice.api.account.log",
+      "shortPath": "account.log",
+      "description": "Retrieve OCR processing logs for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reserved",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ocrwebservice.api.ocr.recognize",
+      "shortPath": "ocr.recognize",
+      "description": "OCR an image or document via REST processDocument",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pagerange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tobw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputformat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gettext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "getwords",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "newline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AvailablePages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ProcessedPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "OCRText",
+            "optional": true,
+            "type": "string[][]"
+          },
+          {
+            "key": "OutputFileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaskDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reserved",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ocrwebservice.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "availablePages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maxPages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subscriptionPlan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expirationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastProcessingTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "ocrwebservice.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "outputFileUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processedPages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "availablePages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "taskDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

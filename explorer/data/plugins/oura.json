@@ -1,0 +1,405 @@
+{
+  "id": "oura",
+  "displayName": "Oura",
+  "description": "Wearable health platform API for sleep, readiness, activity, and wellness ring data.",
+  "npmPackageName": "@corsair-dev/oura",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 3,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "oura.api.profile.get",
+      "shortPath": "profile.get",
+      "description": "Get the authenticated user Oura profile and personal info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "biological_sex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "oura.api.summary.getActivity",
+      "shortPath": "summary.getActivity",
+      "description": "Get daily activity summary data for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, class_5_min?: string | null, score?: number | null, active_calories?: number, average_met_minutes?: number, contributors?: { meet_daily_targets?: number | null, move_every_hour?: number | null, recovery_time?: number | null, stay_active?: number | null, training_frequency?: number | null, training_volume?: number | null }, equivalent_walking_distance?: number, high_activity_met_minutes?: number, high_activity_time?: number, inactivity_alerts?: number, low_activity_met_minutes?: number, low_activity_time?: number, medium_activity_met_minutes?: number, medium_activity_time?: number, meters_to_target?: number, non_wear_time?: number, resting_time?: number, sedentary_met_minutes?: number, sedentary_time?: number, steps?: number, target_calories?: number, target_meters?: number, total_calories?: number, day: string, timestamp: string }[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "oura.api.summary.getReadiness",
+      "shortPath": "summary.getReadiness",
+      "description": "Get daily readiness summary data for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, contributors?: { activity_balance?: number | null, body_temperature?: number | null, hrv_balance?: number | null, previous_day_activity?: number | null, previous_night?: number | null, recovery_index?: number | null, resting_heart_rate?: number | null, sleep_balance?: number | null }, day: string, score?: number | null, temperature_deviation?: number | null, temperature_trend_deviation?: number | null, timestamp: string }[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "oura.api.summary.getSleep",
+      "shortPath": "summary.getSleep",
+      "description": "Get daily sleep summary data for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, contributors?: { deep_sleep?: number | null, efficiency?: number | null, latency?: number | null, rem_sleep?: number | null, restfulness?: number | null, timing?: number | null, total_sleep?: number | null }, day: string, score?: number | null, timestamp: string }[]"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "oura.webhooks.summary.dailyActivity",
+      "shortPath": "summary.dailyActivity",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "oura({\n    webhookHooks: {\n        summary: {\n            dailyActivity: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "oura.webhooks.summary.dailyReadiness",
+      "shortPath": "summary.dailyReadiness",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "oura({\n    webhookHooks: {\n        summary: {\n            dailyReadiness: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "oura.webhooks.summary.dailySleep",
+      "shortPath": "summary.dailySleep",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "oura({\n    webhookHooks: {\n        summary: {\n            dailySleep: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "oura.db.dailyActivity.search",
+      "entityName": "dailyActivity",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "day",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "active_calories",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "steps",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_calories",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "high_activity_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "medium_activity_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "low_activity_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sedentary_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resting_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "oura.db.dailyReadiness.search",
+      "entityName": "dailyReadiness",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "day",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperature_deviation",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "temperature_trend_deviation",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "oura.db.dailySleep.search",
+      "entityName": "dailySleep",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "day",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "oura.db.personalInfo.search",
+      "entityName": "personalInfo",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "age",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "weight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "biological_sex",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

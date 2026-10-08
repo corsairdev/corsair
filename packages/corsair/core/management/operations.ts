@@ -24,6 +24,8 @@ import type {
 	ConnectLink,
 	CreateConnectLinkInput,
 	CreateTenantInput,
+	DisconnectInput,
+	DisconnectResult,
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
@@ -282,6 +284,79 @@ export async function getConnectionStatus(
 	return result;
 }
 
+/**
+ * Removes a tenant's stored connection for a plugin: deletes the account row
+ * (the encrypted credentials) and its account-scoped entities and events in one
+ * transaction. The approval queue (`corsair_permissions`) is left alone — it has
+ * its own `(tenant_id, plugin)` lifecycle and expiry. Idempotent: a missing
+ * connection resolves to `{ disconnected: false }` rather than an error, so
+ * callers can revoke blindly.
+ */
+export async function disconnectConnection(
+	internal: CorsairInternalConfig,
+	input: DisconnectInput,
+): Promise<DisconnectResult> {
+	const rawPlugin = input?.plugin;
+	if (typeof rawPlugin !== 'string' || !rawPlugin.trim()) {
+		throw badRequest('plugin is required', { missingFields: ['plugin'] });
+	}
+	const plugin = rawPlugin.trim();
+	findPlugin(internal, plugin); // 404 for an unknown plugin
+	const rawTenantId = input?.tenantId;
+	if (rawTenantId != null && typeof rawTenantId !== 'string') {
+		throw badRequest('tenantId must be a string');
+	}
+	const tenantId = rawTenantId?.trim() || 'default';
+	if (!internal.database) return { ok: true, disconnected: false };
+
+	const db = internal.database.db;
+	const integration = await db
+		.selectFrom('corsair_integrations')
+		.select(['id'])
+		.where('name', '=', plugin)
+		.executeTakeFirst();
+	if (!integration) return { ok: true, disconnected: false };
+
+	// Serialize with the account writers (ensureAccount / ensureIntegrationAccountRow)
+	// by locking the integration row first inside the transaction. All three
+	// operations take the same lock before they read-then-write accounts, so a
+	// connect and a disconnect cannot interleave and leave live credentials behind.
+	// On SQLite the single-writer model provides the same guarantee without a lock.
+	let disconnected = false;
+	await db.transaction().execute(async (trx) => {
+		if (internal.database?.isPg === true) {
+			await trx
+				.selectFrom('corsair_integrations')
+				.select('id')
+				.where('name', '=', plugin)
+				.forUpdate()
+				.execute();
+		}
+
+		const accountsForPair = trx
+			.selectFrom('corsair_accounts')
+			.select('id')
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id);
+		await trx
+			.deleteFrom('corsair_events')
+			.where('account_id', 'in', accountsForPair)
+			.execute();
+		await trx
+			.deleteFrom('corsair_entities')
+			.where('account_id', 'in', accountsForPair)
+			.execute();
+		const deleted = await trx
+			.deleteFrom('corsair_accounts')
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id)
+			.executeTakeFirst();
+		disconnected = (deleted.numDeletedRows ?? 0n) > 0n;
+	});
+
+	return { ok: true, disconnected };
+}
+
 // ── permissions ────────────────────────────────────────────────────────────
 
 export async function getPermission(
@@ -406,6 +481,7 @@ async function createManualConnectLink(
 	return {
 		connectUrl: url.toString(),
 		expiresAt: new Date(Date.now() + DEFAULT_CONNECT_LINK_TTL_MS).toISOString(),
+		tenantId,
 	};
 }
 
@@ -436,6 +512,7 @@ async function createHubModeConnectLink(
 	return {
 		connectUrl: session.connectUrl,
 		expiresAt: session.expiresAt,
+		tenantId,
 	};
 }
 

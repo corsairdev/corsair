@@ -1,0 +1,138 @@
+---
+title: API
+description: "API reference for Botsonic: every `botsonic.api.*` operation with input and output types."
+---
+
+Every `botsonic.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Generate Response
+
+### post
+
+`generateResponse.post`
+
+Generate a response from a Botsonic chatbot
+
+**Risk:** `write`
+
+```ts
+await corsair.botsonic.api.generateResponse.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input_text` | `string` | Yes | — |
+| `chat_id` | `string` | Yes | — |
+| `source` | `string` | No | — |
+| `starter_question_id` | `string` | No | — |
+| `is_business_api_request` | `boolean` | No | — |
+| `is_integration_request` | `boolean` | No | — |
+| `integration_user_identifier` | `string` | No | — |
+| `user_unique_identifier` | `string` | No | — |
+| `response_type` | `text \| html \| markdown \| mrkdwn` | No | — |
+| `chat_user_id` | `string` | No | — |
+| `extra_metadata` | `object` | No | — |
+| `full_history` | `boolean` | No | — |
+| `message_id` | `string` | No | — |
+| `timeout` | `number` | No | — |
+| `chat_history` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="chat_history full type">
+
+```ts
+{
+  message?: string,
+  sent?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer` | `string` | Yes | — |
+| `message_id` | `string` | No | — |
+| `sources` | `any[]` | No | — |
+| `chat_history` | `any[]` | No | — |
+| `generated_images` | `string[]` | No | — |
+| `follow_up_questions` | `string[]` | No | — |
+| `human_handoff_status` | `boolean` | No | — |
+| `user_options` | `any[]` | No | — |
+| `chat_ended` | `boolean` | No | — |
+| `end_chat_feedback` | `string` | No | — |
+
+
+
+---
+
+## Get All Faqs
+
+### get
+
+`getAllFaqs.get`
+
+Retrieve all FAQs for a Botsonic bot
+
+**Risk:** `read`
+
+```ts
+await corsair.botsonic.api.getAllFaqs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_query` | `string` | No | — |
+| `sort_by` | `id \| bot_id \| question \| answer \| error_reason \| status \| characters \| migration_status \| created_at \| updated_at` | No | — |
+| `sort_order` | `asc \| desc` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `total` | `number` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | number,
+  question?: string,
+  answer?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

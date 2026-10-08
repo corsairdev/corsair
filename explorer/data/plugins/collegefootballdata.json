@@ -1,0 +1,2238 @@
+{
+  "id": "collegefootballdata",
+  "displayName": "College Football Data",
+  "description": "College football statistics API for games, teams, players, and historical NCAA data.",
+  "npmPackageName": "@corsair-dev/collegefootballdata",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 56,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "collegefootballdata.api.account.getUserInfo",
+      "shortPath": "account.getUserInfo",
+      "description": "Get the authenticated user's subscription tier and remaining API calls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "patronLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tierName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monthlyLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCalls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "usedCalls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resetAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sharedPool",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "collegefootballdata.api.betting.getLines",
+      "shortPath": "betting.getLines",
+      "description": "Get betting lines and totals by game and provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gameId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "away",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, season?: number | null, seasonType?: string | null, week?: number | null, startDate?: string | null, homeTeamId?: number | null, homeTeam?: string | null, homeConference?: string | null, homeClassification?: string | null, homeScore?: number | null, awayTeamId?: number | null, awayTeam?: string | null, awayConference?: string | null, awayClassification?: string | null, awayScore?: number | null, lines?: {}[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.coaches.list",
+      "shortPath": "coaches.list",
+      "description": "Get coaching records and history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxYear",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, firstName?: string | null, lastName?: string | null, hireDate?: string | null, seasons?: { teamId?: number | null, school?: string | null, conference?: string | null, year?: number | null, games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null, winPercentage?: number | null, preseasonRank?: number | null, postseasonRank?: number | null, srs?: number | null, spOverall?: number | null, spOffense?: number | null, spDefense?: number | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.conferences.list",
+      "shortPath": "conferences.list",
+      "description": "List all conferences across every NCAA division",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, shortName?: string | null, abbreviation?: string | null, classification?: string | null, memberCount?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.conferences.listDivisions",
+      "shortPath": "conferences.listDivisions",
+      "description": "List conference divisions with active years and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ teamId?: number | null, team?: string | null, conferenceId?: number | null, conference?: string | null, conferenceAbbreviation?: string | null, classification?: string | null, conferenceDivision?: string | null, startYear?: number | null, endYear?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.conferences.listMemberships",
+      "shortPath": "conferences.listMemberships",
+      "description": "Get current/historical conference memberships for teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ teamId?: number | null, team?: string | null, conferenceId?: number | null, conference?: string | null, conferenceAbbreviation?: string | null, classification?: string | null, conferenceDivision?: string | null, startYear?: number | null, endYear?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.draft.listPicks",
+      "shortPath": "draft.listPicks",
+      "description": "List NFL draft picks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ collegeAthleteId?: string | null, nflAthleteId?: string | null, collegeId?: number | null, collegeTeam?: string | null, collegeConference?: string | null, nflTeamId?: number | null, nflTeam?: string | null, year?: number | null, overall?: number | null, round?: number | null, pick?: number | null, name?: string | null, position?: string | null, height?: number | null, weight?: number | null, preDraftRanking?: number | null, preDraftPositionRanking?: number | null, preDraftGrade?: number | null, hometownInfo?: { city?: string | null, state?: string | null, country?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.draft.listPositions",
+      "shortPath": "draft.listPositions",
+      "description": "Get the standardized list of NFL draft positions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, abbreviation?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.draft.listTeams",
+      "shortPath": "draft.listTeams",
+      "description": "List NFL teams used in draft endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ location?: string | null, nickname?: string | null, displayName?: string | null, logo?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.drives.list",
+      "shortPath": "drives.list",
+      "description": "Get drive-level data for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offense",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defense",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offenseConference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defenseConference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, gameId?: number | null, offense?: string | null, offenseConference?: string | null, defense?: string | null, defenseConference?: string | null, driveNumber?: number | null, scoring?: boolean | null, startPeriod?: number | null, startYardline?: number | null, startYardsToGoal?: number | null, startTime?: {} | null, endPeriod?: number | null, endYardline?: number | null, endYardsToGoal?: number | null, endTime?: {} | null, elapsed?: {} | null, plays?: number | null, yards?: number | null, driveResult?: string | null, isHomeOffense?: boolean | null, startOffenseScore?: number | null, startDefenseScore?: number | null, endOffenseScore?: number | null, endDefenseScore?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.games.getAdvancedBoxScore",
+      "shortPath": "games.getAdvancedBoxScore",
+      "description": "Get advanced analytics for a single game",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gameInfo",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "players",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "collegefootballdata.api.games.getGamesAndResults",
+      "shortPath": "games.getGamesAndResults",
+      "description": "Get game schedules and results, filtered by season/week/team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "away",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, season?: number | null, week?: number | null, seasonType?: string | null, startDate?: string | null, startTimeTBD?: boolean | null, completed?: boolean | null, neutralSite?: boolean | null, conferenceGame?: boolean | null, attendance?: number | null, venueId?: number | null, venue?: string | null, homeId?: number | null, homeTeam?: string | null, homeClassification?: string | null, homeConference?: string | null, homePoints?: number | null, homeLineScores?: number[] | null, homePostgameWinProbability?: number | null, homePregameElo?: number | null, homePostgameElo?: number | null, awayId?: number | null, awayTeam?: string | null, awayClassification?: string | null, awayConference?: string | null, awayPoints?: number | null, awayLineScores?: number[] | null, awayPostgameWinProbability?: number | null, awayPregameElo?: number | null, awayPostgameElo?: number | null, excitementIndex?: number | null, highlights?: string | null, notes?: string | null, playoff?: { competition?: string | null, format?: string | null, round?: string | null, roundName?: string | null, bracketSlot?: string | null, homeSeed?: number | null, awaySeed?: number | null, bowlName?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.games.getMedia",
+      "shortPath": "games.getMedia",
+      "description": "Get broadcast/media information for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          },
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, season?: number | null, week?: number | null, seasonType?: string | null, startTime?: string | null, isStartTimeTBD?: boolean | null, homeTeam?: string | null, homeConference?: string | null, awayTeam?: string | null, awayConference?: string | null, mediaType?: string | null, outlet?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.games.getPlayerStats",
+      "shortPath": "games.getPlayerStats",
+      "description": "Get player-level stats for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, teams?: {}[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.games.getTeamStats",
+      "shortPath": "games.getTeamStats",
+      "description": "Get team-level box score stats for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, teams?: {}[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.metrics.getFieldGoalExpectedPoints",
+      "shortPath": "metrics.getFieldGoalExpectedPoints",
+      "description": "Get field goal expected-points model data by distance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ yardsToGoal?: number | null, distance?: number | null, expectedPoints?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.metrics.getPregameWinProbabilities",
+      "shortPath": "metrics.getPregameWinProbabilities",
+      "description": "Get pregame win probabilities for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, week?: number | null, seasonType?: string | null, gameId?: number | null, homeTeam?: string | null, awayTeam?: string | null, spread?: number | null, homeWinProbability?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.metrics.getWinProbability",
+      "shortPath": "metrics.getWinProbability",
+      "description": "Get play-by-play win probabilities for a game",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gameId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, homeId?: number | null, home?: string | null, awayId?: number | null, away?: string | null, playId?: string | null, playText?: string | null, homeScore?: number | null, awayScore?: number | null, down?: number | null, distance?: number | null, homeWinProbability?: number | null, spread?: number | null, yardLine?: number | null, homeBall?: boolean | null, playNumber?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.players.getReturningProduction",
+      "shortPath": "players.getReturningProduction",
+      "description": "Get returning production splits by team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, team?: string | null, conference?: string | null, totalPPA?: number | null, totalPassingPPA?: number | null, totalReceivingPPA?: number | null, totalRushingPPA?: number | null, percentPPA?: number | null, percentPassingPPA?: number | null, percentReceivingPPA?: number | null, percentRushingPPA?: number | null, usage?: number | null, passingUsage?: number | null, receivingUsage?: number | null, rushingUsage?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.players.getUsage",
+      "shortPath": "players.getUsage",
+      "description": "Get player usage rates for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "playerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, usage?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.players.listTransferPortal",
+      "shortPath": "players.listTransferPortal",
+      "description": "Get transfer portal entries for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, firstName?: string | null, lastName?: string | null, position?: string | null, origin?: string | null, destination?: string | null, transferDate?: string | null, rating?: number | null, stars?: number | null, eligibility?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.players.search",
+      "shortPath": "players.search",
+      "description": "Search for players by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchTerm",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, team?: string | null, name?: string | null, firstName?: string | null, lastName?: string | null, weight?: number | null, height?: number | null, jersey?: number | null, position?: string | null, hometown?: string | null, teamColor?: string | null, teamColorSecondary?: string | null, activeStartYear?: number | null, activeEndYear?: number | null, teamStints?: {}[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.plays.list",
+      "shortPath": "plays.list",
+      "description": "Get play-by-play data for games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offense",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defense",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offenseConference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defenseConference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "playType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, driveId?: string | null, id?: string | null, driveNumber?: number | null, playNumber?: number | null, offense?: string | null, offenseConference?: string | null, offenseScore?: number | null, defense?: string | null, defenseConference?: string | null, defenseScore?: number | null, home?: string | null, away?: string | null, period?: number | null, clock?: {} | null, offenseTimeouts?: number | null, defenseTimeouts?: number | null, yardline?: number | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, yardsGained?: number | null, scoring?: boolean | null, playType?: string | null, playText?: string | null, ppa?: number | null, wallclock?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.plays.listStats",
+      "shortPath": "plays.listStats",
+      "description": "Get player-level statistics tied to individual plays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "gameId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athleteId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, season?: number | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, teamScore?: number | null, opponentScore?: number | null, driveId?: string | null, playId?: string | null, period?: number | null, clock?: {} | null, yardsToGoal?: number | null, down?: number | null, distance?: number | null, athleteId?: string | null, athleteName?: string | null, statType?: string | null, stat?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.plays.listStatTypes",
+      "shortPath": "plays.listStatTypes",
+      "description": "List play-level stat type definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, text?: string | null, abbreviation?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.plays.listTypes",
+      "shortPath": "plays.listTypes",
+      "description": "List available play types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, text?: string | null, abbreviation?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ppa.getByPlayerGame",
+      "shortPath": "ppa.getByPlayerGame",
+      "description": "Get player PPA by game",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "playerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, week?: number | null, seasonType?: string | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, opponent?: string | null, averagePPA?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ppa.getByPlayerSeason",
+      "shortPath": "ppa.getByPlayerSeason",
+      "description": "Get player PPA aggregated by season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "playerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, id?: string | null, name?: string | null, position?: string | null, team?: string | null, conference?: string | null, averagePPA?: {} | null, totalPPA?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ppa.getByTeamGame",
+      "shortPath": "ppa.getByTeamGame",
+      "description": "Get team PPA by game",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs | ii | iii"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, season?: number | null, week?: number | null, seasonType?: string | null, team?: string | null, conference?: string | null, opponent?: string | null, offense?: { overall?: number | null, passing?: number | null, rushing?: number | null, firstDown?: number | null, secondDown?: number | null, thirdDown?: number | null } | null, defense?: { overall?: number | null, passing?: number | null, rushing?: number | null, firstDown?: number | null, secondDown?: number | null, thirdDown?: number | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ppa.getByTeamSeason",
+      "shortPath": "ppa.getByTeamSeason",
+      "description": "Get team PPA (Predicted Points Added) by season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, conference?: string | null, team?: string | null, offense?: { overall?: number | null, passing?: number | null, rushing?: number | null, firstDown?: number | null, secondDown?: number | null, thirdDown?: number | null } | null, defense?: { overall?: number | null, passing?: number | null, rushing?: number | null, firstDown?: number | null, secondDown?: number | null, thirdDown?: number | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ppa.getPredictedPoints",
+      "shortPath": "ppa.getPredictedPoints",
+      "description": "Get expected points for a down/distance across field positions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "down",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "distance",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ yardLine?: number | null, predictedPoints?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.rankings.list",
+      "shortPath": "rankings.list",
+      "description": "Get poll rankings by season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, seasonType?: string | null, week?: number | null, polls?: { poll?: string | null, isFinal?: boolean | null, ranks?: { rank?: number | null, teamId?: number | null, school?: string | null, conference?: string | null, firstPlaceVotes?: number | null, points?: number | null }[] | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ratings.getConferenceSP",
+      "shortPath": "ratings.getConferenceSP",
+      "description": "Get SP+ ratings aggregated by conference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, conference?: string | null, rating?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ratings.getElo",
+      "shortPath": "ratings.getElo",
+      "description": "Get Elo ratings by season or team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, elo?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ratings.getFPI",
+      "shortPath": "ratings.getFPI",
+      "description": "Get ESPN FPI (Football Power Index) ratings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, fpi?: number | null, resumeRanks?: {} | null, efficiencies?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ratings.getSP",
+      "shortPath": "ratings.getSP",
+      "description": "Get SP+ team ratings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, rating?: number | null, ranking?: number | null, secondOrderWins?: number | null, sos?: number | null, offense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, defense?: { ranking?: number | null, rating?: number | null, success?: number | null, explosiveness?: number | null, rushing?: number | null, passing?: number | null, standardDowns?: number | null, passingDowns?: number | null, runRate?: number | null, pace?: number | null } | null, specialTeams?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.ratings.getSRS",
+      "shortPath": "ratings.getSRS",
+      "description": "Get SRS (Simple Rating System) ratings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, conference?: string | null, division?: string | null, ranking?: number | null, rating?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.recruiting.getGroupRatings",
+      "shortPath": "recruiting.getGroupRatings",
+      "description": "Get recruiting data grouped by position",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recruitType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endYear",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ team?: string | null, conference?: string | null, positionGroup?: string | null, averageRating?: number | null, totalRating?: number | null, commits?: number | null, averageStars?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.recruiting.getTeamRankings",
+      "shortPath": "recruiting.getTeamRankings",
+      "description": "Get team recruiting class rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, rank?: number | null, points?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.recruiting.getTeamTalent",
+      "shortPath": "recruiting.getTeamTalent",
+      "description": "Get composite team talent rankings for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, team?: string | null, talent?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.recruiting.listRecruits",
+      "shortPath": "recruiting.listRecruits",
+      "description": "Get recruit rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, athleteId?: string | null, recruitType?: string | null, year?: number | null, ranking?: number | null, name?: string | null, school?: string | null, committedTo?: string | null, position?: string | null, height?: number | null, weight?: number | null, stars?: number | null, rating?: number | null, city?: string | null, stateProvince?: string | null, country?: string | null, hometownInfo?: { city?: string | null, state?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null, countyFips?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.seasonTypes.list",
+      "shortPath": "seasonTypes.list",
+      "description": "Get the valid season-type vocabulary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "regular | postseason | both | allstar | spring_regular | spring_postseason[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.getAdvancedGameStats",
+      "shortPath": "stats.getAdvancedGameStats",
+      "description": "Get advanced team metrics at the game level",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opponent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: {} | null, defense?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.getAdvancedSeasonStats",
+      "shortPath": "stats.getAdvancedSeasonStats",
+      "description": "Get advanced season-level team statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeGarbageTime",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startWeek",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endWeek",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, opponent?: string | null, offense?: {} | null, defense?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.getGameHavocStats",
+      "shortPath": "stats.getGameHavocStats",
+      "description": "Get havoc statistics aggregated by game",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opponent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ gameId?: number | null, season?: number | null, seasonType?: string | null, week?: number | null, team?: string | null, conference?: string | null, opponent?: string | null, opponentConference?: string | null, offense?: {} | null, defense?: {} | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.getPlayerSeasonStats",
+      "shortPath": "stats.getPlayerSeasonStats",
+      "description": "Get aggregated season statistics for players",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seasonType",
+            "optional": true,
+            "type": "regular | postseason | both | allstar | spring_regular | spring_postseason"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, playerId?: string | null, player?: string | null, position?: string | null, team?: string | null, conference?: string | null, category?: string | null, statType?: string | null, stat?: string | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.getTeamSeasonStats",
+      "shortPath": "stats.getTeamSeasonStats",
+      "description": "Get basic season stats aggregated by team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startWeek",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endWeek",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ season?: number | null, team?: string | null, conference?: string | null, statName?: string | null, statValue?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.stats.listCategories",
+      "shortPath": "stats.listCategories",
+      "description": "List valid team statistical category names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.getATSRecords",
+      "shortPath": "teams.getATSRecords",
+      "description": "Get against-the-spread (ATS) summary by team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, teamId?: number | null, team?: string | null, conference?: string | null, games?: number | null, atsWins?: number | null, atsLosses?: number | null, atsPushes?: number | null, avgCoverMargin?: number | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.getMatchup",
+      "shortPath": "teams.getMatchup",
+      "description": "Get head-to-head matchup history between two teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxYear",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team1Wins",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team2Wins",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ties",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "games",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.getRecords",
+      "shortPath": "teams.getRecords",
+      "description": "Get team win-loss records for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ year?: number | null, teamId?: number | null, team?: string | null, classification?: string | null, conference?: string | null, division?: string | null, expectedWins?: number | null, total?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, conferenceGames?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, homeGames?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, awayGames?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, neutralSiteGames?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, regularSeason?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null, postseason?: { games?: number | null, wins?: number | null, losses?: number | null, ties?: number | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.getRoster",
+      "shortPath": "teams.getRoster",
+      "description": "Get a team's roster for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "classification",
+            "optional": true,
+            "type": "fbs | fcs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, team?: string | null, weight?: number | null, height?: number | null, jersey?: number | null, year?: number | null, position?: string | null, homeCity?: string | null, homeState?: string | null, homeCountry?: string | null, homeLatitude?: number | null, homeLongitude?: number | null, homeCountyFIPS?: string | null, recruitIds?: (string | number)[] | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams, optionally filtered by conference/season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, school: string, mascot?: string | null, abbreviation?: string | null, alternateNames?: string[] | null, conference?: string | null, division?: string | null, classification?: string | null, color?: string | null, alternateColor?: string | null, logos?: string[] | null, twitter?: string | null, location?: { id?: number | null, name?: string | null, city?: string | null, state?: string | null, zip?: string | null, countryCode?: string | null, timezone?: string | null, latitude?: number | null, longitude?: number | null, elevation?: string | null, capacity?: number | null, constructionYear?: number | null, grass?: boolean | null, dome?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.listFBS",
+      "shortPath": "teams.listFBS",
+      "description": "List FBS teams for a season",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, school: string, mascot?: string | null, abbreviation?: string | null, alternateNames?: string[] | null, conference?: string | null, division?: string | null, classification?: string | null, color?: string | null, alternateColor?: string | null, logos?: string[] | null, twitter?: string | null, location?: { id?: number | null, name?: string | null, city?: string | null, state?: string | null, zip?: string | null, countryCode?: string | null, timezone?: string | null, latitude?: number | null, longitude?: number | null, elevation?: string | null, capacity?: number | null, constructionYear?: number | null, grass?: boolean | null, dome?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.teams.listFCS",
+      "shortPath": "teams.listFCS",
+      "description": "List FCS teams for a season/conference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, school: string, mascot?: string | null, abbreviation?: string | null, alternateNames?: string[] | null, conference?: string | null, division?: string | null, classification?: string | null, color?: string | null, alternateColor?: string | null, logos?: string[] | null, twitter?: string | null, location?: { id?: number | null, name?: string | null, city?: string | null, state?: string | null, zip?: string | null, countryCode?: string | null, timezone?: string | null, latitude?: number | null, longitude?: number | null, elevation?: string | null, capacity?: number | null, constructionYear?: number | null, grass?: boolean | null, dome?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "collegefootballdata.api.venues.list",
+      "shortPath": "venues.list",
+      "description": "List venues with metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, city?: string | null, state?: string | null, zip?: string | null, countryCode?: string | null, timezone?: string | null, latitude?: number | null, longitude?: number | null, elevation?: string | null, capacity?: number | null, constructionYear?: number | null, grass?: boolean | null, dome?: boolean | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "collegefootballdata.db.coaches.search",
+      "entityName": "coaches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hireDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "collegefootballdata.db.conferences.search",
+      "entityName": "conferences",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "collegefootballdata.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "school",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mascot",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "division",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alternateColor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "twitter",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "collegefootballdata.db.venues.search",
+      "entityName": "venues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elevation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "capacity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "constructionYear",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "grass",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dome",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

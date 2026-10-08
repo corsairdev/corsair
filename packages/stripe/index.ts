@@ -316,7 +316,7 @@ const stripeEndpointMeta = {
 	},
 	'customers.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Stripe customer [DESTRUCTIVE]',
+		description: 'Delete a Stripe customer',
 	},
 	'customers.get': {
 		riskLevel: 'read',

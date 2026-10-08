@@ -62,8 +62,7 @@ export const getAgencyBillingPlan: InsightoaiEndpoints['getAgencyBillingPlan'] =
 
 // Insighto documents this as POST /api/v1/pricing with an optional body of
 // model/voice IDs (llm_model_id, voice_stt_id, voice_tts_id) — not a bare GET.
-// Verified against the public operation surface (docs.insighto.ai + Composio
-// Insighto toolkit mirror of the same op names).
+// Verified against the public operation surface (docs.insighto.ai).
 export const getPricingForUser: InsightoaiEndpoints['getPricingForUser'] =
 	async (ctx, input) => {
 		const result = await makeInsightoaiRequest<

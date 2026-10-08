@@ -1,0 +1,4238 @@
+{
+  "id": "outlook",
+  "displayName": "Outlook",
+  "description": "Microsoft email and calendar service for messages, events, contacts, and scheduling.",
+  "npmPackageName": "@corsair-dev/outlook",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 37,
+    "webhooks": 6,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "subscription_id",
+        "client_state"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "outlook.api.calendars.create",
+      "shortPath": "calendars.create",
+      "description": "Create a new calendar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hexColor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hexColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefaultCalendar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canEdit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canShare",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canViewPrivateItems",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRemovable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isTallyingResponses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowedOnlineMeetingProviders",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "defaultOnlineMeetingProvider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.calendars.delete",
+      "shortPath": "calendars.delete",
+      "description": "Delete a calendar",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.calendars.get",
+      "shortPath": "calendars.get",
+      "description": "Get a calendar by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hexColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefaultCalendar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canEdit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canShare",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canViewPrivateItems",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRemovable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isTallyingResponses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowedOnlineMeetingProviders",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "defaultOnlineMeetingProvider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.calendars.list",
+      "shortPath": "calendars.list",
+      "description": "List all calendars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, name?: string, color?: string, hexColor?: string, isDefaultCalendar?: boolean, canEdit?: boolean, canShare?: boolean, canViewPrivateItems?: boolean, isRemovable?: boolean, isTallyingResponses?: boolean, owner?: { name?: string, address?: string }, changeKey?: string, allowedOnlineMeetingProviders?: string[], defaultOnlineMeetingProvider?: string }[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.deltaLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "givenName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "surname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ address: string, name?: string }[]"
+          },
+          {
+            "key": "mobilePhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "homePhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessPhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "officeLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "givenName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "surname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "mobilePhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "homePhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "businessPhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "officeLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, givenName?: string, surname?: string, middleName?: string | null, nickName?: string | null, emailAddresses?: { name?: string, address?: string }[], mobilePhone?: string | null, homePhones?: string[], businessPhones?: string[], jobTitle?: string | null, companyName?: string | null, department?: string | null, officeLocation?: string | null, birthday?: string | null, personalNotes?: string, parentFolderId?: string, createdDateTime?: string, lastModifiedDateTime?: string, changeKey?: string, categories?: string[] }[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "givenName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "surname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ address: string, name?: string }[]"
+          },
+          {
+            "key": "mobilePhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "homePhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "businessPhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "officeLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "givenName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "surname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "mobilePhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "homePhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "businessPhones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "officeLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.cancel",
+      "shortPath": "events.cancel",
+      "description": "Cancel a calendar event and notify attendees",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.create",
+      "shortPath": "events.create",
+      "description": "Create a calendar event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_datetime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_datetime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time_zone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attendees_info",
+            "optional": true,
+            "type": "{ email: string, name?: string, type?: string }[]"
+          },
+          {
+            "key": "is_online_meeting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "online_meeting_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_as",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }[]"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOrganizer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOnlineMeeting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isReminderOn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sensitivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iCalUId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseStatus",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "seriesMasterId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeeting",
+            "optional": true,
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+          },
+          {
+            "key": "onlineMeetingProvider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeetingUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminderMinutesBeforeStart",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowNewTimeProposals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideAttendees",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.decline",
+      "shortPath": "events.decline",
+      "description": "Decline a calendar event invitation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendResponse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proposedNewTime",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.delete",
+      "shortPath": "events.delete",
+      "description": "Delete a calendar event",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.findMeetingTimes",
+      "shortPath": "events.findMeetingTimes",
+      "description": "Find available meeting times for attendees",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "timeConstraint",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "locationConstraint",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meetingDuration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxCandidates",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOrganizerOptional",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "returnSuggestionReasons",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minimumAttendeePercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prefer_timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingTimeSuggestions",
+            "optional": true,
+            "type": "{ confidence?: number, organizerAvailability?: string, suggestionReason?: string, meetingTimeSlot?: { start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string } }, attendeeAvailability?: { attendee?: { type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }, availability?: string }[], locations?: { displayName?: string, address?: {} }[] }[]"
+          },
+          {
+            "key": "emptySuggestionsReason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get a calendar event by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }[]"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOrganizer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOnlineMeeting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isReminderOn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sensitivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iCalUId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseStatus",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "seriesMasterId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeeting",
+            "optional": true,
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+          },
+          {
+            "key": "onlineMeetingProvider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeetingUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminderMinutesBeforeStart",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowNewTimeProposals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideAttendees",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.getSchedule",
+      "shortPath": "events.getSchedule",
+      "description": "Get free/busy schedule for a calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedules",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "startTime",
+            "optional": false,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "endTime",
+            "optional": false,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "availabilityViewInterval",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.list",
+      "shortPath": "events.list",
+      "description": "List calendar events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand_recurring_events",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string }, location?: { displayName?: string, address?: {} }, locations?: { displayName?: string, address?: {} }[], attendees?: { type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[], organizer?: { name?: string, address?: string }, isAllDay?: boolean, isCancelled?: boolean, isOrganizer?: boolean, isDraft?: boolean, isOnlineMeeting?: boolean, isReminderOn?: boolean, showAs?: string, importance?: string, sensitivity?: string, type?: string, iCalUId?: string, webLink?: string, changeKey?: string, categories?: string[], recurrence?: {} | null, responseStatus?: {}, responseRequested?: boolean, seriesMasterId?: string | null, transactionId?: string | null, createdDateTime?: string, lastModifiedDateTime?: string, onlineMeeting?: { joinUrl?: string, conferenceId?: string, tollNumber?: string } | null, onlineMeetingProvider?: string, onlineMeetingUrl?: string | null, reminderMinutesBeforeStart?: number, allowNewTimeProposals?: boolean, hasAttachments?: boolean, hideAttendees?: boolean }[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.events.update",
+      "shortPath": "events.update",
+      "description": "Update a calendar event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "start_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_zone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "show_as",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "{ dateTime: string, timeZone: string }"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ displayName?: string, address?: {} }[]"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+          },
+          {
+            "key": "organizer",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOrganizer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOnlineMeeting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isReminderOn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sensitivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iCalUId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseStatus",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "responseRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "seriesMasterId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeeting",
+            "optional": true,
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+          },
+          {
+            "key": "onlineMeetingProvider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onlineMeetingUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminderMinutesBeforeStart",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowNewTimeProposals",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideAttendees",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new mail folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_existing_if_exists",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unreadItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "childFolderCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sizeInBytes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a mail folder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get a mail folder by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mail_folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unreadItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "childFolderCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sizeInBytes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List mail folders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_hidden_folders",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, displayName?: string, parentFolderId?: string, totalItemCount?: number, unreadItemCount?: number, childFolderCount?: number, isHidden?: boolean, sizeInBytes?: number }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Rename a mail folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mail_folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unreadItemCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "childFolderCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sizeInBytes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.addAttachment",
+      "shortPath": "messages.addAttachment",
+      "description": "Add an attachment to a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "odata_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isInline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "{ name: string, mimetype: string, s3key: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isInline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentLocation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.batchMove",
+      "shortPath": "messages.batchMove",
+      "description": "Batch move up to 20 messages to a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "destination_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_requested",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_succeeded",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_failed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ original_message_id: string, moved_message_id?: string, success: boolean, status?: number, error_message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.batchUpdate",
+      "shortPath": "messages.batchUpdate",
+      "description": "Batch update up to 20 messages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updates",
+            "optional": false,
+            "type": "{ message_id: string, patch: {} }[]"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_requested",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_succeeded",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_failed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ message_id: string, success: boolean, status?: number, error_message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.createDraft",
+      "shortPath": "messages.createDraft",
+      "description": "Create an email draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "to_recipients",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cc_recipients",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc_recipients",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "toRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "ccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "bccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "isRead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "flag",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "internetMessageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inferenceClassification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReadReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeliveryReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete an email message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.forward",
+      "shortPath": "messages.forward",
+      "description": "Forward an email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_recipients",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get an email message by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "toRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "ccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "bccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "isRead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "flag",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "internetMessageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inferenceClassification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReadReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeliveryReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List email messages in a folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject_contains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject_startswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject_endswith",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_attachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_date_time_gt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_date_time_lt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_date_time_ge",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_date_time_gt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_date_time_le",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_date_time_lt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.move",
+      "shortPath": "messages.move",
+      "description": "Move a message to a different folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "destination_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "toRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "ccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "bccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "isRead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "flag",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "internetMessageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inferenceClassification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReadReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeliveryReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.query",
+      "shortPath": "messages.query",
+      "description": "Query email messages with OData filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.reply",
+      "shortPath": "messages.reply",
+      "description": "Reply to an email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc_emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "response_body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.search",
+      "shortPath": "messages.search",
+      "description": "Search email messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from_index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enable_top_results",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an email message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "from_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "save_to_sent_items",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.sendDraft",
+      "shortPath": "messages.sendDraft",
+      "description": "Send a saved draft message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "outlook.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Update an email message (e.g. mark as read)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "to_recipients",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "cc_recipients",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "bcc_recipients",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "flag",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "inference_classification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_read_receipt_requested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_delivery_receipt_requested",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ contentType?: string, content?: string }"
+          },
+          {
+            "key": "bodyPreview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, address?: string }"
+          },
+          {
+            "key": "toRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "ccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "bccRecipients",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ name?: string, address?: string }[]"
+          },
+          {
+            "key": "isRead",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasAttachments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "flag",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "internetMessageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inferenceClassification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReadReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeliveryReceiptRequested",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "outlook.webhooks.contacts.newContact",
+      "shortPath": "contacts.newContact",
+      "description": "Triggered when a new contact is added in Outlook contacts",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType?: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType: created, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        contacts: {\n            newContact: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "outlook.webhooks.events.eventChange",
+      "shortPath": "events.eventChange",
+      "description": "Triggered when a calendar event is created, updated, or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType?: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        events: {\n            eventChange: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "outlook.webhooks.events.newEvent",
+      "shortPath": "events.newEvent",
+      "description": "Triggered when a new calendar event is created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType?: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType: created, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        events: {\n            newEvent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "outlook.webhooks.messages.newMessage",
+      "shortPath": "messages.newMessage",
+      "description": "Triggered when a new message is received in the Outlook mailbox",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType?: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType: created, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        messages: {\n            newMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "outlook.webhooks.messages.sentMessage",
+      "shortPath": "messages.sentMessage",
+      "description": "Triggered when a message is sent from the Outlook mailbox",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType?: created | updated | deleted, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ subscriptionId?: string, subscriptionExpirationDateTime?: string, changeType: created, resource?: string, resourceData?: { @odata.type?: string, @odata.id?: string, @odata.etag?: string, id?: string }, clientState?: string, tenantId?: string, eventType?: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        messages: {\n            sentMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "outlook.webhooks.subscriptionValidation",
+      "shortPath": "subscriptionValidation",
+      "description": "Microsoft Graph subscription validation handshake",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validationToken",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ validationToken: string }",
+      "usageExample": "outlook({\n    webhookHooks: {\n        subscriptionValidation: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "outlook.db.calendars.search",
+      "entityName": "calendars",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hexColor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDefaultCalendar",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "canEdit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "canShare",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "owner",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "outlook.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "givenName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "surname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddresses",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobilePhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "businessPhones",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "officeLocation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentFolderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "outlook.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bodyPreview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isAllDay",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isCancelled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isOrganizer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isOnlineMeeting",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "calendarId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organizer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sensitivity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "showAs",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "outlook.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentFolderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalItemCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unreadItemCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "childFolderCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isHidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "outlook.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bodyPreview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toRecipients",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ccRecipients",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isRead",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDraft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasAttachments",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "importance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentFolderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentDateTime",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "receivedDateTime",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "webLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

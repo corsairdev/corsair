@@ -1,0 +1,1051 @@
+{
+  "id": "dripcel",
+  "displayName": "Dripcel",
+  "description": "SMS marketing platform for campaigns, automations, and two-way customer text messaging.",
+  "npmPackageName": "@corsair-dev/dripcel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dripcel.api.balance.get",
+      "shortPath": "balance.get",
+      "description": "Get the current Dripcel credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List Dripcel campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ _id?: string, name?: string, status?: string, active?: boolean, createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.compliance.checkSend",
+      "shortPath": "compliance.checkSend",
+      "description": "Check whether phone numbers may receive SMS",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cells",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ cell: string, can_send: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.addTags",
+      "shortPath": "contacts.addTags",
+      "description": "Add tags to a Dripcel contact by cell number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cell",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "create_missing_contact",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matchedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "modifiedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create new Dripcel contacts in bulk (POST /contacts)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ _id?: string, cell: string, firstname?: string, lastname?: string, email?: string, tag_ids?: string[], tags?: string[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "ZA | NA"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "send",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validContacts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invalidContacts",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a Dripcel contact by cell number",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cell",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a Dripcel contact by cell number (MSISDN)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cell",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cell",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.optOut",
+      "shortPath": "contacts.optOut",
+      "description": "Opt a Dripcel contact out of campaigns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cell",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaign_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "create_missing_contact",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matchedCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "modifiedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.contacts.upsert",
+      "shortPath": "contacts.upsert",
+      "description": "Create or update Dripcel contacts in bulk (PUT /contacts)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ _id?: string, cell: string, firstname?: string, lastname?: string, email?: string, tag_ids?: string[], tags?: string[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "ZA | NA"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "send",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validContacts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invalidContacts",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.deliveries.list",
+      "shortPath": "deliveries.list",
+      "description": "List Dripcel deliveries by cell or send customerId",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cell",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveries",
+            "optional": false,
+            "type": "{ _id?: string, cell?: string, customerId?: string, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.emailTemplates.list",
+      "shortPath": "emailTemplates.list",
+      "description": "List Dripcel email templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ _id?: string, name?: string, subject?: string, content?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.replies.search",
+      "shortPath": "replies.search",
+      "description": "Search Dripcel message replies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "Message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "Msisdn",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "UserReference",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "Received",
+            "optional": true,
+            "type": "{ $gte?: string, $lte?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "replies",
+            "optional": false,
+            "type": "{ _id?: string, Msisdn?: string, Message?: string, campaign_id?: string, UserReference?: string, kind?: optIn | optOut | unknown, Received?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.sales.upload",
+      "shortPath": "sales.upload",
+      "description": "Upload sales to Dripcel (POST /sales)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sales",
+            "optional": false,
+            "type": "{ _id?: string, campaign_id: string, send_id?: string, click_id?: string, cell: string, soldAt?: string, saleValue?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.send.bulkEmail",
+      "shortPath": "send.bulkEmail",
+      "description": "Send bulk email via a Dripcel template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "filter_non_contacts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "to_start_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dripcel.api.send.sms",
+      "shortPath": "send.sms",
+      "description": "Send a single SMS via Dripcel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cell",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "skipNonContacts",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deliveryMethod",
+            "optional": false,
+            "type": "reverse | standard | transactional"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendOptions",
+            "optional": true,
+            "type": "{ testMode?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "totalCost",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.sendLogs.search",
+      "shortPath": "sendLogs.search",
+      "description": "Search Dripcel send logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "find",
+            "optional": true,
+            "type": "{ campaign_id?: string[], startDeliveryAt?: { $gte?: string, $lte?: string } }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ skip?: number, limit?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "send_logs",
+            "optional": false,
+            "type": "{ _id?: string, campaign_id?: string, message?: string, triggeredBy?: string, startDeliveryAt?: string, destinations?: number | string[] }[]"
+          },
+          {
+            "key": "parsed",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a Dripcel tag by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dripcel.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List all Dripcel tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ _id?: string, name?: string, description?: string, color?: string, createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dripcel.db.campaigns.search",
+      "entityName": "campaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cell",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.deliveries.search",
+      "entityName": "deliveries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cell",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.emailTemplates.search",
+      "entityName": "emailTemplates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.replies.search",
+      "entityName": "replies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Msisdn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "campaign_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "UserReference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Received",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.sales.search",
+      "entityName": "sales",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "campaign_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "send_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "click_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cell",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "soldAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "saleValue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.sendLogs.search",
+      "entityName": "sendLogs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "campaign_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggeredBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDeliveryAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dripcel.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

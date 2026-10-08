@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { version } from '../package.json';
 import AuthCommand from './commands/auth.command';
 import type BaseCommand from './commands/base.command';
+import CloudCommand from './commands/cloud.command';
 import HttpCommand from './commands/http.command';
 import ListCommand from './commands/list.command';
 import OnedriveSubscribeCommand from './commands/onedrive-subscribe.command';
@@ -19,6 +20,7 @@ import {
 	findCorsairConfigPath,
 	getCorsairInstance,
 } from './utils/corsair-instance';
+import { runCli } from './utils/run-cli';
 
 function createProgram(): Command {
 	const program = new Command();
@@ -39,6 +41,7 @@ function createProgram(): Command {
 		new ScriptCommand(),
 		new StudioCommand(),
 		new HttpCommand(),
+		new CloudCommand(),
 	];
 
 	COMMANDS.forEach((command) => {
@@ -70,7 +73,10 @@ function detectIsMainModule(): boolean {
 }
 
 if (detectIsMainModule()) {
-	createProgram().parse(normalizeLegacyArgs(process.argv));
+	void runCli({
+		program: createProgram(),
+		argv: normalizeLegacyArgs(process.argv),
+	});
 }
 
 export { createProgram, findCorsairConfigPath, getCorsairInstance };

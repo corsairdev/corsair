@@ -1,0 +1,2996 @@
+---
+title: API
+description: "API reference for Capsule CRM: every `capsulecrm.api.*` operation with input and output types."
+---
+
+Every `capsulecrm.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity Types
+
+### get
+
+`activityTypes.get`
+
+Get an activity type by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.activityTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`activityTypes.list`
+
+List activity types
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.activityTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listIcons
+
+`activityTypes.listIcons`
+
+List activity type icons
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.activityTypes.listIcons({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Attachments
+
+### get
+
+`attachments.get`
+
+Download an attachment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.attachments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | No | — |
+| `contentType` | `string` | No | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+---
+
+### upload
+
+`attachments.upload`
+
+Upload an attachment and receive a token
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.attachments.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="upload full type">
+
+```ts
+{
+  token: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Boards
+
+### delete
+
+`boards.delete`
+
+Delete (archive) a board
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.boards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`boards.get`
+
+Get a board by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.boards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`boards.list`
+
+List boards
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.boards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listStages
+
+`boards.listStages`
+
+List stages on a board
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.boards.listStages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### restore
+
+`boards.restore`
+
+Restore a deleted board
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.boards.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`boards.update`
+
+Update a board
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.boards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a task category
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.categories.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`categories.delete`
+
+Delete a category
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.categories.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Get a category by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.categories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`categories.list`
+
+List task categories
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`categories.update`
+
+Update a category
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.categories.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Countries
+
+### list
+
+`countries.list`
+
+List countries
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.countries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.currencies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a custom field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.customFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field definition
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.customFields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`customFields.get`
+
+Get a custom field definition
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.customFields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`customFields.list`
+
+List custom field definitions for an entity type
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.customFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a custom field definition
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.customFields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Entries
+
+### create
+
+`entries.create`
+
+Create a note entry
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.entries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `type` | `note` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`entries.delete`
+
+Delete an entry
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.entries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`entries.get`
+
+Get an entry by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.entries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listByDate
+
+`entries.listByDate`
+
+List notes, emails, and completed tasks by date
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.entries.listByDate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listForEntity
+
+`entries.listForEntity`
+
+List entries for a party, opportunity, or project
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.entries.listForEntity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`entries.update`
+
+Update a note or email entry
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.entries.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Filters
+
+### run
+
+`filters.run`
+
+Run a structured filter query
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.filters.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+| `conditions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conditions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Goals
+
+### list
+
+`goals.list`
+
+List goals
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.goals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Lost Reasons
+
+### create
+
+`lostReasons.create`
+
+Create a lost reason
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.lostReasons.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`lostReasons.delete`
+
+Delete a lost reason
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.lostReasons.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`lostReasons.get`
+
+Get a lost reason by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.lostReasons.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`lostReasons.list`
+
+List lost reasons
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.lostReasons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`lostReasons.update`
+
+Update a lost reason
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.lostReasons.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Milestones
+
+### create
+
+`milestones.create`
+
+Create a milestone
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.milestones.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`milestones.delete`
+
+Delete a milestone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.milestones.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`milestones.get`
+
+Get a milestone by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.milestones.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`milestones.list`
+
+List milestones
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.milestones.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`milestones.update`
+
+Update a milestone
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.milestones.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Opportunities
+
+### addParty
+
+`opportunities.addParty`
+
+Add a party to an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.opportunities.addParty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `partyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`opportunities.create`
+
+Create an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.opportunities.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`opportunities.delete`
+
+Delete an opportunity
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.opportunities.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteParty
+
+`opportunities.deleteParty`
+
+Remove a party from an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.opportunities.deleteParty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `partyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`opportunities.get`
+
+Get an opportunity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`opportunities.list`
+
+List opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `since` | `string` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listDeleted
+
+`opportunities.listDeleted`
+
+List deleted or restricted opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.listDeleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listParties
+
+`opportunities.listParties`
+
+List additional parties on an opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.listParties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listProjects
+
+`opportunities.listProjects`
+
+List projects linked to an opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### search
+
+`opportunities.search`
+
+Search opportunities by query string
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.opportunities.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`opportunities.update`
+
+Update an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.opportunities.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Parties
+
+### create
+
+`parties.create`
+
+Create a person or organisation
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.parties.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `person \| organisation` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`parties.delete`
+
+Delete a party
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.parties.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`parties.get`
+
+Get a party by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`parties.list`
+
+List parties (people and organisations)
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `since` | `string` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listDeleted
+
+`parties.listDeleted`
+
+List parties deleted since a date
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.listDeleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listEmployees
+
+`parties.listEmployees`
+
+List employees of an organisation
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.listEmployees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listOpportunities
+
+`parties.listOpportunities`
+
+List opportunities for a party
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.listOpportunities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listProjects
+
+`parties.listProjects`
+
+List projects for a party
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### search
+
+`parties.search`
+
+Search parties by query string
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.parties.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`parties.update`
+
+Update a party
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.parties.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Pipelines
+
+### get
+
+`pipelines.get`
+
+Get a pipeline by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.pipelines.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List sales pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.pipelines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listMilestones
+
+`pipelines.listMilestones`
+
+List milestones on a pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.pipelines.listMilestones({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`pipelines.update`
+
+Update a pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.pipelines.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Projects
+
+### addParty
+
+`projects.addParty`
+
+Add a party to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.projects.addParty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `partyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project (case)
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.projects.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteParty
+
+`projects.deleteParty`
+
+Remove a party from a project
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.projects.deleteParty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `partyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects (kases)
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `since` | `string` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listDeleted
+
+`projects.listDeleted`
+
+List deleted or restricted projects
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.projects.listDeleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listParties
+
+`projects.listParties`
+
+List parties on a project
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.projects.listParties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### search
+
+`projects.search`
+
+Search projects by query string
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.projects.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Rest Hooks
+
+### list
+
+`restHooks.list`
+
+List REST hook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.restHooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Site
+
+### get
+
+`site.get`
+
+Get Capsule site (account) details
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.site.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Stages
+
+### create
+
+`stages.create`
+
+Create a board stage
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.stages.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`stages.delete`
+
+Delete a stage
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.stages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`stages.get`
+
+Get a stage by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.stages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`stages.list`
+
+List stages across boards
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.stages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`stages.update`
+
+Update a stage
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.stages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tags
+
+### delete
+
+`tags.delete`
+
+Delete a tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a tag by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags for an entity type
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag name
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.tasks.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Teams
+
+### list
+
+`teams.list`
+
+List teams
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Titles
+
+### create
+
+`titles.create`
+
+Create a custom person title
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.titles.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`titles.delete`
+
+Delete a title
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.titles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`titles.list`
+
+List custom person titles
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.titles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Track Definitions
+
+### create
+
+`trackDefinitions.create`
+
+Create a track definition
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.trackDefinitions.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`trackDefinitions.delete`
+
+Delete a track definition
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.trackDefinitions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`trackDefinitions.get`
+
+Get a track definition by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.trackDefinitions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`trackDefinitions.list`
+
+List track definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.trackDefinitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`trackDefinitions.update`
+
+Update a track definition
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.trackDefinitions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tracks
+
+### create
+
+`tracks.create`
+
+Apply a track definition to an entity
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.tracks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`tracks.delete`
+
+Delete a track
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.capsulecrm.api.tracks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tracks.get`
+
+Get a track by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tracks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listForEntity
+
+`tracks.listForEntity`
+
+List tracks on an opportunity or project
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.tracks.listForEntity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `parties \| opportunities \| kases` | Yes | — |
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`tracks.update`
+
+Update a track description or date
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.tracks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the current authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.users.getCurrent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`users.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.capsulecrm.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`users.update`
+
+Update user preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.capsulecrm.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `embed` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+

@@ -523,11 +523,11 @@ const onedriveEndpointMeta = {
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a drive item [DESTRUCTIVE]',
+		description: 'Delete a drive item',
 	},
 	'items.deletePermanently': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a drive item [DESTRUCTIVE]',
+		description: 'Permanently delete a drive item',
 	},
 	'items.copy': { riskLevel: 'write', description: 'Copy a drive item' },
 	'items.move': {
@@ -674,7 +674,7 @@ const onedriveEndpointMeta = {
 	},
 	'permissions.deleteFromItem': {
 		riskLevel: 'destructive',
-		description: 'Delete a permission from a drive item [DESTRUCTIVE]',
+		description: 'Delete a permission from a drive item',
 	},
 	'permissions.inviteUser': {
 		riskLevel: 'write',
@@ -690,7 +690,7 @@ const onedriveEndpointMeta = {
 	},
 	'permissions.deleteSharePermission': {
 		riskLevel: 'destructive',
-		description: 'Delete a share permission [DESTRUCTIVE]',
+		description: 'Delete a share permission',
 	},
 	'permissions.grantSharePermission': {
 		riskLevel: 'write',

@@ -1,0 +1,207 @@
+---
+title: Database
+description: "Marketstack local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Marketstack plugin syncs data locally. Use `corsair.marketstack.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Currencies
+
+Path: `marketstack.db.currencies.search`
+
+```ts
+const rows = await corsair.marketstack.db.currencies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol_native` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Dividends
+
+Path: `marketstack.db.dividends.search`
+
+```ts
+const rows = await corsair.marketstack.db.dividends.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `dividend` | `number` | equals, gt, gte, lt, lte, in |
+| `payment_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `record_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `declaration_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `distr_freq` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Eod Bars
+
+Path: `marketstack.db.eodBars.search`
+
+```ts
+const rows = await corsair.marketstack.db.eodBars.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `open` | `number` | equals, gt, gte, lt, lte, in |
+| `high` | `number` | equals, gt, gte, lt, lte, in |
+| `low` | `number` | equals, gt, gte, lt, lte, in |
+| `close` | `number` | equals, gt, gte, lt, lte, in |
+| `volume` | `number` | equals, gt, gte, lt, lte, in |
+| `adj_high` | `number` | equals, gt, gte, lt, lte, in |
+| `adj_low` | `number` | equals, gt, gte, lt, lte, in |
+| `adj_close` | `number` | equals, gt, gte, lt, lte, in |
+| `adj_open` | `number` | equals, gt, gte, lt, lte, in |
+| `adj_volume` | `number` | equals, gt, gte, lt, lte, in |
+| `split_factor` | `number` | equals, gt, gte, lt, lte, in |
+| `dividend` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `asset_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Exchanges
+
+Path: `marketstack.db.exchanges.search`
+
+```ts
+const rows = await corsair.marketstack.db.exchanges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `acronym` | `string` | equals, contains, startsWith, endsWith, in |
+| `mic` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `country_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `operating_mic` | `string` | equals, contains, startsWith, endsWith, in |
+| `oprt_sgmt` | `string` | equals, contains, startsWith, endsWith, in |
+| `legal_entity_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange_lei` | `string` | equals, contains, startsWith, endsWith, in |
+| `market_category_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `comments` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Splits
+
+Path: `marketstack.db.splits.search`
+
+```ts
+const rows = await corsair.marketstack.db.splits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `split_factor` | `number` | equals, gt, gte, lt, lte, in |
+| `stock_split` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tickers
+
+Path: `marketstack.db.tickers.search`
+
+```ts
+const rows = await corsair.marketstack.db.tickers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_intraday` | `boolean` | equals |
+| `has_eod` | `boolean` | equals |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `cik` | `string` | equals, contains, startsWith, endsWith, in |
+| `isin` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `ein_employer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `lei` | `string` | equals, contains, startsWith, endsWith, in |
+| `series_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `item_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `sector` | `string` | equals, contains, startsWith, endsWith, in |
+| `industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `sic_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `sic_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

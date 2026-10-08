@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Sharepoint plugin for Corsair"
+description: "Microsoft collaboration platform for document libraries, sites, lists, and intranet content."
 ---
 
-Use **Sharepoint** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **SharePoint** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -48,8 +48,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -62,7 +62,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="Managed OAuth (Recommended)">
 
-No setup required. Corsair hosts the OAuth app for **Sharepoint** — your tenants connect through Hub when they sign in.
+No setup required. Corsair hosts the OAuth app for **SharePoint** — your tenants connect through Hub when they sign in.
 
 ```ts
 sharepoint({
@@ -75,7 +75,7 @@ More: [Managed OAuth](/concepts/auth#managed)
 </Tab>
 <Tab title="OAuth 2.0">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Sharepoint OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your SharePoint OAuth app.
 
 ```ts
 sharepoint()

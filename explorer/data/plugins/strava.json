@@ -1,0 +1,3258 @@
+{
+  "id": "strava",
+  "displayName": "Strava",
+  "description": "Fitness tracking network for runs, rides, activities, segments, and athlete social data.",
+  "npmPackageName": "@corsair-dev/strava",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 9
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "owner_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "strava.api.activities.create",
+      "shortPath": "activities.create",
+      "description": "Create a manual activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sport_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date_local",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elapsed_time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commute",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sport_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date_local",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "elapsed_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "moving_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calories",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "{ id?: string, polyline?: string | null, summary_polyline?: string | null }"
+          },
+          {
+            "key": "athlete",
+            "optional": true,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "gear_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commute",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trainer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manual",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kudos_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athlete_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "photo_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_watts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_watts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kilojoules",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_watts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_heartrate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "elev_high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elev_low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pr_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "suffer_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workout_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "end_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "upload_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_kudoed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "average_cadence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.activities.get",
+      "shortPath": "activities.get",
+      "description": "Get details of an activity by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_all_efforts",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sport_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date_local",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "elapsed_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "moving_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calories",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "{ id?: string, polyline?: string | null, summary_polyline?: string | null }"
+          },
+          {
+            "key": "athlete",
+            "optional": true,
+            "type": "{ id: number }"
+          },
+          {
+            "key": "gear_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commute",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trainer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manual",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kudos_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athlete_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "photo_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_watts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_watts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kilojoules",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_watts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_heartrate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "elev_high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elev_low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pr_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "suffer_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workout_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "end_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "upload_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_kudoed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "average_cadence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "device_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.activities.getStreams",
+      "shortPath": "activities.getStreams",
+      "description": "Get stream data for an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+          },
+          {
+            "key": "key_by_type",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "velocity_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "heartrate",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "cadence",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "watts",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "temp",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "moving",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "grade_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.activities.getZones",
+      "shortPath": "activities.getZones",
+      "description": "Get heart rate and power zones for an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ type?: string, score?: number, distribution_buckets?: { min?: number, max?: number, time?: number }[], resource_state?: number, sensor_based?: boolean, points?: number, custom_zones?: boolean }[]"
+      }
+    },
+    {
+      "path": "strava.api.activities.list",
+      "shortPath": "activities.list",
+      "description": "List the authenticated athlete's activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string, sport_type?: string, start_date?: string, start_date_local?: string, elapsed_time?: number, moving_time?: number, distance?: number, total_elevation_gain?: number, timezone?: string, description?: string | null, calories?: number, map?: { id?: string, polyline?: string | null, summary_polyline?: string | null }, athlete?: { id: number }, gear_id?: string | null, commute?: boolean, trainer?: boolean, manual?: boolean, private?: boolean, resource_state?: number, kudos_count?: number, comment_count?: number, athlete_count?: number, photo_count?: number, average_speed?: number, max_speed?: number, average_heartrate?: number, max_heartrate?: number, average_watts?: number, max_watts?: number, kilojoules?: number, device_watts?: boolean, has_heartrate?: boolean, elev_high?: number, elev_low?: number, pr_count?: number, suffer_score?: number | null, workout_type?: number | null, start_latlng?: number[], end_latlng?: number[], upload_id?: number | null, external_id?: string | null, has_kudoed?: boolean, average_cadence?: number, device_name?: string }[]"
+      }
+    },
+    {
+      "path": "strava.api.activities.listComments",
+      "shortPath": "activities.listComments",
+      "description": "List comments on an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, activity_id?: number, text?: string, athlete?: { id: number, username?: string | null, firstname?: string, lastname?: string, city?: string | null, state?: string | null, country?: string | null, sex?: string | null, premium?: boolean, summit?: boolean, created_at?: string, updated_at?: string, follower_count?: number, friend_count?: number, measurement_preference?: string, ftp?: number | null, weight?: number | null, profile?: string, profile_medium?: string, resource_state?: number, bikes?: { id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[], shoes?: { id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[] }, created_at?: string }[]"
+      }
+    },
+    {
+      "path": "strava.api.activities.listKudoers",
+      "shortPath": "activities.listKudoers",
+      "description": "List athletes who kudoed an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, username?: string | null, firstname?: string, lastname?: string, profile_medium?: string, profile?: string, resource_state?: number }[]"
+      }
+    },
+    {
+      "path": "strava.api.activities.listLaps",
+      "shortPath": "activities.listLaps",
+      "description": "List laps of an activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, activity?: { id?: number }, athlete?: { id?: number }, average_cadence?: number, average_speed?: number, average_heartrate?: number, average_watts?: number, device_watts?: boolean, distance?: number, elapsed_time?: number, end_index?: number, lap_index?: number, max_speed?: number, max_heartrate?: number, moving_time?: number, name?: string, pace_zone?: number, resource_state?: number, split?: number, start_date?: string, start_date_local?: string, start_index?: number, total_elevation_gain?: number }[]"
+      }
+    },
+    {
+      "path": "strava.api.athletes.get",
+      "shortPath": "athletes.get",
+      "description": "Get the authenticated athlete profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "follower_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "friend_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "measurement_preference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ftp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bikes",
+            "optional": true,
+            "type": "{ id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[]"
+          },
+          {
+            "key": "shoes",
+            "optional": true,
+            "type": "{ id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.athletes.getStats",
+      "shortPath": "athletes.getStats",
+      "description": "Get an athlete's activity statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "biggest_ride_distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "biggest_climb_elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recent_ride_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "recent_run_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "recent_swim_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "ytd_ride_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "ytd_run_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "ytd_swim_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "all_ride_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "all_run_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          },
+          {
+            "key": "all_swim_totals",
+            "optional": true,
+            "type": "{ count?: number, distance?: number, moving_time?: number, elapsed_time?: number, elevation_gain?: number, achievement_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.athletes.getZones",
+      "shortPath": "athletes.getZones",
+      "description": "Get the authenticated athlete's heart rate and power zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "heart_rate",
+            "optional": true,
+            "type": "{ custom_zones?: boolean, zones?: { min?: number, max?: number }[] }"
+          },
+          {
+            "key": "power",
+            "optional": true,
+            "type": "{ zones?: { min?: number, max?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.athletes.update",
+      "shortPath": "athletes.update",
+      "description": "Update the authenticated athlete's profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "follower_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "friend_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "measurement_preference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ftp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bikes",
+            "optional": true,
+            "type": "{ id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[]"
+          },
+          {
+            "key": "shoes",
+            "optional": true,
+            "type": "{ id: string, primary?: boolean, name?: string, nickname?: string, distance?: number, converted_distance?: number, resource_state?: number, retired?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.clubs.get",
+      "shortPath": "clubs.get",
+      "description": "Get details of a club by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "club_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sport_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "member_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "featured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.gear.get",
+      "shortPath": "gear.get",
+      "description": "Get details of a gear item by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brand_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frame_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "athlete_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "converted_distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notification_distance",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.routes.exportGpx",
+      "shortPath": "routes.exportGpx",
+      "description": "Export a route as GPX",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "strava.api.routes.exportTcx",
+      "shortPath": "routes.exportTcx",
+      "description": "Export a route as TCX",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "strava.api.routes.get",
+      "shortPath": "routes.get",
+      "description": "Get details of a route by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "athlete",
+            "optional": true,
+            "type": "{ id?: number }"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "{ id?: string, polyline?: string | null }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimated_moving_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.routes.getStreams",
+      "shortPath": "routes.getStreams",
+      "description": "Get stream data for a route",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "velocity_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "heartrate",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "cadence",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "watts",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "temp",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "moving",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "grade_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segmentEfforts.get",
+      "shortPath": "segmentEfforts.get",
+      "description": "Get details of a segment effort by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "activity_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athlete_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "segment",
+            "optional": true,
+            "type": "{ id?: number }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "elapsed_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "moving_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date_local",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kom_rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pr_rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "achievements",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "device_watts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "average_watts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_heartrate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_cadence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_state",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segmentEfforts.getStreams",
+      "shortPath": "segmentEfforts.getStreams",
+      "description": "Get stream data for a segment effort",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+          },
+          {
+            "key": "key_by_type",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "velocity_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "heartrate",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "cadence",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "watts",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "temp",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "moving",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "grade_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segments.explore",
+      "shortPath": "segments.explore",
+      "description": "Find popular segments within a bounding box",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bounds",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activity_type",
+            "optional": true,
+            "type": "running | riding"
+          },
+          {
+            "key": "min_cat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_cat",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ id?: number, name?: string, climb_category?: number, climb_category_desc?: string, avg_grade?: number, start_latlng?: number[], end_latlng?: number[], elev_difference?: number, distance?: number, points?: string, starred?: boolean, resource_state?: number, starred_date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Get details of a segment by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activity_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_grade",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_grade",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elevation_high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elevation_low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "end_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "climb_category",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "{ id?: string, polyline?: string | null }"
+          },
+          {
+            "key": "effort_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athlete_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hazardous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segments.getStreams",
+      "shortPath": "segments.getStreams",
+      "description": "Get stream data for a segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+          },
+          {
+            "key": "key_by_type",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "velocity_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "heartrate",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "cadence",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "watts",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "temp",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "moving",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          },
+          {
+            "key": "grade_smooth",
+            "optional": true,
+            "type": "{ type?: string, data?: any[], series_type?: string, original_size?: number, resolution?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List the authenticated athlete's starred segments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string, activity_type?: string, distance?: number, average_grade?: number, maximum_grade?: number, elevation_high?: number, elevation_low?: number, start_latlng?: number[], end_latlng?: number[], climb_category?: number, city?: string | null, state?: string | null, country?: string | null, private?: boolean, starred?: boolean, created_at?: string, updated_at?: string, total_elevation_gain?: number, map?: { id?: string, polyline?: string | null }, effort_count?: number, athlete_count?: number, hazardous?: boolean, star_count?: number }[]"
+      }
+    },
+    {
+      "path": "strava.api.segments.star",
+      "shortPath": "segments.star",
+      "description": "Star or unstar a segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "starred",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activity_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_grade",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_grade",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elevation_high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elevation_low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "end_latlng",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "climb_category",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_elevation_gain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "map",
+            "optional": true,
+            "type": "{ id?: string, polyline?: string | null }"
+          },
+          {
+            "key": "effort_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "athlete_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hazardous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.uploads.create",
+      "shortPath": "uploads.create",
+      "description": "Upload an activity file (FIT, TCX, GPX)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "data_type",
+            "optional": false,
+            "type": "fit | fit.gz | tcx | tcx.gz | gpx | gpx.gz"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trainer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activity_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "strava.api.uploads.get",
+      "shortPath": "uploads.get",
+      "description": "Get the status of an upload by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activity_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "strava.db.activities.search",
+      "entityName": "activities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sport_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date_local",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "elapsed_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "moving_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_elevation_gain",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "calories",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "gear_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "commute",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trainer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "manual",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "resource_state",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "kudos_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "comment_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "athlete_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "photo_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_speed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_speed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_watts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_watts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "kilojoules",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "device_watts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_heartrate",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "elev_high",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elev_low",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pr_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "suffer_score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workout_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "upload_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_kudoed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "average_cadence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "device_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.athletes.search",
+      "entityName": "athletes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sex",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "premium",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "summit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "follower_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "friend_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "measurement_preference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ftp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "weight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "profile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_medium",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_state",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.clubs.search",
+      "entityName": "clubs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_medium",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "club_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sport_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "member_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "featured",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.gears.search",
+      "entityName": "gears",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "brand_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "frame_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "athlete_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resource_state",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "retired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "converted_distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "notification_distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.laps.search",
+      "entityName": "laps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_cadence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_speed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_watts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "device_watts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elapsed_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lap_index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_speed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "moving_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pace_zone",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resource_state",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "split",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date_local",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_elevation_gain",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.routes.search",
+      "entityName": "routes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elevation_gain",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "starred",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sub_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "estimated_moving_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.segmentEfforts.search",
+      "entityName": "segmentEfforts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "activity_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "athlete_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "elapsed_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "moving_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date_local",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_index",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "kom_rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pr_rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "device_watts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "average_watts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_heartrate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_cadence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resource_state",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.segments.search",
+      "entityName": "segments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "activity_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "average_grade",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maximum_grade",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elevation_high",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "elevation_low",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "climb_category",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "starred",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_elevation_gain",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "effort_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "athlete_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hazardous",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "star_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "strava.db.uploads.search",
+      "entityName": "uploads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "activity_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

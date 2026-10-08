@@ -14,7 +14,6 @@ type ContributorProfileData = {
 	githubUsername: string;
 	discordUsername: string | null;
 	avatarUrl: string | null;
-	rank: number | null;
 	completedPoints: number;
 	pendingPoints: number;
 	totalPoints: number;
@@ -120,7 +119,7 @@ export function ContributorProfile({
 				</div>
 
 				<FramedPanel>
-					<div className="grid grid-cols-2 gap-px bg-[#1c1c1c1a] sm:grid-cols-3">
+					<div className="grid grid-cols-2 gap-px bg-[#1c1c1c1a]">
 						<StatBlock
 							label="Points earned"
 							value={formatPoints(profile.completedPoints)}
@@ -130,11 +129,6 @@ export function ContributorProfile({
 							label="Points pending"
 							value={formatPoints(profile.pendingPoints)}
 							subtitle="in progress"
-						/>
-						<StatBlock
-							label="Rank"
-							value={profile.rank ? `#${profile.rank}` : '—'}
-							subtitle={profile.rank ? 'on the leaderboard' : 'not ranked yet'}
 						/>
 					</div>
 				</FramedPanel>

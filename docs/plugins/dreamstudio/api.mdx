@@ -1,0 +1,191 @@
+---
+title: API
+description: "API reference for DreamStudio: every `dreamstudio.api.*` operation with input and output types."
+---
+
+Every `dreamstudio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Engines
+
+### list
+
+`engines.list`
+
+List Stability engines available to this API key. The v1 API returns the full list with no pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.dreamstudio.api.engines.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engines` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="engines full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description: string,
+  type: AUDIO | CLASSIFICATION | PICTURE | STORAGE | TEXT | VIDEO
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generation
+
+### imageFromImage
+
+`generation.imageFromImage`
+
+Generate a new image from an init image and text prompts via POST /v1/generation/{engine_id}/image-to-image
+
+**Risk:** `write`
+
+```ts
+await corsair.dreamstudio.api.generation.imageFromImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engine_id` | `string` | Yes | Engine id from GET /v1/engines/list |
+| `init_image` | `string` | Yes | Init image as base64 or a data URL |
+| `text_prompts` | `object[]` | Yes | — |
+| `init_image_mode` | `IMAGE_STRENGTH \| STEP_SCHEDULE` | Yes | — |
+| `image_strength` | `number` | No | — |
+| `step_schedule_start` | `number` | No | — |
+| `step_schedule_end` | `number` | No | — |
+| `cfg_scale` | `number` | No | — |
+| `clip_guidance_preset` | `FAST_BLUE \| FAST_GREEN \| NONE \| SIMPLE \| SLOW \| SLOWER \| SLOWEST` | No | — |
+| `sampler` | `DDIM \| DDPM \| K_DPMPP_2M \| K_DPMPP_2S_ANCESTRAL \| K_DPM_2 \| K_DPM_2_ANCESTRAL \| K_EULER \| K_EULER_ANCESTRAL \| K_HEUN \| K_LMS` | No | — |
+| `samples` | `number` | No | — |
+| `steps` | `number` | No | — |
+| `seed` | `number` | No | — |
+| `style_preset` | `3d-model \| analog-film \| anime \| cinematic \| comic-book \| digital-art \| enhance \| fantasy-art \| isometric \| line-art \| low-poly \| modeling-compound \| neon-punk \| origami \| photographic \| pixel-art \| tile-texture` | No | — |
+
+<AccordionGroup>
+<Accordion title="text_prompts full type">
+
+```ts
+{
+  text: string,
+  weight?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `artifacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="artifacts full type">
+
+```ts
+{
+  base64: string,
+  finishReason: CONTENT_FILTERED | ERROR | SUCCESS,
+  seed: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### account
+
+`user.account`
+
+Get the authenticated Stability user id, email, organizations, and profile picture
+
+**Risk:** `read`
+
+```ts
+await corsair.dreamstudio.api.user.account({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `organizations` | `object[]` | Yes | — |
+| `profile_picture` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  role: string,
+  is_default: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### balance
+
+`user.balance`
+
+Get the credit balance of the Stability account tied to the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.dreamstudio.api.user.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | — |
+
+
+
+---
+

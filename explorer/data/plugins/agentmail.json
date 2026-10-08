@@ -1,0 +1,452 @@
+{
+  "id": "agentmail",
+  "displayName": "AgentMail",
+  "description": "Email infrastructure for AI agents with programmatic inboxes and message handling.",
+  "npmPackageName": "@corsair-dev/agentmail",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 1,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "agentmail.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Retrieve the complete details of an AgentMail message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[]"
+          },
+          {
+            "key": "in_reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extracted_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extracted_html",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agentmail.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages from an AgentMail inbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ascending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_unauthenticated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, cc?: string[], bcc?: string[], subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }[]"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agentmail.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an email using AgentMail",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "agentmail.webhooks.message.received",
+      "shortPath": "message.received",
+      "description": "A new email was received in an AgentMail inbox",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "message.received"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }"
+          },
+          {
+            "key": "thread",
+            "optional": false,
+            "type": "{ inbox_id: string, thread_id: string, labels: string[], timestamp: string, senders: string[], recipients: string[], last_message_id: string, message_count: number, size: number, updated_at: string, created_at: string, received_timestamp?: string, sent_timestamp?: string, subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[] }"
+          }
+        ]
+      },
+      "responseType": "{ type: event, event_type: message.received, event_id: string, message: { inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }, thread: { inbox_id: string, thread_id: string, labels: string[], timestamp: string, senders: string[], recipients: string[], last_message_id: string, message_count: number, size: number, updated_at: string, created_at: string, received_timestamp?: string, sent_timestamp?: string, subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[] } }",
+      "usageExample": "agentmail({\n    webhookHooks: {\n        message: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "agentmail.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inbox_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thread_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

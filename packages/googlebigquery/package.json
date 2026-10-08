@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/googlebigquery",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Google BigQuery plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -38,9 +38,15 @@
     "googlebigquery",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/googlebigquery"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/googlebigquery"
 }

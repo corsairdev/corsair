@@ -1,0 +1,306 @@
+{
+  "id": "deepseek",
+  "displayName": "DeepSeek",
+  "description": "AI model provider API for chat completions, reasoning, and code generation tasks.",
+  "npmPackageName": "@corsair-dev/deepseek",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "deepseek.api.anthropic.createMessage",
+      "shortPath": "anthropic.createMessage",
+      "description": "Generate a response via DeepSeek's Anthropic-compatible Messages API, with support for system prompts, tool calling, and thinking mode",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "deepseek-chat | deepseek-reasoner"
+          },
+          {
+            "key": "maxTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant, content: string | ({ type: text, text: string } | { type: tool_use, id: string, name: string, input: {} } | { type: tool_result, tool_use_id: string, content?: string | { type: text, text: string }[], is_error?: boolean } | { type: thinking, thinking: string, signature: string } | { type: redacted_thinking, data: string })[] }[]"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "string | { type: text, text: string }[]"
+          },
+          {
+            "key": "stopSequences",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topK",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ name: string, description?: string, input_schema: {} }[]"
+          },
+          {
+            "key": "toolChoice",
+            "optional": true,
+            "type": "{ type: auto, disable_parallel_tool_use?: boolean } | { type: any, disable_parallel_tool_use?: boolean } | { type: tool, name: string, disable_parallel_tool_use?: boolean }"
+          },
+          {
+            "key": "thinking",
+            "optional": true,
+            "type": "{ type: enabled, budget_tokens: number } | { type: disabled }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ user_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "assistant"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "({ type: text, text: string } | { type: tool_use, id: string, name: string, input: {} } | { type: tool_result, tool_use_id: string, content?: string | { type: text, text: string }[], is_error?: boolean } | { type: thinking, thinking: string, signature: string } | { type: redacted_thinking, data: string })[]"
+          },
+          {
+            "key": "stop_reason",
+            "optional": true,
+            "type": "end_turn | max_tokens | stop_sequence | tool_use"
+          },
+          {
+            "key": "stop_sequence",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ input_tokens: number, output_tokens: number, cache_creation_input_tokens?: number | null, cache_read_input_tokens?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepseek.api.chat.createCompletion",
+      "shortPath": "chat.createCompletion",
+      "description": "Generate an AI chat response using deepseek-chat or deepseek-reasoner, with support for temperature, tool calling, and structured output",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "deepseek-chat | deepseek-reasoner"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant | tool, content?: string | null, name?: string, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], tool_call_id?: string, prefix?: boolean }[]"
+          },
+          {
+            "key": "frequencyPenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "presencePenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responseFormat",
+            "optional": true,
+            "type": "{ type: text } | { type: json_object }"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: {} } }[]"
+          },
+          {
+            "key": "toolChoice",
+            "optional": true,
+            "type": "none | auto | required | { type: function, function: { name: string } }"
+          },
+          {
+            "key": "logprobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "topLogprobs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "chat.completion"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message: { role: assistant, content?: string | null, reasoning_content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] }, logprobs?: { content?: any[] | null } | null, finish_reason: stop | length | content_filter | tool_calls | insufficient_system_resource }[]"
+          },
+          {
+            "key": "system_fingerprint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number, prompt_cache_hit_tokens?: number, prompt_cache_miss_tokens?: number, completion_tokens_details?: { reasoning_tokens?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepseek.api.models.list",
+      "shortPath": "models.list",
+      "description": "List the DeepSeek models currently available to the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: model, owned_by: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "deepseek.api.user.getBalance",
+      "shortPath": "user.getBalance",
+      "description": "Get the current account balance, including granted and topped-up amounts broken down by currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_available",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "balance_infos",
+            "optional": false,
+            "type": "{ currency: CNY | USD, total_balance: string, granted_balance: string, topped_up_balance: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

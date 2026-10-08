@@ -1,0 +1,476 @@
+{
+  "id": "sourcegraph",
+  "displayName": "Sourcegraph",
+  "description": "Code intelligence platform for searching, navigating, and understanding large codebases.",
+  "npmPackageName": "@corsair-dev/sourcegraph",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "sourcegraph.api.repository.compareCommits",
+      "shortPath": "repository.compareCommits",
+      "description": "Compare two commits and list file diffs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "head",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "{ comparison?: { range?: { expr?: string } | null, fileDiffs?: { nodes?: { oldPath?: string | null, newPath?: string | null, stat?: { added?: number, changed?: number, deleted?: number } }[], totalCount?: number | null, pageInfo?: { hasNextPage?: boolean, endCursor?: string | null } } } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.repository.getCommitDetails",
+      "shortPath": "repository.getCommitDetails",
+      "description": "Get details for a commit, branch, or tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rev",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "{ commit?: { oid: string, abbreviatedOID?: string, message?: string, subject?: string, body?: string | null, url?: string, canonicalURL?: string, author?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null }, committer?: { date?: string, person?: { name?: string | null, email?: string | null, displayName?: string | null } | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.repository.getFileContents",
+      "shortPath": "repository.getFileContents",
+      "description": "Fetch file contents on the default branch (HEAD)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "{ name?: string, defaultBranch?: { displayName?: string | null } | null, commit?: { oid?: string, file?: { name?: string, path?: string, content?: string, binary?: boolean, byteSize?: number } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.repository.list",
+      "shortPath": "repository.list",
+      "description": "List repositories on the Sourcegraph instance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repositories",
+            "optional": false,
+            "type": "{ nodes?: { name: string, url?: string, description?: string | null, language?: string | null }[], totalCount?: number | null, pageInfo?: { hasNextPage?: boolean, endCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.repository.listFiles",
+      "shortPath": "repository.listFiles",
+      "description": "List files and directories in a repository path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rev",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "{ commit?: { tree?: { path?: string, isRoot?: boolean, entries?: { name?: string, path?: string, isDirectory?: boolean }[] } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.repository.listLanguages",
+      "shortPath": "repository.listLanguages",
+      "description": "List languages used in a repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repoName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repository",
+            "optional": true,
+            "type": "{ name?: string, language?: string | null, commit?: { languages?: string[], languageStatistics?: { name?: string, totalBytes?: number, totalLines?: number }[] } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.site.checkSettingsEditPermission",
+      "shortPath": "site.checkSettingsEditPermission",
+      "description": "Check whether the viewer can edit site settings through the GraphQL API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site",
+            "optional": true,
+            "type": "{ id?: string, siteID?: string, canReloadSite?: boolean, viewerCanAdminister?: boolean }"
+          },
+          {
+            "key": "currentUser",
+            "optional": true,
+            "type": "{ siteAdmin?: boolean, viewerCanAdminister?: boolean }"
+          },
+          {
+            "key": "canEditSiteSettings",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "sourcegraph.api.user.getCurrent",
+      "shortPath": "user.getCurrent",
+      "description": "Retrieve the currently authenticated Sourcegraph user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currentUser",
+            "optional": true,
+            "type": "{ id?: string, username?: string, displayName?: string | null, email?: string | null, siteAdmin?: boolean, viewerCanAdminister?: boolean, avatarURL?: string | null, url?: string, createdAt?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "sourcegraph.db.commits.search",
+      "entityName": "commits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbreviatedOID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sourcegraph.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "binary",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sourcegraph.db.repositories.search",
+      "entityName": "repositories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "sourcegraph.db.sites.search",
+      "entityName": "sites",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "canReloadSite",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewerCanAdminister",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "sourcegraph.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteAdmin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewerCanAdminister",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "avatarURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

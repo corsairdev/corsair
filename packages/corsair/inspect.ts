@@ -1,11 +1,13 @@
+import type { ZodTypeAny } from 'zod';
+import type { CorsairInternalConfig } from './core';
+import { CORSAIR_INTERNAL } from './core';
+// Import these directly from their source modules (not the ./core barrel) so
+// inspect.ts and core/index.ts don't form a circular chunk dependency.
 import type {
 	CorsairClient,
-	CorsairInternalConfig,
-	CorsairPlugin,
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
-} from './core';
-import { CORSAIR_INTERNAL } from './core';
+} from './core/client';
 import type { FormFieldSchema, ListOperationsOptions } from './core/inspect';
 import {
 	formatDocSchemaShape,
@@ -13,25 +15,24 @@ import {
 	getStructuredSchema as getStructuredSchemaCore,
 	listOperations as listOperationsCore,
 } from './core/inspect';
+import type { CorsairPlugin } from './core/plugins';
 
 export type { ListOperationsOptions, FormFieldSchema };
 export { formatDocSchemaShape };
 
-// Deliberately shallow plugin shape for inspect helpers.
-type InspectCorsairPlugin = {
-	id: CorsairPlugin['id'];
-};
-
 /**
- * Any form of Corsair instance:
- * - single-tenant client (`createCorsair({ ... })`)
- * - multi-tenant wrapper (`createCorsair({ multiTenancy: true, ... })`)
- * - tenant-scoped client (`corsair.withTenant("tenant-id")`)
+ * Any form of Corsair instance: single-tenant client (`createCorsair()`),
+ * multi-tenant wrapper (`createCorsair({ multiTenancy: true })`), or tenant-scoped
+ * client (`corsair.withTenant()`).
+ *
+ * Mixed type arguments are deliberate: the two clients are matched structurally
+ * (empty plugin set is their common supertype), while the wrapper is matched by
+ * its plugin tuple and so needs the open array — an empty tuple rejects a real one.
  */
 export type AnyCorsairInstance =
-	| CorsairSingleTenantClient<readonly InspectCorsairPlugin[]>
-	| CorsairTenantWrapper<readonly InspectCorsairPlugin[]>
-	| CorsairClient<readonly InspectCorsairPlugin[]>;
+	| CorsairSingleTenantClient<readonly []>
+	| CorsairTenantWrapper<readonly CorsairPlugin[]>
+	| CorsairClient<readonly []>;
 
 function getPlugins(corsair: AnyCorsairInstance): readonly CorsairPlugin[] {
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
@@ -105,4 +106,35 @@ export function getStructuredSchema(
 	description?: string;
 } | null {
 	return getStructuredSchemaCore(getPlugins(corsair), path);
+}
+
+/**
+ * Returns the raw Zod input schema for an operation path, preserving its
+ * validation constraints (min/max, regex, refinements). `null` if the path is
+ * not a known endpoint.
+ */
+export function getInputSchema(
+	corsair: AnyCorsairInstance,
+	path: string,
+): ZodTypeAny | null {
+	const plugins = getPlugins(corsair);
+	const normalised = path.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
+	if (dotIndex === -1) return null;
+
+	const pluginId = normalised.slice(0, dotIndex);
+	const remainder = normalised.slice(dotIndex + 1);
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin?.endpointSchemas) return null;
+
+	let endpointPath = remainder;
+	if (endpointPath.startsWith('api.')) endpointPath = endpointPath.slice(4);
+
+	// Case-insensitive match (endpointSchemas keys use camelCase)
+	for (const [key, entry] of Object.entries(plugin.endpointSchemas)) {
+		if (key.toLowerCase() === endpointPath) {
+			return entry.input ?? null;
+		}
+	}
+	return null;
 }
