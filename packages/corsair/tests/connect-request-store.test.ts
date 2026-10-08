@@ -83,7 +83,8 @@ describe('connect-request store', () => {
 					updated_at: now,
 					account_id: 'acct-acme-linear',
 					event_type: 'connect.request',
-					payload: '{',
+					// Simulate a corrupted persisted row that bypassed the typed API.
+					payload: '{' as unknown as Record<string, unknown>,
 				})
 				.execute();
 
