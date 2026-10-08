@@ -172,6 +172,7 @@ export type BaseKeyManager = {
 	 *
 	 * Set discardConfig only to recover from an undecryptable stored config. This
 	 * permanently discards the old secrets so replacement credentials can be set.
+	 * The current KEK must still decrypt the existing DEK before recovery proceeds.
 	 * @returns The new DEK (for reference, not typically needed)
 	 */
 	issue_new_dek: (options?: { discardConfig?: boolean }) => Promise<string>;

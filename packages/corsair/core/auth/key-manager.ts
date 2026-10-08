@@ -224,14 +224,16 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 			const integration = await ctx.getIntegration();
 			const newDek = generateDEK();
 
-			// Recovery intentionally starts with an empty config after corruption.
-			// Normal rotation decrypts before any write, preserving the old row on failure.
+			// Every rotation proves the KEK can decrypt the existing DEK before writing.
+			// Recovery then intentionally starts with an empty config after corruption.
 			let newConfig: Record<string, string> = {};
-			if (integration.dek && !discardConfig) {
+			if (integration.dek) {
 				const oldDek = await decryptDEK(integration.dek, kek);
-				const config = integration.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
+				if (!discardConfig) {
+					const config = integration.config as Record<string, string>;
+					if (config && Object.keys(config).length > 0) {
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
 				}
 			}
 
@@ -507,14 +509,16 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// Recovery intentionally starts with an empty config after corruption.
-			// Normal rotation decrypts before any write, preserving the old row on failure.
+			// Every rotation proves the KEK can decrypt the existing DEK before writing.
+			// Recovery then intentionally starts with an empty config after corruption.
 			let newConfig: Record<string, string> = {};
-			if (account.dek && !discardConfig) {
+			if (account.dek) {
 				const oldDek = await decryptDEK(account.dek, kek);
-				const config = account.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
+				if (!discardConfig) {
+					const config = account.config as Record<string, string>;
+					if (config && Object.keys(config).length > 0) {
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
 				}
 			}
 

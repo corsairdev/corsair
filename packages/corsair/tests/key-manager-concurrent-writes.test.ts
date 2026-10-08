@@ -186,6 +186,35 @@ describe('key manager decryption failures', () => {
 		}
 	});
 
+	it('does not discard valid integration credentials with a wrong KEK', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedOutlookAccount(database);
+			const storedBeforeRecovery = await database.db
+				.selectFrom('corsair_integrations')
+				.select(['config', 'dek'])
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+			const km = createIntegrationKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				kek: 'incorrect-kek-with-at-least-32-characters',
+				database,
+			});
+
+			await expect(km.issue_new_dek({ discardConfig: true })).rejects.toThrow();
+
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.select(['config', 'dek'])
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+			expect(integration).toEqual(storedBeforeRecovery);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('does not overwrite account config when it cannot be decrypted', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
