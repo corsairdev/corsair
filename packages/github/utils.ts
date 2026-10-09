@@ -34,6 +34,10 @@ export function convertKeysToCamelCase(value: unknown): unknown {
 
 	return value;
 }
+
+// Recursive conversion handles arbitrary JSON values from request bodies.
+// unknown requires narrowing before inspection; a generic return type would
+// incorrectly imply that renamed object keys retain their original type.
 export function convertKeysToSnakeCase(value: unknown): unknown {
 	if (Array.isArray(value)) {
 		return value.map(convertKeysToSnakeCase);
