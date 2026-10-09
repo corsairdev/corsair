@@ -2,6 +2,9 @@ import { createHash } from 'node:crypto';
 
 import type { AgentQLQueryDataInput, AgentQLQueryDocumentInput } from './types';
 
+// Query params come from multiple endpoint-specific Zod-inferred shapes, so a
+// shared narrower type would duplicate those schemas; each unknown is narrowed
+// before recursion instead.
 function canonicalizeParams(value: unknown): unknown {
 	if (Array.isArray(value)) {
 		return value.map(canonicalizeParams);
