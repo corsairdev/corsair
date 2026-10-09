@@ -43,6 +43,11 @@ export const TablesGetDataOutputSchema = DocsumoEnvelopeSchema.extend({
 	data: z
 		.object({
 			data: z.array(DocsumoDynamicRecord).optional(),
+			// Per https://support.docsumo.com/reference/get-table-data the
+			// response nests rows under data.data with limit/offset/total.
+			limit: z.number().optional(),
+			offset: z.number().optional(),
+			total: z.number().optional(),
 		})
 		.loose()
 		.optional(),
