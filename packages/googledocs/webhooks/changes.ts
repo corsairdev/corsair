@@ -78,7 +78,7 @@ async function fetchDocument(
 		return await makeGoogleDocsRequest<Document>(
 			`/documents/${documentId}`,
 			credentials,
-			{ method: 'GET' },
+			{ method: 'GET', query: { includeTabsContent: true } },
 		);
 	} catch (error) {
 		console.warn(`Failed to fetch document ${documentId}:`, error);

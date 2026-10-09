@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type {
 	BatchUpdateResponse,
 	Document,
+	DocumentTabSummary,
 	DriveFile,
 	DriveFileList,
 	SpreadsheetChartsResponse,
@@ -66,11 +67,24 @@ const CopyDocumentInputSchema = z.object({
 	parents: z.array(z.string()).optional(),
 });
 
+const TabSelectorFields = {
+	includeTabsContent: z.boolean().optional(),
+	tabId: z.string().optional(),
+	tabTitle: z.string().optional(),
+	tabIndex: z.number().int().nonnegative().optional(),
+};
+
 const GetDocumentInputSchema = z.object({
 	documentId: z.string(),
+	includeTabsContent: z.boolean().optional(),
 });
 
 const GetDocumentPlaintextInputSchema = z.object({
+	documentId: z.string(),
+	...TabSelectorFields,
+});
+
+const ListDocumentTabsInputSchema = z.object({
 	documentId: z.string(),
 });
 
@@ -293,6 +307,7 @@ export const GoogleDocsEndpointInputSchemas = {
 	copyDocument: CopyDocumentInputSchema,
 	getDocument: GetDocumentInputSchema,
 	getDocumentPlaintext: GetDocumentPlaintextInputSchema,
+	listDocumentTabs: ListDocumentTabsInputSchema,
 	updateDocumentMarkdown: UpdateDocumentMarkdownInputSchema,
 	updateDocumentSectionMarkdown: UpdateDocumentSectionMarkdownInputSchema,
 	updateDocumentStyle: UpdateDocumentStyleInputSchema,
@@ -352,6 +367,21 @@ const DocumentSchema = z.object({
 	lists: z.unknown().optional(),
 	documentStyle: z.unknown().optional(),
 	suggestionsViewMode: z.string().optional(),
+	tabs: z.unknown().optional(),
+});
+
+const DocumentTabSummarySchema = z.object({
+	tabId: z.string(),
+	title: z.string().optional(),
+	index: z.number().optional(),
+	parentTabId: z.string().optional(),
+	nestingLevel: z.number().optional(),
+});
+
+const ListDocumentTabsResultSchema = z.object({
+	documentId: z.string(),
+	title: z.string().optional(),
+	tabs: z.array(DocumentTabSummarySchema),
 });
 
 const BatchUpdateResponseSchema = z.object({
@@ -405,6 +435,8 @@ const PlaintextResultSchema = z.object({
 	title: z.string().optional(),
 	text: z.string(),
 	wordCount: z.number(),
+	tabId: z.string().optional(),
+	tabTitle: z.string().optional(),
 });
 
 const ExportResultSchema = z.object({
@@ -420,6 +452,7 @@ export const GoogleDocsEndpointOutputSchemas = {
 	copyDocument: DriveFileSchema,
 	getDocument: DocumentSchema,
 	getDocumentPlaintext: PlaintextResultSchema,
+	listDocumentTabs: ListDocumentTabsResultSchema,
 	updateDocumentMarkdown: BatchUpdateResponseSchema,
 	updateDocumentSectionMarkdown: BatchUpdateResponseSchema,
 	updateDocumentStyle: BatchUpdateResponseSchema,
@@ -453,6 +486,11 @@ export const GoogleDocsEndpointOutputSchemas = {
 } as const;
 
 export type PlaintextResult = z.infer<typeof PlaintextResultSchema>;
+export type ListDocumentTabsResult = {
+	documentId: string;
+	title?: string;
+	tabs: DocumentTabSummary[];
+};
 export type ExportResult = z.infer<typeof ExportResultSchema>;
 
 export type GoogleDocsEndpointOutputs = {
@@ -462,6 +500,7 @@ export type GoogleDocsEndpointOutputs = {
 	copyDocument: DriveFile;
 	getDocument: Document;
 	getDocumentPlaintext: PlaintextResult;
+	listDocumentTabs: ListDocumentTabsResult;
 	updateDocumentMarkdown: BatchUpdateResponse;
 	updateDocumentSectionMarkdown: BatchUpdateResponse;
 	updateDocumentStyle: BatchUpdateResponse;

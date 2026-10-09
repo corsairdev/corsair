@@ -27,10 +27,8 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ZendeskSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { matchZendeskTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, ZendeskWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+import type { ZendeskWebhookOutputs } from './webhooks/types';
 
 export type ZendeskPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -90,9 +88,7 @@ type ZendeskWebhook<
 	TEvent,
 > = CorsairWebhook<ZendeskContext, TEvent, ZendeskWebhookOutputs[K]>;
 
-export type ZendeskWebhooks = {
-	example: ZendeskWebhook<'example', ExampleEvent>;
-};
+export type ZendeskWebhooks = Record<string, never>;
 
 export type ZendeskBoundWebhooks = BindWebhooks<ZendeskWebhooks>;
 
@@ -116,11 +112,7 @@ const zendeskEndpointsNested = {
 	},
 } as const;
 
-const zendeskWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const zendeskWebhooksNested = {} as const;
 
 export const zendeskEndpointSchemas = {
 	'tickets.create': {
@@ -171,13 +163,10 @@ export const zendeskEndpointSchemas = {
 	typeof zendeskEndpointsNested
 >;
 
-const zendeskWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof zendeskWebhooksNested>;
+const zendeskWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof zendeskWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -309,7 +298,4 @@ export type {
 	ZendeskEndpointInputs,
 	ZendeskEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	ZendeskWebhookOutputs,
-} from './webhooks/types';
+export type { ZendeskWebhookOutputs } from './webhooks/types';

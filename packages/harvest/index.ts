@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Clients,
 	Company,
@@ -749,6 +750,11 @@ export function harvest<const T extends HarvestPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the Harvest bearer token. Throws AuthMissingError when the
+		 * stored OAuth access token is missing, so the request is not sent
+		 * with an empty Authorization header.
+		 */
 		keyBuilder: async (ctx: HarvestKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -756,7 +762,10 @@ export function harvest<const T extends HarvestPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('harvest', 'oauth_2');
+				}
+				return res;
 			}
 
 			return '';
