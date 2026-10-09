@@ -53,14 +53,16 @@ export const deleteFile: DropboxEndpoints['filesDelete'] = async (
 		body: { path: input.path },
 	});
 
-	if (ctx.db.files) {
+	if (ctx.db.files || ctx.db.folders) {
 		try {
 			const meta = result.metadata;
-			if (meta['.tag'] === 'file') {
+			if (meta['.tag'] === 'file' && ctx.db.files) {
 				await ctx.db.files.deleteByEntityId(meta.id);
+			} else if (meta['.tag'] === 'folder' && ctx.db.folders) {
+				await ctx.db.folders.deleteByEntityId(meta.id);
 			}
 		} catch (error) {
-			console.warn('Failed to delete file from database:', error);
+			console.warn('Failed to delete file or folder from database:', error);
 		}
 	}
 
