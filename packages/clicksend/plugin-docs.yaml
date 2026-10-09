@@ -1,0 +1,23 @@
+displayName: ClickSend
+domain: clicksend.com
+description: Multi-channel communications platform for SMS, Voice text-to-speech, and contact management.
+examples:
+  read:
+    path: sms.history
+    title: List SMS history
+  write:
+    path: sms.send
+    title: Send an SMS message
+    args:
+      messages:
+        - to: '+15555550100'
+          body: Hello from Corsair!
+dbExample:
+  entity: messages
+  note: Search synced SMS messages without hitting ClickSend API.
+  limit: 50
+exampleWebhook:
+  path: sms.inbound
+  note: Fires when an inbound SMS reply is received.
+  after: |
+    console.log('ClickSend SMS received:', result.data);

@@ -1154,11 +1154,12 @@
                 ]
               },
               {
-                "group": "ClickMeeting",
+                "group": "ClickSend",
                 "pages": [
-                  "plugins/clickmeeting/overview",
-                  "plugins/clickmeeting/api",
-                  "plugins/clickmeeting/database"
+                  "plugins/clicksend/overview",
+                  "plugins/clicksend/api",
+                  "plugins/clicksend/database",
+                  "plugins/clicksend/webhooks"
                 ]
               },
               {
