@@ -2,7 +2,16 @@ import { createHash } from 'node:crypto';
 
 import type { AgentQLQueryDataInput, AgentQLQueryDocumentInput } from './types';
 
-function sortObjectKeys(value: unknown): unknown {
+type CacheKeyValue =
+	| string
+	| number
+	| boolean
+	| null
+	| undefined
+	| CacheKeyValue[]
+	| { [key: string]: CacheKeyValue };
+
+function sortObjectKeys(value: CacheKeyValue): CacheKeyValue {
 	if (Array.isArray(value)) {
 		return value.map(sortObjectKeys);
 	}
