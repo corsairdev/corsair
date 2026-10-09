@@ -29,6 +29,15 @@ describe('matchSharepointTenantWebhook', () => {
 		expect(matchSharepointTenantWebhook(request)).toBeNull();
 	});
 
+	it('treats a malformed percent-encoded validationtoken header as absent', () => {
+		const request: RawWebhookRequest = {
+			headers: { validationtoken: '%' },
+			body: {},
+		};
+
+		expect(extractMicrosoftGraphValidationToken(request)).toBeNull();
+	});
+
 	it('extracts subscription_id from notification payloads', () => {
 		const request: RawWebhookRequest = {
 			headers: { 'content-type': 'application/json' },
