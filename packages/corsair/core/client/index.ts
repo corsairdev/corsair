@@ -12,6 +12,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from '../auth/key-manager';
+import { hasInflightFlights } from '../auth/single-flight';
 import type {
 	AccountKeyManagerFor,
 	IntegrationKeyManagerFor,
@@ -279,6 +280,101 @@ export type CorsairSingleTenantClient<
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Account key managers are memoized per (scope, plugin, tenant) so repeated
+ * `withTenant()` calls share one manager per credential row. Each call builds
+ * a fresh client, but `singleFlight()` dedupes concurrent refreshes by manager
+ * identity — a fresh manager per call would never dedupe, letting concurrent
+ * refreshes spend the same rotating refresh_token twice and getting the
+ * connection revoked. The scope owner is `internalConfig` (one per
+ * `createCorsair()` wrapper) falling back to the database object, so separate
+ * stores never share managers or flights. Managers hold no row state (account
+ * rows are re-read per call), only an integration-config cache that long-lived
+ * single-tenant managers already share today — and the management `/call`
+ * route already keeps one client (hence one manager) per (instance, tenant)
+ * alive under an LRU in `core/management/call.ts`, so shared-manager lifetime
+ * is the established norm, not a new one. Entries are tiny (closures plus
+ * small caches) and the outer WeakMap dies with the wrapper. The per-scope
+ * map is LRU-capped like `/call`'s client cache: past the cap the oldest
+ * entry with no unsettled refresh flight is dropped (a manager mid-refresh is
+ * never evicted, so eviction can't split a live single-flight); a dropped
+ * tenant simply rebuilds its manager on next use.
+ */
+type CachedAccountKeyManager = {
+	database: object;
+	kek: string;
+	manager: AccountKeyManagerFor<AuthTypes>;
+};
+
+// Same bound as the management `/call` per-tenant client LRU: tenant
+// cardinality is unbounded (tenant ids arrive from URL input), so an
+// uncapped per-scope map would grow with every distinct tenant served.
+const MAX_TENANT_KEY_MANAGERS = 512;
+
+const accountKeyManagersByScope = new WeakMap<
+	object,
+	Map<string, CachedAccountKeyManager>
+>();
+
+/**
+ * Evicts one entry from a per-scope manager cache that grew past
+ * {@link MAX_TENANT_KEY_MANAGERS}, choosing the oldest entry whose manager
+ * has no unsettled refresh flight. `keep` (the just-inserted key) is never a
+ * candidate — same contract as `evictIdle` in core/management/call.ts. If
+ * every older entry is busy, eviction is skipped: a brief overshoot is safe,
+ * splitting a live refresh is not.
+ */
+function evictIdleKeyManager(
+	byKey: Map<string, CachedAccountKeyManager>,
+	keep: string,
+): void {
+	if (byKey.size <= MAX_TENANT_KEY_MANAGERS) return;
+	for (const [key, entry] of byKey) {
+		if (key === keep) continue;
+		if (!hasInflightFlights(entry.manager)) {
+			byKey.delete(key);
+			return;
+		}
+	}
+}
+
+/**
+ * Returns the memoized account key manager for one (scope, cacheKey) pair,
+ * creating and LRU-capping it on first use. A cached manager is reused only
+ * when it was built against the same database and KEK, so credentials are
+ * never served from the wrong store.
+ */
+function getSharedAccountKeyManager(options: {
+	scope: object;
+	cacheKey: string;
+	database: object;
+	kek: string;
+	create: () => AccountKeyManagerFor<AuthTypes>;
+}): AccountKeyManagerFor<AuthTypes> {
+	const { scope, cacheKey, database, kek, create } = options;
+	let byKey = accountKeyManagersByScope.get(scope);
+	if (!byKey) {
+		byKey = new Map();
+		accountKeyManagersByScope.set(scope, byKey);
+	}
+	const cached = byKey.get(cacheKey);
+	// Only reuse a manager built against the same database and KEK. A
+	// mismatch means an unusual direct `buildCorsairClient` reuse of one
+	// scope under different configs — rebuild so we never serve credentials
+	// from the wrong store. (Within one scope + database + KEK the
+	// `ensureProvisioned` closure is equivalent, so it needs no comparison.)
+	if (cached && cached.database === database && cached.kek === kek) {
+		// LRU: most-recently-used entries stay past the cap.
+		byKey.delete(cacheKey);
+		byKey.set(cacheKey, cached);
+		return cached.manager;
+	}
+	const manager = create();
+	byKey.set(cacheKey, { database, kek, manager });
+	evictIdleKeyManager(byKey, cacheKey);
+	return manager;
+}
+
+/**
  * Creates a cached account ID resolver for a specific tenant and integration.
  * The account ID is lazily fetched on first access and cached for subsequent calls.
  */
@@ -456,7 +552,11 @@ export function buildCorsairClient<
 			apiUnsafe[plugin.id]!.db = dbClients;
 		}
 
-		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
+		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it.
+		// Managers are shared per (scope, plugin, tenant): withTenant() builds a
+		// fresh client per call, but singleFlight() dedupes refreshes by manager
+		// identity — without sharing, concurrent refreshes for one tenant would
+		// each spend the same rotating refresh_token.
 		const pluginOptions = plugin.options as
 			| { authType?: AuthTypes }
 			| undefined;
@@ -464,17 +564,34 @@ export function buildCorsairClient<
 		let accountKeyManager: AccountKeyManagerFor<AuthTypes> | undefined;
 		if (database && kek && pluginOptions?.authType) {
 			// Extract extra account fields from plugin authConfig
-			const extraAccountFields =
-				authConfig?.[pluginOptions.authType]?.account ?? [];
+			const authType = pluginOptions.authType;
+			const extraAccountFields = authConfig?.[authType]?.account ?? [];
 
-			accountKeyManager = createAccountKeyManager({
-				authType: pluginOptions.authType,
-				integrationName: plugin.id,
-				tenantId: effectiveTenantId,
-				kek,
+			const createManager = () =>
+				createAccountKeyManager({
+					authType,
+					integrationName: plugin.id,
+					tenantId: effectiveTenantId,
+					kek,
+					database,
+					extraAccountFields,
+					ensureProvisioned,
+				});
+			accountKeyManager = getSharedAccountKeyManager({
+				scope: internalConfig ?? database,
+				// JSON-encoded (not `:`-joined): plugin ids, tenant ids, and
+				// field names may legally contain `:` or `,`, which would
+				// collide two distinct (plugin, tenant) pairs onto one key
+				// and share one credential row's manager — and its flights.
+				cacheKey: JSON.stringify([
+					plugin.id,
+					effectiveTenantId,
+					authType,
+					extraAccountFields,
+				]),
 				database,
-				extraAccountFields,
-				ensureProvisioned,
+				kek,
+				create: createManager,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}

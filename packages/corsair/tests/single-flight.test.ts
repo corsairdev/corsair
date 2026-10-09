@@ -1,4 +1,4 @@
-import { singleFlight } from '../core/auth/single-flight';
+import { hasInflightFlights, singleFlight } from '../core/auth/single-flight';
 
 describe('singleFlight', () => {
 	it('dedupes concurrent runs for the same store and key', async () => {
@@ -54,5 +54,37 @@ describe('singleFlight', () => {
 		await singleFlight(owner, 'k', run);
 
 		expect(runs).toBe(2);
+	});
+
+	it('hasInflightFlights is true while a flight is open, false after it settles', async () => {
+		const owner = {};
+		expect(hasInflightFlights(owner)).toBe(false);
+
+		let release: (v: string) => void = () => {};
+		const gate = new Promise<string>((resolve) => {
+			release = resolve;
+		});
+		const pending = singleFlight(owner, 'k', () => gate);
+		expect(hasInflightFlights(owner)).toBe(true);
+
+		release('done');
+		await expect(pending).resolves.toBe('done');
+		expect(hasInflightFlights(owner)).toBe(false);
+	});
+
+	it('hasInflightFlights distinguishes keys on the same store', async () => {
+		const owner = {};
+		let release: (v: string) => void = () => {};
+		const gate = new Promise<string>((resolve) => {
+			release = resolve;
+		});
+		// One open flight under any key marks the whole store in-flight:
+		// eviction must not split it regardless of which key is live.
+		const pending = singleFlight(owner, 'refresh', () => gate);
+		expect(hasInflightFlights(owner)).toBe(true);
+
+		release('done');
+		await expect(pending).resolves.toBe('done');
+		expect(hasInflightFlights(owner)).toBe(false);
 	});
 });
