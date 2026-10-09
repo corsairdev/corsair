@@ -136,6 +136,7 @@ export const BaseProviders = [
 	'classmarker',
 	'clickhouse',
 	'clickmeeting',
+	'clickup',
 	'clientary',
 	'clockify',
 	'cloudcart',
@@ -485,6 +486,7 @@ export const ProviderDisplayNames = {
 	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
 	clickmeeting: 'ClickMeeting',
+	clickup: 'ClickUp',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudcart: 'CloudCart',
@@ -841,6 +843,7 @@ export type AllProviders =
 	| 'classmarker'
 	| 'clickhouse'
 	| 'clickmeeting'
+	| 'clickup'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudcart'
