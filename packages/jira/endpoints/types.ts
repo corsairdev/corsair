@@ -202,7 +202,7 @@ export type IssuesDeleteResponse = z.infer<typeof IssuesDeleteResponseSchema>;
 
 const IssuesSearchInputSchema = z.object({
 	jql: z.string(),
-	start_at: z.number().optional(),
+	next_page_token: z.string().optional(),
 	max_results: z.number().optional(),
 	fields: z.string().optional(),
 	expand: z.string().optional(),
@@ -213,6 +213,8 @@ const IssuesSearchResponseSchema = z.object({
 	total: z.number().optional(),
 	startAt: z.number().optional(),
 	maxResults: z.number().optional(),
+	nextPageToken: z.string().optional(),
+	isLast: z.boolean().optional(),
 	issues: z.array(JiraIssueSchema).optional(),
 });
 export type IssuesSearchResponse = z.infer<typeof IssuesSearchResponseSchema>;

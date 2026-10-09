@@ -87,7 +87,9 @@ export const get: JiraEndpoints['issuesGet'] = async (ctx, input) => {
 				labels: result.fields?.labels,
 				created: result.fields?.created,
 				updated: result.fields?.updated,
-				createdAt: new Date(),
+				...(result.fields?.created && {
+					createdAt: new Date(result.fields.created),
+				}),
 			});
 		} catch (error) {
 			console.warn('Failed to save issue to database:', error);
@@ -169,7 +171,9 @@ export const search: JiraEndpoints['issuesSearch'] = async (ctx, input) => {
 			method: 'GET',
 			query: {
 				jql: input.jql,
-				startAt: input.start_at,
+				...(input.next_page_token && {
+					nextPageToken: input.next_page_token,
+				}),
 				maxResults: input.max_results,
 				fields: input.fields,
 				expand: input.expand,
@@ -191,7 +195,9 @@ export const search: JiraEndpoints['issuesSearch'] = async (ctx, input) => {
 					priority: issue.fields?.priority?.name ?? undefined,
 					issueType: issue.fields?.issuetype?.name,
 					projectKey: issue.fields?.project?.key,
-					createdAt: new Date(),
+					...(issue.fields?.created && {
+						createdAt: new Date(issue.fields.created),
+					}),
 				});
 			} catch (error) {
 				console.warn('Failed to save issue to database:', error);
@@ -374,7 +380,9 @@ export const bulkFetch: JiraEndpoints['issuesBulkFetch'] = async (
 					priority: issue.fields?.priority?.name ?? undefined,
 					issueType: issue.fields?.issuetype?.name,
 					projectKey: issue.fields?.project?.key,
-					createdAt: new Date(),
+					...(issue.fields?.created && {
+						createdAt: new Date(issue.fields.created),
+					}),
 				});
 			} catch (error) {
 				console.warn('Failed to save issue to database:', error);
