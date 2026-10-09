@@ -54,8 +54,21 @@ export function resolveCorsairDbTables(
 	};
 }
 
+/** Postgres truncates an identifier past this, silently. */
+const MAX_IDENTIFIER_BYTES = 63;
+
+const utf8 = new TextEncoder();
+
 export function validateCorsairDbTables(overrides?: CorsairDbTables): void {
 	if (!overrides) return;
+
+	for (const key of Object.keys(overrides)) {
+		if (!CORSAIR_CORE_TABLE_NAMES.includes(key as CorsairCoreTableName)) {
+			throw new Error(
+				`dbTables.${key} is not a Corsair table. Expected one of: ${CORSAIR_CORE_TABLE_NAMES.join(', ')}`,
+			);
+		}
+	}
 
 	for (const key of CORSAIR_CORE_TABLE_NAMES) {
 		const physical = overrides[key];
@@ -65,29 +78,35 @@ export function validateCorsairDbTables(overrides?: CorsairDbTables): void {
 				`dbTables.${key} must be a non-empty string (got ${JSON.stringify(physical)})`,
 			);
 		}
-	}
-
-	const physicalNames = new Set<string>();
-	for (const key of CORSAIR_CORE_TABLE_NAMES) {
-		const physical = overrides[key];
-		if (physical === undefined) continue;
-		if (physicalNames.has(physical)) {
+		// Two names agreeing up to the limit would become one table.
+		if (utf8.encode(physical).length > MAX_IDENTIFIER_BYTES) {
 			throw new Error(
-				`dbTables: duplicate physical table name "${physical}". Each logical Corsair table must map to a unique name.`,
+				`dbTables.${key} must be at most ${MAX_IDENTIFIER_BYTES} bytes (got "${physical}")`,
 			);
 		}
-		physicalNames.add(physical);
+	}
+
+	// Over the resolved set, so an override onto a table left at its default
+	// collides too. Scoped to one client: two instances picking the same name
+	// is the caller's to prevent.
+	const resolved = resolveCorsairDbTables(overrides);
+	const owners = new Map<string, CorsairCoreTableName>();
+	for (const key of CORSAIR_CORE_TABLE_NAMES) {
+		const physical = resolved[key];
+		const owner = owners.get(physical);
+		if (owner) {
+			throw new Error(
+				`dbTables: duplicate physical table name "${physical}" (${owner} and ${key}). Each logical Corsair table must map to a unique name.`,
+			);
+		}
+		owners.set(physical, key);
 	}
 }
 
-export function corsairDbTablesHasOverrides(
-	overrides?: CorsairDbTables,
+export function tableNamesAreCustomized(
+	tableNames: CorsairResolvedTableNames,
 ): boolean {
-	if (!overrides) return false;
-	return CORSAIR_CORE_TABLE_NAMES.some((key) => {
-		const physical = overrides[key];
-		return physical !== undefined && physical !== key;
-	});
+	return CORSAIR_CORE_TABLE_NAMES.some((key) => tableNames[key] !== key);
 }
 
 function createLogicalToPhysicalMap(
@@ -143,6 +162,6 @@ export function applyCorsairTableNameMap<DB>(
 	db: import('kysely').Kysely<DB>,
 	tableNames: CorsairResolvedTableNames,
 ): import('kysely').Kysely<DB> {
-	if (!corsairDbTablesHasOverrides(tableNames)) return db;
+	if (!tableNamesAreCustomized(tableNames)) return db;
 	return db.withPlugin(createTableNameMapPlugin(tableNames));
 }

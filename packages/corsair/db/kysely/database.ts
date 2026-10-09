@@ -17,9 +17,9 @@ import type {
 } from './table-names.js';
 import {
 	applyCorsairTableNameMap,
-	corsairDbTablesHasOverrides,
 	createTableNameMapPlugin,
 	resolveCorsairDbTables,
+	tableNamesAreCustomized,
 	validateCorsairDbTables,
 } from './table-names.js';
 
@@ -46,8 +46,8 @@ export type CorsairDatabase = {
 	db: Kysely<CorsairKyselyDatabase>;
 	/** True when the underlying dialect is Postgres (pg Pool or postgres.js). Omitting defaults to true. */
 	isPg?: boolean;
-	/** Physical table names for each Corsair logical table key. */
-	tableNames: CorsairResolvedTableNames;
+	/** Physical table names for each Corsair logical table key. Omitting uses the defaults. */
+	tableNames?: CorsairResolvedTableNames;
 };
 
 export type CreateCorsairDatabaseOptions = {
@@ -212,16 +212,17 @@ function buildKyselyPlugins(
 ): KyselyPlugin[] {
 	const plugins: KyselyPlugin[] = [];
 	if (sqlite) plugins.push(new SqliteDatePlugin());
-	if (corsairDbTablesHasOverrides(tableNames)) {
+	if (tableNamesAreCustomized(tableNames)) {
 		plugins.push(createTableNameMapPlugin(tableNames));
 	}
 	return plugins;
 }
 
+// The factory always resolves the names; only a hand-built literal may omit them.
 export function createCorsairDatabase(
 	input: CorsairDatabaseInput,
 	options?: CreateCorsairDatabaseOptions,
-): CorsairDatabase {
+): CorsairDatabase & { tableNames: CorsairResolvedTableNames } {
 	validateCorsairDbTables(options?.dbTables);
 	const tableNames = resolveCorsairDbTables(options?.dbTables);
 

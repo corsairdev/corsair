@@ -37,6 +37,7 @@ import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
+import { resolveCorsairDbTables } from '../db/kysely/table-names';
 import { TABLE_SCHEMAS } from '../db/orm';
 
 import backfillConfig from './backfill.config';
@@ -343,9 +344,10 @@ async function checkTables(
 	const existing = await database.db.introspection.getTables();
 	const existingNames = new Set(existing.map((t) => t.name));
 
+	const tableNames = database.tableNames ?? resolveCorsairDbTables();
+
 	for (const [logicalTable, schema] of Object.entries(REQUIRED_TABLES)) {
-		const physicalTable =
-			database.tableNames[logicalTable as keyof typeof database.tableNames];
+		const physicalTable = tableNames[logicalTable as keyof typeof tableNames];
 		if (!existingNames.has(physicalTable)) {
 			const mapped =
 				physicalTable !== logicalTable

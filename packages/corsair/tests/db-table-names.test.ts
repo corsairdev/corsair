@@ -1,5 +1,6 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
+import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 
 describe('dbTables name mapping', () => {
@@ -61,6 +62,66 @@ describe('dbTables name mapping', () => {
 				},
 			}),
 		).toThrow(/duplicate physical table name/i);
+		sqlite.close();
+	});
+
+	// The collision that matters: one override onto a table whose own name was
+	// left at its default. Both then resolve to one physical table.
+	it('rejects an override that collides with another default', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: { corsair_events: 'corsair_integrations' },
+			}),
+		).toThrow(/duplicate physical table name/i);
+		sqlite.close();
+	});
+
+	it('rejects an unknown dbTables key', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: { corsair_event: 'events' } as never,
+			}),
+		).toThrow(/corsair_event/);
+		sqlite.close();
+	});
+
+	// Postgres truncates an identifier at 63 bytes, so two names agreeing up to
+	// there become one table with no error.
+	it('rejects a name past the identifier limit', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: { corsair_events: `corsair_events_${'x'.repeat(50)}` },
+			}),
+		).toThrow(/63 bytes/i);
+		sqlite.close();
+	});
+
+	// One schema per project puts an instance's five tables in the project's
+	// schema under a suffixed name, so both transforms have to survive together:
+	// withSchema writes the schema, the map writes the table.
+	it('composes with withSchema on Postgres', () => {
+		const pool = { query: () => {}, connect: () => {} };
+		const { db } = createCorsairDatabase(pool as never, {
+			dbTables: { corsair_events: 'corsair_events_users' },
+		});
+
+		const compiled = db
+			.withSchema('env_proj1')
+			.selectFrom('corsair_events')
+			.select('id')
+			.compile();
+
+		expect(compiled.sql).toContain('"env_proj1"."corsair_events_users"');
+	});
+
+	it('takes a database literal that names no tables', () => {
+		const sqlite = new Database(':memory:');
+		const { db } = createCorsairDatabase(sqlite);
+		const database: CorsairDatabase = { db };
+		expect(database.db).toBe(db);
 		sqlite.close();
 	});
 });
