@@ -70,6 +70,34 @@ describe('connect-request store', () => {
 		}
 	});
 
+	it.each([
+		['malformed JSON', '{'],
+		['parsed null', 'null'],
+		['parsed array', '[]'],
+	])('ignores a %s persisted request payload', async (kind, payload) => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			const now = new Date();
+			await database.db
+				.insertInto('corsair_events')
+				.values({
+					id: `invalid-connect-request-${kind}`,
+					created_at: now,
+					updated_at: now,
+					account_id: 'acct-acme-linear',
+					event_type: 'connect.request',
+					// Simulate a corrupted persisted row that bypassed the typed API.
+					payload: payload as unknown as Record<string, unknown>,
+				})
+				.execute();
+
+			await expect(readConnectRequest(database, 'acme')).resolves.toBeNull();
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('returns the oldest live request across plugins — FIFO, does not drift', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
