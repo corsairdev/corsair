@@ -24,6 +24,9 @@ const makeStore = (): Store => ({
 });
 
 function makeCtx(db: Record<string, Store>) {
+	// unknown cast needed because the mock only implements the ctx subset
+	// exercised by the delete handlers (key/$getAccountId/db) — building a
+	// full CorsairPluginContext (hub/keys/database/oauth) is not feasible here.
 	return {
 		key: 'test-token',
 		$getAccountId: async () => 'test-account-id',
