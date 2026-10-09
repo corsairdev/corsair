@@ -1,0 +1,593 @@
+---
+title: Webhooks
+description: "Close incoming webhooks: event paths, payloads, and response data."
+---
+
+The Close plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/close/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `activityNote`
+  - `created` (`activityNote.created`)
+- `contact`
+  - `created` (`contact.created`)
+- `lead`
+  - `created` (`lead.created`)
+  - `updated` (`lead.updated`)
+- `opportunity`
+  - `created` (`opportunity.created`)
+- `task`
+  - `created` (`task.created`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Activity Note
+
+### Created
+
+`activityNote.created`
+
+A note activity was created in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `activity.note.created` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  note?: string,
+  user_id?: string | null,
+  organization_id?: string,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: activity.note.created,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    lead_id?: string,
+    note?: string,
+    user_id?: string | null,
+    organization_id?: string,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        activityNote: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact
+
+### Created
+
+`contact.created`
+
+A contact was created in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `contact.created` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  name?: string,
+  title?: string | null,
+  emails?: {
+    email: string,
+    type?: string
+  }[],
+  phones?: {
+    phone: string,
+    type?: string
+  }[],
+  organization_id?: string,
+  created_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: contact.created,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    lead_id?: string,
+    name?: string,
+    title?: string | null,
+    emails?: {
+      email: string,
+      type?: string
+    }[],
+    phones?: {
+      phone: string,
+      type?: string
+    }[],
+    organization_id?: string,
+    created_by?: string | null,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        contact: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Lead
+
+### Created
+
+`lead.created`
+
+A lead was created in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `lead.created` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  status_id?: string | null,
+  status_label?: string | null,
+  description?: string | null,
+  url?: string | null,
+  organization_id?: string,
+  contacts?: {
+  }[],
+  custom?: {
+  },
+  created_by?: string | null,
+  updated_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: lead.created,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    name?: string,
+    status_id?: string | null,
+    status_label?: string | null,
+    description?: string | null,
+    url?: string | null,
+    organization_id?: string,
+    contacts?: {
+    }[],
+    custom?: {
+    },
+    created_by?: string | null,
+    updated_by?: string | null,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        lead: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`lead.updated`
+
+A lead was updated in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `lead.updated` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  status_id?: string | null,
+  status_label?: string | null,
+  description?: string | null,
+  url?: string | null,
+  organization_id?: string,
+  contacts?: {
+  }[],
+  custom?: {
+  },
+  created_by?: string | null,
+  updated_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: lead.updated,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    name?: string,
+    status_id?: string | null,
+    status_label?: string | null,
+    description?: string | null,
+    url?: string | null,
+    organization_id?: string,
+    contacts?: {
+    }[],
+    custom?: {
+    },
+    created_by?: string | null,
+    updated_by?: string | null,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        lead: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Opportunity
+
+### Created
+
+`opportunity.created`
+
+An opportunity was created in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `opportunity.created` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  lead_name?: string,
+  status_id?: string,
+  status_label?: string,
+  status_type?: string,
+  value?: number,
+  value_period?: string,
+  confidence?: number,
+  user_id?: string | null,
+  organization_id?: string,
+  date_won?: string | null,
+  date_lost?: string | null,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: opportunity.created,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    lead_id?: string,
+    lead_name?: string,
+    status_id?: string,
+    status_label?: string,
+    status_type?: string,
+    value?: number,
+    value_period?: string,
+    confidence?: number,
+    user_id?: string | null,
+    organization_id?: string,
+    date_won?: string | null,
+    date_lost?: string | null,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        opportunity: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Task
+
+### Created
+
+`task.created`
+
+A task was created in Close CRM
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `task.created` | Yes | — |
+| `organization_id` | `string` | No | — |
+| `object_type` | `string` | No | — |
+| `action` | `string` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  text?: string,
+  due_date?: string | null,
+  is_complete?: boolean,
+  assigned_to?: string | null,
+  type?: string,
+  organization_id?: string,
+  created_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: task.created,
+  organization_id?: string,
+  object_type?: string,
+  action?: string,
+  data: {
+    id: string,
+    lead_id?: string,
+    text?: string,
+    due_date?: string | null,
+    is_complete?: boolean,
+    assigned_to?: string | null,
+    type?: string,
+    organization_id?: string,
+    created_by?: string | null,
+    date_created?: string,
+    date_updated?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+close({
+    webhookHooks: {
+        task: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
