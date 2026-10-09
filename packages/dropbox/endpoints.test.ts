@@ -35,13 +35,15 @@ function makeCtx(db: Record<string, Store>) {
 }
 
 describe('dropbox files.delete db cleanup (issue #1874)', () => {
+	let warnSpy: jest.SpyInstance;
+
 	beforeEach(() => {
 		mockRequest.mockReset();
-		jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+		warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
 	});
 
 	afterEach(() => {
-		(jest.spyOn(console, 'warn') as jest.Mock).mockRestore?.();
+		warnSpy.mockRestore();
 		jest.restoreAllMocks();
 	});
 
