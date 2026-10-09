@@ -185,7 +185,7 @@ export async function setupCorsair<
 	const db = setupInternal.database.db;
 
 	// 1. Verify schema
-	await checkTables(db, warn);
+	await checkTables(setupInternal.database, warn);
 
 	// 2. Create integration + account rows and issue DEKs for every plugin.
 	const pluginAuth = await ensurePluginRowsAndDeks(
@@ -337,16 +337,22 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 }
 
 async function checkTables(
-	db: Kysely<CorsairKyselyDatabase>,
+	database: CorsairDatabase,
 	warn: SetupWarn,
 ): Promise<void> {
-	const existing = await db.introspection.getTables();
+	const existing = await database.db.introspection.getTables();
 	const existingNames = new Set(existing.map((t) => t.name));
 
-	for (const [table, schema] of Object.entries(REQUIRED_TABLES)) {
-		if (!existingNames.has(table)) {
+	for (const [logicalTable, schema] of Object.entries(REQUIRED_TABLES)) {
+		const physicalTable =
+			database.tableNames[logicalTable as keyof typeof database.tableNames];
+		if (!existingNames.has(physicalTable)) {
+			const mapped =
+				physicalTable !== logicalTable
+					? ` (dbTables.${logicalTable} → "${physicalTable}")`
+					: '';
 			warn(
-				`[corsair:setup] Table "${table}" does not exist. ` +
+				`[corsair:setup] Table "${physicalTable}" does not exist${mapped}. ` +
 					'Run your database migrations before calling setupCorsair.\n' +
 					`Schema: ${JSON.stringify(describeZodSchema(schema), null, 2)}`,
 			);

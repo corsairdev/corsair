@@ -6,6 +6,7 @@ import type {
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin.js';
+import { resolveCorsairDbTables } from '../db/kysely/table-names.js';
 
 export function createTestDatabase(): {
 	db: Kysely<CorsairKyselyDatabase>;
@@ -67,7 +68,7 @@ export function createTestDatabase(): {
 
 	return {
 		db,
-		database: { db },
+		database: { db, isPg: false, tableNames: resolveCorsairDbTables() },
 		cleanup: () => {
 			db.destroy();
 			sqlite.close();
