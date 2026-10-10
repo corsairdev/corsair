@@ -1,7 +1,5 @@
-import {
-	anthropicAdministratorEndpointSchemas,
-	anthropicadministrator,
-} from './index';
+import { anthropicadministrator } from './index';
+import { anthropicAdministratorEndpointSchemas } from './meta';
 import { AnthropicAdministratorSchema } from './schema';
 
 function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
@@ -24,6 +22,9 @@ const EXPECTED_OPERATIONS = [
 	'invites.deleteInvite',
 	'invites.getInvite',
 	'invites.listInvites',
+	'messages.createMessage',
+	'models.getModel',
+	'models.listModels',
 	'organization.getOrganization',
 	'users.getUser',
 	'users.listUsers',
@@ -53,7 +54,7 @@ function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
 describe('anthropicadministrator plugin shape', () => {
 	const plugin = anthropicadministrator();
 
-	it('exposes exactly the 22 Admin API operations', () => {
+	it('exposes exactly the 25 Admin API operations', () => {
 		expect(
 			endpointPaths(plugin.endpoints as Record<string, unknown>).sort(),
 		).toEqual(EXPECTED_OPERATIONS);
@@ -118,9 +119,12 @@ describe('anthropicadministrator plugin shape', () => {
 		]);
 	});
 
-	it('supports api key and oauth auth', () => {
+	it('supports api key and oauth auth with tenant inference_key', () => {
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({ api_key: {}, oauth_2: {} });
+		expect(plugin.authConfig).toEqual({
+			api_key: { account: ['inference_key'] },
+			oauth_2: { account: ['inference_key'] },
+		});
 	});
 });
 
@@ -159,5 +163,20 @@ describe('anthropicadministrator key resolution', () => {
 		};
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).rejects.toThrow();
+	});
+
+	it('allows inference-only callers when inference_key is stored', async () => {
+		const plugin = anthropicadministrator();
+		const ctx = {
+			authType: 'api_key',
+			keys: {
+				get_api_key: async () => undefined,
+				get_inference_key: async () => 'sk-ant-api-tenant',
+			},
+		};
+
+		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).resolves.toBe(
+			'sk-ant-api-tenant',
+		);
 	});
 });
