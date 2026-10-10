@@ -87,9 +87,55 @@ describe('hub environment delivery', () => {
 		);
 	});
 
+	it('rejects an invalid PORT instead of constructing an unusable delivery URL', () => {
+		withEnv(
+			{
+				PORT: 'not-a-port',
+				CORSAIR_DELIVERY_URL: undefined,
+			},
+			() => {
+				expect(() => resolveHubDeliveryUrl()).toThrow(
+					'PORT must be a whole number between 1 and 65535',
+				);
+			},
+		);
+	});
+
+	it.each(['0', '65536', '3000/path'])(
+		'rejects invalid PORT value %s',
+		(port) => {
+			withEnv(
+				{
+					PORT: port,
+					CORSAIR_DELIVERY_URL: undefined,
+				},
+				() => {
+					expect(() => resolveHubDeliveryUrl()).toThrow(
+						'PORT must be a whole number between 1 and 65535',
+					);
+				},
+			);
+		},
+	);
+
+	it('trims a valid PORT before constructing the delivery URL', () => {
+		withEnv(
+			{
+				PORT: ' 3001 ',
+				CORSAIR_DELIVERY_URL: undefined,
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3001/api/corsair',
+				);
+			},
+		);
+	});
+
 	it('uses CORSAIR_DELIVERY_URL as a full endpoint without appending the path', () => {
 		withEnv(
 			{
+				PORT: 'not-a-port',
 				CORSAIR_DELIVERY_URL: 'http://localhost:3001/api/corsair',
 				APP_URL: 'http://localhost:9999',
 			},
