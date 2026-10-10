@@ -146,15 +146,9 @@ export const del: TrelloEndpoints['boardsDelete'] = async (ctx, input) => {
 
 	if (ctx.db.boards) {
 		try {
-			const existing = await ctx.db.boards.findByEntityId(input.boardId);
-			if (existing) {
-				await ctx.db.boards.upsertByEntityId(input.boardId, {
-					...existing.data,
-					closed: true,
-				});
-			}
+			await ctx.db.boards.deleteByEntityId(input.boardId);
 		} catch (error) {
-			console.warn('Failed to update board in database after deletion:', error);
+			console.warn('Failed to delete from database after deletion:', error);
 		}
 	}
 
