@@ -208,6 +208,18 @@ describe('formatRunScriptError', () => {
 		expect(text).not.toContain('docs-token');
 	});
 
+	it('preserves the connect URL while redacting other credentials in auth-missing errors', () => {
+		const url = 'https://hub.example/connect?token=connect-secret&state=$$keep';
+		const message = `[auth-missing:gmail] Authentication required. Direct the user to connect their account: ${url} Authorization: Bearer unrelated-secret`;
+		const text = formatRunScriptError(
+			new AuthMissingError('gmail', 'oauth_2', message),
+		).content[0]?.text;
+
+		expect(text).toContain(url);
+		expect(text).toContain('connect-secret');
+		expect(text).not.toContain('unrelated-secret');
+	});
+
 	it('marks AuthMissingError as an MCP error without verbose wrapping', () => {
 		const result = formatRunScriptError(
 			new AuthMissingError(
