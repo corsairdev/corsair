@@ -1,6 +1,7 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { createHubConnectSessionForPlugin } from '../../hub/connect';
+import { HubDeliveryUrlError } from '../../hub/resolve-delivery-url';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairPlugin } from '../plugins';
@@ -70,9 +71,12 @@ export async function resolveAuthMissingConnectMessage(input: {
 					})
 				: formatDefaultAuthMissingMessage(input.pluginId, session.connectUrl);
 			return { message, connectUrl: session.connectUrl };
-		} catch {
+		} catch (error) {
+			console.error('[corsair] failed to create Hub connect link', error);
+			const detail =
+				error instanceof HubDeliveryUrlError ? `: ${error.message}` : '';
 			return {
-				message: `[auth-missing:${input.pluginId}:${input.authType}] Authentication required. Could not create connect link. Check hub configuration and server logs.`,
+				message: `[auth-missing:${input.pluginId}:${input.authType}] Authentication required. Could not create connect link${detail}. Check hub configuration and server logs.`,
 				connectUrl: null,
 			};
 		}

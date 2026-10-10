@@ -3,6 +3,7 @@ import {
 	resolveAuthMissingConnectMessage,
 } from '../core/auth/auth-missing-message';
 import type { CorsairPlugin } from '../core/plugins';
+import { HubDeliveryUrlError } from '../hub/resolve-delivery-url';
 import type { HubConfig } from '../hub/types';
 
 const mockHubConnectSession = {
@@ -94,24 +95,65 @@ describe('resolveAuthMissingConnectMessage', () => {
 	});
 
 	it('returns fallback message when hub session creation fails', async () => {
-		createHubConnectSessionForPlugin.mockRejectedValueOnce(
-			new Error('hub down'),
-		);
+		const error = new Error('hub down');
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
+		createHubConnectSessionForPlugin.mockRejectedValueOnce(error);
 
-		const result = await resolveAuthMissingConnectMessage({
-			hub,
-			plugin: slackPlugin,
-			pluginId: 'slack',
-			tenantId: 'default',
-			authType: 'oauth_2',
-			database: {} as never,
-			kek: 'test-kek',
-			plugins: [slackPlugin],
-		});
+		try {
+			const result = await resolveAuthMissingConnectMessage({
+				hub,
+				plugin: slackPlugin,
+				pluginId: 'slack',
+				tenantId: 'default',
+				authType: 'oauth_2',
+				database: {} as never,
+				kek: 'test-kek',
+				plugins: [slackPlugin],
+			});
 
-		expect(result.message).toBe(
-			'[auth-missing:slack:oauth_2] Authentication required. Could not create connect link. Check hub configuration and server logs.',
+			expect(result.message).toBe(
+				'[auth-missing:slack:oauth_2] Authentication required. Could not create connect link. Check hub configuration and server logs.',
+			);
+			expect(result.connectUrl).toBeNull();
+			expect(consoleError).toHaveBeenCalledWith(
+				'[corsair] failed to create Hub connect link',
+				error,
+			);
+		} finally {
+			consoleError.mockRestore();
+		}
+	});
+
+	it('surfaces and logs an invalid Hub delivery URL configuration', async () => {
+		const error = new HubDeliveryUrlError(
+			'PORT must be a whole number between 1 and 65535',
 		);
-		expect(result.connectUrl).toBeNull();
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
+		createHubConnectSessionForPlugin.mockRejectedValueOnce(error);
+
+		try {
+			const result = await resolveAuthMissingConnectMessage({
+				hub,
+				plugin: slackPlugin,
+				pluginId: 'slack',
+				tenantId: 'default',
+				authType: 'oauth_2',
+				database: {} as never,
+				kek: 'test-kek',
+				plugins: [slackPlugin],
+			});
+
+			expect(result.message).toContain(error.message);
+			expect(consoleError).toHaveBeenCalledWith(
+				'[corsair] failed to create Hub connect link',
+				error,
+			);
+		} finally {
+			consoleError.mockRestore();
+		}
 	});
 });
