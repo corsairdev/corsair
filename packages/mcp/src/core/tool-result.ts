@@ -88,7 +88,7 @@ function redactActionMessage(value: string): string {
 
 	return redactSensitiveText(protectedValue).replace(
 		'__CORSAIR_ACTION_URL__',
-		actionUrl ?? '',
+		() => actionUrl ?? '',
 	);
 }
 
