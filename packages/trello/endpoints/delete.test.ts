@@ -66,4 +66,24 @@ describe('Trello delete endpoints', () => {
 
 		expect(deleteByEntityId).not.toHaveBeenCalled();
 	});
+
+	it('does not delete the local board when Trello deletion fails', async () => {
+		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
+
+		const ctx = {
+			key: 'test-token',
+			options: { trelloApiKey: 'test-api-key' },
+			db: { boards: { deleteByEntityId } },
+		} as any;
+
+		mockMakeTrelloRequest.mockRejectedValueOnce(
+			new Error('Trello deletion failed'),
+		);
+
+		await expect(deleteBoard(ctx, { boardId: 'board-123' })).rejects.toThrow(
+			'Trello deletion failed',
+		);
+
+		expect(deleteByEntityId).not.toHaveBeenCalled();
+	});
 });
