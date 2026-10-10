@@ -101,6 +101,20 @@ describe('hub environment delivery', () => {
 		);
 	});
 
+	it.each(['1', '65535'])('accepts boundary PORT value %s', (port) => {
+		withEnv(
+			{
+				PORT: port,
+				CORSAIR_DELIVERY_URL: undefined,
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					`http://localhost:${port}/api/corsair`,
+				);
+			},
+		);
+	});
+
 	it.each(['0', '65536', '3000/path'])(
 		'rejects invalid PORT value %s',
 		(port) => {

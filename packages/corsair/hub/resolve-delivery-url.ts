@@ -14,7 +14,7 @@ function resolveLocalPort(port: string | undefined): string {
 	}
 
 	const parsed = Number(value);
-	if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 65535) {
+	if (parsed < 1 || parsed > 65535) {
 		throw new Error('PORT must be a whole number between 1 and 65535');
 	}
 
