@@ -142,6 +142,12 @@ describe('toAmbeeTimestamp', () => {
 		);
 	});
 
+	it('keeps a GMT timestamp working', () => {
+		expect(toAmbeeTimestamp('Sat, 01 Jun 2024 12:00:00 GMT')).toBe(
+			'2024-06-01 12:00:00',
+		);
+	});
+
 	it('throws AmbeeAPIError on an unparseable value', () => {
 		expect(() => toAmbeeTimestamp('yesterday')).toThrow(AmbeeAPIError);
 	});
