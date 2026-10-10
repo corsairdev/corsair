@@ -130,6 +130,18 @@ describe('toAmbeeTimestamp', () => {
 		);
 	});
 
+	it('treats a zoneless ISO datetime as UTC, not host-local time', () => {
+		// The suite runs with TZ pinned to Asia/Kolkata (jest.config.cjs), so a
+		// host-local parse would come back as 06:30:00 here.
+		expect(toAmbeeTimestamp('2024-06-01T12:00:00')).toBe('2024-06-01 12:00:00');
+	});
+
+	it('matches the same instant written with an explicit Z', () => {
+		expect(toAmbeeTimestamp('2024-06-01T12:00:00')).toBe(
+			toAmbeeTimestamp('2024-06-01T12:00:00Z'),
+		);
+	});
+
 	it('throws AmbeeAPIError on an unparseable value', () => {
 		expect(() => toAmbeeTimestamp('yesterday')).toThrow(AmbeeAPIError);
 	});

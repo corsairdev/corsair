@@ -107,7 +107,11 @@ export function toAmbeeTimestamp(value: string): string {
 		return value;
 	}
 
-	const parsed = new Date(value);
+	// A zoneless ISO datetime is parsed as host-local time, which shifts it by
+	// the host's UTC offset; Ambee's `from`/`to` values are UTC.
+	const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+	const isoWithoutZone = value.toLowerCase().includes('t') && !hasZone;
+	const parsed = new Date(isoWithoutZone ? `${value}Z` : value);
 	if (Number.isNaN(parsed.getTime())) {
 		throw new AmbeeAPIError(
 			`Invalid timestamp: "${value}". Expected "YYYY-MM-DD hh:mm:ss" or an ISO 8601 date.`,
