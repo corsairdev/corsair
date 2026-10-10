@@ -10,9 +10,6 @@ import {
 } from '../hub/config';
 
 describe('instanceKey', () => {
-	// A project key spans every instance of its project, so Hub cannot resolve a
-	// state-changing callback from the key alone and rejects it unpinned. The
-	// SDK sends the instance on every Hub call so it can.
 	it('is carried through normalization and sent as a header', () => {
 		const hub = normalizeHubConfig({
 			projectApiKey: 'ck_cloud_acme.secret',
@@ -24,8 +21,8 @@ describe('instanceKey', () => {
 		});
 	});
 
-	// One host serves many instances, so an unset key must not fall back to
-	// anything: a wrong instance is worse than an unpinned rejection.
+	// An unset key must not fall back to anything: a wrong instance is worse
+	// than an unpinned rejection.
 	it('sends no header when absent or blank', () => {
 		for (const instanceKey of [undefined, '', '   ']) {
 			const hub = normalizeHubConfig({
