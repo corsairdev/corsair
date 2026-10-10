@@ -2692,6 +2692,14 @@
                 ]
               },
               {
+                "group": "Turbot Pipes",
+                "pages": [
+                  "plugins/turbotpipes/overview",
+                  "plugins/turbotpipes/api",
+                  "plugins/turbotpipes/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",
