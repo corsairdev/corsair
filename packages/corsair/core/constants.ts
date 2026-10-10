@@ -277,6 +277,7 @@ export const BaseProviders = [
 	'replyio',
 	'resend',
 	'retailed',
+	'retellai',
 	'rootly',
 	'runpod',
 	'salesforce',
@@ -626,6 +627,7 @@ export const ProviderDisplayNames = {
 	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	retellai: 'Retell AI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
 	salesforce: 'Salesforce',
@@ -982,6 +984,7 @@ export type AllProviders =
 	| 'replyio'
 	| 'resend'
 	| 'retailed'
+	| 'retellai'
 	| 'rootly'
 	| 'runpod'
 	| 'salesforce'
