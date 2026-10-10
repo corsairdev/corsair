@@ -946,7 +946,7 @@ await corsair.jira.api.issues.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jql` | `string` | Yes | — |
-| `start_at` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
 | `max_results` | `number` | No | — |
 | `fields` | `string` | No | — |
 | `expand` | `string` | No | — |
@@ -960,6 +960,8 @@ await corsair.jira.api.issues.search({});
 | `total` | `number` | No | — |
 | `startAt` | `number` | No | — |
 | `maxResults` | `number` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `isLast` | `boolean` | No | — |
 | `issues` | `object[]` | No | — |
 
 <AccordionGroup>
