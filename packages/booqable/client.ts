@@ -65,28 +65,7 @@ export async function makeBooqableRequest<T>(
 	};
 
 	try {
-		const result = await request<T>(config, requestOptions);
-		// `unknown` is intentional here: the shared HTTP client returns raw
-		// text for media types outside `application/json`, and Booqable
-		// responds with `application/vnd.api+json`, so the payload shape is
-		// unknown until inspected below.
-		const payload: unknown = result;
-		if (typeof payload === 'string') {
-			const trimmed = payload.trim();
-			if (trimmed) {
-				try {
-					// Narrow `as T` is safe here: JSON.parse yields the provider
-					// document and the per-endpoint output schemas in
-					// `BooqableEndpointOutputSchemas` validate its shape at the
-					// contract layer, so no broader assertion is needed.
-					return JSON.parse(trimmed) as T;
-				} catch {
-					// Not JSON (e.g. an error page) — fall through and return
-					// the raw text so callers still see the provider response.
-				}
-			}
-		}
-		return result;
+		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof Error) {
 			throw new BooqableAPIError(error.message, { cause: error });
