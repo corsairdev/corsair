@@ -1,12 +1,42 @@
 import { createCorsair } from 'corsair';
 
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { instanceKeyHeader } from '../hub/client/http';
 import {
 	getHubConfig,
 	HubCredentialsMissingError,
 	normalizeHubConfig,
 	resolveHubConfigInput,
 } from '../hub/config';
+
+describe('instanceKey', () => {
+	// A project key spans every instance of its project, so Hub cannot resolve a
+	// state-changing callback from the key alone and rejects it unpinned. The
+	// SDK sends the instance on every Hub call so it can.
+	it('is carried through normalization and sent as a header', () => {
+		const hub = normalizeHubConfig({
+			projectApiKey: 'ck_cloud_acme.secret',
+			instanceKey: ' feed ',
+		});
+		expect(hub.instanceKey).toBe('feed');
+		expect(instanceKeyHeader(hub)).toEqual({
+			'x-corsair-instance-key': 'feed',
+		});
+	});
+
+	// One host serves many instances, so an unset key must not fall back to
+	// anything: a wrong instance is worse than an unpinned rejection.
+	it('sends no header when absent or blank', () => {
+		for (const instanceKey of [undefined, '', '   ']) {
+			const hub = normalizeHubConfig({
+				projectApiKey: 'ck_cloud_acme.secret',
+				instanceKey,
+			});
+			expect(hub.instanceKey).toBeUndefined();
+			expect(instanceKeyHeader(hub)).toEqual({});
+		}
+	});
+});
 
 describe('resolveHubConfigInput', () => {
 	it('trims hub credential strings (not used as scrypt password material)', () => {

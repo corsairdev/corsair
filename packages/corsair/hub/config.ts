@@ -43,6 +43,7 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		apiUrl,
 		projectApiKey,
 		signingSecret,
+		instanceKey: input.instanceKey?.trim() || undefined,
 		oauthCallbackUrl: input.oauthCallbackUrl?.trim().replace(/\/$/, ''),
 		redirectURL: input.redirectURL?.trim() || undefined,
 		allowWorkflowExecution: input.allowWorkflowExecution ?? false,
