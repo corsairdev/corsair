@@ -38,6 +38,13 @@ function createContext() {
 
 const INPUT = { file_key: 'file-1', comment_id: 'comment-1' };
 
+// `as never` is safe here: deleteComment only reads `ctx.key` and
+// `ctx.db.comments`, and passes `ctx` to the mocked logEventFromContext.
+// Building a full FigmaContext would add setup none of these tests use.
+function deleteComment(ctx: ReturnType<typeof createContext>) {
+	return Comments.delete(ctx as never, INPUT);
+}
+
 describe('figma comments.delete', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -47,7 +54,7 @@ describe('figma comments.delete', () => {
 		mockRequest.mockResolvedValue({ status: 200, error: false });
 		const ctx = createContext();
 
-		const result = await Comments.delete(ctx as never, INPUT);
+		const result = await deleteComment(ctx);
 
 		expect(result).toEqual({ status: 200, error: false });
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -69,9 +76,7 @@ describe('figma comments.delete', () => {
 		mockRequest.mockRejectedValue(new Error('Not found'));
 		const ctx = createContext();
 
-		await expect(Comments.delete(ctx as never, INPUT)).rejects.toThrow(
-			'Not found',
-		);
+		await expect(deleteComment(ctx)).rejects.toThrow('Not found');
 		expect(ctx.db.comments.deleteByEntityId).not.toHaveBeenCalled();
 	});
 
@@ -81,7 +86,7 @@ describe('figma comments.delete', () => {
 		const ctx = createContext();
 		ctx.db.comments.deleteByEntityId.mockRejectedValue(new Error('db down'));
 
-		await expect(Comments.delete(ctx as never, INPUT)).resolves.toEqual({
+		await expect(deleteComment(ctx)).resolves.toEqual({
 			status: 200,
 			error: false,
 		});
