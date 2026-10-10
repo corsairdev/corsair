@@ -248,7 +248,7 @@ const getResponseHeader = (
 	responseHeader?: string,
 ): string | undefined => {
 	if (responseHeader) {
-		const content = response.headers.get(responseHeader);
+		const content = response.headers?.get(responseHeader);
 		if (isString(content)) {
 			return content;
 		}
@@ -259,13 +259,31 @@ const getResponseHeader = (
 const getResponseBody = async (response: Response): Promise<any> => {
 	if (response.status !== 204) {
 		try {
-			const contentType = response.headers.get('Content-Type');
+			const contentType = response.headers?.get('Content-Type');
 			if (contentType) {
 				const jsonTypes = ['application/json', 'application/problem+json'];
-				const isJSON = jsonTypes.some((type) =>
-					contentType.toLowerCase().startsWith(type),
-				);
+				// Also accept any structured +json suffix (RFC 6839), e.g. JSON:API's
+				// application/vnd.api+json or application/vnd.github.v3+json.
+				const mediaType = (contentType.split(';')[0] ?? '')
+					.trim()
+					.toLowerCase();
+				const isJSON =
+					jsonTypes.some((type) =>
+						contentType.toLowerCase().startsWith(type),
+					) || mediaType.endsWith('+json');
 				if (isJSON) {
+					// An error body feeds ApiError.body, so read it as text once and
+					// keep the raw text when it is empty or not valid JSON. Success
+					// bodies go straight to json(). Partial Response stubs without
+					// text() keep the json() path.
+					if (!response.ok && typeof response.text === 'function') {
+						const text = await response.text();
+						try {
+							return JSON.parse(text);
+						} catch {
+							return text;
+						}
+					}
 					return await response.json();
 				} else {
 					return await response.text();
