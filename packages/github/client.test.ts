@@ -51,9 +51,13 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 	it('converts camelCase query params to snake_case for GitHub REST', async () => {
 		mockRequest.mockResolvedValueOnce([]);
 
-		await makeGithubRequest<unknown[]>('/repos/o/r/issues/comments', 'token', {
-			query: { perPage: 100, page: 2, state: 'all' },
-		});
+		await makeGithubRequest<Array<{ id: number }>>(
+			'/repos/o/r/issues/comments',
+			'token',
+			{
+				query: { perPage: 100, page: 2, state: 'all' },
+			},
+		);
 
 		expect(mockRequest.mock.calls[0]?.[1]?.query).toEqual({
 			per_page: 100,
@@ -64,12 +68,18 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 
 	// #1867: list endpoints were sending ?perPage=1 which GitHub silently
 	// drops (only per_page is honored), so pagination looked ignored.
+	// Concrete item type used here because the mocked response shape is
+	// fixed ({ id }) — no loose unknown needed.
 	it('sends perPage as per_page so list pagination is honored (#1867)', async () => {
 		mockRequest.mockResolvedValueOnce([{ id: 1 }]);
 
-		await makeGithubRequest<unknown[]>('/repos/o/r/issues', 'token', {
-			query: { perPage: 1, page: 1, state: 'all' },
-		});
+		await makeGithubRequest<Array<{ id: number }>>(
+			'/repos/o/r/issues',
+			'token',
+			{
+				query: { perPage: 1, page: 1, state: 'all' },
+			},
+		);
 
 		const sentQuery = mockRequest.mock.calls[0]?.[1]?.query;
 		expect(sentQuery).toEqual({ per_page: 1, page: 1, state: 'all' });
@@ -79,15 +89,19 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 	it('converts other camelCase list params and drops undefined values', async () => {
 		mockRequest.mockResolvedValueOnce([]);
 
-		await makeGithubRequest<unknown[]>('/repos/o/r/actions/runs', 'token', {
-			query: {
-				perPage: 10,
-				excludePullRequests: true,
-				checkSuiteId: 42,
-				headSha: 'abc123',
-				sort: undefined,
+		await makeGithubRequest<Array<{ id: number }>>(
+			'/repos/o/r/actions/runs',
+			'token',
+			{
+				query: {
+					perPage: 10,
+					excludePullRequests: true,
+					checkSuiteId: 42,
+					headSha: 'abc123',
+					sort: undefined,
+				},
 			},
-		});
+		);
 
 		expect(mockRequest.mock.calls[0]?.[1]?.query).toEqual({
 			per_page: 10,
@@ -95,6 +109,24 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 			check_suite_id: 42,
 			head_sha: 'abc123',
 		});
+	});
+
+	it('forwards converted query alongside body on non-GET requests', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 1 });
+
+		await makeGithubRequest<{ id: number }>(
+			'/repos/o/r/issues/1/comments',
+			'token',
+			{
+				method: 'POST',
+				body: { body: 'hello' },
+				query: { perPage: 5 },
+			},
+		);
+
+		const sent = mockRequest.mock.calls[0]?.[1];
+		expect(sent?.query).toEqual({ per_page: 5 });
+		expect(sent?.body).toEqual({ body: 'hello' });
 	});
 
 	it('camelCases search envelope fields and the nested pull_request marker', async () => {

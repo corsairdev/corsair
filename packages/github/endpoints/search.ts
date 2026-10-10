@@ -15,7 +15,7 @@ import type {
 // searchType) that must never go out to GitHub.
 type StringRecord = Record<string, string | number | boolean | undefined>;
 
-function toSearchQuery(
+export function toSearchQuery(
 	input: StringRecord & { advancedSearch?: boolean; searchType?: string },
 ): StringRecord {
 	const { advancedSearch: _advanced, searchType: _type, ...rest } = input;
