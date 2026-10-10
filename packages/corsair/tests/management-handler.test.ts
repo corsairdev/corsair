@@ -136,6 +136,24 @@ describe('managementHandler — /ok', () => {
 		const body = await readJson<{ error: string }>(res);
 		expect(body.error).toBe('not_found');
 	});
+
+	it('returns 404 for a malformed percent-encoded route parameter', async () => {
+		env = makeEnv();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		const handler = managementHandler(corsair);
+
+		const res = await handler(
+			new Request('http://x/api/corsair/permissions/%', { method: 'GET' }),
+		);
+
+		expect(res.status).toBe(404);
+		const body = await readJson<{ error: string }>(res);
+		expect(body.error).toBe('not_found');
+	});
 });
 
 describe('managementHandler — /plugins', () => {
