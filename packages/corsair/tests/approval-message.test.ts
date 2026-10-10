@@ -140,3 +140,49 @@ describe('resolveAsyncApprovalMessage', () => {
 		expect(msg).toContain('https://hub.example/approve/sess-1');
 	});
 });
+
+describe('resolveApprovalUrl when Hub refuses', () => {
+	const hub = {
+		apiUrl: 'https://hub',
+		projectApiKey: 'ck_cloud_test_key',
+		signingSecret: 'secret',
+	};
+
+	const createHubPermissionSession = jest.requireMock('../hub/permission')
+		.createHubPermissionSession as jest.Mock;
+
+	afterEach(() => {
+		createHubPermissionSession.mockReset();
+		createHubPermissionSession.mockImplementation(async () => ({
+			approvalUrl: 'https://hub.example/approve/sess-1',
+			token: 'hub-token',
+			projectId: 'proj-1',
+			expiresAt: '2099-01-01T00:00:00.000Z',
+		}));
+	});
+
+	it('reports why, and still returns no url', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		createHubPermissionSession.mockRejectedValueOnce(
+			new Error('Hub returned 401: instanceKey required'),
+		);
+
+		await expect(resolveApprovalUrl({ hub }, baseRecord)).resolves.toBeNull();
+
+		expect(warn).toHaveBeenCalledTimes(1);
+		const [message] = warn.mock.calls[0];
+		expect(message).toContain('slack');
+		expect(message).toContain('messages.post');
+		expect(message).toContain('instanceKey required');
+		warn.mockRestore();
+	});
+
+	it('says nothing when the link is minted', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		await expect(resolveApprovalUrl({ hub }, baseRecord)).resolves.toBe(
+			'https://hub.example/approve/sess-1',
+		);
+		expect(warn).not.toHaveBeenCalled();
+		warn.mockRestore();
+	});
+});
