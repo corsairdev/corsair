@@ -63,6 +63,39 @@ const providerError = (providerStatus: number, body: unknown) =>
 		{ providerStatus, body },
 	);
 
+// Every plugin declares its own `<Provider>APIError` for a failure the provider
+// reports in the body rather than the status — Slack answers HTTP 200 with
+// `{ ok: false, error: "not_in_channel" }`. There is no status for the ApiError
+// branch to key on, so without this they reach the generic 500 below and a
+// caller cannot tell a missing scope from a bug.
+//
+// Only the provider's own short code crosses. An operation error's message can
+// carry hosts, config or credential-bearing text (CWE-209), so a message is
+// used only when it is already code-shaped; anything with spaces or punctuation
+// outside this set stays a generic 500.
+const PROVIDER_ERROR_NAME = /^[A-Za-z][A-Za-z0-9]*(APIError|ApiError)$/;
+const PROVIDER_CODE = /^[A-Za-z0-9_.:-]{1,64}$/;
+
+function providerCodeOf(err: unknown): string | null {
+	if (!(err instanceof Error) || !PROVIDER_ERROR_NAME.test(err.name))
+		return null;
+	const code = (err as { code?: unknown }).code;
+	const candidate = typeof code === 'string' && code ? code : err.message;
+	return PROVIDER_CODE.test(candidate) ? candidate : null;
+}
+
+// Same public `provider_error` as the HTTP path, without inventing a status:
+// the provider answered 2xx, so there is none to report.
+const providerOperationError = (providerCode: string) =>
+	new ManagementApiError(
+		502,
+		'provider_error',
+		'The provider returned an error.',
+		{
+			providerCode,
+		},
+	);
+
 function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 	if (err instanceof ManagementApiError) return err;
 	if (err instanceof AuthMissingError)
@@ -78,6 +111,8 @@ function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 		const e = err as { status?: number; body?: unknown };
 		return providerError(typeof e.status === 'number' ? e.status : 502, e.body);
 	}
+	const providerCode = providerCodeOf(err);
+	if (providerCode) return providerOperationError(providerCode);
 	// Never surface an arbitrary operation error's message — it can carry
 	// internal hosts, config, or credential-bearing text (CWE-209). Keep the
 	// original for server-side diagnostics; return a fixed public message.
