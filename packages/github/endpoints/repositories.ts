@@ -234,7 +234,7 @@ export const listStarred: GithubEndpoints['repositoriesListStarred'] = async (
 			query: {
 				sort,
 				direction,
-				per_page: perPage,
+				perPage,
 				page,
 			},
 		},
@@ -269,7 +269,7 @@ export const listStargazers: GithubEndpoints['repositoriesListStargazers'] =
 			ctx,
 			{
 				query: {
-					per_page: perPage,
+					perPage,
 					page,
 				},
 				accept: 'application/vnd.github.v3.star+json',

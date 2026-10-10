@@ -61,10 +61,10 @@ async function makeGithubRequestWithToken<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json',
-		query:
-			method === 'GET' && query
-				? convertQueryKeysToSnakeCase(query)
-				: undefined,
+		// GitHub REST expects snake_case query keys (per_page, sort, etc.)
+		// but the plugin uses camelCase (perPage) throughout, so convert
+		// at the wire boundary. GitHub silently drops unknown params.
+		query: query ? convertQueryKeysToSnakeCase(query) : undefined,
 	};
 
 	try {

@@ -1,24 +1,25 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGithubRequest } from '../client';
 import type { GithubEndpoints } from '../index';
+import { convertQueryKeysToSnakeCase } from '../utils';
 import type {
 	SearchIssuesResponse,
 	SearchRepositoriesResponse,
 	SearchUsersResponse,
 } from './types';
 
-// The plugin exposes camelCase inputs (perPage, advancedSearch, searchType)
-// for internal consistency; GitHub's Search API expects snake_case query keys,
-// so convert at the wire boundary right before the request.
+// The plugin exposes camelCase inputs (perPage) for internal consistency;
+// GitHub's Search API expects snake_case query keys, so convert at the wire
+// boundary right before the request. Central makeGithubRequest already does
+// this, but search also strips internal-only fields (advancedSearch,
+// searchType) that must never go out to GitHub.
 type StringRecord = Record<string, string | number | boolean | undefined>;
 
-function toSnakeCase(input: StringRecord): StringRecord {
-	const out: StringRecord = {};
-	for (const [key, value] of Object.entries(input)) {
-		if (value === undefined) continue;
-		out[key.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`)] = value;
-	}
-	return out;
+function toSearchQuery(
+	input: StringRecord & { advancedSearch?: boolean; searchType?: string },
+): StringRecord {
+	const { advancedSearch: _advanced, searchType: _type, ...rest } = input;
+	return convertQueryKeysToSnakeCase(rest);
 }
 
 function loggableInput(input: StringRecord): StringRecord {
@@ -32,7 +33,7 @@ export const issues: GithubEndpoints['searchIssues'] = async (ctx, input) => {
 	const result = await makeGithubRequest<SearchIssuesResponse>(
 		'/search/issues',
 		ctx,
-		{ query: toSnakeCase(input) },
+		{ query: toSearchQuery(input) },
 	);
 
 	if (result.items && ctx.db.issues) {
@@ -68,7 +69,7 @@ export const repositories: GithubEndpoints['searchRepositories'] = async (
 	const result = await makeGithubRequest<SearchRepositoriesResponse>(
 		'/search/repositories',
 		ctx,
-		{ query: toSnakeCase(input) },
+		{ query: toSearchQuery(input) },
 	);
 
 	if (result.items && ctx.db.repositories) {
@@ -98,7 +99,7 @@ export const users: GithubEndpoints['searchUsers'] = async (ctx, input) => {
 	const result = await makeGithubRequest<SearchUsersResponse>(
 		'/search/users',
 		ctx,
-		{ query: toSnakeCase(input) },
+		{ query: toSearchQuery(input) },
 	);
 
 	if (result.items && ctx.db.users) {
