@@ -102,7 +102,11 @@ export const deleteWebhookConfig: TypeformEndpoints['webhooksConfigDelete'] =
 				const existing = await ctx.db.webhookConfigs.search({
 					data: { tag: input.tag, form_id: input.form_id },
 				});
-				webhookEntityId = existing[0]?.id;
+				// `search` returns `CorsairEntity` rows, where `id` is the internal
+				// row UUID and `entity_id` is the key the upserts stored. The
+				// delete below matches on `entity_id`, so reading `id` here made
+				// the delete a silent no-op against a value it can never match.
+				webhookEntityId = existing[0]?.entity_id;
 			} catch {
 				// ignore — best-effort pre-fetch
 			}
