@@ -225,6 +225,7 @@ export const BaseProviders = [
 	'humanitix',
 	'imejisio',
 	'imgbb',
+	'incidentio',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -574,6 +575,7 @@ export const ProviderDisplayNames = {
 	humanitix: 'Humanitix',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
+	incidentio: 'Incidentio',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -930,6 +932,7 @@ export type AllProviders =
 	| 'humanitix'
 	| 'imejisio'
 	| 'imgbb'
+	| 'incidentio'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
