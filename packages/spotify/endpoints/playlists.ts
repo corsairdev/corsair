@@ -92,12 +92,16 @@ export const get: SpotifyEndpoints['playlistsGet'] = async (ctx, input) => {
 
 export const getUserPlaylists: SpotifyEndpoints['playlistsGetUserPlaylists'] =
 	async (ctx, input) => {
-		const userId = input.user_id || 'me';
 		const query: Record<string, string | number | undefined> = { ...input };
+
+		const endpoint =
+			!input.user_id || input.user_id === 'me'
+				? 'me/playlists'
+				: `users/${input.user_id}/playlists`;
 
 		const result = await makeAuthenticatedSpotifyRequest<
 			SpotifyEndpointOutputs['playlistsGetUserPlaylists']
-		>(`users/${userId}/playlists`, ctx, {
+		>(endpoint, ctx, {
 			method: 'GET',
 			query,
 		});
