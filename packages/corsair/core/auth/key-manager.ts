@@ -201,16 +201,7 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		updates: Record<string, string | null>,
 	): Promise<void> => {
 		const dek = await getDecryptedDek();
-		let currentConfig: Record<string, string>;
-		try {
-			currentConfig = await getDecryptedConfig();
-		} catch (err) {
-			console.error(
-				`[corsair] Failed to decrypt config for integration "${integrationName}", starting fresh:`,
-				err,
-			);
-			currentConfig = {};
-		}
+		const currentConfig = await getDecryptedConfig();
 
 		const newConfig = { ...currentConfig };
 		for (const [key, value] of Object.entries(updates)) {
@@ -229,17 +220,20 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 	const manager = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
+		issue_new_dek: async ({ discardConfig = false } = {}) => {
 			const integration = await ctx.getIntegration();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// Every rotation proves the KEK can decrypt the existing DEK before writing.
+			// Recovery then intentionally starts with an empty config after corruption.
 			let newConfig: Record<string, string> = {};
 			if (integration.dek) {
 				const oldDek = await decryptDEK(integration.dek, kek);
-				const config = integration.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
+				if (!discardConfig) {
+					const config = integration.config as Record<string, string>;
+					if (config && Object.keys(config).length > 0) {
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
 				}
 			}
 
@@ -479,8 +473,8 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		// Read the row ONCE and derive both the DEK and the current config from that
 		// same snapshot. Reading them via two separate getAccount() calls lets a DEK
 		// rotation land between them, so we'd re-encrypt with a DEK that no longer
-		// matches the row — the next read then fails to decrypt and the catch below
-		// discards the config. One read keeps DEK and config consistent.
+		// matches the row and the next config read rejects. One read keeps DEK and
+		// config consistent.
 		const account = await ctx.getAccount();
 		if (!account.dek) {
 			throw new Error(
@@ -488,20 +482,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			);
 		}
 		const dek = await decryptDEK(account.dek, kek);
-		let currentConfig: Record<string, string>;
-		try {
-			const config = account.config as Record<string, string>;
-			currentConfig =
-				!config || Object.keys(config).length === 0
-					? {}
-					: decryptConfig(config, dek);
-		} catch (err) {
-			console.error(
-				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
-				err,
-			);
-			currentConfig = {};
-		}
+		const config = account.config as Record<string, string>;
+		const currentConfig =
+			!config || Object.keys(config).length === 0
+				? {}
+				: decryptConfig(config, dek);
 
 		const newConfig = { ...currentConfig };
 		for (const [key, value] of Object.entries(updates)) {
@@ -520,17 +505,20 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const manager: Record<string, unknown> = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
+		issue_new_dek: async ({ discardConfig = false } = {}) => {
 			const account = await ctx.getAccount();
 			const newDek = generateDEK();
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
+			// Every rotation proves the KEK can decrypt the existing DEK before writing.
+			// Recovery then intentionally starts with an empty config after corruption.
 			let newConfig: Record<string, string> = {};
 			if (account.dek) {
 				const oldDek = await decryptDEK(account.dek, kek);
-				const config = account.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
+				if (!discardConfig) {
+					const config = account.config as Record<string, string>;
+					if (config && Object.keys(config).length > 0) {
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
 				}
 			}
 
