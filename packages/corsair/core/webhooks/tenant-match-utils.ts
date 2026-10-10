@@ -66,7 +66,15 @@ export function extractMicrosoftGraphValidationToken(
 		const value = firstString(
 			Array.isArray(candidate) ? candidate : [candidate],
 		);
-		if (value) return decodeURIComponent(value);
+		if (value) {
+			try {
+				return decodeURIComponent(value);
+			} catch {
+				// A malformed percent-encoding is treated as absent, same as
+				// the management route parameters.
+				continue;
+			}
+		}
 	}
 
 	const queryToken = readQueryParam(
