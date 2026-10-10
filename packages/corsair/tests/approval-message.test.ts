@@ -5,6 +5,7 @@ import {
 	resolveAsyncApprovalMessage,
 	usesManualApprovalConfig,
 } from '../core/permissions/approval-message';
+import { HubDeliveryUrlError } from '../hub/resolve-delivery-url';
 
 jest.mock('../hub/permission', () => ({
 	createHubPermissionSession: jest.fn(async () => ({
@@ -16,6 +17,8 @@ jest.mock('../hub/permission', () => ({
 	formatHubApprovalMessage: (url: string) =>
 		`Approval required. Visit ${url} to approve or deny, then tell the agent to retry this action.`,
 }));
+
+const { createHubPermissionSession } = jest.requireMock('../hub/permission');
 
 const baseRecord = {
 	id: 'perm-1',
@@ -82,6 +85,10 @@ describe('resolveApprovalUrl', () => {
 });
 
 describe('resolveAsyncApprovalMessage', () => {
+	beforeEach(() => {
+		createHubPermissionSession.mockClear();
+	});
+
 	it('returns setup hint when manual approval is preferred but URL cannot be built', async () => {
 		const msg = await resolveAsyncApprovalMessage({
 			manual: { onApprovalRequired: ({ approvalUrl }) => approvalUrl },
@@ -138,5 +145,41 @@ describe('resolveAsyncApprovalMessage', () => {
 			operationPath: 'messages.post',
 		});
 		expect(msg).toContain('https://hub.example/approve/sess-1');
+	});
+
+	it('surfaces and logs an invalid Hub delivery URL configuration', async () => {
+		const error = new HubDeliveryUrlError(
+			'PORT must be a whole number between 1 and 65535',
+		);
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
+		createHubPermissionSession.mockRejectedValueOnce(error);
+
+		try {
+			const message = await resolveAsyncApprovalMessage({
+				hub: {
+					apiUrl: 'https://hub',
+					projectApiKey: 'ck_dev_test_key',
+					signingSecret: 'secret',
+				},
+				permissionId: 'perm-1',
+				permissionToken: 'tok-abc',
+				plugin: 'slack',
+				endpoint: 'messages.post',
+				args: { text: 'hi' },
+				tenantId: 'default',
+				expiresAt: '2099-01-01T00:00:00.000Z',
+				operationPath: 'messages.post',
+			});
+
+			expect(message).toContain(error.message);
+			expect(consoleError).toHaveBeenCalledWith(
+				'[corsair] failed to create Hub approval link',
+				error,
+			);
+		} finally {
+			consoleError.mockRestore();
+		}
 	});
 });

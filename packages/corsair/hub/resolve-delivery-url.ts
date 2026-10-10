@@ -1,6 +1,14 @@
 const DEFAULT_LOCAL_PORT = '3000';
 const DELIVERY_PATH = '/api/corsair';
 
+/** Thrown when local Hub delivery configuration cannot produce a safe URL. */
+export class HubDeliveryUrlError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'HubDeliveryUrlError';
+	}
+}
+
 function stripTrailingSlash(url: string) {
 	return url.replace(/\/$/, '');
 }
@@ -10,12 +18,16 @@ function resolveLocalPort(port: string | undefined): string {
 	if (!value) return DEFAULT_LOCAL_PORT;
 
 	if (!/^\d+$/.test(value)) {
-		throw new Error('PORT must be a whole number between 1 and 65535');
+		throw new HubDeliveryUrlError(
+			'PORT must be a whole number between 1 and 65535',
+		);
 	}
 
 	const parsed = Number(value);
 	if (parsed < 1 || parsed > 65535) {
-		throw new Error('PORT must be a whole number between 1 and 65535');
+		throw new HubDeliveryUrlError(
+			'PORT must be a whole number between 1 and 65535',
+		);
 	}
 
 	return value;
