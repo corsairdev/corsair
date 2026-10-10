@@ -8,13 +8,9 @@ jest.mock('../client', () => ({
 	makeJiraRequest: jest.fn(),
 }));
 
-jest.mock(
-	'corsair/core',
-	() => ({
-		logEventFromContext: jest.fn().mockResolvedValue(undefined),
-	}),
-	{ virtual: true },
-);
+jest.mock('corsair/core', () => ({
+	logEventFromContext: jest.fn().mockResolvedValue(undefined),
+}));
 
 const requestMock = jest.mocked(makeJiraRequest);
 const cloudUrl = 'https://example.atlassian.net';
