@@ -55,15 +55,9 @@ export const deleteComment: FigmaEndpoints['commentsDelete'] = async (
 
 	if (ctx.db.comments) {
 		try {
-			const existing = await ctx.db.comments.findByEntityId(input.comment_id);
-			if (existing) {
-				await ctx.db.comments.upsertByEntityId(input.comment_id, {
-					...existing.data,
-					resolved_at: new Date().toISOString(),
-				});
-			}
+			await ctx.db.comments.deleteByEntityId(input.comment_id);
 		} catch (error) {
-			console.warn('Failed to update comment in database:', error);
+			console.warn('Failed to delete comment from database:', error);
 		}
 	}
 
