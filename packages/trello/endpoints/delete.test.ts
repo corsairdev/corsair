@@ -1,112 +1,96 @@
-const mockMakeTrelloRequest = jest.fn<
-	Promise<unknown>,
-	[
-		string,
-		string,
-		{
-			method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-			body?: Record<string, unknown>;
-			query?: Record<string, string | number | boolean | undefined>;
-		}?,
-		string?,
-	]
->();
-
-// The request helper is generic, so its response type can vary by endpoint.
-// `unknown` keeps the mock from assuming a specific response shape.
-const mockLogEventFromContext = jest.fn<
-	Promise<void>,
-	[unknown, ...unknown[]]
->();
-
-jest.mock('../client', () => ({
-	makeTrelloRequest: mockMakeTrelloRequest,
-}));
-
-jest.mock('corsair/core', () => ({
-	logEventFromContext: mockLogEventFromContext,
-}));
-
+import { logEventFromContext } from 'corsair/core';
+import { makeTrelloRequest } from '../client';
 import { del as deleteBoard } from './boards';
 import { del as deleteCard } from './cards';
+
+jest.mock('../client', () => ({ makeTrelloRequest: jest.fn() }));
+jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
+
+const mockMakeTrelloRequest = jest.mocked(makeTrelloRequest);
+const mockLogEventFromContext = jest.mocked(logEventFromContext);
+
+type DeleteContext = Parameters<typeof deleteCard>[0] &
+	Parameters<typeof deleteBoard>[0];
+
+function createContext(db: {
+	cards?: { deleteByEntityId: jest.Mock };
+	boards?: { deleteByEntityId: jest.Mock };
+}) {
+	// The full plugin context carries every entity client, key helper and hook.
+	// These endpoints only read key, options.trelloApiKey and one entity client,
+	// so the test builds just those and casts once here.
+	return {
+		key: 'test-token',
+		options: { trelloApiKey: 'test-api-key' },
+		db,
+	} as unknown as DeleteContext;
+}
 
 describe('Trello delete endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		mockMakeTrelloRequest.mockResolvedValue({});
-		mockLogEventFromContext.mockResolvedValue(undefined);
+		mockLogEventFromContext.mockResolvedValue(null);
 	});
 
 	it('deletes the local card after successful Trello deletion', async () => {
-		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
 
-		// Only the dependencies exercised by this endpoint are needed here;
-		// the complete runtime context includes unrelated services.
-		const ctx = {
-			key: 'test-token',
-			options: { trelloApiKey: 'test-api-key' },
-			db: { cards: { deleteByEntityId } },
-		} as unknown as Parameters<typeof deleteCard>[0];
+		await deleteCard(createContext({ cards: { deleteByEntityId } }), {
+			cardId: 'card-123',
+		});
 
-		await deleteCard(ctx, { cardId: 'card-123' });
-
+		expect(mockMakeTrelloRequest).toHaveBeenCalledWith(
+			'cards/card-123',
+			'test-token',
+			{ method: 'DELETE' },
+			'test-api-key',
+		);
 		expect(deleteByEntityId).toHaveBeenCalledWith('card-123');
 	});
 
 	it('deletes the local board after successful Trello deletion', async () => {
-		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
 
-		// The board endpoint test intentionally mocks only the dependencies
-		// relevant to deletion rather than building the full runtime context.
-		const ctx = {
-			key: 'test-token',
-			options: { trelloApiKey: 'test-api-key' },
-			db: { boards: { deleteByEntityId } },
-		} as unknown as Parameters<typeof deleteBoard>[0];
+		await deleteBoard(createContext({ boards: { deleteByEntityId } }), {
+			boardId: 'board-123',
+		});
 
-		await deleteBoard(ctx, { boardId: 'board-123' });
-
+		expect(mockMakeTrelloRequest).toHaveBeenCalledWith(
+			'boards/board-123',
+			'test-token',
+			{ method: 'DELETE' },
+			'test-api-key',
+		);
 		expect(deleteByEntityId).toHaveBeenCalledWith('board-123');
 	});
 
 	it('does not delete the local card when Trello deletion fails', async () => {
-		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
-
-		// This focused test supplies only the card deletion dependencies.
-		const ctx = {
-			key: 'test-token',
-			options: { trelloApiKey: 'test-api-key' },
-			db: { cards: { deleteByEntityId } },
-		} as unknown as Parameters<typeof deleteCard>[0];
-
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
 		mockMakeTrelloRequest.mockRejectedValueOnce(
 			new Error('Trello deletion failed'),
 		);
 
-		await expect(deleteCard(ctx, { cardId: 'card-123' })).rejects.toThrow(
-			'Trello deletion failed',
-		);
+		await expect(
+			deleteCard(createContext({ cards: { deleteByEntityId } }), {
+				cardId: 'card-123',
+			}),
+		).rejects.toThrow('Trello deletion failed');
 
 		expect(deleteByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('does not delete the local board when Trello deletion fails', async () => {
-		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
-
-		// This focused test supplies only the board deletion dependencies.
-		const ctx = {
-			key: 'test-token',
-			options: { trelloApiKey: 'test-api-key' },
-			db: { boards: { deleteByEntityId } },
-		} as unknown as Parameters<typeof deleteBoard>[0];
-
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
 		mockMakeTrelloRequest.mockRejectedValueOnce(
 			new Error('Trello deletion failed'),
 		);
 
-		await expect(deleteBoard(ctx, { boardId: 'board-123' })).rejects.toThrow(
-			'Trello deletion failed',
-		);
+		await expect(
+			deleteBoard(createContext({ boards: { deleteByEntityId } }), {
+				boardId: 'board-123',
+			}),
+		).rejects.toThrow('Trello deletion failed');
 
 		expect(deleteByEntityId).not.toHaveBeenCalled();
 	});
