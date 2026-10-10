@@ -1,0 +1,39 @@
+displayName: Daffy
+description: Donor-advised fund platform for charitable giving, gifts, and nonprofit search.
+domain: daffy.org
+recommendedAuth: api_key
+examples:
+  read:
+    path: accounts.getBalance
+    args: {}
+  write:
+    path: gifts.create
+    args:
+      name: Jamie
+      amount: 18
+apiExamples:
+  accounts.getBalance: {}
+  accounts.getContributions:
+    page: 1
+  accounts.getDonations:
+    page: 1
+  accounts.getUserCauses:
+    userId: 1
+  accounts.getUserDonations:
+    userId: 1
+    page: 1
+  accounts.getUserProfile: {}
+  accounts.getUserByUsername:
+    username: api-user
+  gifts.create:
+    name: Jamie
+    amount: 18
+  gifts.getByCode:
+    code: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+  gifts.list:
+    page: 1
+  nonProfits.getByEin:
+    ein: '261544963'
+  nonProfits.search:
+    query: education
+    page: 1
