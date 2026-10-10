@@ -78,7 +78,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	}
 
 	const resolvedDatabase = config.database
-		? createCorsairDatabase(config.database)
+		? createCorsairDatabase(config.database, { dbTables: config.dbTables })
 		: undefined;
 
 	// Empty kek is tolerated at construction (plugin-only clients, env-less build

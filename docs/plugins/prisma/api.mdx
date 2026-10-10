@@ -1,0 +1,3003 @@
+---
+title: API
+description: "API reference for Prisma: every `prisma.api.*` operation with input and output types."
+---
+
+Every `prisma.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Backups
+
+### list
+
+`backups.list`
+
+List backups for a database
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.backups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  databaseId?: string,
+  status?: string,
+  createdAt?: string
+} | {
+  id: string,
+  databaseId?: string,
+  status?: string,
+  createdAt?: string
+}[] | {
+  items: {
+    id: string,
+    databaseId?: string,
+    status?: string,
+    createdAt?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    databaseId?: string,
+    status?: string,
+    createdAt?: string
+  } | {
+    id: string,
+    databaseId?: string,
+    status?: string,
+    createdAt?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restore
+
+`backups.restore`
+
+Restore a backup onto the target database (async, overwrites current data)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.prisma.api.backups.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | Yes | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  backupId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a connection (returns a ready-to-use connection string)
+
+**Risk:** `write`
+
+```ts
+await corsair.prisma.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  databaseId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  databaseId?: string,
+  connectionString?: string,
+  type?: string,
+  createdAt?: string
+} | {
+  data: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }
+} | {
+  project: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }
+} | {
+  database: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }
+} | {
+  connection: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete/revoke a connection and access for anything using it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.prisma.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | Yes | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`connections.list`
+
+List connections
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  databaseId?: string,
+  connectionString?: string,
+  type?: string,
+  createdAt?: string
+} | {
+  id: string,
+  name?: string,
+  databaseId?: string,
+  connectionString?: string,
+  type?: string,
+  createdAt?: string
+}[] | {
+  items: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  } | {
+    id: string,
+    name?: string,
+    databaseId?: string,
+    connectionString?: string,
+    type?: string,
+    createdAt?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Databases
+
+### create
+
+`databases.create`
+
+Create a database in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.prisma.api.databases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  region: string,
+  isDefault?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  connectionString?: string,
+  region?: string,
+  status?: string,
+  isDefault?: boolean,
+  apiKeys?: {
+    id: string,
+    createdAt?: string,
+    apiKey?: string,
+    connectionString?: string,
+    ppgDirectConnection?: {
+      host?: string,
+      user?: string,
+      pass?: string
+    }
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  project: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  database: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  connection: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`databases.delete`
+
+Delete a database and all of its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.prisma.api.databases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`databases.get`
+
+Retrieve database details
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.databases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  connectionString?: string,
+  region?: string,
+  status?: string,
+  isDefault?: boolean,
+  apiKeys?: {
+    id: string,
+    createdAt?: string,
+    apiKey?: string,
+    connectionString?: string,
+    ppgDirectConnection?: {
+      host?: string,
+      user?: string,
+      pass?: string
+    }
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  project: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  database: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+} | {
+  connection: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUsage
+
+`databases.getUsage`
+
+Retrieve database usage metrics for a time period
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.databases.getUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | Yes | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  databaseId?: string,
+  id?: string,
+  startDate?: string,
+  endDate?: string,
+  storage?: number | {
+    reads?: number,
+    writes?: number,
+    total?: number,
+    bytes?: number,
+    history?: {
+      timestamp?: string,
+      value?: number
+    }[]
+  },
+  operations?: number | {
+    reads?: number,
+    writes?: number,
+    total?: number,
+    bytes?: number,
+    history?: {
+      timestamp?: string,
+      value?: number
+    }[]
+  },
+  reads?: number | {
+    reads?: number,
+    writes?: number,
+    total?: number,
+    bytes?: number,
+    history?: {
+      timestamp?: string,
+      value?: number
+    }[]
+  },
+  writes?: number | {
+    reads?: number,
+    writes?: number,
+    total?: number,
+    bytes?: number,
+    history?: {
+      timestamp?: string,
+      value?: number
+    }[]
+  },
+  totalOperations?: number,
+  metrics?: {
+    timestamp?: string,
+    value?: number
+  }[] | {
+  }
+} | {
+  data: {
+    databaseId?: string,
+    id?: string,
+    startDate?: string,
+    endDate?: string,
+    storage?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    operations?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    reads?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    writes?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    totalOperations?: number,
+    metrics?: {
+      timestamp?: string,
+      value?: number
+    }[] | {
+    }
+  }
+} | {
+  usage: {
+    databaseId?: string,
+    id?: string,
+    startDate?: string,
+    endDate?: string,
+    storage?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    operations?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    reads?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    writes?: number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    },
+    totalOperations?: number,
+    metrics?: {
+      timestamp?: string,
+      value?: number
+    }[] | {
+    }
+  }
+} | {
+  timestamp?: string,
+  value?: number
+}[] | {
+  data: {
+    timestamp?: string,
+    value?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### inspectSchema
+
+`databases.inspectSchema`
+
+Inspect a database schema (tables, columns, types, constraints)
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.databases.inspectSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `host` | `string` | Yes | — |
+| `port` | `number` | No | — |
+| `user` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `database` | `string` | Yes | — |
+| `sslRejectUnauthorized` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  schema: string,
+  name: string,
+  columns: {
+    name: string,
+    type: string,
+    nullable: boolean,
+    default?: string | null
+  }[],
+  foreignKeys: {
+    column: string,
+    foreignTable: string,
+    foreignColumn: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`databases.list`
+
+List databases for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.databases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  connectionString?: string,
+  region?: string,
+  status?: string,
+  isDefault?: boolean,
+  apiKeys?: {
+    id: string,
+    createdAt?: string,
+    apiKey?: string,
+    connectionString?: string,
+    ppgDirectConnection?: {
+      host?: string,
+      user?: string,
+      pass?: string
+    }
+  }[]
+} | {
+  id: string,
+  createdAt?: string,
+  name?: string,
+  connectionString?: string,
+  region?: string,
+  status?: string,
+  isDefault?: boolean,
+  apiKeys?: {
+    id: string,
+    createdAt?: string,
+    apiKey?: string,
+    connectionString?: string,
+    ppgDirectConnection?: {
+      host?: string,
+      user?: string,
+      pass?: string
+    }
+  }[]
+}[] | {
+  items: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  } | {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Integrations
+
+### list
+
+`integrations.list`
+
+List integrations (OAuth clients, granted scopes) for a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.integrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  workspaceId?: string,
+  type?: string
+} | {
+  id: string,
+  name?: string,
+  workspaceId?: string,
+  type?: string
+}[] | {
+  items: {
+    id: string,
+    name?: string,
+    workspaceId?: string,
+    type?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    name?: string,
+    workspaceId?: string,
+    type?: string
+  } | {
+    id: string,
+    name?: string,
+    workspaceId?: string,
+    type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project and its default/database environment
+
+**Risk:** `write`
+
+```ts
+await corsair.prisma.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  displayName?: string,
+  region: string,
+  createDatabase?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  displayName?: string | null,
+  workspaceId?: string,
+  region?: string,
+  logicalId?: string,
+  databases?: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  project: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  database: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  connection: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project and all of its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.prisma.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`projects.get`
+
+Retrieve project details
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  displayName?: string | null,
+  workspaceId?: string,
+  region?: string,
+  logicalId?: string,
+  databases?: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  project: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  database: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  connection: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects the token has access to
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  displayName?: string | null,
+  workspaceId?: string,
+  region?: string,
+  logicalId?: string,
+  databases?: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+} | {
+  id: string,
+  createdAt?: string,
+  name?: string,
+  displayName?: string | null,
+  workspaceId?: string,
+  region?: string,
+  logicalId?: string,
+  databases?: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+}[] | {
+  items: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  } | {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### transfer
+
+`projects.transfer`
+
+Transfer a project to another workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.prisma.api.projects.transfer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  recipientAccessToken: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt?: string,
+  name?: string,
+  displayName?: string | null,
+  workspaceId?: string,
+  region?: string,
+  logicalId?: string,
+  databases?: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    connectionString?: string,
+    region?: string,
+    status?: string,
+    isDefault?: boolean,
+    apiKeys?: {
+      id: string,
+      createdAt?: string,
+      apiKey?: string,
+      connectionString?: string,
+      ppgDirectConnection?: {
+        host?: string,
+        user?: string,
+        pass?: string
+      }
+    }[]
+  }[]
+} | {
+  data: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  project: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  database: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+} | {
+  connection: {
+    id: string,
+    createdAt?: string,
+    name?: string,
+    displayName?: string | null,
+    workspaceId?: string,
+    region?: string,
+    logicalId?: string,
+    databases?: {
+      id: string,
+      createdAt?: string,
+      name?: string,
+      connectionString?: string,
+      region?: string,
+      status?: string,
+      isDefault?: boolean,
+      apiKeys?: {
+        id: string,
+        createdAt?: string,
+        apiKey?: string,
+        connectionString?: string,
+        ppgDirectConnection?: {
+          host?: string,
+          user?: string,
+          pass?: string
+        }
+      }[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+List all available regions across products (optionally by product)
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.regions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+} | {
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+}[] | {
+  items: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  } | {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccelerate
+
+`regions.listAccelerate`
+
+List all available Prisma Accelerate regions
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.regions.listAccelerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+} | {
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+}[] | {
+  items: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  } | {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPostgres
+
+`regions.listPostgres`
+
+List all available Prisma Postgres regions with availability
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.regions.listPostgres({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+} | {
+  id: string,
+  region?: string,
+  name?: string,
+  displayName?: string,
+  available?: boolean,
+  status?: string,
+  product?: string
+}[] | {
+  items: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  } | {
+    id: string,
+    region?: string,
+    name?: string,
+    displayName?: string,
+    available?: boolean,
+    status?: string,
+    product?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sql
+
+### execute
+
+`sql.execute`
+
+Execute a SQL command (INSERT/UPDATE/DELETE/DDL) over the Postgres connection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.prisma.api.sql.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `host` | `string` | Yes | — |
+| `port` | `number` | No | — |
+| `user` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `database` | `string` | Yes | — |
+| `sslRejectUnauthorized` | `boolean` | No | — |
+| `sql` | `string` | Yes | — |
+| `params` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[]` | Yes | — |
+| `rowCount` | `number` | No | — |
+| `command` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`sql.query`
+
+Execute a read-only SQL query (SELECT) over the Postgres connection
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.sql.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `host` | `string` | Yes | — |
+| `port` | `number` | No | — |
+| `user` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `database` | `string` | Yes | — |
+| `sslRejectUnauthorized` | `boolean` | No | — |
+| `sql` | `string` | Yes | — |
+| `params` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[]` | Yes | — |
+| `rowCount` | `number` | No | — |
+| `command` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List workspaces the token can access
+
+**Risk:** `read`
+
+```ts
+await corsair.prisma.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `databaseId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+| `targetDatabaseId` | `string` | No | — |
+| `backupId` | `string` | No | — |
+| `regionId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+| `body` | `undefined` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string
+} | {
+  id: string,
+  name?: string
+}[] | {
+  items: {
+    id: string,
+    name?: string
+  }[]
+} | {
+  data: {
+    id: string,
+    name?: string
+  } | {
+    id: string,
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

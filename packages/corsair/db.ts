@@ -16,8 +16,16 @@
 export { sql } from 'kysely';
 export * from './db/index';
 export type {
+	CorsairCoreTableName,
 	CorsairDatabase,
 	CorsairDatabaseInput,
+	CorsairDbTables,
 	CorsairKyselyDatabase,
+	CorsairResolvedTableNames,
+	CreateCorsairDatabaseOptions,
 } from './db/kysely/database';
-export { createCorsairDatabase } from './db/kysely/database';
+export {
+	CORSAIR_CORE_TABLE_NAMES,
+	createCorsairDatabase,
+	resolveCorsairDbTables,
+} from './db/kysely/database';

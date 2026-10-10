@@ -160,11 +160,47 @@ export type DocumentStyle = {
 	flipPageOrientation?: boolean;
 };
 
+export type TabProperties = {
+	tabId?: string;
+	title?: string;
+	index?: number;
+	parentTabId?: string;
+	nestingLevel?: number;
+};
+
+/** Text-bearing content of a single document tab. */
+export type DocumentTab = {
+	body?: Body;
+	headers?: Record<string, Header>;
+	footers?: Record<string, Footer>;
+	footnotes?: Record<string, Footnote>;
+	namedRanges?: Record<string, NamedRanges>;
+	inlineObjects?: Record<string, InlineObject>;
+	positionedObjects?: Record<string, unknown>;
+	lists?: Record<string, unknown>;
+	documentStyle?: DocumentStyle;
+};
+
+export type Tab = {
+	tabProperties?: TabProperties;
+	childTabs?: Tab[];
+	documentTab?: DocumentTab;
+};
+
+export type DocumentTabSummary = {
+	tabId: string;
+	title?: string;
+	index?: number;
+	parentTabId?: string;
+	nestingLevel?: number;
+};
+
 export type Document = {
 	documentId?: string;
 	title?: string;
 	revisionId?: string;
 	suggestionsViewMode?: string;
+	tabs?: Tab[];
 	body?: Body;
 	headers?: Record<string, Header>;
 	footers?: Record<string, Footer>;
@@ -225,4 +261,11 @@ export type SpreadsheetSheet = {
 export type SpreadsheetChartsResponse = {
 	spreadsheetId?: string;
 	sheets?: SpreadsheetSheet[];
+};
+
+/** Subset of spreadsheets.values.get (Sheets API). */
+export type ValueRange = {
+	range?: string;
+	majorDimension?: 'ROWS' | 'COLUMNS' | 'DIMENSION_UNSPECIFIED';
+	values?: Array<Array<string | number | boolean | null>>;
 };

@@ -14,6 +14,16 @@ export class TwilioAPIError extends Error {
 
 const TWILIO_API_BASE = 'https://api.twilio.com/2010-04-01';
 
+/**
+ * Extracts the auth token from a stored key, which is either a bare token or
+ * `accountSid:authToken`. Splits on the first colon only, so tokens that
+ * themselves contain colons are preserved.
+ */
+export function getTwilioAuthToken(key: string): string {
+	const separator = key.indexOf(':');
+	return separator === -1 ? key : key.slice(separator + 1);
+}
+
 export async function makeTwilioRequest<T>(
 	endpoint: string,
 	accountSid: string,

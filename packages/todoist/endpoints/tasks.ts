@@ -150,7 +150,7 @@ export const quickAdd: TodoistEndpoints['tasksQuickAdd'] = async (
 ) => {
 	const result = await makeTodoistRequest<
 		TodoistEndpointOutputs['tasksQuickAdd']
-	>('quick/add', ctx.key, {
+	>('tasks/quick', ctx.key, {
 		method: 'POST',
 		body: input,
 	});

@@ -1,4 +1,5 @@
 import * as Documents from './documents';
+import * as Sheets from './sheets';
 import * as Structure from './structure';
 import * as Tables from './tables';
 import * as Text from './text';
@@ -10,6 +11,7 @@ export const DocumentsEndpoints = {
 	copyDocument: Documents.copyDocument,
 	getDocument: Documents.getDocument,
 	getDocumentPlaintext: Documents.getDocumentPlaintext,
+	listDocumentTabs: Documents.listDocumentTabs,
 	updateDocumentMarkdown: Documents.updateDocumentMarkdown,
 	updateDocumentSectionMarkdown: Documents.updateDocumentSectionMarkdown,
 	updateDocumentStyle: Documents.updateDocumentStyle,
@@ -48,6 +50,10 @@ export const TablesEndpoints = {
 	deleteTableRow: Tables.deleteTableRow,
 	unmergeTableCells: Tables.unmergeTableCells,
 	updateTableRowStyle: Tables.updateTableRowStyle,
+};
+
+export const SheetsEndpoints = {
+	readValues: Sheets.readValues,
 };
 
 export * from './types';

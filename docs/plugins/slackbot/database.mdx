@@ -1,0 +1,194 @@
+---
+title: Database
+description: "Slackbot local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Slackbot plugin syncs data locally. Use `corsair.slackbot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Channels
+
+Path: `slackbot.db.channels.search`
+
+```ts
+const rows = await corsair.slackbot.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_private` | `boolean` | equals |
+| `is_archived` | `boolean` | equals |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_members` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `slackbot.db.files.search`
+
+```ts
+const rows = await corsair.slackbot.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `mimetype` | `string` | equals, contains, startsWith, endsWith, in |
+| `filetype` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `permalink` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `slackbot.db.messages.search`
+
+```ts
+const rows = await corsair.slackbot.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ts` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `subtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `bot_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `team` | `string` | equals, contains, startsWith, endsWith, in |
+| `thread_ts` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Reminders
+
+Path: `slackbot.db.reminders.search`
+
+```ts
+const rows = await corsair.slackbot.db.reminders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `user` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `number` | equals, gt, gte, lt, lte, in |
+| `recurring` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scheduled Messages
+
+Path: `slackbot.db.scheduled_messages.search`
+
+```ts
+const rows = await corsair.slackbot.db.scheduled_messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_at` | `number` | equals, gt, gte, lt, lte, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `thread_ts` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `slackbot.db.users.search`
+
+```ts
+const rows = await corsair.slackbot.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `real_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_bot` | `boolean` | equals |
+| `deleted` | `boolean` | equals |
+| `tz` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
