@@ -15,6 +15,13 @@ import type {
 // searchType) that must never go out to GitHub.
 type StringRecord = Record<string, string | number | boolean | undefined>;
 
+/**
+ * Build the wire query for GitHub Search.
+ *
+ * Strips plugin-internal controls (`advancedSearch`, `searchType`) that the
+ * REST API would silently ignore, then converts the remaining camelCase
+ * keys (`perPage`) to the snake_case form GitHub expects (`per_page`).
+ */
 export function toSearchQuery(
 	input: StringRecord & { advancedSearch?: boolean; searchType?: string },
 ): StringRecord {
