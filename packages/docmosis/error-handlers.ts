@@ -28,7 +28,11 @@ export const errorHandlers = {
 			if (error instanceof DocmosisAPIError && error.status === 401)
 				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('invalid accesskey')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

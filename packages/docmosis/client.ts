@@ -223,7 +223,9 @@ export async function makeDocmosisRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new DocmosisAPIError(error.message, error.status, { cause: error });
+			const body = error.body as { shortMsg?: string; longMsg?: string } | null;
+			const message = body?.longMsg || body?.shortMsg || error.message;
+			throw new DocmosisAPIError(message, error.status, { cause: error });
 		}
 
 		if (error instanceof Error) {

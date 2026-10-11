@@ -78,6 +78,26 @@ describe('makeDocmosisRequest', () => {
 		});
 	});
 
+	it('uses the Docmosis error message from the response body', async () => {
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: 'environment/ready' },
+				{
+					url: 'https://us1.dws4.docmosis.com/api/environment/ready',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: { succeeded: false, shortMsg: 'Invalid accessKey' },
+				},
+				'Bad Request',
+			),
+		);
+
+		await expect(
+			makeDocmosisRequest('environment/ready', 'bad', { formData: {} }),
+		).rejects.toMatchObject({ message: 'Invalid accessKey', status: 400 });
+	});
+
 	it('wraps non-ApiError failures in DocmosisAPIError', async () => {
 		mockRequest.mockRejectedValue(new Error('network down'));
 

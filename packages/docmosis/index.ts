@@ -13,7 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Admin, Images, Templates } from './endpoints';
+import type { DocmosisRegion } from './client';
+import { Admin, Auth, Images, Templates } from './endpoints';
 import type {
 	DocmosisEndpointInputs,
 	DocmosisEndpointOutputs,
@@ -28,6 +29,8 @@ import { DocmosisSchema } from './schema';
 export type DocmosisPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Docmosis Cloud region the environment lives in. Defaults to 'us1'. */
+	region?: DocmosisRegion;
 	hooks?: InternalDocmosisPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof docmosisEndpointsNested>;
@@ -53,6 +56,7 @@ type DocmosisEndpoint<K extends keyof DocmosisEndpointOutputs> =
 	>;
 
 export type DocmosisEndpoints = {
+	getApiKey: DocmosisEndpoint<'getApiKey'>;
 	environmentReady: DocmosisEndpoint<'environmentReady'>;
 	environmentSummary: DocmosisEndpoint<'environmentSummary'>;
 	ping: DocmosisEndpoint<'ping'>;
@@ -73,6 +77,9 @@ export type DocmosisEndpoints = {
 };
 
 const docmosisEndpointsNested = {
+	auth: {
+		getApiKey: Auth.getApiKey,
+	},
 	admin: {
 		environmentReady: Admin.environmentReady,
 		environmentSummary: Admin.environmentSummary,
@@ -101,6 +108,10 @@ const docmosisEndpointsNested = {
 const docmosisWebhooksNested = {} as const;
 
 export const docmosisEndpointSchemas = {
+	'auth.getApiKey': {
+		input: DocmosisEndpointInputSchemas.getApiKey,
+		output: DocmosisEndpointOutputSchemas.getApiKey,
+	},
 	'admin.environmentReady': {
 		input: DocmosisEndpointInputSchemas.environmentReady,
 		output: DocmosisEndpointOutputSchemas.environmentReady,
@@ -174,6 +185,11 @@ export const docmosisEndpointSchemas = {
 >;
 
 const docmosisEndpointMeta = {
+	'auth.getApiKey': {
+		riskLevel: 'read',
+		description:
+			'Confirm a Docmosis access key is configured and return a masked preview of it',
+	},
 	'admin.environmentReady': {
 		riskLevel: 'read',
 		description: 'Check whether the environment is active and ready to render',

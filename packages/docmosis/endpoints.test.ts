@@ -26,7 +26,7 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 describe('Docmosis endpoints', () => {
 	const plugin = docmosis({ key: 'test-key' });
 	const endpoints = plugin.endpoints!;
-	const ctx = { key: 'test-key', authType: 'api_key' } as never;
+	const ctx = { key: 'test-key', authType: 'api_key', options: {} } as never;
 
 	beforeEach(() => {
 		mockRequest.mockReset();
@@ -62,10 +62,111 @@ describe('Docmosis endpoints', () => {
 		);
 	});
 
+	it('getApiKey returns only a masked preview without calling the API', async () => {
+		const result = await endpoints.auth.getApiKey(
+			{ key: 'dXNlcjEyMzQ1Njc4', authType: 'api_key', options: {} } as never,
+			{},
+		);
+
+		expect(result).toEqual({ configured: true, keyPreview: 'Njc4' });
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('forwards the configured region to the client', async () => {
+		mockRequest.mockResolvedValue({ succeeded: true });
+		await endpoints.admin.getRenderQueue(
+			{
+				key: 'test-key',
+				authType: 'api_key',
+				options: { region: 'eu1' },
+			} as never,
+			{},
+		);
+
+		expect(mockRequest).toHaveBeenCalledWith('getRenderQueue', 'test-key', {
+			method: 'POST',
+			region: 'eu1',
+			formData: {},
+		});
+	});
+
+	it('getStructure keeps the provider element shape including nesting', async () => {
+		mockRequest.mockResolvedValue({
+			succeeded: true,
+			templateStructure: [
+				{
+					type: 'condition',
+					conditionIdx: 0,
+					text: 'cs_hasPeople',
+					dataRefs: ['hasPeople'],
+					contains: [
+						{
+							type: 'field',
+							fieldIdx: 0,
+							text: 'name',
+							dataRefs: ['name'],
+						},
+					],
+				},
+			],
+		});
+
+		const result = await endpoints.templates.getStructure(ctx, {
+			templateName: '/a.docx',
+		});
+
+		expect(result.templateStructure).toEqual([
+			{
+				type: 'condition',
+				conditionIdx: 0,
+				text: 'cs_hasPeople',
+				dataRefs: ['hasPeople'],
+				contains: [
+					{ type: 'field', fieldIdx: 0, text: 'name', dataRefs: ['name'] },
+				],
+			},
+		]);
+	});
+
+	it('getStructure accepts the stringified structure', async () => {
+		mockRequest.mockResolvedValue({
+			succeeded: true,
+			templateStructure: '[{"type":"field"}]',
+		});
+
+		const result = await endpoints.templates.getStructure(ctx, {
+			templateName: '/a.docx',
+			stringify: true,
+		});
+
+		expect(result.templateStructure).toBe('[{"type":"field"}]');
+	});
+
+	it('getRenderTags accepts string-encoded counts from the provider', async () => {
+		mockRequest.mockResolvedValue({
+			succeeded: true,
+			renderTags: [
+				{
+					year: '2017',
+					month: '9',
+					tags: [{ name: 'abc', countPages: '6', countDocuments: '4' }],
+				},
+			],
+		});
+
+		const result = await endpoints.admin.getRenderTags(ctx, { tags: 'abc' });
+
+		expect(result.renderTags?.[0]?.tags?.[0]).toEqual({
+			name: 'abc',
+			countPages: '6',
+			countDocuments: '4',
+		});
+	});
+
 	it('ping and pingService GET /ping', async () => {
-		mockRequest.mockResolvedValue({ status: 'ok' });
-		await endpoints.admin.ping(ctx, {});
-		await endpoints.admin.pingService(ctx, {});
+		mockRequest.mockResolvedValue({});
+		expect(await endpoints.admin.ping(ctx, {})).toEqual({});
+		expect(await endpoints.admin.pingService(ctx, {})).toEqual({});
 
 		expect(mockRequest).toHaveBeenNthCalledWith(1, 'ping', 'test-key', {
 			method: 'GET',
@@ -330,12 +431,12 @@ describe('Docmosis endpoints', () => {
 		expect(result).not.toHaveProperty('accessKey');
 	});
 
-	it('registers schemas/meta for all 17 claimed operations', () => {
+	it('registers schemas/meta for all 18 operations', () => {
 		const schemas = plugin.endpointSchemas as Record<string, unknown>;
 		const meta = plugin.endpointMeta as Record<string, unknown>;
 		const keys = Object.keys(schemas);
 
-		expect(keys).toHaveLength(17);
+		expect(keys).toHaveLength(18);
 		for (const key of keys) {
 			expect(meta[key]).toBeDefined();
 		}

@@ -19,6 +19,7 @@ pnpm add @corsair-dev/docmosis
 | `admin.getRenderTags` | `docmosis.api.admin.getRenderTags` | `read` | Get monthly render statistics grouped by custom tags |
 | `admin.ping` | `docmosis.api.admin.ping` | `read` | Check basic connectivity to the Docmosis API |
 | `admin.pingService` | `docmosis.api.admin.pingService` | `read` | Verify that Docmosis service listeners are online |
+| `auth.getApiKey` | `docmosis.api.auth.getApiKey` | `read` | Confirm a Docmosis access key is configured and return a masked preview of it |
 | `images.delete` | `docmosis.api.images.delete` | `destructive` | Delete one or more stored images |
 | `images.get` | `docmosis.api.images.get` | `read` | Download one or more uploaded images |
 | `images.list` | `docmosis.api.images.list` | `read` | List available stored images, optionally by folder |

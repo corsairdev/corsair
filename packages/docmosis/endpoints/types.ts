@@ -8,10 +8,15 @@ type JsonValue =
 	| JsonValue[]
 	| { [key: string]: JsonValue };
 
-export type TemplateStructureField = {
-	name?: string;
+export type TemplateStructureElement = {
 	type?: string;
-	children?: TemplateStructureField[];
+	text?: string;
+	dataRefs?: string[];
+	fieldIdx?: number;
+	repeatIdx?: number;
+	conditionIdx?: number;
+	contains?: TemplateStructureElement[];
+	[key: string]: unknown;
 };
 
 const BooleanLikeSchema = z.union([
@@ -123,33 +128,33 @@ const RenderQueueSchema = z.object({
 	delaySeconds: z.number().optional(),
 });
 
+const NumberLikeSchema = z.union([z.number(), z.string()]);
+
 const RenderTagStatsSchema = z.object({
 	name: z.string().optional(),
-	countPages: z.number().int().optional(),
-	countDocuments: z.number().int().optional(),
+	countPages: NumberLikeSchema.optional(),
+	countDocuments: NumberLikeSchema.optional(),
 });
 
 const RenderTagsSchema = z.object({
-	year: z.number().int().optional(),
-	month: z.number().int().optional(),
+	year: NumberLikeSchema.optional(),
+	month: NumberLikeSchema.optional(),
 	tags: z.array(RenderTagStatsSchema).optional(),
 });
 
-const TemplateStructureFieldSchema: z.ZodType<TemplateStructureField> =
-	z.object({
-		name: z.string().optional(),
+const TemplateStructureElementSchema: z.ZodType<TemplateStructureElement> = z
+	.object({
 		type: z.string().optional(),
-		children: z.lazy(() => z.array(TemplateStructureFieldSchema)).optional(),
-	});
+		text: z.string().optional(),
+		dataRefs: z.array(z.string()).optional(),
+		fieldIdx: z.number().optional(),
+		repeatIdx: z.number().optional(),
+		conditionIdx: z.number().optional(),
+		contains: z.lazy(() => z.array(TemplateStructureElementSchema)).optional(),
+	})
+	.catchall(JsonValueSchema);
 
-const DocmosisPingSchema = z.object({
-	status: z.string().optional(),
-	shortMsg: z.string().optional(),
-	longMsg: z.string().optional(),
-	environment: z.string().optional(),
-	time: z.string().optional(),
-	succeeded: z.boolean().optional(),
-});
+const DocmosisPingSchema = z.object({});
 
 const TemplateSampleDataRecordSchema: z.ZodType<Record<string, JsonValue>> =
 	z.record(z.string(), JsonValueSchema);
@@ -166,6 +171,7 @@ const DocmosisBinaryResponseSchema = z.object({
 });
 
 export const DocmosisEndpointInputSchemas = {
+	getApiKey: z.object({}),
 	environmentReady: z.object({}),
 	environmentSummary: z.object({}),
 	ping: z.object({}),
@@ -219,6 +225,14 @@ export const DocmosisEndpointInputSchemas = {
 } as const;
 
 export const DocmosisEndpointOutputSchemas = {
+	getApiKey: z.object({
+		configured: z
+			.boolean()
+			.describe('Whether a Docmosis access key is configured'),
+		keyPreview: z
+			.string()
+			.describe('Last 4 characters of the configured access key'),
+	}),
 	environmentReady: DocmosisBaseResponseSchema,
 	environmentSummary: DocmosisBaseResponseSchema.extend({
 		accountEnvironmentSummary: AccountEnvironmentSummarySchema.optional(),
@@ -251,7 +265,9 @@ export const DocmosisEndpointOutputSchemas = {
 	getTemplateStructure: DocmosisBaseResponseSchema.extend({
 		templateHasErrors: z.boolean().optional(),
 		templateErrorMessage: z.string().optional(),
-		templateStructure: z.array(TemplateStructureFieldSchema).optional(),
+		templateStructure: z
+			.union([z.array(TemplateStructureElementSchema), z.string()])
+			.optional(),
 	}),
 	getRenderTags: DocmosisBaseResponseSchema.extend({
 		renderTags: z.array(RenderTagsSchema).optional(),

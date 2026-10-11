@@ -107,7 +107,7 @@ Check status for a template batch upload job
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.admin.getBatchUploadStatus({ userJobId: 'example' });
+await corsair.docmosis.api.admin.getBatchUploadStatus({});
 ```
 
 **Input**
@@ -208,7 +208,7 @@ Get monthly render statistics grouped by custom tags
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.admin.getRenderTags({ tags: 'example' });
+await corsair.docmosis.api.admin.getRenderTags({});
 ```
 
 **Input**
@@ -237,12 +237,12 @@ await corsair.docmosis.api.admin.getRenderTags({ tags: 'example' });
 
 ```ts
 {
-  year?: number,
-  month?: number,
+  year?: number | string,
+  month?: number | string,
   tags?: {
     name?: string,
-    countPages?: number,
-    countDocuments?: number
+    countPages?: number | string,
+    countDocuments?: number | string
   }[]
 }[]
 ```
@@ -268,17 +268,7 @@ await corsair.docmosis.api.admin.ping({});
 **Input:** _empty object_
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `status` | `string` | No | — |
-| `shortMsg` | `string` | No | — |
-| `longMsg` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `time` | `string` | No | — |
-| `succeeded` | `boolean` | No | — |
-
+**Output:** _empty object_
 
 
 ---
@@ -298,16 +288,34 @@ await corsair.docmosis.api.admin.pingService({});
 **Input:** _empty object_
 
 
+**Output:** _empty object_
+
+
+---
+
+## Auth
+
+### getApiKey
+
+`auth.getApiKey`
+
+Confirm a Docmosis access key is configured and return a masked preview of it
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.auth.getApiKey({});
+```
+
+**Input:** _empty object_
+
+
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
-| `shortMsg` | `string` | No | — |
-| `longMsg` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `time` | `string` | No | — |
-| `succeeded` | `boolean` | No | — |
+| `configured` | `boolean` | Yes | Whether a Docmosis access key is configured |
+| `keyPreview` | `string` | Yes | Last 4 characters of the configured access key |
 
 
 
@@ -324,7 +332,7 @@ Delete one or more stored images
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.docmosis.api.images.delete({ imageName: 'example' });
+await corsair.docmosis.api.images.delete({});
 ```
 
 **Input**
@@ -356,7 +364,7 @@ Download one or more uploaded images
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.images.get({ imageName: 'example' });
+await corsair.docmosis.api.images.get({});
 ```
 
 **Input**
@@ -440,7 +448,7 @@ Delete one or more templates from the environment
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.docmosis.api.templates.delete({ templateName: 'example' });
+await corsair.docmosis.api.templates.delete({});
 ```
 
 **Input**
@@ -472,7 +480,7 @@ Download one or more template files
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.get({ templateName: 'example' });
+await corsair.docmosis.api.templates.get({});
 ```
 
 **Input**
@@ -504,7 +512,7 @@ Get metadata details for a specific template
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getDetails({ templateName: 'example' });
+await corsair.docmosis.api.templates.getDetails({});
 ```
 
 **Input**
@@ -558,7 +566,7 @@ Generate sample JSON or XML data from a template structure
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getSampleData({ templateName: 'example' });
+await corsair.docmosis.api.templates.getSampleData({});
 ```
 
 **Input**
@@ -614,7 +622,7 @@ Get parsed field and structure metadata for a template
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getStructure({ templateName: 'example' });
+await corsair.docmosis.api.templates.getStructure({});
 ```
 
 **Input**
@@ -635,17 +643,21 @@ await corsair.docmosis.api.templates.getStructure({ templateName: 'example' });
 | `longMsg` | `string` | No | — |
 | `templateHasErrors` | `boolean` | No | — |
 | `templateErrorMessage` | `string` | No | — |
-| `templateStructure` | `object[]` | No | — |
+| `templateStructure` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="templateStructure full type">
 
 ```ts
 {
-  name?: string,
   type?: string,
-  children?: lazy
-}[]
+  text?: string,
+  dataRefs?: string[],
+  fieldIdx?: number,
+  repeatIdx?: number,
+  conditionIdx?: number,
+  contains?: lazy
+}[] | string
 ```
 </Accordion>
 </AccordionGroup>
@@ -724,7 +736,7 @@ Generate a document from a template and JSON/XML data
 **Risk:** `write`
 
 ```ts
-await corsair.docmosis.api.templates.render({ templateName: 'example', data: 'example', outputName: 'example' });
+await corsair.docmosis.api.templates.render({});
 ```
 
 **Input**
@@ -732,7 +744,7 @@ await corsair.docmosis.api.templates.render({ templateName: 'example', data: 'ex
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateName` | `string` | Yes | — |
-| `data` | `string \| object` | Yes | — |
+| `data` | `object` | Yes | — |
 | `outputName` | `string` | Yes | — |
 | `outputFormat` | `string` | No | — |
 | `devMode` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
@@ -761,3 +773,4 @@ string | {
 
 
 ---
+

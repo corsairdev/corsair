@@ -3,6 +3,7 @@ import {
 	deleteTemplate,
 	environmentReady,
 	environmentSummary,
+	getApiKey,
 	getBatchUploadStatus,
 	getImage,
 	getRenderQueue,
@@ -17,6 +18,10 @@ import {
 	pingService,
 	render,
 } from './operations';
+
+export const Auth = {
+	getApiKey,
+};
 
 export const Admin = {
 	environmentReady,
