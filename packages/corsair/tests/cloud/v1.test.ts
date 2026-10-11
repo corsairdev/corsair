@@ -163,6 +163,56 @@ describe('instance plane', () => {
 	});
 });
 
+describe('request options', () => {
+	// Every method takes `options` behind an optional `body`, and twelve of the
+	// forty-seven once dropped it. These cover both planes and both arities.
+	it('cancels an in-flight bodyless write when the caller aborts', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async (_url: string, init: RequestInit) =>
+				new Promise((_resolve, reject) => {
+					(init.signal as AbortSignal).addEventListener('abort', () =>
+						reject(new Error('aborted')),
+					);
+				})) as unknown as typeof fetch,
+		};
+		const controller = new AbortController();
+		const pending = buildInstancePlane(transport, 'app')
+			.reconcile({ signal: controller.signal })
+			.catch((e: unknown) => e);
+		controller.abort();
+		await expect(pending).resolves.toBeInstanceOf(Error);
+	});
+
+	it('forwards options from every method that accepts them', async () => {
+		const { calls, transport } = harness();
+		const project = buildProjectPlane(transport);
+		const instance = buildInstancePlane(transport, 'app');
+		const opts = { requestId: 'req_mine' };
+		const bodyless: Array<() => Promise<unknown>> = [
+			() => project.project.get(opts),
+			() => project.keys.get(opts),
+			() => project.instances.list({}, opts),
+			() => project.integrations.catalog({}, opts),
+			() => project.mcp.links.list({}, opts),
+			() => instance.tenants.list({}, opts),
+			() => instance.access.list({}, opts),
+			() => instance.connections.list({}, opts),
+			() => instance.integrations.list({}, opts),
+			() => instance.webhooks.list({}, opts),
+			() => instance.webhooks.deliveries.list('slack', {}, opts),
+			() => instance.signingSecret.get(opts),
+			() => instance.reconcile(opts),
+		];
+		for (const call of bodyless) await call();
+		const sent = calls.map(
+			(c) => headersOf(c.init)['x-corsair-request-id'] ?? 'dropped',
+		);
+		expect(sent).toEqual(bodyless.map(() => 'req_mine'));
+	});
+});
+
 describe('error mapping', () => {
 	it('maps the management envelope onto CloudApiError', async () => {
 		const { transport } = harness([
@@ -236,7 +286,7 @@ describe('error mapping', () => {
 		});
 	});
 
-	it('wraps a failure part-way through the body, not just the response', async () => {
+	it('does not call a failure past the response retryable — the write may have landed', async () => {
 		const transport: V1Transport = {
 			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
 			apiKey: 'ck',
@@ -253,7 +303,11 @@ describe('error mapping', () => {
 			.keys.get()
 			.catch((e: unknown) => e);
 		expect(err).toBeInstanceOf(CloudApiError);
-		expect(err).toMatchObject({ status: 0, retryable: true });
+		expect(err).toMatchObject({
+			status: 200,
+			code: 'request_failed',
+			retryable: false,
+		});
 	});
 
 	it('does not send the request when the caller signal is already aborted', async () => {
@@ -292,7 +346,44 @@ describe('error mapping', () => {
 		const err = await buildProjectPlane(transport)
 			.keys.get()
 			.catch((e: unknown) => e);
-		expect(err).toMatchObject({ status: 0, retryable: true });
+		expect(err).toMatchObject({ status: 200, retryable: false });
+	});
+
+	it('treats a 429 with no envelope as retryable', async () => {
+		const { transport } = harness([{ status: 429, body: { nope: true } }]);
+		const err = await buildProjectPlane(transport)
+			.keys.get()
+			.catch((e: unknown) => e);
+		expect(err).toMatchObject({ status: 429, retryable: true });
+	});
+
+	it('treats a 429 carrying a bare runtime code as retryable', () => {
+		expect(mapV1Error(429, { error: 'rate_limit_exceeded' })).toMatchObject({
+			retryable: true,
+		});
+	});
+
+	it('will not retry a POST that failed before the server answered', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async () => {
+				throw new Error('socket hang up');
+			}) as unknown as typeof fetch,
+		};
+		const plane = buildProjectPlane(transport);
+		// A mint cannot be revoked, so repeating one that may have landed is
+		// worse than failing.
+		await expect(
+			plane.mcp.tokens.mint({ instance: 'app', tenant: 'acme' }),
+		).rejects.toMatchObject({ status: 0, retryable: false });
+		// Unless the server will dedupe it.
+		await expect(
+			plane.mcp.tokens.mint(
+				{ instance: 'app', tenant: 'acme' },
+				{ idempotencyKey: 'key_1' },
+			),
+		).rejects.toMatchObject({ status: 0, retryable: true });
 	});
 
 	it('treats a transport failure as retryable', async () => {
