@@ -43,3 +43,29 @@ export const list: ChatworkEndpoints['membersList'] = async (ctx, input) => {
 
 	return validatedResult;
 };
+
+export const update: ChatworkEndpoints['membersUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, ...form } =
+		ChatworkEndpointInputSchemas.membersUpdate.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['membersUpdate']
+	>(`rooms/${room_id}/members`, ctx.key, {
+		method: 'PUT',
+		form,
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.membersUpdate.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.members.update',
+		{ room_id, ...form },
+		'completed',
+	);
+
+	return validatedResult;
+};

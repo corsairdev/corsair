@@ -7,8 +7,8 @@ Use **Chatwork** through Corsair: one client, typed API calls, local DB sync, an
 
 **What you get:**
 
-- 7 typed API operations
-- 4 synced entities (`accounts`, `members`, `messages`, `rooms`) for fast `.search()` / `.list()`
+- 30 typed API operations
+- 6 synced entities (`accounts`, `files`, `members`, `messages`, `rooms`, `tasks`) for fast `.search()` / `.list()`
 - 3 incoming webhook event types
 
 ## Setup
@@ -133,7 +133,7 @@ const rows = await tenant.chatwork.db.rooms.search({
 });
 ```
 
-Synced entities: `accounts`, `members`, `messages`, `rooms`. See [Database](/plugins/chatwork/database) for filters and operators.
+Synced entities: `accounts`, `files`, `members`, `messages`, `rooms`, `tasks`. See [Database](/plugins/chatwork/database) for filters and operators.
 
 ## Webhooks
 

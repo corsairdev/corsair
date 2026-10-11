@@ -50,6 +50,35 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 
 ---
 
+## Files
+
+Path: `chatwork.db.files.search`
+
+```ts
+const rows = await corsair.chatwork.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_id` | `number` | equals, gt, gte, lt, lte, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `filename` | `string` | equals, contains, startsWith, endsWith, in |
+| `filesize` | `number` | equals, gt, gte, lt, lte, in |
+| `upload_time` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Members
 
 Path: `chatwork.db.members.search`
@@ -141,6 +170,36 @@ const rows = await corsair.chatwork.db.rooms.search({
 | `icon_path` | `string` | equals, contains, startsWith, endsWith, in |
 | `last_update_time` | `number` | equals, gt, gte, lt, lte, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `chatwork.db.tasks.search`
+
+```ts
+const rows = await corsair.chatwork.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `task_id` | `number` | equals, gt, gte, lt, lte, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `limit_time` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `limit_type` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

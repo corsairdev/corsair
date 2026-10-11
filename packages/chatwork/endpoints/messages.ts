@@ -9,16 +9,11 @@ import {
 
 export const list: ChatworkEndpoints['messagesList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.messagesList.parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.force !== undefined) {
-		query.force = parsedInput.force;
-	}
-
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesList']
 	>(`rooms/${parsedInput.room_id}/messages`, ctx.key, {
 		method: 'GET',
-		query,
+		query: { force: parsedInput.force },
 		authType: ctx.options?.authType,
 		defaultEmptyArray: true,
 	});
@@ -86,25 +81,11 @@ export const get: ChatworkEndpoints['messagesGet'] = async (ctx, input) => {
 
 export const send: ChatworkEndpoints['messagesSend'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.messagesSend.parse(input);
-	const payload: Record<string, unknown> = {
-		body: parsedInput.body,
-	};
-
-	if (parsedInput.self_unread !== undefined) {
-		payload.self_unread =
-			typeof parsedInput.self_unread === 'boolean'
-				? parsedInput.self_unread
-					? 1
-					: 0
-				: parsedInput.self_unread;
-	}
-
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesSend']
 	>(`rooms/${parsedInput.room_id}/messages`, ctx.key, {
 		method: 'POST',
-		body: payload,
-		mediaType: 'application/x-www-form-urlencoded',
+		form: { body: parsedInput.body, self_unread: parsedInput.self_unread },
 		authType: ctx.options?.authType,
 	});
 	const validatedResult =
@@ -118,6 +99,117 @@ export const send: ChatworkEndpoints['messagesSend'] = async (ctx, input) => {
 			self_unread: parsedInput.self_unread,
 			body_length: parsedInput.body.length,
 		},
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const update: ChatworkEndpoints['messagesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, message_id, body } =
+		ChatworkEndpointInputSchemas.messagesUpdate.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['messagesUpdate']
+	>(`rooms/${room_id}/messages/${message_id}`, ctx.key, {
+		method: 'PUT',
+		form: { body },
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.messagesUpdate.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.messages.update',
+		{ room_id, message_id, body_length: body.length },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const deleteMessage: ChatworkEndpoints['messagesDelete'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, message_id } =
+		ChatworkEndpointInputSchemas.messagesDelete.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['messagesDelete']
+	>(`rooms/${room_id}/messages/${message_id}`, ctx.key, {
+		method: 'DELETE',
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.messagesDelete.parse(result);
+
+	if (ctx.db.messages) {
+		try {
+			await ctx.db.messages.deleteByEntityId(message_id);
+		} catch (error) {
+			console.warn('Failed to remove Chatwork message from database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.messages.delete',
+		{ room_id, message_id },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const markRead: ChatworkEndpoints['messagesMarkRead'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, message_id } =
+		ChatworkEndpointInputSchemas.messagesMarkRead.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['messagesMarkRead']
+	>(`rooms/${room_id}/messages/read`, ctx.key, {
+		method: 'PUT',
+		form: { message_id },
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.messagesMarkRead.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.messages.markRead',
+		{ room_id, message_id },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const markUnread: ChatworkEndpoints['messagesMarkUnread'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, message_id } =
+		ChatworkEndpointInputSchemas.messagesMarkUnread.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['messagesMarkUnread']
+	>(`rooms/${room_id}/messages/unread`, ctx.key, {
+		method: 'PUT',
+		form: { message_id },
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.messagesMarkUnread.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.messages.markUnread',
+		{ room_id, message_id },
 		'completed',
 	);
 

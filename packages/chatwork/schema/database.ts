@@ -69,7 +69,39 @@ export const ChatworkMember = z.object({
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
+const ChatworkAccountRef = z.object({
+	account_id: z.number(),
+	name: z.string(),
+	avatar_image_url: z.string().optional(),
+});
+
+export const ChatworkTask = z.object({
+	task_id: z.number(),
+	room_id: z.number(),
+	account: ChatworkAccountRef.optional(),
+	assigned_by_account: ChatworkAccountRef.optional(),
+	message_id: z.string(),
+	body: z.string(),
+	limit_time: z.number().optional(),
+	status: z.string(),
+	limit_type: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const ChatworkFile = z.object({
+	file_id: z.number(),
+	room_id: z.number(),
+	account: ChatworkAccountRef.optional(),
+	message_id: z.string(),
+	filename: z.string(),
+	filesize: z.number(),
+	upload_time: z.number(),
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
 export type ChatworkAccount = z.infer<typeof ChatworkAccount>;
+export type ChatworkTask = z.infer<typeof ChatworkTask>;
+export type ChatworkFile = z.infer<typeof ChatworkFile>;
 export type ChatworkRoom = z.infer<typeof ChatworkRoom>;
 export type ChatworkMessage = z.infer<typeof ChatworkMessage>;
 export type ChatworkMember = z.infer<typeof ChatworkMember>;

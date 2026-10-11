@@ -32,13 +32,39 @@ export const CHATWORK_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+type ChatworkParamValue =
+	| string
+	| number
+	| boolean
+	| readonly number[]
+	| undefined
+	| null;
+
+export type ChatworkParams = Record<string, ChatworkParamValue>;
+
 export interface ChatworkRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-	body?: Record<string, unknown> | string;
-	query?: Record<string, string | number | boolean | undefined>;
+	form?: ChatworkParams;
+	multipart?: FormData;
+	query?: ChatworkParams;
 	authType?: 'api_key' | 'oauth_2';
-	mediaType?: string;
 	defaultEmptyArray?: boolean;
+}
+
+// Chatwork encodes booleans as 1/0 and id lists as comma-separated strings.
+function encodeParams(params: ChatworkParams): Record<string, string> {
+	const encoded: Record<string, string> = {};
+	for (const [key, value] of Object.entries(params)) {
+		if (value === undefined || value === null) continue;
+		if (typeof value === 'boolean') {
+			encoded[key] = value ? '1' : '0';
+		} else if (Array.isArray(value)) {
+			encoded[key] = value.join(',');
+		} else {
+			encoded[key] = String(value);
+		}
+	}
+	return encoded;
 }
 
 export async function makeChatworkRequest<T>(
@@ -48,10 +74,10 @@ export async function makeChatworkRequest<T>(
 ): Promise<T> {
 	const {
 		method = 'GET',
-		body,
+		form,
+		multipart,
 		query,
 		authType = 'oauth_2',
-		mediaType,
 		defaultEmptyArray = false,
 	} = options;
 
@@ -61,26 +87,13 @@ export async function makeChatworkRequest<T>(
 		headers['X-ChatWorkToken'] = token;
 	}
 
-	let requestBody: string | Record<string, unknown> | undefined;
-	let effectiveMediaType = mediaType ?? 'application/json; charset=utf-8';
-
-	if (method === 'POST' || method === 'PUT') {
-		if (mediaType === 'application/x-www-form-urlencoded') {
-			effectiveMediaType = 'application/x-www-form-urlencoded';
-			if (typeof body === 'object' && body !== null) {
-				const params = new URLSearchParams();
-				for (const [key, value] of Object.entries(body)) {
-					if (value !== undefined && value !== null) {
-						params.append(key, String(value));
-					}
-				}
-				requestBody = params.toString();
-			} else {
-				requestBody = body;
-			}
-		} else {
-			requestBody = body;
-		}
+	let body: string | FormData | undefined;
+	let mediaType: string | undefined;
+	if (multipart) {
+		body = multipart;
+	} else if (form) {
+		body = new URLSearchParams(encodeParams(form)).toString();
+		mediaType = 'application/x-www-form-urlencoded';
 	}
 
 	const config: OpenAPIConfig = {
@@ -95,9 +108,9 @@ export async function makeChatworkRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: requestBody,
-		mediaType: effectiveMediaType,
-		query: method === 'GET' ? query : undefined,
+		body,
+		mediaType,
+		query: query ? encodeParams(query) : undefined,
 	};
 
 	try {

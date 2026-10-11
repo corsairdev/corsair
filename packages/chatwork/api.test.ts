@@ -1,6 +1,15 @@
 import { ApiError, request } from 'corsair/http';
 import { ChatworkAPIError, makeChatworkRequest } from './client';
-import { Account, Members, Messages, Rooms } from './endpoints';
+import {
+	Account,
+	Contacts,
+	Files,
+	Links,
+	Members,
+	Messages,
+	Rooms,
+	Tasks,
+} from './endpoints';
 import {
 	ChatworkEndpointInputSchemas,
 	ChatworkEndpointOutputSchemas,
@@ -42,16 +51,39 @@ describe('Chatwork Plugin Structure', () => {
 		expect(plugin.oauthConfig?.tokenUrl).toContain('token');
 	});
 
-	it('registers all 7 endpoints with matching schemas and metadata', () => {
+	it('registers all 30 endpoints with matching schemas and metadata', () => {
 		const plugin = chatwork();
 		const expectedEndpoints = [
 			'account.get',
+			'account.getStatus',
+			'account.listTasks',
+			'contacts.list',
+			'contacts.listIncomingRequests',
 			'rooms.list',
 			'rooms.get',
+			'rooms.create',
+			'rooms.update',
+			'rooms.delete',
+			'links.get',
+			'links.create',
+			'links.update',
+			'links.delete',
 			'messages.list',
 			'messages.get',
 			'messages.send',
+			'messages.update',
+			'messages.delete',
+			'messages.markRead',
+			'messages.markUnread',
 			'members.list',
+			'members.update',
+			'tasks.list',
+			'tasks.get',
+			'tasks.create',
+			'tasks.updateStatus',
+			'files.list',
+			'files.get',
+			'files.upload',
 		].sort();
 
 		const schemaKeys = Object.keys(chatworkEndpointSchemas).sort();
@@ -219,7 +251,7 @@ describe('Chatwork Endpoints', () => {
 
 			const [, reqOptions] = mockRequest.mock.calls[0];
 			expect(reqOptions.url).toBe('rooms/1001/messages');
-			expect(reqOptions.query).toEqual({ force: 1 });
+			expect(reqOptions.query).toEqual({ force: '1' });
 			expect(result).toHaveLength(1);
 			ChatworkEndpointOutputSchemas.messagesList.parse(result);
 		});
@@ -336,6 +368,341 @@ describe('Chatwork Endpoints', () => {
 			expect(reqOptions.url).toBe('rooms/1001/members');
 			expect(result).toHaveLength(2);
 			ChatworkEndpointOutputSchemas.membersList.parse(result);
+		});
+	});
+
+	const taskItem = {
+		task_id: 5,
+		account: { account_id: 2, name: 'Assignee' },
+		assigned_by_account: { account_id: 1, name: 'Assigner' },
+		message_id: 'msg-5',
+		body: 'Write report',
+		limit_time: 1700000000,
+		status: 'open',
+		limit_type: 'date',
+	};
+	const fileItem = {
+		file_id: 9,
+		account: { account_id: 1, name: 'Uploader' },
+		message_id: 'msg-9',
+		filename: 'report.pdf',
+		filesize: 2048,
+		upload_time: 1700000000,
+	};
+	const link = {
+		public: true,
+		url: 'https://www.chatwork.com/g/team-room',
+		need_acceptance: false,
+		description: 'Join us',
+	};
+
+	type EndpointCase = {
+		name: string;
+		call: (ctx: ChatworkContext) => Promise<unknown>;
+		response: unknown;
+		method: string;
+		url: string;
+		query?: Record<string, string>;
+		form?: Record<string, string>;
+		expected?: unknown;
+	};
+
+	const cases: EndpointCase[] = [
+		{
+			name: 'account.getStatus',
+			call: (ctx) => Account.getStatus(ctx, {}),
+			response: {
+				unread_room_num: 2,
+				mention_room_num: 1,
+				mytask_room_num: 3,
+				unread_num: 12,
+				mention_num: 1,
+				mytask_num: 4,
+			},
+			method: 'GET',
+			url: 'my/status',
+		},
+		{
+			name: 'account.listTasks',
+			call: (ctx) =>
+				Account.listTasks(ctx, { assigned_by_account_id: 1, status: 'done' }),
+			response: [
+				{
+					...taskItem,
+					account: undefined,
+					room: { room_id: 1001, name: 'Team', icon_path: 'icon.png' },
+				},
+			],
+			method: 'GET',
+			url: 'my/tasks',
+			query: { assigned_by_account_id: '1', status: 'done' },
+		},
+		{
+			name: 'contacts.list',
+			call: (ctx) => Contacts.list(ctx, {}),
+			response: [{ account_id: 7, room_id: 2002, name: 'Contact' }],
+			method: 'GET',
+			url: 'contacts',
+		},
+		{
+			name: 'contacts.listIncomingRequests',
+			call: (ctx) => Contacts.listIncomingRequests(ctx, {}),
+			response: [
+				{ request_id: 3, account_id: 8, message: 'Hi', name: 'Requester' },
+			],
+			method: 'GET',
+			url: 'incoming_requests',
+		},
+		{
+			name: 'rooms.create',
+			call: (ctx) =>
+				Rooms.create(ctx, {
+					name: 'Project X',
+					members_admin_ids: [1, 2],
+					members_member_ids: [3],
+					icon_preset: 'meeting',
+					link: true,
+					link_need_acceptance: false,
+				}),
+			response: { room_id: 3003 },
+			method: 'POST',
+			url: 'rooms',
+			form: {
+				name: 'Project X',
+				members_admin_ids: '1,2',
+				members_member_ids: '3',
+				icon_preset: 'meeting',
+				link: '1',
+				link_need_acceptance: '0',
+			},
+		},
+		{
+			name: 'rooms.update',
+			call: (ctx) =>
+				Rooms.update(ctx, {
+					room_id: 1001,
+					name: 'Renamed',
+					description: 'New',
+				}),
+			response: { room_id: 1001 },
+			method: 'PUT',
+			url: 'rooms/1001',
+			form: { name: 'Renamed', description: 'New' },
+		},
+		{
+			name: 'rooms.delete',
+			call: (ctx) => Rooms.delete(ctx, { room_id: 1001, action_type: 'leave' }),
+			response: undefined,
+			method: 'DELETE',
+			url: 'rooms/1001',
+			form: { action_type: 'leave' },
+			expected: { success: true },
+		},
+		{
+			name: 'links.get',
+			call: (ctx) => Links.get(ctx, { room_id: 1001 }),
+			response: link,
+			method: 'GET',
+			url: 'rooms/1001/link',
+		},
+		{
+			name: 'links.create',
+			call: (ctx) =>
+				Links.create(ctx, {
+					room_id: 1001,
+					code: 'team-room',
+					need_acceptance: false,
+					description: 'Join us',
+				}),
+			response: link,
+			method: 'POST',
+			url: 'rooms/1001/link',
+			form: { code: 'team-room', need_acceptance: '0', description: 'Join us' },
+		},
+		{
+			name: 'links.update',
+			call: (ctx) =>
+				Links.update(ctx, { room_id: 1001, need_acceptance: true }),
+			response: { ...link, need_acceptance: true },
+			method: 'PUT',
+			url: 'rooms/1001/link',
+			form: { need_acceptance: '1' },
+		},
+		{
+			name: 'links.delete',
+			call: (ctx) => Links.delete(ctx, { room_id: 1001 }),
+			response: { public: false },
+			method: 'DELETE',
+			url: 'rooms/1001/link',
+		},
+		{
+			name: 'messages.update',
+			call: (ctx) =>
+				Messages.update(ctx, {
+					room_id: 1001,
+					message_id: 'msg-1',
+					body: 'Edited',
+				}),
+			response: { message_id: 'msg-1' },
+			method: 'PUT',
+			url: 'rooms/1001/messages/msg-1',
+			form: { body: 'Edited' },
+		},
+		{
+			name: 'messages.delete',
+			call: (ctx) =>
+				Messages.delete(ctx, { room_id: 1001, message_id: 'msg-1' }),
+			response: { message_id: 'msg-1' },
+			method: 'DELETE',
+			url: 'rooms/1001/messages/msg-1',
+		},
+		{
+			name: 'messages.markRead',
+			call: (ctx) =>
+				Messages.markRead(ctx, { room_id: 1001, message_id: 'msg-1' }),
+			response: { unread_num: 0, mention_num: 0 },
+			method: 'PUT',
+			url: 'rooms/1001/messages/read',
+			form: { message_id: 'msg-1' },
+		},
+		{
+			name: 'messages.markUnread',
+			call: (ctx) =>
+				Messages.markUnread(ctx, { room_id: 1001, message_id: 'msg-1' }),
+			response: { unread_num: 3, mention_num: 1 },
+			method: 'PUT',
+			url: 'rooms/1001/messages/unread',
+			form: { message_id: 'msg-1' },
+		},
+		{
+			name: 'members.update',
+			call: (ctx) =>
+				Members.update(ctx, {
+					room_id: 1001,
+					members_admin_ids: [1],
+					members_readonly_ids: [4, 5],
+				}),
+			response: { admin: [1], member: [], readonly: [4, 5] },
+			method: 'PUT',
+			url: 'rooms/1001/members',
+			form: { members_admin_ids: '1', members_readonly_ids: '4,5' },
+		},
+		{
+			name: 'tasks.list',
+			call: (ctx) =>
+				Tasks.list(ctx, { room_id: 1001, account_id: 2, status: 'open' }),
+			response: [taskItem],
+			method: 'GET',
+			url: 'rooms/1001/tasks',
+			query: { account_id: '2', status: 'open' },
+		},
+		{
+			name: 'tasks.get',
+			call: (ctx) => Tasks.get(ctx, { room_id: 1001, task_id: 5 }),
+			response: taskItem,
+			method: 'GET',
+			url: 'rooms/1001/tasks/5',
+		},
+		{
+			name: 'tasks.create',
+			call: (ctx) =>
+				Tasks.create(ctx, {
+					room_id: 1001,
+					body: 'Write report',
+					to_ids: [2, 3],
+					limit: 1700000000,
+					limit_type: 'date',
+				}),
+			response: { task_ids: [5, 6] },
+			method: 'POST',
+			url: 'rooms/1001/tasks',
+			form: {
+				body: 'Write report',
+				to_ids: '2,3',
+				limit: '1700000000',
+				limit_type: 'date',
+			},
+		},
+		{
+			name: 'tasks.updateStatus',
+			call: (ctx) =>
+				Tasks.updateStatus(ctx, { room_id: 1001, task_id: 5, status: 'done' }),
+			response: { task_id: 5 },
+			method: 'PUT',
+			url: 'rooms/1001/tasks/5/status',
+			form: { body: 'done' },
+		},
+		{
+			name: 'files.list',
+			call: (ctx) => Files.list(ctx, { room_id: 1001, account_id: 1 }),
+			response: [fileItem],
+			method: 'GET',
+			url: 'rooms/1001/files',
+			query: { account_id: '1' },
+		},
+		{
+			name: 'files.get',
+			call: (ctx) =>
+				Files.get(ctx, {
+					room_id: 1001,
+					file_id: 9,
+					create_download_url: true,
+				}),
+			response: { ...fileItem, download_url: 'https://dl.example.com/9' },
+			method: 'GET',
+			url: 'rooms/1001/files/9',
+			query: { create_download_url: '1' },
+		},
+	];
+
+	it.each(cases)(
+		'$name sends $method $url and returns the parsed response',
+		async ({ call, response, method, url, query, form, expected }) => {
+			mockRequest.mockResolvedValueOnce(response);
+
+			const result = await call(testContext());
+
+			expect(mockRequest).toHaveBeenCalledTimes(1);
+			const [, reqOptions] = mockRequest.mock.calls[0];
+			expect(reqOptions.method).toBe(method);
+			expect(reqOptions.url).toBe(url);
+			if (query) expect(reqOptions.query).toEqual(query);
+			if (form) {
+				expect(reqOptions.mediaType).toBe('application/x-www-form-urlencoded');
+				expect(
+					Object.fromEntries(new URLSearchParams(reqOptions.body)),
+				).toEqual(form);
+			} else {
+				expect(reqOptions.body).toBeUndefined();
+			}
+			expect(result).toEqual(expected ?? response);
+		},
+	);
+
+	describe('files.upload', () => {
+		it('posts the decoded file as multipart form data', async () => {
+			mockRequest.mockResolvedValueOnce({ file_id: 77 });
+
+			const result = await Files.upload(testContext(), {
+				room_id: 1001,
+				file_base64: Buffer.from('hello').toString('base64'),
+				file_name: 'hello.txt',
+				content_type: 'text/plain',
+				message: 'See attached',
+			});
+
+			const [, reqOptions] = mockRequest.mock.calls[0];
+			expect(reqOptions.method).toBe('POST');
+			expect(reqOptions.url).toBe('rooms/1001/files');
+			expect(reqOptions.mediaType).toBeUndefined();
+			const body = reqOptions.body as FormData;
+			expect(body).toBeInstanceOf(FormData);
+			expect(body.get('message')).toBe('See attached');
+			const file = body.get('file') as File;
+			expect(file.name).toBe('hello.txt');
+			expect(file.type).toBe('text/plain');
+			expect(await file.text()).toBe('hello');
+			expect(result).toEqual({ file_id: 77 });
 		});
 	});
 

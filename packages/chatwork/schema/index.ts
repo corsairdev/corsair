@@ -1,8 +1,10 @@
 import {
 	ChatworkAccount,
+	ChatworkFile,
 	ChatworkMember,
 	ChatworkMessage,
 	ChatworkRoom,
+	ChatworkTask,
 } from './database';
 
 export const ChatworkSchema = {
@@ -12,6 +14,8 @@ export const ChatworkSchema = {
 		rooms: ChatworkRoom,
 		messages: ChatworkMessage,
 		members: ChatworkMember,
+		tasks: ChatworkTask,
+		files: ChatworkFile,
 	},
 } as const;
 

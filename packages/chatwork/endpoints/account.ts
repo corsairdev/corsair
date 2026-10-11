@@ -38,3 +38,68 @@ export const get: ChatworkEndpoints['accountGet'] = async (ctx, input) => {
 
 	return validatedResult;
 };
+
+export const getStatus: ChatworkEndpoints['accountGetStatus'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		ChatworkEndpointInputSchemas.accountGetStatus.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['accountGetStatus']
+	>('my/status', ctx.key, {
+		method: 'GET',
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.accountGetStatus.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.account.getStatus',
+		{ ...parsedInput },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const listTasks: ChatworkEndpoints['accountListTasks'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		ChatworkEndpointInputSchemas.accountListTasks.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['accountListTasks']
+	>('my/tasks', ctx.key, {
+		method: 'GET',
+		query: parsedInput,
+		authType: ctx.options?.authType,
+		defaultEmptyArray: true,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.accountListTasks.parse(result);
+
+	if (ctx.db.tasks) {
+		try {
+			for (const task of validatedResult) {
+				await ctx.db.tasks.upsertByEntityId(String(task.task_id), {
+					...task,
+					room_id: task.room.room_id,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save Chatwork tasks to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.account.listTasks',
+		{ ...parsedInput },
+		'completed',
+	);
+
+	return validatedResult;
+};

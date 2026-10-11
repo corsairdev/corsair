@@ -25,8 +25,8 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const rawBody = await request.text();
-    const result = await processWebhook(corsair, headers, rawBody);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
     return result.response;
 }
 ```
@@ -55,7 +55,7 @@ Current user was mentioned in a room message
 
 ```ts
 {
-  mention_id: string | number,
+  mention_id?: string | number,
   message_id: string,
   room_id: number,
   account_id?: number,
@@ -76,10 +76,10 @@ Current user was mentioned in a room message
 ```ts
 {
   webhook_setting_id: string | number,
-  webhook_event_type: 'mention_to_me',
+  webhook_event_type: mention_to_me,
   webhook_event_time: number,
   webhook_event: {
-    mention_id: string | number,
+    mention_id?: string | number,
     message_id: string,
     room_id: number,
     account_id?: number,
@@ -154,7 +154,7 @@ A message was created in a room
 ```ts
 {
   webhook_setting_id: string | number,
-  webhook_event_type: 'message_created',
+  webhook_event_type: message_created,
   webhook_event_time: number,
   webhook_event: {
     message_id: string,
@@ -228,7 +228,7 @@ A message was updated in a room
 ```ts
 {
   webhook_setting_id: string | number,
-  webhook_event_type: 'message_updated',
+  webhook_event_type: message_updated,
   webhook_event_time: number,
   webhook_event: {
     message_id: string,
@@ -262,3 +262,4 @@ chatwork({
 ```
 
 ---
+

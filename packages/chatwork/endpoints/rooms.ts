@@ -69,3 +69,78 @@ export const get: ChatworkEndpoints['roomsGet'] = async (ctx, input) => {
 
 	return validatedResult;
 };
+
+export const create: ChatworkEndpoints['roomsCreate'] = async (ctx, input) => {
+	const parsedInput = ChatworkEndpointInputSchemas.roomsCreate.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['roomsCreate']
+	>('rooms', ctx.key, {
+		method: 'POST',
+		form: parsedInput,
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.roomsCreate.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.rooms.create',
+		{ ...parsedInput },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const update: ChatworkEndpoints['roomsUpdate'] = async (ctx, input) => {
+	const { room_id, ...form } =
+		ChatworkEndpointInputSchemas.roomsUpdate.parse(input);
+	const result = await makeChatworkRequest<
+		ChatworkEndpointOutputs['roomsUpdate']
+	>(`rooms/${room_id}`, ctx.key, {
+		method: 'PUT',
+		form,
+		authType: ctx.options?.authType,
+	});
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.roomsUpdate.parse(result);
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.rooms.update',
+		{ room_id, ...form },
+		'completed',
+	);
+
+	return validatedResult;
+};
+
+export const deleteRoom: ChatworkEndpoints['roomsDelete'] = async (
+	ctx,
+	input,
+) => {
+	const { room_id, action_type } =
+		ChatworkEndpointInputSchemas.roomsDelete.parse(input);
+	await makeChatworkRequest<void>(`rooms/${room_id}`, ctx.key, {
+		method: 'DELETE',
+		form: { action_type },
+		authType: ctx.options?.authType,
+	});
+
+	if (ctx.db.rooms) {
+		try {
+			await ctx.db.rooms.deleteByEntityId(String(room_id));
+		} catch (error) {
+			console.warn('Failed to remove Chatwork room from database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'chatwork.rooms.delete',
+		{ room_id, action_type },
+		'completed',
+	);
+
+	return { success: true };
+};
