@@ -19,6 +19,7 @@ export function celigoBaseUrl(region: CeligoRegion = 'us'): string {
 
 export type CeligoQueryValue = string | number | boolean | string[] | undefined;
 
+// Returns unknown: callCeligo parses every response with the endpoint's output schema.
 export async function makeCeligoRequest(
 	path: string,
 	apiKey: string,
@@ -53,6 +54,7 @@ export async function makeCeligoRequest(
 	};
 
 	try {
+		// unknown: the raw response is parsed by the caller, not trusted here.
 		return await request<unknown>(config, requestOptions);
 	} catch (error) {
 		// ApiError keeps status and retryAfter for the 429 and 401 handlers.

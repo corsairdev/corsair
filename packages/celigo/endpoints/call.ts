@@ -9,9 +9,11 @@ export type CeligoRoute = {
 	// Each segment is URL-encoded on its own, so an id can never add a path level.
 	path: string[];
 	query?: Record<string, CeligoQueryValue>;
+	// unknown: built from already-validated input; its shape differs per endpoint.
 	body?: unknown;
 	// Celigo answers 204 with no body for deletes, patches and empty lists.
-	// This value stands in for the missing body.
+	// This value stands in for the missing body. unknown: it goes through the
+	// output schema like a real response.
 	empty?: unknown;
 	// Text responses (debug logs, state writes) are wrapped under this key.
 	wrap?: string;
