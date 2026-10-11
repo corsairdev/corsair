@@ -62,23 +62,27 @@ export type MintTokenInput = {
  *  and the MCP links it has minted. Work inside one instance with
  *  `withInstance(key)`. */
 export function buildProjectPlane(transport: V1Transport) {
+	// `options` is required rather than optional: it sits behind `body`, so a
+	// bodyless call that passed neither silently dropped the caller's signal.
 	const req = <T>(
 		method: string,
 		path: string,
-		body?: unknown,
-		options?: RequestOptions,
+		body: unknown,
+		options: RequestOptions | undefined,
 	) => v1Request<T>(transport, method, path, body, options);
 
 	return {
 		project: {
 			/** The project, with a first page of its instances, tenants, access
 			 *  lines, connections and links embedded. */
-			get: (options?: RequestOptions) => req<CloudProject>('GET', '/project'),
+			get: (options?: RequestOptions) =>
+				req<CloudProject>('GET', '/project', undefined, options),
 		},
 
 		keys: {
 			/** The project key. Shown in full; store it, do not log it. */
-			get: (options?: RequestOptions) => req<CloudKey>('GET', '/keys'),
+			get: (options?: RequestOptions) =>
+				req<CloudKey>('GET', '/keys', undefined, options),
 			/** Mints a new project key and redeploys every instance with it. The
 			 *  old key is dead on return, so check `failed`. */
 			rotate: (options?: RequestOptions) =>
@@ -88,7 +92,12 @@ export function buildProjectPlane(transport: V1Transport) {
 		instances: {
 			/** Every instance in the project. */
 			list: (query: ListQuery = {}, options?: RequestOptions) =>
-				req<CloudList<CloudInstance>>('GET', `/instances${queryString(query)}`),
+				req<CloudList<CloudInstance>>(
+					'GET',
+					`/instances${queryString(query)}`,
+					undefined,
+					options,
+				),
 			/** Idempotent by `instance_key`: a repeat returns the existing row. */
 			create: (input: CreateInstanceInput, options?: RequestOptions) => {
 				assertInstanceKey(input.instance_key, 'instances.create');
@@ -129,6 +138,8 @@ export function buildProjectPlane(transport: V1Transport) {
 				req<CloudList<CloudCatalogIntegration>>(
 					'GET',
 					`/integrations/catalog${queryString(query)}`,
+					undefined,
+					options,
 				),
 		},
 
@@ -139,7 +150,12 @@ export function buildProjectPlane(transport: V1Transport) {
 					query: ListQuery & { tenant?: string } = {},
 					options?: RequestOptions,
 				) =>
-					req<CloudList<CloudLink>>('GET', `/mcp/links${queryString(query)}`),
+					req<CloudList<CloudLink>>(
+						'GET',
+						`/mcp/links${queryString(query)}`,
+						undefined,
+						options,
+					),
 				/** Mints a link with its own URL. */
 				mint: (input: MintLinkInput, options?: RequestOptions) =>
 					req<CloudLink>('POST', '/mcp/links', input, options),

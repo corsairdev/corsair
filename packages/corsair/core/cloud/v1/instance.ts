@@ -82,11 +82,13 @@ export function buildInstancePlane(
 ) {
 	assertInstanceKey(instanceKey, 'withInstance');
 
+	// `options` is required rather than optional: it sits behind `body`, so a
+	// bodyless call that passed neither silently dropped the caller's signal.
 	const req = <T>(
 		method: string,
 		path: string,
-		body?: unknown,
-		options?: RequestOptions,
+		body: unknown,
+		options: RequestOptions | undefined,
 	) => v1Request<T>(transport, method, path, body, options);
 
 	const ref = (...tail: string[]) => [instanceKey, ...tail].join(':');
@@ -104,7 +106,12 @@ export function buildInstancePlane(
 		tenants: {
 			/** Every tenant on this instance. */
 			list: (query: ListQuery = {}, options?: RequestOptions) =>
-				req<CloudList<CloudTenant>>('GET', `/tenants${scoped(query)}`),
+				req<CloudList<CloudTenant>>(
+					'GET',
+					`/tenants${scoped(query)}`,
+					undefined,
+					options,
+				),
 			/** Fails with `resource_conflict` if the tenant already exists here. */
 			create: (input: CreateTenantInput, options?: RequestOptions) =>
 				req<CloudTenant>(
@@ -146,7 +153,12 @@ export function buildInstancePlane(
 		 *  create one, so this is the only way to grant reach. */
 		access: {
 			list: (query: ListQuery = {}, options?: RequestOptions) =>
-				req<CloudList<CloudAccess>>('GET', `/access${scoped(query)}`),
+				req<CloudList<CloudAccess>>(
+					'GET',
+					`/access${scoped(query)}`,
+					undefined,
+					options,
+				),
 			get: (tenant: string, options?: RequestOptions) =>
 				req<CloudAccess>(
 					'GET',
@@ -177,7 +189,12 @@ export function buildInstancePlane(
 				query: ListQuery & { tenant?: string; integration?: string } = {},
 				options?: RequestOptions,
 			) =>
-				req<CloudList<CloudConnection>>('GET', `/connections${scoped(query)}`),
+				req<CloudList<CloudConnection>>(
+					'GET',
+					`/connections${scoped(query)}`,
+					undefined,
+					options,
+				),
 			get: (integration: string, tenant: string, options?: RequestOptions) =>
 				req<CloudConnection>(
 					'GET',
@@ -216,6 +233,8 @@ export function buildInstancePlane(
 				req<CloudList<CloudIntegration>>(
 					'GET',
 					`/integrations${scoped(query)}`,
+					undefined,
+					options,
 				),
 			get: (integration: string, options?: RequestOptions) =>
 				req<CloudIntegration>(
@@ -269,7 +288,12 @@ export function buildInstancePlane(
 		/** Inbound provider webhooks: one endpoint per integration. */
 		webhooks: {
 			list: (query: ListQuery = {}, options?: RequestOptions) =>
-				req<CloudList<CloudWebhook>>('GET', `/webhooks${scoped(query)}`),
+				req<CloudList<CloudWebhook>>(
+					'GET',
+					`/webhooks${scoped(query)}`,
+					undefined,
+					options,
+				),
 			/** Idempotent by integration: a repeat returns the existing endpoint,
 			 *  and writes `signing_secret` if one is supplied. */
 			create: (input: CreateWebhookInput, options?: RequestOptions) =>
@@ -357,7 +381,12 @@ export function buildInstancePlane(
 		 *  process is the delivery target. */
 		signingSecret: {
 			get: (options?: RequestOptions) =>
-				req<CloudSigningSecret>('GET', instancePath('/signing-secret')),
+				req<CloudSigningSecret>(
+					'GET',
+					instancePath('/signing-secret'),
+					undefined,
+					options,
+				),
 			/** Hard cutover. Open connect and permission sessions signed with the
 			 *  old secret die; `invalidated` counts them. */
 			rotate: (options?: RequestOptions) =>
@@ -375,6 +404,8 @@ export function buildInstancePlane(
 			req<{ object: 'instance_reconcile'; id: string; instance: string }>(
 				'POST',
 				instancePath('/reconcile'),
+				undefined,
+				options,
 			),
 	};
 }
