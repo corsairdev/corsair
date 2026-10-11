@@ -575,7 +575,7 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 	} satisfies InternalChatworkPlugin;
 }
 
-export * from './client';
+export { ChatworkAPIError } from './client';
 export type {
 	AccountGetInput,
 	AccountGetResponse,
