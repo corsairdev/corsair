@@ -27,7 +27,7 @@ await corsair.starton.api.ipfs.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | Yes | File contents, base64-encoded. |
+| `content` | `string` | Yes | File contents, base64-encoded (standard alphabet, padded). |
 | `filename` | `string` | Yes | File name stored on the pin, e.g. `metadata.json`. |
 | `contentType` | `string` | No | MIME type of the file. Defaults to application/octet-stream. |
 | `metadata` | `object` | No | Arbitrary JSON stored alongside the pin. |

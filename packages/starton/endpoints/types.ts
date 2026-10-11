@@ -392,7 +392,10 @@ const WatcherDeleteResponseSchema = z.number();
 // ─────────────────────────────────────────────────────────────────────────────
 
 const IpfsUploadFileInputSchema = z.object({
-	content: z.string().min(1).describe('File contents, base64-encoded.'),
+	content: z
+		.base64()
+		.min(1)
+		.describe('File contents, base64-encoded (standard alphabet, padded).'),
 	filename: z
 		.string()
 		.min(1)

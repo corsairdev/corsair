@@ -559,6 +559,13 @@ describe('endpoint request wiring', () => {
 			'application/octet-stream',
 		);
 	});
+
+	it('Ipfs.uploadFile rejects malformed base64 before sending', async () => {
+		await expect(
+			Ipfs.uploadFile(ctx, { content: 'not base64!', filename: 'x.bin' }),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
