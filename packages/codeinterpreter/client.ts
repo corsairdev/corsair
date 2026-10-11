@@ -34,8 +34,10 @@ export function getCodeInterpreterBaseUrl(overrideBaseUrl?: string): string {
 
 function decodeBase64Content(content: string): Buffer {
 	const normalized = content.replace(/\s/g, '');
+	// An empty string is the valid base64 encoding of zero bytes, so
+	// zero-byte binary files round-trip through upload/download as ''.
 	if (!normalized) {
-		throw new CodeInterpreterAPIError('Invalid base64 content');
+		return Buffer.alloc(0);
 	}
 	const decoded = Buffer.from(normalized, 'base64');
 	const roundTrip = decoded.toString('base64');

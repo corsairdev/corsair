@@ -118,6 +118,32 @@ describe('makeCodeInterpreterUpload', () => {
 			),
 		).rejects.toThrow('Invalid base64 content');
 	});
+
+	it('accepts empty base64 content for zero-byte files', async () => {
+		const uploaded: Uint8Array[] = [];
+		global.fetch = jest.fn(async (_url, init) => {
+			// Why safe: this test always passes a FormData body above.
+			const body = init?.body as FormData;
+			// Why safe: the client appends the upload under the 'file' key.
+			const file = body.get('file') as File;
+			uploaded.push(new Uint8Array(await file.arrayBuffer()));
+			return new Response(JSON.stringify({ file_id: 'file-0' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			});
+			// Why safe: jest.fn matches the fetch signature used by the client.
+		}) as typeof fetch;
+
+		await makeCodeInterpreterUpload(
+			'test-key',
+			{ filename: 'empty.bin', content: '', contentEncoding: 'base64' },
+			{ baseUrl: 'https://ci.example.com' },
+		);
+
+		const [firstUpload] = uploaded;
+		expect(firstUpload).toBeDefined();
+		expect(firstUpload!.length).toBe(0);
+	});
 });
 
 describe('makeCodeInterpreterDownload', () => {
