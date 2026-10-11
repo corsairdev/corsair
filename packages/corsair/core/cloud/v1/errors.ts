@@ -29,8 +29,11 @@ export class CloudApiError extends ManagementApiError {
 		super(status, fields.code, fields.message, { ...fields });
 		this.name = 'CloudApiError';
 		this.type = fields.type ?? 'api_error';
-		// Status 0 means the server never answered, so nothing was committed.
-		this.retryable = fields.retryable ?? (status === 0 || status >= 500);
+		// 429 and 5xx clear on their own; status 0 means the server never
+		// answered. A caller that knows better — a body read that failed after a
+		// write landed — passes `retryable` explicitly.
+		this.retryable =
+			fields.retryable ?? (status === 0 || status === 429 || status >= 500);
 		this.param = fields.param;
 		this.docUrl = fields.doc_url;
 		this.requestId = fields.request_id;

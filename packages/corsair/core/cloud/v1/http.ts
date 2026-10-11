@@ -40,6 +40,9 @@ export type ListQuery = {
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 
+/** Idempotent by HTTP semantics, so repeating one cannot double a write. */
+const REPEATABLE_METHODS = new Set(['GET', 'HEAD', 'PUT', 'DELETE']);
+
 const INSTANCE_KEY = /^[a-z][a-z0-9-]{0,31}$/;
 
 /**
@@ -104,8 +107,9 @@ export async function v1Request<T>(
 	}
 	if (options.requestId) headers['x-corsair-request-id'] = options.requestId;
 
+	let res: Response | undefined;
 	try {
-		const res = await doFetch(`${transport.baseUrl}${path}`, {
+		res = await doFetch(`${transport.baseUrl}${path}`, {
 			method,
 			headers,
 			body: body === undefined ? undefined : JSON.stringify(body),
@@ -127,17 +131,27 @@ export async function v1Request<T>(
 		}
 		return parsed as T;
 	} catch (err) {
-		// A caller's own abort is theirs to see; everything else — a timeout, a
-		// reset mid-body, a DNS failure — never reached a committed state, which
-		// is what status 0 says.
+		// A caller's own abort is theirs to see.
 		if (options.signal?.aborted) throw err;
 		if (err instanceof CloudApiError) throw err;
-		throw mapV1Error(0, {
-			error: {
-				code: 'request_failed',
-				message: err instanceof Error ? err.message : String(err),
+		// Once the server has answered, a failure reading the body says nothing
+		// about whether the write landed, so retryability follows the status it
+		// answered with. Before that, repeating is only safe for a method that is
+		// idempotent anyway, or for a call the server will dedupe.
+		const retryable = res
+			? undefined
+			: REPEATABLE_METHODS.has(method) || options.idempotencyKey !== undefined;
+		throw mapV1Error(
+			res?.status ?? 0,
+			{
+				error: {
+					code: 'request_failed',
+					message: err instanceof Error ? err.message : String(err),
+					retryable,
+				},
 			},
-		});
+			res?.headers,
+		);
 	} finally {
 		clearTimeout(timer);
 		options.signal?.removeEventListener('abort', onAbort);
