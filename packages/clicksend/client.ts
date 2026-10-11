@@ -1,6 +1,7 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { ZodType } from 'zod';
+import { z } from 'zod';
 
 export class ClickSendAPIError extends Error {
 	constructor(
@@ -21,6 +22,17 @@ export type ClickSendEnvelope<T> = {
 	response_msg?: string;
 	data?: T;
 };
+
+// Envelope uses a loose object schema so extra provider fields never break
+// parsing; `data` is always re-validated by the endpoint responseSchema below.
+const ClickSendEnvelopeSchema = z.looseObject({
+	http_code: z.number().optional(),
+	response_code: z.union([z.string(), z.number()]).optional(),
+	response_msg: z.string().optional(),
+	// unknown justification: envelope `data` carries any endpoint payload; it is
+	// never returned directly — it is always re-parsed by responseSchema first.
+	data: z.unknown().optional(),
+});
 
 export async function getClickSendCredentials(ctx: {
 	options?: { username?: string; apiKey?: string };
@@ -53,10 +65,13 @@ export async function makeClickSendRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Record<string, unknown> justification: request bodies/queries are
+		// endpoint-specific JSON built from zod-validated inputs at each call
+		// site; unknown keeps arbitrary JSON type-safe without any-casts.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
-		responseSchema?: ZodType<T>;
-	} = {},
+		responseSchema: ZodType<T>;
+	},
 ): Promise<T> {
 	// Guard against missing credentials
 	if (!username || !apiKey) {
@@ -104,23 +119,23 @@ export async function makeClickSendRequest<T>(
 	};
 
 	try {
-		const res = await request<ClickSendEnvelope<T> | T>(config, requestOptions);
-		if (res && typeof res === 'object') {
-			const envelope = res as ClickSendEnvelope<T>;
-			if (envelope.http_code !== undefined && envelope.http_code >= 400) {
-				throw new ClickSendAPIError(
-					envelope.response_msg || 'ClickSend API error',
-					envelope.response_code,
-					envelope.http_code,
-				);
-			}
-			if (envelope.data !== undefined) {
-				return responseSchema
-					? responseSchema.parse(envelope.data)
-					: envelope.data;
-			}
+		const res: unknown = await request<unknown>(config, requestOptions);
+		const envelope = ClickSendEnvelopeSchema.parse(res);
+		if (envelope.http_code !== undefined && envelope.http_code >= 400) {
+			const code =
+				envelope.response_code === undefined
+					? undefined
+					: String(envelope.response_code);
+			throw new ClickSendAPIError(
+				envelope.response_msg ?? 'ClickSend API error',
+				code,
+				envelope.http_code,
+			);
 		}
-		return responseSchema ? responseSchema.parse(res) : (res as T);
+		if (envelope.data !== undefined) {
+			return responseSchema.parse(envelope.data);
+		}
+		return responseSchema.parse(res);
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof ClickSendAPIError) {
 			throw error;

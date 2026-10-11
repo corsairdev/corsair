@@ -100,19 +100,14 @@ export const history: ClickSendEndpoints['smsHistory'] = async (ctx, input) => {
 export const inbound: ClickSendEndpoints['smsInbound'] = async (ctx, input) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest(
-		'sms/inbound-sms',
-		username,
-		apiKey,
-		{
-			method: 'GET',
-			query: {
-				page: input.page,
-				limit: input.limit,
-			},
-			responseSchema: ClickSendEndpointOutputSchemas.smsInbound,
+	const response = await makeClickSendRequest('sms/inbound', username, apiKey, {
+		method: 'GET',
+		query: {
+			page: input.page,
+			limit: input.limit,
 		},
-	);
+		responseSchema: ClickSendEndpointOutputSchemas.smsInbound,
+	});
 
 	if (response.data && ctx.db.messages) {
 		for (const msg of response.data) {
