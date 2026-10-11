@@ -8,14 +8,15 @@ import {
 
 // Tinify has no usage endpoint. Its official clients validate a key with an
 // empty POST /shrink, which fails with 400 "Input missing" without compressing,
-// and read the month's count from the Compression-Count header.
+// and read the month's count from the Compression-Count header. Like those
+// clients, a 429 (monthly limit reached) still counts as a valid key.
 export const getCompressionCount: TinypngEndpoints['getCompressionCount'] =
 	async (ctx, input) => {
 		GetCompressionCountInputSchema.parse(input);
 		const response = await tinifyRequest(ctx.key, {
 			method: 'POST',
 			path: '/shrink',
-			acceptStatuses: [400],
+			acceptStatuses: [400, 429],
 		});
 		const compressionCount = numberHeader(
 			response.headers,

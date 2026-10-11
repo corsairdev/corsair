@@ -373,6 +373,20 @@ describe('account.getCompressionCount', () => {
 		expect(result).toEqual({ compressionCount: 42 });
 	});
 
+	it('reads the count when the monthly limit is reached', async () => {
+		respond(
+			429,
+			JSON.stringify({
+				error: 'TooManyRequests',
+				message: 'Your monthly limit has been exceeded',
+			}),
+			{ 'Compression-Count': '500' },
+		);
+		const result = await call(Account.getCompressionCount, {});
+
+		expect(result).toEqual({ compressionCount: 500 });
+	});
+
 	it('still fails on an invalid key', async () => {
 		respond(
 			401,
