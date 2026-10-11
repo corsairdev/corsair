@@ -318,6 +318,7 @@ export const BaseProviders = [
 	'tokenmetrics',
 	'tpscheck',
 	'trello',
+	'tripadvisor',
 	'turso',
 	'twentyonerisk',
 	'twilio',
@@ -667,6 +668,7 @@ export const ProviderDisplayNames = {
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
 	trello: 'Trello',
+	tripadvisor: 'Tripadvisor',
 	turso: 'Turso',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
@@ -1023,6 +1025,7 @@ export type AllProviders =
 	| 'tokenmetrics'
 	| 'tpscheck'
 	| 'trello'
+	| 'tripadvisor'
 	| 'turso'
 	| 'twentyonerisk'
 	| 'twilio'
