@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Image } from './endpoints';
+import { Account, Images } from './endpoints';
 import type {
 	TinypngEndpointInputs,
 	TinypngEndpointOutputs,
@@ -63,7 +63,7 @@ type TinypngEndpoint<K extends keyof TinypngEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type TinypngEndpoints = {
-	compress: TinypngEndpoint<'compress'>;
+	[K in keyof TinypngEndpointOutputs]: TinypngEndpoint<K>;
 };
 
 /* --------------------------------
@@ -71,17 +71,16 @@ export type TinypngEndpoints = {
  * -------------------------------- */
 
 const tinypngEndpointsNested = {
-	image: {
-		compress: Image.compress,
+	images: {
+		shrink: Images.shrink,
+		output: Images.output,
+		transform: Images.transform,
+		compressAndStoreInAzure: Images.compressAndStoreInAzure,
+	},
+	account: {
+		getCompressionCount: Account.getCompressionCount,
 	},
 } as const;
-
-/* --------------------------------
- * Webhooks
- *
- * TinyPNG does not currently use
- * webhooks for this plugin.
- * -------------------------------- */
 
 const tinypngWebhooksNested = {} as const;
 
@@ -90,9 +89,25 @@ const tinypngWebhooksNested = {} as const;
  * -------------------------------- */
 
 export const tinypngEndpointSchemas = {
-	'image.compress': {
-		input: TinypngEndpointInputSchemas.compress,
-		output: TinypngEndpointOutputSchemas.compress,
+	'images.shrink': {
+		input: TinypngEndpointInputSchemas.shrink,
+		output: TinypngEndpointOutputSchemas.shrink,
+	},
+	'images.output': {
+		input: TinypngEndpointInputSchemas.output,
+		output: TinypngEndpointOutputSchemas.output,
+	},
+	'images.transform': {
+		input: TinypngEndpointInputSchemas.transform,
+		output: TinypngEndpointOutputSchemas.transform,
+	},
+	'images.compressAndStoreInAzure': {
+		input: TinypngEndpointInputSchemas.compressAndStoreInAzure,
+		output: TinypngEndpointOutputSchemas.compressAndStoreInAzure,
+	},
+	'account.getCompressionCount': {
+		input: TinypngEndpointInputSchemas.getCompressionCount,
+		output: TinypngEndpointOutputSchemas.getCompressionCount,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof tinypngEndpointsNested
@@ -103,9 +118,28 @@ export const tinypngEndpointSchemas = {
  * -------------------------------- */
 
 const tinypngEndpointMeta = {
-	'image.compress': {
+	'images.shrink': {
 		riskLevel: 'write',
-		description: 'Compress an image from a public URL using TinyPNG',
+		description:
+			'Compress an image from a URL or base64 bytes and return its Tinify image ID (uses one compression)',
+	},
+	'images.output': {
+		riskLevel: 'read',
+		description: 'Download a compressed image by its Tinify image ID as base64',
+	},
+	'images.transform': {
+		riskLevel: 'write',
+		description:
+			'Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS',
+	},
+	'images.compressAndStoreInAzure': {
+		riskLevel: 'write',
+		description:
+			'Compress an image and upload the result to Azure Blob Storage through a SAS URL',
+	},
+	'account.getCompressionCount': {
+		riskLevel: 'read',
+		description: 'Get the number of compressions made this calendar month',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof tinypngEndpointsNested>;
 
@@ -196,8 +230,16 @@ export function tinypng<const T extends TinypngPluginOptions>(
  * -------------------------------- */
 
 export type {
-	CompressInput,
-	CompressResponse,
+	CompressAndStoreInAzureInput,
+	CompressAndStoreInAzureResponse,
+	GetCompressionCountInput,
+	GetCompressionCountResponse,
+	OutputInput,
+	OutputResponse,
+	ShrinkInput,
+	ShrinkResponse,
 	TinypngEndpointInputs,
 	TinypngEndpointOutputs,
+	TransformInput,
+	TransformResponse,
 } from './endpoints/types';
