@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkRequest, pathSegment } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -11,7 +11,7 @@ export const list: ChatworkEndpoints['membersList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.membersList.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['membersList']
-	>(`rooms/${parsedInput.room_id}/members`, ctx.key, {
+	>(`rooms/${pathSegment(parsedInput.room_id)}/members`, ctx.key, {
 		method: 'GET',
 		authType: ctx.options?.authType,
 	});
@@ -52,7 +52,7 @@ export const update: ChatworkEndpoints['membersUpdate'] = async (
 		ChatworkEndpointInputSchemas.membersUpdate.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['membersUpdate']
-	>(`rooms/${room_id}/members`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/members`, ctx.key, {
 		method: 'PUT',
 		form,
 		authType: ctx.options?.authType,

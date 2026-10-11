@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkRequest, pathSegment } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -11,7 +11,7 @@ export const list: ChatworkEndpoints['messagesList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.messagesList.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesList']
-	>(`rooms/${parsedInput.room_id}/messages`, ctx.key, {
+	>(`rooms/${pathSegment(parsedInput.room_id)}/messages`, ctx.key, {
 		method: 'GET',
 		query: { force: parsedInput.force },
 		authType: ctx.options?.authType,
@@ -48,7 +48,7 @@ export const get: ChatworkEndpoints['messagesGet'] = async (ctx, input) => {
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesGet']
 	>(
-		`rooms/${parsedInput.room_id}/messages/${parsedInput.message_id}`,
+		`rooms/${pathSegment(parsedInput.room_id)}/messages/${pathSegment(parsedInput.message_id)}`,
 		ctx.key,
 		{
 			method: 'GET',
@@ -83,7 +83,7 @@ export const send: ChatworkEndpoints['messagesSend'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.messagesSend.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesSend']
-	>(`rooms/${parsedInput.room_id}/messages`, ctx.key, {
+	>(`rooms/${pathSegment(parsedInput.room_id)}/messages`, ctx.key, {
 		method: 'POST',
 		form: { body: parsedInput.body, self_unread: parsedInput.self_unread },
 		authType: ctx.options?.authType,
@@ -113,11 +113,15 @@ export const update: ChatworkEndpoints['messagesUpdate'] = async (
 		ChatworkEndpointInputSchemas.messagesUpdate.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesUpdate']
-	>(`rooms/${room_id}/messages/${message_id}`, ctx.key, {
-		method: 'PUT',
-		form: { body },
-		authType: ctx.options?.authType,
-	});
+	>(
+		`rooms/${pathSegment(room_id)}/messages/${pathSegment(message_id)}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			form: { body },
+			authType: ctx.options?.authType,
+		},
+	);
 	const validatedResult =
 		ChatworkEndpointOutputSchemas.messagesUpdate.parse(result);
 
@@ -139,10 +143,14 @@ export const deleteMessage: ChatworkEndpoints['messagesDelete'] = async (
 		ChatworkEndpointInputSchemas.messagesDelete.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesDelete']
-	>(`rooms/${room_id}/messages/${message_id}`, ctx.key, {
-		method: 'DELETE',
-		authType: ctx.options?.authType,
-	});
+	>(
+		`rooms/${pathSegment(room_id)}/messages/${pathSegment(message_id)}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+			authType: ctx.options?.authType,
+		},
+	);
 	const validatedResult =
 		ChatworkEndpointOutputSchemas.messagesDelete.parse(result);
 
@@ -172,7 +180,7 @@ export const markRead: ChatworkEndpoints['messagesMarkRead'] = async (
 		ChatworkEndpointInputSchemas.messagesMarkRead.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesMarkRead']
-	>(`rooms/${room_id}/messages/read`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/messages/read`, ctx.key, {
 		method: 'PUT',
 		form: { message_id },
 		authType: ctx.options?.authType,
@@ -198,7 +206,7 @@ export const markUnread: ChatworkEndpoints['messagesMarkUnread'] = async (
 		ChatworkEndpointInputSchemas.messagesMarkUnread.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['messagesMarkUnread']
-	>(`rooms/${room_id}/messages/unread`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/messages/unread`, ctx.key, {
 		method: 'PUT',
 		form: { message_id },
 		authType: ctx.options?.authType,

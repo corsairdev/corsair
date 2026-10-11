@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkRequest, pathSegment } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -12,7 +12,7 @@ export const list: ChatworkEndpoints['filesList'] = async (ctx, input) => {
 		ChatworkEndpointInputSchemas.filesList.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['filesList']
-	>(`rooms/${room_id}/files`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/files`, ctx.key, {
 		method: 'GET',
 		query,
 		authType: ctx.options?.authType,
@@ -47,7 +47,7 @@ export const get: ChatworkEndpoints['filesGet'] = async (ctx, input) => {
 	const { room_id, file_id, create_download_url } =
 		ChatworkEndpointInputSchemas.filesGet.parse(input);
 	const result = await makeChatworkRequest<ChatworkEndpointOutputs['filesGet']>(
-		`rooms/${room_id}/files/${file_id}`,
+		`rooms/${pathSegment(room_id)}/files/${pathSegment(file_id)}`,
 		ctx.key,
 		{
 			method: 'GET',
@@ -97,7 +97,7 @@ export const upload: ChatworkEndpoints['filesUpload'] = async (ctx, input) => {
 
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['filesUpload']
-	>(`rooms/${room_id}/files`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/files`, ctx.key, {
 		method: 'POST',
 		multipart,
 		authType: ctx.options?.authType,

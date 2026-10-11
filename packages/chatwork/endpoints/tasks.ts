@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkRequest, pathSegment } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -12,7 +12,7 @@ export const list: ChatworkEndpoints['tasksList'] = async (ctx, input) => {
 		ChatworkEndpointInputSchemas.tasksList.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['tasksList']
-	>(`rooms/${room_id}/tasks`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/tasks`, ctx.key, {
 		method: 'GET',
 		query,
 		authType: ctx.options?.authType,
@@ -47,7 +47,7 @@ export const get: ChatworkEndpoints['tasksGet'] = async (ctx, input) => {
 	const { room_id, task_id } =
 		ChatworkEndpointInputSchemas.tasksGet.parse(input);
 	const result = await makeChatworkRequest<ChatworkEndpointOutputs['tasksGet']>(
-		`rooms/${room_id}/tasks/${task_id}`,
+		`rooms/${pathSegment(room_id)}/tasks/${pathSegment(task_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.options?.authType },
 	);
@@ -79,7 +79,7 @@ export const create: ChatworkEndpoints['tasksCreate'] = async (ctx, input) => {
 		ChatworkEndpointInputSchemas.tasksCreate.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['tasksCreate']
-	>(`rooms/${room_id}/tasks`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}/tasks`, ctx.key, {
 		method: 'POST',
 		form,
 		authType: ctx.options?.authType,
@@ -111,11 +111,15 @@ export const updateStatus: ChatworkEndpoints['tasksUpdateStatus'] = async (
 		ChatworkEndpointInputSchemas.tasksUpdateStatus.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['tasksUpdateStatus']
-	>(`rooms/${room_id}/tasks/${task_id}/status`, ctx.key, {
-		method: 'PUT',
-		form: { body: status },
-		authType: ctx.options?.authType,
-	});
+	>(
+		`rooms/${pathSegment(room_id)}/tasks/${pathSegment(task_id)}/status`,
+		ctx.key,
+		{
+			method: 'PUT',
+			form: { body: status },
+			authType: ctx.options?.authType,
+		},
+	);
 	const validatedResult =
 		ChatworkEndpointOutputSchemas.tasksUpdateStatus.parse(result);
 

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkRequest, pathSegment } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -40,7 +40,7 @@ export const list: ChatworkEndpoints['roomsList'] = async (ctx, input) => {
 export const get: ChatworkEndpoints['roomsGet'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.roomsGet.parse(input);
 	const result = await makeChatworkRequest<ChatworkEndpointOutputs['roomsGet']>(
-		`rooms/${parsedInput.room_id}`,
+		`rooms/${pathSegment(parsedInput.room_id)}`,
 		ctx.key,
 		{
 			method: 'GET',
@@ -97,7 +97,7 @@ export const update: ChatworkEndpoints['roomsUpdate'] = async (ctx, input) => {
 		ChatworkEndpointInputSchemas.roomsUpdate.parse(input);
 	const result = await makeChatworkRequest<
 		ChatworkEndpointOutputs['roomsUpdate']
-	>(`rooms/${room_id}`, ctx.key, {
+	>(`rooms/${pathSegment(room_id)}`, ctx.key, {
 		method: 'PUT',
 		form,
 		authType: ctx.options?.authType,
@@ -121,7 +121,7 @@ export const deleteRoom: ChatworkEndpoints['roomsDelete'] = async (
 ) => {
 	const { room_id, action_type } =
 		ChatworkEndpointInputSchemas.roomsDelete.parse(input);
-	await makeChatworkRequest<void>(`rooms/${room_id}`, ctx.key, {
+	await makeChatworkRequest<void>(`rooms/${pathSegment(room_id)}`, ctx.key, {
 		method: 'DELETE',
 		form: { action_type },
 		authType: ctx.options?.authType,

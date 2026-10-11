@@ -51,6 +51,10 @@ export interface ChatworkRequestOptions {
 	defaultEmptyArray?: boolean;
 }
 
+export function pathSegment(value: string | number): string {
+	return encodeURIComponent(String(value));
+}
+
 // Chatwork encodes booleans as 1/0 and id lists as comma-separated strings.
 function encodeParams(params: ChatworkParams): Record<string, string> {
 	const encoded: Record<string, string> = {};
