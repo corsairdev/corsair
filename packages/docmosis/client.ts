@@ -1,5 +1,7 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
+import type { JsonValue } from './endpoints/types';
 
 export class DocmosisAPIError extends Error {
 	public readonly status?: number;
@@ -50,31 +52,41 @@ function parseRetryHeaderSeconds(value: string | null): number | undefined {
 	return seconds * 1000;
 }
 
-function buildFormData(data?: Record<string, unknown>): FormData | undefined {
+type DocmosisFormFields = Record<
+	string,
+	string | number | readonly string[] | undefined
+>;
+
+const DocmosisErrorBodySchema = z.object({
+	shortMsg: z.string().optional(),
+	longMsg: z.string().optional(),
+});
+
+function errorMessageFromBody(body: JsonValue | undefined): string | undefined {
+	const parsed = DocmosisErrorBodySchema.safeParse(body);
+	if (!parsed.success) {
+		return undefined;
+	}
+	return parsed.data.longMsg || parsed.data.shortMsg || undefined;
+}
+
+function buildFormData(data?: DocmosisFormFields): FormData | undefined {
 	if (!data) {
 		return undefined;
 	}
 
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(data)) {
-		if (value === undefined || value === null) {
+		if (value === undefined) {
 			continue;
 		}
 
-		const appendValue = (item: unknown) => {
-			if (typeof item === 'string' || item instanceof Blob) {
-				formData.append(key, item);
-				return;
-			}
-			formData.append(key, JSON.stringify(item));
-		};
-
 		if (Array.isArray(value)) {
 			for (const item of value) {
-				appendValue(item);
+				formData.append(key, item);
 			}
 		} else {
-			appendValue(value);
+			formData.append(key, String(value));
 		}
 	}
 
@@ -133,12 +145,8 @@ async function fetchBinaryResponse(
 	if (!response.ok) {
 		let message = response.statusText;
 		try {
-			const raw = await response.text();
-			const body = JSON.parse(raw) as {
-				shortMsg?: string;
-				longMsg?: string;
-			};
-			message = body.longMsg ?? body.shortMsg ?? message;
+			message =
+				errorMessageFromBody(JSON.parse(await response.text())) ?? message;
 		} catch {
 			// binary or non-JSON error body
 		}
@@ -166,25 +174,22 @@ async function fetchBinaryResponse(
 	};
 }
 
-export async function makeDocmosisRequest<T>(
+/** Returns the raw provider payload; every caller validates it with zod. */
+export async function makeDocmosisRequest(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
-		formData?: Record<string, unknown>;
-		mediaType?: string;
+		formData?: DocmosisFormFields;
 		responseType?: DocmosisResponseType;
 		region?: DocmosisRegion;
 	} = {},
-): Promise<T> {
+): Promise<JsonValue | DocmosisBinaryResponse> {
 	const {
 		method = 'POST',
-		body,
 		query,
 		formData,
-		mediaType,
 		responseType,
 		region = 'us1',
 	} = options;
@@ -192,11 +197,11 @@ export async function makeDocmosisRequest<T>(
 	if (responseType === 'arrayBuffer') {
 		const url = buildUrl(DOCMOSIS_API_BASES[region], endpoint, query);
 		const requestBody = buildFormData(formData);
-		return (await fetchBinaryResponse(url, {
+		return fetchBinaryResponse(url, {
 			method,
 			headers: { accessKey: apiKey },
 			body: requestBody,
-		})) as T;
+		});
 	}
 
 	const config: OpenAPIConfig = {
@@ -214,17 +219,15 @@ export async function makeDocmosisRequest<T>(
 		method,
 		url: endpoint,
 		query,
-		body,
 		formData,
-		mediaType: mediaType ?? 'application/x-www-form-urlencoded',
+		mediaType: 'application/x-www-form-urlencoded',
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<JsonValue>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const body = error.body as { shortMsg?: string; longMsg?: string } | null;
-			const message = body?.longMsg || body?.shortMsg || error.message;
+			const message = errorMessageFromBody(error.body) ?? error.message;
 			throw new DocmosisAPIError(message, error.status, { cause: error });
 		}
 

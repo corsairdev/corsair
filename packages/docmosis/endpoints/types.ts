@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-type JsonValue =
+export type JsonValue =
 	| string
 	| number
 	| boolean
@@ -16,7 +16,7 @@ export type TemplateStructureElement = {
 	repeatIdx?: number;
 	conditionIdx?: number;
 	contains?: TemplateStructureElement[];
-	[key: string]: unknown;
+	[key: string]: JsonValue | TemplateStructureElement[] | undefined;
 };
 
 const BooleanLikeSchema = z.union([

@@ -19,7 +19,7 @@ function boolLikeToString(
 export const environmentReady: DocmosisEndpoints['environmentReady'] = async (
 	ctx,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('environment/ready', ctx.key, {
+	const raw = await makeDocmosisRequest('environment/ready', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {},
@@ -32,15 +32,11 @@ export const environmentReady: DocmosisEndpoints['environmentReady'] = async (
 
 export const environmentSummary: DocmosisEndpoints['environmentSummary'] =
 	async (ctx) => {
-		const raw = await makeDocmosisRequest<unknown>(
-			'environment/summary',
-			ctx.key,
-			{
-				method: 'POST',
-				region: ctx.options.region,
-				formData: {},
-			},
-		);
+		const raw = await makeDocmosisRequest('environment/summary', ctx.key, {
+			method: 'POST',
+			region: ctx.options.region,
+			formData: {},
+		});
 		const response =
 			DocmosisEndpointOutputSchemas.environmentSummary.parse(raw);
 
@@ -63,7 +59,7 @@ export const getApiKey: DocmosisEndpoints['getApiKey'] = async (ctx) => {
 };
 
 export const ping: DocmosisEndpoints['ping'] = async (ctx) => {
-	const raw = await makeDocmosisRequest<unknown>('ping', ctx.key, {
+	const raw = await makeDocmosisRequest('ping', ctx.key, {
 		method: 'GET',
 		region: ctx.options.region,
 	});
@@ -74,7 +70,7 @@ export const ping: DocmosisEndpoints['ping'] = async (ctx) => {
 };
 
 export const pingService: DocmosisEndpoints['pingService'] = async (ctx) => {
-	const raw = await makeDocmosisRequest<unknown>('ping', ctx.key, {
+	const raw = await makeDocmosisRequest('ping', ctx.key, {
 		method: 'GET',
 		region: ctx.options.region,
 	});
@@ -88,7 +84,7 @@ export const deleteImage: DocmosisEndpoints['deleteImage'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('deleteImage', ctx.key, {
+	const raw = await makeDocmosisRequest('deleteImage', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: { imageName: asArray(input.imageName) },
@@ -108,7 +104,7 @@ export const deleteTemplate: DocmosisEndpoints['deleteTemplate'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('deleteTemplate', ctx.key, {
+	const raw = await makeDocmosisRequest('deleteTemplate', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: { templateName: asArray(input.templateName) },
@@ -128,7 +124,7 @@ export const listImages: DocmosisEndpoints['listImages'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('listImages', ctx.key, {
+	const raw = await makeDocmosisRequest('listImages', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {
@@ -151,7 +147,7 @@ export const listTemplates: DocmosisEndpoints['listTemplates'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('listTemplates', ctx.key, {
+	const raw = await makeDocmosisRequest('listTemplates', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {
@@ -175,7 +171,7 @@ export const listTemplates: DocmosisEndpoints['listTemplates'] = async (
 };
 
 export const getImage: DocmosisEndpoints['getImage'] = async (ctx, input) => {
-	const raw = await makeDocmosisRequest<unknown>('getImage', ctx.key, {
+	const raw = await makeDocmosisRequest('getImage', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: { imageName: asArray(input.imageName) },
@@ -196,7 +192,7 @@ export const getTemplate: DocmosisEndpoints['getTemplate'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('getTemplate', ctx.key, {
+	const raw = await makeDocmosisRequest('getTemplate', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: { templateName: asArray(input.templateName) },
@@ -215,7 +211,7 @@ export const getTemplate: DocmosisEndpoints['getTemplate'] = async (
 
 export const getBatchUploadStatus: DocmosisEndpoints['getBatchUploadStatus'] =
 	async (ctx, input) => {
-		const raw = await makeDocmosisRequest<unknown>(
+		const raw = await makeDocmosisRequest(
 			'uploadTemplateBatchStatus',
 			ctx.key,
 			{
@@ -239,7 +235,7 @@ export const getBatchUploadStatus: DocmosisEndpoints['getBatchUploadStatus'] =
 export const getRenderQueue: DocmosisEndpoints['getRenderQueue'] = async (
 	ctx,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('getRenderQueue', ctx.key, {
+	const raw = await makeDocmosisRequest('getRenderQueue', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {},
@@ -252,18 +248,14 @@ export const getRenderQueue: DocmosisEndpoints['getRenderQueue'] = async (
 
 export const getTemplateDetails: DocmosisEndpoints['getTemplateDetails'] =
 	async (ctx, input) => {
-		const raw = await makeDocmosisRequest<unknown>(
-			'getTemplateDetails',
-			ctx.key,
-			{
-				method: 'POST',
-				region: ctx.options.region,
-				formData: {
-					templateName: input.templateName,
-					stringify: boolLikeToString(input.stringify),
-				},
+		const raw = await makeDocmosisRequest('getTemplateDetails', ctx.key, {
+			method: 'POST',
+			region: ctx.options.region,
+			formData: {
+				templateName: input.templateName,
+				stringify: boolLikeToString(input.stringify),
 			},
-		);
+		});
 		const response =
 			DocmosisEndpointOutputSchemas.getTemplateDetails.parse(raw);
 
@@ -278,18 +270,14 @@ export const getTemplateDetails: DocmosisEndpoints['getTemplateDetails'] =
 
 export const getTemplateStructure: DocmosisEndpoints['getTemplateStructure'] =
 	async (ctx, input) => {
-		const raw = await makeDocmosisRequest<unknown>(
-			'getTemplateStructure',
-			ctx.key,
-			{
-				method: 'POST',
-				region: ctx.options.region,
-				formData: {
-					templateName: input.templateName,
-					stringify: boolLikeToString(input.stringify),
-				},
+		const raw = await makeDocmosisRequest('getTemplateStructure', ctx.key, {
+			method: 'POST',
+			region: ctx.options.region,
+			formData: {
+				templateName: input.templateName,
+				stringify: boolLikeToString(input.stringify),
 			},
-		);
+		});
 		const response =
 			DocmosisEndpointOutputSchemas.getTemplateStructure.parse(raw);
 
@@ -306,7 +294,7 @@ export const getRenderTags: DocmosisEndpoints['getRenderTags'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('getRenderTags', ctx.key, {
+	const raw = await makeDocmosisRequest('getRenderTags', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {
@@ -332,7 +320,7 @@ export const getSampleData: DocmosisEndpoints['getSampleData'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeDocmosisRequest<unknown>('getSampleData', ctx.key, {
+	const raw = await makeDocmosisRequest('getSampleData', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {
@@ -363,7 +351,7 @@ function renderDataToString(
 }
 
 export const render: DocmosisEndpoints['render'] = async (ctx, input) => {
-	const raw = await makeDocmosisRequest<unknown>('render', ctx.key, {
+	const raw = await makeDocmosisRequest('render', ctx.key, {
 		method: 'POST',
 		region: ctx.options.region,
 		formData: {

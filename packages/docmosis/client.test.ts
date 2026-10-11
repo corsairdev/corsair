@@ -162,6 +162,7 @@ describe('makeDocmosisRequest', () => {
 			}),
 		).rejects.toMatchObject({
 			name: 'DocmosisAPIError',
+			message: 'Try again later',
 			status: 429,
 			retryAfter: 2000,
 		});
@@ -198,6 +199,45 @@ describe('makeDocmosisRequest', () => {
 			retryAfter: 3000,
 		});
 
+		fetchMock.mockRestore();
+	});
+
+	it('encodes array and numeric form fields for binary requests', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: true,
+			headers: new Headers({ 'Content-Type': 'application/zip' }),
+			arrayBuffer: async () => new ArrayBuffer(0),
+		} as Response);
+
+		await makeDocmosisRequest('getTemplate', 'key-8', {
+			formData: { templateName: ['/a.docx', '/b.docx'], pageSize: 5 },
+			responseType: 'arrayBuffer',
+		});
+
+		const body = fetchMock.mock.calls[0]?.[1]?.body;
+		expect(body).toBeInstanceOf(FormData);
+		if (body instanceof FormData) {
+			expect(body.getAll('templateName')).toEqual(['/a.docx', '/b.docx']);
+			expect(body.get('pageSize')).toBe('5');
+		}
+		fetchMock.mockRestore();
+	});
+
+	it('falls back to the status text when the error body is not JSON', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: false,
+			status: 500,
+			statusText: 'Internal Server Error',
+			headers: new Headers(),
+			text: async () => '<html>oops</html>',
+		} as Response);
+
+		await expect(
+			makeDocmosisRequest('render', 'key-9', { responseType: 'arrayBuffer' }),
+		).rejects.toMatchObject({
+			message: 'Internal Server Error',
+			status: 500,
+		});
 		fetchMock.mockRestore();
 	});
 });
