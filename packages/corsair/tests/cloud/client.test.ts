@@ -60,14 +60,73 @@ describe('buildCloudClient', () => {
 		expect(() => (client as any).notaplugin.api.x.y()).toThrow();
 	});
 
-	it('rejects db/keys/webhooks as not available in cloud mode', () => {
+	it('rejects keys/webhooks as not available in cloud mode', () => {
 		const client = buildCloudClient([{ id: 'slack' } as any], {
 			transport: {} as any,
 			tenantId: 'acme',
 		});
-		expect(() => (client as any).slack.db).toThrow(/cloud mode/);
 		expect(() => (client as any).slack.keys).toThrow(/cloud mode/);
 		expect(() => (client as any).slack.webhooks).toThrow(/cloud mode/);
+	});
+
+	it('routes an entity-store call over HTTP', async () => {
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(JSON.stringify({ data: { entityId: 'C1' } }), {
+				status: 200,
+			}),
+		);
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {
+				baseUrl: 'https://vm/p/api/corsair',
+				apiKey: 'ck',
+				fetch: fetchMock as any,
+			},
+			tenantId: 'acme',
+		});
+		const row = await (client as any).slack.db.channels.findByEntityId('C1');
+		expect(row).toEqual({ entityId: 'C1' });
+		const [url, init] = fetchMock.mock.calls[0];
+		expect(url).toBe(
+			'https://vm/p/api/corsair/acme/slack/db/channels/findByEntityId',
+		);
+		expect(JSON.parse(init.body)).toEqual({ args: ['C1'] });
+	});
+
+	it('sends a Date argument as a marker, since a bare ISO string is dropped', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: [] }), { status: 200 }),
+			);
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {
+				baseUrl: 'https://vm/p/api/corsair',
+				apiKey: 'ck',
+				fetch: fetchMock as any,
+			},
+			tenantId: 'acme',
+		});
+		await (client as any).slack.db.channels.search({
+			data: { created_at: { after: new Date('2026-01-01T00:00:00.000Z') } },
+		});
+		expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+			args: [
+				{
+					data: {
+						created_at: { after: { $date: '2026-01-01T00:00:00.000Z' } },
+					},
+				},
+			],
+		});
+	});
+
+	it('does not expose a method outside the entity-client surface', () => {
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {} as any,
+			tenantId: 'acme',
+		});
+		expect((client as any).slack.db.channels.constructor).toBeUndefined();
+		expect((client as any).slack.db.channels.dropTable).toBeUndefined();
 	});
 
 	it('rejects chats/workflows as not available in cloud mode', () => {

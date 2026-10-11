@@ -130,7 +130,13 @@ function evictIdle(
 	}
 }
 
-function resolveClient(
+/**
+ * The tenant-scoped client for a request, from a bounded LRU cache.
+ *
+ * Shared with the db route so both reuse one `withTenant` per tenant: building
+ * a client imports plugins and runs provisioning, which is not per-request work.
+ */
+export function resolveTenantClient(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	tenant: string | undefined,
@@ -205,7 +211,7 @@ export async function resolveCall(
 ): Promise<unknown> {
 	if (!internal.plugins.some((p) => p.id === plugin))
 		throw unknownPlugin(plugin);
-	const { client, tenantId } = resolveClient(corsair, internal, tenant);
+	const { client, tenantId } = resolveTenantClient(corsair, internal, tenant);
 	const pluginNs = (client as Record<string, unknown>)[plugin] as
 		| { api?: unknown }
 		| undefined;

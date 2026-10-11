@@ -1,10 +1,11 @@
 import type { CorsairClient } from '../client';
+import { DB_METHODS, encodeDbArgs } from '../management/db';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
 
-const DEFERRED = new Set(['db', 'keys', 'webhooks']);
+const DEFERRED = new Set(['keys', 'webhooks']);
 const TOP_LEVEL_DEFERRED = new Set(['chats', 'workflows']);
 const THENABLE_KEYS = new Set(['then', 'catch', 'finally']);
 
@@ -57,6 +58,50 @@ function buildInvokeProxy(
 	});
 }
 
+// `client.<plugin>.db.<entityType>.<method>(...args)` over HTTP. Fixed at two
+// levels, so the method is checked against the entity-client surface rather
+// than walked from an open-ended dot path.
+function buildDbProxy(
+	transportSource: TransportSource,
+	tenantId: string,
+	pluginId: string,
+): unknown {
+	return new Proxy(
+		{},
+		{
+			get(_target, entityType) {
+				if (typeof entityType !== 'string' || THENABLE_KEYS.has(entityType)) {
+					return undefined;
+				}
+				return new Proxy(
+					{},
+					{
+						get(_entityTarget, method) {
+							if (typeof method !== 'string' || !DB_METHODS.has(method)) {
+								return undefined;
+							}
+							return async (...args: unknown[]) => {
+								const transport = await resolveTransport(transportSource);
+								const res = await cloudRequest<{ data: unknown }>(
+									transport,
+									'POST',
+									CLOUD_ROUTES.entityDb
+										.replace(':tenant', encodeURIComponent(tenantId))
+										.replace(':plugin', encodeURIComponent(pluginId))
+										.replace(':entity', encodeURIComponent(entityType))
+										.replace(':method', encodeURIComponent(method)),
+									{ args: encodeDbArgs(args) },
+								);
+								return res.data;
+							};
+						},
+					},
+				);
+			},
+		},
+	);
+}
+
 // `plugins` typed the client and guarded unknown ids. In cloud mode both are
 // optional: pass them (createCorsair auto-detect) to keep the typed client, or
 // omit them (corsairCloud) for a dynamic client whose plugin set lives on
@@ -93,6 +138,9 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 									pluginId,
 									[],
 								);
+							}
+							if (key === 'db') {
+								return buildDbProxy(opts.transport, opts.tenantId, pluginId);
 							}
 							if (typeof key === 'string' && DEFERRED.has(key)) {
 								throw new Error(

@@ -12,7 +12,13 @@ import {
 	resolveBodyStallTimeoutMs,
 	resolveMaxBodyBytes,
 } from './body-limit';
-import { callDisabled, listRegisteredOps, resolveCall } from './call';
+import {
+	callDisabled,
+	listRegisteredOps,
+	resolveCall,
+	resolveTenantClient,
+} from './call';
+import { callPluginDb, decodeDbArgs } from './db';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
 	completeOAuthCallback,
@@ -325,6 +331,33 @@ const ROUTES: Route[] = [
 		handler: async ({ internal, allowCall }) => {
 			if (!allowCall) throw callDisabled();
 			return json(200, { plugins: listRegisteredOps(internal) });
+		},
+	},
+	{
+		method: 'POST',
+		pattern: '/:tenant/:plugin/db/:entityType/:method',
+		handler: async ({
+			corsair,
+			internal,
+			params,
+			body,
+			scopedTenant,
+			allowCall,
+		}) => {
+			if (!allowCall) throw callDisabled();
+			const input = (body ?? {}) as { args?: unknown[] };
+			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
+			const { client } = resolveTenantClient(corsair, internal, tenant);
+			const data = await callPluginDb(
+				client,
+				{
+					plugin: params.plugin!,
+					entityType: params.entityType!,
+					method: params.method!,
+				},
+				(decodeDbArgs(input.args ?? []) as unknown[]) ?? [],
+			);
+			return json(200, { data });
 		},
 	},
 	{
