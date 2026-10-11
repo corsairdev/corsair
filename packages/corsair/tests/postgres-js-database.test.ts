@@ -13,9 +13,9 @@ import { createCorsairOrm, createPluginOrm } from '../db/orm';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 
 const TEST_SCHEMA = 'corsair_pgjs_test';
-const PG_URL =
-	process.env.DATABASE_URL ??
-	'postgresql://user:password@localhost:5432/db_name';
+// No fallback: an unset DATABASE_URL would otherwise point these at a database
+// nobody chose. This suite CREATEs and DROPs a schema in whatever it is given.
+const PG_URL = process.env.DATABASE_URL ?? '';
 
 const SCHEMA_DDL = `
 CREATE TABLE IF NOT EXISTS ${TEST_SCHEMA}.corsair_integrations (
@@ -157,9 +157,20 @@ describe('postgres-js database integration', () => {
 	// registered describe/it bindings. Use a synchronous env-var hint to
 	// decide whether to run the live tests; the actual probe in beforeAll
 	// will throw loudly if the URL is mis-set.
-	const skipFlag = (process.env.SKIP_PG_TESTS ?? '').toLowerCase();
+	const truthy = (v: string | undefined) =>
+		['1', 'true', 'yes'].includes((v ?? '').toLowerCase());
+
+	// Opt in, not out. These need a throwaway Postgres, so the default — a
+	// laptop, or CI, with none — is to skip rather than fail. CI still sets
+	// SKIP_PG_TESTS, which keeps them off whatever else is set.
+	//
+	// And only a local one: DATABASE_URL is routinely a real database, and
+	// dropping a schema in one is not what running the test suite should mean.
+	const local = /^(localhost|127\.0\.0\.1|\[::1\])(:|$)/;
 	const liveDisabled =
-		skipFlag === '1' || skipFlag === 'true' || skipFlag === 'yes';
+		truthy(process.env.SKIP_PG_TESTS) ||
+		!truthy(process.env.RUN_PG_TESTS) ||
+		!local.test(new URL(PG_URL || 'http://none').host);
 	const gated = () => (liveDisabled ? it.skip : it);
 
 	// ────────────────────────────────────────────────────────────────────────
