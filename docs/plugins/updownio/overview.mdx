@@ -10,7 +10,7 @@ All five operations are read-only catalog endpoints backed by the Updown.io API.
 **What you get:**
 
 - 5 typed API operations
-- 4 synced entities (`checkDomain`, `checks`, `checkSsl`, `nodes`) for fast `.search()` / `.list()`
+- 2 synced entities (`checks`, `nodes`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -102,7 +102,7 @@ See the full list on the [API](/plugins/updownio/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.updownio.db.<entity>.search()` and `.list()`: `checkDomain`, `checks`, `checkSsl`, `nodes`.
+Synced entities support `tenant.updownio.db.<entity>.search()` and `.list()`: `checks`, `nodes`.
 
 See [Database](/plugins/updownio/database) for filters and operators.
 

@@ -5,6 +5,7 @@ export class UpdownIOAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	public readonly body?: unknown;
+	public readonly retryAfterMs?: number;
 
 	constructor(
 		message: string,
@@ -13,6 +14,7 @@ export class UpdownIOAPIError extends Error {
 			status?: number;
 			statusText?: string;
 			body?: unknown;
+			retryAfterMs?: number;
 		},
 	) {
 		super(message, options);
@@ -20,6 +22,7 @@ export class UpdownIOAPIError extends Error {
 		this.status = options?.status;
 		this.statusText = options?.statusText;
 		this.body = options?.body;
+		this.retryAfterMs = options?.retryAfterMs;
 	}
 }
 
@@ -39,6 +42,11 @@ async function parseResponseBody(response: Response): Promise<unknown> {
 	}
 	const text = await response.text();
 	return text.length > 0 ? text : undefined;
+}
+
+function retryAfterMsOf(response: Response): number | undefined {
+	const seconds = Number(response.headers.get('Retry-After'));
+	return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined;
 }
 
 function messageFromBody(body: unknown): string | undefined {
@@ -89,6 +97,7 @@ export async function makeUpdownIORequest<T>(
 					status: response.status,
 					statusText: response.statusText,
 					body,
+					retryAfterMs: retryAfterMsOf(response),
 				},
 			);
 		}

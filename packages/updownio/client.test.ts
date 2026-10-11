@@ -6,17 +6,24 @@ import { errorHandlers } from './error-handlers';
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
 
+const db = {
+	checks: { upsertByEntityId: jest.fn() },
+	nodes: { upsertByEntityId: jest.fn() },
+};
+
 /** A context with a connected key, as the account-scoped routes require. */
 const ctx = {
 	key: 'updown-test-key',
 	options: {},
+	db,
 	$getAccountId: async () => 'test-account',
 } as never;
 
-/** A context with no key — valid for the public node routes. */
+/** A context with no key, valid for the public node routes. */
 const publicCtx = {
 	key: '',
 	options: {},
+	db,
 	$getAccountId: async () => 'test-account',
 } as never;
 
@@ -82,6 +89,8 @@ const exampleNodes = {
 
 beforeEach(() => {
 	fetchMock.mockReset();
+	db.checks.upsertByEntityId.mockReset();
+	db.nodes.upsertByEntityId.mockReset();
 });
 
 afterAll(() => fetchMock.mockRestore());
@@ -118,6 +127,18 @@ describe('checks.list', () => {
 		expect(check?.domain?.remaining_days).toBe(758);
 		expect(check?.http_verb).toBe('GET/HEAD');
 		expect(check?.favicon_url).toBe('https://updown.io/favicon.png');
+	});
+
+	it('stores each check in the database keyed by token', async () => {
+		fetchMock.mockResolvedValue(json([exampleCheck]));
+
+		await listChecks(ctx, {});
+
+		expect(db.checks.upsertByEntityId).toHaveBeenCalledTimes(1);
+		expect(db.checks.upsertByEntityId).toHaveBeenCalledWith(
+			'ngg8',
+			expect.objectContaining({ token: 'ngg8', url: 'https://updown.io' }),
+		);
 	});
 
 	it('accepts a pulse check, which carries no url or status', async () => {
@@ -175,6 +196,10 @@ describe('nodes endpoints', () => {
 		expect(requestedUrl()).toBe('https://updown.io/api/nodes');
 		expect(nodes.tok?.city).toBe('Tokyo');
 		expect(nodes.tok?.lat).toBeCloseTo(35.5833);
+		expect(db.nodes.upsertByEntityId).toHaveBeenCalledWith(
+			'tok',
+			expect.objectContaining({ city: 'Tokyo', ip: '45.76.104.117' }),
+		);
 	});
 
 	it('nodes.listIps GETs /api/nodes/ips', async () => {
@@ -241,14 +266,24 @@ describe('error handling', () => {
 		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(true);
 	});
 
-	it('classifies a 429 as a rate-limit error once wrapped', async () => {
-		const wrapped = new UpdownIOAPIError('Too many requests');
-		(wrapped as { status?: number }).status = 429;
+	it('retries a 429 and honors the Retry-After header', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(JSON.stringify({ error: 'Rate limited' }), {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '7' },
+			}),
+		);
 
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
+		const error = await listChecks(ctx, {}).catch((e: Error) => e);
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
 		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(wrapped),
-		).resolves.toMatchObject({ maxRetries: 0 });
+			errorHandlers.RATE_LIMIT_ERROR.handler(error as Error),
+		).resolves.toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 7000,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 
 	it('treats a missing key as an auth error', () => {

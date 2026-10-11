@@ -10,9 +10,7 @@ describe('UpdownIO schema', () => {
 	});
 
 	it('declares an entity for every documented resource', () => {
-		expect(Object.keys(UpdownIOSchema.entities)).toEqual(
-			expect.arrayContaining(['checks', 'checkSsl', 'checkDomain', 'nodes']),
-		);
+		expect(Object.keys(UpdownIOSchema.entities)).toEqual(['checks', 'nodes']);
 	});
 });
 

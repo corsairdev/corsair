@@ -21,6 +21,15 @@ export const list: UpdownIOEndpoints['nodesList'] = async (ctx, rawInput) => {
 			ctx.key,
 		),
 	);
+	if (ctx.db.nodes) {
+		try {
+			for (const [location, node] of Object.entries(response)) {
+				await ctx.db.nodes.upsertByEntityId(location, node);
+			}
+		} catch (error) {
+			console.warn('Failed to save nodes to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'updownio.nodes.list',

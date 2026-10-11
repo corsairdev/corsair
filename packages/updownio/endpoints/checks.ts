@@ -15,6 +15,15 @@ export const list: UpdownIOEndpoints['checksList'] = async (ctx, rawInput) => {
 			},
 		),
 	);
+	if (ctx.db.checks) {
+		try {
+			for (const check of response) {
+				await ctx.db.checks.upsertByEntityId(check.token, check);
+			}
+		} catch (error) {
+			console.warn('Failed to save checks to database:', error);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'updownio.checks.list',
