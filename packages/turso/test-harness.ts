@@ -7,7 +7,8 @@ import type {
 export const TEST_TOKEN = 'test-turso-token-123';
 export const DB_URL = 'https://mydb-myorg.turso.io';
 
-// Tests call endpoint handlers directly; sibling endpoints are unused.
+// Safe because the handlers under test never read ctx.endpoints; building the
+// real bound endpoint tree needs the full plugin runtime, which unit tests skip.
 const testEndpoints = {} as TursoContext['endpoints'];
 
 /**
@@ -150,14 +151,11 @@ export function sseResponse(chunks: string[]): Response {
 }
 
 /**
- * Creates a mock JSON Response object.
+ * Builds a JSON Response with the given status.
  */
 export function jsonResponse(payload: unknown, status: number = 200): Response {
-	return {
-		ok: status >= 200 && status < 300,
+	return new Response(JSON.stringify(payload), {
 		status,
-		headers: new Headers({ 'content-type': 'application/json' }),
-		json: async (): Promise<unknown> => payload,
-		text: async (): Promise<string> => JSON.stringify(payload),
-	} as Response;
+		headers: { 'content-type': 'application/json' },
+	});
 }
