@@ -11,6 +11,8 @@ const API_KEY = 'test-api-key-123';
 
 const fetchSpy = jest.spyOn(globalThis, 'fetch');
 
+// unknown justification: test fixtures stand in for arbitrary provider JSON;
+// they are serialized straight into a Response, never inspected as objects.
 function jsonResponse(payload: unknown, status = 200): Response {
 	return new Response(JSON.stringify(payload), {
 		status,
@@ -18,6 +20,8 @@ function jsonResponse(payload: unknown, status = 200): Response {
 	});
 }
 
+// unknown justification: envelope `data` fixtures mirror arbitrary provider
+// payloads; they travel through the real client parser, never inspected here.
 function successEnvelope(data: unknown): Response {
 	return jsonResponse({
 		http_code: 200,
@@ -28,6 +32,13 @@ function successEnvelope(data: unknown): Response {
 }
 
 const DataSchema = z.object({ value: z.string() });
+
+// unknown justification: promise rejections carry untyped values by design;
+// this helper is the single place that captures them, and callers only assert
+// with toBeInstanceOf/toMatchObject, never narrowing the value.
+async function captureError(promise: Promise<unknown>): Promise<unknown> {
+	return promise.catch((caught: unknown) => caught);
+}
 
 beforeEach(() => {
 	fetchSpy.mockReset();
@@ -106,10 +117,12 @@ describe('makeClickSendRequest', () => {
 	});
 
 	it('throws MISSING_CREDENTIALS when credentials are absent', async () => {
-		const error: unknown = await makeClickSendRequest('sms/send', '', '', {
-			method: 'POST',
-			responseSchema: DataSchema,
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			makeClickSendRequest('sms/send', '', '', {
+				method: 'POST',
+				responseSchema: DataSchema,
+			}),
+		);
 		expect(error).toBeInstanceOf(ClickSendAPIError);
 		expect(error).toMatchObject({
 			status: 401,
@@ -119,12 +132,12 @@ describe('makeClickSendRequest', () => {
 	});
 
 	it('rejects credentials containing newlines (header injection)', async () => {
-		const error: unknown = await makeClickSendRequest(
-			'sms/send',
-			'user\r\nInject: x',
-			API_KEY,
-			{ method: 'POST', responseSchema: DataSchema },
-		).catch((caught: unknown) => caught);
+		const error = await captureError(
+			makeClickSendRequest('sms/send', 'user\r\nInject: x', API_KEY, {
+				method: 'POST',
+				responseSchema: DataSchema,
+			}),
+		);
 		expect(error).toBeInstanceOf(ClickSendAPIError);
 		expect(error).toMatchObject({
 			status: 400,
@@ -143,12 +156,12 @@ describe('makeClickSendRequest', () => {
 				}),
 			),
 		);
-		const error: unknown = await makeClickSendRequest(
-			'sms/send',
-			USERNAME,
-			API_KEY,
-			{ method: 'POST', responseSchema: DataSchema },
-		).catch((caught: unknown) => caught);
+		const error = await captureError(
+			makeClickSendRequest('sms/send', USERNAME, API_KEY, {
+				method: 'POST',
+				responseSchema: DataSchema,
+			}),
+		);
 		expect(error).toBeInstanceOf(ClickSendAPIError);
 		expect(error).toMatchObject({
 			status: 400,

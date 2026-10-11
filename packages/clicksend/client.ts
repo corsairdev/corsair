@@ -119,6 +119,9 @@ export async function makeClickSendRequest<T>(
 	};
 
 	try {
+		// unknown justification: the HTTP transport returns untyped JSON; it is
+		// never consumed directly — ClickSendEnvelopeSchema validates the
+		// envelope and responseSchema re-validates `data` before returning.
 		const res: unknown = await request<unknown>(config, requestOptions);
 		const envelope = ClickSendEnvelopeSchema.parse(res);
 		if (envelope.http_code !== undefined && envelope.http_code >= 400) {

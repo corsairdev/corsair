@@ -8,6 +8,8 @@ const API_KEY = 'test-api-key';
 
 const fetchSpy = jest.spyOn(globalThis, 'fetch');
 
+// unknown justification: envelope fixtures stand in for arbitrary provider
+// payloads; they travel through the real client parser, never inspected here.
 function envelope(data: unknown): Response {
 	return new Response(
 		JSON.stringify({
@@ -26,6 +28,8 @@ function envelope(data: unknown): Response {
 function lastRequest(): {
 	url: string;
 	method: string | undefined;
+	// unknown justification: captured request bodies are opaque JSON; tests
+	// only compare them with toEqual, never narrowing the value.
 	body: unknown;
 } {
 	const calls = fetchSpy.mock.calls;
@@ -37,8 +41,8 @@ function lastRequest(): {
 	const rawBody = init?.body;
 	// typeof-guard justification: fetch BodyInit is a union type; this client
 	// only ever sends string bodies, so other variants need no handling here.
-	// JSON.parse returns an untyped value by design; it is annotated as
-	// unknown (never any) and only consumed through expect().toEqual below.
+	// unknown justification: JSON.parse returns an untyped value by design; it
+	// is annotated as unknown (never any) and only consumed via toEqual below.
 	const parsedBody: unknown =
 		typeof rawBody === 'string' && rawBody.length > 0
 			? JSON.parse(rawBody)
@@ -50,6 +54,9 @@ type EndpointCase = {
 	name: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE';
 	path: string;
+	// unknown justification: each case carries its endpoint's mock provider
+	// payload; the shape differs per endpoint and is validated by the real
+	// client parser when the case runs.
 	data: unknown;
 	run: (api: ClickSendBoundEndpoints) => Promise<void>;
 };
