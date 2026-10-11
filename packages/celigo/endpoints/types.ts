@@ -13,6 +13,8 @@ const PathSegment = z
 	});
 
 const Id = PathSegment.describe('Celigo resource _id');
+// Connector-specific blocks (http, netsuite, salesforce, ...) and user-defined
+// settings have no fixed schema in the Celigo API, so they stay open records.
 const Json = z.record(z.string(), z.unknown());
 const Records = z.array(Json);
 
@@ -149,6 +151,7 @@ const PingResult = z.union([
 	z.looseObject({ errors: z.array(Json) }),
 ]);
 const DebugLogs = z.object({ logs: z.string() });
+// Keyed by dependent resource type (flows, imports, ...); entry shape differs per type.
 const Dependencies = z.record(z.string(), z.unknown());
 
 const VirtualExportInput = IdInput.extend({
@@ -266,6 +269,7 @@ const UpdateDocInput = z.looseObject({
 const JsonPatchOp = z.object({
 	op: z.enum(['replace', 'add', 'remove']),
 	path: z.string().min(1).describe('JSON Pointer, e.g. /name'),
+	// RFC 6902 allows any JSON value here.
 	value: z.unknown().optional(),
 });
 const PatchInput = IdInput.extend({
@@ -473,6 +477,7 @@ const GenerateStructuredFileInput = z.object({
 });
 const ParsedRecords = z.looseObject({
 	mediaType: z.string().optional(),
+	// Rows parsed from the caller's file, so their fields are whatever the file holds.
 	data: z.array(z.unknown()),
 	duration: z.number().optional(),
 });
@@ -516,6 +521,7 @@ const ScriptLogs = z.looseObject({
 
 const StateKey = PathSegment.describe('State key');
 const StateResourceType = z.enum(['exports', 'imports', 'integrations']);
+// State values are arbitrary JSON the caller stores and reads back.
 const StateValueBody = z.union([Json, z.array(z.unknown())]);
 const StateKeys = z.object({ keys: z.array(z.string()) });
 const StateKeyInput = z.object({ key: StateKey });
