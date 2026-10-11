@@ -1,5 +1,8 @@
 import type { ZodTypeAny } from 'zod';
-import type { CorsairDatabaseInput } from '../../db/kysely/database';
+import type {
+	CorsairDatabaseInput,
+	CorsairDbTables,
+} from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
 import type { HubConfig, HubConfigInput } from '../../hub';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
@@ -756,6 +759,11 @@ export type CorsairPermissionsOptions = {
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	/** Database connection for ORM entities (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByEntityId(...)` for DB) */
 	database?: CorsairDatabaseInput;
+	/**
+	 * Remap Corsair logical table names (`corsair_events`, etc.) to physical
+	 * table names in your database. Omitted keys keep the default `corsair_*` name.
+	 */
+	dbTables?: CorsairDbTables;
 	/** Array of plugin definitions to include */
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */
