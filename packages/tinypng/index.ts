@@ -175,6 +175,7 @@ export type ExternalTinypngPlugin<T extends TinypngPluginOptions> =
  * Plugin
  * -------------------------------- */
 
+// The default is only used when called with no options, so T is inferred as {}.
 export function tinypng<const T extends TinypngPluginOptions>(
 	incomingOptions: TinypngPluginOptions & T = {} as TinypngPluginOptions & T,
 ): ExternalTinypngPlugin<T> {

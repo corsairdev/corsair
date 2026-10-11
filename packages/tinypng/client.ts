@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 // https://tinify.com/developers/reference: HTTP Basic auth with user `api`.
 export const TINIFY_API_BASE = 'https://api.tinify.com';
 
@@ -39,10 +41,16 @@ export type TinifyRequest = {
 	acceptStatuses?: number[];
 };
 
+// https://tinify.com/developers/reference#errors
+const TinifyErrorBodySchema = z.object({
+	error: z.string().optional(),
+	message: z.string().optional(),
+});
+
 function errorFromBody(status: number, body: ArrayBuffer): TinypngAPIError {
 	const text = new TextDecoder().decode(body);
 	try {
-		const parsed = JSON.parse(text) as { error?: string; message?: string };
+		const parsed = TinifyErrorBodySchema.parse(JSON.parse(text));
 		return new TinypngAPIError(
 			parsed.message ?? text ?? `Tinify API request failed (${status})`,
 			status,
@@ -131,6 +139,8 @@ export async function putAzureBlockBlob(
 		method: 'PUT',
 		headers,
 		body: new Uint8Array(data),
+		// The host was checked against Azure Blob domains; never follow elsewhere.
+		redirect: 'error',
 	});
 	if (!response.ok) {
 		const detail = await response.text();

@@ -56,6 +56,7 @@ function request(n: number) {
 		url,
 		method: init?.method,
 		headers: init?.headers as Record<string, string>,
+		redirect: init?.redirect,
 		json: typeof init?.body === 'string' ? JSON.parse(init.body) : undefined,
 		body: init?.body,
 	};
@@ -124,6 +125,16 @@ describe('images.shrink', () => {
 		expect(sent.headers['Content-Type']).toBeUndefined();
 		expect(Array.from(sent.body as Uint8Array)).toEqual(Array.from(PNG));
 	});
+
+	it.each(['not base64!', 'iVBORw', 'data:image/png;base64,iVBORw=='])(
+		'rejects malformed base64 %p before calling Tinify',
+		async (base64) => {
+			await expect(call(Images.shrink, { source: { base64 } })).rejects.toThrow(
+				'base64 must be padded standard base64',
+			);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('surfaces the Tinify error message and status', async () => {
 		respond(
@@ -293,6 +304,7 @@ describe('images.compressAndStoreInAzure', () => {
 		expect(put).toMatchObject({
 			url: blobUrl,
 			method: 'PUT',
+			redirect: 'error',
 			headers: {
 				'x-ms-blob-type': 'BlockBlob',
 				'Content-Type': 'image/png',
@@ -345,14 +357,35 @@ describe('images.compressAndStoreInAzure', () => {
 		expect(error).toMatchObject({ status: 403 });
 	});
 
-	it('rejects a non-https blob url', async () => {
+	it.each([
+		'http://acct.blob.core.windows.net/images/a.png',
+		'https://example.com/upload?sig=x',
+		'https://acct.blob.core.windows.net.evil.com/images/a.png',
+		'https://169.254.169.254/latest',
+	])('rejects a non-Azure blob url %p', async (url) => {
 		await expect(
 			call(Images.compressAndStoreInAzure, {
 				source: { url: 'https://tinypng.com/images/panda-happy.png' },
-				blobUrl: 'http://acct.blob.core.windows.net/images/a.png',
+				blobUrl: url,
 			}),
-		).rejects.toThrow();
+		).rejects.toThrow(
+			'blobUrl must be an https://<account>.blob.core.windows.net URL',
+		);
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts sovereign cloud blob hosts', async () => {
+		respondShrink();
+		respond(200, PNG, { 'Content-Type': 'image/png' });
+		respond(201, '');
+
+		await call(Images.compressAndStoreInAzure, {
+			source: { url: 'https://tinypng.com/images/panda-happy.png' },
+			blobUrl: 'https://acct.blob.core.usgovcloudapi.net/images/a.png?sig=x',
+		});
+		expect(request(2).url).toBe(
+			'https://acct.blob.core.usgovcloudapi.net/images/a.png?sig=x',
+		);
 	});
 });
 

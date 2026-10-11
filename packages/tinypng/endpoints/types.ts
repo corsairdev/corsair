@@ -11,11 +11,15 @@ const ImageSourceSchema = z.union([
 	}),
 	z.object({
 		base64: z
-			.string()
+			.base64('base64 must be padded standard base64 with no data: prefix')
 			.min(1)
 			.describe('Base64-encoded AVIF, JPEG XL, WebP, JPEG or PNG bytes'),
 	}),
 ]);
+
+// Public Azure, US Government and China clouds.
+const AZURE_BLOB_HOST =
+	/^[a-z0-9]{3,24}\.blob\.core\.(windows\.net|usgovcloudapi\.net|chinacloudapi\.cn)$/;
 
 const ImageTypeSchema = z.enum([
 	'image/avif',
@@ -164,7 +168,11 @@ export const CompressAndStoreInAzureInputSchema = z.object({
 	blobUrl: z
 		.string()
 		.url()
-		.startsWith('https://')
+		.refine((value) => {
+			if (!URL.canParse(value)) return false;
+			const url = new URL(value);
+			return url.protocol === 'https:' && AZURE_BLOB_HOST.test(url.hostname);
+		}, 'blobUrl must be an https://<account>.blob.core.windows.net URL')
 		.describe(
 			'Full blob URL with a SAS token granting create/write, e.g. https://acct.blob.core.windows.net/container/name.png?sv=...',
 		),
