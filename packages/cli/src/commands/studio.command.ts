@@ -8,6 +8,27 @@ type StartStudio = (opts: {
 	open?: boolean;
 }) => Promise<unknown>;
 
+/**
+ * Parse and validate a port string for the studio command.
+ * Returns undefined when no port is provided (so the caller's fallback applies).
+ * Exits with code 1 when the port is invalid.
+ */
+export function parseStudioPort(raw: string | undefined): number | undefined {
+	if (raw === undefined) {
+		return undefined;
+	}
+
+	const port = Number(raw);
+	if (!/^\d+$/.test(raw) || port < 1 || port > 65535) {
+		console.error(
+			'[corsair]: Invalid port. Usage: corsair ui --port <number> (1-65535).',
+		);
+		process.exit(1);
+	}
+
+	return port;
+}
+
 export default class StudioCommand extends BaseCommand {
 	getName(): string {
 		return 'ui';
@@ -39,7 +60,7 @@ export default class StudioCommand extends BaseCommand {
 
 	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
-		const port = options.port ? Number.parseInt(options.port, 10) : undefined;
+		const port = parseStudioPort(options.port);
 
 		let startStudio: StartStudio;
 		try {
