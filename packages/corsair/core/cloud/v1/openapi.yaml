@@ -116,8 +116,13 @@ paths:
         content:
           application/json: { schema: { $ref: "#/components/schemas/CreateInstance" } }
       responses:
+        "200":
+          description: The instance already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Instance" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
         "201":
-          description: Success.
+          description: Created.
           content:
             application/json: { schema: { $ref: "#/components/schemas/Instance" } }
           headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
@@ -559,7 +564,11 @@ paths:
           application/json: { schema: { $ref: "#/components/schemas/PutAccess" } }
       responses:
         "200":
-          description: Success.
+          description: The line already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/AccessSynced" } }
+        "201":
+          description: The line is new.
           content:
             application/json: { schema: { $ref: "#/components/schemas/AccessSynced" } }
         "400": { $ref: "#/components/responses/Error" }
@@ -760,8 +769,13 @@ paths:
         content:
           application/json: { schema: { $ref: "#/components/schemas/CreateWebhook" } }
       responses:
+        "200":
+          description: The endpoint already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
         "201":
-          description: Success.
+          description: Created.
           content:
             application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
           headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
