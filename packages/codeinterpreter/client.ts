@@ -73,7 +73,10 @@ export async function makeCodeInterpreterRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// No TOKEN: the framework turns any TOKEN into an
+		// `Authorization: Bearer` header, which this provider does not
+		// accept — API-key-compatible deployments only read `x-api-key`.
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			// Provider contract (librechat.ai/docs/features/code_interpreter,
