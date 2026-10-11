@@ -51,18 +51,17 @@ function retryAfterMsOf(response: Response): number | undefined {
 
 function messageFromBody(body: unknown): string | undefined {
 	if (body && typeof body === 'object' && 'error' in body) {
-		const nested = (body as Record<string, unknown>).error;
-		if (typeof nested === 'string') return nested;
+		if (typeof body.error === 'string') return body.error;
 	}
 	if (typeof body === 'string' && body.length > 0) return body;
 	return undefined;
 }
 
-export async function makeUpdownIORequest<T>(
+export async function makeUpdownIORequest(
 	endpoint: string,
 	apiKey: string,
 	options: UpdownIORequestOptions = {},
-): Promise<T> {
+): Promise<unknown> {
 	const normalizedKey = apiKey.trim();
 	if (options.requiresAuth && !normalizedKey) {
 		throw new UpdownIOAPIError('Updown.io API key is required');
@@ -101,7 +100,7 @@ export async function makeUpdownIORequest<T>(
 				},
 			);
 		}
-		return body as T;
+		return body;
 	} catch (error) {
 		if (error instanceof UpdownIOAPIError) {
 			throw error;
