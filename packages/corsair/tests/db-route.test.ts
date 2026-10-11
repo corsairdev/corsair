@@ -45,14 +45,24 @@ describe('encodeDbArgs / decodeDbArgs', () => {
 	});
 
 	it('round-trips user data that is itself shaped like the marker', () => {
+		// Every escape depth, not just the first two: the ladder used to run out
+		// and rewrite `$$$date` as `$$date`.
 		for (const payload of [
 			{ meta: { $date: 'Q3' } },
 			{ meta: { $date: '2026-01-01' } },
 			{ meta: { $$date: 'already escaped' } },
+			{ meta: { $$$date: 'deeper' } },
+			{ meta: { $$$$$date: 'deeper still' } },
 		]) {
 			const wire = JSON.parse(JSON.stringify(encodeDbArgs(payload)));
 			expect(decodeDbArgs(wire)).toEqual(payload);
 		}
+	});
+
+	it('rejects a $date that is not a timestamp', () => {
+		expect(() =>
+			decodeDbArgs([{ created_at: { after: { $date: 'Q3' } } }]),
+		).toThrow(/Invalid \$date/);
 	});
 
 	it('does not pollute the prototype through a crafted key', () => {
@@ -182,6 +192,33 @@ describe('management handler db route', () => {
 			data: { created_at: { after: unknown } };
 		};
 		expect(filter.data.created_at.after).toBeInstanceOf(Date);
+	});
+
+	it('answers 400 for an args that is not an array', async () => {
+		const count = jest.fn(async () => 1);
+		const handler = managementHandler(
+			fakeCorsair(() => ({ slack: { db: { channels: { count } } } })),
+			{ authenticate: () => true },
+		);
+		// apply() would take this as an empty argument list and report success.
+		const res = await post(handler, '/acme/slack/db/channels/count', {
+			args: { id: 'C1' },
+		});
+		expect(res.status).toBe(400);
+		expect(count).not.toHaveBeenCalled();
+	});
+
+	it('answers 400 for a $date that is not a timestamp', async () => {
+		const search = jest.fn(async () => []);
+		const handler = managementHandler(
+			fakeCorsair(() => ({ slack: { db: { channels: { search } } } })),
+			{ authenticate: () => true },
+		);
+		const res = await post(handler, '/acme/slack/db/channels/search', {
+			args: [{ data: { created_at: { after: { $date: 'Q3' } } } }],
+		});
+		expect(res.status).toBe(400);
+		expect(search).not.toHaveBeenCalled();
 	});
 
 	it('is off in end-user mode, where a browser could reach it', async () => {

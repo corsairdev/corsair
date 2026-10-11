@@ -1,6 +1,6 @@
 import { assertReadonlyAllowed } from '../permissions';
 import type { EndpointRiskLevel } from '../plugins';
-import { ManagementApiError } from './errors';
+import { badRequest, ManagementApiError } from './errors';
 
 /**
  * The entity-client methods reachable over HTTP, each with the risk level the
@@ -24,35 +24,41 @@ export const DB_METHOD_RISK: Record<string, EndpointRiskLevel> = {
 	deleteByEntityId: 'destructive',
 };
 
-type DateMarker = { $date: string };
-type EscapedMarker = { $$date: string };
+const MARKER = /^\$+date$/;
 
-function soleKey(value: unknown, key: string): boolean {
-	return (
-		typeof value === 'object' &&
-		value !== null &&
-		!Array.isArray(value) &&
-		Object.keys(value).length === 1 &&
-		typeof (value as Record<string, unknown>)[key] === 'string'
-	);
+/**
+ * The sole key of a marker-shaped object, or null.
+ *
+ * `{ $date }` and every `$`-prefixed variant of it, since escaping adds one.
+ */
+function markerKey(value: unknown): string | null {
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+		return null;
+	}
+	const keys = Object.keys(value);
+	const key = keys[0];
+	if (keys.length !== 1 || !key || !MARKER.test(key)) return null;
+	return typeof (value as Record<string, unknown>)[key] === 'string'
+		? key
+		: null;
 }
 
 /**
  * Wraps every `Date` as `{ $date }` so it survives JSON.
  *
  * `search`'s date filters are matched on an actual Date, so a plain ISO string
- * is not a near miss — it is dropped, and the query comes back unfiltered. A
- * payload that already looks like a marker is escaped to `{ $$date }`, so
- * stored data shaped like one is never read back as a Date.
+ * is not a near miss — it is dropped, and the query comes back unfiltered.
+ *
+ * Payload data shaped like a marker gains one `$`, and decoding takes one
+ * back, so no depth of `{ $$$…date }` collides with a real Date or with
+ * another escaped value.
  */
 export function encodeDbArgs(args: unknown): unknown {
 	if (args instanceof Date) return { $date: args.toISOString() };
 	if (Array.isArray(args)) return args.map(encodeDbArgs);
-	if (soleKey(args, '$date')) {
-		return { $$date: (args as DateMarker).$date };
-	}
-	if (soleKey(args, '$$date')) {
-		return { $$$date: (args as EscapedMarker).$$date };
+	const marker = markerKey(args);
+	if (marker) {
+		return { [`$${marker}`]: (args as Record<string, string>)[marker] };
 	}
 	if (args && typeof args === 'object') {
 		return Object.fromEntries(
@@ -63,12 +69,19 @@ export function encodeDbArgs(args: unknown): unknown {
 }
 
 export function decodeDbArgs(args: unknown): unknown {
-	if (soleKey(args, '$date')) return new Date((args as DateMarker).$date);
-	if (soleKey(args, '$$date')) {
-		return { $date: (args as EscapedMarker).$$date };
-	}
-	if (soleKey(args, '$$$date')) {
-		return { $$date: (args as Record<string, string>).$$$date! };
+	const marker = markerKey(args);
+	if (marker) {
+		const value = (args as Record<string, string>)[marker] as string;
+		if (marker !== '$date') return { [marker.slice(1)]: value };
+		const date = new Date(value);
+		// A malformed marker is a malformed request: left alone it reaches
+		// `search` as an Invalid Date, which filters nothing and reports nothing.
+		if (Number.isNaN(date.getTime())) {
+			throw badRequest(
+				`Invalid $date value "${value}" — expected an ISO 8601 timestamp`,
+			);
+		}
+		return date;
 	}
 	if (Array.isArray(args)) return args.map(decodeDbArgs);
 	if (args && typeof args === 'object') {

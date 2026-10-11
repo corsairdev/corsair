@@ -19,7 +19,13 @@ import {
 	withTenantClient,
 } from './call';
 import { callPluginDb, decodeDbArgs, encodeDbArgs } from './db';
-import { errorResponse, json, ManagementApiError, notFound } from './errors';
+import {
+	badRequest,
+	errorResponse,
+	json,
+	ManagementApiError,
+	notFound,
+} from './errors';
 import {
 	completeOAuthCallback,
 	createConnectLink,
@@ -350,9 +356,14 @@ const ROUTES: Route[] = [
 			// rows with no policy in front of it. Server mode only, like the other
 			// admin routes — an end-user handler must not expose it to a browser.
 			assertAdminRouteAllowed(scopedTenant);
-			const input = (body ?? {}) as { args?: unknown[] };
+			const input = (body ?? {}) as { args?: unknown };
+			// apply() takes an object as an empty argument list, so an `args` of
+			// the wrong shape would call the method with nothing and report success.
+			if (input.args !== undefined && !Array.isArray(input.args)) {
+				throw badRequest('args must be an array');
+			}
 			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
-			const args = (decodeDbArgs(input.args ?? []) as unknown[]) ?? [];
+			const args = decodeDbArgs(input.args ?? []) as unknown[];
 			const data = await withTenantClient(
 				corsair,
 				internal,
