@@ -4,6 +4,37 @@ import type { CallPageEndpoints } from '../index';
 import type { CallPageEndpointOutputs } from './types';
 import { CallPageEndpointOutputSchemas } from './types';
 
+export const list: CallPageEndpoints['widgetsList'] = async (ctx, input) => {
+	const result = await makeCallPageRequest<
+		CallPageEndpointOutputs['widgetsList']
+	>('/api/v1/external/widgets/all', ctx.key, {
+		query: input,
+		schema: CallPageEndpointOutputSchemas.widgetsList,
+	});
+	await logEventFromContext(ctx, 'callpage.widgets.list', input, 'completed');
+	return result;
+};
+
+export const addUsers: CallPageEndpoints['widgetsAddUsers'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeCallPageRequest<
+		CallPageEndpointOutputs['widgetsAddUsers']
+	>('/api/v1/external/widgets/add-users', ctx.key, {
+		method: 'POST',
+		body: input,
+		schema: CallPageEndpointOutputSchemas.widgetsAddUsers,
+	});
+	await logEventFromContext(
+		ctx,
+		'callpage.widgets.addUsers',
+		input,
+		'completed',
+	);
+	return result;
+};
+
 export const get: CallPageEndpoints['widgetsGet'] = async (ctx, input) => {
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsGet']
@@ -53,7 +84,7 @@ export const remove: CallPageEndpoints['widgetsDelete'] = async (
 		CallPageEndpointOutputs['widgetsDelete']
 	>('/api/v1/external/widgets/delete', ctx.key, {
 		method: 'POST',
-		body: input,
+		query: input,
 		schema: CallPageEndpointOutputSchemas.widgetsDelete,
 	});
 	await logEventFromContext(ctx, 'callpage.widgets.delete', input, 'completed');
@@ -65,7 +96,7 @@ export const call: CallPageEndpoints['widgetsCall'] = async (ctx, input) => {
 		CallPageEndpointOutputs['widgetsCall']
 	>('/api/v1/external/widgets/call', ctx.key, {
 		method: 'POST',
-		body: input,
+		query: input,
 		schema: CallPageEndpointOutputSchemas.widgetsCall,
 	});
 	await logEventFromContext(

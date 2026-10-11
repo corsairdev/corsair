@@ -54,7 +54,7 @@ export const remove: CallPageEndpoints['usersDelete'] = async (ctx, input) => {
 		CallPageEndpointOutputs['usersDelete']
 	>('/api/v1/external/users/delete', ctx.key, {
 		method: 'POST',
-		body: input,
+		query: input,
 		schema: CallPageEndpointOutputSchemas.usersDelete,
 	});
 	await logEventFromContext(ctx, 'callpage.users.delete', input, 'completed');

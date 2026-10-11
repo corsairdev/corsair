@@ -60,6 +60,16 @@ function hasErrorKey(response: object): boolean {
 	return 'hasError' in response;
 }
 
+// CallPage is a PHP backend: repeated `ids=1&ids=2` keeps only the last value,
+// so array filters must be sent as `ids[]=1&ids[]=2`.
+function toPhpQuery(query: Record<string, unknown>): Record<string, unknown> {
+	return Object.fromEntries(
+		Object.entries(query).map(([key, value]) =>
+			Array.isArray(value) ? [`${key}[]`, value] : [key, value],
+		),
+	);
+}
+
 export async function makeCallPageRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -68,9 +78,10 @@ export async function makeCallPageRequest<T>(
 		body?: unknown;
 		query?: Record<string, unknown>;
 		schema?: z.ZodType<T>;
+		unwrap?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, schema } = options;
+	const { method = 'GET', body, query, schema, unwrap = true } = options;
 	const config: OpenAPIConfig = {
 		BASE,
 		VERSION: '1.0.0',
@@ -88,7 +99,7 @@ export async function makeCallPageRequest<T>(
 		url: endpoint,
 		body: method === 'POST' || method === 'PATCH' ? body : undefined,
 		mediaType: 'application/json',
-		query: query as Record<string, string | number | boolean | undefined>,
+		query: query && toPhpQuery(query),
 	};
 
 	try {
@@ -110,7 +121,7 @@ export async function makeCallPageRequest<T>(
 			);
 		}
 
-		const payload = unwrapCallPagePayload(response);
+		const payload = unwrap ? unwrapCallPagePayload(response) : response;
 		return schema ? schema.parse(payload) : (payload as T);
 	} catch (error) {
 		if (error instanceof CallPageAPIError) throw error;

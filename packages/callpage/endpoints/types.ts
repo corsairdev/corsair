@@ -26,10 +26,87 @@ const WidgetSchema = z
 	})
 	.loose();
 
+const BusinessTimeInputSchema = z.object({
+	day_of_week: z.number().int().min(0).max(6),
+	enabled: z.boolean(),
+	start_time: z.string().nullable(),
+	end_time: z.string().nullable(),
+});
+
+const ManagerSchema = z
+	.object({
+		id: IdSchema,
+		enabled: z.boolean().optional(),
+		user: UserSchema.optional(),
+		departments: z
+			.array(z.object({ id: IdSchema, name: z.string() }).loose())
+			.optional(),
+		business_times: z
+			.array(
+				BusinessTimeInputSchema.extend({
+					timezone: z.string().optional(),
+				}).loose(),
+			)
+			.optional(),
+	})
+	.loose();
+
+const IdResponseSchema = z.object({ id: IdSchema }).loose();
+
+const SmsMessageSchema = z
+	.object({
+		message_id: z.string(),
+		text: z.string(),
+		enabled: z.union([z.boolean(), z.number()]).optional(),
+		updated_at: z.string().nullable().optional(),
+	})
+	.loose();
+
+const VoiceMessageSchema = z
+	.object({
+		message_id: z.string(),
+		enabled: z.union([z.boolean(), z.number()]).optional(),
+		updated_at: z.string().nullable().optional(),
+		recording: z.object({ full_url: z.string() }).loose().nullable().optional(),
+	})
+	.loose();
+
+const PaginationInput = {
+	offset: z.number().int().nonnegative().optional(),
+	limit: z.number().int().positive().max(1000).optional(),
+};
+
+const ManagerKeyInput = { user_id: IdSchema, widget_id: IdSchema };
+
+const ManagerUpsertInputSchema = z.object({
+	...ManagerKeyInput,
+	enabled: z.boolean(),
+	business_times: z.array(BusinessTimeInputSchema).optional(),
+});
+
+const SmsUpsertInputSchema = z.object({
+	widget_id: IdSchema,
+	message_id: z.string().min(1),
+	text: z.string().min(1).max(240),
+	enabled: z.boolean().optional(),
+});
+
+const VoiceUpsertInputSchema = z.object({
+	widget_id: IdSchema,
+	message_id: z.string().min(1),
+	enabled: z.boolean(),
+	file: z.string().url().optional(),
+});
+
+const ResetInputSchema = z.object({
+	widget_id: IdSchema,
+	message_id: z.string().min(1).optional(),
+});
+
 const CallRecordSchema = JsonObject;
 const CallHistorySchema = z.array(CallRecordSchema);
 const MutationResponseSchema = JsonObject;
-const DeleteResponseSchema = z.null();
+const NullResponseSchema = z.null();
 
 export const CallPageEndpointInputSchemas = {
 	callsGet: z.object({ callId: IdSchema }),
@@ -50,11 +127,13 @@ export const CallPageEndpointInputSchemas = {
 		tel: z.string().optional(),
 		widget_id: IdSchema.optional(),
 	}),
-	usersList: z.object({
-		offset: z.number().int().nonnegative().optional(),
-		limit: z.number().int().positive().max(1000).optional(),
-	}),
-	usersGet: z.object({ id: IdSchema }),
+	rootGet: z.object({}),
+	usersList: z.object(PaginationInput),
+	usersGet: z
+		.object({ id: IdSchema.optional(), email: z.string().email().optional() })
+		.refine((v) => v.id !== undefined || v.email !== undefined, {
+			message: 'Provide either id or email',
+		}),
 	usersCreate: z.object({
 		name: z.string().min(1),
 		tel: z.string().min(1),
@@ -69,6 +148,7 @@ export const CallPageEndpointInputSchemas = {
 		role: z.enum(['admin', 'manager']).optional(),
 	}),
 	usersDelete: z.object({ id: IdSchema }),
+	widgetsList: z.object(PaginationInput),
 	widgetsGet: z
 		.object({
 			id: IdSchema.optional(),
@@ -112,22 +192,69 @@ export const CallPageEndpointInputSchemas = {
 		tel: z.string().min(1),
 		department_id: IdSchema.optional(),
 	}),
+	widgetsAddUsers: z.object({
+		id: IdSchema,
+		user_id: z.union([IdSchema, z.array(IdSchema).min(1)]),
+		business_times: z
+			.union([
+				z.array(BusinessTimeInputSchema),
+				z.array(z.array(BusinessTimeInputSchema)),
+			])
+			.optional(),
+	}),
+	managersList: z.object({ widget_id: IdSchema, ...PaginationInput }),
+	managersGet: z.object(ManagerKeyInput),
+	managersCreate: ManagerUpsertInputSchema,
+	managersUpdate: ManagerUpsertInputSchema,
+	managersDelete: z.object(ManagerKeyInput),
+	managersStatusStatistics: z.object({ widget_id: IdSchema }),
+	smsList: z.object({ widget_id: IdSchema }),
+	smsCreate: SmsUpsertInputSchema,
+	smsUpdate: SmsUpsertInputSchema,
+	smsReset: ResetInputSchema,
+	voiceMessagesList: z.object({ widget_id: IdSchema }),
+	voiceMessagesCreate: VoiceUpsertInputSchema,
+	voiceMessagesUpdate: VoiceUpsertInputSchema,
+	voiceMessagesReset: ResetInputSchema,
 } as const;
 
 export const CallPageEndpointOutputSchemas = {
+	rootGet: z.object({ message: z.string() }).loose(),
 	callsGet: CallRecordSchema,
 	callsHistory: CallHistorySchema,
 	usersList: z.array(UserSchema),
 	usersGet: UserSchema,
 	usersCreate: UserSchema,
 	usersUpdate: UserSchema,
-	usersDelete: DeleteResponseSchema,
+	usersDelete: NullResponseSchema,
+	widgetsList: z.array(WidgetSchema),
 	widgetsGet: WidgetSchema,
 	widgetsCreate: WidgetSchema,
 	widgetsUpdate: WidgetSchema,
-	widgetsDelete: DeleteResponseSchema,
+	widgetsDelete: NullResponseSchema,
 	widgetsCall: MutationResponseSchema,
 	widgetsCallOrSchedule: MutationResponseSchema,
+	widgetsAddUsers: z.array(
+		z.object({ user_id: IdSchema, manager_id: IdSchema }).loose(),
+	),
+	managersList: z.array(ManagerSchema),
+	managersGet: ManagerSchema,
+	managersCreate: IdResponseSchema,
+	managersUpdate: IdResponseSchema,
+	managersDelete: NullResponseSchema,
+	managersStatusStatistics: z.object({
+		total: z.number().int(),
+		enabled: z.number().int(),
+		disabled: z.number().int(),
+	}),
+	smsList: z.array(SmsMessageSchema),
+	smsCreate: IdResponseSchema,
+	smsUpdate: IdResponseSchema,
+	smsReset: NullResponseSchema,
+	voiceMessagesList: z.array(VoiceMessageSchema),
+	voiceMessagesCreate: IdResponseSchema,
+	voiceMessagesUpdate: IdResponseSchema,
+	voiceMessagesReset: NullResponseSchema,
 } as const;
 
 export type CallPageEndpointInputs = {
