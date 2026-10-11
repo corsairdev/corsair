@@ -183,7 +183,9 @@ export type CloudKeyRotation = CloudKey & {
 	failed: string[];
 };
 
-export type CloudDeleted<Extra = Record<string, never>> = {
+/** `Extra` defaults to no extra fields, not to a forbidden-key record: an
+ *  intersection with `Record<string, never>` would make `object` unassignable. */
+export type CloudDeleted<Extra = Record<never, never>> = {
 	object: string;
 	id: string;
 	deleted: true;
