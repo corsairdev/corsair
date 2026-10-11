@@ -16,11 +16,9 @@ import {
 	CodeInterpreterFile,
 	CodeInterpreterSession,
 } from './schema/database';
-import {
-	ExecutionCompletedEventSchema,
-	ExecutionFailedEventSchema,
-	FileReadyEventSchema,
-} from './webhooks/types';
+
+// Note: this plugin ships no webhooks (the provider exposes no webhook
+// surface), so there are no webhook schemas to test here.
 
 describe('CodeInterpreter schema', () => {
 	it('declares a semver version', () => {
@@ -120,45 +118,5 @@ describe('Endpoint Input/Output Schemas', () => {
 
 		const response = { success: true, file_id: 'f-1' };
 		expect(DeleteFileResponseSchema.parse(response)).toMatchObject(response);
-	});
-});
-
-describe('Webhook Schemas', () => {
-	it('validates ExecutionCompletedEventSchema', () => {
-		const payload = {
-			type: 'execution.completed',
-			created_at: '2026-09-09T12:00:00Z',
-			data: {
-				session_id: 'sess-1',
-				exit_code: 0,
-				stdout: 'Success',
-			},
-		};
-		expect(ExecutionCompletedEventSchema.parse(payload)).toMatchObject(payload);
-	});
-
-	it('validates ExecutionFailedEventSchema', () => {
-		const payload = {
-			type: 'execution.failed',
-			created_at: '2026-09-09T12:00:00Z',
-			data: {
-				session_id: 'sess-1',
-				error: 'SyntaxError',
-			},
-		};
-		expect(ExecutionFailedEventSchema.parse(payload)).toMatchObject(payload);
-	});
-
-	it('validates FileReadyEventSchema', () => {
-		const payload = {
-			type: 'file.ready',
-			created_at: '2026-09-09T12:00:00Z',
-			data: {
-				session_id: 'sess-1',
-				file_id: 'file-1',
-				filename: 'chart.png',
-			},
-		};
-		expect(FileReadyEventSchema.parse(payload)).toMatchObject(payload);
 	});
 });

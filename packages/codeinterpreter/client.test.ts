@@ -45,7 +45,9 @@ describe('makeCodeInterpreterUpload', () => {
 	it('uploads utf8 text without corrupting content', async () => {
 		const uploaded: { bytes: Uint8Array; filename: string }[] = [];
 		global.fetch = jest.fn(async (_url, init) => {
+			// Why safe: this test always passes a FormData body above.
 			const body = init?.body as FormData;
+			// Why safe: the client appends the upload under the 'file' key.
 			const file = body.get('file') as File;
 			uploaded.push({
 				bytes: new Uint8Array(await file.arrayBuffer()),
@@ -55,6 +57,7 @@ describe('makeCodeInterpreterUpload', () => {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' },
 			});
+			// Why safe: jest.fn matches the fetch signature used by the client.
 		}) as typeof fetch;
 
 		await makeCodeInterpreterUpload(
@@ -73,13 +76,16 @@ describe('makeCodeInterpreterUpload', () => {
 	it('decodes base64 content for binary uploads', async () => {
 		const uploaded: Uint8Array[] = [];
 		global.fetch = jest.fn(async (_url, init) => {
+			// Why safe: this test always passes a FormData body above.
 			const body = init?.body as FormData;
+			// Why safe: the client appends the upload under the 'file' key.
 			const file = body.get('file') as File;
 			uploaded.push(new Uint8Array(await file.arrayBuffer()));
 			return new Response(JSON.stringify({ file_id: 'file-2' }), {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' },
 			});
+			// Why safe: jest.fn matches the fetch signature used by the client.
 		}) as typeof fetch;
 
 		const binary = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
@@ -132,6 +138,7 @@ describe('makeCodeInterpreterDownload', () => {
 						'Content-Disposition': 'attachment; filename="image.png"',
 					},
 				}),
+			// Why safe: jest.fn matches the fetch signature used by the client.
 		) as typeof fetch;
 
 		const result = await makeCodeInterpreterDownload(

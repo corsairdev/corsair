@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Code, File } from './endpoints';
 import type {
@@ -26,28 +23,15 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CodeInterpreterSchema } from './schema';
-import { ExecutionWebhooks, FileWebhooks } from './webhooks';
-import { resolveCodeInterpreterOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCodeInterpreterTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	CodeInterpreterWebhookOutputs,
-	ExecutionCompletedEvent,
-	ExecutionFailedEvent,
-	FileReadyEvent,
-} from './webhooks/types';
-import {
-	ExecutionCompletedEventSchema,
-	ExecutionFailedEventSchema,
-	FileReadyEventSchema,
-} from './webhooks/types';
 
+// The provider exposes no webhook surface, so this plugin ships no webhooks.
+// Auth is api_key only: the provider accepts the key in the `x-api-key`
+// header on API-key-compatible deployments (see client.ts).
 export type CodeInterpreterPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	baseUrl?: string;
-	webhookSecret?: string;
 	hooks?: InternalCodeInterpreterPlugin['hooks'];
-	webhookHooks?: InternalCodeInterpreterPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof codeInterpreterEndpointsNested>;
 };
@@ -79,30 +63,6 @@ export type CodeInterpreterEndpoints = {
 	deleteFile: CodeInterpreterEndpoint<'deleteFile'>;
 };
 
-type CodeInterpreterWebhook<
-	K extends keyof CodeInterpreterWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	CodeInterpreterContext,
-	TEvent,
-	CodeInterpreterWebhookOutputs[K]
->;
-
-export type CodeInterpreterWebhooks = {
-	executionCompleted: CodeInterpreterWebhook<
-		'executionCompleted',
-		ExecutionCompletedEvent
-	>;
-	executionFailed: CodeInterpreterWebhook<
-		'executionFailed',
-		ExecutionFailedEvent
-	>;
-	fileReady: CodeInterpreterWebhook<'fileReady', FileReadyEvent>;
-};
-
-export type CodeInterpreterBoundWebhooks =
-	BindWebhooks<CodeInterpreterWebhooks>;
-
 const codeInterpreterEndpointsNested = {
 	code: {
 		execute: Code.execute,
@@ -112,16 +72,6 @@ const codeInterpreterEndpointsNested = {
 		list: File.list,
 		download: File.download,
 		delete: File.delete,
-	},
-} as const;
-
-const codeInterpreterWebhooksNested = {
-	execution: {
-		completed: ExecutionWebhooks.completed,
-		failed: ExecutionWebhooks.failed,
-	},
-	file: {
-		ready: FileWebhooks.ready,
 	},
 } as const;
 
@@ -148,26 +98,6 @@ export const codeInterpreterEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof codeInterpreterEndpointsNested
->;
-
-const codeInterpreterWebhookSchemas = {
-	'execution.completed': {
-		description: 'Code execution completed successfully',
-		payload: ExecutionCompletedEventSchema,
-		response: ExecutionCompletedEventSchema,
-	},
-	'execution.failed': {
-		description: 'Code execution failed with an error',
-		payload: ExecutionFailedEventSchema,
-		response: ExecutionFailedEventSchema,
-	},
-	'file.ready': {
-		description: 'A file is processed and ready in the sandbox',
-		payload: FileReadyEventSchema,
-		response: FileReadyEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof codeInterpreterWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -201,9 +131,6 @@ export const codeInterpreterAuthConfig = {
 	api_key: {
 		account: ['session_id', 'tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['session_id', 'tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCodeInterpreterPlugin<T extends CodeInterpreterPluginOptions> =
@@ -211,7 +138,7 @@ export type BaseCodeInterpreterPlugin<T extends CodeInterpreterPluginOptions> =
 		'codeinterpreter',
 		typeof CodeInterpreterSchema,
 		typeof codeInterpreterEndpointsNested,
-		typeof codeInterpreterWebhooksNested,
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
@@ -237,44 +164,21 @@ export function codeinterpreter<const T extends CodeInterpreterPluginOptions>(
 		schema: CodeInterpreterSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: codeInterpreterEndpointsNested,
-		webhooks: codeInterpreterWebhooksNested,
+		webhooks: {},
 		endpointMeta: codeInterpreterEndpointMeta,
 		endpointSchemas: codeInterpreterEndpointSchemas,
-		webhookSchemas: codeInterpreterWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-webhook-signature' in headers || 'x-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCodeInterpreterTenantWebhook,
-		oauthWebhookTenantLinkResolver:
-			resolveCodeInterpreterOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CodeInterpreterKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -297,9 +201,3 @@ export type {
 	UploadFileInput,
 	UploadFileResponse,
 } from './endpoints/types';
-export type {
-	CodeInterpreterWebhookOutputs,
-	ExecutionCompletedEvent,
-	ExecutionFailedEvent,
-	FileReadyEvent,
-} from './webhooks/types';

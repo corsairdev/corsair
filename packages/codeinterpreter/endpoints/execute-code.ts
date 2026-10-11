@@ -11,7 +11,17 @@ export const executeCode: CodeInterpreterEndpoints['executeCode'] = async (
 		CodeInterpreterEndpointOutputs['executeCode']
 	>('exec', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: {
+			code: input.code,
+			// Provider wire names (code.librechat.ai/docs, "Execute code
+			// with specified language and parameters"): `lang` + `entity_id`.
+			// The endpoint schema keeps the ergonomic `language` /
+			// `session_id` aliases and maps them here.
+			lang: input.language ?? 'py',
+			...(input.session_id ? { entity_id: input.session_id } : {}),
+			...(input.args ? { args: input.args } : {}),
+			...(input.files ? { files: input.files } : {}),
+		},
 		baseUrl: ctx.options.baseUrl,
 	});
 

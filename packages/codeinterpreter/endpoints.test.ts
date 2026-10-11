@@ -1,18 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CodeInterpreterContext } from '..';
 import {
 	makeCodeInterpreterDownload,
 	makeCodeInterpreterRequest,
 	makeCodeInterpreterUpload,
-} from '../client';
-import { deleteFile } from './delete-file';
-import { downloadFile } from './download-file';
-import { executeCode } from './execute-code';
-import { listFiles } from './list-files';
-import { CodeInterpreterEndpointOutputSchemas } from './types';
-import { uploadFile } from './upload-file';
+} from './client';
+import { deleteFile } from './endpoints/delete-file';
+import { downloadFile } from './endpoints/download-file';
+import { executeCode } from './endpoints/execute-code';
+import { listFiles } from './endpoints/list-files';
+import { CodeInterpreterEndpointOutputSchemas } from './endpoints/types';
+import { uploadFile } from './endpoints/upload-file';
+import type { CodeInterpreterContext } from './index';
 
-jest.mock('../client', () => ({
+jest.mock('./client', () => ({
 	makeCodeInterpreterRequest: jest.fn(),
 	makeCodeInterpreterUpload: jest.fn(),
 	makeCodeInterpreterDownload: jest.fn(),
@@ -22,11 +22,15 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(),
 }));
 
+// Why safe: jest.mock replaces these module exports with mock fns;
+// the casts only recover the mock type for assertions.
 const mockedRequest = makeCodeInterpreterRequest as jest.Mock;
 const mockedUpload = makeCodeInterpreterUpload as jest.Mock;
 const mockedDownload = makeCodeInterpreterDownload as jest.Mock;
 const mockedLog = logEventFromContext as jest.Mock;
 
+// Why safe: endpoints only read ctx.key + ctx.options.baseUrl,
+// so a minimal structural stub is sufficient for unit tests.
 const ctx = {
 	key: 'test-api-key',
 	options: { baseUrl: 'https://ci.example.com' },
@@ -40,7 +44,7 @@ describe('CodeInterpreter endpoints', () => {
 		mockedLog.mockReset();
 	});
 
-	it('executeCode calls POST /exec and omits source code from the event log', async () => {
+	it('executeCode calls POST exec with provider wire names and omits source code from the event log', async () => {
 		const response = {
 			exit_code: 0,
 			stdout: 'Hello\n',
@@ -57,7 +61,11 @@ describe('CodeInterpreter endpoints', () => {
 
 		expect(mockedRequest).toHaveBeenCalledWith('exec', 'test-api-key', {
 			method: 'POST',
-			body: input,
+			body: {
+				code: 'print("Hello")',
+				lang: 'python',
+				entity_id: 'sess-1',
+			},
 			baseUrl: 'https://ci.example.com',
 		});
 		expect(mockedLog).toHaveBeenCalledWith(
@@ -71,6 +79,20 @@ describe('CodeInterpreter endpoints', () => {
 			CodeInterpreterEndpointOutputSchemas.executeCode.safeParse(result)
 				.success,
 		).toBe(true);
+	});
+
+	it('executeCode defaults lang to py when no language is given', async () => {
+		const response = { exit_code: 0, stdout: '3\n' };
+		mockedRequest.mockResolvedValueOnce(response);
+
+		const result = await executeCode(ctx, { code: 'print(1+2)' });
+
+		expect(mockedRequest).toHaveBeenCalledWith('exec', 'test-api-key', {
+			method: 'POST',
+			body: { code: 'print(1+2)', lang: 'py' },
+			baseUrl: 'https://ci.example.com',
+		});
+		expect(result).toEqual(response);
 	});
 
 	it('deleteFile sends file_id and session_id as query parameters', async () => {
@@ -132,7 +154,7 @@ describe('CodeInterpreter endpoints', () => {
 		expect(result).toEqual(response);
 	});
 
-	it('listFiles calls GET /files with session_id query', async () => {
+	it('listFiles calls GET files with session_id query', async () => {
 		const response = {
 			files: [{ id: 'file-1', name: 'test.py', size: 8 }],
 		};

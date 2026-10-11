@@ -76,7 +76,10 @@ export async function makeCodeInterpreterRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			// Provider contract (librechat.ai/docs/features/code_interpreter,
+			// "Direct API Integration"): API-key-compatible deployments
+			// accept the key in the `x-api-key` header.
+			'x-api-key': apiKey,
 		},
 	};
 
@@ -143,7 +146,8 @@ export async function makeCodeInterpreterUpload<T>(
 		res = await fetch(url.toString(), {
 			method: 'POST',
 			headers: {
-				Authorization: `Bearer ${apiKey}`,
+				// Same `x-api-key` contract as makeCodeInterpreterRequest above.
+				'x-api-key': apiKey,
 			},
 			body: formData,
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
@@ -173,6 +177,9 @@ export async function makeCodeInterpreterUpload<T>(
 		);
 	}
 
+	// Why safe: callers pin T to a zod-validated output schema for this
+	// endpoint, and the framework validates via endpointSchemas; the cast
+	// only threads the generic through fetch's untyped json().
 	return (await res.json()) as T;
 }
 
@@ -194,7 +201,8 @@ export async function makeCodeInterpreterDownload(
 		res = await fetch(url.toString(), {
 			method: 'GET',
 			headers: {
-				Authorization: `Bearer ${apiKey}`,
+				// Same `x-api-key` contract as makeCodeInterpreterRequest above.
+				'x-api-key': apiKey,
 			},
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
