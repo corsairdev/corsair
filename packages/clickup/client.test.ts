@@ -15,7 +15,7 @@ jest.mock('corsair/http', () => {
 });
 
 const mockRequest = jest.mocked(request);
-const TOKEN = 'pk_test_clickup_token';
+const TOKEN = 'test-token-not-a-secret';
 
 describe('ClickUp API client', () => {
 	beforeEach(() => {

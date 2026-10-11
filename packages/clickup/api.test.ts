@@ -1,6 +1,6 @@
 /**
  * Live ClickUp API tests. These run against the real API with a personal
- * token (`Authorization: pk_...`) and are skipped in CI when CLICKUP_API_KEY
+ * API token and are skipped in CI when CLICKUP_API_KEY
  * is unset. Setup provisions an isolated `corsair-test-*` Space/Folder/List/
  * Task chain (deleted in afterAll); all assertions validate responses with
  * the zod output schemas.

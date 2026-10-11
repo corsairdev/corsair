@@ -35,7 +35,7 @@ jest.mock('corsair/core', () => ({
 
 const mockLogEvent = jest.mocked(logEventFromContext);
 
-const TOKEN = 'pk_test_clickup_token';
+const TOKEN = 'test-token-not-a-secret';
 
 function makeCtx(): ClickupRequestContext {
 	return {
