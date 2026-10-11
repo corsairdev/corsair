@@ -20,7 +20,9 @@ Build a deduplicated TXT or ZIP domain list file locally for bulk lookups
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.createDomainListFile({});
+await corsair.builtwith.api.createDomainListFile({
+	domains: ['builtwith.com', 'shopify.com'],
+});
 ```
 
 **Input**
@@ -59,7 +61,7 @@ Look up technology usage totals from the Trends API, optionally at a historical 
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.datasets.lookup({});
+await corsair.builtwith.api.datasets.lookup({ tech: 'Shopify', date: '2024-01-01' });
 ```
 
 **Input**
@@ -97,7 +99,7 @@ Look up current and historical technologies for up to 16 root domains
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.domain.lookup({});
+await corsair.builtwith.api.domain.lookup({ lookup: 'builtwith.com', liveonly: true });
 ```
 
 **Input**
@@ -143,7 +145,7 @@ Look up financial information for a domain
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.financial.lookup({});
+await corsair.builtwith.api.financial.lookup({ lookup: 'shopify.com' });
 ```
 
 **Input**
@@ -180,7 +182,7 @@ Get technology group and category counts with last-updated dates for a domain
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.free.lookup({});
+await corsair.builtwith.api.free.lookup({ lookup: 'builtwith.com' });
 ```
 
 **Input**
@@ -217,7 +219,7 @@ List websites using a technology, paginated with the NextOffset token
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.lists.getList({});
+await corsair.builtwith.api.lists.getList({ tech: 'Shopify', country: 'US' });
 ```
 
 **Input**
@@ -266,7 +268,7 @@ Search the BuiltWith registry of remote MCP servers by keyword or category
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.mcp.lookup({});
+await corsair.builtwith.api.mcp.lookup({ search: 'payments' });
 ```
 
 **Input**
@@ -310,7 +312,7 @@ Find eCommerce shops selling a product, or list a shop's products
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.product.lookup({});
+await corsair.builtwith.api.product.lookup({ query: 'running shoes', limit: 10 });
 ```
 
 **Input**
@@ -349,7 +351,7 @@ Get technology recommendations for up to 16 domains
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.recommendations.lookup({});
+await corsair.builtwith.api.recommendations.lookup({ lookup: 'builtwith.com' });
 ```
 
 **Input**
@@ -386,7 +388,7 @@ Get live and historical inbound and outbound redirects for a domain
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.redirects.lookup({});
+await corsair.builtwith.api.redirects.lookup({ lookup: 'builtwith.com' });
 ```
 
 **Input**
@@ -423,7 +425,7 @@ Find root domains linked to social media profile URLs
 **Risk:** `read`
 
 ```ts
-await corsair.builtwith.api.social.lookup({});
+await corsair.builtwith.api.social.lookup({ lookup: 'twitter.com/builtwith' });
 ```
 
 **Input**

@@ -230,6 +230,7 @@ export type ExternalBuiltWithPlugin<T extends BuiltWithPluginOptions> =
 	BaseBuiltWithPlugin<T>;
 
 export function builtwith<const T extends BuiltWithPluginOptions>(
+	// Every option is optional, so an empty object satisfies T; TypeScript cannot prove that for a generic.
 	incomingOptions: BuiltWithPluginOptions & T = {} as BuiltWithPluginOptions &
 		T,
 ): ExternalBuiltWithPlugin<T> {

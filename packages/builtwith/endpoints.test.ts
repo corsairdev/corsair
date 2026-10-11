@@ -18,8 +18,8 @@ jest.mock('corsair/http', () => {
 	};
 });
 
+// jest.mock above replaces these imports with jest.fn wrappers, which their static types do not reflect.
 const mockRequest = request as jest.MockedFunction<typeof request>;
-
 const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
@@ -35,29 +35,15 @@ const RESPONSE_BODY = { ok: true };
 let requests: CapturedRequest[] = [];
 
 function makeCtx(key = 'test-builtwith-key') {
+	// Endpoints only read ctx.key; building a full plugin context here adds nothing to these tests.
 	return { key } as unknown as BuiltWithContext;
 }
 
 beforeEach(() => {
 	mockLogEvent.mockClear();
-	mockRequest.mockImplementation(
-		jest.requireActual('corsair/http').request as typeof request,
-	);
 	requests = [];
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
-		const headers: Record<string, string> = {};
-		const raw = init?.headers;
-		if (raw instanceof Headers) {
-			raw.forEach((value, key) => {
-				headers[key.toLowerCase()] = value;
-			});
-		} else {
-			for (const [key, value] of Object.entries(
-				(raw ?? {}) as Record<string, string>,
-			)) {
-				headers[key.toLowerCase()] = String(value);
-			}
-		}
+		const headers = Object.fromEntries(new Headers(init?.headers));
 
 		requests.push({
 			url: String(url),
@@ -74,6 +60,7 @@ beforeEach(() => {
 			json: async () => RESPONSE_BODY,
 			text: async () => JSON.stringify(RESPONSE_BODY),
 		};
+		// The stub implements only the Response members the HTTP client reads.
 	}) as unknown as typeof global.fetch;
 });
 
@@ -108,9 +95,14 @@ describe('BuiltWith endpoints', () => {
 	});
 
 	it('createDomainListFile defaults to txt when format is omitted', async () => {
-		const result = await BuiltWithEndpoints.createDomainListFile(makeCtx(), {
-			domains: [' a.com ', 'b.com'],
-		} as Parameters<typeof BuiltWithEndpoints.createDomainListFile>[1]);
+		// The endpoint input type is the schema output, where format is already defaulted; omit it to exercise the default.
+		const input = { domains: [' a.com ', 'b.com'] } as Parameters<
+			typeof BuiltWithEndpoints.createDomainListFile
+		>[1];
+		const result = await BuiltWithEndpoints.createDomainListFile(
+			makeCtx(),
+			input,
+		);
 
 		expect(result.format).toBe('txt');
 		expect(result.fileName).toBe('domains.txt');
