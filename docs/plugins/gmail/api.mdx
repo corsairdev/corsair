@@ -710,32 +710,6 @@ await corsair.gmail.api.messages.batchModify({});
 
 ---
 
-### delete
-
-`messages.delete`
-
-Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]
-
-**Risk:** `destructive` · **Irreversible**
-
-```ts
-await corsair.gmail.api.messages.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `userId` | `string` | No | — |
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `void`
-
-
----
-
 ### get
 
 `messages.get`
@@ -1123,32 +1097,6 @@ await corsair.gmail.api.messages.untrash({});
 
 ## Threads
 
-### delete
-
-`threads.delete`
-
-Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]
-
-**Risk:** `destructive` · **Irreversible**
-
-```ts
-await corsair.gmail.api.threads.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `userId` | `string` | No | — |
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `void`
-
-
----
-
 ### get
 
 `threads.get`
@@ -1491,6 +1439,41 @@ await corsair.gmail.api.threads.untrash({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getProfile
+
+`users.getProfile`
+
+Get the mailbox profile for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.users.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAddress` | `string` | No | — |
+| `messagesTotal` | `number` | No | — |
+| `threadsTotal` | `number` | No | — |
+| `historyId` | `string` | No | — |
 
 
 
