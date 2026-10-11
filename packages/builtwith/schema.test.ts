@@ -1,4 +1,7 @@
-import { BuiltWithEndpointInputSchemas } from './endpoints/types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './endpoints/types';
 import { BuiltWithSchema } from './schema';
 
 describe('BuiltWith schema', () => {
@@ -37,6 +40,55 @@ describe('BuiltWith endpoint input schemas', () => {
 				format: 'pdf',
 			}),
 		).toThrow();
+	});
+
+	it('listsApiGetList rejects all combined with since', () => {
+		expect(() =>
+			BuiltWithEndpointInputSchemas.listsApiGetList.parse({
+				tech: 'Shopify',
+				all: true,
+				since: '30 Days Ago',
+			}),
+		).toThrow('all cannot be combined with since');
+		expect(
+			BuiltWithEndpointInputSchemas.listsApiGetList.parse({
+				tech: 'Shopify',
+				offset: 'abc',
+			}).offset,
+		).toBe('abc');
+	});
+
+	it('mcpApiLookup requires search or category', () => {
+		expect(() => BuiltWithEndpointInputSchemas.mcpApiLookup.parse({})).toThrow(
+			'search or category is required',
+		);
+		expect(
+			BuiltWithEndpointInputSchemas.mcpApiLookup.parse({
+				category: 'ecommerce',
+			}).category,
+		).toBe('ecommerce');
+	});
+
+	it('productApiLookup accepts page 0 and caps limit at 500', () => {
+		expect(
+			BuiltWithEndpointInputSchemas.productApiLookup.parse({
+				query: 'shoes',
+				page: 0,
+			}).page,
+		).toBe(0);
+		expect(() =>
+			BuiltWithEndpointInputSchemas.productApiLookup.parse({
+				query: 'shoes',
+				limit: 501,
+			}),
+		).toThrow();
+	});
+
+	it('mcpApiLookup output accepts the documented array response', () => {
+		const parsed = BuiltWithEndpointOutputSchemas.mcpApiLookup.parse([
+			{ Domain: 'example.com', Category: 'Developer Tools', Endpoints: [] },
+		]);
+		expect(parsed[0]?.Domain).toBe('example.com');
 	});
 
 	it('createDomainListFile rejects whitespace-only domains', () => {

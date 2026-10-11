@@ -12,7 +12,9 @@ export const mcpApiLookup: BuiltWithEndpoints['mcpApiLookup'] = async (
 	>('mcp2/api.json', ctx.key, {
 		method: 'GET',
 		query: {
-			SEARCH: input.domain,
+			SEARCH: input.search,
+			CATEGORY: input.category,
+			OFFSET: input.offset,
 		},
 	});
 

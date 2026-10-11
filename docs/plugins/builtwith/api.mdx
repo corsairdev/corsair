@@ -1,0 +1,451 @@
+---
+title: API
+description: "API reference for BuiltWith: every `builtwith.api.*` operation with input and output types."
+---
+
+Every `builtwith.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Create Domain List File
+
+### createDomainListFile
+
+`createDomainListFile`
+
+Build a deduplicated TXT or ZIP domain list file locally for bulk lookups
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.createDomainListFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `string[]` | Yes | — |
+| `fileName` | `string` | No | — |
+| `format` | `txt \| zip` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | — |
+| `format` | `txt \| zip` | Yes | — |
+| `content` | `string` | Yes | — |
+| `encoding` | `utf8 \| base64` | Yes | — |
+| `domainCount` | `number` | Yes | — |
+| `domains` | `string[]` | Yes | — |
+
+
+
+---
+
+## Datasets
+
+### lookup
+
+`datasets.lookup`
+
+Look up technology usage totals from the Trends API, optionally at a historical date
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.datasets.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tech` | `string` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Domain
+
+### lookup
+
+`domain.lookup`
+
+Look up current and historical technologies for up to 16 root domains
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.domain.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `hidedl` | `boolean` | No | — |
+| `hidetext` | `boolean` | No | — |
+| `liveonly` | `boolean` | No | — |
+| `nometa` | `boolean` | No | — |
+| `nopii` | `boolean` | No | — |
+| `noattr` | `boolean` | No | — |
+| `trust` | `boolean` | No | — |
+| `fdrange` | `string` | No | — |
+| `ldrange` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Financial
+
+### lookup
+
+`financial.lookup`
+
+Look up financial information for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.financial.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Free
+
+### lookup
+
+`free.lookup`
+
+Get technology group and category counts with last-updated dates for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.free.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Lists
+
+### getList
+
+`lists.getList`
+
+List websites using a technology, paginated with the NextOffset token
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.lists.getList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tech` | `string` | Yes | — |
+| `otherTechs` | `string[]` | No | — |
+| `all` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `meta` | `boolean` | No | — |
+| `offset` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `NextOffset` | `string` | No | — |
+| `Results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mcp
+
+### lookup
+
+`mcp.lookup`
+
+Search the BuiltWith registry of remote MCP servers by keyword or category
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.mcp.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `category` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Domain?: string,
+  Category?: string,
+  Description?: string,
+  Endpoints?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product
+
+### lookup
+
+`product.lookup`
+
+Find eCommerce shops selling a product, or list a shop's products
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.product.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recommendations
+
+### lookup
+
+`recommendations.lookup`
+
+Get technology recommendations for up to 16 domains
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.recommendations.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Redirects
+
+### lookup
+
+`redirects.lookup`
+
+Get live and historical inbound and outbound redirects for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.redirects.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Social
+
+### lookup
+
+`social.lookup`
+
+Find root domains linked to social media profile URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.social.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

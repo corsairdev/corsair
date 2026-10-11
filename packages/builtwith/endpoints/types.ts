@@ -13,6 +13,20 @@ const CreateDomainListFileInputSchema = z.object({
 	format: z.enum(['txt', 'zip']).optional().default('txt'),
 });
 
+const ListsApiGetListOutputSchema = z.looseObject({
+	NextOffset: z.string().optional(),
+	Results: z.array(z.record(z.string(), z.unknown())).optional(),
+});
+
+const McpApiLookupOutputSchema = z.array(
+	z.looseObject({
+		Domain: z.string().optional(),
+		Category: z.string().optional(),
+		Description: z.string().optional(),
+		Endpoints: z.array(z.record(z.string(), z.unknown())).optional(),
+	}),
+);
+
 const CreateDomainListFileOutputSchema = z.object({
 	fileName: z.string(),
 	format: z.enum(['txt', 'zip']),
@@ -23,7 +37,8 @@ const CreateDomainListFileOutputSchema = z.object({
 });
 
 const DatasetsLookupInputSchema = z.object({
-	lookup: z.string(),
+	tech: z.string().min(1),
+	date: z.string().optional(),
 });
 
 const DomainApiLookupInputSchema = z.object({
@@ -31,11 +46,12 @@ const DomainApiLookupInputSchema = z.object({
 	hidedl: z.boolean().optional(),
 	hidetext: z.boolean().optional(),
 	liveonly: z.boolean().optional(),
-	nolive: z.boolean().optional(),
 	nometa: z.boolean().optional(),
 	nopii: z.boolean().optional(),
 	noattr: z.boolean().optional(),
 	trust: z.boolean().optional(),
+	fdrange: z.string().optional(),
+	ldrange: z.string().optional(),
 });
 
 const FinancialApiLookupInputSchema = z.object({
@@ -46,23 +62,34 @@ const FreeApiLookupInputSchema = z.object({
 	lookup: z.string(),
 });
 
-const ListsApiGetListInputSchema = z.object({
-	tech: z.string(),
-	all: z.boolean().optional(),
-	country: z.string().optional(),
-	meta: z.boolean().optional(),
-	offset: z.number().int().nonnegative().optional(),
-	since: z.string().optional(),
-});
+const ListsApiGetListInputSchema = z
+	.object({
+		tech: z.string().min(1),
+		otherTechs: z.array(z.string().min(1)).max(16).optional(),
+		all: z.boolean().optional(),
+		country: z.string().optional(),
+		meta: z.boolean().optional(),
+		offset: z.string().optional(),
+		since: z.string().optional(),
+	})
+	.refine((input) => !(input.all && input.since), {
+		message: 'all cannot be combined with since',
+	});
 
-const McpApiLookupInputSchema = z.object({
-	domain: z.string(),
-});
+const McpApiLookupInputSchema = z
+	.object({
+		search: z.string().min(1).optional(),
+		category: z.string().min(1).optional(),
+		offset: z.number().int().nonnegative().optional(),
+	})
+	.refine((input) => input.search || input.category, {
+		message: 'search or category is required',
+	});
 
 const ProductApiLookupInputSchema = z.object({
 	query: z.string(),
 	limit: z.number().int().positive().max(500).optional(),
-	page: z.number().int().positive().optional(),
+	page: z.number().int().nonnegative().optional(),
 });
 
 const RecommendationsApiLookupInputSchema = z.object({
@@ -109,9 +136,9 @@ export type FinancialApiLookupResponse = z.infer<
 >;
 export type FreeApiLookupResponse = z.infer<typeof BuiltWithApiResponseSchema>;
 export type ListsApiGetListResponse = z.infer<
-	typeof BuiltWithApiResponseSchema
+	typeof ListsApiGetListOutputSchema
 >;
-export type McpApiLookupResponse = z.infer<typeof BuiltWithApiResponseSchema>;
+export type McpApiLookupResponse = z.infer<typeof McpApiLookupOutputSchema>;
 export type ProductApiLookupResponse = z.infer<
 	typeof BuiltWithApiResponseSchema
 >;
@@ -173,8 +200,8 @@ export const BuiltWithEndpointOutputSchemas = {
 	domainApiLookup: BuiltWithApiResponseSchema,
 	financialApiLookup: BuiltWithApiResponseSchema,
 	freeApiLookup: BuiltWithApiResponseSchema,
-	listsApiGetList: BuiltWithApiResponseSchema,
-	mcpApiLookup: BuiltWithApiResponseSchema,
+	listsApiGetList: ListsApiGetListOutputSchema,
+	mcpApiLookup: McpApiLookupOutputSchema,
 	productApiLookup: BuiltWithApiResponseSchema,
 	recommendationsApiLookup: BuiltWithApiResponseSchema,
 	redirectsApiLookup: BuiltWithApiResponseSchema,

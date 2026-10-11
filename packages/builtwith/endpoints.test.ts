@@ -101,32 +101,46 @@ describe('BuiltWith endpoints', () => {
 		expect(result.fileName).toBe('domains.zip');
 		expect(result.format).toBe('zip');
 		expect(result.encoding).toBe('base64');
-		expect(typeof result.content).toBe('string');
-		expect(String(result.content).length).toBeGreaterThan(0);
+		const zip = Buffer.from(result.content, 'base64');
+		expect(zip.readUInt32LE(0)).toBe(0x04034b50);
+		expect(zip.subarray(30, 41).toString('utf8')).toBe('domains.txt');
+		expect(zip.subarray(41, 52).toString('utf8')).toBe('example.com');
 	});
 
-	it('datasetsLookup GETs trends/v6 with TECH query param', async () => {
+	it('createDomainListFile defaults to txt when format is omitted', async () => {
+		const result = await BuiltWithEndpoints.createDomainListFile(makeCtx(), {
+			domains: [' a.com ', 'b.com'],
+		} as Parameters<typeof BuiltWithEndpoints.createDomainListFile>[1]);
+
+		expect(result.format).toBe('txt');
+		expect(result.fileName).toBe('domains.txt');
+		expect(result.content).toBe('a.com\nb.com');
+	});
+
+	it('datasetsLookup GETs trends/v6 with TECH and DATE', async () => {
 		await BuiltWithEndpoints.datasetsLookup(makeCtx(), {
-			lookup: 'Shopify',
+			tech: 'Shopify',
+			date: '2020-01-01',
 		});
 
 		expect(requests[0]?.method).toBe('GET');
-		expect(requests[0]?.url).toContain('/trends/v6/api.json');
-		expect(requests[0]?.url).toContain('TECH=Shopify');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/trends/v6/api.json?TECH=Shopify&DATE=2020-01-01',
+		);
 		expect(requests[0]?.headers.authorization).toBe('API test-builtwith-key');
 	});
 
-	it('domainApiLookup GETs v23/api.json with lookup flags', async () => {
+	it('domainApiLookup GETs v26/api.json with lookup flags and date ranges', async () => {
 		await BuiltWithEndpoints.domainApiLookup(makeCtx(), {
 			lookup: 'example.com',
 			liveonly: true,
 			nopii: true,
+			fdrange: '2022-01-01|2023-01-01',
 		});
 
-		expect(requests[0]?.url).toContain('/v23/api.json');
-		expect(requests[0]?.url).toContain('LOOKUP=example.com');
-		expect(requests[0]?.url).toContain('LIVEONLY=yes');
-		expect(requests[0]?.url).toContain('NOPII=yes');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/v26/api.json?LOOKUP=example.com&LIVEONLY=yes&NOPII=yes&FDRANGE=2022-01-01%7C2023-01-01',
+		);
 	});
 
 	it('financialApiLookup GETs financial1/api.json', async () => {
@@ -147,26 +161,43 @@ describe('BuiltWith endpoints', () => {
 		expect(requests[0]?.url).toContain('LOOKUP=builtwith.com');
 	});
 
-	it('listsApiGetList GETs lists12/api.json with pagination filters', async () => {
+	it('listsApiGetList GETs lists13/api.json with the NextOffset token', async () => {
 		await BuiltWithEndpoints.listsApiGetList(makeCtx(), {
 			tech: 'Shopify',
-			offset: 100,
+			otherTechs: ['Google-Analytics', 'Meta-Pixel'],
+			offset: 'oQEwEnH2FJuIzeXOEk2T',
 			country: 'US',
+			meta: true,
+			all: true,
 		});
 
-		expect(requests[0]?.url).toContain('/lists12/api.json');
-		expect(requests[0]?.url).toContain('TECH=Shopify');
-		expect(requests[0]?.url).toContain('OFFSET=100');
-		expect(requests[0]?.url).toContain('COUNTRY=US');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/lists13/api.json?TECH=Shopify&OTHERTECHS=Google-Analytics%2CMeta-Pixel&ALL=yes&COUNTRY=US&META=yes&OFFSET=oQEwEnH2FJuIzeXOEk2T',
+		);
 	});
 
-	it('mcpApiLookup GETs mcp2/api.json', async () => {
-		await BuiltWithEndpoints.mcpApiLookup(makeCtx(), {
-			domain: 'example.com',
+	it('listsApiGetList omits optional flags that are false', async () => {
+		await BuiltWithEndpoints.listsApiGetList(makeCtx(), {
+			tech: 'Magento',
+			meta: false,
+			all: false,
 		});
 
-		expect(requests[0]?.url).toContain('/mcp2/api.json');
-		expect(requests[0]?.url).toContain('SEARCH=example.com');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/lists13/api.json?TECH=Magento',
+		);
+	});
+
+	it('mcpApiLookup GETs mcp2/api.json with search, category and offset', async () => {
+		await BuiltWithEndpoints.mcpApiLookup(makeCtx(), {
+			search: 'stripe',
+			category: 'ecommerce',
+			offset: 100,
+		});
+
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/mcp2/api.json?SEARCH=stripe&CATEGORY=ecommerce&OFFSET=100',
+		);
 	});
 
 	it('productApiLookup GETs productv1/api.json', async () => {
@@ -176,10 +207,9 @@ describe('BuiltWith endpoints', () => {
 			page: 2,
 		});
 
-		expect(requests[0]?.url).toContain('/productv1/api.json');
-		expect(requests[0]?.url).toContain('QUERY=Adidas');
-		expect(requests[0]?.url).toContain('LIMIT=25');
-		expect(requests[0]?.url).toContain('PAGE=2');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/productv1/api.json?QUERY=Adidas%20Yeezy&LIMIT=25&PAGE=2',
+		);
 	});
 
 	it('recommendationsApiLookup GETs rec1/api.json', async () => {
@@ -205,8 +235,9 @@ describe('BuiltWith endpoints', () => {
 			lookup: 'https://twitter.com/example',
 		});
 
-		expect(requests[0]?.url).toContain('/social1/api.json');
-		expect(requests[0]?.url).toContain('LOOKUP=');
+		expect(requests[0]?.url).toBe(
+			'https://api.builtwith.com/social1/api.json?LOOKUP=https%3A%2F%2Ftwitter.com%2Fexample',
+		);
 	});
 });
 

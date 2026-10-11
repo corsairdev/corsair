@@ -1,0 +1,9 @@
+displayName: BuiltWith
+description: Web technology profiling for domains, technology adoption lists, trends, redirects, and company financials.
+recommendedAuth: api_key
+examples:
+  read:
+    path: domain.lookup
+    title: Look up a domain's technology stack
+    args:
+      lookup: builtwith.com

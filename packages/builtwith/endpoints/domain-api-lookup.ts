@@ -14,15 +14,16 @@ export const domainApiLookup: BuiltWithEndpoints['domainApiLookup'] = async (
 	if (input.hidedl) query.HIDEDL = 'yes';
 	if (input.hidetext) query.HIDETEXT = 'yes';
 	if (input.liveonly) query.LIVEONLY = 'yes';
-	if (input.nolive) query.NOLIVE = 'yes';
 	if (input.nometa) query.NOMETA = 'yes';
 	if (input.nopii) query.NOPII = 'yes';
 	if (input.noattr) query.NOATTR = 'yes';
 	if (input.trust) query.TRUST = 'yes';
+	if (input.fdrange) query.FDRANGE = input.fdrange;
+	if (input.ldrange) query.LDRANGE = input.ldrange;
 
 	const response = await makeBuiltWithRequest<
 		BuiltWithEndpointOutputs['domainApiLookup']
-	>('v23/api.json', ctx.key, {
+	>('v26/api.json', ctx.key, {
 		method: 'GET',
 		query,
 	});

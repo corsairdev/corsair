@@ -12,7 +12,8 @@ export const datasetsLookup: BuiltWithEndpoints['datasetsLookup'] = async (
 	>('trends/v6/api.json', ctx.key, {
 		method: 'GET',
 		query: {
-			TECH: input.lookup,
+			TECH: input.tech,
+			DATE: input.date,
 		},
 	});
 

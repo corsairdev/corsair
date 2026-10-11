@@ -83,23 +83,16 @@ function createZipBase64(fileName: string, content: string): string {
 export const createDomainListFile: BuiltWithEndpoints['createDomainListFile'] =
 	async (ctx, input) => {
 		const domains = dedupeDomains(input.domains);
-		const format = input.format;
-		const defaultFileName = format === 'zip' ? 'domains.zip' : 'domains.txt';
-		const fileName =
-			format === 'zip'
-				? normalizeZipFileName(input.fileName ?? defaultFileName)
-				: (input.fileName ?? defaultFileName);
+		const format = input.format ?? 'txt';
 		const textContent = domains.join('\n');
-
-		const content =
-			format === 'zip'
-				? createZipBase64(
-						fileName.endsWith('.txt') ? fileName : 'domains.txt',
-						textContent,
-					)
-				: textContent;
-
-		const encoding: 'base64' | 'utf8' = format === 'zip' ? 'base64' : 'utf8';
+		const isZip = format === 'zip';
+		const fileName = isZip
+			? normalizeZipFileName(input.fileName ?? 'domains.zip')
+			: (input.fileName ?? 'domains.txt');
+		const content = isZip
+			? createZipBase64('domains.txt', textContent)
+			: textContent;
+		const encoding: 'base64' | 'utf8' = isZip ? 'base64' : 'utf8';
 
 		const result = {
 			fileName,

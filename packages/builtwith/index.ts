@@ -152,16 +152,19 @@ const defaultAuthType: AuthTypes = 'api_key';
 
 const builtWithEndpointMeta = {
 	createDomainListFile: {
-		riskLevel: 'write',
-		description: 'Create a TXT or ZIP file from a list of domains',
+		riskLevel: 'read',
+		description:
+			'Build a deduplicated TXT or ZIP domain list file locally for bulk lookups',
 	},
 	'datasets.lookup': {
 		riskLevel: 'read',
-		description: 'Look up historical technology usage trends',
+		description:
+			'Look up technology usage totals from the Trends API, optionally at a historical date',
 	},
 	'domain.lookup': {
 		riskLevel: 'read',
-		description: 'Look up technology information for domains',
+		description:
+			'Look up current and historical technologies for up to 16 root domains',
 	},
 	'financial.lookup': {
 		riskLevel: 'read',
@@ -169,31 +172,36 @@ const builtWithEndpointMeta = {
 	},
 	'free.lookup': {
 		riskLevel: 'read',
-		description: 'Perform a BuiltWith free lookup',
+		description:
+			'Get technology group and category counts with last-updated dates for a domain',
 	},
 	'lists.getList': {
 		riskLevel: 'read',
-		description: 'Retrieve a BuiltWith technology list',
+		description:
+			'List websites using a technology, paginated with the NextOffset token',
 	},
 	'mcp.lookup': {
 		riskLevel: 'read',
-		description: 'Look up BuiltWith MCP information',
+		description:
+			'Search the BuiltWith registry of remote MCP servers by keyword or category',
 	},
 	'product.lookup': {
 		riskLevel: 'read',
-		description: 'Search BuiltWith product information',
+		description:
+			"Find eCommerce shops selling a product, or list a shop's products",
 	},
 	'recommendations.lookup': {
 		riskLevel: 'read',
-		description: 'Get technology recommendations for domains',
+		description: 'Get technology recommendations for up to 16 domains',
 	},
 	'redirects.lookup': {
 		riskLevel: 'read',
-		description: 'Look up domain redirects',
+		description:
+			'Get live and historical inbound and outbound redirects for a domain',
 	},
 	'social.lookup': {
 		riskLevel: 'read',
-		description: 'Look up social profile information',
+		description: 'Find root domains linked to social media profile URLs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof builtWithEndpointsNested
