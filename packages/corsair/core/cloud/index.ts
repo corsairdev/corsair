@@ -323,7 +323,10 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 
 	// A `url` override alone can't place the management API, which is addressed
 	// by slug. Deferred to first use so an older flat key still makes op calls.
-	const managementUrl = config.managementUrl?.trim();
+	// An empty or slash-suffixed override falls through to the derived URL
+	// rather than disabling v1 or doubling a slash.
+	const managementUrl =
+		config.managementUrl?.trim().replace(/\/+$/, '') || undefined;
 	const v1BaseUrl =
 		managementUrl ?? (slug ? managementUrlFromBase(baseUrl, slug) : null);
 	if (v1BaseUrl) assertCloudUrlSecure(v1BaseUrl, 'Management base URL');
@@ -338,10 +341,11 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		: null;
 
 	// One resolve call per corsairCloud() instance, shared across every
-	// withInstance() and cached for its lifetime — concurrent callers await the
-	// same in-flight promise instead of firing duplicate requests.
+	// withInstance() — concurrent callers await the same in-flight promise
+	// instead of firing duplicate requests.
 	let instancesPromise: Promise<Map<string, string>> | null = null;
-	function resolveInstances(): Promise<Map<string, string>> {
+	function resolveInstances(refresh = false): Promise<Map<string, string>> {
+		if (refresh) instancesPromise = null;
 		if (!instancesPromise) {
 			instancesPromise = fetchInstanceMap(transport).catch((err) => {
 				instancesPromise = null;
@@ -349,6 +353,19 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 			});
 		}
 		return instancesPromise;
+	}
+
+	// A key the cached map doesn't know is resolved once more before it is
+	// called missing: an instance created or deployed after the first resolve
+	// would otherwise stay unreachable for the process's life.
+	async function instanceUrl(name: string): Promise<string> {
+		const cached = await resolveInstances();
+		const url = cached.get(name) ?? (await resolveInstances(true)).get(name);
+		if (url) return url;
+		const available = [...(await resolveInstances()).keys()].join(', ');
+		throw new Error(
+			`corsairCloud.withInstance("${name}"): no such instance — available: ${available || '(none)'}`,
+		);
 	}
 
 	// The runtime still answers the two deprecated members; dropping them would
@@ -367,17 +384,10 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 			const plane = v1
 				? buildInstancePlane(v1, name)
 				: unreachableManagement<CloudInstancePlane>();
-			const getTransport = async (): Promise<CloudTransport> => {
-				const instances = await resolveInstances();
-				const url = instances.get(name);
-				if (!url) {
-					const available = [...instances.keys()].join(', ') || '(none)';
-					throw new Error(
-						`corsairCloud.withInstance("${name}"): no such instance — available: ${available}`,
-					);
-				}
-				return { ...transport, baseUrl: url };
-			};
+			const getTransport = async (): Promise<CloudTransport> => ({
+				...transport,
+				baseUrl: await instanceUrl(name),
+			});
 			// The runtime's own management routes, kept for the deprecated methods.
 			const runtime = buildCloudManagement(getTransport);
 			const handle = {
