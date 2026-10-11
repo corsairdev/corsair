@@ -265,9 +265,18 @@ export const SpacesTagsGetInputSchema = z.object({
 });
 export type SpacesTagsGetInput = z.infer<typeof SpacesTagsGetInputSchema>;
 
+// Documented GetSpaceTags item shape: { name, tag_fg, tag_bg } with no id.
+const SpaceTagSchema = z
+	.object({
+		name: z.string(),
+		tag_fg: z.string().optional(),
+		tag_bg: z.string().optional(),
+	})
+	.passthrough();
+
 export const SpacesTagsGetResponseSchema = z
 	.object({
-		tags: z.array(NamedEntitySchema).optional(),
+		tags: z.array(SpaceTagSchema).optional(),
 	})
 	.passthrough();
 export type SpacesTagsGetResponse = z.infer<typeof SpacesTagsGetResponseSchema>;

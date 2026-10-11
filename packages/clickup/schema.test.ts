@@ -7,6 +7,7 @@ import {
 	DocsCreateInputSchema,
 	GuestsInviteInputSchema,
 	KeyResultsCreateInputSchema,
+	SpacesTagsGetResponseSchema,
 	TasksAttachmentsCreateInputSchema,
 	TasksDeleteResponseSchema,
 	TasksGetResponseSchema,
@@ -206,5 +207,16 @@ describe('endpoint schemas', () => {
 
 		expect(parsed.id).toBe('task1');
 		expect('status' in parsed).toBe(true);
+	});
+
+	it('accepts documented space tags without an id', () => {
+		const parsed = SpacesTagsGetResponseSchema.parse({
+			tags: [{ name: 'Tag name', tag_fg: '#000000', tag_bg: '#000000' }],
+		});
+
+		expect(parsed.tags?.[0]?.name).toBe('Tag name');
+		expect(SpacesTagsGetResponseSchema.safeParse({ tags: [{}] }).success).toBe(
+			false,
+		);
 	});
 });
