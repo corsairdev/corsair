@@ -11,14 +11,15 @@ export const list: ChatworkEndpoints['filesList'] = async (ctx, input) => {
 	const { room_id, ...query } =
 		ChatworkEndpointInputSchemas.filesList.parse(input);
 	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['filesList']
+		ChatworkEndpointOutputs['filesList'] | null
 	>(`rooms/${pathSegment(room_id)}/files`, ctx.key, {
 		method: 'GET',
 		query,
 		authType: ctx.options?.authType,
-		defaultEmptyArray: true,
 	});
-	const validatedResult = ChatworkEndpointOutputSchemas.filesList.parse(result);
+	const validatedResult = ChatworkEndpointOutputSchemas.filesList.parse(
+		result ?? [],
+	);
 
 	if (ctx.db.files) {
 		try {

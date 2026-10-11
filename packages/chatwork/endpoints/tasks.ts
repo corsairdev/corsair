@@ -11,14 +11,15 @@ export const list: ChatworkEndpoints['tasksList'] = async (ctx, input) => {
 	const { room_id, ...query } =
 		ChatworkEndpointInputSchemas.tasksList.parse(input);
 	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['tasksList']
+		ChatworkEndpointOutputs['tasksList'] | null
 	>(`rooms/${pathSegment(room_id)}/tasks`, ctx.key, {
 		method: 'GET',
 		query,
 		authType: ctx.options?.authType,
-		defaultEmptyArray: true,
 	});
-	const validatedResult = ChatworkEndpointOutputSchemas.tasksList.parse(result);
+	const validatedResult = ChatworkEndpointOutputSchemas.tasksList.parse(
+		result ?? [],
+	);
 
 	if (ctx.db.tasks) {
 		try {

@@ -48,7 +48,6 @@ export interface ChatworkRequestOptions {
 	multipart?: FormData;
 	query?: ChatworkParams;
 	authType?: 'api_key' | 'oauth_2';
-	defaultEmptyArray?: boolean;
 }
 
 export function pathSegment(value: string | number): string {
@@ -82,7 +81,6 @@ export async function makeChatworkRequest<T>(
 		multipart,
 		query,
 		authType = 'oauth_2',
-		defaultEmptyArray = false,
 	} = options;
 
 	const headers: Record<string, string> = {};
@@ -121,10 +119,6 @@ export async function makeChatworkRequest<T>(
 		const response = await request<T>(config, requestOptions, {
 			rateLimitConfig: CHATWORK_RATE_LIMIT_CONFIG,
 		});
-
-		if (defaultEmptyArray && (response === undefined || response === null)) {
-			return [] as unknown as T;
-		}
 
 		return response;
 	} catch (error) {

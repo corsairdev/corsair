@@ -10,15 +10,15 @@ import {
 export const list: ChatworkEndpoints['messagesList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.messagesList.parse(input);
 	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['messagesList']
+		ChatworkEndpointOutputs['messagesList'] | null
 	>(`rooms/${pathSegment(parsedInput.room_id)}/messages`, ctx.key, {
 		method: 'GET',
 		query: { force: parsedInput.force },
 		authType: ctx.options?.authType,
-		defaultEmptyArray: true,
 	});
-	const validatedResult =
-		ChatworkEndpointOutputSchemas.messagesList.parse(result);
+	const validatedResult = ChatworkEndpointOutputSchemas.messagesList.parse(
+		result ?? [],
+	);
 
 	if (ctx.db.messages) {
 		try {

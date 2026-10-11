@@ -71,15 +71,15 @@ export const listTasks: ChatworkEndpoints['accountListTasks'] = async (
 	const parsedInput =
 		ChatworkEndpointInputSchemas.accountListTasks.parse(input);
 	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['accountListTasks']
+		ChatworkEndpointOutputs['accountListTasks'] | null
 	>('my/tasks', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
 		authType: ctx.options?.authType,
-		defaultEmptyArray: true,
 	});
-	const validatedResult =
-		ChatworkEndpointOutputSchemas.accountListTasks.parse(result);
+	const validatedResult = ChatworkEndpointOutputSchemas.accountListTasks.parse(
+		result ?? [],
+	);
 
 	if (ctx.db.tasks) {
 		try {

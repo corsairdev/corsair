@@ -10,14 +10,14 @@ import {
 export const list: ChatworkEndpoints['contactsList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.contactsList.parse(input);
 	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['contactsList']
+		ChatworkEndpointOutputs['contactsList'] | null
 	>('contacts', ctx.key, {
 		method: 'GET',
 		authType: ctx.options?.authType,
-		defaultEmptyArray: true,
 	});
-	const validatedResult =
-		ChatworkEndpointOutputSchemas.contactsList.parse(result);
+	const validatedResult = ChatworkEndpointOutputSchemas.contactsList.parse(
+		result ?? [],
+	);
 
 	if (ctx.db.accounts) {
 		try {
@@ -47,14 +47,15 @@ export const listIncomingRequests: ChatworkEndpoints['contactsListIncomingReques
 		const parsedInput =
 			ChatworkEndpointInputSchemas.contactsListIncomingRequests.parse(input);
 		const result = await makeChatworkRequest<
-			ChatworkEndpointOutputs['contactsListIncomingRequests']
+			ChatworkEndpointOutputs['contactsListIncomingRequests'] | null
 		>('incoming_requests', ctx.key, {
 			method: 'GET',
 			authType: ctx.options?.authType,
-			defaultEmptyArray: true,
 		});
 		const validatedResult =
-			ChatworkEndpointOutputSchemas.contactsListIncomingRequests.parse(result);
+			ChatworkEndpointOutputSchemas.contactsListIncomingRequests.parse(
+				result ?? [],
+			);
 
 		await logEventFromContext(
 			ctx,
