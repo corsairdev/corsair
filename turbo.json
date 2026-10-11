@@ -25,7 +25,7 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"],
-      "env": ["SKIP_PG_TESTS"]
+      "env": ["SKIP_PG_TESTS", "RUN_PG_TESTS", "DATABASE_URL"]
     },
     "deploy": {
       "cache": false
