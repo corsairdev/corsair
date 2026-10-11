@@ -26,6 +26,27 @@ import { buildProjectPlane } from './v1/project';
 
 const CLOUD_SINGLE_TENANT_ID = 'default';
 
+const NO_MANAGEMENT_URL =
+	'corsairCloud: the management API needs a ck_cloud_<slug>.<secret> key, or an explicit `managementUrl`.';
+
+// Probes that must not throw, or a diagnostic touching the object replaces the
+// caller's own error with this one: awaiting it, logging it, interpolating it,
+// or feature-testing a property.
+const PROBE_KEYS = new Set<PropertyKey>([
+	'then',
+	'catch',
+	'finally',
+	'toString',
+	'toJSON',
+	'valueOf',
+	'constructor',
+	'inspect',
+	Symbol.toPrimitive,
+	Symbol.toStringTag,
+	Symbol.iterator,
+	Symbol.asyncIterator,
+]);
+
 // A key with no project slug can still make per-op calls, but nothing can
 // address the management API. Throwing on first use names the fix; refusing at
 // construction would break a client that only ever makes calls.
@@ -33,9 +54,8 @@ function unreachableManagement<T>(target: object = {}): T {
 	return new Proxy(target, {
 		get(obj, prop, receiver) {
 			if (Reflect.has(obj, prop)) return Reflect.get(obj, prop, receiver);
-			throw new Error(
-				'corsairCloud: the management API needs a ck_cloud_<slug>.<secret> key, or an explicit `managementUrl`.',
-			);
+			if (PROBE_KEYS.has(prop)) return undefined;
+			throw new Error(NO_MANAGEMENT_URL);
 		},
 	}) as T;
 }
@@ -235,10 +255,19 @@ async function fetchInstanceMap(
 	return map;
 }
 
-// The project plane: the project row, its key, its instance rows, the plugin
-// catalogue and the MCP links it has minted. Everything here is true of the
-// project as a whole — working inside one instance is withInstance(key).
-export type CorsairCloudManage = CloudProjectPlane;
+/**
+ * The project plane: the project row, its key, its instance rows, the plugin
+ * catalogue and the MCP links it has minted. Everything here is true of the
+ * project as a whole; working inside one instance is `withInstance(key)`.
+ */
+export type CorsairCloudManage = CloudProjectPlane & {
+	/** @deprecated Tenants belong to an instance. Use
+	 *  `withInstance(key).tenants`. Still answers from the runtime. */
+	tenants: CorsairManageNamespace['tenants'];
+	/** @deprecated Use `withInstance(key).access`. Still answers from the
+	 *  runtime. */
+	permissions: CorsairManageNamespace['permissions'];
+};
 
 /**
  * One instance, chosen by its key.
@@ -278,7 +307,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		throw new Error('corsairCloud: apiKey is required');
 	}
 	const slug = projectSlugFromKey(trimmedKey);
-	const baseUrl = config.url?.trim() || (slug && cloudUrlFromKey(trimmedKey));
+	const baseUrl = config.url?.trim() || cloudUrlFromKey(trimmedKey);
 	if (!baseUrl) {
 		throw new Error(
 			'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
@@ -292,10 +321,8 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		timeoutMs: config.timeoutMs,
 	};
 
-	// The management API is addressed by project slug, so a `url` override alone
-	// can't place it: a custom host still needs the slug from the key. An older
-	// flat key can still make per-op calls, so this is deferred to first use
-	// rather than refused at construction.
+	// A `url` override alone can't place the management API, which is addressed
+	// by slug. Deferred to first use so an older flat key still makes op calls.
 	const managementUrl = config.managementUrl?.trim();
 	const v1BaseUrl =
 		managementUrl ?? (slug ? managementUrlFromBase(baseUrl, slug) : null);
@@ -324,8 +351,18 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		return instancesPromise;
 	}
 
+	// The runtime still answers the two deprecated members; dropping them would
+	// have broken callers silently.
+	const runtimeProject = buildCloudManagement(transport);
+	const deprecated = {
+		tenants: runtimeProject.tenants,
+		permissions: runtimeProject.permissions,
+	} as Pick<CorsairCloudManage, 'tenants' | 'permissions'>;
+
 	return {
-		manage: v1 ? buildProjectPlane(v1) : unreachableManagement(),
+		manage: v1
+			? { ...buildProjectPlane(v1), ...deprecated }
+			: unreachableManagement<CorsairCloudManage>(deprecated),
 		withInstance: (name: string): CorsairCloudInstanceHandle<Registry> => {
 			const plane = v1
 				? buildInstancePlane(v1, name)
@@ -359,8 +396,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 				disconnect: runtime.disconnect,
 				createConnectLink: runtime.connect.createLink,
 			};
-			// Spreading the plane would read every property, which the
-			// unreachable-management proxy answers by throwing.
+			// Spreading the stand-in would copy its zero own keys and lose the guard.
 			return v1
 				? { ...plane, ...handle }
 				: unreachableManagement<CorsairCloudInstanceHandle<Registry>>(handle);

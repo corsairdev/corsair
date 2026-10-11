@@ -167,10 +167,19 @@ describe('postgres-js database integration', () => {
 	// And only a local one: DATABASE_URL is routinely a real database, and
 	// dropping a schema in one is not what running the test suite should mean.
 	const local = /^(localhost|127\.0\.0\.1|\[::1\])(:|$)/;
+	// A malformed DATABASE_URL skips rather than throwing: a parse error here
+	// runs at module load and would take the whole suite down with it.
+	const isLocal = (url: string): boolean => {
+		try {
+			return local.test(new URL(url).host);
+		} catch {
+			return false;
+		}
+	};
 	const liveDisabled =
 		truthy(process.env.SKIP_PG_TESTS) ||
 		!truthy(process.env.RUN_PG_TESTS) ||
-		!local.test(new URL(PG_URL || 'http://none').host);
+		!isLocal(PG_URL);
 	const gated = () => (liveDisabled ? it.skip : it);
 
 	// ────────────────────────────────────────────────────────────────────────

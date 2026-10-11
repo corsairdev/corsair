@@ -41,9 +41,20 @@ type V1Envelope = {
 	error?: { code?: unknown; [key: string]: unknown } | string;
 };
 
-/** Builds a `CloudApiError` from a response body. `error` is an object on the
- *  management API and a bare code string on the runtime. */
-export function mapV1Error(status: number, body: unknown): CloudApiError {
+/**
+ * Builds a `CloudApiError` from a response.
+ *
+ * `error` is an object on the management API and a bare code string on the
+ * runtime. The `Request-Id` header is the fallback for `requestId`: a gateway
+ * failure has no envelope to carry it, which is exactly when it is the only
+ * diagnostic there is.
+ */
+export function mapV1Error(
+	status: number,
+	body: unknown,
+	headers?: Headers,
+): CloudApiError {
+	const requestId = headers?.get('request-id')?.trim() || undefined;
 	const envelope = (body ?? {}) as V1Envelope;
 	const err = envelope.error;
 	if (typeof err === 'string') {
@@ -51,13 +62,18 @@ export function mapV1Error(status: number, body: unknown): CloudApiError {
 		return new CloudApiError(status, {
 			code: err,
 			message: typeof message === 'string' ? message : undefined,
+			request_id: requestId,
 		});
 	}
 	if (err && typeof err === 'object' && typeof err.code === 'string') {
-		return new CloudApiError(status, err as { code: string });
+		return new CloudApiError(status, {
+			request_id: requestId,
+			...(err as { code: string }),
+		});
 	}
 	return new CloudApiError(status, {
 		code: status === 0 ? 'request_failed' : 'internal_error',
 		message: `Corsair Cloud returned ${status} with no error body`,
+		request_id: requestId,
 	});
 }

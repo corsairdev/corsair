@@ -1,5 +1,5 @@
 import type { CorsairClient } from '../client';
-import { DB_METHODS, encodeDbArgs } from '../management/db';
+import { DB_METHOD_RISK, decodeDbArgs, encodeDbArgs } from '../management/db';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
@@ -77,7 +77,10 @@ function buildDbProxy(
 					{},
 					{
 						get(_entityTarget, method) {
-							if (typeof method !== 'string' || !DB_METHODS.has(method)) {
+							if (
+								typeof method !== 'string' ||
+								!Object.hasOwn(DB_METHOD_RISK, method)
+							) {
 								return undefined;
 							}
 							return async (...args: unknown[]) => {
@@ -92,7 +95,7 @@ function buildDbProxy(
 										.replace(':method', encodeURIComponent(method)),
 									{ args: encodeDbArgs(args) },
 								);
-								return res.data;
+								return decodeDbArgs(res.data);
 							};
 						},
 					},

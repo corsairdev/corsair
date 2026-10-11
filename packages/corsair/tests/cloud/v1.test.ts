@@ -82,11 +82,16 @@ describe('project plane', () => {
 });
 
 describe('instance plane', () => {
-	it('rejects an instance key that is not a slug', () => {
+	it('rejects an instance key that is not a slug, at either entry point', () => {
 		const { transport } = harness();
-		expect(() => buildInstancePlane(transport, 'App_1')).toThrow(
-			/lowercase slug/,
-		);
+		for (const bad of ['App_1', '1app', 'a'.repeat(33), 'a:b']) {
+			expect(() => buildInstancePlane(transport, bad)).toThrow(
+				/not a valid instance key/,
+			);
+			expect(() =>
+				buildProjectPlane(transport).instances.create({ instance_key: bad }),
+			).toThrow(/not a valid instance key/);
+		}
 	});
 
 	it('assembles instance:tenant for a tenant ref', async () => {
@@ -209,6 +214,85 @@ describe('error mapping', () => {
 			code: 'internal_error',
 			retryable: true,
 		});
+	});
+
+	it('reads the request id from the header when the body has no envelope', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async () =>
+				new Response('<html>bad gateway</html>', {
+					status: 502,
+					headers: { 'request-id': 'req_front_door' },
+				})) as unknown as typeof fetch,
+		};
+		const err = await buildProjectPlane(transport)
+			.keys.get()
+			.catch((e: unknown) => e);
+		expect(err).toMatchObject({
+			status: 502,
+			code: 'internal_error',
+			requestId: 'req_front_door',
+		});
+	});
+
+	it('wraps a failure part-way through the body, not just the response', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async () => ({
+				ok: true,
+				status: 200,
+				headers: new Headers(),
+				text: async () => {
+					throw new Error('socket reset mid-body');
+				},
+			})) as unknown as typeof fetch,
+		};
+		const err = await buildProjectPlane(transport)
+			.keys.get()
+			.catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(CloudApiError);
+		expect(err).toMatchObject({ status: 0, retryable: true });
+	});
+
+	it('does not send the request when the caller signal is already aborted', async () => {
+		const fetchMock = jest.fn();
+		const controller = new AbortController();
+		controller.abort();
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: fetchMock as unknown as typeof fetch,
+		};
+		await buildProjectPlane(transport)
+			.instances.delete('app', { signal: controller.signal })
+			.catch(() => undefined);
+		const [[, init]] = fetchMock.mock.calls as [[string, RequestInit]];
+		expect((init.signal as AbortSignal).aborted).toBe(true);
+	});
+
+	it('aborts a body that stalls past the timeout', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			timeoutMs: 20,
+			fetch: (async (_url: string, init: RequestInit) => ({
+				ok: true,
+				status: 200,
+				headers: new Headers(),
+				text: () =>
+					new Promise((_resolve, reject) => {
+						(init.signal as AbortSignal).addEventListener('abort', () =>
+							reject(new Error('aborted')),
+						);
+					}),
+			})) as unknown as typeof fetch,
+		};
+		const err = await buildProjectPlane(transport)
+			.keys.get()
+			.catch((e: unknown) => e);
+		expect(err).toMatchObject({ status: 0, retryable: true });
 	});
 
 	it('treats a transport failure as retryable', async () => {

@@ -1,5 +1,5 @@
 import type { CloudList, ListQuery, RequestOptions, V1Transport } from './http';
-import { queryString, refPath, v1Request } from './http';
+import { assertInstanceKey, queryString, refPath, v1Request } from './http';
 import type {
 	AuthType,
 	CloudAccess,
@@ -73,8 +73,6 @@ export type CreateWebhookInput = {
 	signing_secret?: string;
 };
 
-const SLUG = /^[a-z][a-z0-9-]*$/;
-
 /** One instance: its tenants, access lines, connections, integrations and
  *  webhooks. The REST surface addresses these by composite ref
  *  (`<instance>:<tenant>`); this assembles them, so callers pass the tail. */
@@ -82,11 +80,7 @@ export function buildInstancePlane(
 	transport: V1Transport,
 	instanceKey: string,
 ) {
-	if (!SLUG.test(instanceKey)) {
-		throw new Error(
-			`withInstance("${instanceKey}"): an instance key is a lowercase slug matching ${SLUG.source}`,
-		);
-	}
+	assertInstanceKey(instanceKey, 'withInstance');
 
 	const req = <T>(
 		method: string,
@@ -109,65 +103,96 @@ export function buildInstancePlane(
 
 		tenants: {
 			/** Every tenant on this instance. */
-			list: (query: ListQuery = {}) =>
+			list: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudTenant>>('GET', `/tenants${scoped(query)}`),
 			/** Fails with `resource_conflict` if the tenant already exists here. */
-			create: (input: CreateTenantInput) =>
-				req<CloudTenant>('POST', '/tenants', {
-					...input,
-					instance: instanceKey,
-				}),
-			get: (tenant: string) =>
-				req<CloudTenant>('GET', refPath('/tenants', ref(tenant))),
-			update: (tenant: string, input: UpdateTenantInput) =>
-				req<CloudTenant>('PATCH', refPath('/tenants', ref(tenant)), input),
+			create: (input: CreateTenantInput, options?: RequestOptions) =>
+				req<CloudTenant>(
+					'POST',
+					'/tenants',
+					{ ...input, instance: instanceKey },
+					options,
+				),
+			get: (tenant: string, options?: RequestOptions) =>
+				req<CloudTenant>(
+					'GET',
+					refPath('/tenants', ref(tenant)),
+					undefined,
+					options,
+				),
+			update: (
+				tenant: string,
+				input: UpdateTenantInput,
+				options?: RequestOptions,
+			) =>
+				req<CloudTenant>(
+					'PATCH',
+					refPath('/tenants', ref(tenant)),
+					input,
+					options,
+				),
 			/** Drops the tenant and its stored credentials. `synced: false` means
 			 *  the deployed runtime has not caught up; reconcile the instance. */
-			delete: (tenant: string) =>
+			delete: (tenant: string, options?: RequestOptions) =>
 				req<CloudDeleted<{ synced: boolean }>>(
 					'DELETE',
 					refPath('/tenants', ref(tenant)),
+					undefined,
+					options,
 				),
 		},
 
 		/** What a tenant may reach through MCP. A link can name a line but never
 		 *  create one, so this is the only way to grant reach. */
 		access: {
-			list: (query: ListQuery = {}) =>
+			list: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudAccess>>('GET', `/access${scoped(query)}`),
-			get: (tenant: string) =>
-				req<CloudAccess>('GET', refPath('/access', ref(tenant))),
+			get: (tenant: string, options?: RequestOptions) =>
+				req<CloudAccess>(
+					'GET',
+					refPath('/access', ref(tenant)),
+					undefined,
+					options,
+				),
 			/** Grants or changes a line. Lowering a permission narrows reach, so
 			 *  check `synced` before treating the narrowing as in force. */
-			set: (tenant: string, input: SetAccessInput) =>
+			set: (tenant: string, input: SetAccessInput, options?: RequestOptions) =>
 				req<CloudAccess & { synced: boolean }>(
 					'PUT',
 					refPath('/access', ref(tenant)),
 					input,
+					options,
 				),
-			revoke: (tenant: string) =>
+			revoke: (tenant: string, options?: RequestOptions) =>
 				req<CloudDeleted<{ synced: boolean }>>(
 					'DELETE',
 					refPath('/access', ref(tenant)),
+					undefined,
+					options,
 				),
 		},
 
 		connections: {
 			list: (
 				query: ListQuery & { tenant?: string; integration?: string } = {},
+				options?: RequestOptions,
 			) =>
 				req<CloudList<CloudConnection>>('GET', `/connections${scoped(query)}`),
-			get: (integration: string, tenant: string) =>
+			get: (integration: string, tenant: string, options?: RequestOptions) =>
 				req<CloudConnection>(
 					'GET',
 					refPath('/connections', ref(integration, tenant)),
+					undefined,
+					options,
 				),
 			/** Drops the stored credential. The grant at the provider stands;
 			 *  revoke it there too if you need it gone. */
-			delete: (integration: string, tenant: string) =>
+			delete: (integration: string, tenant: string, options?: RequestOptions) =>
 				req<CloudDeleted<{ revoked_upstream: false }>>(
 					'DELETE',
 					refPath('/connections', ref(integration, tenant)),
+					undefined,
+					options,
 				),
 		},
 
@@ -187,92 +212,143 @@ export function buildInstancePlane(
 
 		integrations: {
 			/** Every integration configured on this instance. */
-			list: (query: ListQuery = {}) =>
+			list: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudIntegration>>(
 					'GET',
 					`/integrations${scoped(query)}`,
 				),
-			get: (integration: string) =>
+			get: (integration: string, options?: RequestOptions) =>
 				req<CloudIntegration>(
 					'GET',
 					refPath('/integrations', ref(integration)),
+					undefined,
+					options,
 				),
 			/** Adds the integration, or reconfigures it in place. */
-			put: (integration: string, input: PutIntegrationInput) =>
+			put: (
+				integration: string,
+				input: PutIntegrationInput,
+				options?: RequestOptions,
+			) =>
 				req<CloudIntegration>(
 					'PUT',
 					refPath('/integrations', ref(integration)),
 					input,
+					options,
 				),
-			delete: (integration: string) =>
-				req<CloudDeleted>('DELETE', refPath('/integrations', ref(integration))),
+			delete: (integration: string, options?: RequestOptions) =>
+				req<CloudDeleted>(
+					'DELETE',
+					refPath('/integrations', ref(integration)),
+					undefined,
+					options,
+				),
 			/** Your own OAuth app for this integration, in place of Corsair's. */
 			oauthApp: {
-				get: (integration: string) =>
+				get: (integration: string, options?: RequestOptions) =>
 					req<CloudOauthApp>(
 						'GET',
 						`${refPath('/integrations', ref(integration))}/oauth-app`,
+						undefined,
+						options,
 					),
-				put: (integration: string, input: PutOauthAppInput) =>
+				put: (
+					integration: string,
+					input: PutOauthAppInput,
+					options?: RequestOptions,
+				) =>
 					req<CloudOauthApp>(
 						'PUT',
 						`${refPath('/integrations', ref(integration))}/oauth-app`,
 						input,
+						options,
 					),
 			},
 		},
 
 		/** Inbound provider webhooks: one endpoint per integration. */
 		webhooks: {
-			list: (query: ListQuery = {}) =>
+			list: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudWebhook>>('GET', `/webhooks${scoped(query)}`),
 			/** Idempotent by integration: a repeat returns the existing endpoint,
 			 *  and writes `signing_secret` if one is supplied. */
-			create: (input: CreateWebhookInput) =>
-				req<CloudWebhook>('POST', '/webhooks', {
-					...input,
-					instance: instanceKey,
-				}),
-			get: (integration: string) =>
-				req<CloudWebhook>('GET', refPath('/webhooks', ref(integration))),
+			create: (input: CreateWebhookInput, options?: RequestOptions) =>
+				req<CloudWebhook>(
+					'POST',
+					'/webhooks',
+					{ ...input, instance: instanceKey },
+					options,
+				),
+			get: (integration: string, options?: RequestOptions) =>
+				req<CloudWebhook>(
+					'GET',
+					refPath('/webhooks', ref(integration)),
+					undefined,
+					options,
+				),
 			/** Removes the endpoint here. The provider keeps posting until you
 			 *  unsubscribe it there as well. */
-			delete: (integration: string) =>
+			delete: (integration: string, options?: RequestOptions) =>
 				req<CloudDeleted<{ provider_still_sending: true }>>(
 					'DELETE',
 					refPath('/webhooks', ref(integration)),
+					undefined,
+					options,
 				),
 			/** Replaces the provider's signing secret held for this endpoint. */
-			rotateSecret: (integration: string, signingSecret: string) =>
+			rotateSecret: (
+				integration: string,
+				signingSecret: string,
+				options?: RequestOptions,
+			) =>
 				req<CloudWebhook>(
 					'POST',
 					`${refPath('/webhooks', ref(integration))}/rotate-secret`,
 					{ signing_secret: signingSecret },
+					options,
 				),
 			/** The log of what this endpoint received. */
 			deliveries: {
 				list: (
 					integration: string,
 					query: ListQuery & { tenant?: string } = {},
+					options?: RequestOptions,
 				) =>
 					req<CloudList<CloudDelivery>>(
 						'GET',
 						`${deliveries(integration)}${queryString(query)}`,
+						undefined,
+						options,
 					),
-				get: (integration: string, deliveryId: string) =>
+				get: (
+					integration: string,
+					deliveryId: string,
+					options?: RequestOptions,
+				) =>
 					req<CloudDelivery>(
 						'GET',
 						refPath(deliveries(integration), deliveryId),
+						undefined,
+						options,
 					),
 				/** Re-posts the stored event to the instance's current delivery
 				 *  target. Answers 502 if that POST fails. */
-				retry: (integration: string, deliveryId: string) =>
+				retry: (
+					integration: string,
+					deliveryId: string,
+					options?: RequestOptions,
+				) =>
 					req<{
 						object: 'delivery_retry';
 						id: string;
 						delivered: true;
 						error: null;
-					}>('POST', `${refPath(deliveries(integration), deliveryId)}/retry`),
+					}>(
+						'POST',
+						`${refPath(deliveries(integration), deliveryId)}/retry`,
+						undefined,
+						options,
+					),
 			},
 		},
 
@@ -280,7 +356,7 @@ export function buildInstancePlane(
 		 *  hosted runtime verifies them itself; read this only when your own
 		 *  process is the delivery target. */
 		signingSecret: {
-			get: () =>
+			get: (options?: RequestOptions) =>
 				req<CloudSigningSecret>('GET', instancePath('/signing-secret')),
 			/** Hard cutover. Open connect and permission sessions signed with the
 			 *  old secret die; `invalidated` counts them. */
@@ -295,7 +371,7 @@ export function buildInstancePlane(
 
 		/** Pushes the stored config, plugins, keys and memberships into the
 		 *  deployed runtime again. */
-		reconcile: () =>
+		reconcile: (options?: RequestOptions) =>
 			req<{ object: 'instance_reconcile'; id: string; instance: string }>(
 				'POST',
 				instancePath('/reconcile'),

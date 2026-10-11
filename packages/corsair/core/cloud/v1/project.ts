@@ -1,5 +1,5 @@
 import type { CloudList, ListQuery, RequestOptions, V1Transport } from './http';
-import { queryString, refPath, v1Request } from './http';
+import { assertInstanceKey, queryString, refPath, v1Request } from './http';
 import type {
 	CloudCatalogIntegration,
 	CloudDeleted,
@@ -73,12 +73,12 @@ export function buildProjectPlane(transport: V1Transport) {
 		project: {
 			/** The project, with a first page of its instances, tenants, access
 			 *  lines, connections and links embedded. */
-			get: () => req<CloudProject>('GET', '/project'),
+			get: (options?: RequestOptions) => req<CloudProject>('GET', '/project'),
 		},
 
 		keys: {
 			/** The project key. Shown in full; store it, do not log it. */
-			get: () => req<CloudKey>('GET', '/keys'),
+			get: (options?: RequestOptions) => req<CloudKey>('GET', '/keys'),
 			/** Mints a new project key and redeploys every instance with it. The
 			 *  old key is dead on return, so check `failed`. */
 			rotate: (options?: RequestOptions) =>
@@ -87,24 +87,45 @@ export function buildProjectPlane(transport: V1Transport) {
 
 		instances: {
 			/** Every instance in the project. */
-			list: (query: ListQuery = {}) =>
+			list: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudInstance>>('GET', `/instances${queryString(query)}`),
 			/** Idempotent by `instance_key`: a repeat returns the existing row. */
-			create: (input: CreateInstanceInput, options?: RequestOptions) =>
-				req<CloudInstance>('POST', '/instances', input, options),
-			get: (instanceKey: string) =>
-				req<CloudInstance>('GET', refPath('/instances', instanceKey)),
-			update: (instanceKey: string, input: UpdateInstanceInput) =>
-				req<CloudInstance>('PATCH', refPath('/instances', instanceKey), input),
+			create: (input: CreateInstanceInput, options?: RequestOptions) => {
+				assertInstanceKey(input.instance_key, 'instances.create');
+				return req<CloudInstance>('POST', '/instances', input, options);
+			},
+			get: (instanceKey: string, options?: RequestOptions) =>
+				req<CloudInstance>(
+					'GET',
+					refPath('/instances', instanceKey),
+					undefined,
+					options,
+				),
+			update: (
+				instanceKey: string,
+				input: UpdateInstanceInput,
+				options?: RequestOptions,
+			) =>
+				req<CloudInstance>(
+					'PATCH',
+					refPath('/instances', instanceKey),
+					input,
+					options,
+				),
 			/** Permanent. Destroys the instance's data and its tenants' stored
 			 *  credentials. */
-			delete: (instanceKey: string) =>
-				req<CloudDeleted>('DELETE', refPath('/instances', instanceKey)),
+			delete: (instanceKey: string, options?: RequestOptions) =>
+				req<CloudDeleted>(
+					'DELETE',
+					refPath('/instances', instanceKey),
+					undefined,
+					options,
+				),
 		},
 
 		integrations: {
 			/** Every plugin the runtime can host, with its auth types. */
-			catalog: (query: ListQuery = {}) =>
+			catalog: (query: ListQuery = {}, options?: RequestOptions) =>
 				req<CloudList<CloudCatalogIntegration>>(
 					'GET',
 					`/integrations/catalog${queryString(query)}`,
@@ -114,17 +135,29 @@ export function buildProjectPlane(transport: V1Transport) {
 		mcp: {
 			/** An MCP link carries its own URL and names the lines it reaches. */
 			links: {
-				list: (query: ListQuery & { tenant?: string } = {}) =>
+				list: (
+					query: ListQuery & { tenant?: string } = {},
+					options?: RequestOptions,
+				) =>
 					req<CloudList<CloudLink>>('GET', `/mcp/links${queryString(query)}`),
 				/** Mints a link with its own URL. */
 				mint: (input: MintLinkInput, options?: RequestOptions) =>
 					req<CloudLink>('POST', '/mcp/links', input, options),
-				get: (id: string) => req<CloudLink>('GET', refPath('/mcp/links', id)),
-				update: (id: string, input: UpdateLinkInput) =>
-					req<CloudLink>('PATCH', refPath('/mcp/links', id), input),
+				get: (id: string, options?: RequestOptions) =>
+					req<CloudLink>('GET', refPath('/mcp/links', id), undefined, options),
+				update: (
+					id: string,
+					input: UpdateLinkInput,
+					options?: RequestOptions,
+				) => req<CloudLink>('PATCH', refPath('/mcp/links', id), input, options),
 				/** Revokes the link. Its URL stops working immediately. */
-				delete: (id: string) =>
-					req<CloudDeleted>('DELETE', refPath('/mcp/links', id)),
+				delete: (id: string, options?: RequestOptions) =>
+					req<CloudDeleted>(
+						'DELETE',
+						refPath('/mcp/links', id),
+						undefined,
+						options,
+					),
 				/** New URL for the same lines. The old URL is revoked. */
 				rotate: (id: string, options?: RequestOptions) =>
 					req<CloudLink>(
@@ -135,13 +168,13 @@ export function buildProjectPlane(transport: V1Transport) {
 					),
 				/** Mails the link to the address on it. Not deduped, so a retry
 				 *  sends a second mail. */
-				send: (id: string) =>
+				send: (id: string, options?: RequestOptions) =>
 					req<{
 						object: 'mcp_link_send';
 						id: string;
 						email: string;
 						sent: true;
-					}>('POST', `${refPath('/mcp/links', id)}/send`),
+					}>('POST', `${refPath('/mcp/links', id)}/send`, undefined, options),
 			},
 			tokens: {
 				/** Mints a bearer token for the project's shared MCP URL. It

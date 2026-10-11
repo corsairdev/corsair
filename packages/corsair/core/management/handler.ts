@@ -16,9 +16,9 @@ import {
 	callDisabled,
 	listRegisteredOps,
 	resolveCall,
-	resolveTenantClient,
+	withTenantClient,
 } from './call';
-import { callPluginDb, decodeDbArgs } from './db';
+import { callPluginDb, decodeDbArgs, encodeDbArgs } from './db';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
 	completeOAuthCallback,
@@ -86,10 +86,11 @@ export type ManagementHandlerOptions = {
 	 */
 	resolveTenant?: (req: Request) => string | null | Promise<string | null>;
 	/**
-	 * Enables the tool-call route `POST /:tenant/:plugin/call/:op` (and `GET
-	 * /call`). Off by default: the route trusts the `tenant` in the URL, so it is
-	 * only safe when the developer's own backend fronts this handler and owns
-	 * access control. The name is deliberately loud.
+	 * Enables the tool-call route `POST /:tenant/:plugin/call/:op`, `GET /call`
+	 * and the entity-store route `POST /:tenant/:plugin/db/:entityType/:method`.
+	 * Off by default: they trust the `tenant` in the URL, so they are only safe
+	 * when the developer's own backend fronts this handler and owns access
+	 * control. The name is deliberately loud.
 	 */
 	unsafeAllowUnauthenticated?: boolean;
 	/**
@@ -344,20 +345,32 @@ const ROUTES: Route[] = [
 			scopedTenant,
 			allowCall,
 		}) => {
-			if (!allowCall) throw callDisabled();
+			if (!allowCall) throw callDisabled('/db');
+			// Entity clients carry no permission wrapper, so this reaches tenant
+			// rows with no policy in front of it. Server mode only, like the other
+			// admin routes — an end-user handler must not expose it to a browser.
+			assertAdminRouteAllowed(scopedTenant);
 			const input = (body ?? {}) as { args?: unknown[] };
 			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
-			const { client } = resolveTenantClient(corsair, internal, tenant);
-			const data = await callPluginDb(
-				client,
-				{
-					plugin: params.plugin!,
-					entityType: params.entityType!,
-					method: params.method!,
-				},
-				(decodeDbArgs(input.args ?? []) as unknown[]) ?? [],
+			const args = (decodeDbArgs(input.args ?? []) as unknown[]) ?? [];
+			const data = await withTenantClient(
+				corsair,
+				internal,
+				{ plugin: params.plugin!, tenant },
+				(client) =>
+					callPluginDb(
+						client,
+						{
+							plugin: params.plugin!,
+							entityType: params.entityType!,
+							method: params.method!,
+						},
+						args,
+					),
 			);
-			return json(200, { data });
+			// Encoded on the way out too: a Date read back as a string and fed to
+			// search() would be dropped as a filter, not rejected.
+			return json(200, { data: encodeDbArgs(data) });
 		},
 	},
 	{

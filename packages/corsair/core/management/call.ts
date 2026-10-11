@@ -27,11 +27,11 @@ const unknownOp = (plugin: string, op: string) =>
 		'unknown_op',
 		`Operation '${op}' not found on plugin '${plugin}'.`,
 	);
-export const callDisabled = () =>
+export const callDisabled = (route = '/call') =>
 	new ManagementApiError(
 		403,
 		'call_disabled',
-		'The /call route is disabled. Construct managementHandler with { unsafeAllowUnauthenticated: true } to enable it — only when your own backend fronts the handler.',
+		`The ${route} route is disabled. Construct managementHandler with { unsafeAllowUnauthenticated: true } to enable it — only when your own backend fronts the handler.`,
 	);
 const notConnected = (plugin: string) =>
 	new ManagementApiError(
@@ -204,30 +204,38 @@ export function listRegisteredOps(
 	return out;
 }
 
-export async function resolveCall(
+/**
+ * Runs `fn` against a tenant-scoped client, with the guards every route that
+ * reaches plugin code needs.
+ *
+ * Shared so the op route and the entity-store route cannot drift apart: the
+ * plugin must be registered, the tenant is marked busy for the whole call
+ * (which spans the credential refresh inside `fn`) so the LRU cannot evict its
+ * client mid-flight, and anything thrown becomes a ManagementApiError rather
+ * than a raw 500.
+ */
+export async function withTenantClient<T>(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
-	{ plugin, op, tenant, args }: ResolveCallInput,
-): Promise<unknown> {
-	if (!internal.plugins.some((p) => p.id === plugin))
-		throw unknownPlugin(plugin);
-	const { client, tenantId } = resolveTenantClient(corsair, internal, tenant);
-	const pluginNs = (client as Record<string, unknown>)[plugin] as
-		| { api?: unknown }
-		| undefined;
-	const fn = walkToBoundFn(pluginNs?.api, op);
-	if (!fn) throw unknownOp(plugin, op);
-	// Mark the tenant busy for the op's lifetime (which spans the credential
-	// refresh inside fn) so the LRU can't evict its client mid-flight.
+	input: { plugin: string; tenant?: string },
+	fn: (client: unknown) => Promise<T> | T,
+): Promise<T> {
+	if (!internal.plugins.some((p) => p.id === input.plugin))
+		throw unknownPlugin(input.plugin);
+	const { client, tenantId } = resolveTenantClient(
+		corsair,
+		internal,
+		input.tenant,
+	);
 	const inFlight = tenantId
 		? mapFor(inFlightByCorsair, corsair as object)
 		: null;
 	if (inFlight && tenantId)
 		inFlight.set(tenantId, (inFlight.get(tenantId) ?? 0) + 1);
 	try {
-		return await fn(args ?? {});
+		return await fn(client);
 	} catch (err) {
-		throw normalizeCallError(err, plugin);
+		throw normalizeCallError(err, input.plugin);
 	} finally {
 		if (inFlight && tenantId) {
 			const n = (inFlight.get(tenantId) ?? 1) - 1;
@@ -235,4 +243,19 @@ export async function resolveCall(
 			else inFlight.set(tenantId, n);
 		}
 	}
+}
+
+export async function resolveCall(
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	{ plugin, op, tenant, args }: ResolveCallInput,
+): Promise<unknown> {
+	return withTenantClient(corsair, internal, { plugin, tenant }, (client) => {
+		const pluginNs = (client as Record<string, unknown>)[plugin] as
+			| { api?: unknown }
+			| undefined;
+		const fn = walkToBoundFn(pluginNs?.api, op);
+		if (!fn) throw unknownOp(plugin, op);
+		return fn(args ?? {});
+	});
 }

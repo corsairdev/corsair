@@ -1,47 +1,59 @@
+import { assertReadonlyAllowed } from '../permissions';
+import type { EndpointRiskLevel } from '../plugins';
 import { ManagementApiError } from './errors';
 
 /**
- * The entity-client methods reachable over HTTP.
+ * The entity-client methods reachable over HTTP, each with the risk level the
+ * readonly guard judges it by.
  *
  * An allowlist rather than a property lookup: `db[entity][method]` with an
  * attacker-supplied method would otherwise reach `constructor` and every other
  * inherited property.
  */
-export const DB_METHODS = new Set([
-	'findByEntityId',
-	'existsByEntityId',
-	'findIdByEntityId',
-	'findById',
-	'findManyByEntityIds',
-	'list',
-	'search',
-	'upsertByEntityId',
-	'deleteById',
-	'deleteByEntityId',
-	'count',
-]);
+export const DB_METHOD_RISK: Record<string, EndpointRiskLevel> = {
+	findByEntityId: 'read',
+	existsByEntityId: 'read',
+	findIdByEntityId: 'read',
+	findById: 'read',
+	findManyByEntityIds: 'read',
+	list: 'read',
+	search: 'read',
+	count: 'read',
+	upsertByEntityId: 'write',
+	deleteById: 'destructive',
+	deleteByEntityId: 'destructive',
+};
 
 type DateMarker = { $date: string };
+type EscapedMarker = { $$date: string };
 
-function isDateMarker(value: unknown): value is DateMarker {
+function soleKey(value: unknown, key: string): boolean {
 	return (
 		typeof value === 'object' &&
 		value !== null &&
-		typeof (value as DateMarker).$date === 'string' &&
-		Object.keys(value).length === 1
+		!Array.isArray(value) &&
+		Object.keys(value).length === 1 &&
+		typeof (value as Record<string, unknown>)[key] === 'string'
 	);
 }
 
 /**
  * Wraps every `Date` as `{ $date }` so it survives JSON.
  *
- * `search`'s date filters are gated on `instanceof Date`, so a plain ISO
- * string is not a near miss — it is dropped, and the query comes back
- * unfiltered. The marker is explicit so no string is revived by accident.
+ * `search`'s date filters are matched on an actual Date, so a plain ISO string
+ * is not a near miss — it is dropped, and the query comes back unfiltered. A
+ * payload that already looks like a marker is escaped to `{ $$date }`, so
+ * stored data shaped like one is never read back as a Date.
  */
 export function encodeDbArgs(args: unknown): unknown {
 	if (args instanceof Date) return { $date: args.toISOString() };
 	if (Array.isArray(args)) return args.map(encodeDbArgs);
+	if (soleKey(args, '$date')) {
+		return { $$date: (args as DateMarker).$date };
+	}
+	if (soleKey(args, '$$date')) {
+		return { $$$date: (args as EscapedMarker).$$date };
+	}
 	if (args && typeof args === 'object') {
 		return Object.fromEntries(
 			Object.entries(args).map(([k, v]) => [k, encodeDbArgs(v)]),
@@ -51,7 +63,13 @@ export function encodeDbArgs(args: unknown): unknown {
 }
 
 export function decodeDbArgs(args: unknown): unknown {
-	if (isDateMarker(args)) return new Date(args.$date);
+	if (soleKey(args, '$date')) return new Date((args as DateMarker).$date);
+	if (soleKey(args, '$$date')) {
+		return { $date: (args as EscapedMarker).$$date };
+	}
+	if (soleKey(args, '$$$date')) {
+		return { $$date: (args as Record<string, string>).$$$date! };
+	}
 	if (Array.isArray(args)) return args.map(decodeDbArgs);
 	if (args && typeof args === 'object') {
 		return Object.fromEntries(
@@ -69,13 +87,23 @@ export async function callPluginDb(
 	route: { plugin: string; entityType: string; method: string },
 	args: unknown[],
 ): Promise<unknown> {
-	if (!DB_METHODS.has(route.method)) {
+	const risk = Object.hasOwn(DB_METHOD_RISK, route.method)
+		? DB_METHOD_RISK[route.method]
+		: undefined;
+	if (!risk) {
 		throw new ManagementApiError(
 			404,
 			'unknown_db_method',
-			`Unknown db method "${route.method}" — expected one of ${[...DB_METHODS].join(', ')}`,
+			`Unknown db method "${route.method}" — expected one of ${Object.keys(DB_METHOD_RISK).join(', ')}`,
 		);
 	}
+	// The same guard the endpoint binding layer applies, so a runReadonly()
+	// scope binds the entity store too. Entity clients carry no permission
+	// wrapper of their own.
+	assertReadonlyAllowed(
+		`${route.plugin}.db.${route.entityType}.${route.method}`,
+		risk,
+	);
 	const plugin = (client as Record<string, unknown> | undefined)?.[
 		route.plugin
 	];

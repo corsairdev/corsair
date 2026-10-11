@@ -1,4 +1,4 @@
-import { mapV1Error } from './errors';
+import { CloudApiError, mapV1Error } from './errors';
 
 export type V1Transport = {
 	/** `https://api.corsair.cloud/v1/projects/<slug>`. Paths append to it. */
@@ -40,6 +40,23 @@ export type ListQuery = {
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 
+const INSTANCE_KEY = /^[a-z][a-z0-9-]{0,31}$/;
+
+/**
+ * The instance-key rule, stated once.
+ *
+ * The key is the head of every composite ref, so a colon or an uppercase
+ * letter in it would make a ref ambiguous or unaddressable. `context` names
+ * the caller in the error.
+ */
+export function assertInstanceKey(key: string, context: string): void {
+	if (!INSTANCE_KEY.test(key)) {
+		throw new Error(
+			`${context}: "${key}" is not a valid instance key — lowercase letter first, then letters, digits or hyphens, up to 32 characters.`,
+		);
+	}
+}
+
 export function queryString(
 	params: Record<string, string | number | undefined>,
 ): string {
@@ -65,8 +82,13 @@ export async function v1Request<T>(
 ): Promise<T> {
 	const doFetch = transport.fetch ?? globalThis.fetch;
 	const controller = new AbortController();
+	// A signal that is already aborted never fires its event, so without this
+	// the request would be sent after the caller had cancelled.
+	if (options.signal?.aborted) controller.abort();
 	const onAbort = () => controller.abort();
 	options.signal?.addEventListener('abort', onAbort, { once: true });
+	// Covers reading the body as well as the response: a server that answers
+	// and then stalls mid-stream would otherwise hang with no deadline.
 	const timer = setTimeout(
 		() => controller.abort(),
 		transport.timeoutMs ?? DEFAULT_TIMEOUT_MS,
@@ -82,17 +104,34 @@ export async function v1Request<T>(
 	}
 	if (options.requestId) headers['x-corsair-request-id'] = options.requestId;
 
-	let res: Response;
 	try {
-		res = await doFetch(`${transport.baseUrl}${path}`, {
+		const res = await doFetch(`${transport.baseUrl}${path}`, {
 			method,
 			headers,
 			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: controller.signal,
 		});
+
+		const text = await res.text();
+		let parsed: unknown;
+		try {
+			parsed = text ? JSON.parse(text) : undefined;
+		} catch {
+			parsed = undefined;
+		}
+
+		if (!res.ok) throw mapV1Error(res.status, parsed, res.headers);
+		// A 204 carries no body by contract; anything else empty is a fault.
+		if (parsed === undefined && res.status !== 204) {
+			throw mapV1Error(res.status, undefined, res.headers);
+		}
+		return parsed as T;
 	} catch (err) {
-		// A caller's own abort is theirs to see; anything else is status 0.
+		// A caller's own abort is theirs to see; everything else — a timeout, a
+		// reset mid-body, a DNS failure — never reached a committed state, which
+		// is what status 0 says.
 		if (options.signal?.aborted) throw err;
+		if (err instanceof CloudApiError) throw err;
 		throw mapV1Error(0, {
 			error: {
 				code: 'request_failed',
@@ -103,18 +142,4 @@ export async function v1Request<T>(
 		clearTimeout(timer);
 		options.signal?.removeEventListener('abort', onAbort);
 	}
-
-	const text = await res.text();
-	let parsed: unknown;
-	try {
-		parsed = text ? JSON.parse(text) : undefined;
-	} catch {
-		parsed = undefined;
-	}
-
-	if (!res.ok) throw mapV1Error(res.status, parsed);
-	if (parsed === undefined) {
-		throw mapV1Error(res.status, undefined);
-	}
-	return parsed as T;
 }

@@ -1,10 +1,12 @@
 import type { CorsairInternalConfig } from '../core';
+import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { managementHandler } from '../core/management';
 import {
 	callPluginDb,
 	decodeDbArgs,
 	encodeDbArgs,
 } from '../core/management/db';
+import { runReadonly } from '../core/permissions';
 
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
@@ -40,6 +42,22 @@ describe('encodeDbArgs / decodeDbArgs', () => {
 			$date: '2026-01-01',
 			tz: 'UTC',
 		});
+	});
+
+	it('round-trips user data that is itself shaped like the marker', () => {
+		for (const payload of [
+			{ meta: { $date: 'Q3' } },
+			{ meta: { $date: '2026-01-01' } },
+			{ meta: { $$date: 'already escaped' } },
+		]) {
+			const wire = JSON.parse(JSON.stringify(encodeDbArgs(payload)));
+			expect(decodeDbArgs(wire)).toEqual(payload);
+		}
+	});
+
+	it('does not pollute the prototype through a crafted key', () => {
+		decodeDbArgs(JSON.parse('{"__proto__":{"polluted":true}}'));
+		expect(({} as Record<string, unknown>).polluted).toBeUndefined();
 	});
 });
 
@@ -87,6 +105,42 @@ describe('callPluginDb', () => {
 			),
 		).rejects.toMatchObject({ status: 404, code: 'unknown_plugin' });
 	});
+
+	it('allows a read inside a readonly scope', async () => {
+		await expect(
+			runReadonly(() =>
+				callPluginDb(
+					client,
+					{ plugin: 'slack', entityType: 'channels', method: 'count' },
+					[],
+				),
+			),
+		).resolves.toBe(7);
+	});
+
+	it('refuses a write and a delete inside a readonly scope', async () => {
+		const writing = {
+			slack: {
+				db: {
+					channels: {
+						upsertByEntityId: async () => ({ id: 'x' }),
+						deleteByEntityId: async () => true,
+					},
+				},
+			},
+		};
+		for (const method of ['upsertByEntityId', 'deleteByEntityId']) {
+			await expect(
+				runReadonly(() =>
+					callPluginDb(
+						writing,
+						{ plugin: 'slack', entityType: 'channels', method },
+						['C1'],
+					),
+				),
+			).rejects.toThrow(/readonly|read-only/i);
+		}
+	});
 });
 
 describe('management handler db route', () => {
@@ -128,6 +182,70 @@ describe('management handler db route', () => {
 			data: { created_at: { after: unknown } };
 		};
 		expect(filter.data.created_at.after).toBeInstanceOf(Date);
+	});
+
+	it('is off in end-user mode, where a browser could reach it', async () => {
+		const count = jest.fn(async () => 1);
+		const handler = managementHandler(
+			fakeCorsair(() => ({ slack: { db: { channels: { count } } } })),
+			{ authenticate: () => true, resolveTenant: () => 'acme' },
+		);
+		const res = await post(handler, '/acme/slack/db/channels/count', {});
+		expect(res.status).toBe(403);
+		expect(count).not.toHaveBeenCalled();
+	});
+
+	it('404s an unregistered plugin before touching the client', async () => {
+		const handler = managementHandler(
+			fakeCorsair(() => ({ nope: { db: { x: { count: async () => 1 } } } })),
+			{ authenticate: () => true },
+		);
+		const res = await post(handler, '/acme/nope/db/x/count', {});
+		expect(res.status).toBe(404);
+	});
+
+	it('answers 401 not_connected rather than 500 for an unconnected tenant', async () => {
+		const handler = managementHandler(
+			fakeCorsair(() => ({
+				slack: {
+					db: {
+						channels: {
+							count: async () => {
+								throw new AuthMissingError('slack');
+							},
+						},
+					},
+				},
+			})),
+			{ authenticate: () => true },
+		);
+		const res = await post(handler, '/acme/slack/db/channels/count', {});
+		expect(res.status).toBe(401);
+		await expect(res.json()).resolves.toMatchObject({ error: 'not_connected' });
+	});
+
+	it('encodes a Date in the response so the client gets a Date back', async () => {
+		const handler = managementHandler(
+			fakeCorsair(() => ({
+				slack: {
+					db: {
+						channels: {
+							findByEntityId: async () => ({
+								entityId: 'C1',
+								createdAt: new Date(0),
+							}),
+						},
+					},
+				},
+			})),
+			{ authenticate: () => true },
+		);
+		const res = await post(handler, '/acme/slack/db/channels/findByEntityId', {
+			args: ['C1'],
+		});
+		await expect(res.json()).resolves.toEqual({
+			data: { entityId: 'C1', createdAt: { $date: new Date(0).toISOString() } },
+		});
 	});
 
 	it('is off when calls are disabled', async () => {
