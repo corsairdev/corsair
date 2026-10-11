@@ -345,10 +345,15 @@ export type {
 export type {
 	CorsairCloudConfig,
 	CorsairCloudInstance,
+	CorsairCloudInstanceHandle,
+	CorsairCloudManage,
 	CorsairCloudRegistry,
 } from './cloud';
 // Cloud surface (corsairCloud)
 export { corsairCloud } from './cloud';
+export type * from './cloud/v1';
+// Corsair Cloud management API: error type and wire shapes
+export { CloudApiError } from './cloud/v1';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';

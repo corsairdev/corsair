@@ -460,18 +460,41 @@ describe('corsairCloud', () => {
 		expect(url).toBe('https://vm/users/connection-status?tenantId=acme');
 	});
 
-	it('exposes project-scoped tenants on manage', async () => {
-		jest
-			.spyOn(globalThis, 'fetch')
-			.mockResolvedValue(
-				new Response(JSON.stringify([{ id: 'acme' }]), { status: 200 }),
-			);
+	it('refuses management for a key that carries no project slug', () => {
 		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
-		await corsair.manage.tenants.list();
-		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/tenants');
+		expect(() => corsair.manage.project.get()).toThrow(/managementUrl/);
+		expect(() => corsair.withInstance('app').tenants.list()).toThrow(
+			/managementUrl/,
+		);
+	});
+
+	it('still routes per-op calls for a key that carries no project slug', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(
+					JSON.stringify({
+						instances: [{ instanceKey: 'app', url: 'https://vm/app' }],
+					}),
+					{ status: 200 },
+				),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ data: 'ok' }), { status: 200 }),
+			);
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+			fetch: fetchMock as unknown as typeof fetch,
+		});
+		await (
+			corsair.withInstance('app').withTenant('acme') as any
+		).slack.api.ok();
+		expect(fetchMock.mock.calls[1][0]).toBe(
+			'https://vm/app/acme/slack/call/ok',
+		);
 	});
 });
