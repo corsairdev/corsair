@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Users } from './endpoints';
 import type {
 	WakaTimeEndpointInputs,
@@ -125,7 +126,10 @@ export function wakatime<const T extends WakaTimePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('wakatime', 'api_key');
+				}
+				return res;
 			}
 
 			return '';

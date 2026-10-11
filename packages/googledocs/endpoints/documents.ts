@@ -3,7 +3,10 @@ import {
 	countWords,
 	DOCS_API_BASE,
 	DRIVE_API_BASE,
+	documentGetQuery,
 	extractPlainText,
+	findTab,
+	listTabSummaries,
 	makeAuthenticatedGoogleRequest,
 	runBatchUpdate,
 	summarizeStructure,
@@ -81,6 +84,36 @@ function documentEndIndex(document: Document): number {
 	const content = document.body?.content ?? [];
 	const last = content[content.length - 1];
 	return last?.endIndex ?? 1;
+}
+
+function wantsTabContent(input: {
+	includeTabsContent?: boolean;
+	tabId?: string;
+	tabTitle?: string;
+	tabIndex?: number;
+}): boolean {
+	return Boolean(
+		input.includeTabsContent ||
+			input.tabId ||
+			input.tabTitle ||
+			input.tabIndex !== undefined,
+	);
+}
+
+async function fetchDocumentResource(
+	ctx: Parameters<GoogleDocsEndpoints['getDocument']>[0],
+	documentId: string,
+	options?: { includeTabsContent?: boolean },
+): Promise<Document> {
+	return makeAuthenticatedGoogleRequest<Document>(
+		DOCS_API_BASE,
+		`/documents/${documentId}`,
+		ctx,
+		{
+			method: 'GET',
+			query: documentGetQuery(options),
+		},
+	);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -197,9 +230,9 @@ export const getDocument: GoogleDocsEndpoints['getDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const document = await makeAuthenticatedGoogleRequest<
-		GoogleDocsEndpointOutputs['getDocument']
-	>(DOCS_API_BASE, `/documents/${input.documentId}`, ctx, { method: 'GET' });
+	const document = await fetchDocumentResource(ctx, input.documentId, {
+		includeTabsContent: input.includeTabsContent,
+	});
 
 	await persistDocument(ctx, document);
 	await logEventFromContext(
@@ -213,16 +246,41 @@ export const getDocument: GoogleDocsEndpoints['getDocument'] = async (
 
 export const getDocumentPlaintext: GoogleDocsEndpoints['getDocumentPlaintext'] =
 	async (ctx, input) => {
-		const document = await makeAuthenticatedGoogleRequest<
-			GoogleDocsEndpointOutputs['getDocument']
-		>(DOCS_API_BASE, `/documents/${input.documentId}`, ctx, { method: 'GET' });
+		const targetingTab =
+			Boolean(input.tabId) ||
+			Boolean(input.tabTitle) ||
+			input.tabIndex !== undefined;
+		const includeTabsContent = wantsTabContent(input);
+		const document = await fetchDocumentResource(ctx, input.documentId, {
+			includeTabsContent,
+		});
 
-		const text = extractPlainText(document);
+		const text = extractPlainText(document, {
+			tabId: input.tabId,
+			tabTitle: input.tabTitle,
+			tabIndex: input.tabIndex,
+			allTabs: includeTabsContent && !targetingTab,
+		});
+
+		let tabId: string | undefined = input.tabId;
+		let tabTitle: string | undefined;
+		if (targetingTab) {
+			const tab = findTab(document, {
+				tabId: input.tabId,
+				tabTitle: input.tabTitle,
+				tabIndex: input.tabIndex,
+			});
+			tabId = tab?.tabProperties?.tabId ?? input.tabId;
+			tabTitle = tab?.tabProperties?.title;
+		}
+
 		const result = {
 			documentId: input.documentId,
 			title: document.title,
 			text,
 			wordCount: countWords(text),
+			...(tabId ? { tabId } : {}),
+			...(tabTitle ? { tabTitle } : {}),
 		};
 
 		await persistDocument(ctx, document);
@@ -234,6 +292,29 @@ export const getDocumentPlaintext: GoogleDocsEndpoints['getDocumentPlaintext'] =
 		);
 		return result;
 	};
+
+export const listDocumentTabs: GoogleDocsEndpoints['listDocumentTabs'] = async (
+	ctx,
+	input,
+) => {
+	const document = await fetchDocumentResource(ctx, input.documentId, {
+		includeTabsContent: true,
+	});
+
+	const result = {
+		documentId: input.documentId,
+		title: document.title,
+		tabs: listTabSummaries(document),
+	};
+
+	await logEventFromContext(
+		ctx,
+		'googledocs.documents.listDocumentTabs',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
 
 export const updateDocumentMarkdown: GoogleDocsEndpoints['updateDocumentMarkdown'] =
 	async (ctx, input) => {
@@ -478,6 +559,7 @@ export const DocumentsEndpoints = {
 	copyDocument,
 	getDocument,
 	getDocumentPlaintext,
+	listDocumentTabs,
 	updateDocumentMarkdown,
 	updateDocumentSectionMarkdown,
 	updateDocumentStyle,
