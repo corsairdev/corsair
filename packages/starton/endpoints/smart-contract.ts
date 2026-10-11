@@ -83,6 +83,32 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 };
 
 /**
+ * List the smart contracts deployed or imported in the project. Paginated via
+ * `page`/`limit`; filterable by `network` and `address`.
+ *
+ * API: GET /v3/smart-contract -> { items, meta }
+ */
+export const list: StartonEndpoints['smartContractList'] = async (
+	ctx,
+	input,
+) => {
+	const query = StartonEndpointInputSchemas.smartContractList.parse(input);
+	const response = await makeStartonRequest<unknown>(
+		'v3/smart-contract',
+		ctx.key,
+		{ method: 'GET', query },
+	);
+	const page = StartonEndpointOutputSchemas.smartContractList.parse(response);
+	await logEventFromContext(
+		ctx,
+		'starton.smartContract.list',
+		{ count: page.items.length },
+		'completed',
+	);
+	return page;
+};
+
+/**
  * Call a read-only (view) function on a deployed contract. Returns the decoded
  * value immediately; nothing is broadcast and no gas is spent.
  *

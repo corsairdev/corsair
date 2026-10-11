@@ -16,7 +16,9 @@ export const StartonSchema = {
 export {
 	StartonCustomGas,
 	StartonPaginationMeta,
+	StartonPin,
 	StartonSmartContract,
+	StartonSmartContractTemplate,
 	StartonSmartContractUI,
 	StartonSpeed,
 	StartonTransaction,
@@ -24,4 +26,8 @@ export {
 	StartonTransactionState,
 	StartonTransactionStatus,
 	StartonWallet,
+	StartonWatcher,
+	StartonWatcherType,
+	StartonWebhook,
+	StartonWebhookStatus,
 } from './database';

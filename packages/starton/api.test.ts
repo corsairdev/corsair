@@ -1,7 +1,15 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { encodeStartonPathSegment, makeStartonRequest } from './client';
-import { SmartContract, Transaction, Wallet } from './endpoints';
+import {
+	Ipfs,
+	SmartContract,
+	Template,
+	Transaction,
+	Wallet,
+	Watcher,
+	Webhook,
+} from './endpoints';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -26,6 +34,7 @@ type CapturedRequest = {
 	method: string;
 	headers: Record<string, string>;
 	body: string | undefined;
+	formData: FormData | undefined;
 };
 
 let captured: CapturedRequest | undefined;
@@ -48,6 +57,7 @@ beforeEach(() => {
 			method: init?.method ?? 'GET',
 			headers,
 			body: typeof init?.body === 'string' ? init.body : undefined,
+			formData: init?.body instanceof FormData ? init.body : undefined,
 		};
 		return new Response(JSON.stringify(nextResponseBody), {
 			status: nextResponseStatus,
@@ -335,6 +345,220 @@ describe('endpoint request wiring', () => {
 		);
 		expect(res.status).toBe('CONFIRMED');
 	});
+
+	const pageMeta = {
+		itemCount: 1,
+		itemsPerPage: 100,
+		currentPage: 0,
+	};
+
+	it('SmartContract.list -> GET /v3/smart-contract with filters', async () => {
+		nextResponseBody = {
+			items: [
+				{
+					id: 'sc_1',
+					name: 'Token',
+					network: 'polygon-amoy',
+					address: '0xc0ffee',
+					status: 'CONFIRMED',
+					state: 'SUCCESS',
+					projectId: 'p',
+					createdAt: 'x',
+					updatedAt: 'x',
+				},
+			],
+			meta: pageMeta,
+		};
+		const res = await SmartContract.list(ctx, {
+			network: 'polygon-amoy',
+			limit: 10,
+			includeAbi: true,
+		});
+
+		expect(captured?.method).toBe('GET');
+		const url = new URL(captured?.url ?? '');
+		expect(url.origin + url.pathname).toBe(
+			'https://api.starton.com/v3/smart-contract',
+		);
+		expect(Object.fromEntries(url.searchParams)).toEqual({
+			network: 'polygon-amoy',
+			limit: '10',
+			includeAbi: 'true',
+		});
+		expect(res.items[0]?.address).toBe('0xc0ffee');
+	});
+
+	it('Template.list -> GET /v3/smart-contract-template with filters', async () => {
+		nextResponseBody = {
+			items: [
+				{
+					id: 'ERC20_META_TRANSACTION',
+					name: 'ERC20 Fungible Token',
+					description: 'd',
+					shortDescription: 's',
+					githubUrl: 'https://github.com/starton-io',
+					blockchains: ['ethereum'],
+					tags: ['token'],
+					category: 'FUNGIBLE',
+					humanReadableAbi: ['function name() view returns (string)'],
+					abi: [{ type: 'function', name: 'name' }],
+					isAudited: true,
+					isActivated: true,
+					order: 1,
+					createdAt: 'x',
+					updatedAt: 'x',
+				},
+			],
+			meta: pageMeta,
+		};
+		const res = await Template.list(ctx, {
+			category: 'FUNGIBLE',
+			isAudited: true,
+		});
+
+		expect(captured?.method).toBe('GET');
+		const url = new URL(captured?.url ?? '');
+		expect(url.origin + url.pathname).toBe(
+			'https://api.starton.com/v3/smart-contract-template',
+		);
+		expect(Object.fromEntries(url.searchParams)).toEqual({
+			category: 'FUNGIBLE',
+			isAudited: 'true',
+		});
+		expect(res.items[0]?.id).toBe('ERC20_META_TRANSACTION');
+	});
+
+	it('Template.list rejects a category outside the spec enum', async () => {
+		await expect(
+			Template.list(ctx, {
+				category: 'TOKEN',
+			} as unknown as Parameters<typeof Template.list>[1]),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
+
+	const watcherBody = {
+		id: 'wat_1',
+		address: '0xc0ffee',
+		network: 'polygon-amoy',
+		projectId: 'p',
+		type: 'EVENT_TRANSFER',
+		triggerType: 'EVENT',
+		webhookUrl: 'https://example.com/hook',
+		confirmationsBlocks: 12,
+		paused: false,
+		createdAt: 'x',
+		updatedAt: 'x',
+	};
+
+	it('Watcher.get -> GET /v3/watcher/{id}', async () => {
+		nextResponseBody = watcherBody;
+		const res = await Watcher.get(ctx, { id: 'wat_1' });
+
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe('https://api.starton.com/v3/watcher/wat_1');
+		expect(res.webhookUrl).toBe('https://example.com/hook');
+		expect(res.type).toBe('EVENT_TRANSFER');
+	});
+
+	it('Watcher.delete -> DELETE /v3/watcher/{id}', async () => {
+		nextResponseBody = 1;
+		const res = await Watcher.delete(ctx, { id: 'wat_1' });
+
+		expect(captured?.method).toBe('DELETE');
+		expect(captured?.url).toBe('https://api.starton.com/v3/watcher/wat_1');
+		expect(captured?.body).toBeUndefined();
+		expect(res).toBe(1);
+	});
+
+	it('Watcher.delete percent-encodes the id and rejects traversal', async () => {
+		nextResponseBody = 1;
+		await Watcher.delete(ctx, { id: 'a/b' });
+		expect(captured?.url).toBe('https://api.starton.com/v3/watcher/a%2Fb');
+		await expect(Watcher.delete(ctx, { id: '..' })).rejects.toThrow(
+			'Invalid path segment',
+		);
+	});
+
+	it('Webhook.list -> GET /v3/webhook with status filter', async () => {
+		nextResponseBody = {
+			items: [
+				{
+					id: 'whk_1',
+					refId: 'wat_1',
+					status: 'SUCCESSFUL',
+					payload: { event: 'transfer' },
+					url: 'https://example.com/hook',
+					headers: null,
+					attempts: [{ status: 200 }],
+					projectId: 'p',
+					createdAt: 'x',
+					updatedAt: 'x',
+				},
+			],
+			meta: pageMeta,
+		};
+		const res = await Webhook.list(ctx, { status: 'SUCCESSFUL', page: 1 });
+
+		expect(captured?.method).toBe('GET');
+		const url = new URL(captured?.url ?? '');
+		expect(url.origin + url.pathname).toBe(
+			'https://api.starton.com/v3/webhook',
+		);
+		expect(Object.fromEntries(url.searchParams)).toEqual({
+			status: 'SUCCESSFUL',
+			page: '1',
+		});
+		expect(res.items[0]?.refId).toBe('wat_1');
+	});
+
+	it('Ipfs.uploadFile -> POST /v3/ipfs/file as multipart with file and metadata', async () => {
+		nextResponseBody = {
+			id: 'pin_1',
+			name: 'hello.txt',
+			cid: 'QmHash',
+			status: 'pinned',
+			projectId: 'p',
+			createdAt: 'x',
+			updatedAt: 'x',
+		};
+		const res = await Ipfs.uploadFile(ctx, {
+			content: Buffer.from('hello world').toString('base64'),
+			filename: 'hello.txt',
+			contentType: 'text/plain',
+			metadata: { purpose: 'test' },
+		});
+
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe('https://api.starton.com/v3/ipfs/file');
+		expect(captured?.headers['content-type']).toBeUndefined();
+		const file = captured?.formData?.get('file');
+		expect(file).toBeInstanceOf(File);
+		expect((file as File).name).toBe('hello.txt');
+		expect((file as File).type).toBe('text/plain');
+		expect(await (file as File).text()).toBe('hello world');
+		expect(captured?.formData?.get('metadata')).toBe('{"purpose":"test"}');
+		expect(res.cid).toBe('QmHash');
+	});
+
+	it('Ipfs.uploadFile omits metadata when none is given', async () => {
+		nextResponseBody = {
+			id: 'pin_2',
+			status: 'queued',
+			projectId: 'p',
+			createdAt: 'x',
+			updatedAt: 'x',
+		};
+		await Ipfs.uploadFile(ctx, {
+			content: Buffer.from('x').toString('base64'),
+			filename: 'x.bin',
+		});
+
+		expect(captured?.formData?.has('metadata')).toBe(false);
+		expect((captured?.formData?.get('file') as File).type).toBe(
+			'application/octet-stream',
+		);
+	});
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -344,15 +568,21 @@ describe('endpoint request wiring', () => {
 describe('schema coverage', () => {
 	const schemaKeys = Object.keys(startonEndpointSchemas);
 
-	it('declares 6 endpoints', () => {
-		expect(schemaKeys).toHaveLength(6);
+	it('declares 12 endpoints', () => {
+		expect(schemaKeys).toHaveLength(12);
 		expect(schemaKeys.sort()).toEqual([
+			'ipfs.uploadFile',
 			'smartContract.call',
 			'smartContract.deployFromTemplate',
+			'smartContract.list',
 			'smartContract.read',
+			'template.list',
 			'transaction.get',
 			'wallet.create',
 			'wallet.list',
+			'watcher.delete',
+			'watcher.get',
+			'webhook.list',
 		]);
 	});
 
@@ -540,9 +770,13 @@ describe('starton() plugin', () => {
 		const plugin = starton({ key: 'test-starton-api-key' });
 		expect(plugin.id).toBe('starton');
 		expect(Object.keys(plugin.endpoints ?? {}).sort()).toEqual([
+			'ipfs',
 			'smartContract',
+			'template',
 			'transaction',
 			'wallet',
+			'watcher',
+			'webhook',
 		]);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(
 			Object.keys(startonEndpointSchemas).sort(),
@@ -582,6 +816,12 @@ describe('starton() plugin', () => {
 		expect(meta['smartContract.call']?.riskLevel).toBe('write');
 		expect(meta['smartContract.read']?.riskLevel).toBe('read');
 		expect(meta['transaction.get']?.riskLevel).toBe('read');
+		expect(meta['smartContract.list']?.riskLevel).toBe('read');
+		expect(meta['template.list']?.riskLevel).toBe('read');
+		expect(meta['watcher.get']?.riskLevel).toBe('read');
+		expect(meta['webhook.list']?.riskLevel).toBe('read');
+		expect(meta['watcher.delete']?.riskLevel).toBe('destructive');
+		expect(meta['ipfs.uploadFile']?.riskLevel).toBe('write');
 	});
 });
 
@@ -1149,13 +1389,23 @@ describe('idempotency classification', () => {
 		}
 
 		expect(declared.filter(isNonIdempotentOperation).sort()).toEqual([
+			'ipfs.uploadFile',
 			'smartContract.call',
 			'smartContract.deployFromTemplate',
 			'wallet.create',
+			'watcher.delete',
 		]);
 		expect(
 			declared.filter((op) => !isNonIdempotentOperation(op)).sort(),
-		).toEqual(['smartContract.read', 'transaction.get', 'wallet.list']);
+		).toEqual([
+			'smartContract.list',
+			'smartContract.read',
+			'template.list',
+			'transaction.get',
+			'wallet.list',
+			'watcher.get',
+			'webhook.list',
+		]);
 	});
 });
 

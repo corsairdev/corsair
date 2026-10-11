@@ -12,7 +12,15 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { SmartContract, Transaction, Wallet } from './endpoints';
+import {
+	Ipfs,
+	SmartContract,
+	Template,
+	Transaction,
+	Wallet,
+	Watcher,
+	Webhook,
+} from './endpoints';
 import type {
 	StartonEndpointInputs,
 	StartonEndpointOutputs,
@@ -63,9 +71,23 @@ const startonEndpointsNested = {
 		deployFromTemplate: SmartContract.deployFromTemplate,
 		call: SmartContract.call,
 		read: SmartContract.read,
+		list: SmartContract.list,
+	},
+	template: {
+		list: Template.list,
 	},
 	transaction: {
 		get: Transaction.get,
+	},
+	watcher: {
+		get: Watcher.get,
+		delete: Watcher.delete,
+	},
+	webhook: {
+		list: Webhook.list,
+	},
+	ipfs: {
+		uploadFile: Ipfs.uploadFile,
 	},
 } as const;
 
@@ -90,9 +112,33 @@ export const startonEndpointSchemas = {
 		input: StartonEndpointInputSchemas.smartContractRead,
 		output: StartonEndpointOutputSchemas.smartContractRead,
 	},
+	'smartContract.list': {
+		input: StartonEndpointInputSchemas.smartContractList,
+		output: StartonEndpointOutputSchemas.smartContractList,
+	},
+	'template.list': {
+		input: StartonEndpointInputSchemas.templateList,
+		output: StartonEndpointOutputSchemas.templateList,
+	},
 	'transaction.get': {
 		input: StartonEndpointInputSchemas.transactionGet,
 		output: StartonEndpointOutputSchemas.transactionGet,
+	},
+	'watcher.get': {
+		input: StartonEndpointInputSchemas.watcherGet,
+		output: StartonEndpointOutputSchemas.watcherGet,
+	},
+	'watcher.delete': {
+		input: StartonEndpointInputSchemas.watcherDelete,
+		output: StartonEndpointOutputSchemas.watcherDelete,
+	},
+	'webhook.list': {
+		input: StartonEndpointInputSchemas.webhookList,
+		output: StartonEndpointOutputSchemas.webhookList,
+	},
+	'ipfs.uploadFile': {
+		input: StartonEndpointInputSchemas.ipfsUploadFile,
+		output: StartonEndpointOutputSchemas.ipfsUploadFile,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof startonEndpointsNested
@@ -124,9 +170,34 @@ const startonEndpointMeta = {
 		description:
 			'Call a read-only function on a deployed smart contract without broadcasting a transaction',
 	},
+	'smartContract.list': {
+		riskLevel: 'read',
+		description: 'List the smart contracts in the project (paginated)',
+	},
+	'template.list': {
+		riskLevel: 'read',
+		description: 'List the Starton Library smart contract templates',
+	},
 	'transaction.get': {
 		riskLevel: 'read',
 		description: 'Retrieve a blockchain transaction by its Starton id',
+	},
+	'watcher.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a blockchain event watcher by its id',
+	},
+	'watcher.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a blockchain event watcher by its id',
+	},
+	'webhook.list': {
+		riskLevel: 'read',
+		description: 'List the webhook deliveries sent by watchers (paginated)',
+	},
+	'ipfs.uploadFile': {
+		riskLevel: 'write',
+		description: "Upload a file to the project's IPFS storage and pin it",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof startonEndpointsNested>;
 
@@ -185,8 +256,12 @@ export type {
 	StartonEndpointOutputs,
 } from './endpoints/types';
 export type {
+	StartonPin,
 	StartonSmartContract,
+	StartonSmartContractTemplate,
 	StartonSmartContractUI,
 	StartonTransaction,
 	StartonWallet,
+	StartonWatcher,
+	StartonWebhook,
 } from './schema/database';

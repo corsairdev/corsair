@@ -62,6 +62,8 @@ const NO_AUTOMATIC_REPLAY: RateLimitConfig = {
 export type StartonRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: unknown;
+	/** Sent as multipart/form-data instead of a JSON body. */
+	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**
 	 * Whether this request may be re-sent automatically after a 429.
@@ -80,7 +82,7 @@ export async function makeStartonRequest<T>(
 	apiKey: string,
 	options: StartonRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, formData, query } = options;
 	// Fail closed: anything that is not a GET is treated as a write unless the
 	// caller has explicitly established that replaying it is harmless.
 	const replayable = options.replayable ?? method === 'GET';
@@ -101,6 +103,7 @@ export async function makeStartonRequest<T>(
 		url: endpoint,
 		query,
 		body: hasBody ? body : undefined,
+		formData,
 		mediaType: hasBody ? 'application/json; charset=utf-8' : undefined,
 	};
 

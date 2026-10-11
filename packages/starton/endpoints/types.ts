@@ -2,11 +2,16 @@ import { z } from 'zod';
 import {
 	StartonCustomGas,
 	StartonPaginationMeta,
+	StartonPin,
 	StartonSmartContract,
+	StartonSmartContractTemplate,
 	StartonSmartContractUI,
 	StartonSpeed,
 	StartonTransaction,
 	StartonWallet,
+	StartonWatcher,
+	StartonWebhook,
+	StartonWebhookStatus,
 } from '../schema/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -278,6 +283,131 @@ const TransactionGetInputSchema = z.object({
 export type TransactionGetInput = z.infer<typeof TransactionGetInputSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Paginated list endpoints — GET /v3/smart-contract,
+// GET /v3/smart-contract-template, GET /v3/webhook
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Official: the `page` / `limit` query parameters every v3 list route takes. */
+const PaginationInputSchema = z.object({
+	page: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe(
+			'Number of returned page. By default the returned page is the first.',
+		),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(2500)
+		.optional()
+		.describe(
+			'Number of entities returned on each page. Defaults to 100, maximum 2500.',
+		),
+});
+
+const paginated = <T extends z.ZodType>(item: T) =>
+	z.object({ items: z.array(item), meta: StartonPaginationMeta });
+
+/** Official: GET /v3/smart-contract query parameters. */
+const SmartContractListInputSchema = PaginationInputSchema.extend({
+	network: z
+		.string()
+		.optional()
+		.describe('Filter by network, e.g. `polygon-amoy`.'),
+	address: z.string().optional().describe('Filter by contract address.'),
+	includeAbi: z
+		.boolean()
+		.optional()
+		.describe('Include each contract ABI in the response.'),
+	includeCompilationDetails: z
+		.boolean()
+		.optional()
+		.describe('Include each contract compilation details in the response.'),
+});
+export type SmartContractListInput = z.infer<
+	typeof SmartContractListInputSchema
+>;
+
+/** Official: GET /v3/smart-contract-template query parameters. */
+const TemplateListInputSchema = PaginationInputSchema.extend({
+	isAudited: z
+		.boolean()
+		.optional()
+		.describe('Only return templates audited by Starton.'),
+	isActivated: z
+		.boolean()
+		.optional()
+		.describe('Only return activated (deployable) templates.'),
+	/** Spec pattern: `^[\w\-\s]+$` — the API rejects other characters with a 400. */
+	name: z
+		.string()
+		.regex(/^[\w\-\s]+$/)
+		.optional()
+		.describe(
+			'Filter by template name. Letters, digits, -, _ and spaces only.',
+		),
+	blockchain: z
+		.string()
+		.optional()
+		.describe('Filter by supported blockchain, e.g. `ethereum`.'),
+	category: StartonSmartContractTemplate.shape.category
+		.optional()
+		.describe('Filter by template category.'),
+	includeCompilationDetails: z
+		.boolean()
+		.optional()
+		.describe('Include each template compilation details.'),
+	includeForm: z
+		.boolean()
+		.optional()
+		.describe('Include each template deployment form definition.'),
+});
+export type TemplateListInput = z.infer<typeof TemplateListInputSchema>;
+
+/** Official: GET /v3/webhook query parameters. */
+const WebhookListInputSchema = PaginationInputSchema.extend({
+	status: StartonWebhookStatus.optional().describe(
+		'Filter by delivery status.',
+	),
+});
+export type WebhookListInput = z.infer<typeof WebhookListInputSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Watcher — GET/DELETE /v3/watcher/{id}
+// ─────────────────────────────────────────────────────────────────────────────
+
+const WatcherIdInputSchema = z.object({
+	id: z.string().describe('Starton watcher id.'),
+});
+export type WatcherIdInput = z.infer<typeof WatcherIdInputSchema>;
+
+/** Official: DELETE /v3/watcher/{id} returns a bare number (rows deleted). */
+const WatcherDeleteResponseSchema = z.number();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IPFS — POST /v3/ipfs/file (multipart/form-data)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const IpfsUploadFileInputSchema = z.object({
+	content: z.string().min(1).describe('File contents, base64-encoded.'),
+	filename: z
+		.string()
+		.min(1)
+		.describe('File name stored on the pin, e.g. `metadata.json`.'),
+	contentType: z
+		.string()
+		.optional()
+		.describe('MIME type of the file. Defaults to application/octet-stream.'),
+	metadata: JsonObject.optional().describe(
+		'Arbitrary JSON stored alongside the pin.',
+	),
+});
+export type IpfsUploadFileInput = z.infer<typeof IpfsUploadFileInputSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Endpoint schema maps
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -287,7 +417,13 @@ export const StartonEndpointInputSchemas = {
 	smartContractDeployFromTemplate: SmartContractDeployFromTemplateInputSchema,
 	smartContractCall: SmartContractCallInputSchema,
 	smartContractRead: SmartContractReadInputSchema,
+	smartContractList: SmartContractListInputSchema,
+	templateList: TemplateListInputSchema,
 	transactionGet: TransactionGetInputSchema,
+	watcherGet: WatcherIdInputSchema,
+	watcherDelete: WatcherIdInputSchema,
+	webhookList: WebhookListInputSchema,
+	ipfsUploadFile: IpfsUploadFileInputSchema,
 } as const;
 
 export const StartonEndpointOutputSchemas = {
@@ -297,7 +433,13 @@ export const StartonEndpointOutputSchemas = {
 		SmartContractDeployFromTemplateResponseSchema,
 	smartContractCall: StartonTransaction,
 	smartContractRead: SmartContractReadResponseSchema,
+	smartContractList: paginated(StartonSmartContract),
+	templateList: paginated(StartonSmartContractTemplate),
 	transactionGet: StartonTransaction,
+	watcherGet: StartonWatcher,
+	watcherDelete: WatcherDeleteResponseSchema,
+	webhookList: paginated(StartonWebhook),
+	ipfsUploadFile: StartonPin,
 } as const;
 
 export type StartonEndpointInputs = {

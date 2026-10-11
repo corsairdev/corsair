@@ -1,13 +1,13 @@
 ---
 title: Overview
-description: "Starton plugin for Corsair — blockchain wallets, smart contract deployment/calls and transaction status"
+description: "Web3 backend for deploying and calling smart contracts, managing wallets, watching blockchain events, and pinning files to IPFS."
 ---
 
 Use **Starton** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
-- 6 typed API operations
+- 12 typed API operations
 - 3 synced entities (`smartContracts`, `transactions`, `wallets`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -89,30 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`smartContract.read`**
+**List smart contracts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.starton.api.smartContract.read({
-  network: 'polygon-mumbai',
-  address: '0x1111111111111111111111111111111111111111',
-  functionName: 'balanceOf',
-  params: ['0x2222222222222222222222222222222222222222']
-});
+await tenant.starton.api.smartContract.list({});
 ```
 
 
-**`smartContract.call`**
+**Upload a file to IPFS**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.starton.api.smartContract.call({
-  network: 'polygon-mumbai',
-  address: '0x1111111111111111111111111111111111111111',
-  functionName: 'transfer',
-  params: ['0x2222222222222222222222222222222222222222', '1000000000000000000'],
-  signerWallet: '0x3333333333333333333333333333333333333333'
-});
+await tenant.starton.api.ipfs.uploadFile({ content: 'aGVsbG8gd29ybGQ=', filename: 'hello.txt', contentType: 'text/plain' });
 ```
 
 

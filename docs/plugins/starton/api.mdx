@@ -9,6 +9,81 @@ Every `starton.api.*` operation is listed below with parameter shapes and return
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Ipfs
+
+### uploadFile
+
+`ipfs.uploadFile`
+
+Upload a file to the project's IPFS storage and pin it
+
+**Risk:** `write`
+
+```ts
+await corsair.starton.api.ipfs.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | File contents, base64-encoded. |
+| `filename` | `string` | Yes | File name stored on the pin, e.g. `metadata.json`. |
+| `contentType` | `string` | No | MIME type of the file. Defaults to application/octet-stream. |
+| `metadata` | `object` | No | Arbitrary JSON stored alongside the pin. |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `cid` | `string` | No | — |
+| `origins` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `status` | `queued \| pinning \| pinned \| failed \| deleted` | Yes | — |
+| `delegates` | `string[]` | No | — |
+| `size` | `number` | No | — |
+| `type` | `directory \| file` | No | — |
+| `directoryContent` | `object[]` | No | — |
+| `projectId` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="directoryContent full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Smart Contract
 
 ### call
@@ -20,13 +95,7 @@ Execute a state-changing function on a deployed smart contract
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.smartContract.call({
-  network: 'polygon-mumbai',
-  address: '0x1111111111111111111111111111111111111111',
-  functionName: 'transfer',
-  params: ['0x2222222222222222222222222222222222222222', '1000000000000000000'],
-  signerWallet: '0x3333333333333333333333333333333333333333'
-});
+await corsair.starton.api.smartContract.call({});
 ```
 
 **Input**
@@ -142,13 +211,7 @@ Deploy a smart contract from a Starton-audited template (e.g. ERC20, ERC721)
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.smartContract.deployFromTemplate({
-  network: 'polygon-mumbai',
-  signerWallet: '0x3333333333333333333333333333333333333333',
-  templateId: 'ERC20_META_TRANSACTION',
-  name: 'MyToken',
-  params: ['MyToken', 'MTK', '1000000000000000000000']
-});
+await corsair.starton.api.smartContract.deployFromTemplate({});
 ```
 
 **Input**
@@ -311,6 +374,93 @@ await corsair.starton.api.smartContract.deployFromTemplate({
 
 ---
 
+### list
+
+`smartContract.list`
+
+List the smart contracts in the project (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.smartContract.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Number of returned page. By default the returned page is the first. |
+| `limit` | `number` | No | Number of entities returned on each page. Defaults to 100, maximum 2500. |
+| `network` | `string` | No | Filter by network, e.g. `polygon-amoy`. |
+| `address` | `string` | No | Filter by contract address. |
+| `includeAbi` | `boolean` | No | Include each contract ABI in the response. |
+| `includeCompilationDetails` | `boolean` | No | Include each contract compilation details in the response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  network: string,
+  abi?: {
+  }[],
+  address: string,
+  params?: string[] | null,
+  compilationDetails?: {
+  } | null,
+  creationHash?: string | null,
+  status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+  state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
+  minedDate?: string | null,
+  blockNumber?: number | null,
+  templateId?: string | null,
+  projectId: string,
+  metadata?: {
+  } | null,
+  uiData?: {
+    version: 1,
+    deployMethod: web3 | kms,
+    imported: boolean,
+    deployType?: string,
+    chainId?: number
+  } | null,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  itemCount: number,
+  totalItems?: number,
+  itemsPerPage: number,
+  totalPages?: number,
+  currentPage: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### read
 
 `smartContract.read`
@@ -320,12 +470,7 @@ Call a read-only function on a deployed smart contract without broadcasting a tr
 **Risk:** `read`
 
 ```ts
-await corsair.starton.api.smartContract.read({
-  network: 'polygon-mumbai',
-  address: '0x1111111111111111111111111111111111111111',
-  functionName: 'balanceOf',
-  params: ['0x2222222222222222222222222222222222222222']
-});
+await corsair.starton.api.smartContract.read({});
 ```
 
 **Input**
@@ -385,6 +530,90 @@ string | number | boolean | {
 
 ---
 
+## Template
+
+### list
+
+`template.list`
+
+List the Starton Library smart contract templates
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.template.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Number of returned page. By default the returned page is the first. |
+| `limit` | `number` | No | Number of entities returned on each page. Defaults to 100, maximum 2500. |
+| `isAudited` | `boolean` | No | Only return templates audited by Starton. |
+| `isActivated` | `boolean` | No | Only return activated (deployable) templates. |
+| `name` | `string` | No | Filter by template name. Letters, digits, -, _ and spaces only. |
+| `blockchain` | `string` | No | Filter by supported blockchain, e.g. `ethereum`. |
+| `category` | `NFT \| FUNGIBLE \| OTHER \| DEPRECATED \| SALE \| TOOL` | No | Filter by template category. |
+| `includeCompilationDetails` | `boolean` | No | Include each template compilation details. |
+| `includeForm` | `boolean` | No | Include each template deployment form definition. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description: string,
+  shortDescription: string,
+  githubUrl: string,
+  blockchains: string[],
+  tags: string[],
+  category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL,
+  humanReadableAbi: string[],
+  abi: {
+  }[],
+  form?: {
+  } | null,
+  compilationDetails?: {
+  } | null,
+  isAudited: boolean,
+  isActivated: boolean,
+  order: number,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  itemCount: number,
+  totalItems?: number,
+  itemsPerPage: number,
+  totalPages?: number,
+  currentPage: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Transaction
 
 ### get
@@ -396,9 +625,7 @@ Retrieve a blockchain transaction by its Starton id
 **Risk:** `read`
 
 ```ts
-await corsair.starton.api.transaction.get({
-  id: 'tx_1234567890'
-});
+await corsair.starton.api.transaction.get({});
 ```
 
 **Input**
@@ -483,9 +710,7 @@ Create a new KMS-managed blockchain wallet for the project
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.wallet.create({
-  kmsId: 'kms_1234567890'
-});
+await corsair.starton.api.wallet.create({});
 ```
 
 **Input**
@@ -603,3 +828,174 @@ await corsair.starton.api.wallet.list({});
 
 
 ---
+
+## Watcher
+
+### delete
+
+`watcher.delete`
+
+Delete a blockchain event watcher by its id
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.starton.api.watcher.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Starton watcher id. |
+
+
+
+**Output:** `number`
+
+
+---
+
+### get
+
+`watcher.get`
+
+Retrieve a blockchain event watcher by its id
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.watcher.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Starton watcher id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `address` | `string` | Yes | — |
+| `network` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `type` | `MINED_TRANSACTION \| ADDRESS_ACTIVITY \| ADDRESS_RECEIVED_NATIVE_CURRENCY \| ADDRESS_SENT_NATIVE_CURRENCY \| EVENT_TRANSFER \| ERC721_EVENT_TRANSFER \| ERC1155_EVENT_TRANSFER_SINGLE \| ERC1155_EVENT_TRANSFER_BATCH \| EVENT_MINT \| EVENT_APPROVAL \| EVENT_CUSTOM` | Yes | — |
+| `customEventAbi` | `object[]` | No | — |
+| `triggerType` | `BLOCK \| TRANSACTION \| EVENT \| GAS_PRICE` | Yes | — |
+| `webhookUrl` | `string` | Yes | — |
+| `confirmationsBlocks` | `number` | Yes | — |
+| `paused` | `boolean` | Yes | — |
+| `pausedReason` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `customFilters` | `object` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customEventAbi full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="customFilters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook
+
+### list
+
+`webhook.list`
+
+List the webhook deliveries sent by watchers (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.webhook.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Number of returned page. By default the returned page is the first. |
+| `limit` | `number` | No | Number of entities returned on each page. Defaults to 100, maximum 2500. |
+| `status` | `RETRYING \| SUCCESSFUL \| FAILED \| CANCELED` | No | Filter by delivery status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  refId: string,
+  status: RETRYING | SUCCESSFUL | FAILED | CANCELED,
+  payload?: {
+  } | null,
+  url: string,
+  headers?: {
+  } | null,
+  attempts: {
+  }[],
+  projectId: string,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  itemCount: number,
+  totalItems?: number,
+  itemsPerPage: number,
+  totalPages?: number,
+  currentPage: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

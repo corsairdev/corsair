@@ -208,3 +208,138 @@ export const StartonPaginationMeta = z
 	})
 	.loose();
 export type StartonPaginationMeta = z.infer<typeof StartonPaginationMeta>;
+
+/**
+ * Starton Library smart contract template.
+ * Official: GET /v3/smart-contract-template (components.schemas.SmartContractTemplate)
+ */
+export const StartonSmartContractTemplate = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		description: z.string(),
+		shortDescription: z.string(),
+		githubUrl: z.string(),
+		blockchains: z.array(z.string()),
+		tags: z.array(z.string()),
+		category: z.enum([
+			'NFT',
+			'FUNGIBLE',
+			'OTHER',
+			'DEPRECATED',
+			'SALE',
+			'TOOL',
+		]),
+		humanReadableAbi: z.array(z.string()),
+		abi: z.array(z.record(z.string(), z.unknown())),
+		form: z.record(z.string(), z.unknown()).nullable().optional(),
+		compilationDetails: z.record(z.string(), z.unknown()).nullable().optional(),
+		isAudited: z.boolean(),
+		isActivated: z.boolean(),
+		order: z.number(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.loose();
+export type StartonSmartContractTemplate = z.infer<
+	typeof StartonSmartContractTemplate
+>;
+
+export const StartonWatcherType = z.enum([
+	'MINED_TRANSACTION',
+	'ADDRESS_ACTIVITY',
+	'ADDRESS_RECEIVED_NATIVE_CURRENCY',
+	'ADDRESS_SENT_NATIVE_CURRENCY',
+	'EVENT_TRANSFER',
+	'ERC721_EVENT_TRANSFER',
+	'ERC1155_EVENT_TRANSFER_SINGLE',
+	'ERC1155_EVENT_TRANSFER_BATCH',
+	'EVENT_MINT',
+	'EVENT_APPROVAL',
+	'EVENT_CUSTOM',
+]);
+export type StartonWatcherType = z.infer<typeof StartonWatcherType>;
+
+/**
+ * Blockchain event watcher that posts matching events to a webhook URL.
+ * Official: GET /v3/watcher/{id} (components.schemas.Watcher)
+ */
+export const StartonWatcher = z
+	.object({
+		id: z.string(),
+		name: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		address: z.string(),
+		network: z.string(),
+		projectId: z.string(),
+		type: StartonWatcherType,
+		customEventAbi: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+		triggerType: z.enum(['BLOCK', 'TRANSACTION', 'EVENT', 'GAS_PRICE']),
+		webhookUrl: z.string(),
+		confirmationsBlocks: z.number(),
+		paused: z.boolean(),
+		pausedReason: z.string().nullable().optional(),
+		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		customFilters: z.record(z.string(), z.unknown()).optional(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.loose();
+export type StartonWatcher = z.infer<typeof StartonWatcher>;
+
+export const StartonWebhookStatus = z.enum([
+	'RETRYING',
+	'SUCCESSFUL',
+	'FAILED',
+	'CANCELED',
+]);
+export type StartonWebhookStatus = z.infer<typeof StartonWebhookStatus>;
+
+/**
+ * A webhook delivery Starton sent, or is retrying, to a watcher's URL.
+ * Official: GET /v3/webhook (components.schemas.Webhook)
+ */
+export const StartonWebhook = z
+	.object({
+		id: z.string(),
+		refId: z.string(),
+		status: StartonWebhookStatus,
+		payload: z.record(z.string(), z.unknown()).nullable(),
+		url: z.string(),
+		headers: z.record(z.string(), z.unknown()).nullable(),
+		attempts: z.array(z.record(z.string(), z.unknown())),
+		projectId: z.string(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.loose();
+export type StartonWebhook = z.infer<typeof StartonWebhook>;
+
+/**
+ * IPFS pin created by an upload.
+ * Official: POST /v3/ipfs/file (components.schemas.Pin)
+ */
+export const StartonPin = z
+	.object({
+		id: z.string(),
+		name: z.string().nullable().optional(),
+		cid: z.string().nullable().optional(),
+		origins: z.array(z.string()).nullable().optional(),
+		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		status: z.enum(['queued', 'pinning', 'pinned', 'failed', 'deleted']),
+		delegates: z.array(z.string()).nullable().optional(),
+		size: z.number().nullable().optional(),
+		type: z.enum(['directory', 'file']).nullable().optional(),
+		directoryContent: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+		projectId: z.string(),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.loose();
+export type StartonPin = z.infer<typeof StartonPin>;

@@ -30,6 +30,11 @@ export const NON_IDEMPOTENT_OPERATIONS = new Set([
 	// POST /v3/smart-contract/{network}/{address}/call — broadcasts a
 	// state-changing transaction and can transfer value.
 	'smartContract.call',
+	// POST /v3/ipfs/file — creates a new pin each time it succeeds.
+	'ipfs.uploadFile',
+	// DELETE /v3/watcher/{id} — a replay after a successful delete returns a
+	// 404 that would mask the success, so it is surfaced instead.
+	'watcher.delete',
 ]);
 
 /**
@@ -57,6 +62,14 @@ export const RETRY_SAFE_OPERATIONS = new Set([
 	'wallet.list',
 	// GET /v3/transaction/{id}
 	'transaction.get',
+	// GET /v3/smart-contract
+	'smartContract.list',
+	// GET /v3/smart-contract-template
+	'template.list',
+	// GET /v3/watcher/{id}
+	'watcher.get',
+	// GET /v3/webhook
+	'webhook.list',
 	// POST /v3/smart-contract/{network}/{address}/read — a POST only because
 	// Starton takes the call arguments in a body; it broadcasts nothing.
 	'smartContract.read',
