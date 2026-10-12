@@ -15,6 +15,7 @@ const CreateDomainListFileInputSchema = z.object({
 
 const ListsApiGetListOutputSchema = z.looseObject({
 	NextOffset: z.string().optional(),
+	// List rows have provider-defined shapes; passed through untouched, never read by field.
 	Results: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
@@ -23,6 +24,7 @@ const McpApiLookupOutputSchema = z.array(
 		Domain: z.string().optional(),
 		Category: z.string().optional(),
 		Description: z.string().optional(),
+		// Endpoint descriptors are provider-defined JSON; passed through untouched.
 		Endpoints: z.array(z.record(z.string(), z.unknown())).optional(),
 	}),
 );

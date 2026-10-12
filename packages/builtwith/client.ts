@@ -18,6 +18,7 @@ export async function makeBuiltWithRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Request bodies are arbitrary JSON per endpoint; they are only serialized with JSON.stringify.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

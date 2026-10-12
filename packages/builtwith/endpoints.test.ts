@@ -42,7 +42,7 @@ function makeCtx(key = 'test-builtwith-key') {
 beforeEach(() => {
 	mockLogEvent.mockClear();
 	requests = [];
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	global.fetch = (async (url: string | URL, init?: RequestInit) => {
 		const headers = Object.fromEntries(new Headers(init?.headers));
 
 		requests.push({
