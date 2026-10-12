@@ -36,8 +36,6 @@ import { AnthropicAdministratorSchema } from './schema';
 export type AnthropicAdministratorPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	/** Standard Anthropic API key (`sk-ant-api…`) for Messages and Models endpoints. */
-	inferenceKey?: string;
 	hooks?: InternalAnthropicAdministratorPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<
@@ -349,7 +347,7 @@ export type ExternalAnthropicAdministratorPlugin<
  *
  * Admin operations require an Admin API key (`sk-ant-admin…`) or an OAuth
  * token with the `org:admin` scope. Messages and Models use a standard API key
- * (`sk-ant-api…`) from the tenant `inference_key` or `options.inferenceKey`.
+ * (`sk-ant-api…`) from the tenant `inference_key` account field.
  */
 export function anthropicadministrator<
 	const T extends AnthropicAdministratorPluginOptions,
@@ -396,8 +394,7 @@ export function anthropicadministrator<
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const admin = await ctx.keys.get_api_key();
 				if (admin) return admin;
-				const inference =
-					(await ctx.keys.get_inference_key()) ?? options.inferenceKey;
+				const inference = await ctx.keys.get_inference_key();
 				if (inference) return inference;
 				throw new AuthMissingError('anthropicadministrator', 'api_key');
 			}
@@ -405,8 +402,7 @@ export function anthropicadministrator<
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const admin = await ctx.keys.get_access_token();
 				if (admin) return admin;
-				const inference =
-					(await ctx.keys.get_inference_key()) ?? options.inferenceKey;
+				const inference = await ctx.keys.get_inference_key();
 				if (inference) return inference;
 				throw new AuthMissingError('anthropicadministrator', 'oauth_2');
 			}

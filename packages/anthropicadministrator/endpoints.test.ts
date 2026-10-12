@@ -464,32 +464,14 @@ describe('credentials', () => {
 		expect(headers.get('authorization')).toBeNull();
 	});
 
-	it('prefers the tenant inference key over the factory option', async () => {
-		const fetchMock = stubFetch(jsonResponse(200, MODEL));
-		const { ctx } = makeContext({
-			tenantInference: 'sk-ant-api03-tenant',
-			optionsInference: 'sk-ant-api03-factory',
-		});
+	it('refuses Models without a tenant inference key', async () => {
+		const fetchMock = stubFetch();
+		const { ctx } = makeContext({ tenantInference: null });
 
-		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
-
-		expect(sentRequest(fetchMock).headers.get('x-api-key')).toBe(
-			'sk-ant-api03-tenant',
-		);
-	});
-
-	it('falls back to the factory inference key', async () => {
-		const fetchMock = stubFetch(jsonResponse(200, MODEL));
-		const { ctx } = makeContext({
-			tenantInference: null,
-			optionsInference: 'sk-ant-api03-factory',
-		});
-
-		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
-
-		expect(sentRequest(fetchMock).headers.get('x-api-key')).toBe(
-			'sk-ant-api03-factory',
-		);
+		await expect(
+			api.models.getModel(ctx, { model_id: 'claude-opus-5' }),
+		).rejects.toThrow(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('refuses an Admin call without an Admin credential', async () => {

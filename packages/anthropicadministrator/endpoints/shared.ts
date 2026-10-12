@@ -44,8 +44,6 @@ export async function resolveInferenceKey(
 ): Promise<string> {
 	const fromTenant = ctx.keys ? await ctx.keys.get_inference_key() : null;
 	if (fromTenant) return fromTenant;
-	const key = ctx.options?.inferenceKey;
-	if (key) return key;
 	throw new AuthMissingError(
 		'anthropicadministrator',
 		'api_key',

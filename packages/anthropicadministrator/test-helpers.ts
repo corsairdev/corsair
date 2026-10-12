@@ -10,7 +10,6 @@ export const INFERENCE_KEY = 'sk-ant-api03-test';
 type ContextOptions = {
 	admin?: string | null;
 	tenantInference?: string | null;
-	optionsInference?: string;
 	authType?: 'api_key' | 'oauth_2';
 	withDb?: boolean;
 };
@@ -26,7 +25,6 @@ export type CacheWrite =
 export function makeContext({
 	admin = ADMIN_KEY,
 	tenantInference = INFERENCE_KEY,
-	optionsInference,
 	authType = 'api_key',
 	withDb = true,
 }: ContextOptions = {}) {
@@ -43,7 +41,7 @@ export function makeContext({
 	});
 	const context = {
 		key: '',
-		options: { authType, inferenceKey: optionsInference },
+		options: { authType },
 		keys: {
 			get_api_key: async () => admin,
 			get_access_token: async () => admin,
