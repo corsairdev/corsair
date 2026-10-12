@@ -12,6 +12,7 @@ const db = {
 };
 
 /** A context with a connected key, as the account-scoped routes require. */
+// Partial mock context; `never` skips the full plugin context type (test only).
 const ctx = {
 	key: 'updown-test-key',
 	options: {},
@@ -20,6 +21,7 @@ const ctx = {
 } as never;
 
 /** A context with no key, valid for the public node routes. */
+// Partial mock context; `never` skips the full plugin context type (test only).
 const publicCtx = {
 	key: '',
 	options: {},
@@ -27,6 +29,7 @@ const publicCtx = {
 	$getAccountId: async () => 'test-account',
 } as never;
 
+// Test helper: any JSON-serializable value is a valid mock response body.
 function json(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -160,6 +163,7 @@ describe('checks.list', () => {
 
 	it('rejects unknown input fields', async () => {
 		await expect(
+			// Deliberately invalid input to prove the schema rejects it.
 			listChecks(ctx, { unexpected: true } as never),
 		).rejects.toThrow();
 	});
@@ -261,6 +265,7 @@ describe('error handling', () => {
 
 	it('classifies a 401 as an auth error once wrapped', async () => {
 		const wrapped = new UpdownIOAPIError('Invalid API key');
+		// status is readonly on the class; the test forces it to simulate a wrapped 401.
 		(wrapped as { status?: number }).status = 401;
 
 		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(true);
@@ -276,8 +281,10 @@ describe('error handling', () => {
 
 		const error = await listChecks(ctx, {}).catch((e: Error) => e);
 
+		// catch() yields Error | Response here; the request above always rejects with an Error.
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
 		await expect(
+			// Same rejected Error as above.
 			errorHandlers.RATE_LIMIT_ERROR.handler(error as Error),
 		).resolves.toEqual({
 			maxRetries: 3,

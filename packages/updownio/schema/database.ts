@@ -67,6 +67,7 @@ export const UpdownIOCheck = z
 		created_at: z.string().nullable().optional(),
 		mute_until: z.string().nullable().optional(),
 		favicon_url: z.string().nullable().optional(),
+		// Header names/values are user-defined and free-form; stored as-is, never read by the plugin.
 		custom_headers: z.record(z.string(), z.unknown()).nullable().optional(),
 		http_verb: z.string().nullable().optional(),
 		http_body: z.string().nullable().optional(),

@@ -65,6 +65,7 @@ describe('entity shapes match the documented responses', () => {
 	});
 
 	it('keeps undocumented fields instead of stripping them', () => {
+		// Parsed type has no index signature; widen it to read the passthrough field (test only).
 		const parsed = UpdownIONode.parse({
 			ip: '1.2.3.4',
 			some_future_field: 'kept',
