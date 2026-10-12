@@ -1,45 +1,203 @@
 import { z } from 'zod';
 
-const GiftAmountSchema = z
-	.object({
-		value: z.number(),
-		currency: z.string().optional(),
-	})
-	.passthrough();
+// Shapes follow the SKY API OpenAPI definitions published on
+// https://developer.sky.blackbaud.com (Gift, Membership and Payments APIs).
 
-// Gift splits and custom fields are provider-defined shapes that vary per
-// gift type and are not explicitly typed - unknown allows for safe extension.
-const GiftSplitSchema = z.record(z.string(), z.unknown());
+const CurrencySchema = z.object({
+	value: z.number(),
+});
 
-const GiftEntrySchema = z
-	.object({
-		constituent_id: z.string().min(1),
-		amount: GiftAmountSchema.optional(),
-		payment_method: z.string().optional(),
-		date: z.string().optional(),
-		gift_type: z.string().optional(),
-		post_date: z.string().optional(),
-		reference: z.string().optional(),
-		splits: z.array(GiftSplitSchema).optional(),
-		custom_fields: z.array(GiftSplitSchema).optional(),
-	})
-	.passthrough();
+const FuzzyDateSchema = z.object({
+	d: z.number().int().optional(),
+	m: z.number().int().optional(),
+	y: z.number().int().optional(),
+});
+
+const GiftSplitAddSchema = z.object({
+	amount: CurrencySchema,
+	fund_id: z.string().min(1),
+	appeal_id: z.string().optional(),
+	campaign_id: z.string().optional(),
+	package_id: z.string().optional(),
+});
+
+const PaymentAddSchema = z.object({
+	payment_method: z
+		.string()
+		.optional()
+		.describe('For example Cash, PersonalCheck, CreditCard, Other.'),
+	account_token: z.string().optional(),
+	bbps_configuration_id: z.string().optional(),
+	bbps_transaction_id: z.string().optional(),
+	check_date: FuzzyDateSchema.optional(),
+	check_number: z.string().optional(),
+	checkout_transaction_id: z.string().optional(),
+	charge_transaction: z.boolean().optional(),
+	reason: z.string().optional(),
+	reference: z.string().optional(),
+	reference_date: FuzzyDateSchema.optional(),
+	rejection_details: z.string().optional(),
+});
+
+const ConstituentCreditSchema = z.object({
+	amount: CurrencySchema,
+	constituent_id: z.string().min(1),
+});
+
+const CustomFieldAddSchema = z.object({
+	category: z.string().min(1),
+	value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+	comment: z.string().optional(),
+	date: z.string().optional(),
+	parent_id: z.string().optional(),
+});
+
+// GiftBatchGiftAdd from the Gift API: amount, constituent_id, gift_splits,
+// type and payments are required by Blackbaud.
+const GiftBatchGiftAddSchema = z.object({
+	amount: CurrencySchema,
+	constituent_id: z.string().min(1),
+	gift_splits: z.array(GiftSplitAddSchema).min(1),
+	type: z
+		.string()
+		.min(1)
+		.describe('Gift type, for example Donation, Pledge or PledgePayment.'),
+	payments: z.array(PaymentAddSchema).min(1),
+	date: z.string().optional(),
+	post_date: z.string().optional(),
+	post_status: z.string().optional(),
+	gift_status: z.string().optional(),
+	subtype: z.string().optional(),
+	constituency: z.string().optional(),
+	gift_code: z.string().optional(),
+	is_anonymous: z.boolean().optional(),
+	lookup_id: z.string().optional(),
+	origin: z.string().optional(),
+	reference: z.string().optional(),
+	batch_number: z.string().optional(),
+	batch_prefix: z.string().optional(),
+	linked_gifts: z.array(z.string()).optional(),
+	fundraisers: z.array(ConstituentCreditSchema).optional(),
+	soft_credits: z.array(ConstituentCreditSchema).optional(),
+	default_fundraiser_credits: z.boolean().optional(),
+	default_soft_credits: z.boolean().optional(),
+	custom_fields: z.array(CustomFieldAddSchema).optional(),
+});
 
 const AddGiftsToBatchInputSchema = z.object({
 	batch_id: z.string().min(1),
-	gifts: z.array(GiftEntrySchema).min(1),
+	gifts: z.array(GiftBatchGiftAddSchema).min(1),
 });
 
 export type AddGiftsToBatchInput = z.infer<typeof AddGiftsToBatchInputSchema>;
 
-const AddGiftsToBatchResponseSchema = z
-	.object({
-		status_code: z.number(),
-		// Batch write payloads vary (created records, validation errors) and are
-		// not explicitly typed - unknown allows for safe extension.
-		response_details: z.unknown().optional(),
-	})
-	.passthrough();
+const GiftSplitReadSchema = z.object({
+	id: z.string().optional(),
+	amount: CurrencySchema.optional(),
+	appeal_id: z.string().optional(),
+	campaign_id: z.string().optional(),
+	fund_id: z.string().optional(),
+	package_id: z.string().optional(),
+});
+
+const PaymentReadSchema = z.object({
+	payment_method: z.string().optional(),
+	account_token: z.string().optional(),
+	bbps_configuration_id: z.string().optional(),
+	bbps_transaction_id: z.string().optional(),
+	check_date: FuzzyDateSchema.optional(),
+	check_number: z.string().optional(),
+	checkout_transaction_id: z.string().optional(),
+	reference: z.string().optional(),
+	reference_date: FuzzyDateSchema.optional(),
+});
+
+const GiftReadShape = {
+	id: z.string().optional(),
+	constituent_id: z.string().optional(),
+	amount: CurrencySchema.optional(),
+	balance: CurrencySchema.optional(),
+	batch_number: z.string().optional(),
+	constituency: z.string().optional(),
+	date: z.string().optional(),
+	date_added: z.string().optional(),
+	date_modified: z.string().optional(),
+	gift_code: z.string().optional(),
+	gift_status: z.string().optional(),
+	is_anonymous: z.boolean().optional(),
+	lookup_id: z.string().optional(),
+	origin: z.string().optional(),
+	post_date: z.string().optional(),
+	post_status: z.string().optional(),
+	reference: z.string().optional(),
+	subtype: z.string().optional(),
+	type: z.string().optional(),
+	linked_gifts: z.array(z.string()).optional(),
+	gift_splits: z.array(GiftSplitReadSchema).optional(),
+	payments: z.array(PaymentReadSchema).optional(),
+	fundraisers: z
+		.array(
+			z.object({
+				amount: CurrencySchema.optional(),
+				constituent_id: z.string().optional(),
+			}),
+		)
+		.optional(),
+	soft_credits: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				amount: CurrencySchema.optional(),
+				constituent_id: z.string().optional(),
+				gift_id: z.string().optional(),
+			}),
+		)
+		.optional(),
+	receipts: z
+		.array(
+			z.object({
+				amount: CurrencySchema.optional(),
+				date: z.string().optional(),
+				number: z.number().int().optional(),
+				status: z.string().optional(),
+			}),
+		)
+		.optional(),
+	acknowledgements: z
+		.array(
+			z.object({
+				date: z.string().optional(),
+				letter: z.string().optional(),
+				status: z.string().optional(),
+			}),
+		)
+		.optional(),
+};
+
+const GiftBatchGiftErrorSchema = z.object({
+	affected_field: z.string().optional(),
+	batch_id: z.string().optional(),
+	exception_error_code: z.number().int().optional(),
+	exception_error_message: z.string().optional(),
+	exception_error_name: z.string().optional(),
+	gift_id: z.string().optional(),
+	lookup_id: z.string().optional(),
+});
+
+// BatchGiftAddResults: the gifts Blackbaud added plus per-gift errors.
+const AddGiftsToBatchResponseSchema = z.object({
+	gifts: z
+		.array(
+			z.object({
+				...GiftReadShape,
+				batch_id: z.string().optional(),
+				approved_gift_id: z.string().optional(),
+				errors: z.array(GiftBatchGiftErrorSchema).optional(),
+			}),
+		)
+		.optional(),
+	errors: z.array(GiftBatchGiftErrorSchema).optional(),
+});
 
 export type AddGiftsToBatchResponse = z.infer<
 	typeof AddGiftsToBatchResponseSchema
@@ -51,91 +209,45 @@ const GetGiftByIdInputSchema = z.object({
 
 export type GetGiftByIdInput = z.infer<typeof GetGiftByIdInputSchema>;
 
-// Raiser's Edge NXT gift record. Core fields are optional because the SKY API
-// returns different shapes per gift type; unknown fields pass through.
-// Ref: https://developer.blackbaud.com/skyapi/products/renxt/gift-v2
-const GetGiftByIdResponseSchema = z
-	.object({
-		id: z.string().optional(),
-		constituent_id: z.string().optional(),
-		amount: GiftAmountSchema.optional(),
-		date: z.string().optional(),
-		type: z.string().optional(),
-		subtype: z.string().optional(),
-		post_status: z.string().optional(),
-	})
-	.passthrough();
+const GetGiftByIdResponseSchema = z.object(GiftReadShape);
 
 export type GetGiftByIdResponse = z.infer<typeof GetGiftByIdResponseSchema>;
 
-// Constituent API list operation (ListConstituentMemberships, per the RENXT
-// connector reference): constituent_id is required; junction id is a
-// client-side filter because no single-membership GET exists. Refs:
-// live gateway (constituent/v1/constituents/{id}/memberships -> 401) and
-// https://learn.microsoft.com/en-us/connectors/blackbaudconstituent
-const ListMembershipsInputSchema = z.object({
-	constituent_id: z.string().min(1),
+const GetMembershipDetailsInputSchema = z.object({
 	member_junction_id: z
 		.string()
 		.min(1)
-		.optional()
 		.describe(
-			'Looks the junction up across all pages in 500-record scans; plain limit/offset are ignored in this mode.',
-		),
-	limit: z
-		.number()
-		.int()
-		.positive()
-		.max(5000)
-		.optional()
-		.describe(
-			'Page size for plain lists (junction lookup always scans 500 per page).',
-		),
-	offset: z
-		.number()
-		.int()
-		.nonnegative()
-		.optional()
-		.describe(
-			'Zero-based skip for plain lists (junction lookup always starts at 0).',
+			'Membership record ID for the constituent (the "id" returned by the constituent memberships list).',
 		),
 });
 
-export type ListMembershipsInput = z.infer<typeof ListMembershipsInputSchema>;
+export type GetMembershipDetailsInput = z.infer<
+	typeof GetMembershipDetailsInputSchema
+>;
 
-// Membership record fields use RENXT domain vocabulary (program, category,
-// standing, dues). All optional + passthrough: exact MembershipRead names
-// need SKY-console confirmation with creds; unknown fields pass through.
-// Ref: https://webfiles-sc1.blackbaud.com/files/support/helpfiles/rex/content/bb-memberships.html
-const MembershipRecordSchema = z
-	.object({
-		id: z.string().optional(),
-		member_junction_id: z.string().optional(),
-		constituent_id: z.string().optional(),
-		program: z.string().optional(),
-		category: z.string().optional(),
-		subcategory: z.string().optional(),
-		standing: z.string().optional(),
-		status: z.string().optional(),
-		join_date: z.string().optional(),
-		expiry_date: z.string().optional(),
-		dropped_date: z.string().optional(),
-		dues: GiftAmountSchema.optional(),
-	})
-	.passthrough();
+// MembershipDetails from the Membership API.
+const GetMembershipDetailsResponseSchema = z.object({
+	dues: z.number().nullable().optional(),
+	category_name: z.string().nullable().optional(),
+	program_name: z.string().nullable().optional(),
+	sub_category_name: z.string().nullable().optional(),
+	last_renewed_date: z.string().nullable().optional(),
+	last_dropped_date: z.string().nullable().optional(),
+	next_renewal_date: z.string().nullable().optional(),
+	joined_date: z.string().optional(),
+	total_years: z.number().int().nullable().optional(),
+	times_renewed: z.number().int().nullable().optional(),
+	consec_years: z.number().int().nullable().optional(),
+	constituent_id: z.string().nullable().optional(),
+	notes: z.string().nullable().optional(),
+	type: z
+		.enum(['Joined', 'Renewal', 'Rejoined', 'Upgrade', 'Downgrade', 'Dropped'])
+		.optional(),
+});
 
-export type MembershipRecord = z.infer<typeof MembershipRecordSchema>;
-
-// SKY API collection envelope (count + value), same pattern as other lists.
-const ListMembershipsResponseSchema = z
-	.object({
-		count: z.number(),
-		value: z.array(MembershipRecordSchema),
-	})
-	.passthrough();
-
-export type ListMembershipsResponse = z.infer<
-	typeof ListMembershipsResponseSchema
+export type GetMembershipDetailsResponse = z.infer<
+	typeof GetMembershipDetailsResponseSchema
 >;
 
 const GetPaymentTransactionInputSchema = z.object({
@@ -146,27 +258,79 @@ export type GetPaymentTransactionInput = z.infer<
 	typeof GetPaymentTransactionInputSchema
 >;
 
-// SKY Payments transaction record served under payments/v1/transactions.
-// Ref: https://developer.blackbaud.com/skyapi/products/bbms/payments
-const GetPaymentTransactionResponseSchema = z
-	.object({
-		id: z.string().optional(),
-		transaction_id: z.string().optional(),
-		amount: GiftAmountSchema.optional(),
-		status: z.string().optional(),
-		transaction_date: z.string().optional(),
-	})
-	.passthrough();
+// TransactionRead from the Payments API. Amounts are integers in the
+// smallest currency unit.
+const GetPaymentTransactionResponseSchema = z.object({
+	id: z.string().optional(),
+	amount: z.number().int().optional(),
+	net_amount: z.number().int().optional(),
+	additional_fee: z.number().int().optional(),
+	application_fee: z.number().int().optional(),
+	total_fees: z.number().int().optional(),
+	currency: z.string().optional(),
+	state: z
+		.enum([
+			'Unknown',
+			'Processed',
+			'Failed',
+			'Refunded',
+			'Pending',
+			'Authorized',
+			'Voided',
+			'Created',
+		])
+		.optional(),
+	transaction_date: z.string().optional(),
+	pending_date: z.string().optional(),
+	transaction_type: z.string().optional(),
+	transaction_category: z.string().optional(),
+	account_type: z.string().optional(),
+	application: z.string().optional(),
+	authorization_code: z.string().optional(),
+	check_number: z.string().optional(),
+	comment: z.string().optional(),
+	disbursement_status: z.string().optional(),
+	donor_ip_address: z.string().optional(),
+	email_address: z.string().optional(),
+	phone_number: z.string().optional(),
+	is_live: z.boolean().optional(),
+	token: z.string().optional(),
+	reference_transaction_id: z.string().optional(),
+	billing_info: z
+		.object({
+			city: z.string().nullable().optional(),
+			country: z.string().nullable().optional(),
+			post_code: z.string().nullable().optional(),
+			state: z.string().nullable().optional(),
+			street: z.string().nullable().optional(),
+		})
+		.optional(),
+	credit_card: z
+		.object({
+			card_type: z.string().nullable().optional(),
+			exp_month: z.number().int().optional(),
+			exp_year: z.number().int().optional(),
+			last_four: z.string().nullable().optional(),
+			name: z.string().nullable().optional(),
+		})
+		.optional(),
+	related_transactions: z
+		.array(
+			z.object({
+				id: z.string().nullable().optional(),
+				transaction_type: z.string().nullable().optional(),
+			}),
+		)
+		.optional(),
+});
 
 export type GetPaymentTransactionResponse = z.infer<
 	typeof GetPaymentTransactionResponseSchema
 >;
 
-// OneRoster OAuth2 discovery metadata only (openid-configuration, publickeys).
-// Token issuance uses the client-credentials grant with HTTP Basic auth plus a
-// scope (ref: https://developer.blackbaud.com/skyapi/products/bbem/oneroster/authorization)
-// and runs through the OAuth flow, not through an authenticated endpoint, so it
-// is intentionally not exposed here.
+// OneRoster OAuth2 discovery metadata served by oauth2.sky.blackbaud.com.
+// Token issuance (client-credentials grant with the app secret) belongs to
+// the auth flow, not to a tool input, so it is intentionally not exposed.
 const OneRosterOAuth2BaseApiInputSchema = z.object({
 	operation: z.enum(['openid-configuration', 'publickeys']),
 });
@@ -175,17 +339,28 @@ export type OneRosterOAuth2BaseApiInput = z.infer<
 	typeof OneRosterOAuth2BaseApiInputSchema
 >;
 
-const OneRosterOAuth2BaseApiResponseSchema = z
-	.object({
-		issuer: z.string().optional(),
-		authorization_endpoint: z.string().optional(),
-		token_endpoint: z.string().optional(),
-		jwks_uri: z.string().optional(),
-		// JWKS key members (kty, kid, x5c, ...) are provider-defined and not
-		// explicitly typed - unknown allows for safe extension.
-		keys: z.array(z.record(z.string(), z.unknown())).optional(),
-	})
-	.passthrough();
+const JsonWebKeySchema = z.object({
+	kty: z.string(),
+	alg: z.string().optional(),
+	use: z.string().optional(),
+	kid: z.string().optional(),
+	x5t: z.string().optional(),
+	x5c: z.array(z.string()).optional(),
+	e: z.string().optional(),
+	n: z.string().optional(),
+});
+
+const OneRosterOAuth2BaseApiResponseSchema = z.object({
+	issuer: z.string().optional(),
+	authorization_endpoint: z.string().optional(),
+	token_endpoint: z.string().optional(),
+	jwks_uri: z.string().optional(),
+	response_types_supported: z.array(z.string()).optional(),
+	subject_types_supported: z.array(z.string()).optional(),
+	id_token_signing_alg_values_supported: z.array(z.string()).optional(),
+	code_challenge_methods_supported: z.array(z.string()).optional(),
+	keys: z.array(JsonWebKeySchema).optional(),
+});
 
 export type OneRosterOAuth2BaseApiResponse = z.infer<
 	typeof OneRosterOAuth2BaseApiResponseSchema
@@ -194,7 +369,7 @@ export type OneRosterOAuth2BaseApiResponse = z.infer<
 export type BlackbaudEndpointInputs = {
 	addGiftsToBatch: AddGiftsToBatchInput;
 	getGiftById: GetGiftByIdInput;
-	listMemberships: ListMembershipsInput;
+	getMembershipDetails: GetMembershipDetailsInput;
 	getPaymentTransaction: GetPaymentTransactionInput;
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiInput;
 };
@@ -202,7 +377,7 @@ export type BlackbaudEndpointInputs = {
 export type BlackbaudEndpointOutputs = {
 	addGiftsToBatch: AddGiftsToBatchResponse;
 	getGiftById: GetGiftByIdResponse;
-	listMemberships: ListMembershipsResponse;
+	getMembershipDetails: GetMembershipDetailsResponse;
 	getPaymentTransaction: GetPaymentTransactionResponse;
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiResponse;
 };
@@ -210,7 +385,7 @@ export type BlackbaudEndpointOutputs = {
 export const BlackbaudEndpointInputSchemas = {
 	addGiftsToBatch: AddGiftsToBatchInputSchema,
 	getGiftById: GetGiftByIdInputSchema,
-	listMemberships: ListMembershipsInputSchema,
+	getMembershipDetails: GetMembershipDetailsInputSchema,
 	getPaymentTransaction: GetPaymentTransactionInputSchema,
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiInputSchema,
 } as const;
@@ -218,7 +393,7 @@ export const BlackbaudEndpointInputSchemas = {
 export const BlackbaudEndpointOutputSchemas = {
 	addGiftsToBatch: AddGiftsToBatchResponseSchema,
 	getGiftById: GetGiftByIdResponseSchema,
-	listMemberships: ListMembershipsResponseSchema,
+	getMembershipDetails: GetMembershipDetailsResponseSchema,
 	getPaymentTransaction: GetPaymentTransactionResponseSchema,
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiResponseSchema,
 } as const;

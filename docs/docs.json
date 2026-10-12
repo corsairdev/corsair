@@ -754,6 +754,14 @@
                 ]
               },
               {
+                "group": "Blackbaud",
+                "pages": [
+                  "plugins/blackbaud/overview",
+                  "plugins/blackbaud/api",
+                  "plugins/blackbaud/database"
+                ]
+              },
+              {
                 "group": "BlazeMeter",
                 "pages": [
                   "plugins/blazemeter/overview",

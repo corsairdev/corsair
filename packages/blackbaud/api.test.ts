@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import { makeBlackbaudRequest } from './client';
 import type {
+	AddGiftsToBatchResponse,
 	GetGiftByIdResponse,
+	GetMembershipDetailsResponse,
 	GetPaymentTransactionResponse,
-	ListMembershipsResponse,
 	OneRosterOAuth2BaseApiResponse,
 } from './endpoints/types';
 import { BlackbaudEndpointOutputSchemas } from './endpoints/types';
@@ -11,7 +12,7 @@ import { BlackbaudEndpointOutputSchemas } from './endpoints/types';
 const ACCESS_TOKEN = process.env.BLACKBAUD_ACCESS_TOKEN;
 const SUBSCRIPTION_KEY = process.env.BLACKBAUD_SUBSCRIPTION_KEY;
 const TEST_GIFT_ID = process.env.TEST_BLACKBAUD_GIFT_ID;
-const TEST_CONSTITUENT_ID = process.env.TEST_BLACKBAUD_CONSTITUENT_ID;
+const TEST_MEMBER_JUNCTION_ID = process.env.TEST_BLACKBAUD_MEMBER_JUNCTION_ID;
 const TEST_TRANSACTION_ID = process.env.TEST_BLACKBAUD_TRANSACTION_ID;
 const TEST_BATCH_ID = process.env.TEST_BLACKBAUD_BATCH_ID;
 
@@ -51,21 +52,20 @@ describeIfCreds('Blackbaud live API', () => {
 		expect(parsed).toBeDefined();
 	});
 
-	it('listMemberships returns a membership collection', async () => {
-		if (!TEST_CONSTITUENT_ID) {
+	it('getMembershipDetails returns membership details', async () => {
+		if (!TEST_MEMBER_JUNCTION_ID) {
 			return;
 		}
-		const response = await makeBlackbaudRequest<ListMembershipsResponse>(
-			`constituent/v1/constituents/${encodeURIComponent(TEST_CONSTITUENT_ID)}/memberships`,
+		const response = await makeBlackbaudRequest<GetMembershipDetailsResponse>(
+			`membership/v1/memberships/${encodeURIComponent(TEST_MEMBER_JUNCTION_ID)}/membershipdetails`,
 			token(),
 			requestOptions(),
 		);
 
 		expect(response).toBeDefined();
 		const parsed =
-			BlackbaudEndpointOutputSchemas.listMemberships.parse(response);
+			BlackbaudEndpointOutputSchemas.getMembershipDetails.parse(response);
 		expect(parsed).toBeDefined();
-		expect(Array.isArray(parsed.value)).toBe(true);
 	});
 
 	it('getPaymentTransaction returns a transaction record', async () => {
@@ -102,7 +102,7 @@ describeIfCreds('Blackbaud live API', () => {
 		if (!TEST_BATCH_ID) {
 			return;
 		}
-		const response = await makeBlackbaudRequest<{ status_code: number }>(
+		const response = await makeBlackbaudRequest<AddGiftsToBatchResponse>(
 			`gift/v1/giftbatches/${encodeURIComponent(TEST_BATCH_ID)}/gifts`,
 			token(),
 			{

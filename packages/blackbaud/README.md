@@ -12,9 +12,9 @@ pnpm add @corsair-dev/blackbaud
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `batch.addGiftsToBatch` | `blackbaud.api.batch.addGiftsToBatch` | `write` | Add gifts to an open gift batch (success returns status_code 200; failures throw) |
+| `batch.addGiftsToBatch` | `blackbaud.api.batch.addGiftsToBatch` | `write` | Add gifts to an open gift batch; returns the added gifts and per-gift errors |
 | `gifts.getGiftById` | `blackbaud.api.gifts.getGiftById` | `read` | Get a gift record by gift ID |
-| `membership.listMemberships` | `blackbaud.api.membership.listMemberships` | `read` | List memberships for a constituent; junction lookups scan 500-record pages and throw past 10,000 rather than report absence (a collection fully scanned within the cap, confirmed against the response total, reports absence) |
+| `membership.getMembershipDetails` | `blackbaud.api.membership.getMembershipDetails` | `read` | Get membership details by member junction ID |
 | `payments.getPaymentTransaction` | `blackbaud.api.payments.getPaymentTransaction` | `read` | Get a SKY Payments transaction by transaction ID |
 | `oneRoster.oneRosterOAuth2BaseApi` | `blackbaud.api.oneRoster.oneRosterOAuth2BaseApi` | `read` | Read OneRoster OAuth2 discovery metadata (openid-configuration, public keys) |
 

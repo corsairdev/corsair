@@ -18,7 +18,6 @@ export class BlackbaudAPIError extends Error {
 	}
 }
 
-// Update to official Blackbaud SKY API URL
 const BLACKBAUD_API_BASE = 'https://api.sky.blackbaud.com';
 
 export async function makeBlackbaudRequest<T>(
@@ -26,9 +25,7 @@ export async function makeBlackbaudRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Request payloads are provider-defined per SKY API operation and are
-		// not explicitly typed - unknown allows for safe extension.
-		body?: Record<string, unknown>;
+		body?: object;
 		query?: Record<string, string | number | boolean | undefined>;
 		subscriptionKey?: string;
 		headers?: Record<string, string>;

@@ -26,22 +26,22 @@ describe('Blackbaud schema', () => {
 		expect(
 			BlackbaudEndpointInputSchemas.addGiftsToBatch.parse({
 				batch_id: 'b1',
-				gifts: [{ constituent_id: 'c1', amount: { value: 25 } }],
+				gifts: [
+					{
+						constituent_id: 'c1',
+						amount: { value: 25 },
+						gift_splits: [{ amount: { value: 25 }, fund_id: 'f1' }],
+						type: 'Donation',
+						payments: [{ payment_method: 'Cash' }],
+					},
+				],
 			}),
 		).toBeDefined();
 		expect(
-			BlackbaudEndpointInputSchemas.listMemberships.parse({
-				constituent_id: 'c1',
-			}),
-		).toEqual({ constituent_id: 'c1' });
-		expect(
-			BlackbaudEndpointInputSchemas.listMemberships.parse({
-				constituent_id: 'c1',
+			BlackbaudEndpointInputSchemas.getMembershipDetails.parse({
 				member_junction_id: 'j1',
-				limit: 50,
-				offset: 0,
 			}),
-		).toBeDefined();
+		).toEqual({ member_junction_id: 'j1' });
 		expect(
 			BlackbaudEndpointInputSchemas.oneRosterOAuth2BaseApi.parse({
 				operation: 'publickeys',
@@ -54,8 +54,14 @@ describe('Blackbaud schema', () => {
 			BlackbaudEndpointInputSchemas.getGiftById.parse({ gift_id: '' }),
 		).toThrow();
 		expect(() =>
-			BlackbaudEndpointInputSchemas.listMemberships.parse({
-				constituent_id: '',
+			BlackbaudEndpointInputSchemas.getMembershipDetails.parse({
+				member_junction_id: '',
+			}),
+		).toThrow();
+		expect(() =>
+			BlackbaudEndpointInputSchemas.addGiftsToBatch.parse({
+				batch_id: 'b1',
+				gifts: [{ constituent_id: 'c1', amount: { value: 25 } }],
 			}),
 		).toThrow();
 		expect(() =>
@@ -70,27 +76,27 @@ describe('Blackbaud schema', () => {
 		).toThrow();
 	});
 
-	it('parses endpoint outputs while allowing provider extensions', () => {
-		const gift = BlackbaudEndpointOutputSchemas.getGiftById.parse({
-			id: 'g1',
-			custom_extension: 'kept',
-		});
-		expect(gift).toMatchObject({ id: 'g1', custom_extension: 'kept' });
+	it('parses endpoint outputs into the documented shapes', () => {
+		expect(
+			BlackbaudEndpointOutputSchemas.getGiftById.parse({
+				id: 'g1',
+				amount: { value: 10 },
+			}),
+		).toEqual({ id: 'g1', amount: { value: 10 } });
 
-		const batch = BlackbaudEndpointOutputSchemas.addGiftsToBatch.parse({
-			status_code: 200,
-			response_details: { batch: 'ok' },
-		});
-		expect(batch.status_code).toBe(200);
+		expect(
+			BlackbaudEndpointOutputSchemas.addGiftsToBatch.parse({
+				gifts: [{ id: 'g1', batch_id: 'b1' }],
+				errors: [],
+			}),
+		).toEqual({ gifts: [{ id: 'g1', batch_id: 'b1' }], errors: [] });
 
-		const memberships = BlackbaudEndpointOutputSchemas.listMemberships.parse({
-			count: 1,
-			value: [{ id: 'm1', program: 'Annual', custom_extension: 'kept' }],
-		});
-		expect(memberships.count).toBe(1);
-		expect(memberships.value).toHaveLength(1);
+		expect(
+			BlackbaudEndpointOutputSchemas.getMembershipDetails.parse({
+				program_name: 'Annual',
+				dues: null,
+				type: 'Joined',
+			}),
+		).toEqual({ program_name: 'Annual', dues: null, type: 'Joined' });
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test (see api.test.ts + endpoints.test.ts).
