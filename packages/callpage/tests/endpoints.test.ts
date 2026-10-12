@@ -888,6 +888,38 @@ describe('CallPage entity persistence', () => {
 		);
 	});
 
+	it('voiceMessages.update clears the stored recording when the file is replaced', async () => {
+		mockRequest.mockResolvedValueOnce(envelope({ id: 37 }));
+		mockRequest.mockResolvedValueOnce(envelope({ id: 37 }));
+		const { ctx, db } = createContext();
+		db.voiceMessages.findByEntityId.mockResolvedValue({
+			data: { ...voice, widget_id: 3 },
+		});
+
+		await VoiceMessages.update(ctx, {
+			widget_id: 3,
+			message_id: 'manager.call',
+			enabled: true,
+			file: 'https://example.com/new.mp3',
+		});
+		await VoiceMessages.update(ctx, {
+			widget_id: 3,
+			message_id: 'manager.call',
+			enabled: false,
+		});
+
+		expect(db.voiceMessages.upsertByEntityId).toHaveBeenNthCalledWith(
+			1,
+			'3:manager.call',
+			{ ...voice, widget_id: 3, recording: null },
+		);
+		expect(db.voiceMessages.upsertByEntityId).toHaveBeenNthCalledWith(
+			2,
+			'3:manager.call',
+			{ ...voice, widget_id: 3, enabled: false },
+		);
+	});
+
 	it('a failing database write does not fail the API call', async () => {
 		const warn = jest
 			.spyOn(console, 'warn')

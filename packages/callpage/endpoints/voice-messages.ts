@@ -49,6 +49,8 @@ export const create: CallPageEndpoints['voiceMessagesCreate'] = async (
 	await patchVoiceMessage(ctx, input.widget_id, {
 		message_id: input.message_id,
 		enabled: input.enabled,
+		// A replaced file has no known URL until the next list, so clear the old one.
+		recording: input.file ? null : undefined,
 	});
 	await logEventFromContext(
 		ctx,
@@ -75,6 +77,8 @@ export const update: CallPageEndpoints['voiceMessagesUpdate'] = async (
 	await patchVoiceMessage(ctx, input.widget_id, {
 		message_id: input.message_id,
 		enabled: input.enabled,
+		// A replaced file has no known URL until the next list, so clear the old one.
+		recording: input.file ? null : undefined,
 	});
 	await logEventFromContext(
 		ctx,
