@@ -14,7 +14,11 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	getConsensusRatings,
+	getEarningsStream,
 	getNews,
+	getNewsStream,
+	listConferenceCalls,
 	listDividends,
 	listEarnings,
 	listEconomics,
@@ -22,6 +26,8 @@ import {
 	listIpos,
 	listNewsChannels,
 	listRatings,
+	listRemovedCalendarEvents,
+	listRemovedNews,
 	listSplits,
 } from './endpoints';
 import type {
@@ -72,12 +78,20 @@ export type BenzingaEndpoints = {
 	listIpos: BenzingaEndpoint<'listIpos'>;
 	listSplits: BenzingaEndpoint<'listSplits'>;
 	listEconomics: BenzingaEndpoint<'listEconomics'>;
+	listConferenceCalls: BenzingaEndpoint<'listConferenceCalls'>;
+	getConsensusRatings: BenzingaEndpoint<'getConsensusRatings'>;
+	listRemovedCalendarEvents: BenzingaEndpoint<'listRemovedCalendarEvents'>;
+	listRemovedNews: BenzingaEndpoint<'listRemovedNews'>;
+	getEarningsStream: BenzingaEndpoint<'getEarningsStream'>;
+	getNewsStream: BenzingaEndpoint<'getNewsStream'>;
 };
 
 const benzingaEndpointsNested = {
 	news: {
 		get: getNews,
 		listChannels: listNewsChannels,
+		listRemoved: listRemovedNews,
+		getStream: getNewsStream,
 	},
 	calendar: {
 		listEarnings,
@@ -87,6 +101,10 @@ const benzingaEndpointsNested = {
 		listIpos,
 		listSplits,
 		listEconomics,
+		listConferenceCalls,
+		getConsensusRatings,
+		listRemoved: listRemovedCalendarEvents,
+		getEarningsStream,
 	},
 } as const;
 
@@ -126,6 +144,30 @@ export const benzingaEndpointSchemas = {
 	'calendar.listEconomics': {
 		input: BenzingaEndpointInputSchemas.listEconomics,
 		output: BenzingaEndpointOutputSchemas.listEconomics,
+	},
+	'news.listRemoved': {
+		input: BenzingaEndpointInputSchemas.listRemovedNews,
+		output: BenzingaEndpointOutputSchemas.listRemovedNews,
+	},
+	'news.getStream': {
+		input: BenzingaEndpointInputSchemas.getNewsStream,
+		output: BenzingaEndpointOutputSchemas.getNewsStream,
+	},
+	'calendar.listConferenceCalls': {
+		input: BenzingaEndpointInputSchemas.listConferenceCalls,
+		output: BenzingaEndpointOutputSchemas.listConferenceCalls,
+	},
+	'calendar.getConsensusRatings': {
+		input: BenzingaEndpointInputSchemas.getConsensusRatings,
+		output: BenzingaEndpointOutputSchemas.getConsensusRatings,
+	},
+	'calendar.listRemoved': {
+		input: BenzingaEndpointInputSchemas.listRemovedCalendarEvents,
+		output: BenzingaEndpointOutputSchemas.listRemovedCalendarEvents,
+	},
+	'calendar.getEarningsStream': {
+		input: BenzingaEndpointInputSchemas.getEarningsStream,
+		output: BenzingaEndpointOutputSchemas.getEarningsStream,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof benzingaEndpointsNested
@@ -179,6 +221,36 @@ const benzingaEndpointMeta = {
 		description:
 			'List economic calendar data (GET /api/v2.1/calendar/economics, page/pagesize pagination)',
 	},
+	'news.listRemoved': {
+		riskLevel: 'read',
+		description:
+			'List IDs and update times of removed news articles (GET /api/v2/news-removed, page/pageSize pagination)',
+	},
+	'news.getStream': {
+		riskLevel: 'read',
+		description:
+			'Get the WebSocket URL for the real-time news stream (wss://api.benzinga.com/api/v1/news/stream); append token=<api key> to connect',
+	},
+	'calendar.listConferenceCalls': {
+		riskLevel: 'read',
+		description:
+			'List conference call data (GET /api/v2.1/calendar/conference-calls, page/pagesize pagination)',
+	},
+	'calendar.getConsensusRatings': {
+		riskLevel: 'read',
+		description:
+			'Get aggregated analyst consensus rating and price targets for one ticker (GET /api/v1/consensus-ratings)',
+	},
+	'calendar.listRemoved': {
+		riskLevel: 'read',
+		description:
+			'List removed calendar events by type and update time (GET /api/v2.1/calendar-removed/, page/pageSize pagination)',
+	},
+	'calendar.getEarningsStream': {
+		riskLevel: 'read',
+		description:
+			'Get the WebSocket URL for the real-time earnings calendar stream (wss://api.benzinga.com/api/v2.1/calendar/earnings/stream); append token=<api key> to connect',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof benzingaEndpointsNested>;
 
 export const benzingaAuthConfig = {
@@ -200,9 +272,8 @@ export type ExternalBenzingaPlugin<T extends BenzingaPluginOptions> =
 	BaseBenzingaPlugin<T>;
 
 export function benzinga<const T extends BenzingaPluginOptions>(
-	// Assertion justified: every BenzingaPluginOptions field is optional, so
-	// `{}` is already a valid value; the assertion only satisfies the generic
-	// `T` default parameter, and real defaults are filled in below.
+	// Safe: every BenzingaPluginOptions field is optional, so `{}` is a valid value and defaults are filled in below.
+	// A narrower type is not practical because a default parameter cannot be typed as the caller-supplied generic `T` without an assertion.
 	incomingOptions: BenzingaPluginOptions & T = {} as BenzingaPluginOptions & T,
 ): ExternalBenzingaPlugin<T> {
 	const options = {
@@ -254,9 +325,15 @@ export function benzinga<const T extends BenzingaPluginOptions>(
 export type {
 	BenzingaEndpointInputs,
 	BenzingaEndpointOutputs,
+	GetConsensusRatingsInput,
+	GetConsensusRatingsResponse,
+	GetEarningsStreamInput,
 	GetNewsInput,
 	GetNewsResponse,
+	GetNewsStreamInput,
 	Ipo,
+	ListConferenceCallsInput,
+	ListConferenceCallsResponse,
 	ListDividendsInput,
 	ListDividendsResponse,
 	ListEarningsInput,
@@ -271,6 +348,11 @@ export type {
 	ListNewsChannelsResponse,
 	ListRatingsInput,
 	ListRatingsResponse,
+	ListRemovedCalendarEventsInput,
+	ListRemovedCalendarEventsResponse,
+	ListRemovedNewsInput,
+	ListRemovedNewsResponse,
 	ListSplitsInput,
 	ListSplitsResponse,
+	StreamConnection,
 } from './endpoints/types';

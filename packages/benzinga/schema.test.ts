@@ -19,23 +19,25 @@ describe('Benzinga schema', () => {
 });
 
 describe('Benzinga endpoint registry', () => {
-	it('registers all nine endpoints with input and output schemas', () => {
-		const keys = Object.keys(benzingaEndpointSchemas);
-		expect(keys).toHaveLength(9);
-		expect(keys).toContain('news.get');
-		expect(keys).toContain('news.listChannels');
-		expect(keys).toContain('calendar.listEarnings');
-		expect(keys).toContain('calendar.listDividends');
-		expect(keys).toContain('calendar.listRatings');
-		expect(keys).toContain('calendar.listGuidance');
-		expect(keys).toContain('calendar.listIpos');
-		expect(keys).toContain('calendar.listSplits');
-		expect(keys).toContain('calendar.listEconomics');
-		for (const key of keys) {
-			// Assertion justified: `keys` comes from Object.keys of this same
-			// registry object, so each entry is guaranteed to be a valid key.
-			const entry =
-				benzingaEndpointSchemas[key as keyof typeof benzingaEndpointSchemas];
+	it('registers every endpoint with input and output schemas', () => {
+		expect(Object.keys(benzingaEndpointSchemas).sort()).toEqual([
+			'calendar.getConsensusRatings',
+			'calendar.getEarningsStream',
+			'calendar.listConferenceCalls',
+			'calendar.listDividends',
+			'calendar.listEarnings',
+			'calendar.listEconomics',
+			'calendar.listGuidance',
+			'calendar.listIpos',
+			'calendar.listRatings',
+			'calendar.listRemoved',
+			'calendar.listSplits',
+			'news.get',
+			'news.getStream',
+			'news.listChannels',
+			'news.listRemoved',
+		]);
+		for (const entry of Object.values(benzingaEndpointSchemas)) {
 			expect(entry.input).toBeDefined();
 			expect(entry.output).toBeDefined();
 		}

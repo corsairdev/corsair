@@ -10,19 +10,16 @@ export const listEconomics: BenzingaEndpoints['listEconomics'] = async (
 	const response = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listEconomics']
 	>('/api/v2.1/calendar/economics', ctx.key, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			pagesize: input.pagesize,
-			'parameters[date]': input.date,
-			'parameters[date_from]': input.dateFrom,
-			'parameters[date_to]': input.dateTo,
-			'parameters[importance]': input.importance,
-			'parameters[updated]': input.updated,
-			country: input.country,
-			event_name: input.event_name,
-			event_category: input.event_category,
-		},
+		page: input.page,
+		pagesize: input.pagesize,
+		'parameters[date]': input.date,
+		'parameters[date_from]': input.dateFrom,
+		'parameters[date_to]': input.dateTo,
+		'parameters[importance]': input.importance,
+		'parameters[updated]': input.updated,
+		country: input.country,
+		event_name: input.event_name,
+		event_category: input.event_category,
 	});
 
 	await logEventFromContext(

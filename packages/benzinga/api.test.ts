@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { makeBenzingaRequest } from './client';
 import type {
+	GetConsensusRatingsResponse,
 	GetNewsResponse,
+	ListConferenceCallsRawResponse,
 	ListDividendsResponse,
 	ListEarningsResponse,
 	ListEconomicsResponse,
@@ -9,10 +11,13 @@ import type {
 	ListIposRawResponse,
 	ListNewsChannelsResponse,
 	ListRatingsResponse,
+	ListRemovedCalendarEventsResponse,
+	ListRemovedNewsResponse,
 	ListSplitsResponse,
 } from './endpoints/types';
 import {
 	BenzingaEndpointOutputSchemas,
+	ListConferenceCallsRawResponseSchema,
 	ListIposRawResponseSchema,
 } from './endpoints/types';
 
@@ -24,9 +29,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<GetNewsResponse>(
 			'/api/v2/news',
 			API_KEY,
-			{
-				query: { pageSize: 2, displayOutput: 'headline' },
-			},
+			{ pageSize: 2, displayOutput: 'headline' },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.getNews.parse(response);
 		expect(Array.isArray(parsed)).toBe(true);
@@ -53,7 +56,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListEarningsResponse>(
 			'/api/v2.1/calendar/earnings',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listEarnings.parse(response);
 		expect(parsed.earnings).toBeDefined();
@@ -66,7 +69,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListDividendsResponse>(
 			'/api/v2.2/calendar/dividends',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listDividends.parse(response);
 		expect(parsed.dividends).toBeDefined();
@@ -79,7 +82,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListRatingsResponse>(
 			'/api/v2.1/calendar/ratings',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listRatings.parse(response);
 		expect(parsed.ratings).toBeDefined();
@@ -92,7 +95,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListGuidanceResponse>(
 			'/api/v2.1/calendar/guidance',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listGuidance.parse(response);
 		expect(parsed.guidance).toBeDefined();
@@ -105,7 +108,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListIposRawResponse>(
 			'/api/v2.1/calendar/ipos',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = ListIposRawResponseSchema.parse(response);
 		const ipos = Array.isArray(parsed) ? parsed : parsed.ipos;
@@ -123,7 +126,7 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListSplitsResponse>(
 			'/api/v2.1/calendar/splits',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listSplits.parse(response);
 		expect(parsed.splits).toBeDefined();
@@ -136,12 +139,57 @@ describeLive('Benzinga live API', () => {
 		const response = await makeBenzingaRequest<ListEconomicsResponse>(
 			'/api/v2.1/calendar/economics',
 			API_KEY,
-			{ query: { pagesize: 2 } },
+			{ pagesize: 2 },
 		);
 		const parsed = BenzingaEndpointOutputSchemas.listEconomics.parse(response);
 		expect(parsed.economics).toBeDefined();
 		expect(Array.isArray(parsed.economics)).toBe(true);
 		expect(parsed.economics.length).toBeGreaterThan(0);
 		expect(parsed.economics[0]?.event_name).toEqual(expect.any(String));
+	});
+
+	it('calendar.listConferenceCalls returns conference call records', async () => {
+		const response = await makeBenzingaRequest<ListConferenceCallsRawResponse>(
+			'/api/v2.1/calendar/conference-calls',
+			API_KEY,
+			{ pagesize: 2 },
+		);
+		const parsed = ListConferenceCallsRawResponseSchema.parse(response);
+		const calls = parsed.conference ?? parsed['conference-calls'] ?? [];
+		expect(Array.isArray(calls)).toBe(true);
+	});
+
+	it('calendar.getConsensusRatings returns an aggregate for one ticker', async () => {
+		const response = await makeBenzingaRequest<GetConsensusRatingsResponse>(
+			'/api/v1/consensus-ratings',
+			API_KEY,
+			{ 'parameters[tickers]': 'AAPL' },
+		);
+		const parsed =
+			BenzingaEndpointOutputSchemas.getConsensusRatings.parse(response);
+		expect(parsed.consensus_rating).toEqual(expect.any(String));
+	});
+
+	it('calendar.listRemoved returns removed calendar events', async () => {
+		const response =
+			await makeBenzingaRequest<ListRemovedCalendarEventsResponse>(
+				'/api/v2.1/calendar-removed/',
+				API_KEY,
+				{ pageSize: 2 },
+			);
+		const parsed =
+			BenzingaEndpointOutputSchemas.listRemovedCalendarEvents.parse(response);
+		expect(Array.isArray(parsed.removed)).toBe(true);
+	});
+
+	it('news.listRemoved returns removed news ids', async () => {
+		const response = await makeBenzingaRequest<ListRemovedNewsResponse>(
+			'/api/v2/news-removed',
+			API_KEY,
+			{ pageSize: 2 },
+		);
+		const parsed =
+			BenzingaEndpointOutputSchemas.listRemovedNews.parse(response);
+		expect(typeof parsed).toBe('object');
 	});
 });

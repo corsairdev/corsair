@@ -9,9 +9,7 @@ export const listNewsChannels: BenzingaEndpoints['listNewsChannels'] = async (
 ) => {
 	const response = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listNewsChannels']
-	>('/api/v2.1/news/channels', ctx.key, {
-		method: 'GET',
-	});
+	>('/api/v2.1/news/channels', ctx.key);
 
 	await logEventFromContext(
 		ctx,

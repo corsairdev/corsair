@@ -155,7 +155,7 @@ const CalendarPaginationSchema = z.object({
 });
 
 const CalendarImportanceSchema = z.number().int().min(0).max(5);
-const EconomicsImportanceSchema = z.number().int().min(1).max(5);
+const EconomicsImportanceSchema = z.number().int().min(1).max(3);
 
 const CalendarDateFiltersSchema = z.object({
 	date: CalendarDateSchema.optional(),
@@ -455,7 +455,7 @@ export type ListSplitsResponse = z.infer<typeof ListSplitsResponseSchema>;
 // GET /api/v2.1/calendar/economics
 // https://docs.benzinga.com/api-reference/calendar-api/get-economics
 const ListEconomicsInputSchema = CalendarPaginationSchema.extend(
-	CalendarDateFiltersSchema.shape,
+	CalendarDateFiltersSchema.omit({ tickers: true }).shape,
 ).extend({
 	importance: EconomicsImportanceSchema.optional(),
 	country: z.string().optional(),
@@ -490,6 +490,215 @@ const ListEconomicsResponseSchema = z.object({
 
 export type ListEconomicsResponse = z.infer<typeof ListEconomicsResponseSchema>;
 
+// ─── calendar.listConferenceCalls ───
+// GET /api/v2.1/calendar/conference-calls
+// https://docs.benzinga.com/api-reference/calendar-api/get-conference-calls
+const ListConferenceCallsInputSchema = CalendarPaginationSchema.extend({
+	date: CalendarDateSchema.optional(),
+	dateFrom: CalendarDateSchema.optional(),
+	dateTo: CalendarDateSchema.optional(),
+	tickers: z.string().optional(),
+	updated: z.number().int().optional(),
+});
+
+export type ListConferenceCallsInput = z.infer<
+	typeof ListConferenceCallsInputSchema
+>;
+
+const ConferenceCallSchema = z
+	.object({
+		id: z.string(),
+		date: z.string(),
+		ticker: z.string(),
+		name: z.string(),
+		exchange: z.string().optional(),
+		cusip: z.string().optional(),
+		isin: z.string().optional(),
+		access_code: z.string().optional(),
+		confirmed: z.boolean().optional(),
+		international_num: z.string().optional(),
+		phone_num: z.string().optional(),
+		reservation_num: z.string().optional(),
+		period: z.string().optional(),
+		period_year: z.number().optional(),
+		start_time: z.string().optional(),
+		time: z.string().optional(),
+		webcast_url: z.string().optional(),
+		importance: z.number().optional(),
+		updated: z.number().optional(),
+		notes: z.string().optional(),
+	})
+	.loose();
+
+const ListConferenceCallsResponseSchema = z.object({
+	conference: z.array(ConferenceCallSchema),
+});
+
+export type ListConferenceCallsResponse = z.infer<
+	typeof ListConferenceCallsResponseSchema
+>;
+
+/**
+ * The OpenAPI schema names the array `conference-calls`, while the documented
+ * 200 example (and the live API) uses `conference`. Both keys are accepted and
+ * normalized to `{ conference }` in `endpoints/conference-calls.ts`.
+ */
+export const ListConferenceCallsRawResponseSchema = z.object({
+	conference: z.array(ConferenceCallSchema).optional(),
+	'conference-calls': z.array(ConferenceCallSchema).optional(),
+});
+
+export type ListConferenceCallsRawResponse = z.infer<
+	typeof ListConferenceCallsRawResponseSchema
+>;
+
+// ─── calendar.getConsensusRatings ───
+// GET /api/v1/consensus-ratings
+// https://docs.benzinga.com/api-reference/calendar-api/get-consensus-ratings
+const GetConsensusRatingsInputSchema = z.object({
+	ticker: z.string().min(1),
+	pagesize: z.number().int().min(1).max(1000).optional(),
+	dateFrom: CalendarDateSchema.optional(),
+	dateTo: CalendarDateSchema.optional(),
+	simplify: z.boolean().optional(),
+	aggregateType: z.enum(['number', 'percentage']).optional(),
+});
+
+export type GetConsensusRatingsInput = z.infer<
+	typeof GetConsensusRatingsInputSchema
+>;
+
+const GetConsensusRatingsResponseSchema = z
+	.object({
+		aggregate_ratings: z
+			.object({
+				strong_buy: z.number().optional(),
+				buy: z.number().optional(),
+				hold: z.number().optional(),
+				sell: z.number().optional(),
+				strong_sell: z.number().optional(),
+			})
+			.optional(),
+		aggregate_type: z.string().optional(),
+		consensus_price_target: z.number().optional(),
+		consensus_rating: z.string().optional(),
+		consensus_rating_val: z.number().optional(),
+		high_price_target: z.number().optional(),
+		low_price_target: z.number().optional(),
+		total_analyst_count: z.number().optional(),
+		unique_analyst_count: z.number().optional(),
+		updated_at: z.string().optional(),
+	})
+	.loose();
+
+export type GetConsensusRatingsResponse = z.infer<
+	typeof GetConsensusRatingsResponseSchema
+>;
+
+// ─── calendar.listRemoved ───
+// GET /api/v2.1/calendar-removed/
+// https://docs.benzinga.com/api-reference/calendar-api/get-removed
+const RemovedCalendarTypeSchema = z.enum([
+	'ratings',
+	'earnings',
+	'dividends',
+	'splits',
+	'ipos',
+	'offerings',
+	'economics',
+	'guidance',
+	'ma',
+	'conference calls',
+]);
+
+const ListRemovedCalendarEventsInputSchema = z.object({
+	page: z.number().int().min(0).max(100000).optional(),
+	pageSize: z.number().int().min(1).max(1000).optional(),
+	type: RemovedCalendarTypeSchema.optional(),
+	updated: z.number().int().optional(),
+});
+
+export type ListRemovedCalendarEventsInput = z.infer<
+	typeof ListRemovedCalendarEventsInputSchema
+>;
+
+const ListRemovedCalendarEventsResponseSchema = z.object({
+	removed: z.array(
+		z.object({
+			id: z.string(),
+			type: z.string(),
+			updated: z.number(),
+		}),
+	),
+});
+
+export type ListRemovedCalendarEventsResponse = z.infer<
+	typeof ListRemovedCalendarEventsResponseSchema
+>;
+
+// ─── news.listRemoved ───
+// GET /api/v2/news-removed
+// https://docs.benzinga.com/api-reference/news-api/get-removed-news
+const ListRemovedNewsInputSchema = z.object({
+	page: z.number().int().min(0).optional(),
+	pageSize: z.number().int().min(1).max(1000).optional(),
+	updatedSince: z.number().int().optional(),
+});
+
+export type ListRemovedNewsInput = z.infer<typeof ListRemovedNewsInputSchema>;
+
+/**
+ * Documented as an object whose keys each hold an array of removed items
+ * (`additionalProperties: array<api.NewsRemovedItem>`). `updated` is an
+ * RFC 2822 timestamp string.
+ */
+const ListRemovedNewsResponseSchema = z.record(
+	z.string(),
+	z.array(
+		z.object({
+			id: z.number(),
+			updated: z.string(),
+		}),
+	),
+);
+
+export type ListRemovedNewsResponse = z.infer<
+	typeof ListRemovedNewsResponseSchema
+>;
+
+// ─── WebSocket stream connection details ───
+// Benzinga streams are WebSocket-only, so these endpoints make no HTTP call.
+// They return the connection URL (filters applied, API key left out so it
+// never lands in logs or tool output) for the caller to open with
+// `token=<api key>` appended.
+// https://docs.benzinga.com/ws-reference/data-websocket/get-calendar-earnings-stream
+// https://docs.benzinga.com/ws-reference/data-websocket/get-news-stream
+const StreamConnectionSchema = z.object({
+	url: z.string(),
+	authQueryParam: z.literal('token'),
+	commands: z.array(z.enum(['ping', 'replay'])),
+});
+
+export type StreamConnection = z.infer<typeof StreamConnectionSchema>;
+
+// ─── calendar.getEarningsStream ───
+const GetEarningsStreamInputSchema = z.object({
+	tickers: z.string().optional(),
+	isins: z.string().optional(),
+});
+
+export type GetEarningsStreamInput = z.infer<
+	typeof GetEarningsStreamInputSchema
+>;
+
+// ─── news.getStream ───
+const GetNewsStreamInputSchema = z.object({
+	tickers: z.string().optional(),
+	channels: z.string().optional(),
+});
+
+export type GetNewsStreamInput = z.infer<typeof GetNewsStreamInputSchema>;
+
 export type BenzingaEndpointInputs = {
 	getNews: GetNewsInput;
 	listNewsChannels: ListNewsChannelsInput;
@@ -500,6 +709,12 @@ export type BenzingaEndpointInputs = {
 	listIpos: ListIposInput;
 	listSplits: ListSplitsInput;
 	listEconomics: ListEconomicsInput;
+	listConferenceCalls: ListConferenceCallsInput;
+	getConsensusRatings: GetConsensusRatingsInput;
+	listRemovedCalendarEvents: ListRemovedCalendarEventsInput;
+	listRemovedNews: ListRemovedNewsInput;
+	getEarningsStream: GetEarningsStreamInput;
+	getNewsStream: GetNewsStreamInput;
 };
 
 export type BenzingaEndpointOutputs = {
@@ -512,6 +727,12 @@ export type BenzingaEndpointOutputs = {
 	listIpos: ListIposResponse;
 	listSplits: ListSplitsResponse;
 	listEconomics: ListEconomicsResponse;
+	listConferenceCalls: ListConferenceCallsResponse;
+	getConsensusRatings: GetConsensusRatingsResponse;
+	listRemovedCalendarEvents: ListRemovedCalendarEventsResponse;
+	listRemovedNews: ListRemovedNewsResponse;
+	getEarningsStream: StreamConnection;
+	getNewsStream: StreamConnection;
 };
 
 export const BenzingaEndpointInputSchemas = {
@@ -524,6 +745,12 @@ export const BenzingaEndpointInputSchemas = {
 	listIpos: ListIposInputSchema,
 	listSplits: ListSplitsInputSchema,
 	listEconomics: ListEconomicsInputSchema,
+	listConferenceCalls: ListConferenceCallsInputSchema,
+	getConsensusRatings: GetConsensusRatingsInputSchema,
+	listRemovedCalendarEvents: ListRemovedCalendarEventsInputSchema,
+	listRemovedNews: ListRemovedNewsInputSchema,
+	getEarningsStream: GetEarningsStreamInputSchema,
+	getNewsStream: GetNewsStreamInputSchema,
 } as const;
 
 export const BenzingaEndpointOutputSchemas = {
@@ -536,4 +763,10 @@ export const BenzingaEndpointOutputSchemas = {
 	listIpos: ListIposResponseSchema,
 	listSplits: ListSplitsResponseSchema,
 	listEconomics: ListEconomicsResponseSchema,
+	listConferenceCalls: ListConferenceCallsResponseSchema,
+	getConsensusRatings: GetConsensusRatingsResponseSchema,
+	listRemovedCalendarEvents: ListRemovedCalendarEventsResponseSchema,
+	listRemovedNews: ListRemovedNewsResponseSchema,
+	getEarningsStream: StreamConnectionSchema,
+	getNewsStream: StreamConnectionSchema,
 } as const;

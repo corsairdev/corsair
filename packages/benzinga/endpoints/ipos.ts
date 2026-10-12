@@ -9,17 +9,14 @@ export const listIpos: BenzingaEndpoints['listIpos'] = async (ctx, input) => {
 		'/api/v2.1/calendar/ipos',
 		ctx.key,
 		{
-			method: 'GET',
-			query: {
-				page: input.page,
-				pagesize: input.pagesize,
-				ipo_date: input.ipo_date,
-				'parameters[date_from]': input.date_from,
-				'parameters[date_to]': input.date_to,
-				'parameters[tickers]': input.tickers,
-				'parameters[ipo_type]': input.ipo_type,
-				'parameters[updated]': input.updated,
-			},
+			page: input.page,
+			pagesize: input.pagesize,
+			ipo_date: input.ipo_date,
+			'parameters[date_from]': input.date_from,
+			'parameters[date_to]': input.date_to,
+			'parameters[tickers]': input.tickers,
+			'parameters[ipo_type]': input.ipo_type,
+			'parameters[updated]': input.updated,
 		},
 	);
 

@@ -1,138 +1,128 @@
-import { ApiError, request } from 'corsair/http';
-import { BenzingaAPIError, makeBenzingaRequest } from './client';
+import type { ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { makeBenzingaRequest } from './client';
+import { errorHandlers } from './error-handlers';
 
-jest.mock('corsair/http', () => {
-	const original = jest.requireActual('corsair/http');
-	return {
-		...original,
-		request: jest.fn(),
-	};
-});
+const fetchSpy = jest.spyOn(globalThis, 'fetch');
 
-const mockRequest = jest.mocked(request);
-
-function apiError(status: number, retryAfter?: number): ApiError {
-	return new ApiError(
-		{ method: 'GET', url: 'https://api.benzinga.com/api/v2/news' },
-		{
-			url: 'https://api.benzinga.com/api/v2/news',
-			ok: false,
-			status,
-			statusText: `status ${status}`,
-			body: `status ${status}`,
-		},
-		`status ${status}`,
-		retryAfter === undefined ? undefined : { retryAfter },
-	);
+function jsonResponse(body: object, init: ResponseInit = {}): Response {
+	return new Response(JSON.stringify(body), {
+		...init,
+		headers: { 'Content-Type': 'application/json', ...init.headers },
+	});
 }
 
-describe('Benzinga API client', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-		mockRequest.mockResolvedValue([]);
+function lastFetch(): { url: string; init: RequestInit | undefined } {
+	const call = fetchSpy.mock.calls.at(-1);
+	const [input, init] = call ?? [];
+	return { url: String(input), init };
+}
+
+function errorContext(error: Error): ErrorContext {
+	return {
+		pluginId: 'benzinga',
+		operation: 'benzinga.news.get',
+		input: {},
+		originalError: error,
+	};
+}
+
+describe('makeBenzingaRequest', () => {
+	afterEach(() => {
+		fetchSpy.mockReset();
+		jest.useRealTimers();
 	});
 
-	it('targets the Benzinga base URL with JSON headers', async () => {
-		await makeBenzingaRequest('/api/v2/news', 'test-key', {
-			query: { pageSize: 1 },
+	it('sends a GET with the token query param and JSON Accept header', async () => {
+		fetchSpy.mockResolvedValue(jsonResponse([{ id: 1 }]));
+
+		const result = await makeBenzingaRequest('/api/v2/news', 'test-key', {
+			pageSize: 2,
+			tickers: 'AAPL',
+			channels: undefined,
 		});
 
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-		const [config, options] = mockRequest.mock.calls[0] ?? [];
-		expect(config).toMatchObject({
-			BASE: 'https://api.benzinga.com',
-			WITH_CREDENTIALS: false,
-		});
-		expect(config?.HEADERS).toMatchObject({
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-		});
-		expect(options).toMatchObject({ method: 'GET', url: '/api/v2/news' });
-	});
-
-	it('authenticates via the token query parameter only', async () => {
-		await makeBenzingaRequest('/api/v2/news', 'test-key', {
-			query: { pageSize: 1 },
-		});
-
-		const [config, options] = mockRequest.mock.calls[0] ?? [];
-		expect(options?.query).toMatchObject({ pageSize: 1, token: 'test-key' });
-		// Live evidence: any `Authorization` header makes the API answer as
-		// anonymous, so neither HEADERS nor TOKEN may set one.
-		expect(config?.HEADERS).not.toHaveProperty('Authorization');
-		expect(config).not.toHaveProperty('TOKEN');
-	});
-
-	it('sends a body only for write methods', async () => {
-		await makeBenzingaRequest('/api/v2/news', 'test-key', {
-			method: 'POST',
-			body: { tickers: 'AAPL' },
-		});
-		const [, postOptions] = mockRequest.mock.calls[0] ?? [];
-		expect(postOptions?.body).toEqual({ tickers: 'AAPL' });
-		expect(postOptions?.query).toMatchObject({ token: 'test-key' });
-
-		jest.clearAllMocks();
-		await makeBenzingaRequest('/api/v2/news', 'test-key', {
-			method: 'GET',
-			query: { pageSize: 1 },
-		});
-		const [, getOptions] = mockRequest.mock.calls[0] ?? [];
-		expect(getOptions?.body).toBeUndefined();
-	});
-
-	it('rethrows ApiError untouched so status and retryAfter survive', async () => {
-		const rateLimited = apiError(429, 45000);
-		mockRequest.mockRejectedValue(rateLimited);
-
-		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
-			// unknown justified: the rejection is typed explicitly so the
-			// assertions below can narrow it safely instead of using `any`.
-			(error: unknown) => error,
-		);
-		expect(seen).toBe(rateLimited);
-		expect(seen).toBeInstanceOf(ApiError);
-		if (seen instanceof ApiError) {
-			expect(seen.status).toBe(429);
-			expect(seen.retryAfter).toBe(45000);
-		}
-	});
-
-	it('wraps generic errors in BenzingaAPIError', async () => {
-		mockRequest.mockRejectedValue(new Error('fetch failed'));
-
-		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
-			// unknown justified: the rejection is typed explicitly so the
-			// assertions below can narrow it safely instead of using `any`.
-			(error: unknown) => error,
-		);
-		expect(seen).toBeInstanceOf(BenzingaAPIError);
-		if (seen instanceof BenzingaAPIError) {
-			expect(seen.message).toBe('fetch failed');
-			expect(seen.name).toBe('BenzingaAPIError');
-			expect(seen.code).toBeUndefined();
-		}
-	});
-
-	it('wraps non-error rejections as unknown errors', async () => {
-		mockRequest.mockRejectedValue('boom');
-
-		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
-			// unknown justified: the rejection is typed explicitly so the
-			// assertions below can narrow it safely instead of using `any`.
-			(error: unknown) => error,
-		);
-		expect(seen).toBeInstanceOf(BenzingaAPIError);
-		if (seen instanceof BenzingaAPIError) {
-			expect(seen.message).toBe('Unknown error');
-		}
-	});
-
-	it('returns the parsed response unchanged', async () => {
-		const payload = [{ id: 1 }];
-		mockRequest.mockResolvedValue(payload);
-
-		const result = await makeBenzingaRequest('/api/v2/news', 'test-key');
 		expect(result).toEqual([{ id: 1 }]);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		const { url, init } = lastFetch();
+		expect(url).toBe(
+			'https://api.benzinga.com/api/v2/news?pageSize=2&tickers=AAPL&token=test-key',
+		);
+		expect(init?.method).toBe('GET');
+		expect(init?.body).toBeUndefined();
+		const headers = new Headers(init?.headers);
+		expect(headers.get('Accept')).toBe('application/json');
+		expect(headers.get('Authorization')).toBeNull();
+	});
+
+	it('surfaces a 401 as ApiError that the auth handler stops on', async () => {
+		fetchSpy.mockResolvedValue(
+			jsonResponse(
+				{ message: 'Invalid or missing authentication token' },
+				{ status: 401, statusText: 'Unauthorized' },
+			),
+		);
+
+		const error = await makeBenzingaRequest('/api/v2/news', 'bad-key').then(
+			() => undefined,
+			(rejection: Error) => rejection,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error instanceof ApiError && error.status).toBe(401);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		if (!error) throw new Error('expected a rejection');
+		expect(errorHandlers.AUTH_ERROR.match(error, errorContext(error))).toBe(
+			true,
+		);
+		await expect(
+			errorHandlers.AUTH_ERROR.handler(error, errorContext(error)),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('honours Retry-After on 429 and hands the delay to the rate-limit handler', async () => {
+		jest.useFakeTimers();
+		fetchSpy.mockImplementation(async () =>
+			jsonResponse(
+				{ message: 'Too Many Requests' },
+				{
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: { 'Retry-After': '2' },
+				},
+			),
+		);
+
+		const pending = makeBenzingaRequest('/api/v2/news', 'test-key').then(
+			() => undefined,
+			(rejection: Error) => rejection,
+		);
+		await jest.advanceTimersByTimeAsync(5_999);
+		expect(fetchSpy).toHaveBeenCalledTimes(3);
+		await jest.advanceTimersByTimeAsync(1);
+		const error = await pending;
+
+		expect(fetchSpy).toHaveBeenCalledTimes(4);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error instanceof ApiError && error.status).toBe(429);
+		expect(error instanceof ApiError && error.retryAfter).toBe(2000);
+		if (!error) throw new Error('expected a rejection');
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(error, errorContext(error)),
+		).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error, errorContext(error)),
+		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+	});
+
+	it('wraps network failures in BenzingaAPIError', async () => {
+		fetchSpy.mockRejectedValue(new TypeError('fetch failed'));
+
+		await expect(
+			makeBenzingaRequest('/api/v2/news', 'test-key'),
+		).rejects.toMatchObject({
+			name: 'BenzingaAPIError',
+			message: 'fetch failed',
+		});
 	});
 });

@@ -10,18 +10,15 @@ export const listGuidance: BenzingaEndpoints['listGuidance'] = async (
 	const response = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listGuidance']
 	>('/api/v2.1/calendar/guidance', ctx.key, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			pagesize: input.pagesize,
-			'parameters[date]': input.date,
-			'parameters[date_from]': input.dateFrom,
-			'parameters[date_to]': input.dateTo,
-			'parameters[importance]': input.importance,
-			'parameters[is_primary]': input.is_primary,
-			'parameters[tickers]': input.tickers,
-			'parameters[updated]': input.updated,
-		},
+		page: input.page,
+		pagesize: input.pagesize,
+		'parameters[date]': input.date,
+		'parameters[date_from]': input.dateFrom,
+		'parameters[date_to]': input.dateTo,
+		'parameters[importance]': input.importance,
+		'parameters[is_primary]': input.is_primary,
+		'parameters[tickers]': input.tickers,
+		'parameters[updated]': input.updated,
 	});
 
 	await logEventFromContext(
