@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, managementPath, tryCacheWrite } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
@@ -15,7 +15,8 @@ export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentsList']
-	>(`/projects/${managementPath(input.project_id)}/list_deployments`, ctx.key, {
+	>('/projects/{project_id}/list_deployments', ctx.key, {
+		path: { project_id: input.project_id },
 		method: 'GET',
 		query,
 	});
@@ -43,7 +44,8 @@ export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
 export const get: ConvexEndpoints['deploymentGet'] = async (ctx, input) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentGet']
-	>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
+	>('/deployments/{deployment_name}', ctx.key, {
+		path: { deployment_name: input.deployment_name },
 		method: 'GET',
 	});
 
@@ -71,7 +73,8 @@ export const create: ConvexEndpoints['deploymentCreate'] = async (
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentCreate']
-	>(`/projects/${managementPath(project_id)}/create_deployment`, ctx.key, {
+	>('/projects/{project_id}/create_deployment', ctx.key, {
+		path: { project_id },
 		method: 'POST',
 		body,
 	});
@@ -100,14 +103,11 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 ) => {
 	const { deployment_name, ...body } = input;
 
-	await makeConvexRequest<void>(
-		`/deployments/${managementPath(deployment_name)}`,
-		ctx.key,
-		{
-			method: 'PATCH',
-			body,
-		},
-	);
+	await makeConvexRequest<void>('/deployments/{deployment_name}', ctx.key, {
+		path: { deployment_name },
+		method: 'PATCH',
+		body,
+	});
 
 	// The PATCH response does not include the updated deployment record, so
 	// fetch it to keep the local cache fresh. A refresh failure is diagnosed but
@@ -118,7 +118,8 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 		try {
 			const refreshed = await makeConvexRequest<
 				ConvexEndpointOutputs['deploymentGet']
-			>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
+			>('/deployments/{deployment_name}', ctx.key, {
+				path: { deployment_name: input.deployment_name },
 				method: 'GET',
 			});
 			if (refreshed.name) {
@@ -147,11 +148,9 @@ export const deleteDeployment: ConvexEndpoints['deploymentDelete'] = async (
 	input,
 ) => {
 	await makeConvexRequest<void>(
-		`/deployments/${managementPath(input.deployment_name)}/delete`,
+		'/deployments/{deployment_name}/delete',
 		ctx.key,
-		{
-			method: 'POST',
-		},
+		{ path: { deployment_name: input.deployment_name }, method: 'POST' },
 	);
 
 	// The deployment was deleted upstream — best-effort cache cleanup only. Also

@@ -1,15 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, managementPath } from '../client';
+import { makeConvexRequest } from '../client';
 
 export const deleteCustomDomain: ConvexEndpoints['customDomainDelete'] = async (
 	ctx,
 	input,
 ) => {
 	await makeConvexRequest<void>(
-		`/deployments/${managementPath(input.deployment_name)}/delete_custom_domain`,
+		'/deployments/{deployment_name}/delete_custom_domain',
 		ctx.key,
 		{
+			path: { deployment_name: input.deployment_name },
 			method: 'POST',
 			body: {
 				requestDestination: input.requestDestination,

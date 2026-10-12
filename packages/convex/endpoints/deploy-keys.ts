@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, managementPath, tryCacheWrite } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const create: ConvexEndpoints['deployKeyCreate'] = async (
@@ -11,14 +11,11 @@ export const create: ConvexEndpoints['deployKeyCreate'] = async (
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deployKeyCreate']
-	>(
-		`/deployments/${managementPath(deployment_name)}/create_deploy_key`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	>('/deployments/{deployment_name}/create_deploy_key', ctx.key, {
+		path: { deployment_name },
+		method: 'POST',
+		body,
+	});
 
 	// The deploy key secret is shown once at creation and never returned again
 	// — do NOT cache the plaintext `deployKey` secret. The create response only
@@ -39,13 +36,10 @@ export const create: ConvexEndpoints['deployKeyCreate'] = async (
 export const list: ConvexEndpoints['deployKeysList'] = async (ctx, input) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deployKeysList']
-	>(
-		`/deployments/${managementPath(input.deployment_name)}/list_deploy_keys`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+	>('/deployments/{deployment_name}/list_deploy_keys', ctx.key, {
+		path: { deployment_name: input.deployment_name },
+		method: 'GET',
+	});
 
 	const deployKeys = ctx.db.deployKeys;
 	if (response && deployKeys) {

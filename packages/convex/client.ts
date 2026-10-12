@@ -20,12 +20,10 @@ export class ConvexAPIError extends Error {
 	}
 }
 
-export function managementPath(segment: string): string {
-	const value = String(segment);
+export function assertPathSegment(value: string): void {
 	if (!value || /[/\\?#]/.test(value) || value.includes('..')) {
 		throw new ConvexAPIError('Invalid Convex path parameter');
 	}
-	return encodeURIComponent(value);
 }
 
 // The Convex Management API. Deployment-scoped endpoints (execute query batch,
@@ -37,6 +35,8 @@ export interface ConvexRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: object;
 	query?: Record<string, string | number | boolean | undefined>;
+	/** Values for `{name}` placeholders in the endpoint; URI-component encoded. */
+	path?: Record<string, string>;
 	/**
 	 * Override the API base URL. Deployment-scoped endpoints (query batch,
 	 * query timestamp, log streams) use `https://<deployment>.convex.cloud/api`.
@@ -81,15 +81,20 @@ export async function makeConvexRequest<T>(
 		method = 'GET',
 		body,
 		query,
+		path,
 		baseUrl,
 		authScheme = 'bearer',
 	} = options;
+	for (const value of Object.values(path ?? {})) {
+		assertPathSegment(value);
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl ?? CONVEX_MANAGEMENT_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		ENCODE_PATH: encodeURIComponent,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization:
@@ -100,6 +105,7 @@ export async function makeConvexRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		path,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body

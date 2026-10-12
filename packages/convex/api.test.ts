@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import type { z } from 'zod';
-import { ConvexAPIError, makeConvexRequest, managementPath } from './client';
+import { ConvexAPIError, makeConvexRequest } from './client';
 import { CustomDomainsEndpoints } from './endpoints/custom-domains';
 import { DeployKeysEndpoints } from './endpoints/deploy-keys';
 import { DeploymentScopedEndpoints } from './endpoints/deployment-scoped';
@@ -707,10 +707,27 @@ describe('deployment-scoped', () => {
 });
 
 describe('request client', () => {
-	it('rejects management path segments that can escape the route', () => {
-		expect(() => managementPath('../teams')).toThrow(ConvexAPIError);
-		expect(() => managementPath('a/b')).toThrow(ConvexAPIError);
-		expect(managementPath('my app')).toBe('my%20app');
+	it.each(['../teams', 'a/b', 'a?b', 'a#b', ''])(
+		'rejects path segment %p before any request',
+		async (segment) => {
+			stubFetch({});
+			await expect(
+				ProjectsEndpoints.getById(makeCtx(), { project_id: segment }),
+			).rejects.toThrow('Invalid Convex path parameter');
+			expect(calls).toHaveLength(0);
+		},
+	);
+
+	it('URI-encodes path segments', async () => {
+		stubFetch(project);
+		await ProjectsEndpoints.getBySlug(makeCtx(), {
+			team_id_or_slug: 'acme team',
+			project_slug: 'my{app}',
+		});
+
+		expect(onlyCall().url).toBe(
+			`${MGMT}/teams/acme%20team/projects/my%7Bapp%7D`,
+		);
 	});
 
 	it('fails Management calls without an access token before any request', async () => {

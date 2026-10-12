@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, managementPath, tryCacheWrite } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
@@ -11,7 +11,8 @@ export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectsList']
-	>(`/teams/${managementPath(input.team_id)}/projects`, ctx.key, {
+	>('/teams/{team_id}/projects', ctx.key, {
+		path: { team_id: input.team_id },
 		method: 'GET',
 		query,
 	});
@@ -40,7 +41,8 @@ export const getById: ConvexEndpoints['projectGetById'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectGetById']
-	>(`/projects/${managementPath(input.project_id)}`, ctx.key, {
+	>('/projects/{project_id}', ctx.key, {
+		path: { project_id: input.project_id },
 		method: 'GET',
 	});
 
@@ -66,13 +68,13 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectGetBySlug']
-	>(
-		`/teams/${managementPath(input.team_id_or_slug)}/projects/${managementPath(input.project_slug)}`,
-		ctx.key,
-		{
-			method: 'GET',
+	>('/teams/{team_id_or_slug}/projects/{project_slug}', ctx.key, {
+		path: {
+			team_id_or_slug: input.team_id_or_slug,
+			project_slug: input.project_slug,
 		},
-	);
+		method: 'GET',
+	});
 
 	const projects = ctx.db.projects;
 	if (response && projects) {
@@ -95,7 +97,8 @@ export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectCreate']
-	>(`/teams/${managementPath(team_id)}/create_project`, ctx.key, {
+	>('/teams/{team_id}/create_project', ctx.key, {
+		path: { team_id },
 		method: 'POST',
 		body,
 	});
@@ -123,13 +126,10 @@ export const deleteProject: ConvexEndpoints['projectDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeConvexRequest<void>(
-		`/projects/${managementPath(input.project_id)}/delete`,
-		ctx.key,
-		{
-			method: 'POST',
-		},
-	);
+	await makeConvexRequest<void>('/projects/{project_id}/delete', ctx.key, {
+		path: { project_id: input.project_id },
+		method: 'POST',
+	});
 
 	const { projects, deployments, deployKeys } = ctx.db;
 	if (projects) {
