@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class BenzingaAPIError extends Error {
@@ -12,6 +16,19 @@ export class BenzingaAPIError extends Error {
 }
 
 const BENZINGA_API_BASE = 'https://api.benzinga.com';
+
+// One transport attempt per call: RATE_LIMIT_ERROR in ./error-handlers owns
+// 429 retries, so retrying here too would multiply the request budget.
+// `enabled` stays on so Retry-After is still read onto the thrown ApiError.
+const BENZINGA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 /**
  * Authenticated request to the Benzinga API.
@@ -53,7 +70,9 @@ export async function makeBenzingaRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: BENZINGA_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;

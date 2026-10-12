@@ -30,7 +30,6 @@ function errorContext(error: Error): ErrorContext {
 describe('makeBenzingaRequest', () => {
 	afterEach(() => {
 		fetchSpy.mockReset();
-		jest.useRealTimers();
 	});
 
 	it('sends a GET with the token query param and JSON Accept header', async () => {
@@ -80,9 +79,8 @@ describe('makeBenzingaRequest', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('honours Retry-After on 429 and hands the delay to the rate-limit handler', async () => {
-		jest.useFakeTimers();
-		fetchSpy.mockImplementation(async () =>
+	it('makes one attempt on 429 and hands Retry-After to the rate-limit handler', async () => {
+		fetchSpy.mockResolvedValue(
 			jsonResponse(
 				{ message: 'Too Many Requests' },
 				{
@@ -93,16 +91,12 @@ describe('makeBenzingaRequest', () => {
 			),
 		);
 
-		const pending = makeBenzingaRequest('/api/v2/news', 'test-key').then(
+		const error = await makeBenzingaRequest('/api/v2/news', 'test-key').then(
 			() => undefined,
 			(rejection: Error) => rejection,
 		);
-		await jest.advanceTimersByTimeAsync(5_999);
-		expect(fetchSpy).toHaveBeenCalledTimes(3);
-		await jest.advanceTimersByTimeAsync(1);
-		const error = await pending;
 
-		expect(fetchSpy).toHaveBeenCalledTimes(4);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error instanceof ApiError && error.status).toBe(429);
 		expect(error instanceof ApiError && error.retryAfter).toBe(2000);
