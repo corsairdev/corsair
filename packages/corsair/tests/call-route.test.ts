@@ -294,6 +294,73 @@ describe('resolveCall — error normalization', () => {
 		}
 	});
 
+	// Every plugin declares its own <Provider>APIError for a body-level failure
+	// (307 of them). Slack answers HTTP 200 with { ok: false, error }, so there
+	// is no status for the ApiError branch to key on, and these used to reach
+	// the generic 500 — leaving a caller no way to learn that the bot simply
+	// was not in the channel.
+	it('plugin APIError → 502 provider_error carrying the provider code', async () => {
+		class SlackAPIError extends Error {
+			constructor(
+				message: string,
+				readonly code?: string,
+			) {
+				super(message);
+				this.name = 'SlackAPIError';
+			}
+		}
+		await expect(
+			callGh(
+				corsairThrowing(new SlackAPIError('not_in_channel', 'not_in_channel')),
+			),
+		).rejects.toMatchObject({
+			status: 502,
+			code: 'provider_error',
+			extra: { providerCode: 'not_in_channel' },
+		});
+	});
+
+	// A code-shaped message is the whole value a caller gets; prose is not,
+	// because an operation error can carry hosts, config or credentials.
+	it('plugin APIError with a prose message stays a generic 500', async () => {
+		const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		class WidgetAPIError extends Error {
+			constructor(message: string) {
+				super(message);
+				this.name = 'WidgetAPIError';
+			}
+		}
+		try {
+			await expect(
+				callGh(
+					corsairThrowing(
+						new WidgetAPIError(
+							'connect failed to db-host:5432 password=hunter2',
+						),
+					),
+				),
+			).rejects.toMatchObject({ status: 500, code: 'internal_error' });
+		} finally {
+			spy.mockRestore();
+		}
+	});
+
+	it('plugin APIError with no code falls back to a code-shaped message', async () => {
+		class NotionAPIError extends Error {
+			constructor(message: string) {
+				super(message);
+				this.name = 'NotionAPIError';
+			}
+		}
+		await expect(
+			callGh(corsairThrowing(new NotionAPIError('object_not_found'))),
+		).rejects.toMatchObject({
+			status: 502,
+			code: 'provider_error',
+			extra: { providerCode: 'object_not_found' },
+		});
+	});
+
 	it('unknown throw → 500 internal_error with a generic message (no detail leak, original logged)', async () => {
 		const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
 		try {
