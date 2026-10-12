@@ -20,7 +20,7 @@ Get a CallPage call by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.calls.get({});
+await corsair.callpage.api.calls.get({ callId: 99 });
 ```
 
 **Input**
@@ -208,7 +208,7 @@ Create a CallPage manager for a widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.managers.create({});
+await corsair.callpage.api.managers.create({ widget_id: 1, user_id: 2, enabled: true });
 ```
 
 **Input**
@@ -255,7 +255,7 @@ Delete a CallPage manager from a widget.
 **Risk:** `destructive`
 
 ```ts
-await corsair.callpage.api.managers.delete({});
+await corsair.callpage.api.managers.delete({ widget_id: 1, user_id: 2 });
 ```
 
 **Input**
@@ -281,7 +281,7 @@ Get a CallPage manager by user and widget.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.managers.get({});
+await corsair.callpage.api.managers.get({ widget_id: 1, user_id: 2 });
 ```
 
 **Input**
@@ -299,6 +299,7 @@ await corsair.callpage.api.managers.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `widget_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
 | `enabled` | `boolean` | No | — |
 | `user` | `object` | No | — |
 | `departments` | `object[]` | No | — |
@@ -355,7 +356,7 @@ List managers for a CallPage widget with pagination.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.managers.list({});
+await corsair.callpage.api.managers.list({ widget_id: 1 });
 ```
 
 **Input**
@@ -377,6 +378,7 @@ await corsair.callpage.api.managers.list({});
 {
   id: number,
   widget_id?: number,
+  user_id?: number,
   enabled?: boolean,
   user?: {
     id: number,
@@ -413,7 +415,7 @@ Count enabled and disabled managers for a CallPage widget.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.managers.statusStatistics({});
+await corsair.callpage.api.managers.statusStatistics({ widget_id: 1 });
 ```
 
 **Input**
@@ -445,7 +447,7 @@ Update a CallPage manager.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.managers.update({});
+await corsair.callpage.api.managers.update({ widget_id: 1, user_id: 2, enabled: false });
 ```
 
 **Input**
@@ -521,7 +523,7 @@ Create a custom SMS message for a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.sms.create({});
+await corsair.callpage.api.sms.create({ widget_id: 1, message_id: 'visitor.dial-completed', text: 'Thanks for calling' });
 ```
 
 **Input**
@@ -554,7 +556,7 @@ List SMS messages for a CallPage widget.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.sms.list({});
+await corsair.callpage.api.sms.list({ widget_id: 1 });
 ```
 
 **Input**
@@ -594,7 +596,7 @@ Reset CallPage widget SMS messages to defaults.
 **Risk:** `destructive`
 
 ```ts
-await corsair.callpage.api.sms.reset({});
+await corsair.callpage.api.sms.reset({ widget_id: 1 });
 ```
 
 **Input**
@@ -620,7 +622,7 @@ Update a custom SMS message for a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.sms.update({});
+await corsair.callpage.api.sms.update({ widget_id: 1, message_id: 'visitor.dial-completed', text: 'Thanks for calling' });
 ```
 
 **Input**
@@ -655,7 +657,7 @@ Create a CallPage user.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.users.create({});
+await corsair.callpage.api.users.create({ name: 'Test Manager', tel: '+48888888888' });
 ```
 
 **Input**
@@ -688,7 +690,7 @@ Delete a CallPage user.
 **Risk:** `destructive`
 
 ```ts
-await corsair.callpage.api.users.delete({});
+await corsair.callpage.api.users.delete({ id: 1380 });
 ```
 
 **Input**
@@ -713,7 +715,7 @@ Get a CallPage user.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.users.get({});
+await corsair.callpage.api.users.get({ id: 3 });
 ```
 
 **Input**
@@ -835,7 +837,7 @@ Update a CallPage user.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.users.update({});
+await corsair.callpage.api.users.update({ id: 1380, name: 'Test Manager', tel: '+48888888888' });
 ```
 
 **Input**
@@ -871,7 +873,7 @@ Create a custom voice message for a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.voiceMessages.create({});
+await corsair.callpage.api.voiceMessages.create({ widget_id: 3, message_id: 'manager.call', enabled: true, file: 'https://example.com/manager.call.mp3' });
 ```
 
 **Input**
@@ -904,7 +906,7 @@ List voice messages for a CallPage widget.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.voiceMessages.list({});
+await corsair.callpage.api.voiceMessages.list({ widget_id: 3 });
 ```
 
 **Input**
@@ -946,7 +948,7 @@ Reset CallPage widget voice messages to defaults.
 **Risk:** `destructive`
 
 ```ts
-await corsair.callpage.api.voiceMessages.reset({});
+await corsair.callpage.api.voiceMessages.reset({ widget_id: 3 });
 ```
 
 **Input**
@@ -972,7 +974,7 @@ Update a custom voice message for a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.voiceMessages.update({});
+await corsair.callpage.api.voiceMessages.update({ widget_id: 3, message_id: 'manager.call', enabled: true });
 ```
 
 **Input**
@@ -1007,7 +1009,7 @@ Add users to a CallPage widget as managers.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.widgets.addUsers({});
+await corsair.callpage.api.widgets.addUsers({ id: 2, user_id: [1, 4] });
 ```
 
 **Input**
@@ -1065,7 +1067,7 @@ Initiate a CallPage widget call.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.widgets.call({});
+await corsair.callpage.api.widgets.call({ id: 1, tel: '+48888888888' });
 ```
 
 **Input**
@@ -1098,7 +1100,7 @@ Initiate or schedule a CallPage widget call.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.widgets.callOrSchedule({});
+await corsair.callpage.api.widgets.callOrSchedule({ id: 1, tel: '+48888888888' });
 ```
 
 **Input**
@@ -1130,7 +1132,7 @@ Create a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.widgets.create({});
+await corsair.callpage.api.widgets.create({ url: 'https://example.com', description: 'Landing page' });
 ```
 
 **Input**
@@ -1173,7 +1175,7 @@ Delete a CallPage widget.
 **Risk:** `destructive`
 
 ```ts
-await corsair.callpage.api.widgets.delete({});
+await corsair.callpage.api.widgets.delete({ id: 1 });
 ```
 
 **Input**
@@ -1198,7 +1200,7 @@ Get a CallPage widget.
 **Risk:** `read`
 
 ```ts
-await corsair.callpage.api.widgets.get({});
+await corsair.callpage.api.widgets.get({ id: 1 });
 ```
 
 **Input**
@@ -1233,6 +1235,7 @@ await corsair.callpage.api.widgets.get({});
 {
   id: number,
   widget_id?: number,
+  user_id?: number,
   enabled?: boolean,
   user?: {
     id: number,
@@ -1301,6 +1304,7 @@ await corsair.callpage.api.widgets.list({});
   managers?: {
     id: number,
     widget_id?: number,
+    user_id?: number,
     enabled?: boolean,
     user?: {
       id: number,
@@ -1338,7 +1342,7 @@ Update a CallPage widget.
 **Risk:** `write`
 
 ```ts
-await corsair.callpage.api.widgets.update({});
+await corsair.callpage.api.widgets.update({ id: 1, url: 'https://example.com' });
 ```
 
 **Input**

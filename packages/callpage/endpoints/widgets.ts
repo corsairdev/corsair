@@ -1,11 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
-import { deleteWidget, saveWidgets } from './persist';
+import { deleteWidget, patchWidget, saveWidgets } from './persist';
 import type { CallPageEndpointOutputs } from './types';
-import { CallPageEndpointOutputSchemas } from './types';
+import {
+	CallPageEndpointInputSchemas,
+	CallPageEndpointOutputSchemas,
+} from './types';
 
-export const list: CallPageEndpoints['widgetsList'] = async (ctx, input) => {
+export const list: CallPageEndpoints['widgetsList'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.widgetsList.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsList']
 	>('/api/v1/external/widgets/all', ctx.key, {
@@ -19,8 +23,9 @@ export const list: CallPageEndpoints['widgetsList'] = async (ctx, input) => {
 
 export const addUsers: CallPageEndpoints['widgetsAddUsers'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.widgetsAddUsers.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsAddUsers']
 	>('/api/v1/external/widgets/add-users', ctx.key, {
@@ -37,7 +42,8 @@ export const addUsers: CallPageEndpoints['widgetsAddUsers'] = async (
 	return result;
 };
 
-export const get: CallPageEndpoints['widgetsGet'] = async (ctx, input) => {
+export const get: CallPageEndpoints['widgetsGet'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.widgetsGet.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsGet']
 	>('/api/v1/external/widgets/get', ctx.key, {
@@ -51,8 +57,9 @@ export const get: CallPageEndpoints['widgetsGet'] = async (ctx, input) => {
 
 export const create: CallPageEndpoints['widgetsCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.widgetsCreate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsCreate']
 	>('/api/v1/external/widgets/create', ctx.key, {
@@ -60,23 +67,22 @@ export const create: CallPageEndpoints['widgetsCreate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsCreate,
 	});
-	await saveWidgets(ctx, [
-		{
-			id: result.id,
-			url: input.url,
-			description: input.description,
-			locale_code: input.locale_code,
-			enabled: input.enabled,
-		},
-	]);
+	await patchWidget(ctx, {
+		id: result.id,
+		url: input.url,
+		description: input.description,
+		locale_code: input.locale_code,
+		enabled: input.enabled,
+	});
 	await logEventFromContext(ctx, 'callpage.widgets.create', input, 'completed');
 	return result;
 };
 
 export const update: CallPageEndpoints['widgetsUpdate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.widgetsUpdate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsUpdate']
 	>('/api/v1/external/widgets/update', ctx.key, {
@@ -84,23 +90,22 @@ export const update: CallPageEndpoints['widgetsUpdate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsUpdate,
 	});
-	await saveWidgets(ctx, [
-		{
-			id: input.id,
-			url: input.url,
-			description: input.description,
-			locale_code: input.locale_code,
-			enabled: input.enabled,
-		},
-	]);
+	await patchWidget(ctx, {
+		id: input.id,
+		url: input.url,
+		description: input.description,
+		locale_code: input.locale_code,
+		enabled: input.enabled,
+	});
 	await logEventFromContext(ctx, 'callpage.widgets.update', input, 'completed');
 	return result;
 };
 
 export const remove: CallPageEndpoints['widgetsDelete'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.widgetsDelete.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsDelete']
 	>('/api/v1/external/widgets/delete', ctx.key, {
@@ -113,7 +118,8 @@ export const remove: CallPageEndpoints['widgetsDelete'] = async (
 	return result;
 };
 
-export const call: CallPageEndpoints['widgetsCall'] = async (ctx, input) => {
+export const call: CallPageEndpoints['widgetsCall'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.widgetsCall.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['widgetsCall']
 	>('/api/v1/external/widgets/call', ctx.key, {
@@ -131,7 +137,9 @@ export const call: CallPageEndpoints['widgetsCall'] = async (ctx, input) => {
 };
 
 export const callOrSchedule: CallPageEndpoints['widgetsCallOrSchedule'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input =
+			CallPageEndpointInputSchemas.widgetsCallOrSchedule.parse(rawInput);
 		const result = await makeCallPageRequest<
 			CallPageEndpointOutputs['widgetsCallOrSchedule']
 		>('/api/v1/external/widgets/call-or-schedule', ctx.key, {

@@ -61,6 +61,7 @@ const rows = await corsair.callpage.db.managers.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `widget_id` | `number` | equals, gt, gte, lt, lte, in |
+| `user_id` | `number` | equals, gt, gte, lt, lte, in |
 | `enabled` | `boolean` | equals |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

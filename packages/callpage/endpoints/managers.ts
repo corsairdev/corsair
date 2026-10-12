@@ -1,11 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
-import { saveManagers } from './persist';
+import { deleteManager, patchManager, saveManagers } from './persist';
 import type { CallPageEndpointOutputs } from './types';
-import { CallPageEndpointOutputSchemas } from './types';
+import {
+	CallPageEndpointInputSchemas,
+	CallPageEndpointOutputSchemas,
+} from './types';
 
-export const list: CallPageEndpoints['managersList'] = async (ctx, input) => {
+export const list: CallPageEndpoints['managersList'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = CallPageEndpointInputSchemas.managersList.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['managersList']
 	>('/api/v1/external/managers/all', ctx.key, {
@@ -17,7 +24,8 @@ export const list: CallPageEndpoints['managersList'] = async (ctx, input) => {
 	return result;
 };
 
-export const get: CallPageEndpoints['managersGet'] = async (ctx, input) => {
+export const get: CallPageEndpoints['managersGet'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.managersGet.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['managersGet']
 	>('/api/v1/external/managers/get', ctx.key, {
@@ -31,14 +39,22 @@ export const get: CallPageEndpoints['managersGet'] = async (ctx, input) => {
 
 export const create: CallPageEndpoints['managersCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.managersCreate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['managersCreate']
 	>('/api/v1/external/managers/create', ctx.key, {
 		method: 'POST',
 		body: input,
 		schema: CallPageEndpointOutputSchemas.managersCreate,
+	});
+	await patchManager(ctx, {
+		id: result.id,
+		widget_id: input.widget_id,
+		user_id: input.user_id,
+		enabled: input.enabled,
+		business_times: input.business_times,
 	});
 	await logEventFromContext(
 		ctx,
@@ -51,14 +67,21 @@ export const create: CallPageEndpoints['managersCreate'] = async (
 
 export const update: CallPageEndpoints['managersUpdate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.managersUpdate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['managersUpdate']
 	>('/api/v1/external/managers/update', ctx.key, {
 		method: 'POST',
 		body: input,
 		schema: CallPageEndpointOutputSchemas.managersUpdate,
+	});
+	await patchManager(ctx, {
+		widget_id: input.widget_id,
+		user_id: input.user_id,
+		enabled: input.enabled,
+		business_times: input.business_times,
 	});
 	await logEventFromContext(
 		ctx,
@@ -71,8 +94,9 @@ export const update: CallPageEndpoints['managersUpdate'] = async (
 
 export const remove: CallPageEndpoints['managersDelete'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.managersDelete.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['managersDelete']
 	>('/api/v1/external/managers/delete', ctx.key, {
@@ -80,6 +104,7 @@ export const remove: CallPageEndpoints['managersDelete'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.managersDelete,
 	});
+	await deleteManager(ctx, input.widget_id, input.user_id);
 	await logEventFromContext(
 		ctx,
 		'callpage.managers.delete',
@@ -94,7 +119,9 @@ export const remove: CallPageEndpoints['managersDelete'] = async (
 const MANAGERS_PAGE_SIZE = 100;
 
 export const statusStatistics: CallPageEndpoints['managersStatusStatistics'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input =
+			CallPageEndpointInputSchemas.managersStatusStatistics.parse(rawInput);
 		let total = 0;
 		let enabled = 0;
 		for (let offset = 0; ; offset += MANAGERS_PAGE_SIZE) {

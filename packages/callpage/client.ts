@@ -38,6 +38,7 @@ type CallPageEnvelope = {
 export class CallPageAPIError extends Error {
 	public readonly status?: number;
 	public readonly retryAfter?: number;
+	public readonly method?: string;
 
 	constructor(
 		message: string,
@@ -50,6 +51,7 @@ export class CallPageAPIError extends Error {
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.retryAfter = options.cause.retryAfter;
+			this.method = options.cause.request.method;
 		}
 	}
 }

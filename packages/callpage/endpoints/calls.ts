@@ -3,9 +3,14 @@ import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
 import { saveCalls } from './persist';
 import type { CallPageEndpointOutputs } from './types';
-import { CallHistoryWireSchema, CallRecordWireSchema } from './types';
+import {
+	CallHistoryWireSchema,
+	CallPageEndpointInputSchemas,
+	CallRecordWireSchema,
+} from './types';
 
-export const get: CallPageEndpoints['callsGet'] = async (ctx, input) => {
+export const get: CallPageEndpoints['callsGet'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.callsGet.parse(rawInput);
 	const result = await makeCallPageRequest<CallPageEndpointOutputs['callsGet']>(
 		`/api/v3/external/calls/${input.callId}`,
 		ctx.key,
@@ -18,8 +23,9 @@ export const get: CallPageEndpoints['callsGet'] = async (ctx, input) => {
 
 export const history: CallPageEndpoints['callsHistory'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.callsHistory.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['callsHistory']
 	>('/api/v3/external/calls/history', ctx.key, {

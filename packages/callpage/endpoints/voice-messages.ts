@@ -1,14 +1,22 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
-import { saveVoiceMessages } from './persist';
+import {
+	deleteVoiceMessages,
+	patchVoiceMessage,
+	saveVoiceMessages,
+} from './persist';
 import type { CallPageEndpointOutputs } from './types';
-import { CallPageEndpointOutputSchemas } from './types';
+import {
+	CallPageEndpointInputSchemas,
+	CallPageEndpointOutputSchemas,
+} from './types';
 
 export const list: CallPageEndpoints['voiceMessagesList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.voiceMessagesList.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['voiceMessagesList']
 	>('/api/v1/external/voice/all', ctx.key, {
@@ -27,8 +35,10 @@ export const list: CallPageEndpoints['voiceMessagesList'] = async (
 
 export const create: CallPageEndpoints['voiceMessagesCreate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input =
+		CallPageEndpointInputSchemas.voiceMessagesCreate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['voiceMessagesCreate']
 	>('/api/v1/external/voice/create', ctx.key, {
@@ -36,9 +46,10 @@ export const create: CallPageEndpoints['voiceMessagesCreate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.voiceMessagesCreate,
 	});
-	await saveVoiceMessages(ctx, input.widget_id, [
-		{ message_id: input.message_id, enabled: input.enabled },
-	]);
+	await patchVoiceMessage(ctx, input.widget_id, {
+		message_id: input.message_id,
+		enabled: input.enabled,
+	});
 	await logEventFromContext(
 		ctx,
 		'callpage.voiceMessages.create',
@@ -50,8 +61,10 @@ export const create: CallPageEndpoints['voiceMessagesCreate'] = async (
 
 export const update: CallPageEndpoints['voiceMessagesUpdate'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input =
+		CallPageEndpointInputSchemas.voiceMessagesUpdate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['voiceMessagesUpdate']
 	>('/api/v1/external/voice/update', ctx.key, {
@@ -59,9 +72,10 @@ export const update: CallPageEndpoints['voiceMessagesUpdate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.voiceMessagesUpdate,
 	});
-	await saveVoiceMessages(ctx, input.widget_id, [
-		{ message_id: input.message_id, enabled: input.enabled },
-	]);
+	await patchVoiceMessage(ctx, input.widget_id, {
+		message_id: input.message_id,
+		enabled: input.enabled,
+	});
 	await logEventFromContext(
 		ctx,
 		'callpage.voiceMessages.update',
@@ -73,8 +87,9 @@ export const update: CallPageEndpoints['voiceMessagesUpdate'] = async (
 
 export const reset: CallPageEndpoints['voiceMessagesReset'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = CallPageEndpointInputSchemas.voiceMessagesReset.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['voiceMessagesReset']
 	>('/api/v1/external/voice/reset', ctx.key, {
@@ -82,6 +97,7 @@ export const reset: CallPageEndpoints['voiceMessagesReset'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.voiceMessagesReset,
 	});
+	await deleteVoiceMessages(ctx, input.widget_id, input.message_id);
 	await logEventFromContext(
 		ctx,
 		'callpage.voiceMessages.reset',

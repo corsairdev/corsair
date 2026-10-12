@@ -32,6 +32,8 @@ function entityStore() {
 	return {
 		upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 		deleteByEntityId: jest.fn().mockResolvedValue(undefined),
+		findByEntityId: jest.fn().mockResolvedValue(null),
+		search: jest.fn().mockResolvedValue([]),
 	};
 }
 
@@ -142,6 +144,8 @@ const voice = {
 
 type RequestCase = {
 	name: string;
+	// Safe: the table only awaits the call; each result is compared via `result`.
+	// A narrower type is not practical because every endpoint resolves to a different output type.
 	run: (ctx: CallPageContext) => Promise<unknown>;
 	method: 'GET' | 'POST';
 	url: string;
@@ -590,6 +594,8 @@ describe('CallPage endpoint requests', () => {
 	});
 });
 
+// Safe: the helper only awaits the call to observe its rejection.
+// A narrower type is not practical because every endpoint resolves to a different output type.
 async function failure(call: Promise<unknown>): Promise<CallPageAPIError> {
 	try {
 		await call;
@@ -605,9 +611,13 @@ describe('CallPage errors', () => {
 		mockRequest.mockReset();
 	});
 
-	function apiError(status: number, retryAfter?: number) {
+	function apiError(
+		status: number,
+		retryAfter?: number,
+		method: 'GET' | 'POST' = 'GET',
+	) {
 		return new ApiError(
-			{ method: 'GET', url: '/api/v1/external/users/all' },
+			{ method, url: '/api/v1/external/users/all' },
 			{
 				url: 'https://core.callpage.io/api/v1/external/users/all',
 				ok: false,
@@ -650,6 +660,18 @@ describe('CallPage errors', () => {
 		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 7000 });
 	});
 
+	it('never retries a rate-limited write at the handler level', async () => {
+		mockRequest.mockRejectedValueOnce(apiError(429, 7000, 'POST'));
+		const { ctx } = createContext();
+
+		const error = await failure(Users.create(ctx, { name: 'a', tel: '1' }));
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 7000 });
+	});
+
 	it('throws the provider message when the envelope reports an error', async () => {
 		mockRequest.mockResolvedValueOnce({
 			hasError: true,
@@ -680,8 +702,7 @@ describe('CallPage entity persistence', () => {
 		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('2', user);
 	});
 
-	it('users.create and users.update upsert the submitted fields under the returned or given id', async () => {
-		mockRequest.mockResolvedValueOnce(envelope({ id: 1380 }));
+	it('users.create stores the submitted fields under the returned id', async () => {
 		mockRequest.mockResolvedValueOnce(envelope({ id: 1380 }));
 		const { ctx, db } = createContext();
 
@@ -690,22 +711,27 @@ describe('CallPage entity persistence', () => {
 			tel: '+48888888888',
 			role: 'admin',
 		});
-		await Users.update(ctx, { id: 1380, name: 'Renamed', tel: '+48888888888' });
 
-		expect(db.users.upsertByEntityId).toHaveBeenNthCalledWith(
-			1,
-			'1380',
-			expect.objectContaining({
-				id: 1380,
-				name: 'Test',
-				role: { slug: 'admin' },
-			}),
-		);
-		expect(db.users.upsertByEntityId).toHaveBeenNthCalledWith(
-			2,
-			'1380',
-			expect.objectContaining({ id: 1380, name: 'Renamed' }),
-		);
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('1380', {
+			id: 1380,
+			name: 'Test',
+			tel: '+48888888888',
+			role: { slug: 'admin' },
+		});
+	});
+
+	it('users.update merges over the stored user instead of erasing its fields', async () => {
+		mockRequest.mockResolvedValueOnce(envelope({ id: 2 }));
+		const { ctx, db } = createContext();
+		db.users.findByEntityId.mockResolvedValueOnce({ data: user });
+
+		await Users.update(ctx, { id: 2, name: 'Renamed', tel: '+48888888888' });
+
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('2', {
+			...user,
+			name: 'Renamed',
+			tel: '+48888888888',
+		});
 	});
 
 	it('users.delete removes the stored user', async () => {
@@ -727,6 +753,7 @@ describe('CallPage entity persistence', () => {
 		expect(db.managers.upsertByEntityId).toHaveBeenCalledWith('23', {
 			...manager,
 			widget_id: 2,
+			user_id: 2,
 		});
 	});
 
@@ -758,6 +785,7 @@ describe('CallPage entity persistence', () => {
 		expect(db.managers.upsertByEntityId).toHaveBeenCalledWith('23', {
 			...manager,
 			widget_id: 1,
+			user_id: 2,
 		});
 	});
 
@@ -803,6 +831,63 @@ describe('CallPage entity persistence', () => {
 		);
 	});
 
+	it('managers.update merges into the stored manager of that widget and user', async () => {
+		mockRequest.mockResolvedValueOnce(envelope({ id: 23 }));
+		const { ctx, db } = createContext();
+		db.managers.search.mockResolvedValueOnce([
+			{ entity_id: '23', data: { ...manager, widget_id: 1, user_id: 2 } },
+		]);
+
+		await Managers.update(ctx, { widget_id: 1, user_id: 2, enabled: false });
+
+		expect(db.managers.search).toHaveBeenCalledWith({
+			data: { widget_id: 1, user_id: 2 },
+			limit: 1,
+		});
+		expect(db.managers.upsertByEntityId).toHaveBeenCalledWith('23', {
+			...manager,
+			widget_id: 1,
+			user_id: 2,
+			enabled: false,
+		});
+	});
+
+	it('managers.delete removes the stored manager of that widget and user', async () => {
+		mockRequest.mockResolvedValueOnce(envelope(null));
+		const { ctx, db } = createContext();
+		db.managers.search.mockResolvedValueOnce([
+			{ entity_id: '23', data: { ...manager, widget_id: 1, user_id: 2 } },
+		]);
+
+		await Managers.remove(ctx, { widget_id: 1, user_id: 2 });
+
+		expect(db.managers.deleteByEntityId).toHaveBeenCalledWith('23');
+	});
+
+	it('sms.reset and voiceMessages.reset drop the stored custom messages', async () => {
+		mockRequest.mockResolvedValueOnce(envelope(null));
+		mockRequest.mockResolvedValueOnce(envelope(null));
+		const { ctx, db } = createContext();
+		db.smsMessages.search.mockResolvedValueOnce([
+			{ entity_id: '1:visitor.dial-completed', data: sms },
+			{ entity_id: '1:visitor.call-scheduled', data: sms },
+		]);
+
+		await Sms.reset(ctx, { widget_id: 1 });
+		await VoiceMessages.reset(ctx, {
+			widget_id: 1,
+			message_id: 'manager.call',
+		});
+
+		expect(db.smsMessages.deleteByEntityId).toHaveBeenCalledTimes(2);
+		expect(db.smsMessages.deleteByEntityId).toHaveBeenCalledWith(
+			'1:visitor.call-scheduled',
+		);
+		expect(db.voiceMessages.deleteByEntityId).toHaveBeenCalledWith(
+			'1:manager.call',
+		);
+	});
+
 	it('a failing database write does not fail the API call', async () => {
 		const warn = jest
 			.spyOn(console, 'warn')
@@ -814,6 +899,29 @@ describe('CallPage entity persistence', () => {
 		await expect(Users.list(ctx, {})).resolves.toEqual([user]);
 		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
+	});
+});
+
+describe('CallPage input validation', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('rejects invalid input before any request is sent', async () => {
+		const { ctx } = createContext();
+
+		await expect(
+			Sms.create(ctx, {
+				widget_id: 1,
+				message_id: 'visitor.dial-completed',
+				text: 'x'.repeat(241),
+			}),
+		).rejects.toThrow();
+		await expect(
+			Widgets.call(ctx, { id: 1, tel: '+48', department_id: 1, manager_id: 2 }),
+		).rejects.toThrow();
+
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
 

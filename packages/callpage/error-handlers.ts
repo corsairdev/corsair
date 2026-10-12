@@ -15,6 +15,11 @@ function getRetryAfter(error: Error): number | undefined {
 		: undefined;
 }
 
+// Only GET is safe to re-run: a rate-limited POST may already have been applied.
+function isReadRequest(error: Error): boolean {
+	return 'method' in error && error.method === 'GET';
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -23,7 +28,7 @@ export const errorHandlers = {
 			return msg.includes('rate') || msg.includes('429');
 		},
 		handler: async (error: Error) => ({
-			maxRetries: 5,
+			maxRetries: isReadRequest(error) ? 5 : 0,
 			headersRetryAfterMs: getRetryAfter(error),
 		}),
 	},

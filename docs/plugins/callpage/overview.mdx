@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calls.get`**
+**`widgets.list`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callpage.api.calls.get({});
+await tenant.callpage.api.widgets.list({ limit: 20 });
 ```
 
 
-**`managers.create`**
+**`widgets.create`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callpage.api.managers.create({});
+await tenant.callpage.api.widgets.create({ url: 'https://example.com', description: 'Landing page' });
 ```
 
 
@@ -109,9 +109,17 @@ See the full list on the [API](/plugins/callpage/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.callpage.db.<entity>.search()` and `.list()`: `calls`, `managers`, `smsMessages`, `users`, `voiceMessages`, `widgets`.
+Query synced `widgets` rows without hitting the live API.
 
-See [Database](/plugins/callpage/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.callpage.db.widgets.search({
+	data: { enabled: true },
+	limit: 20,
+});
+```
+
+Synced entities: `calls`, `managers`, `smsMessages`, `users`, `voiceMessages`, `widgets`. See [Database](/plugins/callpage/database) for filters and operators.
 
 ## What's next
 

@@ -1,11 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
-import { deleteUser, saveUsers } from './persist';
+import { deleteUser, patchUser, saveUsers } from './persist';
 import type { CallPageEndpointOutputs } from './types';
-import { CallPageEndpointOutputSchemas } from './types';
+import {
+	CallPageEndpointInputSchemas,
+	CallPageEndpointOutputSchemas,
+} from './types';
 
-export const list: CallPageEndpoints['usersList'] = async (ctx, input) => {
+export const list: CallPageEndpoints['usersList'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.usersList.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['usersList']
 	>('/api/v1/external/users/all', ctx.key, {
@@ -17,7 +21,8 @@ export const list: CallPageEndpoints['usersList'] = async (ctx, input) => {
 	return result;
 };
 
-export const get: CallPageEndpoints['usersGet'] = async (ctx, input) => {
+export const get: CallPageEndpoints['usersGet'] = async (ctx, rawInput) => {
+	const input = CallPageEndpointInputSchemas.usersGet.parse(rawInput);
 	const result = await makeCallPageRequest<CallPageEndpointOutputs['usersGet']>(
 		'/api/v1/external/users/get',
 		ctx.key,
@@ -28,7 +33,11 @@ export const get: CallPageEndpoints['usersGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const create: CallPageEndpoints['usersCreate'] = async (ctx, input) => {
+export const create: CallPageEndpoints['usersCreate'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = CallPageEndpointInputSchemas.usersCreate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['usersCreate']
 	>('/api/v1/external/users/create', ctx.key, {
@@ -36,20 +45,22 @@ export const create: CallPageEndpoints['usersCreate'] = async (ctx, input) => {
 		body: input,
 		schema: CallPageEndpointOutputSchemas.usersCreate,
 	});
-	await saveUsers(ctx, [
-		{
-			id: result.id,
-			name: input.name,
-			tel: input.tel,
-			email: input.email,
-			role: input.role ? { slug: input.role } : undefined,
-		},
-	]);
+	await patchUser(ctx, {
+		id: result.id,
+		name: input.name,
+		tel: input.tel,
+		email: input.email,
+		role: input.role ? { slug: input.role } : undefined,
+	});
 	await logEventFromContext(ctx, 'callpage.users.create', input, 'completed');
 	return result;
 };
 
-export const update: CallPageEndpoints['usersUpdate'] = async (ctx, input) => {
+export const update: CallPageEndpoints['usersUpdate'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = CallPageEndpointInputSchemas.usersUpdate.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['usersUpdate']
 	>('/api/v1/external/users/update', ctx.key, {
@@ -57,20 +68,22 @@ export const update: CallPageEndpoints['usersUpdate'] = async (ctx, input) => {
 		body: input,
 		schema: CallPageEndpointOutputSchemas.usersUpdate,
 	});
-	await saveUsers(ctx, [
-		{
-			id: input.id,
-			name: input.name,
-			tel: input.tel,
-			email: input.email,
-			role: input.role ? { slug: input.role } : undefined,
-		},
-	]);
+	await patchUser(ctx, {
+		id: input.id,
+		name: input.name,
+		tel: input.tel,
+		email: input.email,
+		role: input.role ? { slug: input.role } : undefined,
+	});
 	await logEventFromContext(ctx, 'callpage.users.update', input, 'completed');
 	return result;
 };
 
-export const remove: CallPageEndpoints['usersDelete'] = async (ctx, input) => {
+export const remove: CallPageEndpoints['usersDelete'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = CallPageEndpointInputSchemas.usersDelete.parse(rawInput);
 	const result = await makeCallPageRequest<
 		CallPageEndpointOutputs['usersDelete']
 	>('/api/v1/external/users/delete', ctx.key, {
