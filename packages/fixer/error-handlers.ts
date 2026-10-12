@@ -2,48 +2,48 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { FixerAPIError } from './client';
 
-function statusOf(error: Error): number | undefined {
-	if (error instanceof ApiError) return error.status;
-	if (error instanceof FixerAPIError) return error.status;
-	return undefined;
+// https://fixer.io error codes: 101 missing or invalid access key,
+// 102 inactive account, 104 monthly request quota reached.
+const AUTH_CODES = new Set([101, 102]);
+const QUOTA_CODE = 104;
+
+function fixerCode(error: Error): number | undefined {
+	return error instanceof FixerAPIError ? error.code : undefined;
+}
+
+function httpStatus(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			if (
-				error instanceof FixerAPIError &&
-				(error.code === 104 || error.code === '104')
-			) {
-				return true;
-			}
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate limit') || msg.includes('too many requests');
-		},
-		handler: async (error: Error) => {
-			return {
-				maxRetries: 3,
-				retryStrategy: 'exponential_backoff' as const,
-			};
-		},
+		match: (error: Error) => httpStatus(error) === 429,
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
+		}),
+	},
+	QUOTA_ERROR: {
+		match: (error: Error) => fixerCode(error) === QUOTA_CODE,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 401 || statusOf(error) === 403) return true;
-			if (
-				error instanceof FixerAPIError &&
-				(error.code === 101 ||
-					error.code === '101' ||
-					error.code === 102 ||
-					error.code === '102')
-			) {
-				return true;
-			}
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid access key');
+			const status = httpStatus(error);
+			if (status === 401 || status === 403) return true;
+			const code = fixerCode(error);
+			return code !== undefined && AUTH_CODES.has(code);
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => (httpStatus(error) ?? 0) >= 500,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

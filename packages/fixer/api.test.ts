@@ -1,151 +1,216 @@
+import { createCorsair } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { FixerAPIError, makeFixerRequest } from './client';
-import { currencies, rates } from './endpoints';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { FixerAPIError } from './client';
+import { fixer } from './index';
 
-describe('Fixer Endpoints Execution & Error Policies', () => {
-	const mockCtx: any = {
-		key: 'fixer_test_key_123',
-		authType: 'api_key',
-		$getAccountId: async () => 'acc-123',
-		database: {},
-	};
+const KEY = 'fixer-test-key';
+const BASE = 'https://data.fixer.io/api';
 
-	beforeEach(() => {
-		global.fetch = jest.fn();
+type Stub = { status?: number; body: object; headers?: Record<string, string> };
+
+let fetchSpy: jest.SpiedFunction<typeof fetch>;
+let cleanup: () => void;
+
+function stubFetch(...stubs: Stub[]) {
+	let call = 0;
+	fetchSpy = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		const stub = stubs[Math.min(call++, stubs.length - 1)]!;
+		return new Response(JSON.stringify(stub.body), {
+			status: stub.status ?? 200,
+			headers: { 'Content-Type': 'application/json', ...stub.headers },
+		});
 	});
+}
 
-	afterEach(() => {
-		jest.resetAllMocks();
+function requested(index = 0) {
+	const [url, init] = fetchSpy.mock.calls[index]!;
+	return { url: String(url), method: init?.method };
+}
+
+async function createFixer() {
+	const testDb = createTestDatabase();
+	await createIntegrationAndAccount(testDb.db, 'fixer', 'default');
+	cleanup = testDb.cleanup;
+	const corsair = createCorsair({
+		plugins: [fixer({ key: KEY })],
+		database: testDb.db,
+		kek: '0123456789abcdef0123456789abcdef',
 	});
+	return corsair.fixer.api;
+}
 
-	function mockResponse(status: number, data: any) {
-		const bodyText = typeof data === 'string' ? data : JSON.stringify(data);
-		return {
-			ok: status >= 200 && status < 300,
-			status,
-			statusText: status === 401 ? 'Unauthorized' : 'OK',
-			headers: {
-				get: (name: string) => {
-					if (name.toLowerCase() === 'content-type') return 'application/json';
-					return null;
-				},
-			},
-			json: async () =>
-				typeof data === 'object' ? data : { success: true, message: data },
-			text: async () => bodyText,
+afterEach(() => {
+	jest.restoreAllMocks();
+	cleanup?.();
+});
+
+describe('Fixer endpoints', () => {
+	it('rates.latest sends base and comma-joined symbols', async () => {
+		const body = {
+			success: true,
+			timestamp: 1700000000,
+			base: 'EUR',
+			date: '2026-10-12',
+			rates: { USD: 1.08, GBP: 0.85 },
 		};
-	}
+		stubFetch({ body });
+		const api = await createFixer();
 
-	it('executes rates.latest endpoint with correct query formatting', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(200, {
-				success: true,
-				timestamp: 1600000000,
-				base: 'EUR',
-				date: '2026-09-02',
-				rates: { USD: 1.08, GBP: 0.85 },
-			}),
-		);
-
-		const res = await rates.latest(mockCtx, {
+		const result = await api.rates.latest({
 			base: 'EUR',
 			symbols: ['USD', 'GBP'],
 		});
 
-		expect(res.success).toBe(true);
-		expect(res.rates.USD).toBe(1.08);
-		expect(global.fetch).toHaveBeenCalledWith(
-			'https://data.fixer.io/api/latest?access_key=fixer_test_key_123&base=EUR&symbols=USD%2CGBP',
-			expect.anything(),
-		);
+		expect(requested()).toEqual({
+			url: `${BASE}/latest?access_key=${KEY}&base=EUR&symbols=USD%2CGBP`,
+			method: 'GET',
+		});
+		expect(result).toEqual(body);
 	});
 
-	it('executes rates.convert endpoint', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(200, {
-				success: true,
-				query: { from: 'USD', to: 'EUR', amount: 100 },
-				info: { timestamp: 1600000000, rate: 0.92 },
-				date: '2026-09-02',
-				result: 92,
-			}),
-		);
+	it('rates.historical puts the date in the path', async () => {
+		const body = {
+			success: true,
+			historical: true,
+			date: '2026-01-01',
+			base: 'EUR',
+			rates: { USD: 1.04 },
+		};
+		stubFetch({ body });
+		const api = await createFixer();
 
-		const res = await rates.convert(mockCtx, {
+		const result = await api.rates.historical({
+			date: '2026-01-01',
+			symbols: ['USD'],
+		});
+
+		expect(requested()).toEqual({
+			url: `${BASE}/2026-01-01?access_key=${KEY}&symbols=USD`,
+			method: 'GET',
+		});
+		expect(result).toEqual(body);
+	});
+
+	it('rates.historical rejects an impossible date without a request', async () => {
+		stubFetch({ body: {} });
+		const api = await createFixer();
+
+		await expect(
+			api.rates.historical({ date: '2025-02-29' }),
+		).rejects.toThrow();
+		expect(fetchSpy).not.toHaveBeenCalled();
+	});
+
+	it('rates.convert sends from, to, amount and date', async () => {
+		const body = {
+			success: true,
+			query: { from: 'USD', to: 'EUR', amount: 100 },
+			info: { timestamp: 1700000000, rate: 0.92 },
+			date: '2026-01-01',
+			result: 92,
+		};
+		stubFetch({ body });
+		const api = await createFixer();
+
+		const result = await api.rates.convert({
 			from: 'USD',
 			to: 'EUR',
 			amount: 100,
-		});
-
-		expect(res.result).toBe(92);
-	});
-
-	it('rejects invalid historical dates before calling Fixer', async () => {
-		await expect(
-			rates.historical(mockCtx, { date: '2025-02-29' }),
-		).rejects.toThrow();
-		await expect(
-			rates.historical(mockCtx, { date: '2026-13-01' }),
-		).rejects.toThrow();
-		expect(global.fetch).not.toHaveBeenCalled();
-	});
-
-	it('executes rates.historical endpoint', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(200, {
-				success: true,
-				historical: true,
-				date: '2026-01-01',
-				base: 'EUR',
-				rates: { USD: 1.08 },
-			}),
-		);
-
-		const res = await rates.historical(mockCtx, {
 			date: '2026-01-01',
-			base: 'EUR',
 		});
 
-		expect(res.date).toBe('2026-01-01');
-		expect(global.fetch).toHaveBeenCalledWith(
-			'https://data.fixer.io/api/2026-01-01?access_key=fixer_test_key_123&base=EUR',
-			expect.anything(),
-		);
+		expect(requested()).toEqual({
+			url: `${BASE}/convert?access_key=${KEY}&from=USD&to=EUR&amount=100&date=2026-01-01`,
+			method: 'GET',
+		});
+		expect(result).toEqual(body);
 	});
 
-	it('executes currencies.getAll endpoint', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(200, {
-				success: true,
-				symbols: { USD: 'United States Dollar', EUR: 'Euro' },
-			}),
-		);
+	it('currencies.getAll calls /symbols', async () => {
+		const body = {
+			success: true,
+			symbols: { USD: 'United States Dollar', EUR: 'Euro' },
+		};
+		stubFetch({ body });
+		const api = await createFixer();
 
-		const res = await currencies.getAll(mockCtx, {});
+		const result = await api.currencies.getAll({});
 
-		expect(res.symbols.USD).toBe('United States Dollar');
+		expect(requested()).toEqual({
+			url: `${BASE}/symbols?access_key=${KEY}`,
+			method: 'GET',
+		});
+		expect(result).toEqual(body);
 	});
+});
 
-	it('handles Fixer API error codes inside JSON response', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(200, {
+describe('Fixer errors', () => {
+	it('turns an HTTP 200 error envelope into FixerAPIError without retrying', async () => {
+		stubFetch({
+			body: {
 				success: false,
-				error: { code: 101, info: 'Invalid access key' },
-			}),
-		);
+				error: {
+					code: 101,
+					type: 'invalid_access_key',
+					info: 'You have not supplied a valid API Access Key.',
+				},
+			},
+		});
+		const api = await createFixer();
 
-		await expect(makeFixerRequest('latest', 'invalid_key', {})).rejects.toThrow(
-			FixerAPIError,
-		);
+		const error = await api.currencies.getAll({}).catch((e: Error) => e);
+
+		expect(error).toBeInstanceOf(FixerAPIError);
+		expect(error).toMatchObject({
+			code: 101,
+			type: 'invalid_access_key',
+			message: 'You have not supplied a valid API Access Key.',
+		});
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 
-	it('preserves ApiError on HTTP status error (401)', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(
-			mockResponse(401, 'Unauthorized'),
-		);
+	it('does not retry when the monthly quota is used up', async () => {
+		stubFetch({
+			body: {
+				success: false,
+				error: { code: 104, type: 'usage_limit_reached' },
+			},
+		});
+		const api = await createFixer();
 
-		await expect(makeFixerRequest('latest', 'invalid_key', {})).rejects.toThrow(
-			ApiError,
+		await expect(api.rates.latest({})).rejects.toMatchObject({ code: 104 });
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('does not retry an HTTP 401', async () => {
+		stubFetch({ status: 401, body: { message: 'Unauthorized' } });
+		const api = await createFixer();
+
+		const error = await api.rates.latest({}).catch((e: Error) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 401 });
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('retries an HTTP 429 after the Retry-After delay', async () => {
+		const body = { success: true, symbols: { EUR: 'Euro' } };
+		stubFetch(
+			{
+				status: 429,
+				body: { message: 'Too Many Requests' },
+				headers: { 'Retry-After': '1' },
+			},
+			{ body },
 		);
+		const api = await createFixer();
+
+		const started = Date.now();
+		const result = await api.currencies.getAll({});
+
+		expect(result).toEqual(body);
+		expect(fetchSpy).toHaveBeenCalledTimes(2);
+		expect(Date.now() - started).toBeGreaterThanOrEqual(1000);
 	});
 });

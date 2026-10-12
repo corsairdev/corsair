@@ -12,9 +12,7 @@ export const getAll: FixerEndpoints['currenciesGetAll'] = async (
 ) => {
 	CurrenciesGetAllInputSchema.parse(rawInput);
 	const response = CurrenciesGetAllOutputSchema.parse(
-		await makeFixerRequest<unknown>('symbols', ctx.key, {
-			method: 'GET',
-		}),
+		await makeFixerRequest('symbols', ctx.key),
 	);
 
 	await logEventFromContext(ctx, 'fixer.currencies.getAll', {}, 'completed');

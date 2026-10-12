@@ -13,12 +13,9 @@ import {
 export const latest: FixerEndpoints['ratesLatest'] = async (ctx, rawInput) => {
 	const input = RatesLatestInputSchema.parse(rawInput);
 	const response = RatesLatestOutputSchema.parse(
-		await makeFixerRequest<unknown>('latest', ctx.key, {
-			method: 'GET',
-			query: {
-				base: input.base,
-				symbols: input.symbols?.join(','),
-			},
+		await makeFixerRequest('latest', ctx.key, {
+			base: input.base,
+			symbols: input.symbols?.join(','),
 		}),
 	);
 
@@ -41,14 +38,11 @@ export const convert: FixerEndpoints['ratesConvert'] = async (
 ) => {
 	const input = RatesConvertInputSchema.parse(rawInput);
 	const response = RatesConvertOutputSchema.parse(
-		await makeFixerRequest<unknown>('convert', ctx.key, {
-			method: 'GET',
-			query: {
-				from: input.from,
-				to: input.to,
-				amount: input.amount,
-				date: input.date,
-			},
+		await makeFixerRequest('convert', ctx.key, {
+			from: input.from,
+			to: input.to,
+			amount: input.amount,
+			date: input.date,
 		}),
 	);
 
@@ -72,12 +66,9 @@ export const historical: FixerEndpoints['ratesHistorical'] = async (
 ) => {
 	const input = RatesHistoricalInputSchema.parse(rawInput);
 	const response = RatesHistoricalOutputSchema.parse(
-		await makeFixerRequest<unknown>(input.date, ctx.key, {
-			method: 'GET',
-			query: {
-				base: input.base,
-				symbols: input.symbols?.join(','),
-			},
+		await makeFixerRequest(input.date, ctx.key, {
+			base: input.base,
+			symbols: input.symbols?.join(','),
 		}),
 	);
 

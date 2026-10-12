@@ -33,7 +33,8 @@ import { FixerSchema } from './schema';
 
 export type FixerPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	accessKey?: string;
+	/** Fixer API access key. Sent as the `access_key` query parameter. */
+	key?: string;
 	hooks?: InternalFixerPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof fixerEndpointsNested>;
@@ -126,6 +127,8 @@ export type InternalFixerPlugin = BaseFixerPlugin<FixerPluginOptions>;
 export type ExternalFixerPlugin<T extends FixerPluginOptions> =
 	BaseFixerPlugin<T>;
 
+// Safe: an empty object satisfies every optional field of FixerPluginOptions.
+// A narrower type is not practical because T is the caller's literal options type.
 export function fixer<const T extends FixerPluginOptions>(
 	incomingOptions: FixerPluginOptions & T = {} as FixerPluginOptions & T,
 ): ExternalFixerPlugin<T> {
@@ -150,8 +153,8 @@ export function fixer<const T extends FixerPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FixerKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.accessKey) {
-				return options.accessKey;
+			if (source === 'endpoint' && options.key) {
+				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
