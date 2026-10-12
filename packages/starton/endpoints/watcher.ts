@@ -13,6 +13,7 @@ import {
  */
 export const get: StartonEndpoints['watcherGet'] = async (ctx, input) => {
 	const { id } = StartonEndpointInputSchemas.watcherGet.parse(input);
+	// Transport response is untyped JSON; the output schema parses it below.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,
@@ -38,6 +39,7 @@ export const deleteWatcher: StartonEndpoints['watcherDelete'] = async (
 	input,
 ) => {
 	const { id } = StartonEndpointInputSchemas.watcherDelete.parse(input);
+	// Transport response is untyped JSON; the output schema parses it below.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,

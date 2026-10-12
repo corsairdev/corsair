@@ -216,6 +216,7 @@ export type ExternalStartonPlugin<T extends StartonPluginOptions> =
 	BaseStartonPlugin<T>;
 
 export function starton<const T extends StartonPluginOptions>(
+	// Safe: every StartonPluginOptions field is optional, so {} satisfies it.
 	incomingOptions: StartonPluginOptions & T = {} as StartonPluginOptions & T,
 ): ExternalStartonPlugin<T> {
 	const options = {

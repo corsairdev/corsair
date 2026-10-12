@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Starton returns free-form JSON objects in these fields; no stricter shape is documented.
+const JsonRecord = z.record(z.string(), z.unknown());
+
 /**
  * Shared transaction lifecycle status/state enums.
  * Official: components.schemas.Transaction / SmartContract
@@ -82,7 +85,7 @@ export const StartonTransactionLog = z
 	.object({
 		message: z.string(),
 		type: StartonTransactionStatus,
-		context: z.record(z.string(), z.unknown()).optional(),
+		context: JsonRecord.optional(),
 		createdAt: z.string(),
 	})
 	.loose();
@@ -106,7 +109,7 @@ export const StartonTransaction = z
 		gasPrice: z.string().nullable().optional(),
 		maxFeePerGas: z.string().nullable().optional(),
 		maxPriorityFeePerGas: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		metadata: JsonRecord.nullable().optional(),
 		nonce: z.number().nullable().optional(),
 		type: z.number().nullable().optional(),
 		signerWallet: z.string(),
@@ -142,7 +145,7 @@ export const StartonWallet = z
 		kmsId: z.string(),
 		name: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		metadata: JsonRecord.nullable().optional(),
 		projectId: z.string(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
@@ -176,10 +179,10 @@ export const StartonSmartContract = z
 		name: z.string(),
 		description: z.string().nullable().optional(),
 		network: z.string(),
-		abi: z.array(z.record(z.string(), z.unknown())).optional(),
+		abi: z.array(JsonRecord).optional(),
 		address: z.string(),
 		params: z.array(z.string()).nullable().optional(),
-		compilationDetails: z.record(z.string(), z.unknown()).nullable().optional(),
+		compilationDetails: JsonRecord.nullable().optional(),
 		creationHash: z.string().nullable().optional(),
 		status: StartonTransactionStatus,
 		state: StartonTransactionState,
@@ -187,7 +190,7 @@ export const StartonSmartContract = z
 		blockNumber: z.number().nullable().optional(),
 		templateId: z.string().nullable().optional(),
 		projectId: z.string(),
-		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		metadata: JsonRecord.nullable().optional(),
 		uiData: StartonSmartContractUI.nullable().optional(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
@@ -231,9 +234,9 @@ export const StartonSmartContractTemplate = z
 			'TOOL',
 		]),
 		humanReadableAbi: z.array(z.string()),
-		abi: z.array(z.record(z.string(), z.unknown())),
-		form: z.record(z.string(), z.unknown()).nullable().optional(),
-		compilationDetails: z.record(z.string(), z.unknown()).nullable().optional(),
+		abi: z.array(JsonRecord),
+		form: JsonRecord.nullable().optional(),
+		compilationDetails: JsonRecord.nullable().optional(),
 		isAudited: z.boolean(),
 		isActivated: z.boolean(),
 		order: z.number(),
@@ -273,17 +276,14 @@ export const StartonWatcher = z
 		network: z.string(),
 		projectId: z.string(),
 		type: StartonWatcherType,
-		customEventAbi: z
-			.array(z.record(z.string(), z.unknown()))
-			.nullable()
-			.optional(),
+		customEventAbi: z.array(JsonRecord).nullable().optional(),
 		triggerType: z.enum(['BLOCK', 'TRANSACTION', 'EVENT', 'GAS_PRICE']),
 		webhookUrl: z.string(),
 		confirmationsBlocks: z.number(),
 		paused: z.boolean(),
 		pausedReason: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
-		customFilters: z.record(z.string(), z.unknown()).optional(),
+		metadata: JsonRecord.nullable().optional(),
+		customFilters: JsonRecord.optional(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
 	})
@@ -307,10 +307,10 @@ export const StartonWebhook = z
 		id: z.string(),
 		refId: z.string(),
 		status: StartonWebhookStatus,
-		payload: z.record(z.string(), z.unknown()).nullable(),
+		payload: JsonRecord.nullable(),
 		url: z.string(),
-		headers: z.record(z.string(), z.unknown()).nullable(),
-		attempts: z.array(z.record(z.string(), z.unknown())),
+		headers: JsonRecord.nullable(),
+		attempts: z.array(JsonRecord),
 		projectId: z.string(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
@@ -328,15 +328,12 @@ export const StartonPin = z
 		name: z.string().nullable().optional(),
 		cid: z.string().nullable().optional(),
 		origins: z.array(z.string()).nullable().optional(),
-		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+		metadata: JsonRecord.nullable().optional(),
 		status: z.enum(['queued', 'pinning', 'pinned', 'failed', 'deleted']),
 		delegates: z.array(z.string()).nullable().optional(),
 		size: z.number().nullable().optional(),
 		type: z.enum(['directory', 'file']).nullable().optional(),
-		directoryContent: z
-			.array(z.record(z.string(), z.unknown()))
-			.nullable()
-			.optional(),
+		directoryContent: z.array(JsonRecord).nullable().optional(),
 		projectId: z.string(),
 		createdAt: z.string(),
 		updatedAt: z.string(),

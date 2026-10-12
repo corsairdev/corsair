@@ -14,6 +14,7 @@ import {
  */
 export const list: StartonEndpoints['webhookList'] = async (ctx, input) => {
 	const query = StartonEndpointInputSchemas.webhookList.parse(input);
+	// Transport response is untyped JSON; the output schema parses it below.
 	const response = await makeStartonRequest<unknown>('v3/webhook', ctx.key, {
 		method: 'GET',
 		query,

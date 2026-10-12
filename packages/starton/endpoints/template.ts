@@ -14,6 +14,7 @@ import {
  */
 export const list: StartonEndpoints['templateList'] = async (ctx, input) => {
 	const query = StartonEndpointInputSchemas.templateList.parse(input);
+	// Transport response is untyped JSON; the output schema parses it below.
 	const response = await makeStartonRequest<unknown>(
 		'v3/smart-contract-template',
 		ctx.key,

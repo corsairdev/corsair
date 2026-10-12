@@ -61,8 +61,10 @@ const NO_AUTOMATIC_REPLAY: RateLimitConfig = {
 
 export type StartonRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// Request body is arbitrary JSON; it is serialized with JSON.stringify.
 	body?: unknown;
 	/** Sent as multipart/form-data instead of a JSON body. */
+	// Form field values are arbitrary; each is appended to FormData as-is.
 	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**

@@ -18,6 +18,7 @@ import {
 // Shared primitives
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Starton returns arbitrary JSON here; no stricter shape is documented.
 const JsonObject = z.record(z.string(), z.unknown());
 
 /** Smart contract constructor/function argument: string | number | boolean | object. */
@@ -258,6 +259,7 @@ const SmartContractReadResponseSchema = z.object({
 		z.number(),
 		z.boolean(),
 		JsonObject,
+		// Starton returns arbitrary JSON here; no stricter shape is documented.
 		z.array(z.unknown()),
 	]),
 	params: z.array(ContractParam),

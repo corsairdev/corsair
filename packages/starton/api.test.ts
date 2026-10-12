@@ -38,6 +38,7 @@ type CapturedRequest = {
 };
 
 let captured: CapturedRequest | undefined;
+// Test only: the mocked response body can be any JSON.
 let nextResponseBody: unknown = {};
 let nextResponseStatus = 200;
 
@@ -71,6 +72,7 @@ afterEach(() => {
 	globalThis.fetch = originalFetch;
 });
 
+// Test only: partial context stub with only the fields under test.
 const ctx = {
 	key: 'test-starton-api-key',
 	$getAccountId: async () => 'acct_test',
@@ -430,6 +432,7 @@ describe('endpoint request wiring', () => {
 
 	it('Template.list rejects a category outside the spec enum', async () => {
 		await expect(
+			// Test only: deliberately invalid input to exercise schema validation.
 			Template.list(ctx, {
 				category: 'TOKEN',
 			} as unknown as Parameters<typeof Template.list>[1]),
@@ -534,8 +537,11 @@ describe('endpoint request wiring', () => {
 		expect(captured?.headers['content-type']).toBeUndefined();
 		const file = captured?.formData?.get('file');
 		expect(file).toBeInstanceOf(File);
+		// Test only: the multipart body holds a File here, checked above.
 		expect((file as File).name).toBe('hello.txt');
+		// Test only: the multipart body holds a File here, checked above.
 		expect((file as File).type).toBe('text/plain');
+		// Test only: the multipart body holds a File here, checked above.
 		expect(await (file as File).text()).toBe('hello world');
 		expect(captured?.formData?.get('metadata')).toBe('{"purpose":"test"}');
 		expect(res.cid).toBe('QmHash');
@@ -555,6 +561,7 @@ describe('endpoint request wiring', () => {
 		});
 
 		expect(captured?.formData?.has('metadata')).toBe(false);
+		// Test only: the multipart body holds a File here, checked above.
 		expect((captured?.formData?.get('file') as File).type).toBe(
 			'application/octet-stream',
 		);
@@ -594,6 +601,7 @@ describe('schema coverage', () => {
 	});
 
 	it('every endpoint schema entry has an input and output schema', () => {
+		// Test only: iterate the schema map generically by name.
 		const entries = startonEndpointSchemas as Record<
 			string,
 			{ input?: unknown; output?: unknown }
@@ -746,6 +754,7 @@ describe('output schema validation', () => {
 			someFutureField: true,
 		});
 		expect(parsed.id).toBe('tx_1');
+		// Test only: schemas keep forward-compatible fields absent from the type.
 		expect((parsed as Record<string, unknown>).someFutureField).toBe(true);
 	});
 
@@ -797,12 +806,14 @@ describe('starton() plugin', () => {
 
 	it('keyBuilder returns the configured key and throws when none is available', async () => {
 		const plugin = starton({ key: 'test-starton-api-key' });
+		// Test only: partial context stub with only the fields under test.
 		const withKey = { authType: 'api_key' } as unknown as StartonContext;
 		await expect(
 			plugin.keyBuilder?.(withKey as never, 'endpoint'),
 		).resolves.toBe('test-starton-api-key');
 
 		const noKey = starton();
+		// Test only: partial context stub with only the fields under test.
 		const emptyCtx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => undefined },
@@ -813,6 +824,7 @@ describe('starton() plugin', () => {
 	});
 
 	it('marks write vs. read risk correctly', () => {
+		// Test only: read endpoint meta generically by name.
 		const meta = starton().endpointMeta as Record<
 			string,
 			{ riskLevel: string } | undefined
@@ -850,12 +862,14 @@ describe('error handling', () => {
 		}).catch((e) => e);
 
 		expect(err).toBeInstanceOf(ApiError);
+		// Test only: this request rejects with an ApiError, which carries status.
 		expect((err as ApiError).status).toBe(401);
 	});
 
 	it('routes a 401 to AUTH_ERROR with no retries', async () => {
 		nextResponseStatus = 401;
 		nextResponseBody = { errorCode: 'NOT_AUTHENTICATED' };
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', 'bad', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
@@ -869,6 +883,7 @@ describe('error handling', () => {
 	it('routes a 429 to RATE_LIMIT_ERROR with retries', async () => {
 		nextResponseStatus = 429;
 		nextResponseBody = { errorCode: 'THROTTLED' };
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', 'k', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
@@ -886,6 +901,7 @@ describe('error handling', () => {
 	it('routes a deterministic blockchain validation error (400) to the non-retryable handler', async () => {
 		nextResponseStatus = 400;
 		nextResponseBody = { errorCode: 'INSUFFICIENT_FUNDS' };
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest(
 			'v3/smart-contract/polygon-mumbai/0xabc/call',
 			'k',
@@ -901,6 +917,7 @@ describe('error handling', () => {
 	it('routes a 5xx to SERVER_ERROR with limited retries', async () => {
 		nextResponseStatus = 500;
 		nextResponseBody = { errorCode: 'MICROSERVICE_NOT_RESPONDING' };
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/transaction/tx_1', 'k', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
@@ -1175,11 +1192,13 @@ describe('error routing (403 / retry-after)', () => {
 	it('routes a 403 to AUTH_ERROR with no retries', async () => {
 		nextResponseStatus = 403;
 		nextResponseBody = { statusCode: 403, errorCode: 'FORBIDDEN' };
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', 'k', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
 
 		expect(err).toBeInstanceOf(ApiError);
+		// Test only: this request rejects with an ApiError, which carries status.
 		expect((err as ApiError).status).toBe(403);
 		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
 		expect(errorHandlers.NOT_RETRYABLE_CLIENT_ERROR.match(err)).toBe(false);
@@ -1191,10 +1210,12 @@ describe('error routing (403 / retry-after)', () => {
 			statusCode: 404,
 			errorCode: 'COULD_NOT_FIND_RESOURCE',
 		};
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/transaction/nope', 'k', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
 
+		// Test only: this request rejects with an ApiError, which carries status.
 		expect((err as ApiError).status).toBe(404);
 		expect(errorHandlers.NOT_RETRYABLE_CLIENT_ERROR.match(err)).toBe(true);
 		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(false);
@@ -1492,6 +1513,7 @@ describe('runtime response validation', () => {
 		const result = await Transaction.get(ctx, { id: 'tx_1' });
 
 		expect(result.id).toBe('tx_1');
+		// Test only: schemas keep forward-compatible fields absent from the type.
 		expect((result as Record<string, unknown>).aFutureStartonField).toBe(
 			'kept',
 		);
@@ -1537,6 +1559,7 @@ describe('credential secrecy', () => {
 		nextResponseStatus = 500;
 		nextResponseBody = { statusCode: 500, errorCode: 'UNKNOWN' };
 
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
 			method: 'GET',
 		}).catch((e) => e)) as ApiError;
@@ -1551,6 +1574,7 @@ describe('credential secrecy', () => {
 			throw new Error('socket hang up');
 		}) as typeof fetch;
 
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
@@ -1568,6 +1592,7 @@ describe('credential secrecy', () => {
 			message: 'Your funds are insufficient.',
 		};
 
+		// Test only: makeStartonRequest rejects with an Error, never resolves here.
 		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
 			method: 'GET',
 		}).catch((e) => e)) as ApiError;
@@ -1744,6 +1769,7 @@ describe('runtime input validation', () => {
 		const attempts = countingFetch(200);
 
 		await expect(
+			// Test only: deliberately invalid input to exercise schema validation.
 			Wallet.create(ctx, {} as unknown as Parameters<typeof Wallet.create>[1]),
 		).rejects.toThrow();
 		expect(attempts()).toBe(0);
@@ -1753,6 +1779,7 @@ describe('runtime input validation', () => {
 		const attempts = countingFetch(200);
 
 		await expect(
+			// Test only: deliberately invalid input to exercise schema validation.
 			Wallet.list(ctx, {
 				limit: 'twenty',
 			} as unknown as Parameters<typeof Wallet.list>[1]),
@@ -1777,6 +1804,7 @@ describe('runtime input validation', () => {
 			updatedAt: 'x',
 		};
 
+		// Test only: deliberately invalid input to exercise schema validation.
 		await Wallet.create(ctx, {
 			kmsId: 'kms_1',
 			name: 'Treasury',
@@ -1795,6 +1823,7 @@ describe('runtime input validation', () => {
 			meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 },
 		};
 
+		// Test only: deliberately invalid input to exercise schema validation.
 		await Wallet.list(ctx, {
 			limit: 5,
 			secretFilter: 'leak',
@@ -1814,6 +1843,7 @@ describe('runtime input validation', () => {
 			network: 'polygon-mumbai',
 		};
 
+		// Test only: deliberately invalid input to exercise schema validation.
 		await SmartContract.read(ctx, {
 			network: 'polygon-mumbai',
 			address: '0xabc',
@@ -1829,6 +1859,7 @@ describe('runtime input validation', () => {
 	it('keeps path/query fields out of the smartContract.call body after parsing', async () => {
 		nextResponseBody = TX_FIXTURE;
 
+		// Test only: deliberately invalid input to exercise schema validation.
 		await SmartContract.call(ctx, {
 			network: 'polygon-mumbai',
 			address: '0xabc',
