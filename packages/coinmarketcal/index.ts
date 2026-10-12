@@ -150,6 +150,9 @@ export type ExternalCoinmarketcalPlugin<T extends CoinmarketcalPluginOptions> =
 	BaseCoinmarketcalPlugin<T>;
 
 export function coinmarketcal<const T extends CoinmarketcalPluginOptions>(
+	// Safe: every option is optional, so an empty object satisfies the options
+	// type; T is a caller-supplied refinement of those optional fields and a
+	// default value cannot be typed generically without the assertion.
 	incomingOptions: CoinmarketcalPluginOptions &
 		T = {} as CoinmarketcalPluginOptions & T,
 ): ExternalCoinmarketcalPlugin<T> {

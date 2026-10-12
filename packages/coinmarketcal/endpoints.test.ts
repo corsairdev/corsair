@@ -23,14 +23,39 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
-// unknown: jest stub is not the full plugin context
+// Safe: endpoints under test read only key and options, and the full context
+// carries DB handles that cannot be built without a real corsair instance.
 const mockCtx = {
 	key: 'coinmarketcal_test_key',
-	$getAccountId: () => 'test-account-id',
 	options: {},
-	logEvent: jest.fn(),
-	db: {},
-} as unknown as CoinmarketcalContext;
+} as CoinmarketcalContext;
+
+// Calls the plugin's keyBuilder (optional on the plugin type) with a typed context.
+function runKeyBuilder(
+	plugin: ReturnType<typeof coinmarketcal>,
+	ctx: CoinmarketcalKeyBuilderContext,
+): Promise<string> {
+	if (!plugin.keyBuilder) throw new Error('keyBuilder is not defined');
+	return Promise.resolve(plugin.keyBuilder(ctx, 'endpoint'));
+}
+
+function createKeyBuilderContext(
+	getApiKey: () => Promise<string | null>,
+): CoinmarketcalKeyBuilderContext {
+	return {
+		authType: 'api_key',
+		options: {},
+		tenantId: 'default',
+		keys: {
+			get_api_key: getApiKey,
+			get_webhook_signature: async () => null,
+			set_api_key: async () => undefined,
+			set_webhook_signature: async () => undefined,
+			get_dek: async () => 'test-dek',
+			issue_new_dek: async () => 'test-dek',
+		},
+	};
+}
 
 describe('Coinmarketcal plugin shape', () => {
 	it('registers endpoint surface and API-key auth only', () => {
@@ -60,11 +85,10 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('returns options.key for endpoint requests', async () => {
 		const plugin = coinmarketcal({ key: 'from-options' });
 
-		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				{ authType: 'api_key' },
-				'endpoint',
+			runKeyBuilder(
+				plugin,
+				createKeyBuilderContext(async () => null),
 			),
 		).resolves.toBe('from-options');
 	});
@@ -72,19 +96,10 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('reads API key from managed credentials', async () => {
 		const plugin = coinmarketcal();
 
-		// unknown: jest stub is not the full keyBuilder context
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue('managed-key'),
-			},
-		} as unknown as CoinmarketcalKeyBuilderContext;
-
-		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				ctx,
-				'endpoint',
+			runKeyBuilder(
+				plugin,
+				createKeyBuilderContext(async () => 'managed-key'),
 			),
 		).resolves.toBe('managed-key');
 	});
@@ -92,19 +107,10 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('throws AuthMissingError when API key is absent', async () => {
 		const plugin = coinmarketcal();
 
-		// unknown: jest stub is not the full keyBuilder context
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue(undefined),
-			},
-		} as unknown as CoinmarketcalKeyBuilderContext;
-
-		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				ctx,
-				'endpoint',
+			runKeyBuilder(
+				plugin,
+				createKeyBuilderContext(async () => null),
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});

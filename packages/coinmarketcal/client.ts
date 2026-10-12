@@ -8,7 +8,8 @@ export async function makeCoinmarketcalRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// unknown: request body fields vary by endpoint; narrowed by callers
+		// Safe: the body is only passed to JSON serialization, never read here.
+		// A narrower type is not practical because each endpoint defines its own body shape.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -49,7 +50,8 @@ export async function makeCoinmarketcalRequest<T>(
 	}
 }
 
-// unknown: error bodies are arbitrary JSON; narrowed by the checks below
+// Safe: every field is read only after typeof/`in` narrowing below.
+// A narrower type is not practical because error bodies are unvalidated provider JSON.
 function providerErrorMessage(body: unknown): string | undefined {
 	if (typeof body !== 'object' || body === null || !('error' in body)) {
 		return undefined;
