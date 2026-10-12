@@ -247,6 +247,7 @@ beforeEach(() => {
 	for (const table of Object.values(db)) {
 		for (const fn of Object.values(table)) fn.mockReset();
 	}
+	db.teamUsers.search.mockResolvedValue([]);
 });
 
 afterAll(() => {
@@ -549,6 +550,35 @@ describe('teams', () => {
 			body: { agents: ['1', '3', '5'] },
 		});
 		expect(result).toEqual({ success: true });
+	});
+
+	it('updateTeamUsers drops stored memberships missing from the new roster', async () => {
+		db.teamUsers.search.mockResolvedValueOnce([
+			{ entity_id: '123:1' },
+			{ entity_id: '123:9' },
+		]);
+		fetchMock.mockResolvedValueOnce(json({ success: true }));
+		await Handlers.updateTeamUsers(ctx, { teamId: 123, agents: [1, 5] });
+		expect(db.teamUsers.search).toHaveBeenCalledWith({
+			entity_id: { startsWith: '123:' },
+			limit: 1000,
+		});
+		expect(db.teamUsers.deleteByEntityId.mock.calls).toEqual([['123:9']]);
+		expect(db.teamUsers.upsertByEntityId.mock.calls).toEqual([
+			['123:5', { id: 5, team_id: 123 }],
+		]);
+	});
+
+	it('updateTeamUsers stores the returned roster when the API echoes it', async () => {
+		db.teamUsers.search.mockResolvedValueOnce([{ entity_id: '123:9' }]);
+		fetchMock.mockResolvedValueOnce(
+			json({ agents: [{ id: 1, name: 'Ann', priority: 1, cap: null }] }),
+		);
+		await Handlers.updateTeamUsers(ctx, { teamId: 123, agents: [1] });
+		expect(db.teamUsers.deleteByEntityId.mock.calls).toEqual([['123:9']]);
+		expect(db.teamUsers.upsertByEntityId.mock.calls).toEqual([
+			['123:1', { id: 1, name: 'Ann', priority: 1, cap: null, team_id: 123 }],
+		]);
 	});
 
 	it('updateTeamAgentSettings sends PUT /teams/{id}/agents/{agent_id}', async () => {

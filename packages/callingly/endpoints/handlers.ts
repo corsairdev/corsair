@@ -437,16 +437,31 @@ export const updateTeamUsers: CallinglyEndpoints['updateTeamUsers'] = async (
 			accountId: account_id,
 		}),
 	);
-	if ('agents' in response) {
-		await persist(async () => {
-			for (const agent of response.agents) {
-				await ctx.db.teamUsers?.upsertByEntityId(`${teamId}:${agent.id}`, {
-					...agent,
-					team_id: teamId,
-				});
-			}
+	await persist(async () => {
+		const teamUsers = ctx.db.teamUsers;
+		if (!teamUsers) return;
+		const roster = new Set(agents.map((id) => `${teamId}:${id}`));
+		const stored = await teamUsers.search({
+			entity_id: { startsWith: `${teamId}:` },
+			limit: 1000,
 		});
-	}
+		const storedIds = new Set(stored.map((row) => row.entity_id));
+		for (const entityId of storedIds) {
+			if (!roster.has(entityId)) await teamUsers.deleteByEntityId(entityId);
+		}
+		const members =
+			'agents' in response
+				? response.agents
+				: agents
+						.filter((id) => !storedIds.has(`${teamId}:${id}`))
+						.map((id) => ({ id }));
+		for (const agent of members) {
+			await teamUsers.upsertByEntityId(`${teamId}:${agent.id}`, {
+				...agent,
+				team_id: teamId,
+			});
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.updateUsers',
