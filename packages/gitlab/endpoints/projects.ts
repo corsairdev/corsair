@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, persistProject, resolveProjectId } from '../utils';
+import { enc, findProject, persistProject } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['projectsList'] = async (ctx, input) => {
@@ -117,13 +117,8 @@ export const deleteProject: GitlabEndpoints['projectsDelete'] = async (
 
 	if (ctx.db.projects) {
 		try {
-			const projectId = await resolveProjectId(
-				input.project_id,
-				ctx.db.projects,
-			);
-			if (projectId !== null) {
-				await ctx.db.projects.deleteByEntityId(String(projectId));
-			}
+			const project = await findProject(input.project_id, ctx.db.projects);
+			if (project) await ctx.db.projects.deleteByEntityId(project.entity_id);
 		} catch (error) {
 			console.warn('Failed to delete project from database:', error);
 		}

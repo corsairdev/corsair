@@ -16,35 +16,60 @@ type IidStore =
 	| PluginEntityClient<typeof GitlabIssue>
 	| PluginEntityClient<typeof GitlabMergeRequest>;
 
-// project_id may be a numeric ID or a path like "group/project". Paths are
-// resolved through the local projects table; anything but one match is null.
-export async function resolveProjectId(
+const isGitlabId = (value: number) => Number.isSafeInteger(value) && value > 0;
+
+function parseProjectId(projectId: string | number): number | null {
+	const id =
+		typeof projectId === 'number'
+			? projectId
+			: /^\d+$/.test(projectId)
+				? Number(projectId)
+				: Number.NaN;
+	return isGitlabId(id) ? id : null;
+}
+
+// project_id may be a numeric ID or a path like "group/project". Returns the
+// local project row only when exactly one row matches.
+export async function findProject(
+	projectId: string | number,
+	projects: ProjectStore | undefined,
+) {
+	const id = parseProjectId(projectId);
+	if (!projects || (id === null && typeof projectId === 'number')) {
+		return null;
+	}
+	const rows = await projects.search({
+		data: id === null ? { path_with_namespace: projectId } : { id },
+	} as never);
+	return rows.length === 1 ? rows[0]! : null;
+}
+
+async function resolveProjectId(
 	projectId: string | number,
 	projects: ProjectStore | undefined,
 ): Promise<number | null> {
-	if (typeof projectId === 'number') return projectId;
-	if (/^\d+$/.test(projectId)) return Number(projectId);
-	const matches = await projects?.search({
-		data: { path_with_namespace: projectId },
-	} as never);
-	return matches?.length === 1 ? matches[0]!.data.id : null;
+	const id = parseProjectId(projectId);
+	if (id !== null) return id;
+	const project = await findProject(projectId, projects);
+	return project ? project.data.id : null;
 }
 
 // Issues and MRs are stored by global id, but deletes address them by
-// project + iid, so the rows have to be looked up before they can be removed.
+// project + iid, so the row has to be found before it can be removed. Nothing
+// is deleted unless exactly one row matches.
 export async function deleteByIid(
 	store: IidStore | undefined,
 	projects: ProjectStore | undefined,
 	projectId: string | number,
 	iid: number,
 ) {
-	if (!store) return;
+	if (!store || !isGitlabId(iid)) return;
 	const resolved = await resolveProjectId(projectId, projects);
 	if (resolved === null) return;
 	const rows = await store.search({
 		data: { iid, project_id: resolved },
 	} as never);
-	await Promise.all(rows.map((row) => store.deleteByEntityId(row.entity_id)));
+	if (rows.length === 1) await store.deleteByEntityId(rows[0]!.entity_id);
 }
 
 export async function persistUser(user: Record<string, any>, db: PluginDb) {

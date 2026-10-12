@@ -41,13 +41,14 @@ function makeCtx(db: {
 		mergeRequests: makeStore(db.mergeRequests),
 		projects: makeStore(db.projects),
 	};
-	// The endpoint context carries the full plugin runtime; the handlers only
-	// touch key, db, options and the logging hooks, so a partial one is cast.
 	const ctx = {
 		key: 'token',
 		db: stores,
 		options: {},
 		$getAccountId: async () => 'account',
+		// `unknown` is needed because the real endpoint context carries the full
+		// plugin runtime; these handlers only read key, db, options and the
+		// logging hooks, so a partial context is cast to the full type.
 	} as unknown as Parameters<typeof deleteIssue>[0];
 	return { ctx, stores };
 }
@@ -101,6 +102,30 @@ describe('deleteIssue', () => {
 		expect(stores.issues.deleteByEntityId).not.toHaveBeenCalled();
 	});
 
+	it('deletes nothing when more than one row matches', async () => {
+		const { ctx, stores } = makeCtx({
+			issues: [issue(5, 3, 100), issue(6, 3, 100)],
+		});
+
+		await deleteIssue(ctx, { project_id: 100, issue_iid: 3 });
+
+		expect(stores.issues.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		[{ project_id: -5, issue_iid: 3 }],
+		[{ project_id: '0', issue_iid: 3 }],
+		[{ project_id: 100, issue_iid: 0 }],
+		[{ project_id: 100, issue_iid: 1.5 }],
+	])('deletes nothing for invalid ids %j', async (input) => {
+		const { ctx, stores } = makeCtx({ issues: [issue(5, 3, 100)] });
+
+		await deleteIssue(ctx, input);
+
+		expect(stores.issues.search).not.toHaveBeenCalled();
+		expect(stores.issues.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
 	it('leaves the local DB alone when the remote DELETE fails', async () => {
 		fetchSpy.mockImplementation(
 			async () => new Response('{"message":"404 Not found"}', { status: 404 }),
@@ -140,6 +165,18 @@ describe('deleteMr', () => {
 	});
 });
 
+describe('deleteMr', () => {
+	it('deletes nothing when more than one row matches', async () => {
+		const { ctx, stores } = makeCtx({
+			mergeRequests: [issue(500, 3, 100), issue(501, 3, 100)],
+		});
+
+		await deleteMr(ctx, { project_id: 100, merge_request_iid: 3 });
+
+		expect(stores.mergeRequests.deleteByEntityId).not.toHaveBeenCalled();
+	});
+});
+
 describe('deleteProject', () => {
 	it('removes the project by numeric id', async () => {
 		const { ctx, stores } = makeCtx({
@@ -159,6 +196,25 @@ describe('deleteProject', () => {
 		await deleteProject(ctx, { project_id: 'org/b' });
 
 		expect(stores.projects.rows).toEqual([project(42, 'org/a')]);
+	});
+
+	it('deletes by the stored entity_id', async () => {
+		const { ctx, stores } = makeCtx({
+			projects: [{ ...project(42, 'org/a'), entity_id: 'project-42' }],
+		});
+
+		await deleteProject(ctx, { project_id: 42 });
+
+		expect(stores.projects.deleteByEntityId).toHaveBeenCalledWith('project-42');
+		expect(stores.projects.rows).toEqual([]);
+	});
+
+	it('deletes nothing for an invalid project id', async () => {
+		const { ctx, stores } = makeCtx({ projects: [project(42, 'org/a')] });
+
+		await deleteProject(ctx, { project_id: -42 });
+
+		expect(stores.projects.deleteByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('deletes nothing when a path matches more than one row', async () => {
