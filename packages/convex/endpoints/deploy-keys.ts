@@ -45,7 +45,7 @@ export const list: ConvexEndpoints['deployKeysList'] = async (ctx, input) => {
 	if (response && deployKeys) {
 		await tryCacheWrite(async () => {
 			for (const deployKey of response) {
-				await deployKeys.upsertByEntityId(deployKey.id, {
+				await deployKeys.upsertByEntityId(String(deployKey.id), {
 					deploymentName: input.deployment_name,
 					...deployKey,
 				});

@@ -63,6 +63,24 @@ function stubFetch(
 	});
 }
 
+function stubFetchSequence(payloads: Array<object | null>) {
+	calls = [];
+	const queue = [...payloads];
+	jest.spyOn(global, 'fetch').mockImplementation(async (input, req) => {
+		calls.push({
+			url: String(input),
+			method: req?.method ?? 'GET',
+			authorization: new Headers(req?.headers).get('Authorization'),
+			body: typeof req?.body === 'string' ? req.body : null,
+		});
+		const payload = queue.shift() ?? null;
+		return new Response(payload === null ? null : JSON.stringify(payload), {
+			status: 200,
+			headers: payload === null ? {} : { 'Content-Type': 'application/json' },
+		});
+	});
+}
+
 function onlyCall(): Captured {
 	expect(calls).toHaveLength(1);
 	const call = calls[0];
@@ -149,19 +167,30 @@ const project = {
 	devDeploymentName: null,
 };
 
+const deployKeyRecord = {
+	id: 9001,
+	name: 'ci',
+	creationTime: 1700000000002,
+	lastUsedTime: null,
+	expiresAt: null,
+	creator: 7,
+	managedBy: null,
+	allowedActions: ['deployment:deploy'],
+};
+
 const deployment = {
 	id: 501,
 	name: 'happy-otter-123',
 	createTime: 1700000000001,
 	lastDeployTime: null,
-	deploymentType: 'prod',
+	deploymentType: 'prod' as const,
 	projectId: 101,
 	region: 'aws-us-east-1',
 	isDefault: true,
 	reference: 'production',
 	deploymentUrl: 'https://happy-otter-123.convex.cloud',
 	class: 's16',
-	kind: 'cloud',
+	kind: 'cloud' as const,
 };
 
 beforeEach(() => {
@@ -219,7 +248,8 @@ describe('projects', () => {
 			items: [project],
 			pagination: { hasMore: true, nextCursor: 'c2' },
 		});
-		const result = await ProjectsEndpoints.list(makeCtx(), {
+		const projects = fakeTable(ConvexProjectSchema);
+		const result = await ProjectsEndpoints.list(makeCtx({ db: { projects } }), {
 			team_id: '7',
 			cursor: 'c1',
 			limit: 10,
@@ -234,31 +264,37 @@ describe('projects', () => {
 			items: [project],
 			pagination: { hasMore: true, nextCursor: 'c2' },
 		});
+		expect(projects.upsertByEntityId).toHaveBeenCalledWith('101', project);
 	});
 
 	it('getById sends GET /projects/{id}', async () => {
 		stubFetch(project);
-		const result = await ProjectsEndpoints.getById(makeCtx(), {
-			project_id: '101',
-		});
+		const projects = fakeTable(ConvexProjectSchema);
+		const result = await ProjectsEndpoints.getById(
+			makeCtx({ db: { projects } }),
+			{ project_id: '101' },
+		);
 
 		const call = onlyCall();
 		expect(call.method).toBe('GET');
 		expect(call.url).toBe(`${MGMT}/projects/101`);
 		expect(result).toEqual(project);
+		expect(projects.upsertByEntityId).toHaveBeenCalledWith('101', project);
 	});
 
 	it('getBySlug sends GET /teams/{team}/projects/{slug}', async () => {
 		stubFetch(project);
-		const result = await ProjectsEndpoints.getBySlug(makeCtx(), {
-			team_id_or_slug: 'acme',
-			project_slug: 'my-app',
-		});
+		const projects = fakeTable(ConvexProjectSchema);
+		const result = await ProjectsEndpoints.getBySlug(
+			makeCtx({ db: { projects } }),
+			{ team_id_or_slug: 'acme', project_slug: 'my-app' },
+		);
 
 		const call = onlyCall();
 		expect(call.method).toBe('GET');
 		expect(call.url).toBe(`${MGMT}/teams/acme/projects/my-app`);
 		expect(result).toEqual(project);
+		expect(projects.upsertByEntityId).toHaveBeenCalledWith('101', project);
 	});
 
 	it('create sends POST /teams/{id}/create_project with the body fields', async () => {
@@ -288,18 +324,39 @@ describe('projects', () => {
 		expect(result).toEqual(created);
 	});
 
+	it('create caches the full project fetched after creation', async () => {
+		const created = {
+			projectId: 101,
+			id: 101,
+			slug: 'my-app',
+			deploymentName: 'happy-otter-123',
+			deploymentUrl: 'https://happy-otter-123.convex.cloud',
+		};
+		stubFetchSequence([created, project]);
+		const projects = fakeTable(ConvexProjectSchema);
+		const result = await ProjectsEndpoints.create(
+			makeCtx({ db: { projects } }),
+			{ team_id: '7', projectName: 'My App', deploymentType: 'prod' },
+		);
+
+		expect(result).toEqual(created);
+		expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual([
+			`POST ${MGMT}/teams/7/create_project`,
+			`GET ${MGMT}/projects/101`,
+		]);
+		expect(projects.upsertByEntityId).toHaveBeenCalledWith('101', project);
+	});
+
 	it('delete sends POST /projects/{id}/delete and clears cached children', async () => {
 		stubFetch(null);
-		const projects = fakeTable(ConvexProjectSchema, [
-			['101', { id: 101, name: 'x' }],
-		]);
+		const projects = fakeTable(ConvexProjectSchema, [['101', project]]);
 		const deployments = fakeTable(ConvexDeploymentSchema, [
-			['happy-otter-123', { projectId: 101 }],
-			['other-dog-9', { projectId: 202 }],
+			['happy-otter-123', deployment],
+			['other-dog-9', { ...deployment, name: 'other-dog-9', projectId: 202 }],
 		]);
 		const deployKeys = fakeTable(ConvexDeployKeySchema, [
-			['k1', { deploymentName: 'happy-otter-123' }],
-			['k2', { deploymentName: 'other-dog-9' }],
+			['k1', { ...deployKeyRecord, deploymentName: 'happy-otter-123' }],
+			['k2', { ...deployKeyRecord, deploymentName: 'other-dog-9' }],
 		]);
 		const result = await ProjectsEndpoints.delete(
 			makeCtx({ db: { projects, deployments, deployKeys } }),
@@ -340,24 +397,34 @@ describe('deployments', () => {
 
 	it('get sends GET /deployments/{name}', async () => {
 		stubFetch(deployment);
-		const result = await DeploymentsEndpoints.get(makeCtx(), {
-			deployment_name: 'happy-otter-123',
-		});
+		const deployments = fakeTable(ConvexDeploymentSchema);
+		const result = await DeploymentsEndpoints.get(
+			makeCtx({ db: { deployments } }),
+			{ deployment_name: 'happy-otter-123' },
+		);
 
 		const call = onlyCall();
 		expect(call.method).toBe('GET');
 		expect(call.url).toBe(`${MGMT}/deployments/happy-otter-123`);
 		expect(result).toEqual(deployment);
+		expect(deployments.upsertByEntityId).toHaveBeenCalledWith(
+			'happy-otter-123',
+			deployment,
+		);
 	});
 
 	it('create sends POST /projects/{id}/create_deployment with the body fields', async () => {
 		stubFetch(deployment);
-		const result = await DeploymentsEndpoints.create(makeCtx(), {
-			project_id: '101',
-			type: 'prod',
-			reference: 'production',
-			isDefault: true,
-		});
+		const deployments = fakeTable(ConvexDeploymentSchema);
+		const result = await DeploymentsEndpoints.create(
+			makeCtx({ db: { deployments } }),
+			{
+				project_id: '101',
+				type: 'prod',
+				reference: 'production',
+				isDefault: true,
+			},
+		);
 
 		const call = onlyCall();
 		expect(call.method).toBe('POST');
@@ -368,6 +435,10 @@ describe('deployments', () => {
 			isDefault: true,
 		});
 		expect(result).toEqual(deployment);
+		expect(deployments.upsertByEntityId).toHaveBeenCalledWith(
+			'happy-otter-123',
+			deployment,
+		);
 	});
 
 	it('update sends PATCH /deployments/{name} with only the supplied fields', async () => {
@@ -424,11 +495,11 @@ describe('deployments', () => {
 	it('delete sends POST /deployments/{name}/delete and clears cached deploy keys', async () => {
 		stubFetch(null);
 		const deployments = fakeTable(ConvexDeploymentSchema, [
-			['happy-otter-123', { projectId: 101 }],
+			['happy-otter-123', deployment],
 		]);
 		const deployKeys = fakeTable(ConvexDeployKeySchema, [
-			['k1', { deploymentName: 'happy-otter-123' }],
-			['k2', { deploymentName: 'other-dog-9' }],
+			['k1', { ...deployKeyRecord, deploymentName: 'happy-otter-123' }],
+			['k2', { ...deployKeyRecord, deploymentName: 'other-dog-9' }],
 		]);
 		const result = await DeploymentsEndpoints.delete(
 			makeCtx({ db: { deployments, deployKeys } }),
@@ -471,18 +542,13 @@ describe('deploy keys', () => {
 	});
 
 	it('list sends GET /deployments/{name}/list_deploy_keys', async () => {
-		const key = {
-			id: 'key_1',
-			name: 'ci',
-			creationTime: 1700000000002,
-			lastUsedTime: null,
-			expiresAt: null,
-			allowedActions: ['deployment:deploy'],
-		};
+		const key = deployKeyRecord;
 		stubFetch([key]);
-		const result = await DeployKeysEndpoints.list(makeCtx(), {
-			deployment_name: 'happy-otter-123',
-		});
+		const deployKeys = fakeTable(ConvexDeployKeySchema);
+		const result = await DeployKeysEndpoints.list(
+			makeCtx({ db: { deployKeys } }),
+			{ deployment_name: 'happy-otter-123' },
+		);
 
 		const call = onlyCall();
 		expect(call.method).toBe('GET');
@@ -490,6 +556,10 @@ describe('deploy keys', () => {
 			`${MGMT}/deployments/happy-otter-123/list_deploy_keys`,
 		);
 		expect(result).toEqual([key]);
+		expect(deployKeys.upsertByEntityId).toHaveBeenCalledWith('9001', {
+			deploymentName: 'happy-otter-123',
+			...key,
+		});
 	});
 });
 
@@ -518,7 +588,7 @@ describe('custom domains', () => {
 describe('platform', () => {
 	it('getTokenDetails sends GET /token_details', async () => {
 		const details = {
-			id: 'tok_1',
+			id: 5099424,
 			teamId: 7,
 			name: 'ci-token',
 			createTime: 1700000000003,
@@ -848,8 +918,14 @@ describe('keyBuilder', () => {
 describe('output schemas', () => {
 	it('parse the official Management API payloads', () => {
 		expect(ConvexEndpointOutputSchemas.deploymentGet.parse(deployment)).toEqual(
-			{ ...deployment, id: '501', projectId: '101' },
+			deployment,
 		);
+		expect(ConvexEndpointOutputSchemas.projectGetById.parse(project)).toEqual(
+			project,
+		);
+		expect(
+			ConvexEndpointOutputSchemas.deployKeysList.parse([deployKeyRecord]),
+		).toEqual([deployKeyRecord]);
 		expect(
 			ConvexEndpointOutputSchemas.executeQueryBatch.safeParse({
 				results: [{ status: 'success' }],

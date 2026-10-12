@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import type { ConvexDeployment, ConvexProject } from '../schema/database';
+import {
+	ConvexDeployKeySchema,
+	ConvexDeploymentSchema,
+	ConvexProjectSchema,
+} from '../schema/database';
 
 // ── Common validation ────────────────────────────────────────────────────────
 
@@ -12,7 +18,7 @@ import { z } from 'zod';
 export const CONVEX_SUBDOMAIN_PATTERN =
 	/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/;
 
-const ConvexIdSchema = z.coerce.string().min(1);
+const ConvexIdSchema = z.number().int().nonnegative();
 
 const SafePathSegmentSchema = z.coerce
 	.string()
@@ -34,52 +40,16 @@ const DeploymentScopedLocationSchema = {
 
 // ── Common resource schemas ──────────────────────────────────────────────────
 
-export const ProjectSchema = z
-	.object({
-		id: ConvexIdSchema,
-		name: z.string(),
-		slug: z.string(),
-		teamId: ConvexIdSchema,
-		teamSlug: z.string().nullable().optional(),
-		createTime: z.number(),
-		prodDeploymentName: z.string().nullable().optional(),
-		devDeploymentName: z.string().nullable().optional(),
-	})
-	.passthrough();
-export type Project = z.infer<typeof ProjectSchema>;
+export const ProjectSchema = ConvexProjectSchema;
+export type Project = ConvexProject;
 
-export const DeploymentSchema = z
-	.object({
-		id: ConvexIdSchema.optional(),
-		name: z.string(),
-		createTime: z.number(),
-		lastDeployTime: z.number().nullable().optional(),
-		deploymentType: z.string(),
-		projectId: ConvexIdSchema,
-		region: z.string().nullable().optional(),
-		isDefault: z.boolean().optional(),
-		reference: z.string().nullable().optional(),
-		deploymentUrl: z.string().nullable().optional(),
-		url: z.string().nullable().optional(),
-		siteUrl: z.string().nullable().optional(),
-		class: z.string().nullable().optional(),
-		kind: z.string().nullable().optional(),
-	})
-	.passthrough();
-export type Deployment = z.infer<typeof DeploymentSchema>;
+export const DeploymentSchema = ConvexDeploymentSchema;
+export type Deployment = ConvexDeployment;
 
-export const DeployKeySchema = z
-	.object({
-		id: ConvexIdSchema,
-		name: z.string(),
-		creationTime: z.number(),
-		lastUsedTime: z.number().nullable().optional(),
-		expiresAt: z.number().nullable().optional(),
-		allowedActions: z.array(z.string()).default([]),
-		creator: ConvexIdSchema.nullable().optional(),
-		managedBy: z.string().nullable().optional(),
-	})
-	.passthrough();
+// The list endpoint adds `deploymentName`; the raw API object omits it.
+export const DeployKeySchema = ConvexDeployKeySchema.omit({
+	deploymentName: true,
+}).passthrough();
 export type DeployKey = z.infer<typeof DeployKeySchema>;
 
 export const PaginationMetadataSchema = z

@@ -21,7 +21,7 @@ export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
 	if (response.items && projects) {
 		await tryCacheWrite(async () => {
 			for (const project of response.items) {
-				await projects.upsertByEntityId(project.id, { ...project });
+				await projects.upsertByEntityId(String(project.id), { ...project });
 			}
 		});
 	}
@@ -49,7 +49,7 @@ export const getById: ConvexEndpoints['projectGetById'] = async (
 	const projects = ctx.db.projects;
 	if (response && projects) {
 		await tryCacheWrite(() =>
-			projects.upsertByEntityId(response.id, { ...response }),
+			projects.upsertByEntityId(String(response.id), { ...response }),
 		);
 	}
 
@@ -79,7 +79,7 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 	const projects = ctx.db.projects;
 	if (response && projects) {
 		await tryCacheWrite(() =>
-			projects.upsertByEntityId(response.id, { ...response }),
+			projects.upsertByEntityId(String(response.id), { ...response }),
 		);
 	}
 
@@ -103,14 +103,26 @@ export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
 		body,
 	});
 
-	// The project was created upstream — a cache failure must not turn this
-	// successful non-idempotent call into an endpoint error (which could prompt
-	// a duplicate create on retry).
+	// The create response only carries `{ id, slug, ... }`, so fetch the full
+	// project record for the cache. The project was created upstream — neither a
+	// refresh failure nor a cache failure may turn this successful
+	// non-idempotent call into an endpoint error (which could prompt a duplicate
+	// create on retry).
 	const projects = ctx.db.projects;
-	if (response.id && projects) {
-		await tryCacheWrite(() =>
-			projects.upsertByEntityId(response.id, { ...response }),
-		);
+	if (projects) {
+		try {
+			const created = await makeConvexRequest<
+				ConvexEndpointOutputs['projectGetById']
+			>('/projects/{project_id}', ctx.key, {
+				path: { project_id: String(response.id) },
+				method: 'GET',
+			});
+			await tryCacheWrite(() =>
+				projects.upsertByEntityId(String(created.id), { ...created }),
+			);
+		} catch {
+			// Intentionally swallowed — create already succeeded; cache refresh is best-effort.
+		}
 	}
 
 	await logEventFromContext(

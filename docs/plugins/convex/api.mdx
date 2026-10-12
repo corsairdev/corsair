@@ -109,14 +109,16 @@ await corsair.convex.api.deployKeys.list({ deployment_name: 'happy-otter-123' })
 
 ```ts
 {
-  id: string,
+  id: number,
   name: string,
   creationTime: number,
   lastUsedTime?: number | null,
   expiresAt?: number | null,
-  allowedActions: string[],
-  creator?: string | null,
-  managedBy?: string | null
+  creator?: number | null,
+  managedBy?: vercel | {
+    oauthApp: string
+  } | null,
+  allowedActions: string[]
 }[]
 ```
 </Accordion>
@@ -160,7 +162,8 @@ await corsair.convex.api.deployment.executeQueryBatch({
 ```ts
 {
   path: string,
-  args: Record<string, JsonValue>,
+  args: {
+  },
   format?: string | null
 }[]
 ```
@@ -182,12 +185,12 @@ await corsair.convex.api.deployment.executeQueryBatch({
 (
   {
     status: success,
-    value: JsonValue,
+    value: lazy,
     logLines?: string[]
   } | {
     status: error,
     errorMessage: string,
-    errorData?: JsonValue,
+    errorData?: lazy,
     logLines?: string[]
   }
 )[]
@@ -307,20 +310,26 @@ await corsair.convex.api.deployments.create({ project_id: '123', type: 'prod', r
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
 | `lastDeployTime` | `number` | No | — |
-| `deploymentType` | `string` | Yes | — |
-| `projectId` | `string` | Yes | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `creator` | `number` | No | — |
+| `previewIdentifier` | `string` | No | — |
 | `region` | `string` | No | — |
 | `isDefault` | `boolean` | No | — |
 | `reference` | `string` | No | — |
+| `dashboardEditConfirmation` | `boolean` | No | — |
 | `deploymentUrl` | `string` | No | — |
-| `url` | `string` | No | — |
-| `siteUrl` | `string` | No | — |
+| `expiresAt` | `number` | No | — |
 | `class` | `string` | No | — |
-| `kind` | `string` | No | — |
+| `sendLogsToClient` | `boolean` | No | — |
+| `kind` | `cloud \| local` | Yes | — |
+| `port` | `number` | No | — |
+| `deviceName` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
 
 
 
@@ -380,20 +389,26 @@ await corsair.convex.api.deployments.get({ deployment_name: 'happy-otter-123' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
 | `lastDeployTime` | `number` | No | — |
-| `deploymentType` | `string` | Yes | — |
-| `projectId` | `string` | Yes | — |
+| `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `creator` | `number` | No | — |
+| `previewIdentifier` | `string` | No | — |
 | `region` | `string` | No | — |
 | `isDefault` | `boolean` | No | — |
 | `reference` | `string` | No | — |
+| `dashboardEditConfirmation` | `boolean` | No | — |
 | `deploymentUrl` | `string` | No | — |
-| `url` | `string` | No | — |
-| `siteUrl` | `string` | No | — |
+| `expiresAt` | `number` | No | — |
 | `class` | `string` | No | — |
-| `kind` | `string` | No | — |
+| `sendLogsToClient` | `boolean` | No | — |
+| `kind` | `cloud \| local` | Yes | — |
+| `port` | `number` | No | — |
+| `deviceName` | `string` | No | — |
+| `isActive` | `boolean` | No | — |
 
 
 
@@ -429,20 +444,26 @@ await corsair.convex.api.deployments.list({ project_id: '123', deploymentType: '
 
 ```ts
 {
-  id?: string,
+  id?: number,
   name: string,
   createTime: number,
   lastDeployTime?: number | null,
-  deploymentType: string,
-  projectId: string,
-  region?: string | null,
+  deploymentType: dev | prod | preview | custom,
+  projectId: number,
+  creator?: number | null,
+  previewIdentifier?: string | null,
+  region?: string,
   isDefault?: boolean,
-  reference?: string | null,
-  deploymentUrl?: string | null,
-  url?: string | null,
-  siteUrl?: string | null,
-  class?: string | null,
-  kind?: string | null
+  reference?: string,
+  dashboardEditConfirmation?: boolean | null,
+  deploymentUrl?: string,
+  expiresAt?: number | null,
+  class?: string,
+  sendLogsToClient?: boolean | null,
+  kind: cloud | local,
+  port?: number,
+  deviceName?: string,
+  isActive?: boolean
 }[]
 ```
 </Accordion>
@@ -509,9 +530,9 @@ await corsair.convex.api.platform.getTokenDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
-| `projectId` | `string` | No | — |
+| `id` | `number` | Yes | — |
+| `teamId` | `number` | No | — |
+| `projectId` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
 | `type` | `teamToken \| projectToken` | Yes | — |
@@ -635,8 +656,8 @@ await corsair.convex.api.projects.create({ team_id: '41', projectName: 'My App',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `projectId` | `string` | Yes | — |
-| `id` | `string` | Yes | — |
+| `projectId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
 | `slug` | `string` | Yes | — |
 | `deploymentName` | `string` | No | — |
 | `deploymentUrl` | `string` | No | — |
@@ -699,11 +720,11 @@ await corsair.convex.api.projects.getById({ project_id: '123' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
+| `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `teamId` | `string` | Yes | — |
-| `teamSlug` | `string` | No | — |
+| `teamId` | `number` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
 | `prodDeploymentName` | `string` | No | — |
 | `devDeploymentName` | `string` | No | — |
@@ -737,11 +758,11 @@ await corsair.convex.api.projects.getBySlug({ team_id_or_slug: 'acme', project_s
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
+| `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `teamId` | `string` | Yes | — |
-| `teamSlug` | `string` | No | — |
+| `teamId` | `number` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
 | `prodDeploymentName` | `string` | No | — |
 | `devDeploymentName` | `string` | No | — |
@@ -785,11 +806,11 @@ await corsair.convex.api.projects.list({ team_id: '41', limit: 20 });
 
 ```ts
 {
-  id: string,
+  id: number,
   name: string,
   slug: string,
-  teamId: string,
-  teamSlug?: string | null,
+  teamId: number,
+  teamSlug: string,
   createTime: number,
   prodDeploymentName?: string | null,
   devDeploymentName?: string | null

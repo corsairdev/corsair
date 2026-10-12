@@ -26,11 +26,13 @@ const rows = await corsair.convex.db.deployKeys.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
 | `deploymentName` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `creationTime` | `number` | equals, gt, gte, lt, lte, in |
+| `lastUsedTime` | `number` | equals, gt, gte, lt, lte, in |
 | `expiresAt` | `number` | equals, gt, gte, lt, lte, in |
+| `creator` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -53,15 +55,24 @@ const rows = await corsair.convex.db.deployments.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `createTime` | `number` | equals, gt, gte, lt, lte, in |
-| `deploymentType` | `string` | equals, contains, startsWith, endsWith, in |
-| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastDeployTime` | `number` | equals, gt, gte, lt, lte, in |
+| `projectId` | `number` | equals, gt, gte, lt, lte, in |
+| `creator` | `number` | equals, gt, gte, lt, lte, in |
+| `previewIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
 | `region` | `string` | equals, contains, startsWith, endsWith, in |
 | `isDefault` | `boolean` | equals |
 | `reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `dashboardEditConfirmation` | `boolean` | equals |
 | `deploymentUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `expiresAt` | `number` | equals, gt, gte, lt, lte, in |
+| `class` | `string` | equals, contains, startsWith, endsWith, in |
+| `sendLogsToClient` | `boolean` | equals |
+| `port` | `number` | equals, gt, gte, lt, lte, in |
+| `deviceName` | `string` | equals, contains, startsWith, endsWith, in |
+| `isActive` | `boolean` | equals |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -84,10 +95,10 @@ const rows = await corsair.convex.db.projects.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
-| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `number` | equals, gt, gte, lt, lte, in |
 | `teamSlug` | `string` | equals, contains, startsWith, endsWith, in |
 | `createTime` | `number` | equals, gt, gte, lt, lte, in |
 | `prodDeploymentName` | `string` | equals, contains, startsWith, endsWith, in |
