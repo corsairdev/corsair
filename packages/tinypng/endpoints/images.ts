@@ -77,6 +77,16 @@ function downloadOutput(
 export const shrink: TinypngEndpoints['shrink'] = async (ctx, input) => {
 	const { source } = ShrinkInputSchema.parse(input);
 	const result = await shrinkSource(ctx.key, source);
+	try {
+		await ctx.db?.images?.upsertByEntityId(result.imageId, {
+			id: result.imageId,
+			input: result.input,
+			output: result.output,
+			compression_count: result.compressionCount,
+		});
+	} catch (error) {
+		console.warn('Failed to save image to database:', error);
+	}
 	await logEventFromContext(
 		ctx,
 		'tinypng.images.shrink',
@@ -116,6 +126,19 @@ export const transform: TinypngEndpoints['transform'] = async (ctx, input) => {
 			height: file.height,
 			compressionCount: file.compressionCount,
 		});
+		if (result.stored) {
+			try {
+				await ctx.db?.storedOutputs?.upsertByEntityId(result.location, {
+					id: result.location,
+					image_id: imageId,
+					service: store.service,
+					width: result.width,
+					height: result.height,
+				});
+			} catch (error) {
+				console.warn('Failed to save stored output to database:', error);
+			}
+		}
 		// The request body carries storage credentials. Only the result is logged.
 		await logEventFromContext(
 			ctx,
@@ -160,6 +183,20 @@ export const compressAndStoreInAzure: TinypngEndpoints['compressAndStoreInAzure'
 			blobUrl: `${url.origin}${url.pathname}`,
 			etag,
 		});
+		try {
+			await ctx.db?.storedOutputs?.upsertByEntityId(result.blobUrl, {
+				id: result.blobUrl,
+				image_id: imageId,
+				service: 'azure',
+				width: result.width,
+				height: result.height,
+				content_type: result.contentType,
+				size: result.size,
+				etag: result.etag,
+			});
+		} catch (error) {
+			console.warn('Failed to save stored output to database:', error);
+		}
 		await logEventFromContext(
 			ctx,
 			'tinypng.images.compressAndStoreInAzure',

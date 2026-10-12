@@ -1,6 +1,8 @@
+import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { AzureBlobError, TinypngAPIError } from './client';
 import { Account, Images } from './endpoints';
+import type { TinypngContext } from './index';
 import { tinypng } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -9,18 +11,28 @@ jest.mock('corsair/core', () => ({
 }));
 
 const mockLog = jest.mocked(logEventFromContext);
-const fetchMock = jest.fn<Promise<Response>, [string, RequestInit]>();
-// Safe: the client only calls fetch(url, init), which the mock implements; a full typeof fetch mock
-// (with preconnect etc.) is not practical to build.
-global.fetch = fetchMock as unknown as typeof fetch;
+const fetchMock = jest.spyOn(global, 'fetch');
 
-// unknown: ctx is a stub { key } and the input is deliberately arbitrary, safe because tests only
-// call endpoints through `call`; the real context type needs the whole plugin runtime to build.
-type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
-// Safe: the stub context carries every field the endpoints read; a precise per-endpoint type
-// would force a full plugin context and a separate call signature for each test.
-const call = (endpoint: unknown, input: unknown) =>
-	(endpoint as AnyEndpoint)({ key: 'test-key' }, input);
+const upserts = {
+	images: jest.fn(),
+	storedOutputs: jest.fn(),
+	usage: jest.fn(),
+};
+const entityClient = (upsert: jest.Mock) => ({
+	upsertByEntityId: async (id: string, data: object) => upsert(id, data),
+});
+const db = {
+	images: entityClient(upserts.images),
+	storedOutputs: entityClient(upserts.storedOutputs),
+	usage: entityClient(upserts.usage),
+};
+// Safe: endpoints read only key and db from the context, and both are set here.
+// A narrower type is not practical because the full context needs the plugin runtime, a database and a keys manager.
+const ctx = { key: 'test-key', db } as TinypngContext;
+const call = <I, O>(
+	endpoint: CorsairEndpoint<TinypngContext, I, O>,
+	input: I,
+) => endpoint(ctx, input);
 
 const AUTH = `Basic ${Buffer.from('api:test-key').toString('base64')}`;
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
@@ -72,6 +84,7 @@ function request(n: number) {
 beforeEach(() => {
 	fetchMock.mockReset();
 	mockLog.mockClear();
+	for (const upsert of Object.values(upserts)) upsert.mockClear();
 });
 
 describe('tinypng plugin', () => {
@@ -114,8 +127,20 @@ describe('images.shrink', () => {
 				ratio: 0.148,
 			},
 		});
+		expect(upserts.images).toHaveBeenCalledWith('cciutldm823k9e9r', {
+			id: 'cciutldm823k9e9r',
+			input: { size: 207565, type: 'image/png' },
+			output: {
+				size: 30734,
+				type: 'image/png',
+				width: 530,
+				height: 300,
+				ratio: 0.148,
+			},
+			compression_count: 7,
+		});
 		expect(mockLog).toHaveBeenCalledWith(
-			{ key: 'test-key' },
+			ctx,
 			'tinypng.images.shrink',
 			expect.objectContaining({ imageId: 'cciutldm823k9e9r' }),
 			'completed',
@@ -151,8 +176,8 @@ describe('images.shrink', () => {
 				message: 'Credentials are invalid',
 			}),
 		);
-		// unknown: the caught value is only checked with toBeInstanceOf/toMatchObject below, so it is safe;
-		// a narrower type would be a guess before those assertions run.
+		// Safe: the caught value is only checked with toBeInstanceOf/toMatchObject below.
+		// A narrower type is not practical because a rejection can carry any value.
 		const error = await call(Images.shrink, {
 			source: { url: 'https://example.com/a.png' },
 		}).catch((e: unknown) => e);
@@ -163,6 +188,24 @@ describe('images.shrink', () => {
 			status: 401,
 			code: 'Unauthorized',
 		});
+	});
+});
+
+describe('rate limiting', () => {
+	it('surfaces 429 with a Retry-After header as a TooManyRequests error', async () => {
+		respond(
+			429,
+			JSON.stringify({
+				error: 'TooManyRequests',
+				message: 'Your monthly limit has been exceeded',
+			}),
+			{ 'Retry-After': '30' },
+		);
+
+		await expect(
+			call(Images.shrink, { source: { url: 'https://example.com/a.png' } }),
+		).rejects.toMatchObject({ status: 429, code: 'TooManyRequests' });
+		expect(upserts.images).not.toHaveBeenCalled();
 	});
 });
 
@@ -245,7 +288,7 @@ describe('images.transform', () => {
 			'Compression-Count': '3',
 		});
 		const store = {
-			service: 's3',
+			service: 's3' as const,
 			aws_access_key_id: 'AKIAEXAMPLE',
 			aws_secret_access_key: 'secret',
 			region: 'us-west-1',
@@ -266,6 +309,16 @@ describe('images.transform', () => {
 			height: 300,
 			compressionCount: 3,
 		});
+		expect(upserts.storedOutputs).toHaveBeenCalledWith(
+			'https://s3-us-west-1.amazonaws.com/example-bucket/my-images/optimized.jpg',
+			{
+				id: 'https://s3-us-west-1.amazonaws.com/example-bucket/my-images/optimized.jpg',
+				image_id: '2xnsp7jn34e5',
+				service: 's3',
+				width: 530,
+				height: 300,
+			},
+		);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('secret');
 	});
 
@@ -331,6 +384,19 @@ describe('images.compressAndStoreInAzure', () => {
 			compressionCount: 7,
 			etag: '"0x8CB171BA9E94B0B"',
 		});
+		expect(upserts.storedOutputs).toHaveBeenCalledWith(
+			'https://acct.blob.core.windows.net/images/panda.png',
+			{
+				id: 'https://acct.blob.core.windows.net/images/panda.png',
+				image_id: 'cciutldm823k9e9r',
+				service: 'azure',
+				width: 530,
+				height: 300,
+				content_type: 'image/png',
+				size: 4,
+				etag: '"0x8CB171BA9E94B0B"',
+			},
+		);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('SECRETSIG');
 	});
 
@@ -357,8 +423,8 @@ describe('images.compressAndStoreInAzure', () => {
 		respond(200, PNG, { 'Content-Type': 'image/png' });
 		respond(403, 'AuthenticationFailed');
 
-		// unknown: the caught value is only checked with toBeInstanceOf/toMatchObject below, so it is safe;
-		// a narrower type would be a guess before those assertions run.
+		// Safe: the caught value is only checked with toBeInstanceOf/toMatchObject below.
+		// A narrower type is not practical because a rejection can carry any value.
 		const error = await call(Images.compressAndStoreInAzure, {
 			source: { url: 'https://tinypng.com/images/panda-happy.png' },
 			blobUrl,
@@ -415,6 +481,11 @@ describe('account.getCompressionCount', () => {
 		});
 		expect(request(0).body).toBeUndefined();
 		expect(result).toEqual({ compressionCount: 42 });
+		const month = new Date().toISOString().slice(0, 7);
+		expect(upserts.usage).toHaveBeenCalledWith(month, {
+			id: month,
+			compression_count: 42,
+		});
 	});
 
 	it('reads the count when the monthly limit is reached', async () => {

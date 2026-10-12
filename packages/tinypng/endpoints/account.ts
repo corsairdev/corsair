@@ -31,6 +31,15 @@ export const getCompressionCount: TinypngEndpoints['getCompressionCount'] =
 		const result = GetCompressionCountResponseSchema.parse({
 			compressionCount,
 		});
+		try {
+			const month = new Date().toISOString().slice(0, 7);
+			await ctx.db?.usage?.upsertByEntityId(month, {
+				id: month,
+				compression_count: result.compressionCount,
+			});
+		} catch (error) {
+			console.warn('Failed to save usage to database:', error);
+		}
 		await logEventFromContext(
 			ctx,
 			'tinypng.account.getCompressionCount',

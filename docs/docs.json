@@ -2624,6 +2624,14 @@
                 ]
               },
               {
+                "group": "TinyPNG",
+                "pages": [
+                  "plugins/tinypng/overview",
+                  "plugins/tinypng/api",
+                  "plugins/tinypng/database"
+                ]
+              },
+              {
                 "group": "TinyURL",
                 "pages": [
                   "plugins/tinyurl/overview",
