@@ -286,6 +286,7 @@ export type ExternalDocmosisPlugin<T extends DocmosisPluginOptions> =
 	BaseDocmosisPlugin<T>;
 
 export function docmosis<const T extends DocmosisPluginOptions>(
+	// empty default is safe: T extends DocmosisPluginOptions and every option is optional
 	incomingOptions: DocmosisPluginOptions & T = {} as DocmosisPluginOptions & T,
 ): ExternalDocmosisPlugin<T> {
 	const options = {

@@ -432,7 +432,9 @@ describe('Docmosis endpoints', () => {
 	});
 
 	it('registers schemas/meta for all 18 operations', () => {
+		// test only: widened to Record so keys can be enumerated; values are not read
 		const schemas = plugin.endpointSchemas as Record<string, unknown>;
+		// test only: widened to Record so keys can be enumerated; values are not read
 		const meta = plugin.endpointMeta as Record<string, unknown>;
 		const keys = Object.keys(schemas);
 
