@@ -1,6 +1,7 @@
 import { request } from 'corsair/http';
 import { z } from 'zod';
 import { makeCallPageRequest } from '../client';
+import { CallPageEndpointOutputSchemas } from '../endpoints/types';
 
 jest.mock('corsair/http', () => ({
 	ApiError: class ApiError extends Error {
@@ -42,6 +43,8 @@ describe('makeCallPageRequest', () => {
 	});
 
 	it('preserves ApiError metadata for rate-limit handling', async () => {
+		// Safe: requireMock returns the ApiError stub defined in jest.mock above;
+		// jest cannot infer that factory's type, so it is spelled out here.
 		const { ApiError } = jest.requireMock('corsair/http') as {
 			ApiError: new (
 				message: string,
@@ -57,7 +60,9 @@ describe('makeCallPageRequest', () => {
 		);
 
 		await expect(
-			makeCallPageRequest('/api/v1/external/users/all', 'key'),
+			makeCallPageRequest('/api/v1/external/users/all', 'key', {
+				schema: CallPageEndpointOutputSchemas.usersList,
+			}),
 		).rejects.toMatchObject({ status: 429, retryAfter: 5000 });
 	});
 });

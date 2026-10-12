@@ -427,6 +427,8 @@ export type InternalCallPagePlugin = BaseCallPagePlugin<CallPagePluginOptions>;
 export type ExternalCallPagePlugin<T extends CallPagePluginOptions> =
 	BaseCallPagePlugin<T>;
 
+// The `{} as` default is safe because every option is optional, and a
+// conditional type over the generic T cannot express an empty default.
 export function callpage<const T extends CallPagePluginOptions>(
 	incomingOptions: CallPagePluginOptions & T = {} as CallPagePluginOptions & T,
 ): ExternalCallPagePlugin<T> {

@@ -18,11 +18,21 @@ const CALLPAGE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-type CallPageEnvelope<T> = {
+type CallPageQueryValue =
+	| string
+	| number
+	| boolean
+	| number[]
+	| string[]
+	| undefined;
+
+type CallPageEnvelope = {
 	hasError?: boolean;
 	errorCode?: string | number;
 	message?: string;
-	data?: T;
+	// unknown: the payload shape differs per endpoint, and makeCallPageRequest
+	// parses it with the endpoint's zod schema before returning it.
+	data?: unknown;
 };
 
 export class CallPageAPIError extends Error {
@@ -44,25 +54,25 @@ export class CallPageAPIError extends Error {
 	}
 }
 
-function unwrapCallPagePayload<T>(response: CallPageEnvelope<T> | T): T {
+// Returns unknown: the payload shape differs per endpoint, and the caller
+// parses it with the endpoint's schema instead of trusting a cast.
+function unwrapCallPagePayload(response: CallPageEnvelope): unknown {
 	if (
 		response &&
 		typeof response === 'object' &&
 		'data' in response &&
-		(hasErrorKey(response) || 'errorCode' in response || 'message' in response)
+		('hasError' in response || 'errorCode' in response || 'message' in response)
 	) {
-		return (response as CallPageEnvelope<T>).data as T;
+		return response.data;
 	}
-	return response as T;
-}
-
-function hasErrorKey(response: object): boolean {
-	return 'hasError' in response;
+	return response;
 }
 
 // CallPage is a PHP backend: repeated `ids=1&ids=2` keeps only the last value,
 // so array filters must be sent as `ids[]=1&ids[]=2`.
-function toPhpQuery(query: Record<string, unknown>): Record<string, unknown> {
+function toPhpQuery(
+	query: Record<string, CallPageQueryValue>,
+): Record<string, CallPageQueryValue> {
 	return Object.fromEntries(
 		Object.entries(query).map(([key, value]) =>
 			Array.isArray(value) ? [`${key}[]`, value] : [key, value],
@@ -75,11 +85,13 @@ export async function makeCallPageRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+		// unknown: bodies are validated endpoint inputs of many shapes, and the
+		// transport only serializes them to JSON.
 		body?: unknown;
-		query?: Record<string, unknown>;
-		schema?: z.ZodType<T>;
+		query?: Record<string, CallPageQueryValue>;
+		schema: z.ZodType<T>;
 		unwrap?: boolean;
-	} = {},
+	},
 ): Promise<T> {
 	const { method = 'GET', body, query, schema, unwrap = true } = options;
 	const config: OpenAPIConfig = {
@@ -103,16 +115,12 @@ export async function makeCallPageRequest<T>(
 	};
 
 	try {
-		const response = await request<CallPageEnvelope<T>>(
-			config,
-			requestOptions,
-			{
-				rateLimitConfig:
-					method === 'GET'
-						? CALLPAGE_RATE_LIMIT_CONFIG
-						: { ...CALLPAGE_RATE_LIMIT_CONFIG, maxRetries: 0 },
-			},
-		);
+		const response = await request<CallPageEnvelope>(config, requestOptions, {
+			rateLimitConfig:
+				method === 'GET'
+					? CALLPAGE_RATE_LIMIT_CONFIG
+					: { ...CALLPAGE_RATE_LIMIT_CONFIG, maxRetries: 0 },
+		});
 
 		if (response.hasError) {
 			throw new CallPageAPIError(
@@ -122,7 +130,7 @@ export async function makeCallPageRequest<T>(
 		}
 
 		const payload = unwrap ? unwrapCallPagePayload(response) : response;
-		return schema ? schema.parse(payload) : (payload as T);
+		return schema.parse(payload);
 	} catch (error) {
 		if (error instanceof CallPageAPIError) throw error;
 		if (error instanceof ApiError) {

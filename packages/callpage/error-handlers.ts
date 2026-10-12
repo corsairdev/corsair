@@ -1,15 +1,18 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import type { CallPageAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
-	return (error as Partial<CallPageAPIError>).status;
+	return 'status' in error && typeof error.status === 'number'
+		? error.status
+		: undefined;
 }
 
 function getRetryAfter(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.retryAfter;
-	return (error as Partial<CallPageAPIError>).retryAfter;
+	return 'retryAfter' in error && typeof error.retryAfter === 'number'
+		? error.retryAfter
+		: undefined;
 }
 
 export const errorHandlers = {

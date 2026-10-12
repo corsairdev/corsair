@@ -26,9 +26,14 @@ jest.mock('corsair/core', () => ({
 const mockRequest = jest.mocked(makeCallPageRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-type AnyEndpoint = (ctx: CallPageContext, input?: unknown) => Promise<unknown>;
+// input is never so every endpoint (each with its own input type) is assignable;
+// the table below supplies the matching input per case. Promise<unknown>: each
+// endpoint returns a different output type and the tests only compare values.
+type AnyEndpoint = (ctx: CallPageContext, input: never) => Promise<unknown>;
 
 function createContext(): CallPageContext {
+	// Safe: endpoints under test read only key and options, and the full context
+	// carries DB handles that cannot be built without a real corsair instance.
 	return {
 		key: 'test-key',
 		options: { authType: 'api_key' },
@@ -79,16 +84,18 @@ describe('CallPage endpoint routing', () => {
 	const cases: Array<{
 		name: string;
 		fn: AnyEndpoint;
+		// unknown: the table holds heterogeneous inputs, one shape per endpoint.
 		input: Record<string, unknown>;
 		path: string;
 		method?: 'GET' | 'POST';
 		transport?: 'query' | 'body' | 'none';
+		// unknown: mocked transport responses differ per endpoint.
 		response: unknown;
 		schemaKey: keyof typeof CallPageEndpointOutputSchemas;
 	}> = [
 		{
 			name: 'calls.get',
-			fn: Calls.get as AnyEndpoint,
+			fn: Calls.get,
 			input: { callId: 99 },
 			path: '/api/v3/external/calls/99',
 			transport: 'none',
@@ -97,7 +104,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'calls.history',
-			fn: Calls.history as AnyEndpoint,
+			fn: Calls.history,
 			input: { limit: 10 },
 			path: '/api/v3/external/calls/history',
 			response: [call],
@@ -105,7 +112,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'users.list',
-			fn: Users.list as AnyEndpoint,
+			fn: Users.list,
 			input: { limit: 2 },
 			path: '/api/v1/external/users/all',
 			response: [user],
@@ -113,7 +120,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'users.get',
-			fn: Users.get as AnyEndpoint,
+			fn: Users.get,
 			input: { id: 1 },
 			path: '/api/v1/external/users/get',
 			response: user,
@@ -121,7 +128,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'users.create',
-			fn: Users.create as AnyEndpoint,
+			fn: Users.create,
 			input: { name: 'New', tel: '+48123123123' },
 			path: '/api/v1/external/users/create',
 			method: 'POST',
@@ -130,7 +137,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'users.update',
-			fn: Users.update as AnyEndpoint,
+			fn: Users.update,
 			input: { id: 1, name: 'Updated', tel: '+48123123123' },
 			path: '/api/v1/external/users/update',
 			method: 'POST',
@@ -139,7 +146,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'users.delete',
-			fn: Users.remove as AnyEndpoint,
+			fn: Users.remove,
 			input: { id: 1 },
 			path: '/api/v1/external/users/delete',
 			method: 'POST',
@@ -149,7 +156,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.get',
-			fn: Widgets.get as AnyEndpoint,
+			fn: Widgets.get,
 			input: { id: 2 },
 			path: '/api/v1/external/widgets/get',
 			response: widget,
@@ -157,7 +164,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.create',
-			fn: Widgets.create as AnyEndpoint,
+			fn: Widgets.create,
 			input: { url: 'https://example.com' },
 			path: '/api/v1/external/widgets/create',
 			method: 'POST',
@@ -166,7 +173,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.update',
-			fn: Widgets.update as AnyEndpoint,
+			fn: Widgets.update,
 			input: { id: 2, url: 'https://example.com' },
 			path: '/api/v1/external/widgets/update',
 			method: 'POST',
@@ -175,7 +182,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.delete',
-			fn: Widgets.remove as AnyEndpoint,
+			fn: Widgets.remove,
 			input: { id: 2 },
 			path: '/api/v1/external/widgets/delete',
 			method: 'POST',
@@ -185,7 +192,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.call',
-			fn: Widgets.call as AnyEndpoint,
+			fn: Widgets.call,
 			input: { id: 2, tel: '+48123123123' },
 			path: '/api/v1/external/widgets/call',
 			method: 'POST',
@@ -195,7 +202,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.callOrSchedule',
-			fn: Widgets.callOrSchedule as AnyEndpoint,
+			fn: Widgets.callOrSchedule,
 			input: { id: 2, tel: '+48123123123' },
 			path: '/api/v1/external/widgets/call-or-schedule',
 			method: 'POST',
@@ -204,7 +211,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.list',
-			fn: Widgets.list as AnyEndpoint,
+			fn: Widgets.list,
 			input: { offset: 0, limit: 50 },
 			path: '/api/v1/external/widgets/all',
 			response: [widget],
@@ -212,7 +219,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'widgets.addUsers',
-			fn: Widgets.addUsers as AnyEndpoint,
+			fn: Widgets.addUsers,
 			input: { id: 2, user_id: [1, 4] },
 			path: '/api/v1/external/widgets/add-users',
 			method: 'POST',
@@ -224,7 +231,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'managers.list',
-			fn: Managers.list as AnyEndpoint,
+			fn: Managers.list,
 			input: { widget_id: 2, limit: 10 },
 			path: '/api/v1/external/managers/all',
 			response: [manager],
@@ -232,7 +239,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'managers.get',
-			fn: Managers.get as AnyEndpoint,
+			fn: Managers.get,
 			input: { user_id: 1, widget_id: 2 },
 			path: '/api/v1/external/managers/get',
 			response: manager,
@@ -240,7 +247,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'managers.create',
-			fn: Managers.create as AnyEndpoint,
+			fn: Managers.create,
 			input: { user_id: 1, widget_id: 2, enabled: true, business_times: [] },
 			path: '/api/v1/external/managers/create',
 			method: 'POST',
@@ -249,7 +256,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'managers.update',
-			fn: Managers.update as AnyEndpoint,
+			fn: Managers.update,
 			input: { user_id: 1, widget_id: 2, enabled: false },
 			path: '/api/v1/external/managers/update',
 			method: 'POST',
@@ -258,7 +265,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'managers.delete',
-			fn: Managers.remove as AnyEndpoint,
+			fn: Managers.remove,
 			input: { user_id: 1, widget_id: 2 },
 			path: '/api/v1/external/managers/delete',
 			method: 'POST',
@@ -268,7 +275,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'sms.list',
-			fn: Sms.list as AnyEndpoint,
+			fn: Sms.list,
 			input: { widget_id: 2 },
 			path: '/api/v1/external/sms/all',
 			response: [sms],
@@ -276,7 +283,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'sms.create',
-			fn: Sms.create as AnyEndpoint,
+			fn: Sms.create,
 			input: { widget_id: 2, message_id: 'visitor.dial-completed', text: 'Hi' },
 			path: '/api/v1/external/sms/create',
 			method: 'POST',
@@ -285,7 +292,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'sms.update',
-			fn: Sms.update as AnyEndpoint,
+			fn: Sms.update,
 			input: {
 				widget_id: 2,
 				message_id: 'visitor.dial-completed',
@@ -299,7 +306,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'sms.reset',
-			fn: Sms.reset as AnyEndpoint,
+			fn: Sms.reset,
 			input: { widget_id: 2 },
 			path: '/api/v1/external/sms/reset',
 			method: 'POST',
@@ -309,7 +316,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'voiceMessages.list',
-			fn: VoiceMessages.list as AnyEndpoint,
+			fn: VoiceMessages.list,
 			input: { widget_id: 2 },
 			path: '/api/v1/external/voice/all',
 			response: [voice],
@@ -317,7 +324,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'voiceMessages.create',
-			fn: VoiceMessages.create as AnyEndpoint,
+			fn: VoiceMessages.create,
 			input: {
 				widget_id: 2,
 				message_id: 'manager.call',
@@ -332,7 +339,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'voiceMessages.update',
-			fn: VoiceMessages.update as AnyEndpoint,
+			fn: VoiceMessages.update,
 			input: { widget_id: 2, message_id: 'manager.call', enabled: false },
 			path: '/api/v1/external/voice/update',
 			method: 'POST',
@@ -341,7 +348,7 @@ describe('CallPage endpoint routing', () => {
 		},
 		{
 			name: 'voiceMessages.reset',
-			fn: VoiceMessages.reset as AnyEndpoint,
+			fn: VoiceMessages.reset,
 			input: { widget_id: 2, message_id: 'manager.call' },
 			path: '/api/v1/external/voice/reset',
 			method: 'POST',
@@ -365,7 +372,9 @@ describe('CallPage endpoint routing', () => {
 			mockRequest.mockResolvedValueOnce(response);
 			const ctx = createContext();
 
-			const result = await fn(ctx, input);
+			// Safe: each case pairs an endpoint with its own input, which the
+			// table type cannot correlate per row without losing the shared loop.
+			const result = await fn(ctx, input as never);
 
 			expect(mockRequest).toHaveBeenCalledTimes(1);
 			const [calledPath, calledKey, requestOptions] =
@@ -388,7 +397,7 @@ describe('CallPage endpoint routing', () => {
 	it('root.get returns the envelope greeting without unwrapping', async () => {
 		mockRequest.mockResolvedValueOnce({ message: 'Hello from CallPage' });
 
-		const result = await (Root.get as AnyEndpoint)(createContext(), {});
+		const result = await Root.get(createContext(), {});
 
 		expect(mockRequest).toHaveBeenCalledWith('/api/v1/external/', 'test-key', {
 			unwrap: false,
@@ -408,10 +417,9 @@ describe('CallPage endpoint routing', () => {
 			.mockResolvedValueOnce(page(100, 60))
 			.mockResolvedValueOnce(page(5, 2));
 
-		const result = await (Managers.statusStatistics as AnyEndpoint)(
-			createContext(),
-			{ widget_id: 2 },
-		);
+		const result = await Managers.statusStatistics(createContext(), {
+			widget_id: 2,
+		});
 
 		expect(result).toEqual({ total: 105, enabled: 62, disabled: 43 });
 		expect(mockRequest).toHaveBeenCalledTimes(2);

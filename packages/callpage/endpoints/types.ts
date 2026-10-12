@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 const IdSchema = z.coerce.number().int().positive();
-// Widget settings are a provider-defined map whose keys change with the
-// widget's configured features, so only the outer object shape is enforced.
+// unknown: widget settings are a provider-defined map whose keys change with
+// the configured features, so values pass through unvalidated (any stricter
+// type would reject valid settings); only the outer object shape is enforced.
 const WidgetSettingsSchema = z.record(z.string(), z.unknown());
 
 const UserSchema = z
