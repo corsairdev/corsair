@@ -25,7 +25,7 @@ import { errorHandlers } from './error-handlers';
 import { CallinglySchema } from './schema';
 
 export type CallinglyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalCallinglyPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -262,8 +262,7 @@ const callinglyEndpointMeta = {
 	},
 	'leads.list': {
 		riskLevel: 'read',
-		description:
-			'List leads with optional date, phone number, and pagination filters',
+		description: 'List leads with optional date range and phone number filters',
 	},
 	'leads.update': {
 		riskLevel: 'write',
@@ -284,7 +283,7 @@ const callinglyEndpointMeta = {
 	'calls.list': {
 		riskLevel: 'read',
 		description:
-			'List call history and logs with optional team, user, and status filters',
+			'List call history with optional date range, team, and paging filters',
 	},
 	'agents.create': {
 		riskLevel: 'write',
@@ -379,12 +378,7 @@ const callinglyEndpointMeta = {
 >;
 
 export const callinglyAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCallinglyPlugin<T extends CallinglyPluginOptions> =
@@ -417,7 +411,6 @@ export function callingly(
 		options: options,
 		hooks: options.hooks,
 		endpoints: callinglyEndpointsNested,
-		// REST webhook-config ops only. No inbound Callingly event handlers.
 		webhooks: {},
 		endpointMeta: callinglyEndpointMeta,
 		endpointSchemas: callinglyEndpointSchemas,
@@ -427,27 +420,13 @@ export function callingly(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CallinglyKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('callingly', 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys?.get_api_key?.();
-				if (!res) {
-					throw new AuthMissingError('callingly', 'api_key');
-				}
-				return res;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys?.get_access_token?.();
-				if (!res) {
-					throw new AuthMissingError('callingly', 'oauth_2');
-				}
-				return res;
-			}
-
-			throw new AuthMissingError('callingly', 'api_key');
+			if (options.key) return options.key;
+			const key = await ctx.keys.get_api_key();
+			if (!key) throw new AuthMissingError('callingly', 'api_key');
+			return key;
 		},
 	} satisfies InternalCallinglyPlugin;
 }

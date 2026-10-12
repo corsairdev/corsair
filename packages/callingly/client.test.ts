@@ -1,118 +1,103 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-import {
-	CALLINGLY_API_BASE,
-	CallinglyAPIError,
-	makeCallinglyRequest,
-} from './client';
+import { CallinglyAPIError, makeCallinglyRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
+const fetchMock = jest.spyOn(globalThis, 'fetch');
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+beforeEach(() => fetchMock.mockReset());
+afterAll(() => fetchMock.mockRestore());
 
-function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
-	const call = mockRequest.mock.calls.at(-1);
-	if (!call) throw new Error('request() was never called');
-	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
+async function failure(request: ReturnType<typeof makeCallinglyRequest>) {
+	const error = await request.then(
+		() => undefined,
+		(reason: Error) => reason,
+	);
+	if (!(error instanceof CallinglyAPIError)) {
+		throw new Error('expected a CallinglyAPIError');
+	}
+	return error;
 }
 
-beforeEach(() => {
-	mockRequest.mockReset();
-});
-
 describe('makeCallinglyRequest', () => {
-	it('sends Bearer token auth and correct base url', async () => {
-		mockRequest.mockResolvedValue({ id: '123' });
+	it('adds account_id to the query for GET and to the body for POST', async () => {
+		fetchMock.mockImplementation(async () => new Response('[]'));
 
-		await makeCallinglyRequest('leads', 'secret-key');
+		await makeCallinglyRequest('teams', 'key', { accountId: 42 });
+		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+			'https://api.callingly.com/v1/teams?account_id=42',
+		);
 
-		const [config, req] = lastCall();
-		expect(config.BASE).toBe(CALLINGLY_API_BASE);
-		expect(config.TOKEN).toBe('secret-key');
-		expect(config.HEADERS).toMatchObject({
-			Authorization: 'Bearer secret-key',
-			'Content-Type': 'application/json',
-		});
-		expect(req.url).toBe('/leads');
-		expect(req.method).toBe('GET');
-	});
-
-	it('includes X-Account-Id header and account_id parameter when accountId is provided', async () => {
-		mockRequest.mockResolvedValue({ id: '123' });
-
-		await makeCallinglyRequest('calls', 'secret-key', {
+		await makeCallinglyRequest('teams', 'key', {
 			method: 'POST',
-			body: { lead_id: '456' },
-			accountId: 'acc_999',
+			body: { name: 'Main Team' },
+			accountId: 42,
 		});
-
-		const [config, req] = lastCall();
-		expect(config.HEADERS).toMatchObject({
-			'X-Account-Id': 'acc_999',
-			Authorization: 'Bearer secret-key',
-		});
-		expect(req.body).toEqual({ lead_id: '456', account_id: 'acc_999' });
-		expect(req.method).toBe('POST');
+		expect(fetchMock.mock.calls[1]?.[1]?.body).toBe(
+			JSON.stringify({ account_id: 42, name: 'Main Team' }),
+		);
 	});
 
-	it('wraps errors into CallinglyAPIError', async () => {
-		mockRequest.mockRejectedValue({
-			status: 404,
-			message: 'Lead not found',
-			body: { detail: 'Not Found' },
-		});
+	it('maps a 401 to AUTH_ERROR with no retries', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ message: 'Unauthenticated.' }), {
+				status: 401,
+			}),
+		);
+		const error = await failure(makeCallinglyRequest('leads', 'bad-key'));
 
+		expect(error.message).toBe('Unauthenticated.');
+		expect(error.status).toBe(401);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		await expect(errorHandlers.AUTH_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
+	it('maps a 429 to RATE_LIMIT_ERROR and honours Retry-After on reads', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ message: 'Too Many Attempts.' }), {
+				status: 429,
+				headers: { 'Retry-After': '7' },
+			}),
+		);
+		const error = await failure(makeCallinglyRequest('calls', 'key'));
+
+		expect(error.retryAfterMs).toBe(7000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
-			makeCallinglyRequest('leads/999', 'secret-key'),
-		).rejects.toThrow(CallinglyAPIError);
-	});
-});
-
-describe('errorHandlers', () => {
-	it('matches 429 rate limit errors', () => {
-		const err = new CallinglyAPIError('Rate limit exceeded', 429);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 7000,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 
-	it('matches 401 and 403 auth errors', () => {
-		const err401 = new CallinglyAPIError('Unauthorized', 401);
-		const err403 = new CallinglyAPIError('Forbidden', 403);
-		expect(errorHandlers.AUTH_ERROR.match(err401)).toBe(true);
-		expect(errorHandlers.AUTH_ERROR.match(err403)).toBe(true);
-	});
-
-	it('matches 404 not found errors', () => {
-		const err = new CallinglyAPIError('Lead not found', 404);
-		expect(errorHandlers.NOT_FOUND_ERROR.match(err)).toBe(true);
-	});
-
-	it('matches 400 validation errors', () => {
-		const err = new CallinglyAPIError('Invalid phone number', 400);
-		expect(errorHandlers.VALIDATION_ERROR.match(err)).toBe(true);
-	});
-
-	it('matches 500 server errors and specifies retry for idempotent requests', async () => {
-		const getErr = new CallinglyAPIError(
-			'Internal error',
-			500,
-			undefined,
-			'GET',
+	it('never retries a rate-limited POST /calls, which dials a real phone', async () => {
+		fetchMock.mockResolvedValueOnce(new Response('', { status: 429 }));
+		const error = await failure(
+			makeCallinglyRequest('calls', 'key', {
+				method: 'POST',
+				body: { team_id: 1, phone_number: '+14801234567' },
+			}),
 		);
-		expect(errorHandlers.SERVER_ERROR.match(getErr)).toBe(true);
-		const resGet = await errorHandlers.SERVER_ERROR.handler(getErr);
-		expect(resGet.maxRetries).toBe(2);
 
-		const postErr = new CallinglyAPIError(
-			'Internal error',
-			500,
-			undefined,
-			'POST',
-		);
-		const resPost = await errorHandlers.SERVER_ERROR.handler(postErr);
-		expect(resPost.maxRetries).toBe(0);
+		expect(error.message).toBe('Callingly request failed (429)');
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 0,
+			headersRetryAfterMs: undefined,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('wraps network failures in CallinglyAPIError', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+		const error = await failure(makeCallinglyRequest('teams', 'key'));
+
+		expect(error.message).toBe('fetch failed');
+		expect(error.status).toBeUndefined();
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
 	});
 });

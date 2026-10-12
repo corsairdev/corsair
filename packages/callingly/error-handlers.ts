@@ -1,98 +1,56 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { CallinglyAPIError } from './client';
+import { CallinglyAPIError } from './client';
 
-/**
- * Safely extracts HTTP status code from an error object.
- * unknown: caught values may be CallinglyAPIError, HTTP client errors, or plain Error.
- */
-function getStatus(error: unknown): number | undefined {
-	if (error && typeof error === 'object' && 'status' in error) {
-		// Type narrowing safely inspects the optional status number on CallinglyAPIError or HTTP error
-		const status = (error as Partial<CallinglyAPIError>).status;
-		return typeof status === 'number' ? status : undefined;
-	}
-	return undefined;
+function statusOf(error: Error): number | undefined {
+	return error instanceof CallinglyAPIError ? error.status : undefined;
+}
+
+function isIdempotent(error: Error): boolean {
+	const method = error instanceof CallinglyAPIError ? error.method : undefined;
+	return method === 'GET' || method === 'PUT' || method === 'DELETE';
 }
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 429;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('429') ||
-				msg.includes('rate limit') ||
-				msg.includes('too many requests')
-			);
+			return msg.includes('rate limit') || msg.includes('too many requests');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		// POST /calls dials a real phone, so only idempotent requests are replayed.
+		handler: async (error: Error) => ({
+			maxRetries: isIdempotent(error) ? 3 : 0,
+			headersRetryAfterMs:
+				error instanceof CallinglyAPIError ? error.retryAfterMs : undefined,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 401 || status === 403;
+			const status = statusOf(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('401') ||
-				msg.includes('403') ||
-				msg.includes('unauthorized') ||
-				msg.includes('forbidden') ||
-				msg.includes('invalid api key') ||
-				msg.includes('invalid token')
-			);
+			return msg.includes('unauthenticated') || msg.includes('unauthorized');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 404;
-			const msg = error.message.toLowerCase();
-			return msg.includes('404') || msg.includes('not found');
-		},
+		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 400 || status === 422;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('400') ||
-				msg.includes('422') ||
-				msg.includes('bad request') ||
-				msg.includes('validation') ||
-				msg.includes('unprocessable')
-			);
+			const status = statusOf(error);
+			return status === 400 || status === 422;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status >= 500;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('500') ||
-				msg.includes('internal server error') ||
-				msg.includes('bad gateway') ||
-				msg.includes('service unavailable')
-			);
-		},
-		handler: async (error?: Error) => {
-			const method = (
-				error as Partial<CallinglyAPIError> | undefined
-			)?.method?.toUpperCase();
-			// Retain retries only for GET or explicitly idempotent requests; return maxRetries: 0 for mutations like POST
-			if (method && method !== 'GET') {
-				return { maxRetries: 0 };
-			}
-			return {
-				maxRetries: 2,
-				retryStrategy: 'exponential_backoff' as const,
-			};
-		},
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
+		handler: async (error: Error) => ({
+			maxRetries: isIdempotent(error) ? 2 : 0,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

@@ -6,92 +6,36 @@ import {
 	CallinglyEndpointOutputSchemas as Out,
 } from './types';
 
-type UpsertTable = {
-	// unknown: entity persistence returns an opaque row handle from the core DB layer.
-	upsertByEntityId: (id: string, data: never) => Promise<unknown>;
-	deleteByEntityId?: (id: string) => Promise<unknown>;
-};
-
-async function upsert(
-	table: UpsertTable | undefined,
-	// unknown: Callingly entity ids are numeric or string depending on the resource.
-	id: unknown,
-	// unknown: validated endpoint output objects vary per entity type before persistence.
-	data: unknown,
-) {
-	if (!table || id === undefined || id === null || id === '') return;
+/** Local sync is best effort: a failed write must not fail the API call. */
+async function persist(write: () => Promise<void>): Promise<void> {
 	try {
-		await table.upsertByEntityId(String(id), data as never);
+		await write();
 	} catch (error) {
-		console.warn('Failed to persist Callingly entity:', error);
+		console.warn('Failed to sync Callingly data to the database:', error);
 	}
 }
 
-async function remove(
-	table: UpsertTable | undefined,
-	// unknown: Callingly delete inputs accept numeric or string ids from callers.
-	id: unknown,
-) {
-	if (
-		!table?.deleteByEntityId ||
-		id === undefined ||
-		id === null ||
-		id === ''
-	) {
-		return;
-	}
-	try {
-		await table.deleteByEntityId(String(id));
-	} catch (error) {
-		console.warn('Failed to delete Callingly entity:', error);
-	}
-}
+const segment = (id: string | number) => encodeURIComponent(String(id));
 
-function collection<T extends { id?: unknown }>(
-	// unknown: list endpoints return a bare array or one of several collection keys.
-	response: unknown,
-	keys: string[],
-): T[] {
-	if (Array.isArray(response)) return response as T[];
-	if (response && typeof response === 'object') {
-		const record = response as Record<string, unknown>;
-		for (const key of keys) {
-			const value = record[key];
-			if (Array.isArray(value)) return value as T[];
-		}
-	}
-	return [];
-}
-
-function scheduleRecord(
-	// unknown: schedule handlers accept numeric or string agent ids from input schemas.
-	agentId: unknown,
-	// unknown: GET schedule returns a day array while PUT may return the wrapped object.
-	response: unknown,
-) {
-	if (Array.isArray(response)) {
-		return { id: agentId, agent_id: agentId, days: response };
-	}
-	return response;
-}
+// Leads
 
 export const getLead: CallinglyEndpoints['getLead'] = async (ctx, input) => {
 	const { leadId, account_id } = In.getLead.parse(input);
-	const response = Out.getLead.parse(
-		await makeCallinglyRequest(
-			`leads/${encodeURIComponent(String(leadId))}`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+	const lead = Out.getLead.parse(
+		await makeCallinglyRequest(`leads/${segment(leadId)}`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.leads, response.id, response);
+	await persist(async () => {
+		await ctx.db.leads?.upsertByEntityId(String(lead.id), lead);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.leads.get',
 		{ leadId },
 		'completed',
 	);
-	return response;
+	return lead;
 };
 
 export const listLeads: CallinglyEndpoints['listLeads'] = async (
@@ -99,23 +43,24 @@ export const listLeads: CallinglyEndpoints['listLeads'] = async (
 	input,
 ) => {
 	const { account_id, ...query } = In.listLeads.parse(input);
-	const response = Out.listLeads.parse(
+	const leads = Out.listLeads.parse(
 		await makeCallinglyRequest('leads', ctx.key, {
-			method: 'GET',
 			query,
 			accountId: account_id,
 		}),
 	);
-	for (const item of collection(response, ['leads'])) {
-		await upsert(ctx.db.leads, item.id, item);
-	}
+	await persist(async () => {
+		for (const lead of leads) {
+			await ctx.db.leads?.upsertByEntityId(String(lead.id), lead);
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.leads.list',
-		{ ...query },
+		{ count: leads.length },
 		'completed',
 	);
-	return response;
+	return leads;
 };
 
 export const updateLead: CallinglyEndpoints['updateLead'] = async (
@@ -123,21 +68,23 @@ export const updateLead: CallinglyEndpoints['updateLead'] = async (
 	input,
 ) => {
 	const { leadId, account_id, ...body } = In.updateLead.parse(input);
-	const response = Out.updateLead.parse(
-		await makeCallinglyRequest(
-			`leads/${encodeURIComponent(String(leadId))}`,
-			ctx.key,
-			{ method: 'PUT', body, accountId: account_id },
-		),
+	const lead = Out.updateLead.parse(
+		await makeCallinglyRequest(`leads/${segment(leadId)}`, ctx.key, {
+			method: 'PUT',
+			body,
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.leads, response.id, response);
+	await persist(async () => {
+		await ctx.db.leads?.upsertByEntityId(String(lead.id), lead);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.leads.update',
 		{ leadId },
 		'completed',
 	);
-	return response;
+	return lead;
 };
 
 export const deleteLead: CallinglyEndpoints['deleteLead'] = async (
@@ -145,61 +92,73 @@ export const deleteLead: CallinglyEndpoints['deleteLead'] = async (
 	input,
 ) => {
 	const { leadId, account_id } = In.deleteLead.parse(input);
-	const raw = await makeCallinglyRequest(
-		`leads/${encodeURIComponent(String(leadId))}`,
-		ctx.key,
-		{ method: 'DELETE', accountId: account_id },
+	const result = Out.deleteLead.parse(
+		(await makeCallinglyRequest(`leads/${segment(leadId)}`, ctx.key, {
+			method: 'DELETE',
+			accountId: account_id,
+		})) ?? {},
 	);
-	const response = Out.deleteLead.parse(raw ?? { success: true });
-	await remove(ctx.db.leads, leadId);
+	await persist(async () => {
+		await ctx.db.leads?.deleteByEntityId(String(leadId));
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.leads.delete',
 		{ leadId },
 		'completed',
 	);
-	return response;
+	return result;
 };
+
+// Calls
 
 export const createCall: CallinglyEndpoints['createCall'] = async (
 	ctx,
 	input,
 ) => {
 	const { account_id, ...body } = In.createCall.parse(input);
-	const response = Out.createCall.parse(
+	const call = Out.createCall.parse(
 		await makeCallinglyRequest('calls', ctx.key, {
 			method: 'POST',
 			body,
 			accountId: account_id,
 		}),
 	);
-	await upsert(ctx.db.calls, response.id, response);
+	const callId = call.id ?? call.call_id;
+	if (callId !== undefined) {
+		await persist(async () => {
+			await ctx.db.calls?.upsertByEntityId(String(callId), {
+				...call,
+				id: callId,
+			});
+		});
+	}
 	await logEventFromContext(
 		ctx,
 		'callingly.calls.create',
-		{ id: response.id },
+		{ callId, teamId: body.team_id },
 		'completed',
 	);
-	return response;
+	return call;
 };
 
 export const getCall: CallinglyEndpoints['getCall'] = async (ctx, input) => {
 	const { callId, account_id } = In.getCall.parse(input);
-	const response = Out.getCall.parse(
-		await makeCallinglyRequest(
-			`calls/${encodeURIComponent(String(callId))}`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+	const call = Out.getCall.parse(
+		await makeCallinglyRequest(`calls/${segment(callId)}`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.calls, response.id, response);
+	await persist(async () => {
+		await ctx.db.calls?.upsertByEntityId(String(call.id), call);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.calls.get',
 		{ callId },
 		'completed',
 	);
-	return response;
+	return call;
 };
 
 export const listCalls: CallinglyEndpoints['listCalls'] = async (
@@ -209,67 +168,70 @@ export const listCalls: CallinglyEndpoints['listCalls'] = async (
 	const { account_id, ...query } = In.listCalls.parse(input);
 	const response = Out.listCalls.parse(
 		await makeCallinglyRequest('calls', ctx.key, {
-			method: 'GET',
 			query,
 			accountId: account_id,
 		}),
 	);
-	for (const item of collection(response, ['calls', 'data'])) {
-		await upsert(ctx.db.calls, item.id, item);
-	}
+	await persist(async () => {
+		for (const call of response.data) {
+			await ctx.db.calls?.upsertByEntityId(String(call.id), call);
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.calls.list',
-		{ ...query },
+		{ count: response.data.length },
 		'completed',
 	);
 	return response;
 };
+
+// Agents
 
 export const createAgent: CallinglyEndpoints['createAgent'] = async (
 	ctx,
 	input,
 ) => {
 	const { account_id, ...body } = In.createAgent.parse(input);
-	const response = Out.createAgent.parse(
+	const agent = Out.createAgent.parse(
 		await makeCallinglyRequest('agents', ctx.key, {
 			method: 'POST',
 			body,
 			accountId: account_id,
 		}),
 	);
-	await upsert(ctx.db.users, response.id, response);
+	await persist(async () => {
+		await ctx.db.users?.upsertByEntityId(String(agent.id), agent);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.agents.create',
-		{ id: response.id },
+		{ agentId: agent.id },
 		'completed',
 	);
-	return response;
+	return agent;
 };
 
 export const listUsers: CallinglyEndpoints['listUsers'] = async (
 	ctx,
 	input,
 ) => {
-	const { account_id, ...query } = In.listUsers.parse(input);
-	const response = Out.listUsers.parse(
-		await makeCallinglyRequest('agents', ctx.key, {
-			method: 'GET',
-			query,
-			accountId: account_id,
-		}),
+	const { account_id } = In.listUsers.parse(input);
+	const agents = Out.listUsers.parse(
+		await makeCallinglyRequest('agents', ctx.key, { accountId: account_id }),
 	);
-	for (const item of collection(response, ['users', 'agents'])) {
-		await upsert(ctx.db.users, item.id, item);
-	}
+	await persist(async () => {
+		for (const agent of agents) {
+			await ctx.db.users?.upsertByEntityId(String(agent.id), agent);
+		}
+	});
 	await logEventFromContext(
 		ctx,
-		'callingly.users.list',
-		{ ...query },
+		'callingly.agents.list',
+		{ count: agents.length },
 		'completed',
 	);
-	return response;
+	return agents;
 };
 
 export const updateAgent: CallinglyEndpoints['updateAgent'] = async (
@@ -277,21 +239,23 @@ export const updateAgent: CallinglyEndpoints['updateAgent'] = async (
 	input,
 ) => {
 	const { agentId, account_id, ...body } = In.updateAgent.parse(input);
-	const response = Out.updateAgent.parse(
-		await makeCallinglyRequest(
-			`agents/${encodeURIComponent(String(agentId))}`,
-			ctx.key,
-			{ method: 'PUT', body, accountId: account_id },
-		),
+	const agent = Out.updateAgent.parse(
+		await makeCallinglyRequest(`agents/${segment(agentId)}`, ctx.key, {
+			method: 'PUT',
+			body,
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.users, response.id ?? agentId, response);
+	await persist(async () => {
+		await ctx.db.users?.upsertByEntityId(String(agent.id), agent);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.agents.update',
 		{ agentId },
 		'completed',
 	);
-	return response;
+	return agent;
 };
 
 export const deleteAgent: CallinglyEndpoints['deleteAgent'] = async (
@@ -299,20 +263,22 @@ export const deleteAgent: CallinglyEndpoints['deleteAgent'] = async (
 	input,
 ) => {
 	const { agentId, account_id } = In.deleteAgent.parse(input);
-	const raw = await makeCallinglyRequest(
-		`agents/${encodeURIComponent(String(agentId))}`,
-		ctx.key,
-		{ method: 'DELETE', accountId: account_id },
+	const result = Out.deleteAgent.parse(
+		(await makeCallinglyRequest(`agents/${segment(agentId)}`, ctx.key, {
+			method: 'DELETE',
+			accountId: account_id,
+		})) ?? {},
 	);
-	const response = Out.deleteAgent.parse(raw ?? { success: true });
-	await remove(ctx.db.users, agentId);
+	await persist(async () => {
+		await ctx.db.users?.deleteByEntityId(String(agentId));
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.agents.delete',
 		{ agentId },
 		'completed',
 	);
-	return response;
+	return result;
 };
 
 export const getAgentSchedule: CallinglyEndpoints['getAgentSchedule'] = async (
@@ -320,106 +286,116 @@ export const getAgentSchedule: CallinglyEndpoints['getAgentSchedule'] = async (
 	input,
 ) => {
 	const { agentId, account_id } = In.getAgentSchedule.parse(input);
-	const response = Out.getAgentSchedule.parse(
-		await makeCallinglyRequest(
-			`agents/${encodeURIComponent(String(agentId))}/schedule`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+	const days = Out.getAgentSchedule.parse(
+		await makeCallinglyRequest(`agents/${segment(agentId)}/schedule`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.schedules, agentId, scheduleRecord(agentId, response));
+	await persist(async () => {
+		await ctx.db.schedules?.upsertByEntityId(String(agentId), {
+			id: agentId,
+			days,
+		});
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.agents.getSchedule',
 		{ agentId },
 		'completed',
 	);
-	return response;
+	return days;
 };
 
 export const updateAgentSchedule: CallinglyEndpoints['updateAgentSchedule'] =
 	async (ctx, input) => {
 		const { agentId, account_id, days } = In.updateAgentSchedule.parse(input);
-		const response = Out.updateAgentSchedule.parse(
+		const saved = Out.updateAgentSchedule.parse(
 			await makeCallinglyRequest(
-				`agents/${encodeURIComponent(String(agentId))}/schedule`,
+				`agents/${segment(agentId)}/schedule`,
 				ctx.key,
 				{ method: 'PUT', body: days, accountId: account_id },
 			),
 		);
-		await upsert(ctx.db.schedules, agentId, scheduleRecord(agentId, response));
+		await persist(async () => {
+			await ctx.db.schedules?.upsertByEntityId(String(agentId), {
+				id: agentId,
+				days: saved,
+			});
+		});
 		await logEventFromContext(
 			ctx,
 			'callingly.agents.updateSchedule',
 			{ agentId },
 			'completed',
 		);
-		return response;
+		return saved;
 	};
+
+// Teams
 
 export const createTeam: CallinglyEndpoints['createTeam'] = async (
 	ctx,
 	input,
 ) => {
 	const { account_id, ...body } = In.createTeam.parse(input);
-	const response = Out.createTeam.parse(
+	const team = Out.createTeam.parse(
 		await makeCallinglyRequest('teams', ctx.key, {
 			method: 'POST',
 			body,
 			accountId: account_id,
 		}),
 	);
-	await upsert(ctx.db.teams, response.id, response);
+	await persist(async () => {
+		await ctx.db.teams?.upsertByEntityId(String(team.id), team);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.create',
-		{ id: response.id },
+		{ teamId: team.id },
 		'completed',
 	);
-	return response;
+	return team;
 };
 
 export const listTeams: CallinglyEndpoints['listTeams'] = async (
 	ctx,
 	input,
 ) => {
-	const { account_id, ...query } = In.listTeams.parse(input);
-	const response = Out.listTeams.parse(
-		await makeCallinglyRequest('teams', ctx.key, {
-			method: 'GET',
-			query,
-			accountId: account_id,
-		}),
+	const { account_id } = In.listTeams.parse(input);
+	const teams = Out.listTeams.parse(
+		await makeCallinglyRequest('teams', ctx.key, { accountId: account_id }),
 	);
-	for (const item of collection(response, ['teams'])) {
-		await upsert(ctx.db.teams, item.id, item);
-	}
+	await persist(async () => {
+		for (const team of teams) {
+			await ctx.db.teams?.upsertByEntityId(String(team.id), team);
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.list',
-		{ ...query },
+		{ count: teams.length },
 		'completed',
 	);
-	return response;
+	return teams;
 };
 
 export const getTeam: CallinglyEndpoints['getTeam'] = async (ctx, input) => {
 	const { teamId, account_id } = In.getTeam.parse(input);
-	const response = Out.getTeam.parse(
-		await makeCallinglyRequest(
-			`teams/${encodeURIComponent(String(teamId))}`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+	const team = Out.getTeam.parse(
+		await makeCallinglyRequest(`teams/${segment(teamId)}`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.teams, response.id, response);
+	await persist(async () => {
+		await ctx.db.teams?.upsertByEntityId(String(team.id), team);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.get',
 		{ teamId },
 		'completed',
 	);
-	return response;
+	return team;
 };
 
 export const listTeamUsers: CallinglyEndpoints['listTeamUsers'] = async (
@@ -428,22 +404,22 @@ export const listTeamUsers: CallinglyEndpoints['listTeamUsers'] = async (
 ) => {
 	const { teamId, account_id } = In.listTeamUsers.parse(input);
 	const response = Out.listTeamUsers.parse(
-		await makeCallinglyRequest(
-			`teams/${encodeURIComponent(String(teamId))}/agents`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+		await makeCallinglyRequest(`teams/${segment(teamId)}/agents`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	for (const item of collection(response, ['agents', 'users'])) {
-		await upsert(ctx.db.teamUsers, `${teamId}:${item.id}`, {
-			...item,
-			team_id: teamId,
-		});
-	}
+	await persist(async () => {
+		for (const agent of response.agents) {
+			await ctx.db.teamUsers?.upsertByEntityId(`${teamId}:${agent.id}`, {
+				...agent,
+				team_id: teamId,
+			});
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.listUsers',
-		{ teamId },
+		{ teamId, count: response.agents.length },
 		'completed',
 	);
 	return response;
@@ -453,31 +429,28 @@ export const updateTeamUsers: CallinglyEndpoints['updateTeamUsers'] = async (
 	ctx,
 	input,
 ) => {
-	const { teamId, user_ids, agents, account_id } =
-		In.updateTeamUsers.parse(input);
-	const agentIds = agents ?? user_ids ?? [];
+	const { teamId, agents, account_id } = In.updateTeamUsers.parse(input);
 	const response = Out.updateTeamUsers.parse(
-		await makeCallinglyRequest(
-			`teams/${encodeURIComponent(String(teamId))}/agents`,
-			ctx.key,
-			{ method: 'PUT', body: { agents: agentIds }, accountId: account_id },
-		),
+		await makeCallinglyRequest(`teams/${segment(teamId)}/agents`, ctx.key, {
+			method: 'PUT',
+			body: { agents: agents.map(String) },
+			accountId: account_id,
+		}),
 	);
-	const members = collection(response, ['agents', 'users']);
-	if (members.length > 0) {
-		for (const item of members) {
-			await upsert(ctx.db.teamUsers, `${teamId}:${item.id}`, {
-				...item,
-				team_id: teamId,
-			});
-		}
-	} else if (response && typeof response === 'object' && 'id' in response) {
-		await upsert(ctx.db.teams, response.id, response);
+	if ('agents' in response) {
+		await persist(async () => {
+			for (const agent of response.agents) {
+				await ctx.db.teamUsers?.upsertByEntityId(`${teamId}:${agent.id}`, {
+					...agent,
+					team_id: teamId,
+				});
+			}
+		});
 	}
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.updateUsers',
-		{ teamId },
+		{ teamId, count: agents.length },
 		'completed',
 	);
 	return response;
@@ -487,16 +460,18 @@ export const updateTeamAgentSettings: CallinglyEndpoints['updateTeamAgentSetting
 	async (ctx, input) => {
 		const { teamId, agentId, account_id, ...body } =
 			In.updateTeamAgentSettings.parse(input);
-		const response = Out.updateTeamAgentSettings.parse(
+		const agent = Out.updateTeamAgentSettings.parse(
 			await makeCallinglyRequest(
-				`teams/${encodeURIComponent(String(teamId))}/agents/${encodeURIComponent(String(agentId))}`,
+				`teams/${segment(teamId)}/agents/${segment(agentId)}`,
 				ctx.key,
 				{ method: 'PUT', body, accountId: account_id },
 			),
 		);
-		await upsert(ctx.db.teamUsers, `${teamId}:${agentId}`, {
-			...response,
-			team_id: teamId,
+		await persist(async () => {
+			await ctx.db.teamUsers?.upsertByEntityId(`${teamId}:${agentId}`, {
+				...agent,
+				team_id: teamId,
+			});
 		});
 		await logEventFromContext(
 			ctx,
@@ -504,7 +479,7 @@ export const updateTeamAgentSettings: CallinglyEndpoints['updateTeamAgentSetting
 			{ teamId, agentId },
 			'completed',
 		);
-		return response;
+		return agent;
 	};
 
 export const removeTeamAgent: CallinglyEndpoints['removeTeamAgent'] = async (
@@ -512,35 +487,47 @@ export const removeTeamAgent: CallinglyEndpoints['removeTeamAgent'] = async (
 	input,
 ) => {
 	const { teamId, agentId, account_id } = In.removeTeamAgent.parse(input);
-	const raw = await makeCallinglyRequest(
-		`teams/${encodeURIComponent(String(teamId))}/agents/${encodeURIComponent(String(agentId))}`,
-		ctx.key,
-		{ method: 'DELETE', accountId: account_id },
+	const result = Out.removeTeamAgent.parse(
+		(await makeCallinglyRequest(
+			`teams/${segment(teamId)}/agents/${segment(agentId)}`,
+			ctx.key,
+			{ method: 'DELETE', accountId: account_id },
+		)) ?? {},
 	);
-	const response = Out.removeTeamAgent.parse(raw ?? { success: true });
-	await remove(ctx.db.teamUsers, `${teamId}:${agentId}`);
+	await persist(async () => {
+		await ctx.db.teamUsers?.deleteByEntityId(`${teamId}:${agentId}`);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.removeAgent',
 		{ teamId, agentId },
 		'completed',
 	);
-	return response;
+	return result;
 };
+
+// Clients
 
 export const listClients: CallinglyEndpoints['listClients'] = async (
 	ctx,
 	input,
 ) => {
 	In.listClients.parse(input);
-	const response = Out.listClients.parse(
-		await makeCallinglyRequest('clients', ctx.key, { method: 'GET' }),
+	const clients = Out.listClients.parse(
+		await makeCallinglyRequest('clients', ctx.key),
 	);
-	for (const item of collection(response, ['clients'])) {
-		await upsert(ctx.db.clients, item.id, item);
-	}
-	await logEventFromContext(ctx, 'callingly.clients.list', {}, 'completed');
-	return response;
+	await persist(async () => {
+		for (const client of clients) {
+			await ctx.db.clients?.upsertByEntityId(String(client.id), client);
+		}
+	});
+	await logEventFromContext(
+		ctx,
+		'callingly.clients.list',
+		{ count: clients.length },
+		'completed',
+	);
+	return clients;
 };
 
 export const createClient: CallinglyEndpoints['createClient'] = async (
@@ -548,17 +535,19 @@ export const createClient: CallinglyEndpoints['createClient'] = async (
 	input,
 ) => {
 	const body = In.createClient.parse(input);
-	const response = Out.createClient.parse(
+	const client = Out.createClient.parse(
 		await makeCallinglyRequest('clients', ctx.key, { method: 'POST', body }),
 	);
-	await upsert(ctx.db.clients, response.id, response);
+	await persist(async () => {
+		await ctx.db.clients?.upsertByEntityId(String(client.id), client);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.clients.create',
-		{ id: response.id },
+		{ clientId: client.id },
 		'completed',
 	);
-	return response;
+	return client;
 };
 
 export const deleteClient: CallinglyEndpoints['deleteClient'] = async (
@@ -566,67 +555,68 @@ export const deleteClient: CallinglyEndpoints['deleteClient'] = async (
 	input,
 ) => {
 	const { clientId } = In.deleteClient.parse(input);
-	const raw = await makeCallinglyRequest(
-		`clients/${encodeURIComponent(String(clientId))}`,
-		ctx.key,
-		{ method: 'DELETE' },
+	const result = Out.deleteClient.parse(
+		(await makeCallinglyRequest(`clients/${segment(clientId)}`, ctx.key, {
+			method: 'DELETE',
+		})) ?? {},
 	);
-	const response = Out.deleteClient.parse(raw ?? { success: true });
-	await remove(ctx.db.clients, clientId);
+	await persist(async () => {
+		await ctx.db.clients?.deleteByEntityId(String(clientId));
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.clients.delete',
 		{ clientId },
 		'completed',
 	);
-	return response;
+	return result;
 };
 
 export const setClientActive: CallinglyEndpoints['setClientActive'] = async (
 	ctx,
 	input,
 ) => {
-	const validated = In.setClientActive.parse(input);
-	const is_active = validated.is_active ?? (validated.active === true ? 1 : 0);
-	const response = Out.setClientActive.parse(
-		await makeCallinglyRequest(
-			`clients/${encodeURIComponent(String(validated.clientId))}/active`,
-			ctx.key,
-			{ method: 'POST', body: { is_active } },
-		),
+	const { clientId, is_active } = In.setClientActive.parse(input);
+	const client = Out.setClientActive.parse(
+		await makeCallinglyRequest(`clients/${segment(clientId)}/active`, ctx.key, {
+			method: 'POST',
+			body: { is_active },
+		}),
 	);
-	await upsert(ctx.db.clients, response.id ?? validated.clientId, response);
+	await persist(async () => {
+		await ctx.db.clients?.upsertByEntityId(String(client.id), client);
+	});
 	await logEventFromContext(
 		ctx,
-		'callingly.clients.setActive',
-		{ clientId: validated.clientId, is_active },
+		'callingly.clients.activateDeactivate',
+		{ clientId, is_active },
 		'completed',
 	);
-	return response;
+	return client;
 };
+
+// Webhooks
 
 export const listWebhooks: CallinglyEndpoints['listWebhooks'] = async (
 	ctx,
 	input,
 ) => {
-	const { account_id, ...query } = In.listWebhooks.parse(input);
-	const response = Out.listWebhooks.parse(
-		await makeCallinglyRequest('webhooks', ctx.key, {
-			method: 'GET',
-			query,
-			accountId: account_id,
-		}),
+	const { account_id } = In.listWebhooks.parse(input);
+	const webhooks = Out.listWebhooks.parse(
+		await makeCallinglyRequest('webhooks', ctx.key, { accountId: account_id }),
 	);
-	for (const item of collection(response, ['webhooks'])) {
-		await upsert(ctx.db.webhooks, item.id, item);
-	}
+	await persist(async () => {
+		for (const webhook of webhooks) {
+			await ctx.db.webhooks?.upsertByEntityId(String(webhook.id), webhook);
+		}
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.webhooks.list',
-		{ ...query },
+		{ count: webhooks.length },
 		'completed',
 	);
-	return response;
+	return webhooks;
 };
 
 export const getWebhook: CallinglyEndpoints['getWebhook'] = async (
@@ -634,21 +624,21 @@ export const getWebhook: CallinglyEndpoints['getWebhook'] = async (
 	input,
 ) => {
 	const { webhookId, account_id } = In.getWebhook.parse(input);
-	const response = Out.getWebhook.parse(
-		await makeCallinglyRequest(
-			`webhooks/${encodeURIComponent(String(webhookId))}`,
-			ctx.key,
-			{ method: 'GET', accountId: account_id },
-		),
+	const webhook = Out.getWebhook.parse(
+		await makeCallinglyRequest(`webhooks/${segment(webhookId)}`, ctx.key, {
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.webhooks, response.id, response);
+	await persist(async () => {
+		await ctx.db.webhooks?.upsertByEntityId(String(webhook.id), webhook);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.webhooks.get',
 		{ webhookId },
 		'completed',
 	);
-	return response;
+	return webhook;
 };
 
 export const createWebhook: CallinglyEndpoints['createWebhook'] = async (
@@ -656,21 +646,23 @@ export const createWebhook: CallinglyEndpoints['createWebhook'] = async (
 	input,
 ) => {
 	const { account_id, ...body } = In.createWebhook.parse(input);
-	const response = Out.createWebhook.parse(
+	const webhook = Out.createWebhook.parse(
 		await makeCallinglyRequest('webhooks', ctx.key, {
 			method: 'POST',
 			body,
 			accountId: account_id,
 		}),
 	);
-	await upsert(ctx.db.webhooks, response.id, response);
+	await persist(async () => {
+		await ctx.db.webhooks?.upsertByEntityId(String(webhook.id), webhook);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.webhooks.create',
-		{ id: response.id },
+		{ webhookId: webhook.id },
 		'completed',
 	);
-	return response;
+	return webhook;
 };
 
 export const updateWebhook: CallinglyEndpoints['updateWebhook'] = async (
@@ -678,21 +670,23 @@ export const updateWebhook: CallinglyEndpoints['updateWebhook'] = async (
 	input,
 ) => {
 	const { webhookId, account_id, ...body } = In.updateWebhook.parse(input);
-	const response = Out.updateWebhook.parse(
-		await makeCallinglyRequest(
-			`webhooks/${encodeURIComponent(String(webhookId))}`,
-			ctx.key,
-			{ method: 'PUT', body, accountId: account_id },
-		),
+	const webhook = Out.updateWebhook.parse(
+		await makeCallinglyRequest(`webhooks/${segment(webhookId)}`, ctx.key, {
+			method: 'PUT',
+			body,
+			accountId: account_id,
+		}),
 	);
-	await upsert(ctx.db.webhooks, response.id ?? webhookId, response);
+	await persist(async () => {
+		await ctx.db.webhooks?.upsertByEntityId(String(webhook.id), webhook);
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.webhooks.update',
 		{ webhookId },
 		'completed',
 	);
-	return response;
+	return webhook;
 };
 
 export const deleteWebhook: CallinglyEndpoints['deleteWebhook'] = async (
@@ -700,18 +694,20 @@ export const deleteWebhook: CallinglyEndpoints['deleteWebhook'] = async (
 	input,
 ) => {
 	const { webhookId, account_id } = In.deleteWebhook.parse(input);
-	const raw = await makeCallinglyRequest(
-		`webhooks/${encodeURIComponent(String(webhookId))}`,
-		ctx.key,
-		{ method: 'DELETE', accountId: account_id },
+	const result = Out.deleteWebhook.parse(
+		(await makeCallinglyRequest(`webhooks/${segment(webhookId)}`, ctx.key, {
+			method: 'DELETE',
+			accountId: account_id,
+		})) ?? {},
 	);
-	const response = Out.deleteWebhook.parse(raw ?? { success: true });
-	await remove(ctx.db.webhooks, webhookId);
+	await persist(async () => {
+		await ctx.db.webhooks?.deleteByEntityId(String(webhookId));
+	});
 	await logEventFromContext(
 		ctx,
 		'callingly.webhooks.delete',
 		{ webhookId },
 		'completed',
 	);
-	return response;
+	return result;
 };

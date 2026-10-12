@@ -20,14 +20,14 @@ pnpm add @corsair-dev/callingly
 | `agents.updateSchedule` | `callingly.api.agents.updateSchedule` | `write` | Update an agent availability schedule |
 | `calls.create` | `callingly.api.calls.create` | `write` | Initiate or trigger a new call to a lead |
 | `calls.get` | `callingly.api.calls.get` | `read` | Retrieve call details, duration, and recording by ID |
-| `calls.list` | `callingly.api.calls.list` | `read` | List call history and logs with optional team, user, and status filters |
+| `calls.list` | `callingly.api.calls.list` | `read` | List call history with optional date range, team, and paging filters |
 | `clients.activateDeactivate` | `callingly.api.clients.activateDeactivate` | `write` | Activate or deactivate a client account |
 | `clients.create` | `callingly.api.clients.create` | `write` | Create a new agency client account |
 | `clients.delete` | `callingly.api.clients.delete` | `destructive` | Delete an agency client account by ID |
 | `clients.list` | `callingly.api.clients.list` | `read` | List agency client accounts |
 | `leads.delete` | `callingly.api.leads.delete` | `destructive` | Delete a lead by ID |
 | `leads.get` | `callingly.api.leads.get` | `read` | Retrieve lead details by ID |
-| `leads.list` | `callingly.api.leads.list` | `read` | List leads with optional date, phone number, and pagination filters |
+| `leads.list` | `callingly.api.leads.list` | `read` | List leads with optional date range and phone number filters |
 | `leads.update` | `callingly.api.leads.update` | `write` | Update lead contact details and assignments |
 | `teams.create` | `callingly.api.teams.create` | `write` | Create a new team in Callingly |
 | `teams.get` | `callingly.api.teams.get` | `read` | Retrieve team details by ID |
@@ -44,7 +44,7 @@ pnpm add @corsair-dev/callingly
 
 ## Auth
 
-Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
+Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
