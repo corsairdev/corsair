@@ -1,18 +1,15 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -34,15 +31,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CallPageSchema } from './schema';
-import { CallPageWebhooks } from './webhooks';
-import type {
-	CallPageWebhookEvent,
-	CallPageWebhookOutputs,
-} from './webhooks/types';
-import {
-	CallPageWebhookEventSchema,
-	CallPageWebhookOutputSchema,
-} from './webhooks/types';
 
 export const callPageAuthConfig = {
 	api_key: { account: ['tenant_external_id'] as const },
@@ -51,9 +39,7 @@ export const callPageAuthConfig = {
 export type CallPagePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCallPagePlugin['hooks'];
-	webhookHooks?: InternalCallPagePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof callPageEndpointsNested>;
 };
@@ -111,15 +97,6 @@ export type CallPageBoundEndpoints = BindEndpoints<
 	typeof callPageEndpointsNested
 >;
 
-type CallPageWebhook<
-	K extends keyof CallPageWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CallPageContext, TEvent, CallPageWebhookOutputs[K]>;
-export type CallPageWebhooks = {
-	event: CallPageWebhook<'event', CallPageWebhookEvent>;
-};
-export type CallPageBoundWebhooks = BindWebhooks<CallPageWebhooks>;
-
 const callPageEndpointsNested = {
 	root: { get: Root.get },
 	calls: { get: Calls.get, history: Calls.history },
@@ -160,10 +137,6 @@ const callPageEndpointsNested = {
 		update: VoiceMessages.update,
 		reset: VoiceMessages.reset,
 	},
-} as const;
-
-const callPageWebhooksNested = {
-	event: { received: CallPageWebhooks.event },
 } as const;
 
 export const callPageEndpointSchemas = {
@@ -291,16 +264,6 @@ export const callPageEndpointSchemas = {
 	typeof callPageEndpointsNested
 >;
 
-const callPageWebhookSchemas = {
-	'event.received': {
-		description: 'Receives CallPage outgoing webhook events.',
-		payload: CallPageWebhookEventSchema,
-		response: CallPageWebhookOutputSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof callPageWebhooksNested
->;
-
 const callPageEndpointMeta = {
 	'calls.get': { riskLevel: 'read', description: 'Get a CallPage call by ID.' },
 	'calls.history': {
@@ -418,7 +381,7 @@ export type BaseCallPagePlugin<T extends CallPagePluginOptions> = CorsairPlugin<
 	'callpage',
 	typeof CallPageSchema,
 	typeof callPageEndpointsNested,
-	typeof callPageWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType,
 	typeof callPageAuthConfig
@@ -427,8 +390,8 @@ export type InternalCallPagePlugin = BaseCallPagePlugin<CallPagePluginOptions>;
 export type ExternalCallPagePlugin<T extends CallPagePluginOptions> =
 	BaseCallPagePlugin<T>;
 
-// The `{} as` default is safe because every option is optional, and a
-// conditional type over the generic T cannot express an empty default.
+// Safe: every option is optional, so an empty object satisfies the options type.
+// A narrower type is not practical because a conditional type over the generic T cannot express an empty default.
 export function callpage<const T extends CallPagePluginOptions>(
 	incomingOptions: CallPagePluginOptions & T = {} as CallPagePluginOptions & T,
 ): ExternalCallPagePlugin<T> {
@@ -441,52 +404,18 @@ export function callpage<const T extends CallPagePluginOptions>(
 		schema: CallPageSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: callPageEndpointsNested,
-		webhooks: callPageWebhooksNested,
+		webhooks: {},
 		authConfig: callPageAuthConfig,
 		endpointMeta: callPageEndpointMeta,
 		endpointSchemas: callPageEndpointSchemas,
-		webhookSchemas: callPageWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const body =
-				typeof request.body === 'string'
-					? (() => {
-							try {
-								return JSON.parse(request.body);
-							} catch {
-								return null;
-							}
-						})()
-					: request.body;
-			const parsed = CallPageWebhookEventSchema.safeParse(body);
-			if (!parsed.success) return false;
-			if (options.webhookSecret) {
-				const authorization = request.headers.authorization;
-				const header = Array.isArray(authorization)
-					? authorization[0]
-					: authorization;
-				return typeof header === 'string' && header.length > 0;
-			}
-			return true;
-		},
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: CallPageKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (res) return res;
-				throw new Error(
-					'[auth-missing:callpage:webhook_signature]: CallPage webhook verification token is missing',
-				);
-			}
-
+		keyBuilder: async (ctx: CallPageKeyBuilderContext) => {
 			if (options.key) return options.key;
 
 			if (ctx.authType === 'api_key') {
@@ -499,8 +428,3 @@ export function callpage<const T extends CallPagePluginOptions>(
 		},
 	} satisfies InternalCallPagePlugin;
 }
-
-export type {
-	CallPageWebhookEvent,
-	CallPageWebhookOutputs,
-} from './webhooks/types';

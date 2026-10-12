@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
+import { saveManagers } from './persist';
 import type { CallPageEndpointOutputs } from './types';
 import { CallPageEndpointOutputSchemas } from './types';
 
@@ -11,6 +12,7 @@ export const list: CallPageEndpoints['managersList'] = async (ctx, input) => {
 		query: input,
 		schema: CallPageEndpointOutputSchemas.managersList,
 	});
+	await saveManagers(ctx, input.widget_id, result);
 	await logEventFromContext(ctx, 'callpage.managers.list', input, 'completed');
 	return result;
 };
@@ -22,6 +24,7 @@ export const get: CallPageEndpoints['managersGet'] = async (ctx, input) => {
 		query: input,
 		schema: CallPageEndpointOutputSchemas.managersGet,
 	});
+	await saveManagers(ctx, input.widget_id, [result]);
 	await logEventFromContext(ctx, 'callpage.managers.get', input, 'completed');
 	return result;
 };
@@ -74,7 +77,7 @@ export const remove: CallPageEndpoints['managersDelete'] = async (
 		CallPageEndpointOutputs['managersDelete']
 	>('/api/v1/external/managers/delete', ctx.key, {
 		method: 'POST',
-		query: input,
+		body: input,
 		schema: CallPageEndpointOutputSchemas.managersDelete,
 	});
 	await logEventFromContext(

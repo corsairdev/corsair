@@ -30,8 +30,8 @@ type CallPageEnvelope = {
 	hasError?: boolean;
 	errorCode?: string | number;
 	message?: string;
-	// unknown: the payload shape differs per endpoint, and makeCallPageRequest
-	// parses it with the endpoint's zod schema before returning it.
+	// Safe: the payload is parsed with the endpoint's zod schema before it is returned.
+	// A narrower type is not practical because the payload shape differs per endpoint.
 	data?: unknown;
 };
 
@@ -54,8 +54,8 @@ export class CallPageAPIError extends Error {
 	}
 }
 
-// Returns unknown: the payload shape differs per endpoint, and the caller
-// parses it with the endpoint's schema instead of trusting a cast.
+// Safe: the caller parses the result with the endpoint's schema instead of casting it.
+// A narrower type is not practical because the payload shape differs per endpoint.
 function unwrapCallPagePayload(response: CallPageEnvelope): unknown {
 	if (
 		response &&
@@ -85,8 +85,8 @@ export async function makeCallPageRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-		// unknown: bodies are validated endpoint inputs of many shapes, and the
-		// transport only serializes them to JSON.
+		// Safe: the transport only serializes the body to JSON and never reads it.
+		// A narrower type is not practical because bodies are validated inputs of many shapes.
 		body?: unknown;
 		query?: Record<string, CallPageQueryValue>;
 		schema: z.ZodType<T>;

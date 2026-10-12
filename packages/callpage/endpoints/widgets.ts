@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCallPageRequest } from '../client';
 import type { CallPageEndpoints } from '../index';
+import { deleteWidget, saveWidgets } from './persist';
 import type { CallPageEndpointOutputs } from './types';
 import { CallPageEndpointOutputSchemas } from './types';
 
@@ -11,6 +12,7 @@ export const list: CallPageEndpoints['widgetsList'] = async (ctx, input) => {
 		query: input,
 		schema: CallPageEndpointOutputSchemas.widgetsList,
 	});
+	await saveWidgets(ctx, result);
 	await logEventFromContext(ctx, 'callpage.widgets.list', input, 'completed');
 	return result;
 };
@@ -42,6 +44,7 @@ export const get: CallPageEndpoints['widgetsGet'] = async (ctx, input) => {
 		query: input,
 		schema: CallPageEndpointOutputSchemas.widgetsGet,
 	});
+	await saveWidgets(ctx, [result]);
 	await logEventFromContext(ctx, 'callpage.widgets.get', input, 'completed');
 	return result;
 };
@@ -57,6 +60,15 @@ export const create: CallPageEndpoints['widgetsCreate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsCreate,
 	});
+	await saveWidgets(ctx, [
+		{
+			id: result.id,
+			url: input.url,
+			description: input.description,
+			locale_code: input.locale_code,
+			enabled: input.enabled,
+		},
+	]);
 	await logEventFromContext(ctx, 'callpage.widgets.create', input, 'completed');
 	return result;
 };
@@ -72,6 +84,15 @@ export const update: CallPageEndpoints['widgetsUpdate'] = async (
 		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsUpdate,
 	});
+	await saveWidgets(ctx, [
+		{
+			id: input.id,
+			url: input.url,
+			description: input.description,
+			locale_code: input.locale_code,
+			enabled: input.enabled,
+		},
+	]);
 	await logEventFromContext(ctx, 'callpage.widgets.update', input, 'completed');
 	return result;
 };
@@ -84,9 +105,10 @@ export const remove: CallPageEndpoints['widgetsDelete'] = async (
 		CallPageEndpointOutputs['widgetsDelete']
 	>('/api/v1/external/widgets/delete', ctx.key, {
 		method: 'POST',
-		query: input,
+		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsDelete,
 	});
+	await deleteWidget(ctx, input.id);
 	await logEventFromContext(ctx, 'callpage.widgets.delete', input, 'completed');
 	return result;
 };
@@ -96,7 +118,7 @@ export const call: CallPageEndpoints['widgetsCall'] = async (ctx, input) => {
 		CallPageEndpointOutputs['widgetsCall']
 	>('/api/v1/external/widgets/call', ctx.key, {
 		method: 'POST',
-		query: input,
+		body: input,
 		schema: CallPageEndpointOutputSchemas.widgetsCall,
 	});
 	await logEventFromContext(

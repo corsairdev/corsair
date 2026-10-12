@@ -1,5 +1,5 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCallPageRequest } from '../client';
+import { ApiError, request } from 'corsair/http';
+import { CallPageAPIError } from '../client';
 import {
 	Calls,
 	Managers,
@@ -10,58 +10,122 @@ import {
 	Widgets,
 } from '../endpoints';
 import {
+	CallHistoryWireSchema,
 	CallPageEndpointInputSchemas,
-	CallPageEndpointOutputSchemas,
+	CallRecordWireSchema,
 } from '../endpoints/types';
+import { errorHandlers } from '../error-handlers';
 import type { CallPageContext } from '../index';
-
-jest.mock('../client', () => ({
-	makeCallPageRequest: jest.fn(),
-}));
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
 }));
 
-const mockRequest = jest.mocked(makeCallPageRequest);
-const mockLog = jest.mocked(logEventFromContext);
+jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
+	request: jest.fn(),
+}));
 
-// input is never so every endpoint (each with its own input type) is assignable;
-// the table below supplies the matching input per case. Promise<unknown>: each
-// endpoint returns a different output type and the tests only compare values.
-type AnyEndpoint = (ctx: CallPageContext, input: never) => Promise<unknown>;
+const mockRequest = jest.mocked(request);
 
-function createContext(): CallPageContext {
-	// Safe: endpoints under test read only key and options, and the full context
-	// carries DB handles that cannot be built without a real corsair instance.
+function entityStore() {
 	return {
+		upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		deleteByEntityId: jest.fn().mockResolvedValue(undefined),
+	};
+}
+
+function createDb() {
+	return {
+		users: entityStore(),
+		widgets: entityStore(),
+		managers: entityStore(),
+		calls: entityStore(),
+		smsMessages: entityStore(),
+		voiceMessages: entityStore(),
+	};
+}
+
+function createContext(db = createDb()) {
+	// Safe: endpoints read only key, options and the entity stores, and a real
+	// context needs a live corsair instance.
+	// A narrower type is not practical because CorsairPluginContext carries the
+	// full bound endpoint tree and tenant helpers that these tests never touch.
+	const base = {
 		key: 'test-key',
 		options: { authType: 'api_key' },
 	} as CallPageContext;
+	// The mock stores replace the typed entity stores, which expose many more
+	// methods than the endpoints call.
+	const ctx: CallPageContext = Object.assign(base, { db });
+	return { ctx, db };
 }
 
+const envelope = <T>(data: T) => ({
+	hasError: false,
+	errorCode: 0,
+	message: '',
+	data,
+});
+
+// Fixtures follow the sample responses in https://callpage.github.io/documentation-rest/
 const user = {
-	id: 1,
-	name: 'Manager',
-	tel: '+48123123123',
-	email: 'm@callpage.io',
+	id: 2,
+	name: 'Manager1',
+	email: 'manager1@callpage.io',
+	tel: '+48570934649',
+	tel_formatted: '570 934 649',
+	tel_extension: null,
+	last_online: null,
+	parent_id: 1,
+	activated_at: '2016-09-08 13:32:54',
+	role: { slug: 'manager' },
+	avatar: null,
+	caller_id: { id: 1, activated_at: null, updated_at: '2016-09-08 13:32:54' },
 };
-const widget = { id: 2, url: 'https://example.com', enabled: true };
-const call = { id: 99, status: 'completed' };
+const businessTimes = [
+	{
+		day_of_week: 1,
+		enabled: true,
+		timezone: 'Europe/Warsaw',
+		start_time: '09:00:00',
+		end_time: '17:00:00',
+	},
+];
 const manager = {
 	id: 23,
 	enabled: true,
-	user,
-	departments: [{ id: 1, name: 'Sales' }],
-	business_times: [
-		{
-			day_of_week: 1,
-			enabled: true,
-			timezone: 'Europe/Warsaw',
-			start_time: '09:00:00',
-			end_time: '17:00:00',
-		},
-	],
+	user: {
+		id: 2,
+		name: 'Manager1',
+		tel: '+48570934649',
+		email: 'm@x.io',
+		avatar: null,
+	},
+	departments: [],
+	business_times: businessTimes,
+};
+const widget = {
+	id: 2,
+	description: 'Callpage.io DIALOG',
+	url: 'http://callpage.io',
+	enabled: true,
+	locale_code: 'en',
+	installation_status: 0,
+	installed_at: null,
+	company_sms_name: null,
+	call_requests_count: 0,
+	managers: [manager],
+};
+const callObject = {
+	id: 10507595,
+	to: '+48123456789',
+	human_status: 'completed',
+	created_at: '2023-12-19 10:46:56',
+	scheduled_at: null,
+	leadable_type: 'Widget',
+	utm: { utm_medium: null, utm_source: null },
+	call: { id: 8826249, type: 1, billing_time: 0 },
 };
 const sms = {
 	enabled: 1,
@@ -76,334 +140,428 @@ const voice = {
 	recording: { full_url: 'https://core.callpage.io/manager.call.mp3' },
 };
 
-describe('CallPage endpoint routing', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+type RequestCase = {
+	name: string;
+	run: (ctx: CallPageContext) => Promise<unknown>;
+	method: 'GET' | 'POST';
+	url: string;
+	query?: Record<string, string | number | boolean | number[] | string[]>;
+	body?: Record<string, string | number | boolean | object>;
+	// Safe: the value is only handed to the mocked transport.
+	// A narrower type is not practical because each case mocks a differently shaped API response.
+	data: unknown;
+	// Safe: the value is only compared with toEqual.
+	// A narrower type is not practical because each case expects a differently shaped parsed result.
+	result: unknown;
+};
 
-	const cases: Array<{
-		name: string;
-		fn: AnyEndpoint;
-		// unknown: the table holds heterogeneous inputs, one shape per endpoint.
-		input: Record<string, unknown>;
-		path: string;
-		method?: 'GET' | 'POST';
-		transport?: 'query' | 'body' | 'none';
-		// unknown: mocked transport responses differ per endpoint.
-		response: unknown;
-		schemaKey: keyof typeof CallPageEndpointOutputSchemas;
-	}> = [
-		{
-			name: 'calls.get',
-			fn: Calls.get,
-			input: { callId: 99 },
-			path: '/api/v3/external/calls/99',
-			transport: 'none',
-			response: call,
-			schemaKey: 'callsGet',
+const cases: RequestCase[] = [
+	{
+		name: 'calls.get',
+		run: (ctx) => Calls.get(ctx, { callId: 99 }),
+		method: 'GET',
+		url: '/api/v3/external/calls/99',
+		data: { data: callObject },
+		result: callObject,
+	},
+	{
+		name: 'calls.history',
+		run: (ctx) =>
+			Calls.history(ctx, {
+				widget_ids: [2],
+				statuses: ['completed', 'in-progress'],
+				limit: 15,
+				offset: 0,
+			}),
+		method: 'GET',
+		url: '/api/v3/external/calls/history',
+		query: {
+			'widget_ids[]': [2],
+			'statuses[]': ['completed', 'in-progress'],
+			limit: 15,
+			offset: 0,
 		},
-		{
-			name: 'calls.history',
-			fn: Calls.history,
-			input: { limit: 10 },
-			path: '/api/v3/external/calls/history',
-			response: [call],
-			schemaKey: 'callsHistory',
-		},
-		{
-			name: 'users.list',
-			fn: Users.list,
-			input: { limit: 2 },
-			path: '/api/v1/external/users/all',
-			response: [user],
-			schemaKey: 'usersList',
-		},
-		{
-			name: 'users.get',
-			fn: Users.get,
-			input: { id: 1 },
-			path: '/api/v1/external/users/get',
-			response: user,
-			schemaKey: 'usersGet',
-		},
-		{
-			name: 'users.create',
-			fn: Users.create,
-			input: { name: 'New', tel: '+48123123123' },
-			path: '/api/v1/external/users/create',
-			method: 'POST',
-			response: user,
-			schemaKey: 'usersCreate',
-		},
-		{
-			name: 'users.update',
-			fn: Users.update,
-			input: { id: 1, name: 'Updated', tel: '+48123123123' },
-			path: '/api/v1/external/users/update',
-			method: 'POST',
-			response: user,
-			schemaKey: 'usersUpdate',
-		},
-		{
-			name: 'users.delete',
-			fn: Users.remove,
-			input: { id: 1 },
-			path: '/api/v1/external/users/delete',
-			method: 'POST',
-			transport: 'query',
-			response: null,
-			schemaKey: 'usersDelete',
-		},
-		{
-			name: 'widgets.get',
-			fn: Widgets.get,
-			input: { id: 2 },
-			path: '/api/v1/external/widgets/get',
-			response: widget,
-			schemaKey: 'widgetsGet',
-		},
-		{
-			name: 'widgets.create',
-			fn: Widgets.create,
-			input: { url: 'https://example.com' },
-			path: '/api/v1/external/widgets/create',
-			method: 'POST',
-			response: widget,
-			schemaKey: 'widgetsCreate',
-		},
-		{
-			name: 'widgets.update',
-			fn: Widgets.update,
-			input: { id: 2, url: 'https://example.com' },
-			path: '/api/v1/external/widgets/update',
-			method: 'POST',
-			response: widget,
-			schemaKey: 'widgetsUpdate',
-		},
-		{
-			name: 'widgets.delete',
-			fn: Widgets.remove,
-			input: { id: 2 },
-			path: '/api/v1/external/widgets/delete',
-			method: 'POST',
-			transport: 'query',
-			response: null,
-			schemaKey: 'widgetsDelete',
-		},
-		{
-			name: 'widgets.call',
-			fn: Widgets.call,
-			input: { id: 2, tel: '+48123123123' },
-			path: '/api/v1/external/widgets/call',
-			method: 'POST',
-			transport: 'query',
-			response: { status: 'queued' },
-			schemaKey: 'widgetsCall',
-		},
-		{
-			name: 'widgets.callOrSchedule',
-			fn: Widgets.callOrSchedule,
-			input: { id: 2, tel: '+48123123123' },
-			path: '/api/v1/external/widgets/call-or-schedule',
-			method: 'POST',
-			response: { status: 'scheduled' },
-			schemaKey: 'widgetsCallOrSchedule',
-		},
-		{
-			name: 'widgets.list',
-			fn: Widgets.list,
-			input: { offset: 0, limit: 50 },
-			path: '/api/v1/external/widgets/all',
-			response: [widget],
-			schemaKey: 'widgetsList',
-		},
-		{
-			name: 'widgets.addUsers',
-			fn: Widgets.addUsers,
-			input: { id: 2, user_id: [1, 4] },
-			path: '/api/v1/external/widgets/add-users',
-			method: 'POST',
-			response: [
-				{ user_id: 1, manager_id: 3 },
-				{ user_id: 4, manager_id: 4 },
+		data: [{ data: callObject }],
+		result: [callObject],
+	},
+	{
+		name: 'users.list',
+		run: (ctx) => Users.list(ctx, { offset: 1, limit: 2 }),
+		method: 'GET',
+		url: '/api/v1/external/users/all',
+		query: { offset: 1, limit: 2 },
+		data: [user],
+		result: [user],
+	},
+	{
+		name: 'users.get',
+		run: (ctx) => Users.get(ctx, { id: 2 }),
+		method: 'GET',
+		url: '/api/v1/external/users/get',
+		query: { id: 2 },
+		data: user,
+		result: user,
+	},
+	{
+		name: 'users.create',
+		run: (ctx) =>
+			Users.create(ctx, { name: 'Test', tel: '+48888888888', role: 'manager' }),
+		method: 'POST',
+		url: '/api/v1/external/users/create',
+		body: { name: 'Test', tel: '+48888888888', role: 'manager' },
+		data: { id: 1380 },
+		result: { id: 1380 },
+	},
+	{
+		name: 'users.update',
+		run: (ctx) =>
+			Users.update(ctx, { id: 1380, name: 'Test', tel: '+48888888888' }),
+		method: 'POST',
+		url: '/api/v1/external/users/update',
+		body: { id: 1380, name: 'Test', tel: '+48888888888' },
+		data: { id: 1380 },
+		result: { id: 1380 },
+	},
+	{
+		name: 'users.delete',
+		run: (ctx) => Users.remove(ctx, { id: 1380 }),
+		method: 'POST',
+		url: '/api/v1/external/users/delete',
+		body: { id: 1380 },
+		data: null,
+		result: null,
+	},
+	{
+		name: 'widgets.list',
+		run: (ctx) => Widgets.list(ctx, { offset: 1, limit: 2 }),
+		method: 'GET',
+		url: '/api/v1/external/widgets/all',
+		query: { offset: 1, limit: 2 },
+		data: [widget],
+		result: [widget],
+	},
+	{
+		name: 'widgets.get',
+		run: (ctx) => Widgets.get(ctx, { id: 2 }),
+		method: 'GET',
+		url: '/api/v1/external/widgets/get',
+		query: { id: 2 },
+		data: widget,
+		result: widget,
+	},
+	{
+		name: 'widgets.create',
+		run: (ctx) =>
+			Widgets.create(ctx, {
+				url: 'http://test.com',
+				description: 'Test',
+				locale_code: 'pl',
+			}),
+		method: 'POST',
+		url: '/api/v1/external/widgets/create',
+		body: { url: 'http://test.com', description: 'Test', locale_code: 'pl' },
+		data: { id: 3409 },
+		result: { id: 3409 },
+	},
+	{
+		name: 'widgets.update',
+		run: (ctx) => Widgets.update(ctx, { id: 3409, url: 'http://test.com' }),
+		method: 'POST',
+		url: '/api/v1/external/widgets/update',
+		body: { id: 3409, url: 'http://test.com' },
+		data: { id: 3409 },
+		result: { id: 3409 },
+	},
+	{
+		name: 'widgets.delete',
+		run: (ctx) => Widgets.remove(ctx, { id: 3409 }),
+		method: 'POST',
+		url: '/api/v1/external/widgets/delete',
+		body: { id: 3409 },
+		data: null,
+		result: null,
+	},
+	{
+		name: 'widgets.call',
+		run: (ctx) =>
+			Widgets.call(ctx, { id: 1, tel: '+48888888888', department_id: 1 }),
+		method: 'POST',
+		url: '/api/v1/external/widgets/call',
+		body: { id: 1, tel: '+48888888888', department_id: 1 },
+		data: { id: 6 },
+		result: { id: 6 },
+	},
+	{
+		name: 'widgets.callOrSchedule',
+		run: (ctx) =>
+			Widgets.callOrSchedule(ctx, {
+				id: 1,
+				tel: '+48888888888',
+				department_id: 1,
+			}),
+		method: 'POST',
+		url: '/api/v1/external/widgets/call-or-schedule',
+		body: { id: 1, tel: '+48888888888', department_id: 1 },
+		data: { id: 7 },
+		result: { id: 7 },
+	},
+	{
+		name: 'widgets.addUsers',
+		run: (ctx) => Widgets.addUsers(ctx, { id: 2, user_id: [1, 4] }),
+		method: 'POST',
+		url: '/api/v1/external/widgets/add-users',
+		body: { id: 2, user_id: [1, 4] },
+		data: [
+			{ user_id: 1, manager_id: 3 },
+			{ user_id: 4, manager_id: 4 },
+		],
+		result: [
+			{ user_id: 1, manager_id: 3 },
+			{ user_id: 4, manager_id: 4 },
+		],
+	},
+	{
+		name: 'managers.list',
+		run: (ctx) => Managers.list(ctx, { widget_id: 2, limit: 10 }),
+		method: 'GET',
+		url: '/api/v1/external/managers/all',
+		query: { widget_id: 2, limit: 10 },
+		data: [manager],
+		result: [manager],
+	},
+	{
+		name: 'managers.get',
+		run: (ctx) => Managers.get(ctx, { widget_id: 1, user_id: 2 }),
+		method: 'GET',
+		url: '/api/v1/external/managers/get',
+		query: { widget_id: 1, user_id: 2 },
+		data: manager,
+		result: manager,
+	},
+	{
+		name: 'managers.create',
+		run: (ctx) =>
+			Managers.create(ctx, {
+				widget_id: 1,
+				user_id: 2,
+				enabled: true,
+				business_times: businessTimes.map(({ timezone: _tz, ...time }) => time),
+			}),
+		method: 'POST',
+		url: '/api/v1/external/managers/create',
+		body: {
+			widget_id: 1,
+			user_id: 2,
+			enabled: true,
+			business_times: [
+				{
+					day_of_week: 1,
+					enabled: true,
+					start_time: '09:00:00',
+					end_time: '17:00:00',
+				},
 			],
-			schemaKey: 'widgetsAddUsers',
 		},
-		{
-			name: 'managers.list',
-			fn: Managers.list,
-			input: { widget_id: 2, limit: 10 },
-			path: '/api/v1/external/managers/all',
-			response: [manager],
-			schemaKey: 'managersList',
-		},
-		{
-			name: 'managers.get',
-			fn: Managers.get,
-			input: { user_id: 1, widget_id: 2 },
-			path: '/api/v1/external/managers/get',
-			response: manager,
-			schemaKey: 'managersGet',
-		},
-		{
-			name: 'managers.create',
-			fn: Managers.create,
-			input: { user_id: 1, widget_id: 2, enabled: true, business_times: [] },
-			path: '/api/v1/external/managers/create',
-			method: 'POST',
-			response: { id: 21 },
-			schemaKey: 'managersCreate',
-		},
-		{
-			name: 'managers.update',
-			fn: Managers.update,
-			input: { user_id: 1, widget_id: 2, enabled: false },
-			path: '/api/v1/external/managers/update',
-			method: 'POST',
-			response: { id: 21 },
-			schemaKey: 'managersUpdate',
-		},
-		{
-			name: 'managers.delete',
-			fn: Managers.remove,
-			input: { user_id: 1, widget_id: 2 },
-			path: '/api/v1/external/managers/delete',
-			method: 'POST',
-			transport: 'query',
-			response: null,
-			schemaKey: 'managersDelete',
-		},
-		{
-			name: 'sms.list',
-			fn: Sms.list,
-			input: { widget_id: 2 },
-			path: '/api/v1/external/sms/all',
-			response: [sms],
-			schemaKey: 'smsList',
-		},
-		{
-			name: 'sms.create',
-			fn: Sms.create,
-			input: { widget_id: 2, message_id: 'visitor.dial-completed', text: 'Hi' },
-			path: '/api/v1/external/sms/create',
-			method: 'POST',
-			response: { id: 49 },
-			schemaKey: 'smsCreate',
-		},
-		{
-			name: 'sms.update',
-			fn: Sms.update,
-			input: {
-				widget_id: 2,
+		data: { id: 21 },
+		result: { id: 21 },
+	},
+	{
+		name: 'managers.update',
+		run: (ctx) =>
+			Managers.update(ctx, { widget_id: 1, user_id: 2, enabled: false }),
+		method: 'POST',
+		url: '/api/v1/external/managers/update',
+		body: { widget_id: 1, user_id: 2, enabled: false },
+		data: { id: 21 },
+		result: { id: 21 },
+	},
+	{
+		name: 'managers.delete',
+		run: (ctx) => Managers.remove(ctx, { widget_id: 1, user_id: 2 }),
+		method: 'POST',
+		url: '/api/v1/external/managers/delete',
+		body: { widget_id: 1, user_id: 2 },
+		data: null,
+		result: null,
+	},
+	{
+		name: 'sms.list',
+		run: (ctx) => Sms.list(ctx, { widget_id: 1 }),
+		method: 'GET',
+		url: '/api/v1/external/sms/all',
+		query: { widget_id: 1 },
+		data: [sms],
+		result: [sms],
+	},
+	{
+		name: 'sms.create',
+		run: (ctx) =>
+			Sms.create(ctx, {
+				widget_id: 1,
+				message_id: 'visitor.dial-completed',
+				text: 'Hi',
+			}),
+		method: 'POST',
+		url: '/api/v1/external/sms/create',
+		body: { widget_id: 1, message_id: 'visitor.dial-completed', text: 'Hi' },
+		data: { id: 49 },
+		result: { id: 49 },
+	},
+	{
+		name: 'sms.update',
+		run: (ctx) =>
+			Sms.update(ctx, {
+				widget_id: 1,
 				message_id: 'visitor.dial-completed',
 				text: 'Hello',
 				enabled: false,
-			},
-			path: '/api/v1/external/sms/update',
-			method: 'POST',
-			response: { id: 49 },
-			schemaKey: 'smsUpdate',
+			}),
+		method: 'POST',
+		url: '/api/v1/external/sms/update',
+		body: {
+			widget_id: 1,
+			message_id: 'visitor.dial-completed',
+			text: 'Hello',
+			enabled: false,
 		},
-		{
-			name: 'sms.reset',
-			fn: Sms.reset,
-			input: { widget_id: 2 },
-			path: '/api/v1/external/sms/reset',
-			method: 'POST',
-			transport: 'query',
-			response: null,
-			schemaKey: 'smsReset',
-		},
-		{
-			name: 'voiceMessages.list',
-			fn: VoiceMessages.list,
-			input: { widget_id: 2 },
-			path: '/api/v1/external/voice/all',
-			response: [voice],
-			schemaKey: 'voiceMessagesList',
-		},
-		{
-			name: 'voiceMessages.create',
-			fn: VoiceMessages.create,
-			input: {
-				widget_id: 2,
+		data: { id: 49 },
+		result: { id: 49 },
+	},
+	{
+		name: 'sms.reset',
+		run: (ctx) => Sms.reset(ctx, { widget_id: 1 }),
+		method: 'POST',
+		url: '/api/v1/external/sms/reset',
+		body: { widget_id: 1 },
+		data: null,
+		result: null,
+	},
+	{
+		name: 'voiceMessages.list',
+		run: (ctx) => VoiceMessages.list(ctx, { widget_id: 1 }),
+		method: 'GET',
+		url: '/api/v1/external/voice/all',
+		query: { widget_id: 1 },
+		data: [voice],
+		result: [voice],
+	},
+	{
+		name: 'voiceMessages.create',
+		run: (ctx) =>
+			VoiceMessages.create(ctx, {
+				widget_id: 3,
 				message_id: 'manager.call',
 				enabled: true,
-				file: 'https://example.com/greeting.mp3',
-			},
-			path: '/api/v1/external/voice/create',
-			method: 'POST',
-			transport: 'query',
-			response: { id: 37 },
-			schemaKey: 'voiceMessagesCreate',
+				file: 'https://example.com/manager.call.mp3',
+			}),
+		method: 'POST',
+		url: '/api/v1/external/voice/create',
+		body: {
+			widget_id: 3,
+			message_id: 'manager.call',
+			enabled: true,
+			file: 'https://example.com/manager.call.mp3',
 		},
-		{
-			name: 'voiceMessages.update',
-			fn: VoiceMessages.update,
-			input: { widget_id: 2, message_id: 'manager.call', enabled: false },
-			path: '/api/v1/external/voice/update',
-			method: 'POST',
-			response: { id: 37 },
-			schemaKey: 'voiceMessagesUpdate',
-		},
-		{
-			name: 'voiceMessages.reset',
-			fn: VoiceMessages.reset,
-			input: { widget_id: 2, message_id: 'manager.call' },
-			path: '/api/v1/external/voice/reset',
-			method: 'POST',
-			transport: 'query',
-			response: null,
-			schemaKey: 'voiceMessagesReset',
-		},
-	];
+		data: { id: 37 },
+		result: { id: 37 },
+	},
+	{
+		name: 'voiceMessages.update',
+		run: (ctx) =>
+			VoiceMessages.update(ctx, {
+				widget_id: 3,
+				message_id: 'manager.call',
+				enabled: false,
+			}),
+		method: 'POST',
+		url: '/api/v1/external/voice/update',
+		body: { widget_id: 3, message_id: 'manager.call', enabled: false },
+		data: { id: 37 },
+		result: { id: 37 },
+	},
+	{
+		name: 'voiceMessages.reset',
+		run: (ctx) =>
+			VoiceMessages.reset(ctx, { widget_id: 3, message_id: 'manager.call' }),
+		method: 'POST',
+		url: '/api/v1/external/voice/reset',
+		body: { widget_id: 3, message_id: 'manager.call' },
+		data: null,
+		result: null,
+	},
+];
+
+function lastRequest() {
+	const [config, options, extra] = mockRequest.mock.calls[0] ?? [];
+	return { config, options, extra };
+}
+
+describe('CallPage endpoint requests', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
 
 	it.each(cases)(
-		'$name calls the expected path and validates output',
-		async ({
-			fn,
-			input,
-			path,
-			method = 'GET',
-			transport = method === 'POST' ? 'body' : 'query',
-			response,
-			schemaKey,
-		}) => {
-			mockRequest.mockResolvedValueOnce(response);
-			const ctx = createContext();
+		'$name sends the documented request and parses the result',
+		async ({ run, method, url, query, body, data, result }) => {
+			mockRequest.mockResolvedValueOnce(envelope(data));
+			const { ctx } = createContext();
 
-			// Safe: each case pairs an endpoint with its own input, which the
-			// table type cannot correlate per row without losing the shared loop.
-			const result = await fn(ctx, input as never);
+			await expect(run(ctx)).resolves.toEqual(result);
 
 			expect(mockRequest).toHaveBeenCalledTimes(1);
-			const [calledPath, calledKey, requestOptions] =
-				mockRequest.mock.calls[0] ?? [];
-			expect(calledPath).toBe(path);
-			expect(calledKey).toBe('test-key');
-			expect(requestOptions).toMatchObject({
-				schema: CallPageEndpointOutputSchemas[schemaKey],
-				...(method === 'POST' ? { method: 'POST' } : {}),
-				...(transport === 'none' ? {} : { [transport]: input }),
+			const { config, options } = lastRequest();
+			expect(config).toMatchObject({
+				BASE: 'https://core.callpage.io',
+				HEADERS: { Authorization: 'test-key' },
 			});
-			if (transport !== 'body') {
-				expect(requestOptions).not.toHaveProperty('body');
-			}
-			expect(result).toEqual(response);
-			expect(mockLog).toHaveBeenCalledTimes(1);
+			expect(options).toEqual({
+				method,
+				url,
+				query,
+				body,
+				mediaType: 'application/json',
+			});
 		},
 	);
 
-	it('root.get returns the envelope greeting without unwrapping', async () => {
-		mockRequest.mockResolvedValueOnce({ message: 'Hello from CallPage' });
+	it('retries GET on rate limits and never retries writes', async () => {
+		mockRequest
+			.mockResolvedValueOnce(envelope([]))
+			.mockResolvedValueOnce(envelope({ id: 1 }));
+		const { ctx } = createContext();
 
-		const result = await Root.get(createContext(), {});
+		await Users.list(ctx, {});
+		await Users.create(ctx, { name: 'a', tel: '1' });
 
-		expect(mockRequest).toHaveBeenCalledWith('/api/v1/external/', 'test-key', {
-			unwrap: false,
-			schema: CallPageEndpointOutputSchemas.rootGet,
+		expect(mockRequest.mock.calls[0]?.[2]).toMatchObject({
+			rateLimitConfig: {
+				maxRetries: 3,
+				headerNames: { retryAfter: 'Retry-After' },
+			},
 		});
-		expect(result).toEqual({ message: 'Hello from CallPage' });
+		expect(mockRequest.mock.calls[1]?.[2]).toMatchObject({
+			rateLimitConfig: { maxRetries: 0 },
+		});
+	});
+
+	it('root.get returns the greeting from the envelope message', async () => {
+		mockRequest.mockResolvedValueOnce({
+			hasError: false,
+			errorCode: 0,
+			message: 'Hello there! I am the CallPage API.',
+			data: [],
+		});
+		const { ctx } = createContext();
+
+		await expect(Root.get(ctx, {})).resolves.toMatchObject({
+			message: 'Hello there! I am the CallPage API.',
+		});
+		expect(lastRequest().options).toEqual({
+			method: 'GET',
+			url: '/api/v1/external/',
+			mediaType: 'application/json',
+		});
 	});
 
 	it('managers.statusStatistics counts enabled and disabled managers across pages', async () => {
@@ -414,32 +572,260 @@ describe('CallPage endpoint routing', () => {
 				enabled: i < enabledCount,
 			}));
 		mockRequest
-			.mockResolvedValueOnce(page(100, 60))
-			.mockResolvedValueOnce(page(5, 2));
+			.mockResolvedValueOnce(envelope(page(100, 60)))
+			.mockResolvedValueOnce(envelope(page(5, 2)));
+		const { ctx } = createContext();
 
-		const result = await Managers.statusStatistics(createContext(), {
-			widget_id: 2,
-		});
+		await expect(
+			Managers.statusStatistics(ctx, { widget_id: 2 }),
+		).resolves.toEqual({ total: 105, enabled: 62, disabled: 43 });
 
-		expect(result).toEqual({ total: 105, enabled: 62, disabled: 43 });
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-		expect(mockRequest.mock.calls[0]?.[2]).toMatchObject({
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/api/v1/external/managers/all',
 			query: { widget_id: 2, offset: 0, limit: 100 },
 		});
-		expect(mockRequest.mock.calls[1]?.[2]).toMatchObject({
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
 			query: { widget_id: 2, offset: 100, limit: 100 },
 		});
 	});
 });
 
-describe('CallPage input schemas', () => {
-	it('rejects SMS text over 240 characters', () => {
-		const result = CallPageEndpointInputSchemas.smsCreate.safeParse({
-			widget_id: 2,
-			message_id: 'visitor.dial-completed',
-			text: 'x'.repeat(241),
+async function failure(call: Promise<unknown>): Promise<CallPageAPIError> {
+	try {
+		await call;
+	} catch (error) {
+		if (error instanceof CallPageAPIError) return error;
+		throw error;
+	}
+	throw new Error('expected the call to reject');
+}
+
+describe('CallPage errors', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	function apiError(status: number, retryAfter?: number) {
+		return new ApiError(
+			{ method: 'GET', url: '/api/v1/external/users/all' },
+			{
+				url: 'https://core.callpage.io/api/v1/external/users/all',
+				ok: false,
+				status,
+				statusText: 'error',
+				body: {
+					hasError: true,
+					errorCode: 'access-denied',
+					message: 'Access denied',
+					data: null,
+				},
+			},
+			'Access denied',
+			{ retryAfter },
+		);
+	}
+
+	it('maps 401 to an auth error the handler recognises', async () => {
+		mockRequest.mockRejectedValueOnce(apiError(401));
+		const { ctx } = createContext();
+
+		const error = await failure(Users.list(ctx, {}));
+
+		expect(error).toBeInstanceOf(CallPageAPIError);
+		expect(error).toMatchObject({ status: 401 });
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
+
+	it('maps 429 with Retry-After to a rate-limit error that carries the delay', async () => {
+		mockRequest.mockRejectedValueOnce(apiError(429, 7000));
+		const { ctx } = createContext();
+
+		const error = await failure(Users.list(ctx, {}));
+
+		expect(error).toMatchObject({ status: 429, retryAfter: 7000 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 7000 });
+	});
+
+	it('throws the provider message when the envelope reports an error', async () => {
+		mockRequest.mockResolvedValueOnce({
+			hasError: true,
+			errorCode: 'validation',
+			message: 'Invalid widget',
+			data: null,
 		});
-		expect(result.success).toBe(false);
+		const { ctx } = createContext();
+
+		await expect(Widgets.get(ctx, { id: 1 })).rejects.toMatchObject({
+			message: 'Invalid widget',
+			code: 'validation',
+		});
+	});
+});
+
+describe('CallPage entity persistence', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('users.list upserts every user by id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope([user]));
+		const { ctx, db } = createContext();
+
+		await Users.list(ctx, {});
+
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('2', user);
+	});
+
+	it('users.create and users.update upsert the submitted fields under the returned or given id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope({ id: 1380 }));
+		mockRequest.mockResolvedValueOnce(envelope({ id: 1380 }));
+		const { ctx, db } = createContext();
+
+		await Users.create(ctx, {
+			name: 'Test',
+			tel: '+48888888888',
+			role: 'admin',
+		});
+		await Users.update(ctx, { id: 1380, name: 'Renamed', tel: '+48888888888' });
+
+		expect(db.users.upsertByEntityId).toHaveBeenNthCalledWith(
+			1,
+			'1380',
+			expect.objectContaining({
+				id: 1380,
+				name: 'Test',
+				role: { slug: 'admin' },
+			}),
+		);
+		expect(db.users.upsertByEntityId).toHaveBeenNthCalledWith(
+			2,
+			'1380',
+			expect.objectContaining({ id: 1380, name: 'Renamed' }),
+		);
+	});
+
+	it('users.delete removes the stored user', async () => {
+		mockRequest.mockResolvedValueOnce(envelope(null));
+		const { ctx, db } = createContext();
+
+		await Users.remove(ctx, { id: 2 });
+
+		expect(db.users.deleteByEntityId).toHaveBeenCalledWith('2');
+	});
+
+	it('widgets.list upserts widgets and their managers with the widget id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope([widget]));
+		const { ctx, db } = createContext();
+
+		await Widgets.list(ctx, {});
+
+		expect(db.widgets.upsertByEntityId).toHaveBeenCalledWith('2', widget);
+		expect(db.managers.upsertByEntityId).toHaveBeenCalledWith('23', {
+			...manager,
+			widget_id: 2,
+		});
+	});
+
+	it('widgets.create upserts the submitted widget and widgets.delete removes it', async () => {
+		mockRequest.mockResolvedValueOnce(envelope({ id: 3409 }));
+		mockRequest.mockResolvedValueOnce(envelope(null));
+		const { ctx, db } = createContext();
+
+		await Widgets.create(ctx, { url: 'http://test.com', description: 'Test' });
+		await Widgets.remove(ctx, { id: 3409 });
+
+		expect(db.widgets.upsertByEntityId).toHaveBeenCalledWith(
+			'3409',
+			expect.objectContaining({
+				id: 3409,
+				url: 'http://test.com',
+				description: 'Test',
+			}),
+		);
+		expect(db.widgets.deleteByEntityId).toHaveBeenCalledWith('3409');
+	});
+
+	it('managers.get upserts the manager with the requested widget id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope(manager));
+		const { ctx, db } = createContext();
+
+		await Managers.get(ctx, { widget_id: 1, user_id: 2 });
+
+		expect(db.managers.upsertByEntityId).toHaveBeenCalledWith('23', {
+			...manager,
+			widget_id: 1,
+		});
+	});
+
+	it('calls.history upserts each unwrapped call by id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope([{ data: callObject }]));
+		const { ctx, db } = createContext();
+
+		await Calls.history(ctx, {});
+
+		expect(db.calls.upsertByEntityId).toHaveBeenCalledWith(
+			'10507595',
+			callObject,
+		);
+	});
+
+	it('sms and voice messages are keyed by widget id and message id', async () => {
+		mockRequest.mockResolvedValueOnce(envelope([sms]));
+		mockRequest.mockResolvedValueOnce(envelope([voice]));
+		mockRequest.mockResolvedValueOnce(envelope({ id: 49 }));
+		const { ctx, db } = createContext();
+
+		await Sms.list(ctx, { widget_id: 1 });
+		await VoiceMessages.list(ctx, { widget_id: 1 });
+		await Sms.create(ctx, {
+			widget_id: 1,
+			message_id: 'visitor.call-scheduled',
+			text: 'Hi',
+		});
+
+		expect(db.smsMessages.upsertByEntityId).toHaveBeenNthCalledWith(
+			1,
+			'1:visitor.dial-completed',
+			{ ...sms, widget_id: 1 },
+		);
+		expect(db.voiceMessages.upsertByEntityId).toHaveBeenCalledWith(
+			'1:manager.call',
+			{ ...voice, widget_id: 1 },
+		);
+		expect(db.smsMessages.upsertByEntityId).toHaveBeenNthCalledWith(
+			2,
+			'1:visitor.call-scheduled',
+			expect.objectContaining({ text: 'Hi', widget_id: 1 }),
+		);
+	});
+
+	it('a failing database write does not fail the API call', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		mockRequest.mockResolvedValueOnce(envelope([user]));
+		const { ctx, db } = createContext();
+		db.users.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+
+		await expect(Users.list(ctx, {})).resolves.toEqual([user]);
+		expect(warn).toHaveBeenCalled();
+		warn.mockRestore();
+	});
+});
+
+describe('CallPage schemas', () => {
+	it('rejects SMS text over 240 characters', () => {
+		expect(
+			CallPageEndpointInputSchemas.smsCreate.safeParse({
+				widget_id: 2,
+				message_id: 'visitor.dial-completed',
+				text: 'x'.repeat(241),
+			}).success,
+		).toBe(false);
 	});
 
 	it('requires enabled on manager create', () => {
@@ -457,40 +843,17 @@ describe('CallPage input schemas', () => {
 		expect(schema.safeParse({ id: 2, user_id: [1, 4] }).success).toBe(true);
 		expect(schema.safeParse({ id: 2, user_id: [] }).success).toBe(false);
 	});
-});
 
-describe('CallPage output schemas', () => {
-	it('parses call records and keeps provider fields it does not model', () => {
-		expect(
-			CallPageEndpointOutputSchemas.callsGet.parse({
-				id: '99',
-				status: 'completed',
-				tel: '+48123123123',
-				widget_id: 2,
-				created_at: 1700000000,
-				duration: 42,
-			}),
-		).toEqual({
-			id: 99,
-			status: 'completed',
-			tel: '+48123123123',
-			widget_id: 2,
-			created_at: 1700000000,
-			duration: 42,
-		});
+	it('parses a call in either the wrapped or flat form', () => {
+		expect(CallRecordWireSchema.parse({ data: callObject })).toEqual(
+			callObject,
+		);
+		expect(CallRecordWireSchema.parse(callObject)).toEqual(callObject);
 	});
 
-	it('rejects a call record without an id', () => {
+	it('rejects a call without an id', () => {
 		expect(
-			CallPageEndpointOutputSchemas.callsHistory.safeParse([
-				{ status: 'completed' },
-			]).success,
-		).toBe(false);
-	});
-
-	it('rejects a non-string status from widgets.call', () => {
-		expect(
-			CallPageEndpointOutputSchemas.widgetsCall.safeParse({ status: 1 })
+			CallHistoryWireSchema.safeParse([{ data: { human_status: 'completed' } }])
 				.success,
 		).toBe(false);
 	});

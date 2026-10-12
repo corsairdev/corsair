@@ -1008,6 +1008,14 @@
                 ]
               },
               {
+                "group": "CallPage",
+                "pages": [
+                  "plugins/callpage/overview",
+                  "plugins/callpage/api",
+                  "plugins/callpage/database"
+                ]
+              },
+              {
                 "group": "CampaignCleaner",
                 "pages": [
                   "plugins/campaigncleaner/overview",

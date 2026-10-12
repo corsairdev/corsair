@@ -1,33 +1,17 @@
 import { z } from 'zod';
+import {
+	CallPageCall,
+	CallPageId,
+	CallPageManager,
+	CallPageSmsMessage,
+	CallPageUser,
+	CallPageVoiceMessage,
+	CallPageWidget,
+} from '../schema/database';
 
-const IdSchema = z.coerce.number().int().positive();
-// unknown: widget settings are a provider-defined map whose keys change with
-// the configured features, so values pass through unvalidated (any stricter
-// type would reject valid settings); only the outer object shape is enforced.
+// Safe: only the outer object shape is enforced and the values are forwarded to CallPage as given.
+// A narrower type is not practical because widget settings are a provider-defined map whose keys change with the configured features.
 const WidgetSettingsSchema = z.record(z.string(), z.unknown());
-
-const UserSchema = z
-	.object({
-		id: IdSchema.optional(),
-		name: z.string().optional(),
-		tel: z.string().optional(),
-		email: z.string().optional(),
-		role: z
-			.union([z.string(), z.object({ slug: z.string() }).loose()])
-			.optional(),
-	})
-	.loose();
-
-const WidgetSchema = z
-	.object({
-		id: IdSchema.optional(),
-		url: z.string().optional(),
-		description: z.string().optional(),
-		locale_code: z.string().optional(),
-		enabled: z.boolean().optional(),
-		settings: WidgetSettingsSchema.optional(),
-	})
-	.loose();
 
 const BusinessTimeInputSchema = z.object({
 	day_of_week: z.number().int().min(0).max(6),
@@ -36,50 +20,14 @@ const BusinessTimeInputSchema = z.object({
 	end_time: z.string().nullable(),
 });
 
-const ManagerSchema = z
-	.object({
-		id: IdSchema,
-		enabled: z.boolean().optional(),
-		user: UserSchema.optional(),
-		departments: z
-			.array(z.object({ id: IdSchema, name: z.string() }).loose())
-			.optional(),
-		business_times: z
-			.array(
-				BusinessTimeInputSchema.extend({
-					timezone: z.string().optional(),
-				}).loose(),
-			)
-			.optional(),
-	})
-	.loose();
-
-const IdResponseSchema = z.object({ id: IdSchema }).loose();
-
-const SmsMessageSchema = z
-	.object({
-		message_id: z.string(),
-		text: z.string(),
-		enabled: z.union([z.boolean(), z.number()]).optional(),
-		updated_at: z.string().nullable().optional(),
-	})
-	.loose();
-
-const VoiceMessageSchema = z
-	.object({
-		message_id: z.string(),
-		enabled: z.union([z.boolean(), z.number()]).optional(),
-		updated_at: z.string().nullable().optional(),
-		recording: z.object({ full_url: z.string() }).loose().nullable().optional(),
-	})
-	.loose();
+const IdResponseSchema = z.object({ id: CallPageId }).loose();
 
 const PaginationInput = {
 	offset: z.number().int().nonnegative().optional(),
 	limit: z.number().int().positive().max(1000).optional(),
 };
 
-const ManagerKeyInput = { user_id: IdSchema, widget_id: IdSchema };
+const ManagerKeyInput = { user_id: CallPageId, widget_id: CallPageId };
 
 const ManagerUpsertInputSchema = z.object({
 	...ManagerKeyInput,
@@ -88,73 +36,59 @@ const ManagerUpsertInputSchema = z.object({
 });
 
 const SmsUpsertInputSchema = z.object({
-	widget_id: IdSchema,
+	widget_id: CallPageId,
 	message_id: z.string().min(1),
 	text: z.string().min(1).max(240),
 	enabled: z.boolean().optional(),
 });
 
 const VoiceUpsertInputSchema = z.object({
-	widget_id: IdSchema,
+	widget_id: CallPageId,
 	message_id: z.string().min(1),
 	enabled: z.boolean(),
 	file: z.string().url().optional(),
 });
 
 const ResetInputSchema = z.object({
-	widget_id: IdSchema,
+	widget_id: CallPageId,
 	message_id: z.string().min(1).optional(),
 });
 
-const NullableIdSchema = z
-	.union([z.number(), z.string()])
-	.nullable()
-	.optional();
-const TimestampSchema = z.union([z.string(), z.number()]).nullable().optional();
-
-const CallRecordSchema = z
-	.object({
-		id: IdSchema,
-		status: z.string().optional(),
-		tel: z.string().nullable().optional(),
-		widget_id: NullableIdSchema,
-		user_id: NullableIdSchema,
-		created_at: TimestampSchema,
-		scheduled_at: TimestampSchema,
-	})
-	.loose();
-const CallHistorySchema = z.array(CallRecordSchema);
-const CallRequestResultSchema = z
-	.object({
-		id: IdSchema.optional(),
-		status: z.string().optional(),
-	})
-	.loose();
+// The API wraps each call as { data: {...} }; accept that and the flat form.
+export const CallRecordWireSchema = z.union([
+	z
+		.object({ data: CallPageCall })
+		.loose()
+		.transform((v) => v.data),
+	CallPageCall,
+]);
+export const CallHistoryWireSchema = z.array(CallRecordWireSchema);
+const CallRequestResultSchema = IdResponseSchema;
 const NullResponseSchema = z.null();
 
 export const CallPageEndpointInputSchemas = {
-	callsGet: z.object({ callId: IdSchema }),
+	callsGet: z.object({ callId: CallPageId }),
 	callsHistory: z.object({
 		display_hidden: z.number().int().optional(),
-		call_id: z.array(IdSchema).optional(),
+		call_id: z.array(CallPageId).optional(),
 		phone_number: z.string().optional(),
-		user_ids: z.array(IdSchema).optional(),
+		user_ids: z.array(CallPageId).optional(),
 		statuses: z.array(z.string()).optional(),
-		tag_ids: z.array(IdSchema).optional(),
+		tag_ids: z.array(CallPageId).optional(),
 		date_from: z.number().int().optional(),
 		date_to: z.number().int().optional(),
-		widget_ids: z.array(IdSchema).optional(),
+		widget_ids: z.array(CallPageId).optional(),
 		limit: z.number().int().positive().max(1000).optional(),
 		offset: z.number().int().nonnegative().optional(),
 		url: z.string().optional(),
-		incoming_number_ids: z.array(IdSchema).optional(),
+		incoming_number_ids: z.array(CallPageId).optional(),
 		tel: z.string().optional(),
-		widget_id: IdSchema.optional(),
+		widget_id: CallPageId.optional(),
 	}),
 	rootGet: z.object({}),
 	usersList: z.object(PaginationInput),
 	usersGet: z
-		.object({ id: IdSchema.optional(), email: z.string().email().optional() })
+		.object({ id: CallPageId.optional(), email: z.string().email().optional() })
 		.refine((v) => v.id !== undefined || v.email !== undefined, {
 			message: 'Provide either id or email',
 		}),
@@ -165,18 +99,18 @@ export const CallPageEndpointInputSchemas = {
 		role: z.enum(['admin', 'manager']).optional(),
 	}),
 	usersUpdate: z.object({
-		id: IdSchema,
+		id: CallPageId,
 		name: z.string().min(1),
 		tel: z.string().min(1),
 		email: z.string().email().optional(),
 		role: z.enum(['admin', 'manager']).optional(),
 	}),
-	usersDelete: z.object({ id: IdSchema }),
+	usersDelete: z.object({ id: CallPageId }),
 	widgetsList: z.object(PaginationInput),
 	widgetsGet: z
 		.object({
-			id: IdSchema.optional(),
-			widget_id: IdSchema.optional(),
+			id: CallPageId.optional(),
+			widget_id: CallPageId.optional(),
 			encrypted_id: z.string().optional(),
 		})
 		.refine(
@@ -193,32 +127,32 @@ export const CallPageEndpointInputSchemas = {
 		enabled: z.boolean().optional(),
 	}),
 	widgetsUpdate: z.object({
-		id: IdSchema,
+		id: CallPageId,
 		url: z.string().url(),
 		description: z.string().optional(),
 		settings: WidgetSettingsSchema.optional(),
 		locale_code: z.string().optional(),
 		enabled: z.boolean().optional(),
 	}),
-	widgetsDelete: z.object({ id: IdSchema }),
+	widgetsDelete: z.object({ id: CallPageId }),
 	widgetsCall: z
 		.object({
-			id: IdSchema,
+			id: CallPageId,
 			tel: z.string().min(1),
-			department_id: IdSchema.optional(),
-			manager_id: IdSchema.optional(),
+			department_id: CallPageId.optional(),
+			manager_id: CallPageId.optional(),
 		})
 		.refine(
 			(v) => !(v.department_id !== undefined && v.manager_id !== undefined),
 		),
 	widgetsCallOrSchedule: z.object({
-		id: IdSchema,
+		id: CallPageId,
 		tel: z.string().min(1),
-		department_id: IdSchema.optional(),
+		department_id: CallPageId.optional(),
 	}),
 	widgetsAddUsers: z.object({
-		id: IdSchema,
-		user_id: z.union([IdSchema, z.array(IdSchema).min(1)]),
+		id: CallPageId,
+		user_id: z.union([CallPageId, z.array(CallPageId).min(1)]),
 		business_times: z
 			.union([
 				z.array(BusinessTimeInputSchema),
@@ -226,17 +160,17 @@ export const CallPageEndpointInputSchemas = {
 			])
 			.optional(),
 	}),
-	managersList: z.object({ widget_id: IdSchema, ...PaginationInput }),
+	managersList: z.object({ widget_id: CallPageId, ...PaginationInput }),
 	managersGet: z.object(ManagerKeyInput),
 	managersCreate: ManagerUpsertInputSchema,
 	managersUpdate: ManagerUpsertInputSchema,
 	managersDelete: z.object(ManagerKeyInput),
-	managersStatusStatistics: z.object({ widget_id: IdSchema }),
-	smsList: z.object({ widget_id: IdSchema }),
+	managersStatusStatistics: z.object({ widget_id: CallPageId }),
+	smsList: z.object({ widget_id: CallPageId }),
 	smsCreate: SmsUpsertInputSchema,
 	smsUpdate: SmsUpsertInputSchema,
 	smsReset: ResetInputSchema,
-	voiceMessagesList: z.object({ widget_id: IdSchema }),
+	voiceMessagesList: z.object({ widget_id: CallPageId }),
 	voiceMessagesCreate: VoiceUpsertInputSchema,
 	voiceMessagesUpdate: VoiceUpsertInputSchema,
 	voiceMessagesReset: ResetInputSchema,
@@ -244,25 +178,25 @@ export const CallPageEndpointInputSchemas = {
 
 export const CallPageEndpointOutputSchemas = {
 	rootGet: z.object({ message: z.string() }).loose(),
-	callsGet: CallRecordSchema,
-	callsHistory: CallHistorySchema,
-	usersList: z.array(UserSchema),
-	usersGet: UserSchema,
-	usersCreate: UserSchema,
-	usersUpdate: UserSchema,
+	callsGet: CallPageCall,
+	callsHistory: z.array(CallPageCall),
+	usersList: z.array(CallPageUser),
+	usersGet: CallPageUser,
+	usersCreate: IdResponseSchema,
+	usersUpdate: IdResponseSchema,
 	usersDelete: NullResponseSchema,
-	widgetsList: z.array(WidgetSchema),
-	widgetsGet: WidgetSchema,
-	widgetsCreate: WidgetSchema,
-	widgetsUpdate: WidgetSchema,
+	widgetsList: z.array(CallPageWidget),
+	widgetsGet: CallPageWidget,
+	widgetsCreate: IdResponseSchema,
+	widgetsUpdate: IdResponseSchema,
 	widgetsDelete: NullResponseSchema,
 	widgetsCall: CallRequestResultSchema,
 	widgetsCallOrSchedule: CallRequestResultSchema,
 	widgetsAddUsers: z.array(
-		z.object({ user_id: IdSchema, manager_id: IdSchema }).loose(),
+		z.object({ user_id: CallPageId, manager_id: CallPageId }).loose(),
 	),
-	managersList: z.array(ManagerSchema),
-	managersGet: ManagerSchema,
+	managersList: z.array(CallPageManager),
+	managersGet: CallPageManager,
 	managersCreate: IdResponseSchema,
 	managersUpdate: IdResponseSchema,
 	managersDelete: NullResponseSchema,
@@ -271,11 +205,11 @@ export const CallPageEndpointOutputSchemas = {
 		enabled: z.number().int(),
 		disabled: z.number().int(),
 	}),
-	smsList: z.array(SmsMessageSchema),
+	smsList: z.array(CallPageSmsMessage),
 	smsCreate: IdResponseSchema,
 	smsUpdate: IdResponseSchema,
 	smsReset: NullResponseSchema,
-	voiceMessagesList: z.array(VoiceMessageSchema),
+	voiceMessagesList: z.array(CallPageVoiceMessage),
 	voiceMessagesCreate: IdResponseSchema,
 	voiceMessagesUpdate: IdResponseSchema,
 	voiceMessagesReset: NullResponseSchema,
