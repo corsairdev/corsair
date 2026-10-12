@@ -18,8 +18,8 @@ export const create: StartonEndpoints['walletCreate'] = async (ctx, input) => {
 	// round trip and strips unknown keys, so only documented CreateWalletDto
 	// fields reach Starton.
 	const body = StartonEndpointInputSchemas.walletCreate.parse(input);
-	// Keep transport responses unknown at the boundary; parse below is the
-	// runtime contract that validates and narrows to StartonWallet.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		'v3/kms/wallet',
 		ctx.key,
@@ -46,8 +46,8 @@ export const create: StartonEndpoints['walletCreate'] = async (ctx, input) => {
 export const list: StartonEndpoints['walletList'] = async (ctx, input) => {
 	// Parsing also keeps unknown keys out of the query string.
 	const query = StartonEndpointInputSchemas.walletList.parse(input);
-	// Keep transport responses unknown at the boundary; parse below is the
-	// runtime contract that validates and narrows to WalletListResponse.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>('v3/kms/wallet', ctx.key, {
 		method: 'GET',
 		query: { ...query },

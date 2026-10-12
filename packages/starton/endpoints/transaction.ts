@@ -18,8 +18,8 @@ export const get: StartonEndpoints['transactionGet'] = async (ctx, input) => {
 	// Validate before the request so a malformed id fails locally rather than
 	// being interpolated into the URL.
 	const { id } = StartonEndpointInputSchemas.transactionGet.parse(input);
-	// Keep transport responses unknown at the boundary; parse below is the
-	// runtime contract that validates and narrows to StartonTransaction.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		`v3/transaction/${encodeStartonPathSegment(id)}`,
 		ctx.key,

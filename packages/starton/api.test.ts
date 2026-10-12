@@ -38,7 +38,8 @@ type CapturedRequest = {
 };
 
 let captured: CapturedRequest | undefined;
-// Test only: the mocked response body can be any JSON.
+// unknown: the mock serializes whatever JSON a test sets and never reads it, and
+// each test uses a different response shape, so no single type fits.
 let nextResponseBody: unknown = {};
 let nextResponseStatus = 200;
 
@@ -48,6 +49,9 @@ beforeEach(() => {
 	captured = undefined;
 	nextResponseBody = {};
 	nextResponseStatus = 200;
+	// Test only: the stub implements just the call signature the code under test
+	// uses; the cast is safe because fetch is only called as (url, init), and
+	// typeof fetch also carries static members that are not practical to mock.
 	globalThis.fetch = (async (url: string | URL, init?: RequestInit) => {
 		const headers: Record<string, string> = {};
 		new Headers(init?.headers).forEach((value, key) => {
@@ -72,13 +76,49 @@ afterEach(() => {
 	globalThis.fetch = originalFetch;
 });
 
-// Test only: partial context stub with only the fields under test.
+// Test only: partial stub with only the fields the endpoints read, so the cast
+// is safe; a full context needs the database and key manager, not worth building.
 const ctx = {
 	key: 'test-starton-api-key',
 	$getAccountId: async () => 'acct_test',
 	database: undefined,
 	endpoints: {},
-} as unknown as StartonContext;
+} as StartonContext;
+
+// Cast is safe: the value only reaches the endpoint under test, whose zod schema
+// must reject or strip it at runtime. No typed alternative: the compiler
+// (correctly) refuses to build a value that violates the input type.
+function invalidInput<T>(value: object): T {
+	return value as T;
+}
+
+// Awaits a promise expected to reject and returns the thrown Error. The
+// instanceof narrowing replaces an `as Error` on the caught value.
+// unknown: the resolved value is discarded; only the rejection matters, and
+// callers pass promises of many different types.
+async function rejectionOf(promise: Promise<unknown>): Promise<Error> {
+	try {
+		await promise;
+	} catch (error) {
+		if (error instanceof Error) return error;
+		throw error;
+	}
+	throw new Error('expected the promise to reject');
+}
+
+// Same as rejectionOf, narrowed to ApiError so status and body are readable.
+// unknown: same as rejectionOf, the resolved value is discarded.
+async function apiRejectionOf(promise: Promise<unknown>): Promise<ApiError> {
+	const error = await rejectionOf(promise);
+	if (error instanceof ApiError) return error;
+	throw error;
+}
+
+// The `file` part of the last captured multipart upload.
+function uploadedFile(): File | undefined {
+	const file = captured?.formData?.get('file');
+	return file instanceof File ? file : undefined;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Client / auth
@@ -432,10 +472,12 @@ describe('endpoint request wiring', () => {
 
 	it('Template.list rejects a category outside the spec enum', async () => {
 		await expect(
-			// Test only: deliberately invalid input to exercise schema validation.
-			Template.list(ctx, {
-				category: 'TOKEN',
-			} as unknown as Parameters<typeof Template.list>[1]),
+			Template.list(
+				ctx,
+				invalidInput<Parameters<typeof Template.list>[1]>({
+					category: 'TOKEN',
+				}),
+			),
 		).rejects.toThrow();
 		expect(captured).toBeUndefined();
 	});
@@ -537,12 +579,10 @@ describe('endpoint request wiring', () => {
 		expect(captured?.headers['content-type']).toBeUndefined();
 		const file = captured?.formData?.get('file');
 		expect(file).toBeInstanceOf(File);
-		// Test only: the multipart body holds a File here, checked above.
-		expect((file as File).name).toBe('hello.txt');
-		// Test only: the multipart body holds a File here, checked above.
-		expect((file as File).type).toBe('text/plain');
-		// Test only: the multipart body holds a File here, checked above.
-		expect(await (file as File).text()).toBe('hello world');
+		if (!(file instanceof File)) throw new Error('expected a File');
+		expect(file.name).toBe('hello.txt');
+		expect(file.type).toBe('text/plain');
+		expect(await file.text()).toBe('hello world');
 		expect(captured?.formData?.get('metadata')).toBe('{"purpose":"test"}');
 		expect(res.cid).toBe('QmHash');
 	});
@@ -561,10 +601,7 @@ describe('endpoint request wiring', () => {
 		});
 
 		expect(captured?.formData?.has('metadata')).toBe(false);
-		// Test only: the multipart body holds a File here, checked above.
-		expect((captured?.formData?.get('file') as File).type).toBe(
-			'application/octet-stream',
-		);
+		expect(uploadedFile()?.type).toBe('application/octet-stream');
 	});
 
 	it('Ipfs.uploadFile rejects malformed base64 before sending', async () => {
@@ -601,11 +638,10 @@ describe('schema coverage', () => {
 	});
 
 	it('every endpoint schema entry has an input and output schema', () => {
-		// Test only: iterate the schema map generically by name.
-		const entries = startonEndpointSchemas as Record<
-			string,
-			{ input?: unknown; output?: unknown }
-		>;
+		// unknown: only presence is asserted, never the schema type, and the entries
+		// differ per endpoint, so there is no common schema type to use.
+		const entries: Record<string, { input?: unknown; output?: unknown }> =
+			startonEndpointSchemas;
 		for (const key of schemaKeys) {
 			expect(entries[key]?.input).toBeDefined();
 			expect(entries[key]?.output).toBeDefined();
@@ -754,8 +790,7 @@ describe('output schema validation', () => {
 			someFutureField: true,
 		});
 		expect(parsed.id).toBe('tx_1');
-		// Test only: schemas keep forward-compatible fields absent from the type.
-		expect((parsed as Record<string, unknown>).someFutureField).toBe(true);
+		expect(parsed).toHaveProperty('someFutureField', true);
 	});
 
 	it('parses the paginated wallet-list envelope', () => {
@@ -806,29 +841,29 @@ describe('starton() plugin', () => {
 
 	it('keyBuilder returns the configured key and throws when none is available', async () => {
 		const plugin = starton({ key: 'test-starton-api-key' });
-		// Test only: partial context stub with only the fields under test.
-		const withKey = { authType: 'api_key' } as unknown as StartonContext;
+		const withKey = { authType: 'api_key' };
 		await expect(
+			// Test only: keyBuilder's parameter infers as `never` on the generic plugin
+			// type, so no context type fits; the stub holds the only field it reads here
+			// (the configured key short-circuits), and building a real context is not practical.
 			plugin.keyBuilder?.(withKey as never, 'endpoint'),
 		).resolves.toBe('test-starton-api-key');
 
 		const noKey = starton();
-		// Test only: partial context stub with only the fields under test.
 		const emptyCtx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => undefined },
-		} as unknown as StartonContext;
+		};
 		await expect(
+			// Test only: same `never` parameter as above; the stub holds the only fields
+			// keyBuilder reads on this path, and a real key manager is not practical to build.
 			noKey.keyBuilder?.(emptyCtx as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('marks write vs. read risk correctly', () => {
-		// Test only: read endpoint meta generically by name.
-		const meta = starton().endpointMeta as Record<
-			string,
-			{ riskLevel: string } | undefined
-		>;
+		const meta: Record<string, { riskLevel: string } | undefined> =
+			starton().endpointMeta ?? {};
 		expect(meta['wallet.create']?.riskLevel).toBe('write');
 		expect(meta['wallet.list']?.riskLevel).toBe('read');
 		expect(meta['smartContract.deployFromTemplate']?.riskLevel).toBe('write');
@@ -857,22 +892,22 @@ describe('error handling', () => {
 			message: 'Not authenticated',
 		};
 
-		const err = await makeStartonRequest('v3/kms/wallet', 'bad_key', {
-			method: 'GET',
-		}).catch((e) => e);
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', 'bad_key', { method: 'GET' }),
+		);
 
 		expect(err).toBeInstanceOf(ApiError);
-		// Test only: this request rejects with an ApiError, which carries status.
-		expect((err as ApiError).status).toBe(401);
+		expect(err).toMatchObject({ status: 401 });
 	});
 
 	it('routes a 401 to AUTH_ERROR with no retries', async () => {
 		nextResponseStatus = 401;
 		nextResponseBody = { errorCode: 'NOT_AUTHENTICATED' };
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', 'bad', {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', 'bad', {
+				method: 'GET',
+			}),
+		);
 
 		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
 		await expect(errorHandlers.AUTH_ERROR.handler()).resolves.toEqual({
@@ -883,10 +918,11 @@ describe('error handling', () => {
 	it('routes a 429 to RATE_LIMIT_ERROR with retries', async () => {
 		nextResponseStatus = 429;
 		nextResponseBody = { errorCode: 'THROTTLED' };
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', 'k', {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', 'k', {
+				method: 'GET',
+			}),
+		);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
 		// A verified retry-safe operation — the handler now fails closed without
@@ -901,12 +937,12 @@ describe('error handling', () => {
 	it('routes a deterministic blockchain validation error (400) to the non-retryable handler', async () => {
 		nextResponseStatus = 400;
 		nextResponseBody = { errorCode: 'INSUFFICIENT_FUNDS' };
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest(
-			'v3/smart-contract/polygon-mumbai/0xabc/call',
-			'k',
-			{ method: 'POST', body: {} },
-		).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/smart-contract/polygon-mumbai/0xabc/call', 'k', {
+				method: 'POST',
+				body: {},
+			}),
+		);
 
 		expect(errorHandlers.NOT_RETRYABLE_CLIENT_ERROR.match(err)).toBe(true);
 		await expect(
@@ -917,10 +953,11 @@ describe('error handling', () => {
 	it('routes a 5xx to SERVER_ERROR with limited retries', async () => {
 		nextResponseStatus = 500;
 		nextResponseBody = { errorCode: 'MICROSERVICE_NOT_RESPONDING' };
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/transaction/tx_1', 'k', {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/transaction/tx_1', 'k', {
+				method: 'GET',
+			}),
+		);
 
 		expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
 		await expect(
@@ -1192,14 +1229,14 @@ describe('error routing (403 / retry-after)', () => {
 	it('routes a 403 to AUTH_ERROR with no retries', async () => {
 		nextResponseStatus = 403;
 		nextResponseBody = { statusCode: 403, errorCode: 'FORBIDDEN' };
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', 'k', {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', 'k', {
+				method: 'GET',
+			}),
+		);
 
 		expect(err).toBeInstanceOf(ApiError);
-		// Test only: this request rejects with an ApiError, which carries status.
-		expect((err as ApiError).status).toBe(403);
+		expect(err).toMatchObject({ status: 403 });
 		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
 		expect(errorHandlers.NOT_RETRYABLE_CLIENT_ERROR.match(err)).toBe(false);
 	});
@@ -1210,13 +1247,13 @@ describe('error routing (403 / retry-after)', () => {
 			statusCode: 404,
 			errorCode: 'COULD_NOT_FIND_RESOURCE',
 		};
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/transaction/nope', 'k', {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/transaction/nope', 'k', {
+				method: 'GET',
+			}),
+		);
 
-		// Test only: this request rejects with an ApiError, which carries status.
-		expect((err as ApiError).status).toBe(404);
+		expect(err).toMatchObject({ status: 404 });
 		expect(errorHandlers.NOT_RETRYABLE_CLIENT_ERROR.match(err)).toBe(true);
 		expect(errorHandlers.AUTH_ERROR.match(err)).toBe(false);
 	});
@@ -1277,6 +1314,9 @@ function errorContext(operation: string) {
 /** Count fetch attempts, optionally succeeding once the Nth attempt is reached. */
 function countingFetch(status: number, succeedOnAttempt?: number) {
 	let attempts = 0;
+	// Test only: the stub implements just the call signature the code under test
+	// uses; the cast is safe because fetch is only called as (url, init), and
+	// typeof fetch also carries static members that are not practical to mock.
 	globalThis.fetch = (async () => {
 		attempts += 1;
 		const ok = succeedOnAttempt !== undefined && attempts >= succeedOnAttempt;
@@ -1513,10 +1553,7 @@ describe('runtime response validation', () => {
 		const result = await Transaction.get(ctx, { id: 'tx_1' });
 
 		expect(result.id).toBe('tx_1');
-		// Test only: schemas keep forward-compatible fields absent from the type.
-		expect((result as Record<string, unknown>).aFutureStartonField).toBe(
-			'kept',
-		);
+		expect(result).toHaveProperty('aFutureStartonField', 'kept');
 	});
 
 	it('a malformed response is not retried (DEFAULT handler, no side-effect replay)', async () => {
@@ -1559,10 +1596,11 @@ describe('credential secrecy', () => {
 		nextResponseStatus = 500;
 		nextResponseBody = { statusCode: 500, errorCode: 'UNKNOWN' };
 
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
-			method: 'GET',
-		}).catch((e) => e)) as ApiError;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', SECRET, {
+				method: 'GET',
+			}),
+		);
 
 		// Message, and every own enumerable property (url, request, body, ...).
 		const serialized = `${err.message} ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`;
@@ -1570,14 +1608,18 @@ describe('credential secrecy', () => {
 	});
 
 	it('never leaks the key into a thrown transport error', async () => {
+		// Test only: the stub implements just the call signature the code under test
+		// uses; the cast is safe because fetch is only called as (url, init), and
+		// typeof fetch also carries static members that are not practical to mock.
 		globalThis.fetch = (async () => {
 			throw new Error('socket hang up');
 		}) as typeof fetch;
 
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
-			method: 'GET',
-		}).catch((e) => e)) as Error;
+		const err = await rejectionOf(
+			makeStartonRequest('v3/kms/wallet', SECRET, {
+				method: 'GET',
+			}),
+		);
 
 		const serialized = `${err.message} ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`;
 		expect(serialized).not.toContain(SECRET);
@@ -1592,10 +1634,11 @@ describe('credential secrecy', () => {
 			message: 'Your funds are insufficient.',
 		};
 
-		// Test only: makeStartonRequest rejects with an Error, never resolves here.
-		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
-			method: 'GET',
-		}).catch((e) => e)) as ApiError;
+		const err = await apiRejectionOf(
+			makeStartonRequest('v3/kms/wallet', SECRET, {
+				method: 'GET',
+			}),
+		);
 
 		expect(err.status).toBe(400);
 		expect(JSON.stringify(err.body)).toContain('INSUFFICIENT_FUNDS');
@@ -1711,13 +1754,13 @@ describe('retry decision fails closed without a verified operation', () => {
 	});
 
 	it('withholds retries on both paths for an unrecognised operation', async () => {
-		const unknown = errorContext('starton.someFutureOperation');
+		const unmapped = errorContext('starton.someFutureOperation');
 
 		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited, unknown),
+			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited, unmapped),
 		).resolves.toEqual({ maxRetries: 0 });
 		await expect(
-			errorHandlers.SERVER_ERROR.handler(serverError, unknown),
+			errorHandlers.SERVER_ERROR.handler(serverError, unmapped),
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
@@ -1769,8 +1812,7 @@ describe('runtime input validation', () => {
 		const attempts = countingFetch(200);
 
 		await expect(
-			// Test only: deliberately invalid input to exercise schema validation.
-			Wallet.create(ctx, {} as unknown as Parameters<typeof Wallet.create>[1]),
+			Wallet.create(ctx, invalidInput<Parameters<typeof Wallet.create>[1]>({})),
 		).rejects.toThrow();
 		expect(attempts()).toBe(0);
 	});
@@ -1779,10 +1821,12 @@ describe('runtime input validation', () => {
 		const attempts = countingFetch(200);
 
 		await expect(
-			// Test only: deliberately invalid input to exercise schema validation.
-			Wallet.list(ctx, {
-				limit: 'twenty',
-			} as unknown as Parameters<typeof Wallet.list>[1]),
+			Wallet.list(
+				ctx,
+				invalidInput<Parameters<typeof Wallet.list>[1]>({
+					limit: 'twenty',
+				}),
+			),
 		).rejects.toThrow();
 		expect(attempts()).toBe(0);
 	});
@@ -1804,13 +1848,15 @@ describe('runtime input validation', () => {
 			updatedAt: 'x',
 		};
 
-		// Test only: deliberately invalid input to exercise schema validation.
-		await Wallet.create(ctx, {
-			kmsId: 'kms_1',
-			name: 'Treasury',
-			// Not part of CreateWalletDto — must not be forwarded to Starton.
-			internalNote: 'do not send me',
-		} as unknown as Parameters<typeof Wallet.create>[1]);
+		await Wallet.create(
+			ctx,
+			invalidInput<Parameters<typeof Wallet.create>[1]>({
+				kmsId: 'kms_1',
+				name: 'Treasury',
+				// Not part of CreateWalletDto — must not be forwarded to Starton.
+				internalNote: 'do not send me',
+			}),
+		);
 
 		const body = JSON.parse(captured?.body ?? '{}');
 		expect(body).toEqual({ kmsId: 'kms_1', name: 'Treasury' });
@@ -1823,11 +1869,13 @@ describe('runtime input validation', () => {
 			meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 },
 		};
 
-		// Test only: deliberately invalid input to exercise schema validation.
-		await Wallet.list(ctx, {
-			limit: 5,
-			secretFilter: 'leak',
-		} as unknown as Parameters<typeof Wallet.list>[1]);
+		await Wallet.list(
+			ctx,
+			invalidInput<Parameters<typeof Wallet.list>[1]>({
+				limit: 5,
+				secretFilter: 'leak',
+			}),
+		);
 
 		expect(captured?.url).toContain('limit=5');
 		expect(captured?.url).not.toContain('secretFilter');
@@ -1843,12 +1891,14 @@ describe('runtime input validation', () => {
 			network: 'polygon-mumbai',
 		};
 
-		// Test only: deliberately invalid input to exercise schema validation.
-		await SmartContract.read(ctx, {
-			network: 'polygon-mumbai',
-			address: '0xabc',
-			functionName: 'totalSupply',
-		} as unknown as Parameters<typeof SmartContract.read>[1]);
+		await SmartContract.read(
+			ctx,
+			invalidInput<Parameters<typeof SmartContract.read>[1]>({
+				network: 'polygon-mumbai',
+				address: '0xabc',
+				functionName: 'totalSupply',
+			}),
+		);
 
 		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
 			functionName: 'totalSupply',
@@ -1859,16 +1909,18 @@ describe('runtime input validation', () => {
 	it('keeps path/query fields out of the smartContract.call body after parsing', async () => {
 		nextResponseBody = TX_FIXTURE;
 
-		// Test only: deliberately invalid input to exercise schema validation.
-		await SmartContract.call(ctx, {
-			network: 'polygon-mumbai',
-			address: '0xabc',
-			functionName: 'mint',
-			params: ['1'],
-			signerWallet: '0x298',
-			simulate: true,
-			bogus: 'nope',
-		} as unknown as Parameters<typeof SmartContract.call>[1]);
+		await SmartContract.call(
+			ctx,
+			invalidInput<Parameters<typeof SmartContract.call>[1]>({
+				network: 'polygon-mumbai',
+				address: '0xabc',
+				functionName: 'mint',
+				params: ['1'],
+				signerWallet: '0x298',
+				simulate: true,
+				bogus: 'nope',
+			}),
+		);
 
 		const body = JSON.parse(captured?.body ?? '{}');
 		expect(body).toEqual({

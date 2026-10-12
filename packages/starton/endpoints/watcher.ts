@@ -13,7 +13,8 @@ import {
  */
 export const get: StartonEndpoints['watcherGet'] = async (ctx, input) => {
 	const { id } = StartonEndpointInputSchemas.watcherGet.parse(input);
-	// Transport response is untyped JSON; the output schema parses it below.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,
@@ -39,7 +40,8 @@ export const deleteWatcher: StartonEndpoints['watcherDelete'] = async (
 	input,
 ) => {
 	const { id } = StartonEndpointInputSchemas.watcherDelete.parse(input);
-	// Transport response is untyped JSON; the output schema parses it below.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,

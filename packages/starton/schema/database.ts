@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-// Starton returns free-form JSON objects in these fields; no stricter shape is documented.
+// unknown values: safe because they are stored and returned as-is, never read;
+// Starton documents no stricter shape for these free-form JSON fields.
 const JsonRecord = z.record(z.string(), z.unknown());
 
 /**

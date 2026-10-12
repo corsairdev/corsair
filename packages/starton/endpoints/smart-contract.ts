@@ -23,8 +23,8 @@ export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTempla
 		// keys so only DeployFromTemplateDto fields reach Starton.
 		const { simulate, ...body } =
 			StartonEndpointInputSchemas.smartContractDeployFromTemplate.parse(input);
-		// Keep transport responses unknown at the boundary; parse below is the
-		// runtime contract that validates and narrows to DeployFromTemplateResponse.
+		// unknown: safe because the zod parse below validates the payload before it is
+		// used; no static type fits since the request layer cannot know each response.
 		const response = await makeStartonRequest<unknown>(
 			'v3/smart-contract/from-template',
 			ctx.key,
@@ -63,8 +63,8 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 ) => {
 	const { network, address, simulate, ...body } =
 		StartonEndpointInputSchemas.smartContractCall.parse(input);
-	// Keep transport responses unknown at the boundary; parse below is the
-	// runtime contract that validates and narrows to StartonTransaction.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/call`,
 		ctx.key,
@@ -93,7 +93,8 @@ export const list: StartonEndpoints['smartContractList'] = async (
 	input,
 ) => {
 	const query = StartonEndpointInputSchemas.smartContractList.parse(input);
-	// Transport response is untyped JSON; the output schema parses it below.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		'v3/smart-contract',
 		ctx.key,
@@ -122,8 +123,8 @@ export const read: StartonEndpoints['smartContractRead'] = async (
 ) => {
 	const { network, address, ...body } =
 		StartonEndpointInputSchemas.smartContractRead.parse(input);
-	// Keep transport responses unknown at the boundary; parse below is the
-	// runtime contract that validates and narrows to ReadSmartContractResponse.
+	// unknown: safe because the zod parse below validates the payload before it is
+	// used; no static type fits since the request layer cannot know each response.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,
