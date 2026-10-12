@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const AddOrUpdateAccountStampsInputSchema = z.object({
 	decode_only: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddOrUpdateAccountStampsOutputSchema = z.object({}).passthrough();
@@ -32,7 +32,7 @@ export const addOrUpdateAccountStamps = async (
 
 export const CreateAccountCustomFieldInputSchema = z.object({
 	apply_to_templates: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateAccountCustomFieldOutputSchema = z.object({}).passthrough();
@@ -59,7 +59,7 @@ export const createAccountCustomField = async (
 };
 
 export const CreateBccEmailArchiveConfigurationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateBccEmailArchiveConfigurationOutputSchema = z
@@ -320,7 +320,7 @@ export const GetAccountStampImageInputSchema = z.object({
 	include_chrome: z.string().optional(),
 });
 
-export const GetAccountStampImageOutputSchema = z.unknown();
+export const GetAccountStampImageOutputSchema = z.string();
 
 export type GetAccountStampImageParams = z.infer<
 	typeof GetAccountStampImageInputSchema
@@ -596,7 +596,7 @@ export const listSignatureProvidersForAccount = async (
 };
 
 export const ModifyAccountNotificationSettingsInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ModifyAccountNotificationSettingsOutputSchema = z
@@ -621,7 +621,7 @@ export const modifyAccountNotificationSettings = async (
 };
 
 export const ModifyTabSettingsForAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ModifyTabSettingsForAccountOutputSchema = z
@@ -857,7 +857,7 @@ export const retrieveSharedItemStatusForUsers = async (
 };
 
 export const SetEnvelopePurgeConfigForAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SetEnvelopePurgeConfigForAccountOutputSchema = z
@@ -885,7 +885,7 @@ export const SetSharedAccessForUsersAndTemplatesInputSchema = z.object({
 	item_type: z.string().optional(),
 	preserve_existing_shared_access: z.string().optional(),
 	user_ids: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SetSharedAccessForUsersAndTemplatesOutputSchema = z
@@ -923,7 +923,7 @@ export const setSharedAccessForUsersAndTemplates = async (
 export const UpdateAccountCustomFieldInputSchema = z.object({
 	customFieldId: z.string(),
 	apply_to_templates: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountCustomFieldOutputSchema = z.object({}).passthrough();
@@ -953,7 +953,7 @@ export const updateAccountCustomField = async (
 };
 
 export const UpdateAccountPasswordRulesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountPasswordRulesOutputSchema = z
@@ -978,7 +978,7 @@ export const updateAccountPasswordRules = async (
 };
 
 export const UpdateAccountSettingsInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountSettingsOutputSchema = z.object({}).passthrough();
@@ -1003,7 +1003,7 @@ export const updateAccountSettings = async (
 export const UpdateAccountStampByIdInputSchema = z.object({
 	signatureId: z.string(),
 	close_existing_signature: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountStampByIdOutputSchema = z.object({}).passthrough();
@@ -1036,7 +1036,7 @@ export const updateAccountStampById = async (
 };
 
 export const UpdateAccountStampsInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountStampsOutputSchema = z.object({}).passthrough();
@@ -1059,7 +1059,7 @@ export const updateAccountStamps = async (
 };
 
 export const UpdateAccountWatermarkInformationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountWatermarkInformationOutputSchema = z
@@ -1084,7 +1084,7 @@ export const updateAccountWatermarkInformation = async (
 };
 
 export const UpdateAccountWatermarkPreviewInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountWatermarkPreviewOutputSchema = z
@@ -1111,7 +1111,7 @@ export const updateAccountWatermarkPreview = async (
 export const UpdateElectronicRecordDisclosureInputSchema = z.object({
 	langCode: z.string(),
 	include_metadata: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateElectronicRecordDisclosureOutputSchema = z
@@ -1143,7 +1143,7 @@ export const updateElectronicRecordDisclosure = async (
 };
 
 export const UpdateEnoteIntegrationConfigInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnoteIntegrationConfigOutputSchema = z

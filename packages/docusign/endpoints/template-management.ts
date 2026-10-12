@@ -46,7 +46,7 @@ export const createCustomFieldsInTemplateDocument = async (
 export const CreatePreviewOfResponsiveHtmlInputSchema = z.object({
 	templateId: z.string(),
 	documentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreatePreviewOfResponsiveHtmlOutputSchema = z
@@ -75,7 +75,7 @@ export const createPreviewOfResponsiveHtml = async (
 
 export const CreateTemplateDocumentCustomFieldsInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateTemplateDocumentCustomFieldsOutputSchema = z
@@ -104,7 +104,7 @@ export const createTemplateDocumentCustomFields = async (
 
 export const CreateTemplateRecipientPreviewUrlInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateTemplateRecipientPreviewUrlOutputSchema = z
@@ -133,7 +133,7 @@ export const createTemplateRecipientPreviewUrl = async (
 
 export const CreateTemplateResponsiveHtmlPreviewInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateTemplateResponsiveHtmlPreviewOutputSchema = z
@@ -162,7 +162,7 @@ export const createTemplateResponsiveHtmlPreview = async (
 
 export const CreateUrlforTemplateEditViewInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateUrlforTemplateEditViewOutputSchema = z
@@ -437,7 +437,7 @@ export const getTemplateRecipientDocumentVisibility = async (
 
 export const LockTemplateForEditingInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const LockTemplateForEditingOutputSchema = z.object({}).passthrough();
@@ -570,7 +570,7 @@ export const RetrievePdfFromSpecifiedTemplateInputSchema = z.object({
 	show_changes: z.string().optional(),
 });
 
-export const RetrievePdfFromSpecifiedTemplateOutputSchema = z.unknown();
+export const RetrievePdfFromSpecifiedTemplateOutputSchema = z.string();
 
 export type RetrievePdfFromSpecifiedTemplateParams = z.infer<
 	typeof RetrievePdfFromSpecifiedTemplateInputSchema
@@ -637,7 +637,7 @@ export const RetrieveTemplateDocumentPageImagesInputSchema = z.object({
 	show_changes: z.string().optional(),
 });
 
-export const RetrieveTemplateDocumentPageImagesOutputSchema = z.unknown();
+export const RetrieveTemplateDocumentPageImagesOutputSchema = z.string();
 
 export type RetrieveTemplateDocumentPageImagesParams = z.infer<
 	typeof RetrieveTemplateDocumentPageImagesInputSchema
@@ -720,7 +720,7 @@ export const RotateTemplatePageImageInputSchema = z.object({
 	templateId: z.string(),
 	documentId: z.string(),
 	pageNumber: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const RotateTemplatePageImageOutputSchema = z.object({}).passthrough();
@@ -746,7 +746,7 @@ export const rotateTemplatePageImage = async (
 };
 
 export const SetTemplatesAsAccountFavoritesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SetTemplatesAsAccountFavoritesOutputSchema = z
@@ -773,7 +773,7 @@ export const setTemplatesAsAccountFavorites = async (
 export const ShareTemplateWithGroupInputSchema = z.object({
 	templateId: z.string(),
 	templatePart: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ShareTemplateWithGroupOutputSchema = z.object({}).passthrough();
@@ -800,7 +800,7 @@ export const shareTemplateWithGroup = async (
 
 export const UpdateTemplateCustomFieldsInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateCustomFieldsOutputSchema = z
@@ -830,7 +830,7 @@ export const updateTemplateCustomFields = async (
 export const UpdateTemplateDocumentCustomFieldsInputSchema = z.object({
 	templateId: z.string(),
 	documentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateDocumentCustomFieldsOutputSchema = z
@@ -859,7 +859,7 @@ export const updateTemplateDocumentCustomFields = async (
 
 export const UpdateTemplateDocVisibilityInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateDocVisibilityOutputSchema = z
@@ -888,7 +888,7 @@ export const updateTemplateDocVisibility = async (
 
 export const UpdateTemplateLockInformationInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateLockInformationOutputSchema = z
@@ -917,7 +917,7 @@ export const updateTemplateLockInformation = async (
 
 export const UpdateTemplateNotificationSettingsInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateNotificationSettingsOutputSchema = z
@@ -947,7 +947,7 @@ export const updateTemplateNotificationSettings = async (
 export const UpdateTemplateRecipientDocumentVisibilityInputSchema = z.object({
 	templateId: z.string(),
 	recipientId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateRecipientDocumentVisibilityOutputSchema = z

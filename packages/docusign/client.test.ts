@@ -9,7 +9,7 @@ function makeClient(baseUri?: string) {
 }
 
 function jsonResponse(
-	body: unknown,
+	body: object | undefined,
 	init: {
 		status?: number;
 		statusText?: string;
@@ -27,12 +27,12 @@ function jsonResponse(
 }
 
 function lastFetchCall() {
-	const calls = (globalThis.fetch as jest.Mock).mock.calls;
+	const calls = jest.mocked(globalThis.fetch).mock.calls;
 	const last = calls[calls.length - 1];
 	if (!last) {
 		throw new Error('expected fetch to be called');
 	}
-	return { url: String(last[0]), init: last[1] as RequestInit };
+	return { url: String(last[0]), init: last[1] ?? {} };
 }
 
 function authHeader(init: RequestInit): string | null {
@@ -62,7 +62,7 @@ describe('DocusignClient', () => {
 	});
 
 	it('retries safe GETs at the transport layer only', async () => {
-		const fetchMock = globalThis.fetch as jest.Mock;
+		const fetchMock = jest.mocked(globalThis.fetch);
 		fetchMock
 			.mockImplementationOnce(() =>
 				Promise.resolve(
@@ -85,7 +85,7 @@ describe('DocusignClient', () => {
 	});
 
 	it('does not retry non-idempotent writes at the transport layer', async () => {
-		const fetchMock = globalThis.fetch as jest.Mock;
+		const fetchMock = jest.mocked(globalThis.fetch);
 		fetchMock.mockImplementationOnce(() =>
 			Promise.resolve(
 				jsonResponse(
@@ -139,14 +139,16 @@ describe('DocusignClient', () => {
 	});
 
 	it('wraps framework errors with the DocuSign error code', async () => {
-		(globalThis.fetch as jest.Mock).mockImplementationOnce(() =>
-			Promise.resolve(
-				jsonResponse(
-					{ errorCode: 'RATE_LIMIT_EXCEEDED', message: 'Slow down' },
-					{ status: 429, statusText: 'Too Many Requests' },
+		jest
+			.mocked(globalThis.fetch)
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					jsonResponse(
+						{ errorCode: 'RATE_LIMIT_EXCEEDED', message: 'Slow down' },
+						{ status: 429, statusText: 'Too Many Requests' },
+					),
 				),
-			),
-		);
+			);
 		const client = makeClient();
 		const failure = client.request('/envelopes', {
 			method: 'POST',
@@ -234,7 +236,7 @@ describe('DocusignClient', () => {
 	});
 
 	it('retries safe GETs when a 429 has an empty JSON body', async () => {
-		const fetchMock = globalThis.fetch as jest.Mock;
+		const fetchMock = jest.mocked(globalThis.fetch);
 		fetchMock
 			.mockImplementationOnce(() =>
 				Promise.resolve(

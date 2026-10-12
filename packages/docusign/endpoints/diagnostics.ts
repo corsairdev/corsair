@@ -132,7 +132,7 @@ export const getServiceInformation = async (
 };
 
 export const ToggleApiRequestLoggingInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ToggleApiRequestLoggingOutputSchema = z.object({}).passthrough();

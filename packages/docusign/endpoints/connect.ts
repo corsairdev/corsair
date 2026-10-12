@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateConnectConfigurationForAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateConnectConfigurationForAccountOutputSchema = z
@@ -152,7 +152,7 @@ export const deleteSpecificConnectLogEntry = async (
 
 export const RepublishConnectDataForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const RepublishConnectDataForEnvelopeOutputSchema = z
@@ -180,7 +180,7 @@ export const republishConnectDataForEnvelope = async (
 };
 
 export const RepublishConnectInfoForEnvelopesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const RepublishConnectInfoForEnvelopesOutputSchema = z
@@ -456,7 +456,7 @@ export const returnUsersFromConnectService = async (
 };
 
 export const SetUpConnectOauthConfigurationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SetUpConnectOauthConfigurationOutputSchema = z
@@ -481,7 +481,7 @@ export const setUpConnectOauthConfiguration = async (
 };
 
 export const UpdateConnectOauthConfigurationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateConnectOauthConfigurationOutputSchema = z
@@ -506,7 +506,7 @@ export const updateConnectOauthConfiguration = async (
 };
 
 export const UpdateDocusignConnectConfigurationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateDocusignConnectConfigurationOutputSchema = z

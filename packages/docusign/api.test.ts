@@ -38,7 +38,7 @@ describeLive('DocuSign live API', () => {
 		const data = await listTemplates({ client }, { count: 5 });
 		const parsed = z
 			.object({
-				envelopeTemplates: z.array(z.record(z.string(), z.unknown())),
+				envelopeTemplates: z.array(z.record(z.string(), z.json())),
 			})
 			.passthrough()
 			.safeParse(data);

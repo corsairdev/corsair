@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateBrandProfilesForAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateBrandProfilesForAccountOutputSchema = z
@@ -102,7 +102,7 @@ export const ExportBrandToXmlfileInputSchema = z.object({
 	brandId: z.string(),
 });
 
-export const ExportBrandToXmlfileOutputSchema = z.unknown();
+export const ExportBrandToXmlfileOutputSchema = z.string();
 
 export type ExportBrandToXmlfileParams = z.infer<
 	typeof ExportBrandToXmlfileInputSchema
@@ -128,7 +128,7 @@ export const GetBrandLogoByTypeInputSchema = z.object({
 	logoType: z.string(),
 });
 
-export const GetBrandLogoByTypeOutputSchema = z.unknown();
+export const GetBrandLogoByTypeOutputSchema = z.string();
 
 export type GetBrandLogoByTypeParams = z.infer<
 	typeof GetBrandLogoByTypeInputSchema
@@ -156,7 +156,7 @@ export const GetSpecificBrandResourceFileInputSchema = z.object({
 	return_master: z.string().optional(),
 });
 
-export const GetSpecificBrandResourceFileOutputSchema = z.unknown();
+export const GetSpecificBrandResourceFileOutputSchema = z.string();
 
 export type GetSpecificBrandResourceFileParams = z.infer<
 	typeof GetSpecificBrandResourceFileInputSchema
@@ -284,7 +284,7 @@ export const returnBrandResourceMetadataForAccount = async (
 export const UpdateAccountBrandSettingsInputSchema = z.object({
 	brandId: z.string(),
 	replace_brand: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateAccountBrandSettingsOutputSchema = z

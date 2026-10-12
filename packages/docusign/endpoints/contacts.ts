@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const AddContactsToContactsListInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddContactsToContactsListOutputSchema = z.object({}).passthrough();
@@ -105,7 +105,7 @@ export const getDocusignAccountContacts = async (
 };
 
 export const UpdateContactsInformationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateContactsInformationOutputSchema = z.object({}).passthrough();

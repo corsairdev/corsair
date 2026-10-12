@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateCustomTabWithPropertiesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateCustomTabWithPropertiesOutputSchema = z
@@ -109,7 +109,7 @@ export const retrieveCustomTabInformation = async (
 
 export const UpdateCustomTabInformationForAccountInputSchema = z.object({
 	customTabId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateCustomTabInformationForAccountOutputSchema = z

@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const ConfigureCloudStorageRedirectUrlInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ConfigureCloudStorageRedirectUrlOutputSchema = z

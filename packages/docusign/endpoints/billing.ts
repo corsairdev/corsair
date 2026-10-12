@@ -96,7 +96,7 @@ export const listPaymentGatewayAccountsInfo = async (
 };
 
 export const PostPaymentToInvoiceInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const PostPaymentToInvoiceOutputSchema = z.object({}).passthrough();
@@ -119,7 +119,7 @@ export const postPaymentToInvoice = async (
 };
 
 export const PurchaseAdditionalEnvelopesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const PurchaseAdditionalEnvelopesOutputSchema = z
@@ -144,7 +144,7 @@ export const purchaseAdditionalEnvelopes = async (
 };
 
 export const QueueDowngradeBillingPlanRequestInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const QueueDowngradeBillingPlanRequestOutputSchema = z
@@ -344,7 +344,7 @@ export const retrievePaymentInformationList = async (
 
 export const UpdateBillingPlanForAccountInputSchema = z.object({
 	preview_billing_plan: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateBillingPlanForAccountOutputSchema = z

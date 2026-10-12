@@ -3,7 +3,7 @@ export function joinUrl(base: string, path: string): string {
 	return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-export function mockFetchJson(body: unknown = {}): jest.Mock {
+export function mockFetchJson(body: object = {}): jest.Mock {
 	const fetchMock = jest.fn().mockImplementation(() =>
 		Promise.resolve(
 			new Response(JSON.stringify(body), {
@@ -30,10 +30,10 @@ export function mockFetchText(body: string): jest.Mock {
 }
 
 export function lastFetchCall(): { url: string; init: RequestInit } {
-	const calls = (globalThis.fetch as jest.Mock).mock.calls;
+	const calls = jest.mocked(globalThis.fetch).mock.calls;
 	const last = calls[calls.length - 1];
 	if (!last) {
 		throw new Error('expected fetch to be called');
 	}
-	return { url: String(last[0]), init: last[1] as RequestInit };
+	return { url: String(last[0]), init: last[1] ?? {} };
 }

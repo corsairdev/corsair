@@ -6,7 +6,7 @@ import { docusignErrorHandlers } from './error-handlers';
 function apiError(
 	status: number,
 	message: string,
-	body?: unknown,
+	body?: object,
 	retryAfter?: number,
 	method: ApiRequestOptions['method'] = 'GET',
 ) {
@@ -27,7 +27,7 @@ function apiError(
 function docusignError(
 	status: number,
 	message: string,
-	body?: unknown,
+	body?: object,
 	retryAfter?: number,
 	method: ApiRequestOptions['method'] = 'GET',
 ) {

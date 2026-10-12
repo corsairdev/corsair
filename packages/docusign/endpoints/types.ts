@@ -25,8 +25,8 @@ export type DocusignRuntimeContext = {
 	key?: string | undefined;
 	options?: Partial<DocusignAuthOptions> | undefined;
 	tenantId?: string | undefined;
-	keys?: unknown;
-	db?: unknown;
+	keys?: object;
+	db?: object;
 };
 
 export const CreateEnvelopeInputSchema = z.object({
@@ -157,7 +157,7 @@ export const CreateRecipientViewUrlOutputSchema = z
 
 export const ListTemplatesOutputSchema = z
 	.object({
-		envelopeTemplates: z.array(z.record(z.string(), z.unknown())).optional(),
+		envelopeTemplates: z.array(z.record(z.string(), z.json())).optional(),
 	})
 	.passthrough();
 
@@ -256,7 +256,7 @@ export type DocusignEndpointInputs = {
 	fetchRecipientNamesForEmail: z.infer<
 		typeof FetchRecipientNamesForEmailInputSchema
 	>;
-} & Record<string, unknown>;
+};
 
 export type DocusignEndpointOutputs = {
 	createEnvelope: z.infer<typeof CreateEnvelopeOutputSchema>;
@@ -269,7 +269,7 @@ export type DocusignEndpointOutputs = {
 	fetchRecipientNamesForEmail: z.infer<
 		typeof FetchRecipientNamesForEmailOutputSchema
 	>;
-} & Record<string, unknown>;
+};
 
 export type EndpointInputs = DocusignEndpointInputs;
 export type EndpointOutputs = DocusignEndpointOutputs;

@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const AddEmailOverridesToEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddEmailOverridesToEnvelopeOutputSchema = z
@@ -33,7 +33,7 @@ export const addEmailOverridesToEnvelope = async (
 
 export const AddStepToEnvelopeWorkflowInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddStepToEnvelopeWorkflowOutputSchema = z.object({}).passthrough();
@@ -62,7 +62,7 @@ export const AddTemplatesToDocumentInEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
 	preserve_template_recipient: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddTemplatesToDocumentInEnvelopeOutputSchema = z
@@ -100,7 +100,7 @@ export const addTemplatesToDocumentInEnvelope = async (
 export const AddTemplatesToEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 	preserve_template_recipient: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddTemplatesToEnvelopeOutputSchema = z.object({}).passthrough();
@@ -134,7 +134,7 @@ export const addTemplatesToEnvelope = async (
 
 export const CreateCustomFieldsForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateCustomFieldsForEnvelopeOutputSchema = z
@@ -163,7 +163,7 @@ export const createCustomFieldsForEnvelope = async (
 
 export const CreateTemplateWorkflowStepInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateTemplateWorkflowStepOutputSchema = z
@@ -807,7 +807,7 @@ export const listEnvelopeAndDocumentCustomFields = async (
 
 export const LockAnEnvelopeForEditingInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const LockAnEnvelopeForEditingOutputSchema = z.object({}).passthrough();
@@ -969,7 +969,7 @@ export const returnTemplateWorkflowDefinition = async (
 };
 
 export const SubmitBatchHistoricalEnvelopesToWebhookInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SubmitBatchHistoricalEnvelopesToWebhookOutputSchema = z
@@ -996,7 +996,7 @@ export const submitBatchHistoricalEnvelopesToWebhook = async (
 
 export const UpdateEnvelopeCustomFieldsInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeCustomFieldsOutputSchema = z
@@ -1026,7 +1026,7 @@ export const updateEnvelopeCustomFields = async (
 export const UpdateEnvelopeDelayedRoutingRulesInputSchema = z.object({
 	envelopeId: z.string(),
 	workflowStepId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeDelayedRoutingRulesOutputSchema = z
@@ -1055,7 +1055,7 @@ export const updateEnvelopeDelayedRoutingRules = async (
 
 export const UpdateEnvelopeEmailSettingsInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeEmailSettingsOutputSchema = z
@@ -1084,7 +1084,7 @@ export const updateEnvelopeEmailSettings = async (
 
 export const UpdateEnvelopeScheduledSendingRulesInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeScheduledSendingRulesOutputSchema = z
@@ -1113,7 +1113,7 @@ export const updateEnvelopeScheduledSendingRules = async (
 
 export const UpdateEnvelopeWorkflowDefinitionInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeWorkflowDefinitionOutputSchema = z
@@ -1143,7 +1143,7 @@ export const updateEnvelopeWorkflowDefinition = async (
 export const UpdateEnvelopeWorkflowStepInputSchema = z.object({
 	envelopeId: z.string(),
 	workflowStepId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeWorkflowStepOutputSchema = z
@@ -1172,7 +1172,7 @@ export const updateEnvelopeWorkflowStep = async (
 
 export const UpdateLockForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateLockForEnvelopeOutputSchema = z.object({}).passthrough();
@@ -1200,7 +1200,7 @@ export const updateLockForEnvelope = async (
 export const UpdateTemplateDelayedRoutingRulesInputSchema = z.object({
 	templateId: z.string(),
 	workflowStepId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateDelayedRoutingRulesOutputSchema = z
@@ -1229,7 +1229,7 @@ export const updateTemplateDelayedRoutingRules = async (
 
 export const UpdateTemplateScheduledSendingRulesInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateScheduledSendingRulesOutputSchema = z
@@ -1258,7 +1258,7 @@ export const updateTemplateScheduledSendingRules = async (
 
 export const UpdateTemplateWorkflowDefinitionInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateTemplateWorkflowDefinitionOutputSchema = z
@@ -1288,7 +1288,7 @@ export const updateTemplateWorkflowDefinition = async (
 export const UpdateWorkflowStepForTemplateInputSchema = z.object({
 	templateId: z.string(),
 	workflowStepId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateWorkflowStepForTemplateOutputSchema = z

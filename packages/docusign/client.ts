@@ -5,6 +5,9 @@ import type {
 	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError } from 'corsair/http';
+import { z } from 'zod';
+
+const JsonValueSchema = z.json();
 
 const DOCUSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -72,19 +75,32 @@ function serializeBody(
 	return JSON.stringify(options.body);
 }
 
+// Safe: callers parse this value with an endpoint-specific zod schema.
+// A narrower type is not practical because DocuSign returns JSON, text, or binary depending on the endpoint.
 async function parseResponseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
-	const contentType = response.headers.get('Content-Type');
-	if (contentType?.toLowerCase().includes('application/json')) {
+	const contentType = response.headers.get('Content-Type')?.toLowerCase() ?? '';
+	if (contentType.includes('application/json')) {
 		const text = await response.text();
 		if (text.length === 0) return undefined;
 		try {
-			return JSON.parse(text) as unknown;
+			return JSON.parse(text);
 		} catch {
 			return undefined;
 		}
 	}
-	return response.text();
+	if (isTextContentType(contentType)) {
+		return response.text();
+	}
+	return Buffer.from(await response.arrayBuffer()).toString('base64');
+}
+
+function isTextContentType(contentType: string): boolean {
+	return (
+		contentType === '' ||
+		contentType.startsWith('text/') ||
+		contentType.includes('xml')
+	);
 }
 
 /**
@@ -92,11 +108,13 @@ async function parseResponseBody(response: Response): Promise<unknown> {
  * paths are not analyzed against the shared OpenAPI placeholder regex
  * (CodeQL js/polynomial-redos).
  */
-async function docusignHttpRequest<T>(
+// Safe: callers parse this value with an endpoint-specific zod schema.
+// A narrower type is not practical because DocuSign returns JSON, text, or binary depending on the endpoint.
+async function docusignHttpRequest(
 	config: OpenAPIConfig,
 	options: ApiRequestOptions,
 	rateLimitConfig: RateLimitConfig,
-): Promise<T> {
+): Promise<unknown> {
 	const url = joinUrl(config.BASE, options.url);
 	const maxAttempts = rateLimitConfig.maxRetries + 1;
 	const headers = new Headers({
@@ -159,7 +177,7 @@ async function docusignHttpRequest<T>(
 			);
 		}
 
-		return responseBody as T;
+		return responseBody;
 	}
 
 	throw new ApiError(
@@ -181,6 +199,8 @@ export interface DocusignAuthOptions {
 	baseUri?: string;
 }
 
+// Safe: the value is narrowed with typeof and `in` checks before use.
+// A narrower type is not practical because error bodies come straight from the network.
 function extractErrorCode(body: unknown): string | undefined {
 	if (
 		typeof body === 'object' &&
@@ -220,7 +240,7 @@ export class DocusignApiError extends ApiError {
 }
 
 function toRequestBody(body: string | Uint8Array | undefined): {
-	body?: unknown;
+	body?: Blob | object | string;
 	mediaType?: string;
 } {
 	if (body instanceof Uint8Array) {
@@ -230,9 +250,13 @@ function toRequestBody(body: string | Uint8Array | undefined): {
 		return {};
 	}
 	try {
-		const parsed: unknown = JSON.parse(body);
-		if (typeof parsed === 'object' && parsed !== null) {
-			return { body: parsed, mediaType: 'application/json' };
+		const parsed = JsonValueSchema.safeParse(JSON.parse(body));
+		if (
+			parsed.success &&
+			typeof parsed.data === 'object' &&
+			parsed.data !== null
+		) {
+			return { body: parsed.data, mediaType: 'application/json' };
 		}
 	} catch {
 		// Non-JSON string body: pass through without a JSON media type.
@@ -356,10 +380,12 @@ export class DocusignClient {
 		return url.origin;
 	}
 
+	// Safe: callers parse this value with an endpoint-specific zod schema.
+	// A narrower type is not practical because DocuSign returns JSON, text, or binary depending on the endpoint.
 	async userInfo(authServer?: string): Promise<unknown> {
 		const origin = this.resolveAuthServer(authServer);
 		try {
-			const data: unknown = await docusignHttpRequest<unknown>(
+			return await docusignHttpRequest(
 				this.openApiConfig(origin),
 				{
 					method: 'GET',
@@ -367,7 +393,6 @@ export class DocusignClient {
 				},
 				transportRateLimitConfig('GET'),
 			);
-			return data;
 		} catch (error) {
 			throw toDocusignApiError(error, 'GET', '/oauth/userinfo');
 		}
@@ -424,6 +449,8 @@ export class DocusignClient {
 		return { baseUri: `${url.origin}${path}`, isDemoEnvironment };
 	}
 
+	// Safe: callers parse this value with an endpoint-specific zod schema.
+	// A narrower type is not practical because DocuSign returns JSON, text, or binary depending on the endpoint.
 	async request(
 		endpoint: string,
 		options: DocusignRequestOptions = {},
@@ -444,12 +471,11 @@ export class DocusignClient {
 			...(options.headers === undefined ? {} : { headers: options.headers }),
 		};
 		try {
-			const data: unknown = await docusignHttpRequest<unknown>(
+			return await docusignHttpRequest(
 				this.openApiConfig(base),
 				requestOptions,
 				transportRateLimitConfig(requestOptions.method),
 			);
-			return data;
 		} catch (error) {
 			throw toDocusignApiError(error, requestOptions.method, endpoint);
 		}
@@ -466,6 +492,8 @@ export class DocusignClient {
 	}
 }
 
+// Safe: the value is narrowed with instanceof before use.
+// A narrower type is not practical because anything can be thrown from a catch block.
 function toDocusignApiError(
 	error: unknown,
 	method: ApiRequestOptions['method'],

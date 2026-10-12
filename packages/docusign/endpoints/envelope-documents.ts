@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const AddEnvelopeAttachmentsInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddEnvelopeAttachmentsOutputSchema = z.object({}).passthrough();
@@ -32,7 +32,7 @@ export const addEnvelopeAttachments = async (
 export const CreateCustomDocumentFieldsInEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateCustomDocumentFieldsInEnvelopeOutputSchema = z
@@ -62,7 +62,7 @@ export const createCustomDocumentFieldsInEnvelope = async (
 export const CreateDocumentResponsiveHtmlPreviewInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateDocumentResponsiveHtmlPreviewOutputSchema = z
@@ -91,7 +91,7 @@ export const createDocumentResponsiveHtmlPreview = async (
 
 export const CreatePreviewOfResponsiveHtmlInEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreatePreviewOfResponsiveHtmlInEnvelopeOutputSchema = z
@@ -265,7 +265,7 @@ export const GetPdftranscriptOfEnvelopeCommentsInputSchema = z.object({
 	encoding: z.string().optional(),
 });
 
-export const GetPdftranscriptOfEnvelopeCommentsOutputSchema = z.unknown();
+export const GetPdftranscriptOfEnvelopeCommentsOutputSchema = z.string();
 
 export type GetPdftranscriptOfEnvelopeCommentsParams = z.infer<
 	typeof GetPdftranscriptOfEnvelopeCommentsInputSchema
@@ -376,7 +376,7 @@ export const RetrieveEnvelopeAttachmentInputSchema = z.object({
 	attachmentId: z.string(),
 });
 
-export const RetrieveEnvelopeAttachmentOutputSchema = z.unknown();
+export const RetrieveEnvelopeAttachmentOutputSchema = z.string();
 
 export type RetrieveEnvelopeAttachmentParams = z.infer<
 	typeof RetrieveEnvelopeAttachmentInputSchema
@@ -512,7 +512,7 @@ export const returnEnvelopeTabDataForExistingEnvelope = async (
 export const UpdateCustomFieldsInEnvelopeDocumentInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateCustomFieldsInEnvelopeDocumentOutputSchema = z
@@ -541,7 +541,7 @@ export const updateCustomFieldsInEnvelopeDocument = async (
 
 export const UpdateDocumentVisibilityRecipientsInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateDocumentVisibilityRecipientsOutputSchema = z
@@ -571,7 +571,7 @@ export const updateDocumentVisibilityRecipients = async (
 export const UpdateEnvelopeAttachmentInputSchema = z.object({
 	envelopeId: z.string(),
 	attachmentId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeAttachmentOutputSchema = z.object({}).passthrough();
@@ -599,7 +599,7 @@ export const updateEnvelopeAttachment = async (
 export const UpdateEnvelopeDocGenFormFieldsInputSchema = z.object({
 	envelopeId: z.string(),
 	update_docgen_formfields_only: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeDocGenFormFieldsOutputSchema = z

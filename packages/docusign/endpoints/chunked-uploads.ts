@@ -5,7 +5,7 @@ import type { DocusignExecutionContext } from './types';
 export const AddPartToChunkedUploadInputSchema = z.object({
 	chunkedUploadId: z.string(),
 	chunkedUploadPartSeq: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddPartToChunkedUploadOutputSchema = z.object({}).passthrough();
@@ -33,7 +33,7 @@ export const addPartToChunkedUpload = async (
 export const CommitChunkedUploadForEnvelopesInputSchema = z.object({
 	chunkedUploadId: z.string(),
 	action: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CommitChunkedUploadForEnvelopesOutputSchema = z
@@ -89,7 +89,7 @@ export const deleteChunkedUpload = async (
 };
 
 export const InitiateNewChunkedUploadInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const InitiateNewChunkedUploadOutputSchema = z.object({}).passthrough();

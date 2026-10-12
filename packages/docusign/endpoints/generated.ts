@@ -1,4 +1,7 @@
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
+import type {
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+} from 'corsair/core';
 import {
 	AddOrUpdateAccountStampsInputSchema,
 	AddOrUpdateAccountStampsOutputSchema,
@@ -771,8 +774,11 @@ import {
 	getNotaryJurisdictionObject,
 	getNotaryJurisdictionSeal,
 	getNotaryUserSettings,
+	ListNotaryJournalsInputSchema,
+	ListNotaryJournalsOutputSchema,
 	ListRegisteredNotaryJurisdictionsInputSchema,
 	ListRegisteredNotaryJurisdictionsOutputSchema,
+	listNotaryJournals,
 	listRegisteredNotaryJurisdictions,
 	RegisterCurrentUserAsNotaryInputSchema,
 	RegisterCurrentUserAsNotaryOutputSchema,
@@ -1278,6 +1284,7 @@ export const generatedEndpointsNested = {
 	createNotaryJurisdictionObject,
 	deleteNotaryJurisdiction,
 	getNotaryJournals,
+	listNotaryJournals,
 	getNotaryJurisdictionObject,
 	getNotaryUserSettings,
 	getNotaryJurisdictionSeal,
@@ -2583,6 +2590,11 @@ export const generatedEndpointMeta = {
 			'Deletes a specified notary jurisdiction from the DocuSign system. This endpoint should be used when you need to remove a notary jurisdiction from your DocuSign account, typically when a notary is no longer active in a particular jurisdiction or when correcting erroneously added jurisdictions. The op',
 		riskLevel: 'destructive',
 	},
+	listNotaryJournals: {
+		description:
+			'Gets notary journals for the current user. Use when you need to retrieve notary journal data.',
+		riskLevel: 'read',
+	},
 	getNotaryJournals: {
 		description:
 			"Tool to retrieve notary journal entries for the current user. Use when you need to access a user's notary journal records, which contain information about notarized documents including signer names, document names, jurisdictions, and timestamps.",
@@ -3025,10 +3037,7 @@ export const generatedEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof generatedEndpointsNested>;
 
-export const generatedEndpointSchemas: Record<
-	string,
-	{ input?: unknown; output?: unknown }
-> = {
+export const generatedEndpointSchemas = {
 	addOrUpdateAccountStamps: {
 		input: AddOrUpdateAccountStampsInputSchema,
 		output: AddOrUpdateAccountStampsOutputSchema,
@@ -4005,6 +4014,10 @@ export const generatedEndpointSchemas: Record<
 		input: GetNotaryJournalsInputSchema,
 		output: GetNotaryJournalsOutputSchema,
 	},
+	listNotaryJournals: {
+		input: ListNotaryJournalsInputSchema,
+		output: ListNotaryJournalsOutputSchema,
+	},
 	getNotaryJurisdictionObject: {
 		input: GetNotaryJurisdictionObjectInputSchema,
 		output: GetNotaryJurisdictionObjectOutputSchema,
@@ -4353,7 +4366,7 @@ export const generatedEndpointSchemas: Record<
 		input: UpdateWorkspaceItemMetadataInputSchema,
 		output: UpdateWorkspaceItemMetadataOutputSchema,
 	},
-};
+} satisfies RequiredPluginEndpointSchemas<typeof generatedEndpointsNested>;
 
 export const generatedInputSchemas = {
 	addOrUpdateAccountStamps: AddOrUpdateAccountStampsInputSchema,
@@ -4661,6 +4674,7 @@ export const generatedInputSchemas = {
 	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectInputSchema,
 	deleteNotaryJurisdiction: DeleteNotaryJurisdictionInputSchema,
 	getNotaryJournals: GetNotaryJournalsInputSchema,
+	listNotaryJournals: ListNotaryJournalsInputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectInputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsInputSchema,
 	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealInputSchema,
@@ -5090,6 +5104,7 @@ export const generatedOutputSchemas = {
 	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectOutputSchema,
 	deleteNotaryJurisdiction: DeleteNotaryJurisdictionOutputSchema,
 	getNotaryJournals: GetNotaryJournalsOutputSchema,
+	listNotaryJournals: ListNotaryJournalsOutputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectOutputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsOutputSchema,
 	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealOutputSchema,

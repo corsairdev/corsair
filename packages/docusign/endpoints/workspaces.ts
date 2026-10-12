@@ -5,7 +5,7 @@ import type { DocusignExecutionContext } from './types';
 export const AddFileToWorkspaceInputSchema = z.object({
 	workspaceId: z.string(),
 	folderId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddFileToWorkspaceOutputSchema = z.object({}).passthrough();
@@ -31,7 +31,7 @@ export const addFileToWorkspace = async (
 };
 
 export const CreateACollaborativeWorkspaceInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateACollaborativeWorkspaceOutputSchema = z
@@ -118,7 +118,7 @@ export const GetWorkspaceFileInputSchema = z.object({
 	pdf_version: z.string().optional(),
 });
 
-export const GetWorkspaceFileOutputSchema = z.unknown();
+export const GetWorkspaceFileOutputSchema = z.string();
 
 export type GetWorkspaceFileParams = z.infer<
 	typeof GetWorkspaceFileInputSchema
@@ -287,7 +287,7 @@ export const retrievePropertiesAboutWorkspace = async (
 
 export const UpdateWorkspaceInformationInputSchema = z.object({
 	workspaceId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateWorkspaceInformationOutputSchema = z
@@ -318,7 +318,7 @@ export const UpdateWorkspaceItemMetadataInputSchema = z.object({
 	workspaceId: z.string(),
 	folderId: z.string(),
 	fileId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateWorkspaceItemMetadataOutputSchema = z

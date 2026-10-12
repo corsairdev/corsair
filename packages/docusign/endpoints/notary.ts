@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateNotaryJurisdictionObjectInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateNotaryJurisdictionObjectOutputSchema = z
@@ -83,6 +83,17 @@ export const getNotaryJournals = async (
 	return GetNotaryJournalsOutputSchema.parse(data);
 };
 
+export const ListNotaryJournalsInputSchema = GetNotaryJournalsInputSchema;
+
+export const ListNotaryJournalsOutputSchema = GetNotaryJournalsOutputSchema;
+
+export type ListNotaryJournalsParams = GetNotaryJournalsParams;
+
+export const listNotaryJournals = (
+	ctxOrClient: DocusignExecutionContext,
+	params: ListNotaryJournalsParams,
+) => getNotaryJournals(ctxOrClient, params);
+
 export const GetNotaryJurisdictionObjectInputSchema = z.object({
 	jurisdictionId: z.string(),
 });
@@ -140,7 +151,7 @@ export const GetNotaryJurisdictionSealInputSchema = z.object({
 	jurisdictionId: z.string(),
 });
 
-export const GetNotaryJurisdictionSealOutputSchema = z.object({}).passthrough();
+export const GetNotaryJurisdictionSealOutputSchema = z.string();
 
 export type GetNotaryJurisdictionSealParams = z.infer<
 	typeof GetNotaryJurisdictionSealInputSchema
@@ -184,7 +195,7 @@ export const listRegisteredNotaryJurisdictions = async (
 };
 
 export const RegisterCurrentUserAsNotaryInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const RegisterCurrentUserAsNotaryOutputSchema = z
@@ -210,7 +221,7 @@ export const registerCurrentUserAsNotary = async (
 
 export const UpdateNotaryJurisdictionInfoInputSchema = z.object({
 	jurisdictionId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateNotaryJurisdictionInfoOutputSchema = z
@@ -238,7 +249,7 @@ export const updateNotaryJurisdictionInfo = async (
 };
 
 export const UpdateUserNotaryInformationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserNotaryInformationOutputSchema = z
@@ -266,6 +277,7 @@ export const NotaryInputSchemas = {
 	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectInputSchema,
 	deleteNotaryJurisdiction: DeleteNotaryJurisdictionInputSchema,
 	getNotaryJournals: GetNotaryJournalsInputSchema,
+	listNotaryJournals: ListNotaryJournalsInputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectInputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsInputSchema,
 	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealInputSchema,
@@ -280,6 +292,7 @@ export const NotaryOutputSchemas = {
 	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectOutputSchema,
 	deleteNotaryJurisdiction: DeleteNotaryJurisdictionOutputSchema,
 	getNotaryJournals: GetNotaryJournalsOutputSchema,
+	listNotaryJournals: ListNotaryJournalsOutputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectOutputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsOutputSchema,
 	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealOutputSchema,

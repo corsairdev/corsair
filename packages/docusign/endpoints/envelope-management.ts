@@ -72,7 +72,7 @@ export const GetPageImageFromEnvelopeInputSchema = z.object({
 	show_changes: z.string().optional(),
 });
 
-export const GetPageImageFromEnvelopeOutputSchema = z.unknown();
+export const GetPageImageFromEnvelopeOutputSchema = z.string();
 
 export type GetPageImageFromEnvelopeParams = z.infer<
 	typeof GetPageImageFromEnvelopeInputSchema
@@ -195,7 +195,7 @@ export const RetrieveSignerSignatureImageInformationInputSchema = z.object({
 	include_chrome: z.string().optional(),
 });
 
-export const RetrieveSignerSignatureImageInformationOutputSchema = z.unknown();
+export const RetrieveSignerSignatureImageInformationOutputSchema = z.string();
 
 export type RetrieveSignerSignatureImageInformationParams = z.infer<
 	typeof RetrieveSignerSignatureImageInformationInputSchema
@@ -228,7 +228,7 @@ export const RetrieveUserInitialsImageForEnvelopesInputSchema = z.object({
 	include_chrome: z.string().optional(),
 });
 
-export const RetrieveUserInitialsImageForEnvelopesOutputSchema = z.unknown();
+export const RetrieveUserInitialsImageForEnvelopesOutputSchema = z.string();
 
 export type RetrieveUserInitialsImageForEnvelopesParams = z.infer<
 	typeof RetrieveUserInitialsImageForEnvelopesInputSchema
@@ -308,7 +308,7 @@ export const RotatePageImageForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
 	pageNumber: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const RotatePageImageForEnvelopeOutputSchema = z
@@ -408,7 +408,7 @@ export const setSignatureImageForNoAccountSigner = async (
 
 export const UpdateEnvelopeNotificationSettingsInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateEnvelopeNotificationSettingsOutputSchema = z

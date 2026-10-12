@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const AddExistingBrandToGroupInputSchema = z.object({
 	groupId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddExistingBrandToGroupOutputSchema = z.object({}).passthrough();
@@ -31,7 +31,7 @@ export const addExistingBrandToGroup = async (
 
 export const AddMembersToSigningGroupInputSchema = z.object({
 	signingGroupId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddMembersToSigningGroupOutputSchema = z.object({}).passthrough();
@@ -58,7 +58,7 @@ export const addMembersToSigningGroup = async (
 
 export const AddUsersToExistingGroupInputSchema = z.object({
 	groupId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddUsersToExistingGroupOutputSchema = z.object({}).passthrough();
@@ -84,7 +84,7 @@ export const addUsersToExistingGroup = async (
 };
 
 export const CreateGroupsForAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateGroupsForAccountOutputSchema = z.object({}).passthrough();
@@ -108,7 +108,7 @@ export const createGroupsForAccount = async (
 
 export const CreateNewAccountPermissionProfileInputSchema = z.object({
 	include: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateNewAccountPermissionProfileOutputSchema = z
@@ -137,7 +137,7 @@ export const createNewAccountPermissionProfile = async (
 };
 
 export const CreateSigningGroupInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateSigningGroupOutputSchema = z.object({}).passthrough();
@@ -589,7 +589,7 @@ export const retrieveAccountSigningGroups = async (
 };
 
 export const UpdateGroupInformationInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateGroupInformationOutputSchema = z.object({}).passthrough();
@@ -614,7 +614,7 @@ export const updateGroupInformation = async (
 export const UpdatePermissionProfileSettingsInputSchema = z.object({
 	permissionProfileId: z.string(),
 	include: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdatePermissionProfileSettingsOutputSchema = z
@@ -648,7 +648,7 @@ export const updatePermissionProfileSettings = async (
 
 export const UpdateSigningGroupDetailsInputSchema = z.object({
 	signingGroupId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateSigningGroupDetailsOutputSchema = z.object({}).passthrough();
@@ -674,7 +674,7 @@ export const updateSigningGroupDetails = async (
 };
 
 export const UpdateSigningGroupNamesInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateSigningGroupNamesOutputSchema = z.object({}).passthrough();

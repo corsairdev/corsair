@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { DocusignClient } from './client';
 import type { EndpointContractCase } from './endpoint-contract-cases';
 import { endpointContractCases } from './endpoint-contract-cases';
@@ -16,24 +17,33 @@ import {
 	mockFetchText,
 } from './test-fetch';
 
-function sampleValue(type: string): unknown {
+type SampleValue = string | number | boolean | string[];
+
+function sampleValue(type: string): SampleValue {
 	if (type === 'integer' || type === 'number') return 7;
 	if (type === 'boolean') return true;
 	if (type === 'array') return ['a', 'b'];
 	return 'test-value';
 }
 
-function expectedQueryString(value: unknown): string {
+function expectedQueryString(value: SampleValue): string {
 	if (Array.isArray(value)) return value.map(String).join(',');
 	return String(value);
 }
+
+const RESPONSE_BODY = { id: 'resp-1' };
+
+const endpointsByName = new Map(Object.entries(docusignEndpointsNested));
+const schemasByName = new Map(
+	Object.entries(endpoints.docusignEndpointSchemas),
+);
 
 const IMAGE_ENDPOINTS = new Set([
 	'setInitialsImageForAccountlessSigner',
 	'setSignatureImageForNoAccountSigner',
 ]);
 
-const specialBodies: Record<string, unknown> = {
+const specialBodies: Record<string, object> = {
 	deleteDraftEnvelopeAttachments: {
 		attachments: [{ attachmentId: 'test-id' }],
 	},
@@ -76,7 +86,7 @@ describe('DocuSign generated endpoints', () => {
 	let fetchMock: jest.Mock;
 
 	beforeEach(() => {
-		fetchMock = mockFetchJson({});
+		fetchMock = mockFetchJson(RESPONSE_BODY);
 	});
 
 	it.each(endpointContractCases)(
@@ -90,7 +100,7 @@ describe('DocuSign generated endpoints', () => {
 			hasBody,
 		}: EndpointContractCase) => {
 			const client = makeClient();
-			const params: Record<string, unknown> = {};
+			const params: Record<string, SampleValue | object> = {};
 			for (const p of pathParams)
 				params[p] = p === 'bulkAction' ? 'void' : 'test-id';
 			for (const q of queryParams) params[q.name] = sampleValue(q.type);
@@ -100,23 +110,21 @@ describe('DocuSign generated endpoints', () => {
 			} else if (hasBody) {
 				params.body = specialBodies[name] ?? { hello: 'world' };
 			}
-			if (name === 'getRequestLoggingLogFile') {
+			const returnsText =
+				schemasByName.get(name)?.output instanceof z.ZodString;
+			if (returnsText) {
 				fetchMock.mockResolvedValueOnce(
-					new Response('request log content', {
+					new Response('file-content', {
 						status: 200,
 						headers: { 'Content-Type': 'text/plain' },
 					}),
 				);
 			}
-			const fn = (
-				endpoints as unknown as Record<
-					string,
-					(ctx: unknown, params: unknown) => Promise<unknown>
-				>
-			)[name];
+			const fn = endpointsByName.get(name);
 			if (typeof fn !== 'function')
 				throw new Error(`missing endpoint: ${name}`);
-			await fn({ client }, params);
+			const result = await Reflect.apply(fn, undefined, [{ client }, params]);
+			expect(result).toEqual(returnsText ? 'file-content' : RESPONSE_BODY);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			const { url, init } = lastFetchCall();
 			expect(url.startsWith(expectedBase(path))).toBe(true);
@@ -224,6 +232,21 @@ describe('DocuSign generated endpoints', () => {
 		expect(res).toBe('binary-file-bytes');
 	});
 
+	it('base64-encodes binary responses', async () => {
+		const client = makeClient();
+		fetchMock.mockResolvedValueOnce(
+			new Response(new Uint8Array([0x89, 0x50, 0x4e, 0x47]), {
+				status: 200,
+				headers: { 'Content-Type': 'image/png' },
+			}),
+		);
+		const res = await endpoints.retrieveUserProfileImage(
+			{ client },
+			{ userId: 'u1' },
+		);
+		expect(res).toBe('iVBORw==');
+	});
+
 	it('resolves the client from the Corsair runtime context shape', async () => {
 		mockFetchJson({ envelopeId: 'env_9', status: 'sent' });
 		const runtimeCtx = {
@@ -297,10 +320,8 @@ describe('DocuSign generated endpoints', () => {
 });
 
 describe('DocuSign tenant credential lifecycle', () => {
-	const buildKey = docusignPlugin.keyBuilder as (
-		ctx: unknown,
-		source: string,
-	) => Promise<string>;
+	const buildKey = (ctx: object, source: string): Promise<string> =>
+		Reflect.apply(docusignPlugin.keyBuilder, undefined, [ctx, source]);
 
 	function keychain(overrides: Record<string, string | null> = {}) {
 		const values: Record<string, string | null> = {
@@ -414,33 +435,23 @@ describe('DocuSign tenant credential lifecycle', () => {
 });
 
 describe('DocuSign plugin meta', () => {
-	it('exposes 339 endpoints', () => {
-		expect(Object.keys(docusignEndpointsNested)).toHaveLength(339);
+	it('exposes 340 endpoints', () => {
+		expect(Object.keys(docusignEndpointsNested)).toHaveLength(340);
 	});
 
 	it('every endpoint has meta with a valid risk level', () => {
 		const names = Object.keys(docusignEndpointsNested);
 		expect(Object.keys(docusignEndpointMeta)).toHaveLength(names.length);
-		for (const name of names) {
-			const meta = (
-				docusignEndpointMeta as Record<
-					string,
-					{ description?: unknown; riskLevel?: unknown }
-				>
-			)[name];
-			expect(typeof meta?.description).toBe('string');
-			expect(['read', 'write', 'destructive']).toContain(meta?.riskLevel);
+		for (const [, meta] of Object.entries(docusignEndpointMeta)) {
+			expect(meta.description.length).toBeGreaterThan(0);
+			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
 		}
 	});
 
 	it('every endpoint has input and output schemas', () => {
-		const schemas = endpoints.docusignEndpointSchemas as Record<
-			string,
-			{ input?: unknown; output?: unknown }
-		>;
 		for (const name of Object.keys(docusignEndpointsNested)) {
-			expect(schemas[name]?.input).toBeDefined();
-			expect(schemas[name]?.output).toBeDefined();
+			expect(schemasByName.get(name)?.input).toBeInstanceOf(z.ZodType);
+			expect(schemasByName.get(name)?.output).toBeInstanceOf(z.ZodType);
 		}
 	});
 });

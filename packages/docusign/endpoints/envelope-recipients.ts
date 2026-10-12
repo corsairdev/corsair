@@ -6,7 +6,7 @@ export const CreateIdproofResourceTokenForRecipientInputSchema = z.object({
 	envelopeId: z.string(),
 	recipientId: z.string(),
 	token_scopes: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateIdproofResourceTokenForRecipientOutputSchema = z
@@ -41,7 +41,7 @@ export const createIdproofResourceTokenForRecipient = async (
 export const CreateRecipientManualReviewLinkInputSchema = z.object({
 	envelopeId: z.string(),
 	recipientId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateRecipientManualReviewLinkOutputSchema = z
@@ -70,7 +70,7 @@ export const createRecipientManualReviewLink = async (
 
 export const CreateRecipientPreviewForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateRecipientPreviewForEnvelopeOutputSchema = z
@@ -99,7 +99,7 @@ export const createRecipientPreviewForEnvelope = async (
 
 export const CreateSenderViewUrlForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateSenderViewUrlForEnvelopeOutputSchema = z
@@ -128,7 +128,7 @@ export const createSenderViewUrlForEnvelope = async (
 
 export const GenerateEditViewUrlforEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const GenerateEditViewUrlforEnvelopeOutputSchema = z
@@ -157,7 +157,7 @@ export const generateEditViewUrlforEnvelope = async (
 
 export const GenerateEnvelopeCorrectionUrlInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const GenerateEnvelopeCorrectionUrlOutputSchema = z
@@ -186,7 +186,7 @@ export const generateEnvelopeCorrectionUrl = async (
 
 export const GenerateRecipientSharedViewUrlInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const GenerateRecipientSharedViewUrlOutputSchema = z
@@ -243,7 +243,7 @@ export const getElectronicDisclosureForRecipient = async (
 };
 
 export const GetUrlforEmbeddingDocusignUiInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const GetUrlforEmbeddingDocusignUiOutputSchema = z

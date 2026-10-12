@@ -131,7 +131,7 @@ export const docusignPlugin = {
 			});
 		}
 		// Direct mode: no key manager, so factory options are the only source.
-		const factory = ctx.options as Partial<DocusignAuthOptions> | undefined;
+		const factory = ctx.options;
 		if (
 			typeof factory?.accessToken === 'string' &&
 			factory.accessToken.length > 0 &&
@@ -150,7 +150,7 @@ export const docusignPlugin = {
 	},
 };
 
-export const docusign = (config?: Record<string, unknown>) => ({
+export const docusign = (config?: Partial<DocusignPluginOptions>) => ({
 	...docusignPlugin,
 	// Core forwards `plugin.options` into the runtime context (`ctx.options`),
 	// so credentials must live under `options` — not only `config` — for

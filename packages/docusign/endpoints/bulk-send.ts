@@ -5,7 +5,7 @@ import type { DocusignExecutionContext } from './types';
 export const ApplyActionToBulkSendEnvelopesInputSchema = z.object({
 	bulkSendBatchId: z.string(),
 	bulkAction: z.enum(['resend', 'correct', 'void']),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ApplyActionToBulkSendEnvelopesOutputSchema = z
@@ -34,7 +34,7 @@ export const applyActionToBulkSendEnvelopes = async (
 
 export const CreateBulkSendRequestInputSchema = z.object({
 	bulkSendListId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateBulkSendRequestOutputSchema = z.object({}).passthrough();
@@ -61,7 +61,7 @@ export const createBulkSendRequest = async (
 
 export const CreateBulkSendTestRequestInputSchema = z.object({
 	bulkSendListId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateBulkSendTestRequestOutputSchema = z.object({}).passthrough();
@@ -207,7 +207,7 @@ export const removeBulkSendList = async (
 
 export const UpdateBulkSendBatchNameInputSchema = z.object({
 	bulkSendBatchId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateBulkSendBatchNameOutputSchema = z.object({}).passthrough();

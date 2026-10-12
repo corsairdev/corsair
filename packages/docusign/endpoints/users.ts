@@ -3,7 +3,7 @@ import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
 export const AddNewUsersToASpecifiedAccountInputSchema = z.object({
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddNewUsersToASpecifiedAccountOutputSchema = z
@@ -29,7 +29,7 @@ export const addNewUsersToASpecifiedAccount = async (
 
 export const AddOrUpdateUserCustomSettingsInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddOrUpdateUserCustomSettingsOutputSchema = z
@@ -58,7 +58,7 @@ export const addOrUpdateUserCustomSettings = async (
 
 export const AddOrUpdateUserSignatureInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddOrUpdateUserSignatureOutputSchema = z.object({}).passthrough();
@@ -85,7 +85,7 @@ export const addOrUpdateUserSignature = async (
 
 export const AddUserSignatureAndInitialsImagesInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const AddUserSignatureAndInitialsImagesOutputSchema = z
@@ -114,7 +114,7 @@ export const addUserSignatureAndInitialsImages = async (
 
 export const ChangeUsersInAccountInputSchema = z.object({
 	allow_all_languages: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const ChangeUsersInAccountOutputSchema = z.object({}).passthrough();
@@ -181,7 +181,7 @@ export const closeUsersInAccount = async (
 
 export const CreateOrUpdateUserAuthorizationsInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateOrUpdateUserAuthorizationsOutputSchema = z
@@ -210,7 +210,7 @@ export const createOrUpdateUserAuthorizations = async (
 
 export const CreateUserAuthorizationForAgentUserInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const CreateUserAuthorizationForAgentUserOutputSchema = z
@@ -692,7 +692,7 @@ export const RetrieveUserProfileImageInputSchema = z.object({
 	encoding: z.string().optional(),
 });
 
-export const RetrieveUserProfileImageOutputSchema = z.unknown();
+export const RetrieveUserProfileImageOutputSchema = z.string();
 
 export type RetrieveUserProfileImageParams = z.infer<
 	typeof RetrieveUserProfileImageInputSchema
@@ -783,7 +783,7 @@ export const RetrieveUserSignatureImageInputSchema = z.object({
 	include_chrome: z.string().optional(),
 });
 
-export const RetrieveUserSignatureImageOutputSchema = z.unknown();
+export const RetrieveUserSignatureImageOutputSchema = z.string();
 
 export type RetrieveUserSignatureImageParams = z.infer<
 	typeof RetrieveUserSignatureImageInputSchema
@@ -842,7 +842,7 @@ export const SetUserSignatureImageInputSchema = z.object({
 	signatureId: z.string(),
 	imageType: z.string(),
 	transparent_png: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const SetUserSignatureImageOutputSchema = z.object({}).passthrough();
@@ -875,7 +875,7 @@ export const setUserSignatureImage = async (
 export const UpdateUserAccountSettingsInputSchema = z.object({
 	userId: z.string(),
 	allow_all_languages: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserAccountSettingsOutputSchema = z.object({}).passthrough();
@@ -907,7 +907,7 @@ export const updateUserAccountSettings = async (
 export const UpdateUserAuthorizationDatesInputSchema = z.object({
 	userId: z.string(),
 	authorizationId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserAuthorizationDatesOutputSchema = z
@@ -937,7 +937,7 @@ export const updateUserAuthorizationDates = async (
 export const UpdateUserInformationForSpecifiedUserInputSchema = z.object({
 	userId: z.string(),
 	allow_all_languages: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserInformationForSpecifiedUserOutputSchema = z
@@ -970,7 +970,7 @@ export const updateUserInformationForSpecifiedUser = async (
 
 export const UpdateUserProfileImageInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserProfileImageOutputSchema = z.object({}).passthrough();
@@ -997,7 +997,7 @@ export const updateUserProfileImage = async (
 
 export const UpdateUserProfileInformationInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserProfileInformationOutputSchema = z
@@ -1028,7 +1028,7 @@ export const UpdateUserSignatureByIdInputSchema = z.object({
 	userId: z.string(),
 	signatureId: z.string(),
 	close_existing_signature: z.string().optional(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const UpdateUserSignatureByIdOutputSchema = z.object({}).passthrough();

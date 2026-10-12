@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import type { DocusignAuthOptions } from '../client';
 import { DocusignClient } from '../client';
-import type { DocusignExecutionContext } from './types';
 
 const DocusignCredentialsSchema = z.object({
 	accessToken: z.string().min(1),
@@ -30,19 +29,17 @@ const DocusignOptionsRoutingEnvelopeSchema = z.object({
 const DocusignKeyBundleSchema = DocusignCredentialsSchema;
 
 function parseKeyBundle(key: string): DocusignAuthOptions | undefined {
-	let parsed: unknown;
 	try {
-		parsed = JSON.parse(key);
+		const bundle = DocusignKeyBundleSchema.safeParse(JSON.parse(key));
+		return bundle.success ? bundle.data : undefined;
 	} catch {
 		return undefined;
 	}
-	const bundle = DocusignKeyBundleSchema.safeParse(parsed);
-	return bundle.success ? bundle.data : undefined;
 }
 
-export function resolveClient(
-	contextOrClient: DocusignExecutionContext | unknown,
-): DocusignClient {
+// Safe: every branch narrows with instanceof, `in`, or a zod schema before use.
+// A narrower type is not practical because the Corsair runtime passes its own context object here.
+export function resolveClient(contextOrClient: unknown): DocusignClient {
 	if (contextOrClient instanceof DocusignClient) {
 		return contextOrClient;
 	}
