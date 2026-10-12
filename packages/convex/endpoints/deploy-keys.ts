@@ -7,17 +7,12 @@ export const create: ConvexEndpoints['deployKeyCreate'] = async (
 	ctx,
 	input,
 ) => {
-	// unknown: create payload fields vary by optional deploy-key inputs.
-	const body: Record<string, unknown> = { name: input.name };
-	if (input.allowedActions !== undefined) {
-		body.allowedActions = input.allowedActions;
-	}
-	if (input.expiresAt !== undefined) body.expiresAt = input.expiresAt;
+	const { deployment_name, ...body } = input;
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deployKeyCreate']
 	>(
-		`/deployments/${managementPath(input.deployment_name)}/create_deploy_key`,
+		`/deployments/${managementPath(deployment_name)}/create_deploy_key`,
 		ctx.key,
 		{
 			method: 'POST',

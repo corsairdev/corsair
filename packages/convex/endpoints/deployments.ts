@@ -67,23 +67,14 @@ export const create: ConvexEndpoints['deploymentCreate'] = async (
 	ctx,
 	input,
 ) => {
-	// unknown: create payload fields vary by optional deployment inputs.
-	const body: Record<string, unknown> = { type: input.type };
-	if (input.class !== undefined) body.class = input.class;
-	if (input.region !== undefined) body.region = input.region;
-	if (input.reference !== undefined) body.reference = input.reference;
-	if (input.isDefault !== undefined) body.isDefault = input.isDefault;
+	const { project_id, ...body } = input;
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentCreate']
-	>(
-		`/projects/${managementPath(input.project_id)}/create_deployment`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
+	>(`/projects/${managementPath(project_id)}/create_deployment`, ctx.key, {
+		method: 'POST',
+		body,
+	});
 
 	// The deployment was created upstream — a cache failure must not turn this
 	// successful non-idempotent call into an endpoint error.
@@ -107,20 +98,16 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	// unknown: PATCH body includes only the fields the caller supplied.
-	const body: Record<string, unknown> = {};
-	if (input.reference !== undefined) body.reference = input.reference;
-	if (input.dashboardEditConfirmation !== undefined) {
-		body.dashboardEditConfirmation = input.dashboardEditConfirmation;
-	}
-	if (input.expiresAt !== undefined) body.expiresAt = input.expiresAt;
+	const { deployment_name, ...body } = input;
 
-	const response = await makeConvexRequest<
-		ConvexEndpointOutputs['deploymentUpdate']
-	>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
-		method: 'PATCH',
-		body,
-	});
+	await makeConvexRequest<void>(
+		`/deployments/${managementPath(deployment_name)}`,
+		ctx.key,
+		{
+			method: 'PATCH',
+			body,
+		},
+	);
 
 	// The PATCH response does not include the updated deployment record, so
 	// fetch it to keep the local cache fresh. A refresh failure is diagnosed but
@@ -152,18 +139,20 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return { success: true };
 };
 
 export const deleteDeployment: ConvexEndpoints['deploymentDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeConvexRequest<
-		ConvexEndpointOutputs['deploymentDelete']
-	>(`/deployments/${managementPath(input.deployment_name)}/delete`, ctx.key, {
-		method: 'POST',
-	});
+	await makeConvexRequest<void>(
+		`/deployments/${managementPath(input.deployment_name)}/delete`,
+		ctx.key,
+		{
+			method: 'POST',
+		},
+	);
 
 	// The deployment was deleted upstream — best-effort cache cleanup only. Also
 	// remove cached deploy keys for this deployment, since deleting a deployment
@@ -191,7 +180,7 @@ export const deleteDeployment: ConvexEndpoints['deploymentDelete'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return { success: true };
 };
 
 export const DeploymentsEndpoints = {

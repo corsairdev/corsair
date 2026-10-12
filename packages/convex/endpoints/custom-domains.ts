@@ -1,15 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
 import { makeConvexRequest, managementPath } from '../client';
-import type { ConvexEndpointOutputs } from './types';
 
 export const deleteCustomDomain: ConvexEndpoints['customDomainDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeConvexRequest<
-		ConvexEndpointOutputs['customDomainDelete']
-	>(
+	await makeConvexRequest<void>(
 		`/deployments/${managementPath(input.deployment_name)}/delete_custom_domain`,
 		ctx.key,
 		{
@@ -27,7 +24,7 @@ export const deleteCustomDomain: ConvexEndpoints['customDomainDelete'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return { success: true };
 };
 
 export const CustomDomainsEndpoints = {

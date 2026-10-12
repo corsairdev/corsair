@@ -22,3 +22,63 @@ overviewNote: |
 
   Use Corsair permissions for destructive actions such as deleting projects,
   deployments, or custom domains.
+examples:
+  read:
+    path: projects.list
+    title: List projects in a team
+    args:
+      team_id: '41'
+  write:
+    path: deployKeys.create
+    title: Create a deploy key
+    args:
+      deployment_name: happy-otter-123
+      name: ci
+apiExamples:
+  projects.list:
+    team_id: '41'
+    limit: 20
+  projects.getById:
+    project_id: '123'
+  projects.getBySlug:
+    team_id_or_slug: acme
+    project_slug: my-app
+  projects.create:
+    call: "{ team_id: '41', projectName: 'My App', deploymentType: 'dev' }"
+  projects.delete:
+    project_id: '123'
+  deployments.list:
+    call: "{ project_id: '123', deploymentType: 'prod' }"
+  deployments.get:
+    deployment_name: happy-otter-123
+  deployments.create:
+    call: "{ project_id: '123', type: 'prod', region: 'aws-us-east-1' }"
+  deployments.update:
+    deployment_name: happy-otter-123
+    reference: staging
+  deployments.delete:
+    deployment_name: happy-otter-123
+  deployKeys.create:
+    deployment_name: happy-otter-123
+    name: ci
+    allowedActions:
+      - deployment:deploy
+  deployKeys.list:
+    deployment_name: happy-otter-123
+  customDomains.delete:
+    call: "{ deployment_name: 'happy-otter-123', requestDestination: 'convexSite', domain: 'api.example.com' }"
+  platform.getTokenDetails: {}
+  platform.listDeploymentClasses:
+    team_id: '41'
+  platform.listDeploymentRegions:
+    team_id: '41'
+  deployment.executeQueryBatch:
+    subdomain: happy-otter-123
+    queries:
+      - path: messages:list
+        args:
+          channel: general
+  deployment.getQueryTimestamp:
+    subdomain: happy-otter-123
+  deployment.listLogStreams:
+    subdomain: happy-otter-123

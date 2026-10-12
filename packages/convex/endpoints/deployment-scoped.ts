@@ -97,7 +97,6 @@ export const executeQueryBatch: ConvexEndpoints['executeQueryBatch'] = async (
 		baseUrl,
 		authScheme: 'convex',
 		body: {
-			format: input.format ?? 'json',
 			queries: input.queries.map((query) => ({
 				path: query.path,
 				args: query.args,
@@ -156,7 +155,7 @@ export const listLogStreams: ConvexEndpoints['logStreamsList'] = async (
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['logStreamsList']
-	>('/list_log_streams', deployKey, {
+	>('/v1/list_log_streams', deployKey, {
 		method: 'GET',
 		baseUrl,
 		authScheme: 'convex',

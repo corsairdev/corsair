@@ -1,0 +1,166 @@
+---
+title: Overview
+description: "Convex plugin for Corsair"
+---
+
+Use **Convex** through Corsair: one client, typed API calls, local DB sync.
+
+Convex is a reactive backend platform for TypeScript apps. This plugin wraps the
+Convex Management API (https://api.convex.dev/v1) for teams, projects,
+deployments, deploy keys, and custom domains, plus the deployment-scoped REST
+API for executing query batches, reading query timestamps, and listing log
+streams.
+
+Authentication follows the Convex authorization model:
+- Management API operations authenticate with `Authorization: Bearer <token>`
+  using a Convex personal/team access token. An `api_key` or `oauth_2`
+  connection must therefore store an access token — deploy keys are not
+  accepted as bearer credentials by the Management API.
+- Deployment-scoped operations require a deployment admin deploy key and
+  authenticate with `Authorization: Convex <key>`. Supply one per call via the
+  `deployKey` input, or store it on the connection as `deploy_key`; the plugin
+  credential (an access token) is not a valid deploy key. The deployment name
+  (subdomain) is resolved from the connection or the `subdomain` option.
+  Connections that only store a deploy key can use deployment-scoped
+  operations, while Management operations require the access token.
+
+Use Corsair permissions for destructive actions such as deleting projects,
+deployments, or custom domains.
+
+**What you get:**
+
+- 19 typed API operations
+- 3 synced entities (`deployKeys`, `deployments`, `projects`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/convex
+```
+```bash yarn
+yarn add corsair @corsair-dev/convex
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/convex
+```
+```bash bun
+bun add corsair @corsair-dev/convex
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { convex } from '@corsair-dev/convex';
+
+export const corsair = createCorsair({
+	plugins: [
+		convex(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+convex()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Convex OAuth app.
+
+```ts
+convex({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'convex',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List projects in a team**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.convex.api.projects.list({ team_id: '41' });
+```
+
+
+**Create a deploy key**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.convex.api.deployKeys.create({ deployment_name: 'happy-otter-123', name: 'ci' });
+```
+
+
+See the full list on the [API](/plugins/convex/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.convex.db.<entity>.search()` and `.list()`: `deployKeys`, `deployments`, `projects`.
+
+See [Database](/plugins/convex/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/convex/api">
+    Every `convex.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/convex/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

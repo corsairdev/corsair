@@ -76,6 +76,8 @@ export const DeployKeySchema = z
 		lastUsedTime: z.number().nullable().optional(),
 		expiresAt: z.number().nullable().optional(),
 		allowedActions: z.array(z.string()).default([]),
+		creator: ConvexIdSchema.nullable().optional(),
+		managedBy: z.string().nullable().optional(),
 	})
 	.passthrough();
 export type DeployKey = z.infer<typeof DeployKeySchema>;
@@ -102,7 +104,36 @@ export const DeploymentRegionMetadataSchema = z
 	})
 	.passthrough();
 
-const CreateDeploymentTypeSchema = z.enum(['dev', 'prod', 'preview', 'custom']);
+const DeploymentTypeSchema = z.enum(['dev', 'prod', 'preview', 'custom']);
+
+const DeployKeyActionSchema = z.enum([
+	'deployment:deploy',
+	'deployment:env:view',
+	'deployment:env:write',
+	'deployment:pause',
+	'deployment:unpause',
+	'deployment:logs:view',
+	'deployment:metrics:view',
+	'deployment:integrations:view',
+	'deployment:integrations:write',
+	'deployment:data:view',
+	'deployment:data:write',
+	'deployment:backups:view',
+	'deployment:backups:create',
+	'deployment:backups:download',
+	'deployment:backups:delete',
+	'deployment:backups:import',
+	'deployment:functions:actAsUser',
+	'deployment:functions:runInternalQueries',
+	'deployment:functions:runInternalMutations',
+	'deployment:functions:runInternalActions',
+	'deployment:functions:runTestQuery',
+	'deployment:auditLog:view',
+	'deployment:usageLimits:view',
+	'deployment:usageLimits:write',
+	'deployment:usage:view',
+	'deployment:aiGateway:use',
+]);
 
 const RequestDestinationSchema = z.enum(['convexCloud', 'convexSite']);
 
@@ -127,7 +158,7 @@ const ProjectGetBySlugInputSchema = z.object({
 const ProjectCreateInputSchema = z.object({
 	team_id: SafePathSegmentSchema,
 	projectName: z.string().min(1),
-	deploymentType: CreateDeploymentTypeSchema.nullable().optional(),
+	deploymentType: DeploymentTypeSchema.nullable().optional(),
 	deploymentClass: z.string().nullable().optional(),
 	deploymentRegion: z.string().nullable().optional(),
 });
@@ -140,7 +171,7 @@ const DeploymentsListInputSchema = z.object({
 	project_id: SafePathSegmentSchema,
 	includeLocal: z.boolean().optional(),
 	isDefault: z.boolean().nullable().optional(),
-	deploymentType: z.string().optional(),
+	deploymentType: DeploymentTypeSchema.optional(),
 });
 
 const DeploymentGetInputSchema = z.object({
@@ -149,11 +180,12 @@ const DeploymentGetInputSchema = z.object({
 
 const DeploymentCreateInputSchema = z.object({
 	project_id: SafePathSegmentSchema,
-	type: CreateDeploymentTypeSchema,
+	type: DeploymentTypeSchema,
 	class: z.string().nullable().optional(),
 	region: z.string().nullable().optional(),
 	reference: z.string().nullable().optional(),
 	isDefault: z.boolean().nullable().optional(),
+	expiresAt: z.number().int().nullable().optional(),
 });
 
 const DeploymentUpdateInputSchema = z.object({
@@ -161,6 +193,10 @@ const DeploymentUpdateInputSchema = z.object({
 	reference: z.string().nullable().optional(),
 	dashboardEditConfirmation: z.boolean().nullable().optional(),
 	expiresAt: z.number().int().nullable().optional(),
+	sendLogsToClient: z.boolean().nullable().optional(),
+	class: z.string().nullable().optional(),
+	isDefault: z.boolean().nullable().optional(),
+	deploymentType: DeploymentTypeSchema.nullable().optional(),
 });
 
 const DeploymentDeleteInputSchema = z.object({
@@ -170,7 +206,7 @@ const DeploymentDeleteInputSchema = z.object({
 const DeployKeyCreateInputSchema = z.object({
 	deployment_name: SafePathSegmentSchema,
 	name: z.string().min(1),
-	allowedActions: z.array(z.string()).optional(),
+	allowedActions: z.array(DeployKeyActionSchema).optional(),
 	expiresAt: z.number().int().nullable().optional(),
 });
 
@@ -196,14 +232,12 @@ const DeploymentRegionsListInputSchema = z.object({
 
 const QueryBatchItemSchema = z.object({
 	path: z.string().min(1),
-	// unknown: Convex query args are function-specific; validated at execution time.
-	args: z.record(z.string(), z.unknown()).default({}),
-	format: z.enum(['json']).optional(),
+	args: z.record(z.string(), z.json()).default({}),
+	format: z.string().nullable().optional(),
 });
 
 const ExecuteQueryBatchInputSchema = z.object({
 	...DeploymentScopedLocationSchema,
-	format: z.enum(['json']).optional(),
 	queries: z.array(QueryBatchItemSchema).min(1),
 });
 const QueryTimestampInputSchema = z.object(DeploymentScopedLocationSchema);
@@ -231,10 +265,10 @@ const ProjectCreateResponseSchema = z
 	})
 	.passthrough();
 
-// unknown: delete endpoints return empty or provider-specific JSON bodies.
-const ProjectDeleteResponseSchema = z
-	.record(z.string(), z.unknown())
-	.optional();
+// Convex returns an empty 200 body for these operations.
+const EmptyResponseSchema = z.object({ success: z.boolean() });
+
+const ProjectDeleteResponseSchema = EmptyResponseSchema;
 
 const DeploymentsListResponseSchema = z.array(DeploymentSchema);
 
@@ -242,13 +276,9 @@ const DeploymentGetResponseSchema = DeploymentSchema;
 
 const DeploymentCreateResponseSchema = DeploymentSchema;
 
-const DeploymentUpdateResponseSchema = z
-	.record(z.string(), z.unknown())
-	.optional();
+const DeploymentUpdateResponseSchema = EmptyResponseSchema;
 
-const DeploymentDeleteResponseSchema = z
-	.record(z.string(), z.unknown())
-	.optional();
+const DeploymentDeleteResponseSchema = EmptyResponseSchema;
 
 const DeployKeyCreateResponseSchema = z
 	.object({
@@ -258,18 +288,16 @@ const DeployKeyCreateResponseSchema = z
 
 const DeployKeysListResponseSchema = z.array(DeployKeySchema);
 
-const CustomDomainDeleteResponseSchema = z
-	.record(z.string(), z.unknown())
-	.optional();
+const CustomDomainDeleteResponseSchema = EmptyResponseSchema;
 
 const TokenDetailsResponseSchema = z
 	.object({
-		id: ConvexIdSchema.optional(),
+		id: ConvexIdSchema,
 		teamId: ConvexIdSchema.optional(),
 		projectId: ConvexIdSchema.optional(),
-		name: z.string().optional(),
-		createTime: z.number().optional(),
-		type: z.string().optional(),
+		name: z.string(),
+		createTime: z.number(),
+		type: z.enum(['teamToken', 'projectToken']),
 	})
 	.passthrough();
 
@@ -285,45 +313,51 @@ const DeploymentRegionsListResponseSchema = z
 	})
 	.passthrough();
 
-// unknown: query results carry function-specific values and error payloads.
-export const QueryBatchResultSchema = z
-	.object({
-		status: z.enum(['success', 'error']),
-		value: z.unknown().optional(),
-		errorMessage: z.string().optional(),
-		errorData: z.unknown().optional(),
+export const QueryBatchResultSchema = z.discriminatedUnion('status', [
+	z.object({
+		status: z.literal('success'),
+		value: z.json(),
 		logLines: z.array(z.string()).optional(),
-	})
-	.passthrough();
-
-const ExecuteQueryBatchResponseSchema = z.array(QueryBatchResultSchema);
-
-export const QueryTimestampResponseSchema = z
-	.object({
-		status: z.enum(['success', 'error']).optional(),
-		value: z.unknown().optional(),
-		ts: z.unknown().optional(),
-		errorMessage: z.string().optional(),
+	}),
+	z.object({
+		status: z.literal('error'),
+		errorMessage: z.string(),
+		errorData: z.json().optional(),
 		logLines: z.array(z.string()).optional(),
-	})
-	.passthrough();
+	}),
+]);
+
+const ExecuteQueryBatchResponseSchema = z.object({
+	results: z.array(QueryBatchResultSchema),
+});
+
+export const QueryTimestampResponseSchema = z.object({
+	ts: z.string(),
+});
+
+const LogStreamStatusSchema = z.object({
+	type: z.enum(['pending', 'restarting', 'failed', 'active', 'deleting']),
+	reason: z.string().optional(),
+});
 
 export const LogStreamSchema = z
 	.object({
-		id: ConvexIdSchema,
-		destination: z.string().optional(),
-		config: z.record(z.string(), z.unknown()).optional(),
+		id: z.string(),
+		logStreamType: z.enum([
+			'datadog',
+			'webhook',
+			'axiom',
+			'sentry',
+			'postHogLogs',
+			'postHogErrorTracking',
+			's3Export',
+		]),
+		status: LogStreamStatusSchema,
+		topics: z.array(z.string()).nullable().optional(),
 	})
 	.passthrough();
 
-const LogStreamsListResponseSchema = z.array(LogStreamSchema).or(
-	z
-		.object({
-			status: z.string().optional(),
-			value: z.array(LogStreamSchema).optional(),
-		})
-		.passthrough(),
-);
+const LogStreamsListResponseSchema = z.array(LogStreamSchema);
 
 // ── Endpoint maps ────────────────────────────────────────────────────────────
 

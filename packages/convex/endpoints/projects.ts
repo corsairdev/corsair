@@ -91,21 +91,11 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 };
 
 export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
-	// unknown: create payload fields vary by optional provisioning inputs.
-	const body: Record<string, unknown> = { projectName: input.projectName };
-	if (input.deploymentType !== undefined) {
-		body.deploymentType = input.deploymentType;
-	}
-	if (input.deploymentClass !== undefined) {
-		body.deploymentClass = input.deploymentClass;
-	}
-	if (input.deploymentRegion !== undefined) {
-		body.deploymentRegion = input.deploymentRegion;
-	}
+	const { team_id, ...body } = input;
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectCreate']
-	>(`/teams/${managementPath(input.team_id)}/create_project`, ctx.key, {
+	>(`/teams/${managementPath(team_id)}/create_project`, ctx.key, {
 		method: 'POST',
 		body,
 	});
@@ -133,11 +123,13 @@ export const deleteProject: ConvexEndpoints['projectDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeConvexRequest<
-		ConvexEndpointOutputs['projectDelete']
-	>(`/projects/${managementPath(input.project_id)}/delete`, ctx.key, {
-		method: 'POST',
-	});
+	await makeConvexRequest<void>(
+		`/projects/${managementPath(input.project_id)}/delete`,
+		ctx.key,
+		{
+			method: 'POST',
+		},
+	);
 
 	const { projects, deployments, deployKeys } = ctx.db;
 	if (projects) {
@@ -169,7 +161,7 @@ export const deleteProject: ConvexEndpoints['projectDelete'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return { success: true };
 };
 
 export const ProjectsEndpoints = {

@@ -122,6 +122,8 @@ export type ExternalConvexPlugin<T extends ConvexPluginOptions> =
 	BaseConvexPlugin<T>;
 
 export function convex<const T extends ConvexPluginOptions>(
+	// Safe: every field of ConvexPluginOptions is optional, so {} is a valid value.
+	// A narrower type is not practical because T is the caller's literal options type.
 	incomingOptions: ConvexPluginOptions & T = {} as ConvexPluginOptions & T,
 ): ExternalConvexPlugin<T> {
 	const options = {

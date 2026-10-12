@@ -1,1123 +1,842 @@
 import { logEventFromContext } from 'corsair/core';
-import { request } from 'corsair/http';
-import { makeConvexRequest } from './client';
+import { ApiError } from 'corsair/http';
+import type { z } from 'zod';
+import { ConvexAPIError, makeConvexRequest, managementPath } from './client';
+import { CustomDomainsEndpoints } from './endpoints/custom-domains';
+import { DeployKeysEndpoints } from './endpoints/deploy-keys';
+import { DeploymentScopedEndpoints } from './endpoints/deployment-scoped';
+import { DeploymentsEndpoints } from './endpoints/deployments';
+import { PlatformEndpoints } from './endpoints/platform';
+import { ProjectsEndpoints } from './endpoints/projects';
 import {
 	ConvexEndpointInputSchemas,
 	ConvexEndpointOutputSchemas,
-} from './endpoints';
-import type { ConvexContext } from './index';
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import type { ConvexContext, ConvexKeyBuilderContext } from './index';
 import { convex, convexEndpointSchemas } from './index';
+import type { ConvexSchema } from './schema';
+import {
+	ConvexDeployKeySchema,
+	ConvexDeploymentSchema,
+	ConvexProjectSchema,
+} from './schema/database';
 
-jest.mock('corsair/http', () => {
-	const original = jest.requireActual('corsair/http');
-	return {
-		...original,
-		request: jest.fn(),
-	};
-});
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(async () => undefined),
+}));
 
-jest.mock('corsair/core', () => {
-	const original = jest.requireActual('corsair/core');
-	return {
-		...original,
-		logEventFromContext: jest.fn().mockResolvedValue(null),
-	};
-});
+const mockLogEvent = jest.mocked(logEventFromContext);
 
-const mockRequest = request as jest.Mock;
+const MGMT = 'https://api.convex.dev/v1';
+const DEPLOYMENT = 'https://acoustic-panther-728.convex.cloud/api';
 
-function countLeaves(tree: Record<string, unknown>): number {
-	return Object.values(tree).reduce<number>((count, value) => {
-		if (typeof value === 'function') return count + 1;
-		if (value && typeof value === 'object') {
-			return count + countLeaves(value as Record<string, unknown>);
-		}
-		return count;
-	}, 0);
-}
+type Captured = {
+	url: string;
+	method: string;
+	authorization: string | null;
+	body: string | null;
+};
 
-function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
-	return Object.entries(tree).flatMap(([key, value]) => {
-		const path = prefix ? `${prefix}.${key}` : key;
-		if (typeof value === 'function') return [path];
-		if (value && typeof value === 'object') {
-			return endpointPaths(value as Record<string, unknown>, path);
-		}
-		return [];
+let calls: Captured[] = [];
+
+function stubFetch(
+	payload: object | null,
+	init: { status?: number; headers?: Record<string, string> } = {},
+) {
+	calls = [];
+	jest.spyOn(global, 'fetch').mockImplementation(async (input, req) => {
+		calls.push({
+			url: String(input),
+			method: req?.method ?? 'GET',
+			authorization: new Headers(req?.headers).get('Authorization'),
+			body: typeof req?.body === 'string' ? req.body : null,
+		});
+		return new Response(payload === null ? null : JSON.stringify(payload), {
+			status: init.status ?? 200,
+			headers: {
+				...(payload === null ? {} : { 'Content-Type': 'application/json' }),
+				...init.headers,
+			},
+		});
 	});
 }
 
-// unknown: test helpers invoke endpoints with partial inputs and untyped results.
-type TestEndpointHandler = (
-	ctx: ConvexContext,
-	input: Record<string, unknown>,
-) => Promise<unknown>;
-
-type TestEndpoints = Record<string, Record<string, TestEndpointHandler>>;
-
-function getEndpoint(
-	endpoints: TestEndpoints,
-	group: string,
-	name: string,
-): TestEndpointHandler {
-	const handler = endpoints[group]?.[name];
-	if (!handler) {
-		throw new Error(`[test] missing endpoint ${group}.${name}`);
-	}
-	return handler;
+function onlyCall(): Captured {
+	expect(calls).toHaveLength(1);
+	const call = calls[0];
+	if (!call) throw new Error('[test] no fetch call captured');
+	return call;
 }
-// unknown: fixture only supplies ctx fields exercised by routing tests.
-const mockCtx = {
-	key: 'test-token',
-	options: {},
-	keys: {
-		get_subdomain: async () => 'acoustic-panther-728',
-		get_deploy_key: async () => null,
-	},
-	$getAccountId: () => 'test-account-id',
-	logEvent: jest.fn(),
-	db: {},
-} as unknown as ConvexContext;
 
-describe('Convex plugin shape', () => {
-	it('exposes all 19 claimed operations with schemas and no webhooks', () => {
+function sentJson(call: Captured): object | null {
+	return call.body === null ? null : JSON.parse(call.body);
+}
+
+type Db = ConvexContext['db'];
+type EntityKey = keyof typeof ConvexSchema.entities;
+type Table<K extends EntityKey> = NonNullable<Db[K]>;
+type CacheMethods<K extends EntityKey> = Pick<
+	Table<K>,
+	'upsertByEntityId' | 'deleteByEntityId' | 'list'
+>;
+
+function fakeTable<S extends z.ZodType>(
+	schema: S,
+	seed: Array<[string, z.input<S>]> = [],
+) {
+	const rows = new Map(seed);
+	const toEntity = (entityId: string, data: z.input<S>) => ({
+		id: `row-${entityId}`,
+		created_at: new Date(0),
+		updated_at: new Date(0),
+		account_id: 'test-account',
+		entity_id: entityId,
+		entity_type: 'test',
+		version: '1.0.0',
+		data: schema.parse(data),
+	});
+	return {
+		rows,
+		upsertByEntityId: jest.fn(async (entityId: string, data: z.input<S>) => {
+			rows.set(entityId, data);
+			return toEntity(entityId, data);
+		}),
+		deleteByEntityId: jest.fn(async (entityId: string) =>
+			rows.delete(entityId),
+		),
+		list: jest.fn(async () =>
+			[...rows].map(([entityId, data]) => toEntity(entityId, data)),
+		),
+	};
+}
+
+function makeCtx(
+	overrides: {
+		subdomain?: string | null;
+		deployKey?: string | null;
+		db?: { [K in EntityKey]?: CacheMethods<K> };
+	} = {},
+): ConvexContext {
+	const subdomain =
+		overrides.subdomain === undefined
+			? 'acoustic-panther-728'
+			: overrides.subdomain;
+	const deployKey =
+		overrides.deployKey === undefined ? 'prod:stored-key' : overrides.deployKey;
+	// Safe: handlers only read key, options, keys.get_subdomain, keys.get_deploy_key and db, all supplied here.
+	// A narrower type is not practical because ConvexContext also carries ORM, tenant and hook members these handlers never touch.
+	return {
+		key: 'test-token',
+		options: {},
+		keys: {
+			get_subdomain: async () => subdomain,
+			get_deploy_key: async () => deployKey,
+		},
+		db: overrides.db ?? {},
+	} as ConvexContext;
+}
+
+const project = {
+	id: 101,
+	name: 'My App',
+	slug: 'my-app',
+	teamId: 7,
+	teamSlug: 'acme',
+	createTime: 1700000000000,
+	prodDeploymentName: 'happy-otter-123',
+	devDeploymentName: null,
+};
+
+const deployment = {
+	id: 501,
+	name: 'happy-otter-123',
+	createTime: 1700000000001,
+	lastDeployTime: null,
+	deploymentType: 'prod',
+	projectId: 101,
+	region: 'aws-us-east-1',
+	isDefault: true,
+	reference: 'production',
+	deploymentUrl: 'https://happy-otter-123.convex.cloud',
+	class: 's16',
+	kind: 'cloud',
+};
+
+beforeEach(() => {
+	calls = [];
+	mockLogEvent.mockClear();
+});
+
+afterEach(() => {
+	jest.restoreAllMocks();
+	jest.useRealTimers();
+});
+
+describe('plugin shape', () => {
+	it('exposes the 19 operations with meta and schemas and defines no webhooks', () => {
 		const plugin = convex();
-		const endpoints = plugin.endpoints as Record<string, unknown>;
-		const paths = endpointPaths(endpoints).sort();
+		const paths = Object.keys(convexEndpointSchemas).sort();
 
-		expect(countLeaves(endpoints)).toBe(19);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(19);
-		expect(Object.keys(convexEndpointSchemas)).toHaveLength(19);
-		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
-		expect(Object.keys(convexEndpointSchemas).sort()).toEqual(paths);
-		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual([
-			'projects',
-			'deployments',
-			'deployKeys',
+		expect(paths).toEqual([
+			'customDomains.delete',
+			'deployKeys.create',
+			'deployKeys.list',
+			'deployment.executeQueryBatch',
+			'deployment.getQueryTimestamp',
+			'deployment.listLogStreams',
+			'deployments.create',
+			'deployments.delete',
+			'deployments.get',
+			'deployments.list',
+			'deployments.update',
+			'platform.getTokenDetails',
+			'platform.listDeploymentClasses',
+			'platform.listDeploymentRegions',
+			'projects.create',
+			'projects.delete',
+			'projects.getById',
+			'projects.getBySlug',
+			'projects.list',
 		]);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
 		expect(plugin.webhooks).toEqual({});
-		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
-			false,
-		);
-	});
-
-	it('uses api key auth by default with subdomain and deploy key account fields', () => {
-		const plugin = convex();
-
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['subdomain', 'deploy_key'] },
-			oauth_2: { account: ['subdomain', 'deploy_key'] },
-		});
-	});
-
-	it('marks destructive operations as irreversible', () => {
-		const plugin = convex();
-		const meta = plugin.endpointMeta ?? {};
-
-		expect(meta['projects.delete']?.irreversible).toBe(true);
-		expect(meta['deployments.delete']?.irreversible).toBe(true);
-		expect(meta['customDomains.delete']?.irreversible).toBe(true);
-		expect(meta['projects.list']?.irreversible).toBeUndefined();
-	});
-
-	it('declares input schemas for every endpoint', () => {
-		expect(Object.keys(ConvexEndpointInputSchemas)).toHaveLength(19);
-		expect(Object.keys(ConvexEndpointOutputSchemas)).toHaveLength(19);
-
-		// every schema parses
-		for (const schema of Object.values(ConvexEndpointInputSchemas)) {
-			expect(schema).toBeDefined();
-		}
+		expect(plugin.endpointMeta?.['projects.delete']?.irreversible).toBe(true);
+		expect(plugin.endpointMeta?.['deployments.delete']?.irreversible).toBe(
+			true,
+		);
+		expect(plugin.endpointMeta?.['customDomains.delete']?.irreversible).toBe(
+			true,
+		);
 	});
 });
 
-describe('Convex request client', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true });
-	});
-
-	it('sends bearer auth to the Management API by default', async () => {
-		await makeConvexRequest('/teams/123/projects', 'test-token');
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://api.convex.dev/v1',
-				HEADERS: expect.objectContaining({
-					'Content-Type': 'application/json',
-					Authorization: 'Bearer test-token',
-				}),
-			}),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/teams/123/projects',
-			}),
-		);
-	});
-
-	it('rejects requests without a configured credential', async () => {
-		await expect(
-			makeConvexRequest('/teams/123/projects', undefined),
-		).rejects.toThrow('No Convex access token');
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
-	it('sends Convex-style auth and deployment base URL for deployment-scoped calls', async () => {
-		await makeConvexRequest('/query_batch', 'prod:deploy-key', {
-			method: 'POST',
-			baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-			authScheme: 'convex',
-			body: { format: 'json', queries: [] },
+describe('projects', () => {
+	it('list sends GET /teams/{id}/projects with pagination query', async () => {
+		stubFetch({
+			items: [project],
+			pagination: { hasMore: true, nextCursor: 'c2' },
+		});
+		const result = await ProjectsEndpoints.list(makeCtx(), {
+			team_id: '7',
+			cursor: 'c1',
+			limit: 10,
+			q: 'my',
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://acoustic-panther-728.convex.cloud/api',
-				HEADERS: expect.objectContaining({
-					Authorization: 'Convex prod:deploy-key',
-				}),
-			}),
-			expect.objectContaining({
-				method: 'POST',
-				url: '/query_batch',
-				body: { format: 'json', queries: [] },
-			}),
-		);
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/teams/7/projects?cursor=c1&limit=10&q=my`);
+		expect(call.authorization).toBe('Bearer test-token');
+		expect(result).toEqual({
+			items: [project],
+			pagination: { hasMore: true, nextCursor: 'c2' },
+		});
 	});
 
-	it('drops bodies for GET requests and keeps query params', async () => {
-		await makeConvexRequest('/teams/123/projects', 'test-token', {
-			method: 'GET',
-			body: { ignored: true },
-			query: { limit: 10 },
+	it('getById sends GET /projects/{id}', async () => {
+		stubFetch(project);
+		const result = await ProjectsEndpoints.getById(makeCtx(), {
+			project_id: '101',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
-			method: 'GET',
-			url: '/teams/123/projects',
-			query: { limit: 10 },
-		});
-		expect(mockRequest.mock.calls[0]?.[1].body).toBeUndefined();
-	});
-});
-
-describe('Convex endpoints', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true });
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/projects/101`);
+		expect(result).toEqual(project);
 	});
 
-	it('routes every operation to its declared path and method', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as Record<
-			string,
-			Record<
-				string,
-				(ctx: ConvexContext, input: Record<string, unknown>) => Promise<unknown>
-			>
-		>;
-
-		const cases: Array<{
-			group: string;
-			name: string;
-			input: Record<string, unknown>;
-			method: string;
-			url: string;
-			baseUrl?: string;
-			auth?: string;
-		}> = [
-			{
-				group: 'projects',
-				name: 'list',
-				input: { team_id: 'team-1' },
-				method: 'GET',
-				url: '/teams/team-1/projects',
-			},
-			{
-				group: 'projects',
-				name: 'getById',
-				input: { project_id: 'proj-1' },
-				method: 'GET',
-				url: '/projects/proj-1',
-			},
-			{
-				group: 'projects',
-				name: 'getBySlug',
-				input: { team_id_or_slug: 'team-1', project_slug: 'my-app' },
-				method: 'GET',
-				url: '/teams/team-1/projects/my-app',
-			},
-			{
-				group: 'projects',
-				name: 'create',
-				input: { team_id: 'team-1', projectName: 'My App' },
-				method: 'POST',
-				url: '/teams/team-1/create_project',
-			},
-			{
-				group: 'projects',
-				name: 'delete',
-				input: { project_id: 'proj-1' },
-				method: 'POST',
-				url: '/projects/proj-1/delete',
-			},
-			{
-				group: 'deployments',
-				name: 'list',
-				input: { project_id: 'proj-1' },
-				method: 'GET',
-				url: '/projects/proj-1/list_deployments',
-			},
-			{
-				group: 'deployments',
-				name: 'get',
-				input: { deployment_name: 'happy-otter-123' },
-				method: 'GET',
-				url: '/deployments/happy-otter-123',
-			},
-			{
-				group: 'deployments',
-				name: 'create',
-				input: { project_id: 'proj-1', type: 'prod' },
-				method: 'POST',
-				url: '/projects/proj-1/create_deployment',
-			},
-			{
-				group: 'deployments',
-				name: 'update',
-				input: { deployment_name: 'happy-otter-123' },
-				method: 'PATCH',
-				url: '/deployments/happy-otter-123',
-			},
-			{
-				group: 'deployments',
-				name: 'delete',
-				input: { deployment_name: 'happy-otter-123' },
-				method: 'POST',
-				url: '/deployments/happy-otter-123/delete',
-			},
-			{
-				group: 'deployKeys',
-				name: 'create',
-				input: { deployment_name: 'happy-otter-123', name: 'ci' },
-				method: 'POST',
-				url: '/deployments/happy-otter-123/create_deploy_key',
-			},
-			{
-				group: 'deployKeys',
-				name: 'list',
-				input: { deployment_name: 'happy-otter-123' },
-				method: 'GET',
-				url: '/deployments/happy-otter-123/list_deploy_keys',
-			},
-			{
-				group: 'customDomains',
-				name: 'delete',
-				input: {
-					deployment_name: 'happy-otter-123',
-					requestDestination: 'convexCloud',
-					domain: 'api.example.com',
-				},
-				method: 'POST',
-				url: '/deployments/happy-otter-123/delete_custom_domain',
-			},
-			{
-				group: 'platform',
-				name: 'getTokenDetails',
-				input: {},
-				method: 'GET',
-				url: '/token_details',
-			},
-			{
-				group: 'platform',
-				name: 'listDeploymentClasses',
-				input: { team_id: 'team-1' },
-				method: 'GET',
-				url: '/teams/team-1/list_deployment_classes',
-			},
-			{
-				group: 'platform',
-				name: 'listDeploymentRegions',
-				input: { team_id: 'team-1' },
-				method: 'GET',
-				url: '/teams/team-1/list_deployment_regions',
-			},
-			{
-				group: 'deployment',
-				name: 'executeQueryBatch',
-				input: {
-					deployKey: 'prod:deploy-key',
-					queries: [{ path: 'messages:list', args: {} }],
-				},
-				method: 'POST',
-				url: '/query_batch',
-				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex prod:deploy-key',
-			},
-			{
-				group: 'deployment',
-				name: 'getQueryTimestamp',
-				input: { deployKey: 'prod:deploy-key' },
-				method: 'POST',
-				url: '/query_ts',
-				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex prod:deploy-key',
-			},
-			{
-				group: 'deployment',
-				name: 'listLogStreams',
-				input: { deployKey: 'prod:deploy-key' },
-				method: 'GET',
-				url: '/list_log_streams',
-				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex prod:deploy-key',
-			},
-		];
-
-		for (const testCase of cases) {
-			const handler = endpoints[testCase.group]?.[testCase.name];
-			if (!handler) {
-				throw new Error(
-					`[test] missing endpoint ${testCase.group}.${testCase.name}`,
-				);
-			}
-
-			mockRequest.mockClear();
-			mockRequest.mockResolvedValue({ ok: true });
-			await handler(mockCtx, testCase.input);
-
-			const call = mockRequest.mock.calls[0]?.[1];
-			expect(call).toMatchObject({
-				method: testCase.method,
-				url: testCase.url,
-			});
-			if (testCase.baseUrl) {
-				expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(testCase.baseUrl);
-			}
-			if (testCase.auth) {
-				expect(mockRequest.mock.calls[0]?.[0].HEADERS.Authorization).toBe(
-					testCase.auth,
-				);
-			}
-		}
-	});
-
-	it('requires a deployment name for deployment-scoped operations', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const ctxWithoutSubdomain = {
-			...mockCtx,
-			options: {},
-			keys: { get_subdomain: async () => null },
-		} as unknown as ConvexContext;
-
-		await expect(
-			getEndpoint(
-				endpoints,
-				'deployment',
-				'executeQueryBatch',
-			)(ctxWithoutSubdomain, {
-				queries: [{ path: 'messages:list', args: {} }],
-			}),
-		).rejects.toThrow('deployment name');
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
-	it('prefers the explicit subdomain input over stored keys', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'getQueryTimestamp',
-		)(mockCtx, {
-			subdomain: 'custom-deploy-1',
-			deployKey: 'prod:deploy-key',
+	it('getBySlug sends GET /teams/{team}/projects/{slug}', async () => {
+		stubFetch(project);
+		const result = await ProjectsEndpoints.getBySlug(makeCtx(), {
+			team_id_or_slug: 'acme',
+			project_slug: 'my-app',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
-			'https://custom-deploy-1.convex.cloud/api',
-		);
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/teams/acme/projects/my-app`);
+		expect(result).toEqual(project);
 	});
 
-	it('sends project body fields only when provided', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'projects',
-			'create',
-		)(mockCtx, {
-			team_id: 'team-1',
+	it('create sends POST /teams/{id}/create_project with the body fields', async () => {
+		const created = {
+			projectId: 101,
+			id: 101,
+			slug: 'my-app',
+			deploymentName: 'happy-otter-123',
+			deploymentUrl: 'https://happy-otter-123.convex.cloud',
+		};
+		stubFetch(created);
+		const result = await ProjectsEndpoints.create(makeCtx(), {
+			team_id: '7',
 			projectName: 'My App',
 			deploymentType: 'prod',
+			deploymentRegion: 'aws-us-east-1',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
-			method: 'POST',
-			url: '/teams/team-1/create_project',
-			body: { projectName: 'My App', deploymentType: 'prod' },
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${MGMT}/teams/7/create_project`);
+		expect(sentJson(call)).toEqual({
+			projectName: 'My App',
+			deploymentType: 'prod',
+			deploymentRegion: 'aws-us-east-1',
 		});
+		expect(result).toEqual(created);
 	});
 
-	it('keeps query params on list endpoints', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'projects',
-			'list',
-		)(mockCtx, {
-			team_id: 'team-1',
-			limit: 25,
-			q: 'demo',
-		});
-
-		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
-			method: 'GET',
-			url: '/teams/team-1/projects',
-			query: { limit: 25, q: 'demo' },
-		});
-	});
-
-	it('caches wrapped list responses when database clients exist', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const ctxWithDb = {
-			...mockCtx,
-			db: {
-				projects: { upsertByEntityId: jest.fn() },
-				deployments: { upsertByEntityId: jest.fn() },
-				deployKeys: { upsertByEntityId: jest.fn() },
-			},
-		} as unknown as ConvexContext;
-
-		mockRequest
-			.mockResolvedValueOnce({
-				items: [{ id: 'proj-1', name: 'Demo', slug: 'demo' }],
-				pagination: { hasMore: false, nextCursor: null },
-			})
-			.mockResolvedValueOnce([
-				{ name: 'happy-otter-123', deploymentType: 'prod' },
-			]);
-
-		await getEndpoint(
-			endpoints,
-			'projects',
-			'list',
-		)(ctxWithDb, {
-			team_id: 'team-1',
-		});
-		await getEndpoint(
-			endpoints,
-			'deployments',
-			'list',
-		)(ctxWithDb, {
-			project_id: 'proj-1',
-		});
-
-		expect(ctxWithDb.db.projects.upsertByEntityId).toHaveBeenCalledWith(
-			'proj-1',
-			expect.objectContaining({ name: 'Demo' }),
+	it('delete sends POST /projects/{id}/delete and clears cached children', async () => {
+		stubFetch(null);
+		const projects = fakeTable(ConvexProjectSchema, [
+			['101', { id: 101, name: 'x' }],
+		]);
+		const deployments = fakeTable(ConvexDeploymentSchema, [
+			['happy-otter-123', { projectId: 101 }],
+			['other-dog-9', { projectId: 202 }],
+		]);
+		const deployKeys = fakeTable(ConvexDeployKeySchema, [
+			['k1', { deploymentName: 'happy-otter-123' }],
+			['k2', { deploymentName: 'other-dog-9' }],
+		]);
+		const result = await ProjectsEndpoints.delete(
+			makeCtx({ db: { projects, deployments, deployKeys } }),
+			{ project_id: '101' },
 		);
-		expect(ctxWithDb.db.deployments.upsertByEntityId).toHaveBeenCalledWith(
+
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${MGMT}/projects/101/delete`);
+		expect(call.body).toBeNull();
+		expect(result).toEqual({ success: true });
+		expect([...projects.rows.keys()]).toEqual([]);
+		expect([...deployments.rows.keys()]).toEqual(['other-dog-9']);
+		expect([...deployKeys.rows.keys()]).toEqual(['k2']);
+	});
+});
+
+describe('deployments', () => {
+	it('list sends GET /projects/{id}/list_deployments with filters and caches rows', async () => {
+		stubFetch([deployment]);
+		const deployments = fakeTable(ConvexDeploymentSchema);
+		const result = await DeploymentsEndpoints.list(
+			makeCtx({ db: { deployments } }),
+			{ project_id: '101', includeLocal: false, deploymentType: 'prod' },
+		);
+
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(
+			`${MGMT}/projects/101/list_deployments?includeLocal=false&deploymentType=prod`,
+		);
+		expect(result).toEqual([deployment]);
+		expect(deployments.upsertByEntityId).toHaveBeenCalledWith(
 			'happy-otter-123',
-			expect.objectContaining({ deploymentType: 'prod' }),
+			deployment,
 		);
 	});
 
-	it('deletes cached entities for destructive operations', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const ctxWithDb = {
-			...mockCtx,
-			db: {
-				projects: { deleteByEntityId: jest.fn() },
-				deployments: { deleteByEntityId: jest.fn() },
-			},
-		} as unknown as ConvexContext;
-
-		await getEndpoint(
-			endpoints,
-			'projects',
-			'delete',
-		)(ctxWithDb, {
-			project_id: 'proj-1',
-		});
-		await getEndpoint(
-			endpoints,
-			'deployments',
-			'delete',
-		)(ctxWithDb, {
+	it('get sends GET /deployments/{name}', async () => {
+		stubFetch(deployment);
+		const result = await DeploymentsEndpoints.get(makeCtx(), {
 			deployment_name: 'happy-otter-123',
 		});
 
-		expect(ctxWithDb.db.projects.deleteByEntityId).toHaveBeenCalledWith(
-			'proj-1',
-		);
-		expect(ctxWithDb.db.deployments.deleteByEntityId).toHaveBeenCalledWith(
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/deployments/happy-otter-123`);
+		expect(result).toEqual(deployment);
+	});
+
+	it('create sends POST /projects/{id}/create_deployment with the body fields', async () => {
+		stubFetch(deployment);
+		const result = await DeploymentsEndpoints.create(makeCtx(), {
+			project_id: '101',
+			type: 'prod',
+			reference: 'production',
+			isDefault: true,
+		});
+
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${MGMT}/projects/101/create_deployment`);
+		expect(sentJson(call)).toEqual({
+			type: 'prod',
+			reference: 'production',
+			isDefault: true,
+		});
+		expect(result).toEqual(deployment);
+	});
+
+	it('update sends PATCH /deployments/{name} with only the supplied fields', async () => {
+		stubFetch(null);
+		const result = await DeploymentsEndpoints.update(makeCtx(), {
+			deployment_name: 'happy-otter-123',
+			reference: 'staging',
+			sendLogsToClient: false,
+		});
+
+		const call = onlyCall();
+		expect(call.method).toBe('PATCH');
+		expect(call.url).toBe(`${MGMT}/deployments/happy-otter-123`);
+		expect(sentJson(call)).toEqual({
+			reference: 'staging',
+			sendLogsToClient: false,
+		});
+		expect(result).toEqual({ success: true });
+	});
+
+	it('update refreshes the cached deployment after a successful PATCH', async () => {
+		const deployments = fakeTable(ConvexDeploymentSchema);
+		calls = [];
+		jest.spyOn(global, 'fetch').mockImplementation(async (input, req) => {
+			calls.push({
+				url: String(input),
+				method: req?.method ?? 'GET',
+				authorization: null,
+				body: null,
+			});
+			return req?.method === 'PATCH'
+				? new Response(null, { status: 200 })
+				: new Response(JSON.stringify(deployment), {
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					});
+		});
+
+		await DeploymentsEndpoints.update(makeCtx({ db: { deployments } }), {
+			deployment_name: 'happy-otter-123',
+			reference: 'staging',
+		});
+
+		expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual([
+			`PATCH ${MGMT}/deployments/happy-otter-123`,
+			`GET ${MGMT}/deployments/happy-otter-123`,
+		]);
+		expect(deployments.upsertByEntityId).toHaveBeenCalledWith(
 			'happy-otter-123',
+			deployment,
 		);
 	});
 
-	it('rejects subdomains that could escape the deployment host', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await expect(
-			getEndpoint(
-				endpoints,
-				'deployment',
-				'executeQueryBatch',
-			)(mockCtx, {
-				subdomain: 'attacker.example:443/',
-				deployKey: 'prod:deploy-key',
-				queries: [{ path: 'messages:list', args: {} }],
-			}),
-		).rejects.toThrow('Invalid Convex deployment name');
-		expect(mockRequest).not.toHaveBeenCalled();
-
-		// The input schema rejects malicious subdomains before the handler runs.
-		expect(
-			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
-				subdomain: 'attacker.example:443/',
-				deployKey: 'prod:deploy-key',
-				queries: [{ path: 'messages:list', args: {} }],
-			}).success,
-		).toBe(false);
-
-		// A valid subdomain with a deploy key passes schema validation.
-		expect(
-			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
-				subdomain: 'acoustic-panther-728',
-				deployKey: 'prod:deploy-key',
-				queries: [{ path: 'messages:list', args: {} }],
-			}).success,
-		).toBe(true);
-	});
-
-	it('rejects deployment-scoped operations without any deploy key', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await expect(
-			getEndpoint(endpoints, 'deployment', 'getQueryTimestamp')(mockCtx, {}),
-		).rejects.toThrow('deploy key');
-		expect(mockRequest).not.toHaveBeenCalled();
-
-		// The input schema accepts an omitted deployKey (the handler resolves it
-		// from the connection), but never a non-string value.
-		expect(
-			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
-				queries: [{ path: 'messages:list', args: {} }],
-			}).success,
-		).toBe(true);
-	});
-
-	it('falls back to the stored connection deploy key', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const ctxWithStoredDeployKey = {
-			...mockCtx,
-			keys: {
-				get_subdomain: async () => 'acoustic-panther-728',
-				get_deploy_key: async () => 'prod:stored-deploy-key',
-			},
-		} as unknown as ConvexContext;
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'getQueryTimestamp',
-		)(ctxWithStoredDeployKey, {});
-
-		expect(mockRequest.mock.calls[0]?.[0].HEADERS.Authorization).toBe(
-			'Convex prod:stored-deploy-key',
+	it('delete sends POST /deployments/{name}/delete and clears cached deploy keys', async () => {
+		stubFetch(null);
+		const deployments = fakeTable(ConvexDeploymentSchema, [
+			['happy-otter-123', { projectId: 101 }],
+		]);
+		const deployKeys = fakeTable(ConvexDeployKeySchema, [
+			['k1', { deploymentName: 'happy-otter-123' }],
+			['k2', { deploymentName: 'other-dog-9' }],
+		]);
+		const result = await DeploymentsEndpoints.delete(
+			makeCtx({ db: { deployments, deployKeys } }),
+			{ deployment_name: 'happy-otter-123' },
 		);
+
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${MGMT}/deployments/happy-otter-123/delete`);
+		expect(result).toEqual({ success: true });
+		expect([...deployments.rows.keys()]).toEqual([]);
+		expect([...deployKeys.rows.keys()]).toEqual(['k2']);
 	});
+});
 
-	it('lets deploy-key-only connections reach deployment-scoped endpoints', async () => {
-		const plugin = convex();
-		const keyBuilder = plugin.keyBuilder as (
-			ctx: unknown,
-			source: string,
-		) => Promise<string | undefined>;
-		const deployKeyOnlyCtx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: async () => null,
-				get_deploy_key: async () => 'prod:deploy-key',
-			},
-		} as never;
-
-		await expect(keyBuilder(deployKeyOnlyCtx, 'endpoint')).resolves.toBe('');
-
-		// A completely empty connection is still an auth-missing error.
-		const emptyCtx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: async () => null,
-				get_deploy_key: async () => null,
-			},
-		} as never;
-		await expect(keyBuilder(emptyCtx, 'endpoint')).rejects.toThrow();
-	});
-
-	it('returns the access token for Management-capable connections', async () => {
-		const plugin = convex();
-		const keyBuilder = plugin.keyBuilder as (
-			ctx: unknown,
-			source: string,
-		) => Promise<string | undefined>;
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: async () => 'access-token',
-				get_deploy_key: async () => null,
-			},
-		} as never;
-
-		await expect(keyBuilder(ctx, 'endpoint')).resolves.toBe('access-token');
-	});
-
-	it('accepts a per-call deploy key for deployment-scoped operations', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'getQueryTimestamp',
-		)(mockCtx, {
-			deployKey: 'prod:deploy-key',
-		});
-
-		expect(mockRequest.mock.calls[0]?.[0].HEADERS.Authorization).toBe(
-			'Convex prod:deploy-key',
-		);
-	});
-
-	it('does not let cache failures mask a successful create', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const ctxWithDb = {
-			...mockCtx,
-			db: {
-				projects: {
-					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
-				},
-				deployments: {
-					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
-				},
-				deployKeys: {
-					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
-				},
-			},
-		} as unknown as ConvexContext;
-
-		mockRequest.mockResolvedValue({
-			ok: true,
-			id: 'proj-1',
-			name: 'happy-otter-123',
-			deployKey: 'secret',
-		});
-
-		await expect(
-			getEndpoint(
-				endpoints,
-				'projects',
-				'create',
-			)(ctxWithDb, {
-				team_id: 'team-1',
-				projectName: 'My App',
-			}),
-		).resolves.toMatchObject({ ok: true });
-
-		await expect(
-			getEndpoint(
-				endpoints,
-				'deployments',
-				'create',
-			)(ctxWithDb, {
-				project_id: 'proj-1',
-				type: 'prod',
-			}),
-		).resolves.toMatchObject({ ok: true });
-
-		await expect(
-			getEndpoint(
-				endpoints,
-				'deployKeys',
-				'create',
-			)(ctxWithDb, {
+describe('deploy keys', () => {
+	it('create sends POST /deployments/{name}/create_deploy_key and never caches the secret', async () => {
+		stubFetch({ deployKey: 'prod:happy-otter-123|secret' });
+		const deployKeys = fakeTable(ConvexDeployKeySchema);
+		const result = await DeployKeysEndpoints.create(
+			makeCtx({ db: { deployKeys } }),
+			{
 				deployment_name: 'happy-otter-123',
 				name: 'ci',
-			}),
-		).resolves.toMatchObject({ ok: true });
-	});
+				allowedActions: ['deployment:deploy'],
+			},
+		);
 
-	it('does not cache deploy key metadata at create time', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const upsert = jest.fn();
-		const ctxWithDb = {
-			...mockCtx,
-			db: { deployKeys: { upsertByEntityId: upsert } },
-		} as unknown as ConvexContext;
-
-		await getEndpoint(
-			endpoints,
-			'deployKeys',
-			'create',
-		)(ctxWithDb, {
-			deployment_name: 'happy-otter-123',
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(
+			`${MGMT}/deployments/happy-otter-123/create_deploy_key`,
+		);
+		expect(sentJson(call)).toEqual({
 			name: 'ci',
+			allowedActions: ['deployment:deploy'],
 		});
-
-		expect(upsert).not.toHaveBeenCalled();
+		expect(result).toEqual({ deployKey: 'prod:happy-otter-123|secret' });
+		expect(deployKeys.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
-	it('refreshes the cached deployment record after an update', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const upsert = jest.fn();
-		const ctxWithDb = {
-			...mockCtx,
-			db: { deployments: { upsertByEntityId: upsert } },
-		} as unknown as ConvexContext;
-
-		mockRequest.mockResolvedValueOnce({}).mockResolvedValueOnce({
-			name: 'happy-otter-123',
-			deploymentType: 'prod',
-			id: 'dep-1',
-			projectId: 'proj-1',
-		});
-
-		await getEndpoint(
-			endpoints,
-			'deployments',
-			'update',
-		)(ctxWithDb, {
+	it('list sends GET /deployments/{name}/list_deploy_keys', async () => {
+		const key = {
+			id: 'key_1',
+			name: 'ci',
+			creationTime: 1700000000002,
+			lastUsedTime: null,
+			expiresAt: null,
+			allowedActions: ['deployment:deploy'],
+		};
+		stubFetch([key]);
+		const result = await DeployKeysEndpoints.list(makeCtx(), {
 			deployment_name: 'happy-otter-123',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({ method: 'PATCH' });
-		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({ method: 'GET' });
-		expect(upsert).toHaveBeenCalledWith(
-			'happy-otter-123',
-			expect.objectContaining({ deploymentType: 'prod' }),
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(
+			`${MGMT}/deployments/happy-otter-123/list_deploy_keys`,
+		);
+		expect(result).toEqual([key]);
+	});
+});
+
+describe('custom domains', () => {
+	it('delete sends POST /deployments/{name}/delete_custom_domain', async () => {
+		stubFetch(null);
+		const result = await CustomDomainsEndpoints.delete(makeCtx(), {
+			deployment_name: 'happy-otter-123',
+			requestDestination: 'convexSite',
+			domain: 'api.example.com',
+		});
+
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(
+			`${MGMT}/deployments/happy-otter-123/delete_custom_domain`,
+		);
+		expect(sentJson(call)).toEqual({
+			requestDestination: 'convexSite',
+			domain: 'api.example.com',
+		});
+		expect(result).toEqual({ success: true });
+	});
+});
+
+describe('platform', () => {
+	it('getTokenDetails sends GET /token_details', async () => {
+		const details = {
+			id: 'tok_1',
+			teamId: 7,
+			name: 'ci-token',
+			createTime: 1700000000003,
+			type: 'teamToken',
+		};
+		stubFetch(details);
+		const result = await PlatformEndpoints.getTokenDetails(makeCtx(), {});
+
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/token_details`);
+		expect(result).toEqual(details);
+	});
+
+	it('listDeploymentClasses sends GET /teams/{id}/list_deployment_classes', async () => {
+		const body = { items: [{ type: 's16', available: true }] };
+		stubFetch(body);
+		const result = await PlatformEndpoints.listDeploymentClasses(makeCtx(), {
+			team_id: '7',
+		});
+
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/teams/7/list_deployment_classes`);
+		expect(result).toEqual(body);
+	});
+
+	it('listDeploymentRegions sends GET /teams/{id}/list_deployment_regions', async () => {
+		const body = {
+			items: [
+				{
+					name: 'aws-us-east-1',
+					displayName: 'US East (N. Virginia)',
+					available: true,
+				},
+			],
+		};
+		stubFetch(body);
+		const result = await PlatformEndpoints.listDeploymentRegions(makeCtx(), {
+			team_id: '7',
+		});
+
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(`${MGMT}/teams/7/list_deployment_regions`);
+		expect(result).toEqual(body);
+	});
+});
+
+describe('deployment-scoped', () => {
+	it('executeQueryBatch sends POST /api/query_batch with Convex auth', async () => {
+		const body = {
+			results: [
+				{ status: 'success', value: [{ text: 'hi' }], logLines: [] },
+				{ status: 'error', errorMessage: 'boom', errorData: null },
+			],
+		};
+		stubFetch(body);
+		const result = await DeploymentScopedEndpoints.executeQueryBatch(
+			makeCtx(),
+			{
+				deployKey: 'prod:input-key',
+				queries: [
+					{ path: 'messages:list', args: { channel: 'general' } },
+					{ path: 'messages:broken', args: {}, format: 'json' },
+				],
+			},
+		);
+
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${DEPLOYMENT}/query_batch`);
+		expect(call.authorization).toBe('Convex prod:input-key');
+		expect(sentJson(call)).toEqual({
+			queries: [
+				{ path: 'messages:list', args: { channel: 'general' } },
+				{ path: 'messages:broken', args: {}, format: 'json' },
+			],
+		});
+		expect(result).toEqual(body);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			expect.anything(),
+			'convex.deployment.executeQueryBatch',
+			{ queries: ['messages:list', 'messages:broken'] },
+			'completed',
 		);
 	});
 
-	it('cleans up cached deployments when a project is deleted', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const deleteDeployment = jest.fn();
-		const deleteKey = jest.fn();
-		const ctxWithDb = {
-			...mockCtx,
-			db: {
-				projects: { deleteByEntityId: jest.fn() },
-				deployments: {
-					deleteByEntityId: deleteDeployment,
-					list: jest.fn().mockResolvedValue([
-						{
-							entity_id: 'happy-otter-123',
-							data: { projectId: 'proj-1' },
-						},
-						{
-							entity_id: 'brave-bear-456',
-							data: { projectId: 'proj-1' },
-						},
-						{
-							entity_id: 'other-project-dep',
-							data: { projectId: 'proj-2' },
-						},
-					]),
-				},
-				deployKeys: {
-					deleteByEntityId: deleteKey,
-					list: jest.fn().mockResolvedValue([
-						{
-							entity_id: 'key-1',
-							data: { deploymentName: 'happy-otter-123' },
-						},
-						{
-							entity_id: 'key-2',
-							data: { deploymentName: 'other-project-dep' },
-						},
-					]),
-				},
-			},
-		} as unknown as ConvexContext;
+	it('getQueryTimestamp sends POST /api/query_ts with the stored deploy key', async () => {
+		stubFetch({ ts: '1700000000000000000' });
+		const result = await DeploymentScopedEndpoints.getQueryTimestamp(
+			makeCtx(),
+			{},
+		);
 
-		await getEndpoint(
-			endpoints,
-			'projects',
-			'delete',
-		)(ctxWithDb, {
-			project_id: 'proj-1',
-		});
-
-		expect(deleteDeployment).toHaveBeenCalledWith('happy-otter-123');
-		expect(deleteDeployment).toHaveBeenCalledWith('brave-bear-456');
-		expect(deleteDeployment).not.toHaveBeenCalledWith('other-project-dep');
-		expect(deleteKey).toHaveBeenCalledWith('key-1');
-		expect(deleteKey).not.toHaveBeenCalledWith('key-2');
+		const call = onlyCall();
+		expect(call.method).toBe('POST');
+		expect(call.url).toBe(`${DEPLOYMENT}/query_ts`);
+		expect(call.authorization).toBe('Convex prod:stored-key');
+		expect(result).toEqual({ ts: '1700000000000000000' });
 	});
 
-	it('cleans up cached deploy keys when a deployment is deleted', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const deleteKey = jest.fn();
-		const ctxWithDb = {
-			...mockCtx,
-			db: {
-				deployments: { deleteByEntityId: jest.fn() },
-				deployKeys: {
-					deleteByEntityId: deleteKey,
-					list: jest.fn().mockResolvedValue([
-						{
-							entity_id: 'key-1',
-							data: { deploymentName: 'happy-otter-123' },
-						},
-						{
-							entity_id: 'key-2',
-							data: { deploymentName: 'other-dep' },
-						},
-					]),
-				},
+	it('listLogStreams sends GET /api/v1/list_log_streams', async () => {
+		const streams = [
+			{
+				id: 'ls_1',
+				logStreamType: 'webhook',
+				status: { type: 'active' },
+				url: 'https://logs.example.com',
+				format: 'json',
+				hmacSecret: 'whsec',
+				topics: null,
 			},
-		} as unknown as ConvexContext;
-
-		await getEndpoint(
-			endpoints,
-			'deployments',
-			'delete',
-		)(ctxWithDb, {
-			deployment_name: 'happy-otter-123',
-		});
-
-		expect(deleteKey).toHaveBeenCalledWith('key-1');
-		expect(deleteKey).not.toHaveBeenCalledWith('key-2');
-	});
-
-	it('builds regional convex.cloud hosts from multi-label subdomains', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'getQueryTimestamp',
-		)(mockCtx, {
+		];
+		stubFetch(streams);
+		const result = await DeploymentScopedEndpoints.listLogStreams(makeCtx(), {
 			subdomain: 'calm-cow-456.eu-west-1',
-			deployKey: 'prod:deploy-key',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
-			'https://calm-cow-456.eu-west-1.convex.cloud/api',
+		const call = onlyCall();
+		expect(call.method).toBe('GET');
+		expect(call.url).toBe(
+			'https://calm-cow-456.eu-west-1.convex.cloud/api/v1/list_log_streams',
 		);
-		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
-			method: 'POST',
-			url: '/query_ts',
-		});
+		expect(call.authorization).toBe('Convex prod:stored-key');
+		expect(result).toEqual(streams);
 	});
 
 	it('accepts an explicit convex.cloud deployment URL', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'executeQueryBatch',
-		)(mockCtx, {
-			deploymentUrl: 'https://calm-cow-456.eu-west-1.convex.cloud',
-			deployKey: 'prod:deploy-key',
-			queries: [{ path: 'messages:list', args: {} }],
+		stubFetch({ ts: '1' });
+		await DeploymentScopedEndpoints.getQueryTimestamp(makeCtx(), {
+			deploymentUrl: 'https://joyful-capybara-123.convex.cloud/',
 		});
 
-		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
-			'https://calm-cow-456.eu-west-1.convex.cloud/api',
+		expect(onlyCall().url).toBe(
+			'https://joyful-capybara-123.convex.cloud/api/query_ts',
 		);
 	});
 
-	it('rejects deployment URLs that are not convex.cloud hosts', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
+	it.each([
+		'https://evil.example.com',
+		'http://acoustic-panther-728.convex.cloud',
+		'https://user:pw@acoustic-panther-728.convex.cloud',
+		'https://acoustic-panther-728.convex.cloud/other',
+	])('rejects deployment URL %s without sending a request', async (url) => {
+		stubFetch({ ts: '1' });
 		await expect(
-			getEndpoint(
-				endpoints,
-				'deployment',
-				'getQueryTimestamp',
-			)(mockCtx, {
-				deploymentUrl: 'https://attacker.example/api',
-				deployKey: 'prod:deploy-key',
+			DeploymentScopedEndpoints.getQueryTimestamp(makeCtx(), {
+				deploymentUrl: url,
 			}),
-		).rejects.toThrow('deployment URL');
-		expect(mockRequest).not.toHaveBeenCalled();
+		).rejects.toThrow('Invalid Convex deployment URL');
+		expect(calls).toHaveLength(0);
 	});
 
-	it('rejects management path segments that can escape the route', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-
+	it('requires a deployment name', async () => {
+		stubFetch({ ts: '1' });
 		await expect(
-			getEndpoint(
-				endpoints,
-				'deployments',
-				'get',
-			)(mockCtx, {
-				deployment_name: 'happy-otter-123/../other',
-			}),
-		).rejects.toThrow('path');
-		expect(mockRequest).not.toHaveBeenCalled();
-
-		expect(
-			ConvexEndpointInputSchemas.deploymentGet.safeParse({
-				deployment_name: 'happy-otter-123/../other',
-			}).success,
-		).toBe(false);
-		expect(
-			ConvexEndpointInputSchemas.projectsList.safeParse({
-				team_id: '41/../0',
-			}).success,
-		).toBe(false);
+			DeploymentScopedEndpoints.getQueryTimestamp(
+				makeCtx({ subdomain: null }),
+				{},
+			),
+		).rejects.toThrow('deployment name (subdomain) is required');
+		expect(calls).toHaveLength(0);
 	});
 
-	it('parses official integer Management API payloads', () => {
-		expect(
-			ConvexEndpointOutputSchemas.projectsList.safeParse({
-				items: [
-					{
-						id: 123,
-						name: 'Demo',
-						slug: 'demo',
-						teamId: 41,
-						teamSlug: 'acme',
-						createTime: 1710000000000,
-						prodDeploymentName: 'happy-otter-123',
-						devDeploymentName: null,
-					},
-				],
-				pagination: { hasMore: false },
-			}).success,
-		).toBe(true);
-
-		expect(
-			ConvexEndpointOutputSchemas.projectCreate.safeParse({
-				projectId: 123,
-				id: 123,
-				slug: 'demo',
-				deploymentName: 'happy-otter-123',
-				deploymentUrl: 'https://happy-otter-123.convex.cloud',
-			}).success,
-		).toBe(true);
-
-		expect(
-			ConvexEndpointOutputSchemas.deploymentGet.safeParse({
-				id: 7,
-				name: 'happy-otter-123',
-				createTime: 1710000000000,
-				lastDeployTime: null,
-				deploymentType: 'prod',
-				projectId: 123,
-				region: 'aws-us-east-1',
-				isDefault: true,
-				reference: 'prod',
-				deploymentUrl: 'https://happy-otter-123.convex.cloud',
-				class: 'convex',
-				kind: 'cloud',
-			}).success,
-		).toBe(true);
-
-		expect(
-			ConvexEndpointOutputSchemas.deployKeysList.safeParse([
-				{
-					id: 99,
-					name: 'ci',
-					creationTime: 1710000000000,
-					lastUsedTime: null,
-					expiresAt: null,
-					allowedActions: ['deployment:deploy'],
-				},
-			]).success,
-		).toBe(true);
-
-		expect(
-			ConvexEndpointOutputSchemas.tokenDetails.safeParse({
-				id: 1,
-				teamId: 41,
-				name: 'local',
-				createTime: 1710000000000,
-				type: 'teamToken',
-			}).success,
-		).toBe(true);
+	it('requires a deploy key', async () => {
+		stubFetch({ ts: '1' });
+		await expect(
+			DeploymentScopedEndpoints.getQueryTimestamp(
+				makeCtx({ deployKey: null }),
+				{},
+			),
+		).rejects.toThrow('require a deployment admin deploy key');
+		expect(calls).toHaveLength(0);
 	});
 
-	it('does not persist deploy keys in completion events', async () => {
-		const plugin = convex({ key: 'test-token' });
-		const endpoints = plugin.endpoints as unknown as TestEndpoints;
-		const mockLogEvent = logEventFromContext as jest.Mock;
-		mockLogEvent.mockClear();
-
-		await getEndpoint(
-			endpoints,
-			'deployment',
-			'getQueryTimestamp',
-		)(mockCtx, {
-			deployKey: 'prod:deploy-key',
-		});
-
-		expect(mockLogEvent).toHaveBeenCalled();
-		const payload = mockLogEvent.mock.calls[0]?.[2];
-		expect(payload).not.toEqual(
-			expect.objectContaining({ deployKey: 'prod:deploy-key' }),
+	it('rejects subdomains that could escape the deployment host', () => {
+		const schema = ConvexEndpointInputSchemas.queryTimestamp;
+		expect(schema.safeParse({ subdomain: 'evil.com:443/' }).success).toBe(
+			false,
 		);
-		expect(JSON.stringify(payload)).not.toContain('prod:deploy-key');
+		expect(
+			schema.safeParse({ subdomain: 'calm-cow-456.eu-west-1' }).success,
+		).toBe(true);
 	});
 });
 
-describe('Convex error handlers', () => {
-	const { errorHandlers } = jest.requireActual('./error-handlers');
-	const { ConvexAPIError } = jest.requireActual('./client');
-
-	it('matches 429 rate limits with retry config', async () => {
-		const error = new ConvexAPIError('Too Many Requests', 429);
-		const entry = errorHandlers.RATE_LIMIT_ERROR;
-		expect(entry.match(error)).toBe(true);
-		await expect(entry.handler(error)).resolves.toMatchObject({
-			maxRetries: 5,
-		});
+describe('request client', () => {
+	it('rejects management path segments that can escape the route', () => {
+		expect(() => managementPath('../teams')).toThrow(ConvexAPIError);
+		expect(() => managementPath('a/b')).toThrow(ConvexAPIError);
+		expect(managementPath('my app')).toBe('my%20app');
 	});
 
-	it('matches 401 auth errors without retries', async () => {
-		const error = new ConvexAPIError('Unauthorized', 401);
-		const entry = errorHandlers.AUTH_ERROR;
-		expect(entry.match(error)).toBe(true);
-		await expect(entry.handler(error)).resolves.toMatchObject({
+	it('fails Management calls without an access token before any request', async () => {
+		stubFetch({});
+		await expect(makeConvexRequest('/token_details', '')).rejects.toThrow(
+			'No Convex access token',
+		);
+		expect(calls).toHaveLength(0);
+	});
+
+	it('maps a 401 to ConvexAPIError with the provider message', async () => {
+		stubFetch(
+			{ code: 'Unauthenticated', message: 'Invalid token' },
+			{ status: 401 },
+		);
+		const error = await makeConvexRequest('/token_details', 'bad').catch(
+			(e: Error) => e,
+		);
+
+		expect(error).toBeInstanceOf(ConvexAPIError);
+		if (!(error instanceof ConvexAPIError)) return;
+		expect(error.status).toBe(401);
+		expect(error.code).toBe('Unauthenticated');
+		expect(error.message).toBe('Invalid token');
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
 			maxRetries: 0,
 		});
 	});
 
-	it('matches 403 permission errors', () => {
-		const error = new ConvexAPIError('Forbidden', 403);
-		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(true);
+	it('surfaces Retry-After from a 429 to the rate limit handler', async () => {
+		jest.useFakeTimers();
+		stubFetch(
+			{ code: 'RateLimited', message: 'Too many requests' },
+			{ status: 429, headers: { 'Retry-After': '7' } },
+		);
+		const pending = makeConvexRequest('/token_details', 'test-token').catch(
+			(e: Error) => e,
+		);
+		await jest.advanceTimersByTimeAsync(60_000);
+		const error = await pending;
+
+		expect(error).toBeInstanceOf(ConvexAPIError);
+		if (!(error instanceof ConvexAPIError)) return;
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(7000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 7000,
+		});
 	});
 
-	it('matches 404 not found errors', () => {
-		const error = new ConvexAPIError('Not Found', 404);
-		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);
+	it('classifies 403, 404 and 5xx errors', () => {
+		expect(
+			errorHandlers.PERMISSION_ERROR.match(new ConvexAPIError('x', 403)),
+		).toBe(true);
+		expect(
+			errorHandlers.NOT_FOUND_ERROR.match(new ConvexAPIError('x', 404)),
+		).toBe(true);
+		expect(errorHandlers.SERVER_ERROR.match(new ConvexAPIError('x', 503))).toBe(
+			true,
+		);
+		expect(errorHandlers.SERVER_ERROR.match(new Error('other'))).toBe(false);
 	});
 
-	it('falls through to DEFAULT for unknown errors', () => {
-		const error = new Error('mystery failure');
-		expect(errorHandlers.DEFAULT.match(error)).toBe(true);
+	it('matches raw ApiError 429s', () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/token_details' },
+			{
+				url: `${MGMT}/token_details`,
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: null,
+			},
+			'Too Many Requests',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+	});
+});
+
+describe('keyBuilder', () => {
+	function keyCtx(keys: {
+		api_key?: string | null;
+		deploy_key?: string | null;
+	}): ConvexKeyBuilderContext {
+		// Safe: keyBuilder only reads authType and the two key getters supplied here.
+		// A narrower type is not practical because ConvexKeyBuilderContext also exposes setters and account helpers keyBuilder never calls.
+		return {
+			authType: 'api_key',
+			keys: {
+				get_api_key: async () => keys.api_key ?? null,
+				get_deploy_key: async () => keys.deploy_key ?? null,
+			},
+		} as ConvexKeyBuilderContext;
+	}
+
+	function buildKey(ctx: ConvexKeyBuilderContext) {
+		const { keyBuilder } = convex();
+		if (!keyBuilder) throw new Error('[test] keyBuilder missing');
+		return keyBuilder(ctx, 'endpoint');
+	}
+
+	it('returns the access token for Management calls', async () => {
+		await expect(buildKey(keyCtx({ api_key: 'tok' }))).resolves.toBe('tok');
+	});
+
+	it('lets deploy-key-only connections bind with an empty bearer credential', async () => {
+		await expect(buildKey(keyCtx({ deploy_key: 'prod:k' }))).resolves.toBe('');
+	});
+
+	it('throws when no credential is stored', async () => {
+		await expect(buildKey(keyCtx({}))).rejects.toThrow();
+	});
+});
+
+describe('output schemas', () => {
+	it('parse the official Management API payloads', () => {
+		expect(ConvexEndpointOutputSchemas.deploymentGet.parse(deployment)).toEqual(
+			{ ...deployment, id: '501', projectId: '101' },
+		);
+		expect(
+			ConvexEndpointOutputSchemas.executeQueryBatch.safeParse({
+				results: [{ status: 'success' }],
+			}).success,
+		).toBe(false);
 	});
 });

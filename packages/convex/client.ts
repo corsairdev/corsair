@@ -1,5 +1,12 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
+
+const ConvexErrorBodySchema = z.object({
+	message: z.string().optional(),
+	error: z.string().optional(),
+	code: z.string().optional(),
+});
 
 export class ConvexAPIError extends Error {
 	constructor(
@@ -28,8 +35,7 @@ const CONVEX_MANAGEMENT_API_BASE = 'https://api.convex.dev/v1';
 
 export interface ConvexRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	// unknown: request JSON varies by Convex operation; Zod parses at callers.
-	body?: Record<string, unknown> | unknown[];
+	body?: object;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**
 	 * Override the API base URL. Deployment-scoped endpoints (query batch,
@@ -54,10 +60,7 @@ export interface ConvexRequestOptions {
  * ones from the cache layer — since the provider operation has already
  * completed and must be reported as such.
  */
-export async function tryCacheWrite(
-	// unknown: cache helpers return entity rows with provider-specific shapes.
-	write: () => Promise<unknown>,
-): Promise<void> {
+export async function tryCacheWrite<T>(write: () => Promise<T>): Promise<void> {
 	try {
 		await write();
 	} catch {
@@ -109,10 +112,8 @@ export async function makeConvexRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Repository typing rule: ApiError.body is unknown — narrow to Convex error shape.
-			const body = error.body as
-				| { message?: string; error?: string; code?: string }
-				| undefined;
+			const parsed = ConvexErrorBodySchema.safeParse(error.body);
+			const body = parsed.success ? parsed.data : undefined;
 			throw new ConvexAPIError(
 				body?.message ?? body?.error ?? error.message,
 				error.status,
