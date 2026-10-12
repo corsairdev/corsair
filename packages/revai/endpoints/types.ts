@@ -85,7 +85,7 @@ export const TranscriptTextSchema = z.string();
 
 export type SubmitJobInput = z.infer<typeof SubmitJobInputSchema>;
 export type GetJobInput = z.infer<typeof GetJobInputSchema>;
-export type GetTranscriptInput = z.infer<typeof GetTranscriptInputSchema>;
+export type GetTranscriptInput = z.input<typeof GetTranscriptInputSchema>;
 export type JobResponse = z.infer<typeof JobSchema>;
 export type TranscriptJsonResponse = z.infer<typeof TranscriptJsonSchema>;
 export type TranscriptResponse = TranscriptJsonResponse | string;

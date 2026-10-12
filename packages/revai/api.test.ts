@@ -186,7 +186,7 @@ describe('Rev AI endpoints', () => {
 		expect(upserts).toEqual([]);
 	});
 
-	it('getTranscript parses the vendor JSON transcript', async () => {
+	it('getTranscript defaults to the vendor JSON transcript', async () => {
 		const transcript = {
 			monologues: [
 				{
@@ -201,10 +201,7 @@ describe('Rev AI endpoints', () => {
 			}),
 		);
 
-		const result = await getTranscript(ctx, {
-			id: 'job1',
-			accept: 'application/vnd.rev.transcript.v1.0+json',
-		});
+		const result = await getTranscript(ctx, { id: 'job1' });
 
 		expect(lastCall().headers.get('Accept')).toBe(
 			'application/vnd.rev.transcript.v1.0+json',
