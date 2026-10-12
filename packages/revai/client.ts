@@ -18,6 +18,8 @@ export async function makeRevAIRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Safe: the body is serialised straight to JSON and never inspected.
+		// A narrower type is not practical because each endpoint sends a different request shape.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		headers?: Record<string, string>;

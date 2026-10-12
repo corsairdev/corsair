@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RevAIEndpoints } from '..';
 import { makeRevAIRequest } from '../client';
+import { RevAIJob } from '../schema/database';
 import type { RevAIEndpointOutputs, SubmitJobInput } from './types';
 import { RevAIEndpointInputSchemas, RevAIEndpointOutputSchemas } from './types';
 
@@ -14,10 +15,7 @@ function sanitizeNotificationConfig(
 }
 
 function decodeTranscriptJson(response: RevAIEndpointOutputs['getTranscript']) {
-	if (typeof response === 'string') {
-		return JSON.parse(response) as unknown;
-	}
-	return response;
+	return typeof response === 'string' ? JSON.parse(response) : response;
 }
 
 export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
@@ -36,13 +34,17 @@ export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
 		},
 	);
 	const parsedResponse = RevAIEndpointOutputSchemas.submitJob.parse(response);
+	await ctx.db.job.upsertByEntityId(
+		parsedResponse.id,
+		RevAIJob.parse(parsedResponse),
+	);
 	const safeInput = {
 		metadata: parsedInput.metadata,
 		language: parsedInput.language,
 	};
-	const { notification_config } = parsedInput;
-	const safeNotificationConfig =
-		sanitizeNotificationConfig(notification_config);
+	const safeNotificationConfig = sanitizeNotificationConfig(
+		parsedInput.notification_config,
+	);
 	await logEventFromContext(
 		ctx,
 		'revai.jobs.submit',
@@ -60,6 +62,10 @@ export const getJob: RevAIEndpoints['getJob'] = async (ctx, input) => {
 		{ method: 'GET' },
 	);
 	const parsedResponse = RevAIEndpointOutputSchemas.getJob.parse(response);
+	await ctx.db.job.upsertByEntityId(
+		parsedResponse.id,
+		RevAIJob.parse(parsedResponse),
+	);
 	await logEventFromContext(
 		ctx,
 		'revai.jobs.get',

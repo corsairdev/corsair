@@ -113,6 +113,8 @@ export type ExternalRevAIPlugin<T extends RevAIPluginOptions> =
 	BaseRevAIPlugin<T>;
 
 export function revai<const T extends RevAIPluginOptions>(
+	// Safe: every RevAIPluginOptions field is optional, so an empty object satisfies it.
+	// A narrower type is not practical because the generic T cannot be inferred from a default value.
 	incomingOptions: RevAIPluginOptions & T = {} as RevAIPluginOptions & T,
 ): ExternalRevAIPlugin<T> {
 	const options = {

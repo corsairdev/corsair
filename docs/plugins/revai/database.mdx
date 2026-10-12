@@ -27,13 +27,28 @@ const rows = await corsair.revai.db.job.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_on` | `date` | equals, before, after, between |
 | `completed_on` | `date` | equals, before, after, between |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `metadata` | `string` | equals, contains, startsWith, endsWith, in |
+| `media_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `transcriber` | `string` | equals, contains, startsWith, endsWith, in |
 | `failure` | `string` | equals, contains, startsWith, endsWith, in |
+| `failure_detail` | `string` | equals, contains, startsWith, endsWith, in |
 | `duration_seconds` | `number` | equals, gt, gte, lt, lte, in |
+| `stream_duration_seconds` | `number` | equals, gt, gte, lt, lte, in |
+| `delete_after_seconds` | `number` | equals, gt, gte, lt, lte, in |
+| `skip_diarization` | `boolean` | equals |
+| `skip_postprocessing` | `boolean` | equals |
+| `skip_punctuation` | `boolean` | equals |
+| `remove_disfluencies` | `boolean` | equals |
+| `remove_atmospherics` | `boolean` | equals |
+| `filter_profanity` | `boolean` | equals |
+| `custom_vocabulary_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `speaker_channels_count` | `number` | equals, gt, gte, lt, lte, in |
+| `enable_multilingual` | `boolean` | equals |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

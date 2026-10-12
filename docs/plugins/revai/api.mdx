@@ -36,15 +36,30 @@ await corsair.revai.api.jobs.getJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
 | `created_on` | `string` | No | — |
 | `completed_on` | `string` | No | — |
 | `name` | `string` | No | — |
-| `type` | `string` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
 | `metadata` | `string` | No | — |
+| `media_url` | `string` | No | — |
+| `callback_url` | `string` | No | — |
 | `language` | `string` | No | — |
+| `transcriber` | `string` | No | — |
 | `failure` | `string` | No | — |
+| `failure_detail` | `string` | No | — |
 | `duration_seconds` | `number` | No | — |
+| `stream_duration_seconds` | `number` | No | — |
+| `delete_after_seconds` | `number` | No | — |
+| `skip_diarization` | `boolean` | No | — |
+| `skip_postprocessing` | `boolean` | No | — |
+| `skip_punctuation` | `boolean` | No | — |
+| `remove_disfluencies` | `boolean` | No | — |
+| `remove_atmospherics` | `boolean` | No | — |
+| `filter_profanity` | `boolean` | No | — |
+| `custom_vocabulary_id` | `string` | No | — |
+| `speaker_channels_count` | `number` | No | — |
+| `enable_multilingual` | `boolean` | No | — |
 
 
 
@@ -78,7 +93,16 @@ await corsair.revai.api.jobs.getTranscript({});
 
 ```ts
 {
-  monologues: any[]
+  monologues: {
+    speaker?: number,
+    elements: {
+      type: string,
+      value: string,
+      ts?: number | null,
+      end_ts?: number | null,
+      confidence?: number | null
+    }[]
+  }[]
 } | string
 ```
 </Accordion>
@@ -129,15 +153,30 @@ await corsair.revai.api.jobs.submitJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
 | `created_on` | `string` | No | — |
 | `completed_on` | `string` | No | — |
 | `name` | `string` | No | — |
-| `type` | `string` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
 | `metadata` | `string` | No | — |
+| `media_url` | `string` | No | — |
+| `callback_url` | `string` | No | — |
 | `language` | `string` | No | — |
+| `transcriber` | `string` | No | — |
 | `failure` | `string` | No | — |
+| `failure_detail` | `string` | No | — |
 | `duration_seconds` | `number` | No | — |
+| `stream_duration_seconds` | `number` | No | — |
+| `delete_after_seconds` | `number` | No | — |
+| `skip_diarization` | `boolean` | No | — |
+| `skip_postprocessing` | `boolean` | No | — |
+| `skip_punctuation` | `boolean` | No | — |
+| `remove_disfluencies` | `boolean` | No | — |
+| `remove_atmospherics` | `boolean` | No | — |
+| `filter_profanity` | `boolean` | No | — |
+| `custom_vocabulary_id` | `string` | No | — |
+| `speaker_channels_count` | `number` | No | — |
+| `enable_multilingual` | `boolean` | No | — |
 
 
 

@@ -1,16 +1,33 @@
 import { z } from 'zod';
 
+// https://docs.rev.ai/api/asynchronous/reference/#operation/GetJobById
+// Rev AI omits properties whose value is null, so every field but `id` is optional.
 export const JobSchema = z.object({
 	id: z.string(),
-	status: z.string().optional(),
+	status: z.enum(['in_progress', 'transcribed', 'failed']).optional(),
 	created_on: z.string().nullable().optional(),
 	completed_on: z.string().nullable().optional(),
-	name: z.string().optional(),
-	type: z.string().optional(),
+	name: z.string().nullable().optional(),
+	type: z.enum(['async', 'human_tc', 'stream']).optional(),
 	metadata: z.string().nullable().optional(),
+	media_url: z.string().nullable().optional(),
+	callback_url: z.string().nullable().optional(),
 	language: z.string().nullable().optional(),
+	transcriber: z.string().nullable().optional(),
 	failure: z.string().nullable().optional(),
+	failure_detail: z.string().nullable().optional(),
 	duration_seconds: z.number().nullable().optional(),
+	stream_duration_seconds: z.number().nullable().optional(),
+	delete_after_seconds: z.number().nullable().optional(),
+	skip_diarization: z.boolean().nullable().optional(),
+	skip_postprocessing: z.boolean().nullable().optional(),
+	skip_punctuation: z.boolean().nullable().optional(),
+	remove_disfluencies: z.boolean().nullable().optional(),
+	remove_atmospherics: z.boolean().nullable().optional(),
+	filter_profanity: z.boolean().nullable().optional(),
+	custom_vocabulary_id: z.string().nullable().optional(),
+	speaker_channels_count: z.number().nullable().optional(),
+	enable_multilingual: z.boolean().nullable().optional(),
 });
 
 export const SubmitJobInputSchema = z.object({
@@ -40,9 +57,27 @@ export const GetTranscriptInputSchema = z.object({
 		.default('application/vnd.rev.transcript.v1.0+json'),
 });
 
+// https://docs.rev.ai/api/asynchronous/reference/#operation/GetTranscriptById
+const TranscriptElementSchema = z
+	.object({
+		type: z.string(),
+		value: z.string(),
+		ts: z.number().nullable().optional(),
+		end_ts: z.number().nullable().optional(),
+		confidence: z.number().nullable().optional(),
+	})
+	.passthrough();
+
+const MonologueSchema = z
+	.object({
+		speaker: z.number().optional(),
+		elements: z.array(TranscriptElementSchema),
+	})
+	.passthrough();
+
 export const TranscriptJsonSchema = z
 	.object({
-		monologues: z.array(z.unknown()),
+		monologues: z.array(MonologueSchema),
 	})
 	.passthrough();
 
