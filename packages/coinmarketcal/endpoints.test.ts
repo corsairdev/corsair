@@ -1,5 +1,5 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { CoinmarketcalEndpointOutputSchemas } from './endpoints/types';
 import type {
 	CoinmarketcalContext,
@@ -116,6 +116,27 @@ describe('Coinmarketcal endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
+	});
+
+	it('surfaces the provider error message on rejected requests', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/v2/categories' },
+			{
+				url: 'https://api.coinmarketcal.com/v2/categories',
+				ok: false,
+				status: 403,
+				statusText: 'Forbidden',
+				body: {
+					error: 'Categories endpoint requires Standard tier or above',
+				},
+			},
+			'Forbidden',
+		);
+		mockRequest.mockRejectedValue(error);
+
+		await expect(endpoints.categories.list(mockCtx, {})).rejects.toThrow(
+			'Forbidden: Categories endpoint requires Standard tier or above',
+		);
 	});
 
 	it('coins.list calls GET /v2/coins with query params', async () => {
