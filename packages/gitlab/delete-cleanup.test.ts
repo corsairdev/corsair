@@ -2,15 +2,16 @@ import { deleteIssue } from './endpoints/issues';
 import { deleteMr } from './endpoints/merge-requests';
 import { deleteProject } from './endpoints/projects';
 
-type Row = { entity_id: string; data: Record<string, unknown> };
+type Row = { entity_id: string; data: Record<string, string | number> };
 
 function makeStore(rows: Row[] = []) {
 	return {
 		rows,
-		search: jest.fn(async ({ data }: { data: Record<string, unknown> }) =>
-			rows.filter((row) =>
-				Object.entries(data).every(([key, value]) => row.data[key] === value),
-			),
+		search: jest.fn(
+			async ({ data }: { data: Record<string, string | number> }) =>
+				rows.filter((row) =>
+					Object.entries(data).every(([key, value]) => row.data[key] === value),
+				),
 		),
 		deleteByEntityId: jest.fn(async (entityId: string) => {
 			const index = rows.findIndex((row) => row.entity_id === entityId);
@@ -46,10 +47,10 @@ function makeCtx(db: {
 		db: stores,
 		options: {},
 		$getAccountId: async () => 'account',
-		// `unknown` is needed because the real endpoint context carries the full
-		// plugin runtime; these handlers only read key, db, options and the
-		// logging hooks, so a partial context is cast to the full type.
-	} as unknown as Parameters<typeof deleteIssue>[0];
+		// The real endpoint context carries the full plugin runtime; these
+		// handlers only read key, db, options and the logging hooks, so this
+		// partial context is cast with `never`, which every handler accepts.
+	} as never;
 	return { ctx, stores };
 }
 
@@ -97,7 +98,7 @@ describe('deleteIssue', () => {
 	it('deletes nothing when the project path is not mirrored locally', async () => {
 		const { ctx, stores } = makeCtx({ issues: [issue(5, 3, 100)] });
 
-		await deleteIssue(ctx, { project_id: 'unknown/repo', issue_iid: 3 });
+		await deleteIssue(ctx, { project_id: 'missing/repo', issue_iid: 3 });
 
 		expect(stores.issues.deleteByEntityId).not.toHaveBeenCalled();
 	});
