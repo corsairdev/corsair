@@ -9,6 +9,22 @@ import type {
 } from '../types';
 import type { GoogleSheetsEndpointOutputs, ListSheetsResponse } from './types';
 
+// A1-notation ranges carry the sheet in a `Sheet!...` (or `'My Sheet'!...`)
+// prefix. The stored row must name the sheet the API actually wrote to, which
+// can differ from input.sheetName when the caller passes an explicit range.
+function sheetNameFromRange(
+	range: string | undefined,
+	fallback: string,
+): string {
+	if (range) {
+		const bang = range.indexOf('!');
+		if (bang > 0) {
+			return range.slice(0, bang).replace(/^'(.*)'$/, '$1');
+		}
+	}
+	return fallback;
+}
+
 export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 	ctx,
 	input,
@@ -32,17 +48,30 @@ export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 
 	if (ctx.db.rows) {
 		try {
-			const updatedRange = result.updates?.updatedRange || range;
-			const sheetName = input.sheetName || 'Sheet1';
-			const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
-			await ctx.db.rows.upsertByEntityId(rowId, {
-				rowId,
-				spreadsheetId: input.spreadsheetId,
-				sheetName,
-				range: updatedRange,
-				values: input.values,
-				createdAt: new Date(),
-			});
+			// updates.updatedRange is the only identifier of the appended row.
+			// The request range is the table search area, not the row — using
+			// it as the rowId would make repeat appends overwrite each other,
+			// so persistence is skipped when the API omits it.
+			const updatedRange = result.updates?.updatedRange;
+			if (!updatedRange) {
+				console.warn(
+					'Sheets append returned no updatedRange; skipping row persistence.',
+				);
+			} else {
+				const sheetName = sheetNameFromRange(
+					updatedRange,
+					input.sheetName || 'Sheet1',
+				);
+				const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+				await ctx.db.rows.upsertByEntityId(rowId, {
+					rowId,
+					spreadsheetId: input.spreadsheetId,
+					sheetName,
+					range: updatedRange,
+					values: input.values,
+					createdAt: new Date(),
+				});
+			}
 		} catch (error) {
 			console.warn('Failed to save row to database:', error);
 		}

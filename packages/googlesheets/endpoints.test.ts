@@ -81,21 +81,49 @@ describe('googlesheets sheets.appendRow db persistence (issue #1835)', () => {
 		);
 	});
 
-	it('falls back to the request range when updates is missing', async () => {
-		mockRequest.mockResolvedValue({ spreadsheetId: 'sheet-2' });
+	it('derives the sheet name from the range when sheetName is absent', async () => {
+		mockRequest.mockResolvedValue({
+			spreadsheetId: 'sheet-1',
+			tableRange: 'Expenses!A1:Z100',
+			updates: {
+				spreadsheetId: 'sheet-1',
+				updatedRange: 'Expenses!A101:C101',
+				updatedRows: 1,
+				updatedColumns: 3,
+				updatedCells: 3,
+			},
+		});
 		const rows = makeStore();
 		const ctx = makeCtx({ rows });
 
 		await appendRow(ctx, {
+			spreadsheetId: 'sheet-1',
+			range: 'Expenses!A:Z',
+			values: ['rent', '100', 'usd'],
+		});
+
+		expect(rows.upsertByEntityId).toHaveBeenCalledWith(
+			'sheet-1_Expenses_Expenses!A101:C101',
+			expect.objectContaining({
+				sheetName: 'Expenses',
+				range: 'Expenses!A101:C101',
+			}),
+		);
+	});
+
+	it('skips persistence when the response has no updatedRange', async () => {
+		mockRequest.mockResolvedValue({ spreadsheetId: 'sheet-2' });
+		const rows = makeStore();
+		const ctx = makeCtx({ rows });
+
+		const result = await appendRow(ctx, {
 			spreadsheetId: 'sheet-2',
 			sheetName: 'Sheet1',
 			values: ['x'],
 		});
 
-		expect(rows.upsertByEntityId).toHaveBeenCalledWith(
-			'sheet-2_Sheet1_Sheet1!A:Z',
-			expect.objectContaining({ range: 'Sheet1!A:Z' }),
-		);
+		expect(result.spreadsheetId).toBe('sheet-2');
+		expect(rows.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('posts to the :append endpoint with values wrapped as ROWS', async () => {
@@ -143,18 +171,21 @@ describe('googlesheets sheets.appendRow db persistence (issue #1835)', () => {
 	});
 
 	it('sheetsAppendRow output schema accepts a real AppendValuesResponse', () => {
-		expect(() =>
-			GoogleSheetsEndpointOutputSchemas.sheetsAppendRow.parse({
+		const parsed = GoogleSheetsEndpointOutputSchemas.sheetsAppendRow.parse({
+			spreadsheetId: 'sheet-5',
+			tableRange: 'Sheet1!A1:Z100',
+			updates: {
 				spreadsheetId: 'sheet-5',
-				tableRange: 'Sheet1!A1:Z100',
-				updates: {
-					spreadsheetId: 'sheet-5',
-					updatedRange: 'Sheet1!A101:Z101',
-					updatedRows: 1,
-					updatedColumns: 2,
-					updatedCells: 2,
-				},
-			}),
-		).not.toThrow();
+				updatedRange: 'Sheet1!A101:Z101',
+				updatedRows: 1,
+				updatedColumns: 2,
+				updatedCells: 2,
+			},
+		});
+
+		// The old BatchUpdateValuesResponse shape strips unknown fields, so
+		// assert the append-specific fields survive parsing.
+		expect(parsed.tableRange).toBe('Sheet1!A1:Z100');
+		expect(parsed.updates?.updatedRange).toBe('Sheet1!A101:Z101');
 	});
 });
