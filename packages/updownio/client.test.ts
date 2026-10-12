@@ -53,7 +53,8 @@ const ctx = makeCtx('updown-test-key');
 /** A context with no key, valid for the public node routes. */
 const publicCtx = makeCtx('');
 
-// unknown: any JSON-serializable value is a valid mock body, and JSON.stringify accepts unknown, so a narrower type would only block valid test inputs.
+// Safe: the value is only passed to JSON.stringify, which accepts anything.
+// A narrower type is not practical because tests send many different response shapes.
 function json(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -186,9 +187,9 @@ describe('checks.list', () => {
 	});
 
 	it('rejects unknown input fields', async () => {
+		// Reflect.apply sends input the declared type forbids, to prove the strict schema rejects it at runtime.
 		await expect(
-			// Safe: the input is only ever passed to a schema that must reject it; a better type is impractical since the declared input type forbids this value by design.
-			listChecks(ctx, { unexpected: true } as never),
+			Reflect.apply(listChecks, undefined, [ctx, { unexpected: true }]),
 		).rejects.toThrow();
 	});
 
