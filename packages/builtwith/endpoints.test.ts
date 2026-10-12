@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { makeBuiltWithRequest } from './client';
+import { BuiltWithAPIError, makeBuiltWithRequest } from './client';
 import { BuiltWithEndpoints } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import type { BuiltWithContext } from './index';
@@ -255,6 +255,44 @@ describe('makeBuiltWithRequest', () => {
 				query: { LOOKUP: 'example.com' },
 			}),
 		).rejects.toBe(apiError);
+	});
+
+	it('parses text/json bodies into objects', async () => {
+		mockRequest.mockResolvedValueOnce('{"domain":"builtwith.com","groups":[]}');
+
+		await expect(
+			makeBuiltWithRequest('free1/api.json', 'test-key', {
+				query: { LOOKUP: 'builtwith.com' },
+			}),
+		).resolves.toEqual({ domain: 'builtwith.com', groups: [] });
+	});
+
+	it('throws when BuiltWith returns Errors without Results', async () => {
+		mockRequest.mockResolvedValueOnce(
+			'{"Errors":[{"Message":"API Credits: 0 - Used: 0 - API allocation depleted","Code":-3}]}',
+		);
+
+		const error = await makeBuiltWithRequest('v26/api.json', 'test-key', {
+			query: { LOOKUP: 'builtwith.com' },
+		}).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(BuiltWithAPIError);
+		expect(error).toMatchObject({
+			message: 'API Credits: 0 - Used: 0 - API allocation depleted',
+			code: '-3',
+		});
+	});
+
+	it('keeps responses that have Results alongside per-lookup Errors', async () => {
+		const body = {
+			Results: [{ Lookup: 'builtwith.com' }],
+			Errors: [{ Message: 'bad lookup', Code: -1 }],
+		};
+		mockRequest.mockResolvedValueOnce(body);
+
+		await expect(
+			makeBuiltWithRequest('v26/api.json', 'test-key'),
+		).resolves.toEqual(body);
 	});
 });
 
