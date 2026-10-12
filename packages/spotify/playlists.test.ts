@@ -7,13 +7,13 @@ jest.mock('./client', () => ({
 
 const request = jest.mocked(makeAuthenticatedSpotifyRequest);
 
-// The endpoint context carries the full plugin runtime; the handler only
-// passes it through to the mocked client and the event logger, so a partial
-// one is cast.
 const ctx = {
 	key: 'token',
 	db: {},
 	$getAccountId: async () => 'account',
+	// `unknown` is needed because the real endpoint context carries the full
+	// plugin runtime; the handler only passes it to the mocked client and the
+	// event logger, so a partial context is cast to the full type.
 } as unknown as Parameters<typeof getUserPlaylists>[0];
 
 describe('getUserPlaylists', () => {
