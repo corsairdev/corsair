@@ -5,6 +5,7 @@ import {
 	numberHeader,
 	putAzureBlockBlob,
 	readJson,
+	TinypngAPIError,
 	tinifyRequest,
 } from '../client';
 import type { TinypngEndpoints } from '../index';
@@ -167,7 +168,14 @@ export const compressAndStoreInAzure: TinypngEndpoints['compressAndStoreInAzure'
 		const { source, blobUrl, cacheControl, ...options } =
 			CompressAndStoreInAzureInputSchema.parse(input);
 		const { imageId } = await shrinkSource(ctx.key, source);
-		const response = await downloadOutput(ctx.key, imageId, options);
+		const response = await downloadOutput(ctx.key, imageId, options).catch(
+			(error) => {
+				// Retrying the operation would shrink the same image again and bill a second compression.
+				throw error instanceof TinypngAPIError
+					? new TinypngAPIError(error.message, error.status, error.code, true)
+					: error;
+			},
+		);
 		const file = imageFile(imageId, response);
 		const { etag } = await putAzureBlockBlob(
 			blobUrl,

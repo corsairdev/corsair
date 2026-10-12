@@ -9,6 +9,8 @@ export class TinypngAPIError extends Error {
 		public readonly status?: number,
 		// Tinify's machine-readable error name, e.g. `Unauthorized`, `TooManyRequests`.
 		public readonly code?: string,
+		// Set when the image was already compressed, so retrying the whole operation would bill it again.
+		public readonly compressed = false,
 	) {
 		super(message);
 		this.name = 'TinypngAPIError';

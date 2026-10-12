@@ -2,7 +2,9 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { TinypngAPIError } from './client';
 
 function tinifyStatus(error: Error): number | undefined {
-	return error instanceof TinypngAPIError ? error.status : undefined;
+	return error instanceof TinypngAPIError && !error.compressed
+		? error.status
+		: undefined;
 }
 
 export const errorHandlers = {

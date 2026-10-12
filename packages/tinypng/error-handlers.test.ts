@@ -27,6 +27,11 @@ describe('tinypng error handlers', () => {
 			retries: 1,
 		},
 		{
+			error: new TinypngAPIError('Too Many Requests', 429, undefined, true),
+			name: 'DEFAULT',
+			retries: 0,
+		},
+		{
 			error: new TinypngAPIError('Input missing', 400),
 			name: 'DEFAULT',
 			retries: 0,

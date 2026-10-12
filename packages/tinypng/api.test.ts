@@ -400,6 +400,22 @@ describe('images.compressAndStoreInAzure', () => {
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('SECRETSIG');
 	});
 
+	it('marks an output failure after shrinking as not retryable', async () => {
+		respondShrink();
+		respond(
+			429,
+			JSON.stringify({ error: 'TooManyRequests', message: 'Slow down' }),
+		);
+
+		await expect(
+			call(Images.compressAndStoreInAzure, {
+				source: { url: 'https://tinypng.com/images/panda-happy.png' },
+				blobUrl,
+			}),
+		).rejects.toMatchObject({ status: 429, compressed: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
 	it('converts through POST /output when options are given', async () => {
 		respondShrink();
 		respond(200, PNG, { 'Content-Type': 'image/webp' });
