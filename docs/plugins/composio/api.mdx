@@ -1,0 +1,1555 @@
+---
+title: API
+description: "API reference for Composio: every `composio.api.*` operation with input and output types."
+---
+
+Every `composio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a connected-account auth link
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auth_config_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `alias` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_token` | `string` | Yes | — |
+| `redirect_url` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+| `connected_account_id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete a connected account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.composio.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connected_account_id` | `string` | Yes | — |
+| `revoke_on_delete` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `revoke_job_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`connections.list`
+
+List connected accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolkit_slugs` | `string[]` | No | — |
+| `statuses` | `INITIALIZING \| INITIATED \| ACTIVE \| FAILED \| EXPIRED \| INACTIVE \| REVOKED[]` | No | — |
+| `user_ids` | `string[]` | No | — |
+| `auth_config_ids` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `account_type` | `PRIVATE \| SHARED \| ALL` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `total_pages` | `number` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `total_items` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  user_id: string,
+  alias?: string | null,
+  created_at: string,
+  updated_at: string,
+  is_disabled: boolean,
+  toolkit: {
+    slug: string
+  },
+  auth_config: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meta
+
+### checkActiveConnection
+
+`meta.checkActiveConnection`
+
+COMPOSIO_CHECK_ACTIVE_CONNECTION: check one connection
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.checkActiveConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkit?: string,
+  connected_account_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkActiveConnections
+
+`meta.checkActiveConnections`
+
+COMPOSIO_CHECK_ACTIVE_CONNECTIONS: check many connections
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.checkActiveConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  requests: {
+    toolkit?: string,
+    connected_account_id?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPlan
+
+`meta.createPlan`
+
+COMPOSIO_CREATE_PLAN: plan a multi-step workflow
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.createPlan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  difficulty: medium | hard,
+  known_fields: string,
+  primary_tool_slugs: string[],
+  reasoning: string,
+  use_case: string,
+  related_tool_slugs?: string[],
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enableTrigger
+
+`meta.enableTrigger`
+
+COMPOSIO_ENABLE_TRIGGER: enable a trigger on an account
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.enableTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  connected_account_id: string,
+  toolkit_slug: string,
+  trigger_name: string,
+  config_params?: Record<string, JsonValue>,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### executeTool
+
+`meta.executeTool`
+
+COMPOSIO_EXECUTE_TOOL: run one tool
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.executeTool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  tool_slug: string,
+  arguments: Record<string, JsonValue>,
+  connected_account_id?: string,
+  allow_destructive?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDependencyGraph
+
+`meta.getDependencyGraph`
+
+COMPOSIO_GET_DEPENDENCY_GRAPH: tools a tool depends on
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.getDependencyGraph({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  tool_name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRequiredParameters
+
+`meta.getRequiredParameters`
+
+COMPOSIO_GET_REQUIRED_PARAMETERS: auth fields of a toolkit
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.getRequiredParameters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkit: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getResponseSchema
+
+`meta.getResponseSchema`
+
+COMPOSIO_GET_RESPONSE_SCHEMA: output schema of a tool
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.getResponseSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  tool: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getToolSchemas
+
+`meta.getToolSchemas`
+
+COMPOSIO_GET_TOOL_SCHEMAS: input schemas by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.getToolSchemas({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  tool_slugs: string[],
+  include?: input_schema | output_schema[],
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### initiateConnection
+
+`meta.initiateConnection`
+
+COMPOSIO_INITIATE_CONNECTION: start connecting a toolkit
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.initiateConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkit: string,
+  parameters?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listToolkits
+
+`meta.listToolkits`
+
+COMPOSIO_LIST_TOOLKITS: list toolkits
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.listToolkits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  category?: string,
+  name_filter?: string,
+  min_tools?: number,
+  no_auth_only?: boolean,
+  size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTriggers
+
+`meta.listTriggers`
+
+COMPOSIO_LIST_TRIGGERS: list trigger types
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.listTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkit_names?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### manageConnections
+
+`meta.manageConnections`
+
+COMPOSIO_MANAGE_CONNECTIONS: check or connect toolkits
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.manageConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkits: string[],
+  reinitiate_all?: boolean,
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### multiExecuteTool
+
+`meta.multiExecuteTool`
+
+COMPOSIO_MULTI_EXECUTE_TOOL: run tools in parallel
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.multiExecuteTool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  tools: {
+    tool_slug: string,
+    arguments: Record<string, JsonValue>
+  }[],
+  sync_response_to_workbench: boolean,
+  memory?: Record<string, string[]>,
+  thought?: string,
+  current_step?: string,
+  current_step_metric?: string,
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remoteBashTool
+
+`meta.remoteBashTool`
+
+COMPOSIO_REMOTE_BASH_TOOL: run bash in the sandbox
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.remoteBashTool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  command: string,
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remoteWorkbench
+
+`meta.remoteWorkbench`
+
+COMPOSIO_REMOTE_WORKBENCH: run Python in the sandbox
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.meta.remoteWorkbench({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  code_to_execute: string,
+  thought?: string,
+  current_step?: string,
+  current_step_metric?: string,
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchTools
+
+`meta.searchTools`
+
+COMPOSIO_SEARCH_TOOLS: find tools for a use case
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.searchTools({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  queries: {
+    use_case: string,
+    known_fields?: string
+  }[],
+  session?: {
+    generate_id: true
+  } | {
+    id: string
+  },
+  model?: string,
+  search_strategy?: auto | tool_search
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### waitForConnection
+
+`meta.waitForConnection`
+
+COMPOSIO_WAIT_FOR_CONNECTION: wait until toolkits connect
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.waitForConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `arguments` | `object` | Yes | — |
+| `user_id` | `string` | No | Composio user the call runs for |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkits: string[],
+  mode?: 'any' | 'all',
+  timeout_seconds?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### waitForConnections
+
+`meta.waitForConnections`
+
+COMPOSIO_WAIT_FOR_CONNECTIONS: wait inside a session
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.meta.waitForConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | Session id from sessions.create |
+| `arguments` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+{
+  toolkits: string[],
+  mode?: 'any' | 'all',
+  session_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  result_type: completed | failed,
+  data: Record<string, JsonValue>,
+  error?: string | null,
+  log_id: string
+} | {
+  result_type: input_required,
+  input_requests: Record<string, Record<string, JsonValue>>,
+  request_state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Create a tool router session for a user
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.sessions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `toolkits` | `object` | No | Allowlist (enable) or denylist (disable) of toolkit slugs |
+
+<AccordionGroup>
+<Accordion title="toolkits full type">
+
+```ts
+{
+  enable: string[]
+} | {
+  disable: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `mcp` | `object` | Yes | — |
+| `tool_router_tools` | `string[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mcp full type">
+
+```ts
+{
+  type: http,
+  url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Toolkits
+
+### list
+
+`toolkits.list`
+
+List toolkits
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.toolkits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | No | — |
+| `managed_by` | `composio \| all \| project` | No | — |
+| `type` | `native \| custom \| all` | No | — |
+| `sort_by` | `usage \| alphabetically` | No | — |
+| `search` | `string` | No | — |
+| `include_deprecated` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `total_pages` | `number` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `total_items` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  type: string,
+  auth_schemes?: string[],
+  no_auth?: boolean,
+  meta: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### execute
+
+`tools.execute`
+
+Execute a tool by slug
+
+**Risk:** `write`
+
+```ts
+await corsair.composio.api.tools.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_slug` | `string` | Yes | — |
+| `arguments` | `object` | Yes | Arguments the tool takes |
+| `connected_account_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `version` | `string` | No | Toolkit version. Composio runs the latest when omitted. |
+
+<AccordionGroup>
+<Accordion title="arguments full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `log_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tools.get`
+
+Get a tool by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.tools.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_slug` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `toolkit` | `object` | Yes | — |
+| `input_parameters` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `output_parameters` | `object` | Yes | JSON object mapping string keys to JSON values |
+| `no_auth` | `boolean` | Yes | — |
+| `version` | `string` | Yes | — |
+| `available_versions` | `string[]` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `is_deprecated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="toolkit full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  logo?: string
+}
+```
+</Accordion>
+
+<Accordion title="input_parameters full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+
+<Accordion title="output_parameters full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tools.list`
+
+List Composio tools
+
+**Risk:** `read`
+
+```ts
+await corsair.composio.api.tools.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolkit_slug` | `string` | No | — |
+| `tool_slugs` | `string` | No | Comma-separated tool slugs |
+| `query` | `string` | No | — |
+| `important` | `true \| false` | No | — |
+| `include_deprecated` | `boolean` | No | — |
+| `toolkit_versions` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `total_pages` | `number` | Yes | — |
+| `current_page` | `number` | Yes | — |
+| `total_items` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  description: string,
+  toolkit: {
+    slug: string,
+    name: string,
+    logo?: string
+  },
+  input_parameters: Record<string, JsonValue>,
+  output_parameters: Record<string, JsonValue>,
+  no_auth: boolean,
+  version: string,
+  available_versions: string[],
+  tags: string[],
+  is_deprecated: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

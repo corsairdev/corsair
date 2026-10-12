@@ -1,27 +1,8 @@
-import * as actions from './actions';
-import * as apps from './apps';
-import * as connections from './connections';
-import * as tools from './tools';
+import * as Connections from './connections';
+import * as MetaTools from './meta-tools';
+import * as Sessions from './sessions';
+import * as Toolkits from './toolkits';
+import * as Tools from './tools';
 
-export const ToolsEndpoints = {
-	list: tools.list,
-	get: tools.get,
-};
-
-export const ActionsEndpoints = {
-	list: actions.list,
-	get: actions.get,
-	execute: actions.execute,
-};
-
-export const ConnectionsEndpoints = {
-	list: connections.list,
-	create: connections.create,
-	delete: connections.deleteConnection,
-};
-
-export const AppsEndpoints = {
-	list: apps.list,
-};
-
+export { Connections, MetaTools, Sessions, Toolkits, Tools };
 export * from './types';

@@ -1,5 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class ComposioAPIError extends Error {
 	constructor(
@@ -12,59 +17,59 @@ export class ComposioAPIError extends Error {
 	}
 }
 
-/** Composio v3 API root. v1/v2 return 410. */
-export const COMPOSIO_API_BASE = 'https://backend.composio.dev/api';
+export const COMPOSIO_API_BASE = 'https://backend.composio.dev/api/v3.1';
 
-/**
- * Drop undefined entries from a query object so they are not sent upstream.
- * Shared by all endpoint modules.
- */
-export function omitUndefined(
-	query: Record<string, string | number | boolean | undefined>,
-): Record<string, string | number | boolean | undefined> {
-	return Object.fromEntries(
-		Object.entries(query).filter(([, v]) => v !== undefined),
-	);
-}
+// The plugin's RATE_LIMIT_ERROR handler owns retries. A transport retry on top
+// of it would multiply attempts. maxRetries 0 still reads Retry-After into the
+// error so the handler can honor it.
+const COMPOSIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
-export async function makeComposioRequest<T>(
+type QueryValue = string | number | boolean | string[] | undefined;
+
+export async function makeComposioRequest<S extends z.ZodType>(
 	endpoint: string,
 	apiKey: string,
+	responseSchema: S,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		method?: 'GET' | 'POST' | 'DELETE';
+		// Validated endpoint inputs are specific objects. An index signature
+		// would force a cast at every call.
+		body?: object;
+		query?: Record<string, QueryValue>;
+		timeoutMs?: number;
 	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+): Promise<z.infer<S>> {
+	const { method = 'GET', body, query, timeoutMs } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: COMPOSIO_API_BASE,
-		VERSION: '3.0.0',
+		VERSION: '3.1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			'Content-Type': 'application/json',
-			'x-api-key': apiKey,
-		},
+		TIMEOUT: timeoutMs,
+		HEADERS: { 'x-api-key': apiKey },
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
 		query,
 	};
 
+	let raw: z.input<S>;
 	try {
-		return await request<T>(config, requestOptions);
+		raw = await request(config, requestOptions, {
+			rateLimitConfig: COMPOSIO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
-		// Preserve status + retryAfter (ms) from ApiError so error handlers can
-		// match on structured fields and honor Retry-After delays.
 		if (error instanceof ApiError) {
 			throw new ComposioAPIError(error.message, error.status, error.retryAfter);
 		}
@@ -73,4 +78,5 @@ export async function makeComposioRequest<T>(
 		}
 		throw new ComposioAPIError('Unknown error');
 	}
+	return responseSchema.parse(raw);
 }

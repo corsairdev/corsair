@@ -1238,6 +1238,14 @@
                 ]
               },
               {
+                "group": "Composio",
+                "pages": [
+                  "plugins/composio/overview",
+                  "plugins/composio/api",
+                  "plugins/composio/database"
+                ]
+              },
+              {
                 "group": "Confluence",
                 "pages": [
                   "plugins/confluence/overview",
