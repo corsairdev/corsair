@@ -120,12 +120,13 @@ export type ExternalAnthropicAdministratorPlugin<
 > = BaseAnthropicAdministratorPlugin<T>;
 
 /**
- * Anthropic Admin API plugin — organization members, invites, workspaces,
- * workspace members and API keys.
+ * Anthropic Admin API plugin: organization members, invites, workspaces,
+ * workspace members and API keys, plus Messages (with prompt caching) and
+ * Models.
  *
- * Requires an Admin API key (`sk-ant-admin…`) or an OAuth token with the
- * `org:admin` scope. A standard Anthropic API key is rejected by these
- * endpoints.
+ * Admin operations require an Admin API key (`sk-ant-admin…`) or an OAuth
+ * token with the `org:admin` scope. Messages and Models use a standard API key
+ * (`sk-ant-api…`) from the tenant `inference_key` or `options.inferenceKey`.
  */
 export function anthropicadministrator<
 	const T extends AnthropicAdministratorPluginOptions,

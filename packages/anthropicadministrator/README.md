@@ -1,6 +1,6 @@
 # @corsair-dev/anthropicadministrator
 
-Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys.
+Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys, plus Messages, prompt caching and Models.
 
 ## Install
 
@@ -19,6 +19,10 @@ pnpm add @corsair-dev/anthropicadministrator
 | `invites.deleteInvite` | `anthropicadministrator.api.invites.deleteInvite` | `destructive` | Delete a pending organization invite |
 | `invites.getInvite` | `anthropicadministrator.api.invites.getInvite` | `read` | Get a single invite by ID |
 | `invites.listInvites` | `anthropicadministrator.api.invites.listInvites` | `read` | List organization invites |
+| `messages.createCachedMessage` | `anthropicadministrator.api.messages.createCachedMessage` | `write` | Create a Message with prompt caching, reusing the cached prompt prefix on later calls |
+| `messages.createMessage` | `anthropicadministrator.api.messages.createMessage` | `write` | Send a conversation to a Claude model and get its reply (non-streaming) |
+| `models.getModel` | `anthropicadministrator.api.models.getModel` | `read` | Get a model by ID or alias |
+| `models.listModels` | `anthropicadministrator.api.models.listModels` | `read` | List available models, newest first, optionally filtered by lifecycle stage |
 | `organization.getOrganization` | `anthropicadministrator.api.organization.getOrganization` | `read` | Get the organization associated with the Admin API key |
 | `users.getUser` | `anthropicadministrator.api.users.getUser` | `read` | Get a single organization member by user ID |
 | `users.listUsers` | `anthropicadministrator.api.users.listUsers` | `read` | List organization members, optionally filtered by email or role |

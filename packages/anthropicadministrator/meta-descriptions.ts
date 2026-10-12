@@ -4,45 +4,46 @@ import type { anthropicAdministratorEndpointsNested } from './index';
 export const anthropicAdministratorEndpointMeta = {
 	'organization.getOrganization': {
 		riskLevel: 'read',
-		description: 'Get the current organization',
+		description: 'Get the organization associated with the Admin API key',
 	},
 	'users.listUsers': {
 		riskLevel: 'read',
-		description: 'List users',
+		description:
+			'List organization members, optionally filtered by email or role',
 	},
 	'users.getUser': {
 		riskLevel: 'read',
-		description: 'Get a user',
+		description: 'Get a single organization member by user ID',
 	},
 	'users.updateUser': {
 		riskLevel: 'write',
-		description: 'Update a user',
+		description: "Change an organization member's role",
 	},
 	'users.removeUser': {
 		riskLevel: 'destructive',
-		description: 'Remove a user',
 		irreversible: true,
+		description: 'Remove a member from the organization',
 	},
 	'invites.listInvites': {
 		riskLevel: 'read',
-		description: 'List invites',
+		description: 'List organization invites',
 	},
 	'invites.createInvite': {
 		riskLevel: 'write',
-		description: 'Create an invite',
+		description: 'Invite someone to the organization with a given role',
 	},
 	'invites.getInvite': {
 		riskLevel: 'read',
-		description: 'Get an invite',
+		description: 'Get a single invite by ID',
 	},
 	'invites.deleteInvite': {
 		riskLevel: 'destructive',
-		description: 'Delete an invite',
 		irreversible: true,
+		description: 'Delete a pending organization invite',
 	},
 	'workspaces.listWorkspaces': {
 		riskLevel: 'read',
-		description: 'List workspaces',
+		description: 'List workspaces, optionally including archived ones',
 	},
 	'workspaces.createWorkspace': {
 		riskLevel: 'write',
@@ -50,45 +51,45 @@ export const anthropicAdministratorEndpointMeta = {
 	},
 	'workspaces.getWorkspace': {
 		riskLevel: 'read',
-		description: 'Get a workspace',
+		description: 'Get a single workspace by ID',
 	},
 	'workspaces.updateWorkspace': {
 		riskLevel: 'write',
-		description: 'Update a workspace',
+		description: 'Update a workspace name, tags or data residency',
 	},
 	'workspaces.archiveWorkspace': {
 		riskLevel: 'destructive',
-		description: 'Archive a workspace',
 		irreversible: true,
+		description: 'Archive a workspace',
 	},
 	'workspaceMembers.listWorkspaceMembers': {
 		riskLevel: 'read',
-		description: 'List workspace members',
+		description: 'List members of a workspace',
 	},
 	'workspaceMembers.createWorkspaceMember': {
 		riskLevel: 'write',
-		description: 'Add a user to a workspace',
+		description: 'Add an organization member to a workspace with a role',
 	},
 	'workspaceMembers.getWorkspaceMember': {
 		riskLevel: 'read',
-		description: 'Get a workspace member',
+		description: 'Get a single workspace member',
 	},
 	'workspaceMembers.updateWorkspaceMember': {
 		riskLevel: 'write',
-		description: 'Update a workspace member',
+		description: "Change a workspace member's role",
 	},
 	'workspaceMembers.deleteWorkspaceMember': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from a workspace',
 		irreversible: true,
+		description: 'Remove a member from a workspace',
 	},
 	'apiKeys.listApiKeys': {
 		riskLevel: 'read',
-		description: 'List API keys',
+		description: 'List organization API keys, optionally filtered by status',
 	},
 	'apiKeys.getApiKey': {
 		riskLevel: 'read',
-		description: 'Get an API key',
+		description: 'Get a single API key by ID',
 	},
 	'apiKeys.updateApiKey': {
 		riskLevel: 'write',
@@ -96,7 +97,8 @@ export const anthropicAdministratorEndpointMeta = {
 	},
 	'messages.createMessage': {
 		riskLevel: 'write',
-		description: 'Create a Message',
+		description:
+			'Send a conversation to a Claude model and get its reply (non-streaming)',
 	},
 	'messages.createCachedMessage': {
 		riskLevel: 'write',
@@ -105,11 +107,12 @@ export const anthropicAdministratorEndpointMeta = {
 	},
 	'models.getModel': {
 		riskLevel: 'read',
-		description: 'Get a Model',
+		description: 'Get a model by ID or alias',
 	},
 	'models.listModels': {
 		riskLevel: 'read',
-		description: 'List Models',
+		description:
+			'List available models, newest first, optionally filtered by lifecycle stage',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof anthropicAdministratorEndpointsNested

@@ -367,6 +367,415 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 
 ---
 
+## Messages
+
+### createCachedMessage
+
+`messages.createCachedMessage`
+
+Create a Message with prompt caching, reusing the cached prompt prefix on later calls
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.messages.createCachedMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model ID, e.g. from models.listModels |
+| `max_tokens` | `number` | Yes | Maximum number of tokens to generate; 0 only warms the prompt cache |
+| `messages` | `object[]` | Yes | Conversation turns, alternating user and assistant |
+| `system` | `object[]` | No | System prompt; use text blocks to attach cache_control |
+| `metadata` | `object` | No | — |
+| `stop_sequences` | `string[]` | No | — |
+| `stream` | `boolean` | No | — |
+| `temperature` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `ttl` | `5m \| 1h` | No | Cache lifetime for the prompt prefix; defaults to 5m |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant,
+  content: string | (
+    {
+      type: text,
+      text: string,
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    } | {
+      type: image,
+      source: {
+        type: base64,
+        media_type: image/jpeg | image/png | image/gif | image/webp,
+        data: string
+      } | {
+        type: url,
+        url: string
+      },
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    } | {
+      type: document,
+      source: {
+        type: base64,
+        media_type: application/pdf,
+        data: string
+      } | {
+        type: text,
+        media_type: text/plain,
+        data: string
+      } | {
+        type: url,
+        url: string
+      },
+      title?: string | null,
+      context?: string | null,
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="system full type">
+
+```ts
+string | {
+  type: text,
+  text: string,
+  cache_control?: {
+    type: ephemeral,
+    ttl?: 5m | 1h
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  user_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `message` | Yes | — |
+| `role` | `assistant` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `model` | `string` | Yes | — |
+| `stop_reason` | `string` | No | — |
+| `stop_sequence` | `string` | No | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type: string,
+  text?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number,
+  cache_creation_input_tokens?: number | null,
+  cache_read_input_tokens?: number | null,
+  service_tier?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMessage
+
+`messages.createMessage`
+
+Send a conversation to a Claude model and get its reply (non-streaming)
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.messages.createMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model ID, e.g. from models.listModels |
+| `max_tokens` | `number` | Yes | Maximum number of tokens to generate; 0 only warms the prompt cache |
+| `messages` | `object[]` | Yes | Conversation turns, alternating user and assistant |
+| `system` | `object[]` | No | System prompt; use text blocks to attach cache_control |
+| `cache_control` | `object` | No | Automatic prompt caching for the whole request |
+| `metadata` | `object` | No | — |
+| `stop_sequences` | `string[]` | No | — |
+| `stream` | `boolean` | No | — |
+| `temperature` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `top_p` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant,
+  content: string | (
+    {
+      type: text,
+      text: string,
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    } | {
+      type: image,
+      source: {
+        type: base64,
+        media_type: image/jpeg | image/png | image/gif | image/webp,
+        data: string
+      } | {
+        type: url,
+        url: string
+      },
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    } | {
+      type: document,
+      source: {
+        type: base64,
+        media_type: application/pdf,
+        data: string
+      } | {
+        type: text,
+        media_type: text/plain,
+        data: string
+      } | {
+        type: url,
+        url: string
+      },
+      title?: string | null,
+      context?: string | null,
+      cache_control?: {
+        type: ephemeral,
+        ttl?: 5m | 1h
+      } | null
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="system full type">
+
+```ts
+string | {
+  type: text,
+  text: string,
+  cache_control?: {
+    type: ephemeral,
+    ttl?: 5m | 1h
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cache_control full type">
+
+```ts
+{
+  type: ephemeral,
+  ttl?: 5m | 1h
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  user_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `message` | Yes | — |
+| `role` | `assistant` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `model` | `string` | Yes | — |
+| `stop_reason` | `string` | No | — |
+| `stop_sequence` | `string` | No | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  type: string,
+  text?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number,
+  cache_creation_input_tokens?: number | null,
+  cache_read_input_tokens?: number | null,
+  service_tier?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### getModel
+
+`models.getModel`
+
+Get a model by ID or alias
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.models.getModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model identifier or alias |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `model` | Yes | — |
+| `id` | `string` | Yes | — |
+| `display_name` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `deprecated_at` | `string` | No | — |
+| `retires_at` | `string` | No | — |
+| `lifecycle` | `active \| deprecated \| retired` | No | — |
+| `line` | `string` | No | — |
+| `max_input_tokens` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+
+
+
+---
+
+### listModels
+
+`models.listModels`
+
+List available models, newest first, optionally filtered by lifecycle stage
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.models.listModels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+| `lifecycle` | `active \| deprecated \| retired[]` | No | Lifecycle stages to include; defaults to active and deprecated |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: model,
+  id: string,
+  display_name: string,
+  created_at: string,
+  deprecated_at?: string | null,
+  retires_at?: string | null,
+  lifecycle?: active | deprecated | retired,
+  line?: string | null,
+  max_input_tokens?: number | null,
+  max_tokens?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Organization
 
 ### getOrganization
@@ -784,6 +1193,9 @@ await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos: global | us[] | unrestricted,
+  default_inference_geo: global | us,
+  workspace_geo: us
 }
 ```
 </Accordion>
@@ -827,6 +1239,9 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos?: global | us[] | unrestricted | null,
+  default_inference_geo?: global | us | null,
+  workspace_geo?: us | null
 }
 ```
 </Accordion>
@@ -862,6 +1277,9 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos: global | us[] | unrestricted,
+  default_inference_geo: global | us,
+  workspace_geo: us
 }
 ```
 </Accordion>
@@ -919,6 +1337,9 @@ await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos: global | us[] | unrestricted,
+  default_inference_geo: global | us,
+  workspace_geo: us
 }
 ```
 </Accordion>
@@ -978,6 +1399,9 @@ await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
   compartment_id?: string,
   created_at: string,
   data_residency?: {
+    allowed_inference_geos: global | us[] | unrestricted,
+    default_inference_geo: global | us,
+    workspace_geo: us
   } | null,
   display_color?: string,
   external_key_id?: string | null,
@@ -1021,6 +1445,8 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos?: global | us[] | unrestricted | null,
+  default_inference_geo?: global | us | null
 }
 ```
 </Accordion>
@@ -1056,6 +1482,9 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 
 ```ts
 {
+  allowed_inference_geos: global | us[] | unrestricted,
+  default_inference_geo: global | us,
+  workspace_geo: us
 }
 ```
 </Accordion>
