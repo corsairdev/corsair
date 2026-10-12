@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeComposioRequest } from '../client';
 import type { ComposioEndpoints } from '../index';
-import { ComposioEndpointOutputSchemas } from './types';
+import {
+	ComposioEndpointInputSchemas,
+	ComposioEndpointOutputSchemas,
+} from './types';
 
-export const list: ComposioEndpoints['connectionsList'] = async (
-	ctx,
-	input,
-) => {
+export const list: ComposioEndpoints['connectionsList'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.connectionsList.parse(raw);
 	const response = await makeComposioRequest(
 		'/connected_accounts',
 		ctx.key,
@@ -34,8 +35,9 @@ export const list: ComposioEndpoints['connectionsList'] = async (
 
 export const create: ComposioEndpoints['connectionCreate'] = async (
 	ctx,
-	input,
+	raw,
 ) => {
+	const input = ComposioEndpointInputSchemas.connectionCreate.parse(raw);
 	const response = await makeComposioRequest(
 		'/connected_accounts/link',
 		ctx.key,
@@ -53,8 +55,9 @@ export const create: ComposioEndpoints['connectionCreate'] = async (
 
 export const remove: ComposioEndpoints['connectionDelete'] = async (
 	ctx,
-	input,
+	raw,
 ) => {
+	const input = ComposioEndpointInputSchemas.connectionDelete.parse(raw);
 	const response = await makeComposioRequest(
 		`/connected_accounts/${encodeURIComponent(input.connected_account_id)}`,
 		ctx.key,

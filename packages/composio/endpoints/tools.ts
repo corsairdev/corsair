@@ -2,7 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import { makeComposioRequest } from '../client';
 import type { ComposioContext, ComposioEndpoints } from '../index';
 import type { Tool } from './types';
-import { ComposioEndpointOutputSchemas } from './types';
+import {
+	ComposioEndpointInputSchemas,
+	ComposioEndpointOutputSchemas,
+} from './types';
 
 async function saveTool(ctx: ComposioContext, tool: Tool) {
 	if (!ctx.db.tools) return;
@@ -13,7 +16,8 @@ async function saveTool(ctx: ComposioContext, tool: Tool) {
 	}
 }
 
-export const list: ComposioEndpoints['toolsList'] = async (ctx, input) => {
+export const list: ComposioEndpoints['toolsList'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.toolsList.parse(raw);
 	const response = await makeComposioRequest(
 		'/tools',
 		ctx.key,
@@ -27,7 +31,8 @@ export const list: ComposioEndpoints['toolsList'] = async (ctx, input) => {
 	return response;
 };
 
-export const get: ComposioEndpoints['toolGet'] = async (ctx, input) => {
+export const get: ComposioEndpoints['toolGet'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.toolGet.parse(raw);
 	const response = await makeComposioRequest(
 		`/tools/${encodeURIComponent(input.tool_slug)}`,
 		ctx.key,
@@ -44,7 +49,8 @@ export const get: ComposioEndpoints['toolGet'] = async (ctx, input) => {
 	return response;
 };
 
-export const execute: ComposioEndpoints['toolExecute'] = async (ctx, input) => {
+export const execute: ComposioEndpoints['toolExecute'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.toolExecute.parse(raw);
 	const { tool_slug, ...body } = input;
 	const response = await makeComposioRequest(
 		`/tools/execute/${encodeURIComponent(tool_slug)}`,

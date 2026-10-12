@@ -1,9 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeComposioRequest } from '../client';
 import type { ComposioEndpoints } from '../index';
-import { ComposioEndpointOutputSchemas } from './types';
+import {
+	ComposioEndpointInputSchemas,
+	ComposioEndpointOutputSchemas,
+} from './types';
 
-export const list: ComposioEndpoints['toolkitsList'] = async (ctx, input) => {
+export const list: ComposioEndpoints['toolkitsList'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.toolkitsList.parse(raw);
 	const response = await makeComposioRequest(
 		'/toolkits',
 		ctx.key,

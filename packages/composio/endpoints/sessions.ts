@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeComposioRequest } from '../client';
 import type { ComposioEndpoints } from '../index';
-import { ComposioEndpointOutputSchemas } from './types';
+import {
+	ComposioEndpointInputSchemas,
+	ComposioEndpointOutputSchemas,
+} from './types';
 
-export const create: ComposioEndpoints['sessionCreate'] = async (
-	ctx,
-	input,
-) => {
+export const create: ComposioEndpoints['sessionCreate'] = async (ctx, raw) => {
+	const input = ComposioEndpointInputSchemas.sessionCreate.parse(raw);
 	const response = await makeComposioRequest(
 		'/tool_router/session',
 		ctx.key,

@@ -675,6 +675,19 @@ describe('entity persistence', () => {
 	});
 });
 
+describe('input validation', () => {
+	it('rejects invalid input before any request is sent', async () => {
+		await expect(Sessions.create(ctx, { user_id: '' })).rejects.toThrow();
+		await expect(
+			Tools.get(ctx, { tool_slug: '../connected_accounts' }),
+		).rejects.toThrow();
+		await expect(
+			Connections.remove(ctx, { connected_account_id: 'ca_1/../x' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('errors', () => {
 	it('a 401 becomes a ComposioAPIError that AUTH_ERROR does not retry', async () => {
 		respond(401, { error: { message: 'Invalid API key' } });
