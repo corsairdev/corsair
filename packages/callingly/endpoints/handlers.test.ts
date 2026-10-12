@@ -559,14 +559,31 @@ describe('teams', () => {
 		]);
 		fetchMock.mockResolvedValueOnce(json({ success: true }));
 		await Handlers.updateTeamUsers(ctx, { teamId: 123, agents: [1, 5] });
-		expect(db.teamUsers.search).toHaveBeenCalledWith({
-			entity_id: { startsWith: '123:' },
-			limit: 1000,
-		});
+		expect(db.teamUsers.search.mock.calls).toEqual([
+			[{ entity_id: { startsWith: '123:' }, limit: 500, offset: 0 }],
+		]);
 		expect(db.teamUsers.deleteByEntityId.mock.calls).toEqual([['123:9']]);
 		expect(db.teamUsers.upsertByEntityId.mock.calls).toEqual([
 			['123:5', { id: 5, team_id: 123 }],
 		]);
+	});
+
+	it('updateTeamUsers reads every stored page before pruning', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, i) => ({
+			entity_id: `123:${i + 100}`,
+		}));
+		db.teamUsers.search
+			.mockResolvedValueOnce(fullPage)
+			.mockResolvedValueOnce([{ entity_id: '123:9' }]);
+		fetchMock.mockResolvedValueOnce(json({ success: true }));
+		await Handlers.updateTeamUsers(ctx, { teamId: 123, agents: [100] });
+		expect(db.teamUsers.search.mock.calls).toEqual([
+			[{ entity_id: { startsWith: '123:' }, limit: 500, offset: 0 }],
+			[{ entity_id: { startsWith: '123:' }, limit: 500, offset: 500 }],
+		]);
+		expect(db.teamUsers.deleteByEntityId).toHaveBeenCalledTimes(500);
+		expect(db.teamUsers.deleteByEntityId).toHaveBeenCalledWith('123:9');
+		expect(db.teamUsers.deleteByEntityId).not.toHaveBeenCalledWith('123:100');
 	});
 
 	it('updateTeamUsers stores the returned roster when the API echoes it', async () => {

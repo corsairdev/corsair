@@ -425,6 +425,8 @@ export const listTeamUsers: CallinglyEndpoints['listTeamUsers'] = async (
 	return response;
 };
 
+const ROSTER_PAGE = 500;
+
 export const updateTeamUsers: CallinglyEndpoints['updateTeamUsers'] = async (
 	ctx,
 	input,
@@ -441,11 +443,16 @@ export const updateTeamUsers: CallinglyEndpoints['updateTeamUsers'] = async (
 		const teamUsers = ctx.db.teamUsers;
 		if (!teamUsers) return;
 		const roster = new Set(agents.map((id) => `${teamId}:${id}`));
-		const stored = await teamUsers.search({
-			entity_id: { startsWith: `${teamId}:` },
-			limit: 1000,
-		});
-		const storedIds = new Set(stored.map((row) => row.entity_id));
+		const storedIds = new Set<string>();
+		for (let offset = 0; ; offset += ROSTER_PAGE) {
+			const page = await teamUsers.search({
+				entity_id: { startsWith: `${teamId}:` },
+				limit: ROSTER_PAGE,
+				offset,
+			});
+			for (const row of page) storedIds.add(row.entity_id);
+			if (page.length < ROSTER_PAGE) break;
+		}
 		for (const entityId of storedIds) {
 			if (!roster.has(entityId)) await teamUsers.deleteByEntityId(entityId);
 		}
