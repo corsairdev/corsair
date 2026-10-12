@@ -1,105 +1,59 @@
 import { AuthMissingError } from 'corsair/core';
-import { request } from 'corsair/http';
+import { ZodError } from 'zod';
 import { CreateMessageInputSchema } from './endpoints/types/inputs';
 import type { AnthropicAdministratorContext } from './index';
-import { anthropicadministrator } from './index';
+import { anthropicAdministratorEndpointsNested as api } from './index';
+import { anthropicAdministratorEndpointSchemas } from './meta';
+import {
+	ADMIN_KEY,
+	INFERENCE_KEY,
+	jsonResponse,
+	makeContext,
+	sentRequest,
+	stubFetch,
+} from './test-helpers';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(async () => undefined),
-}));
+const BASE = 'https://api.anthropic.com';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
-
-const mockRequest = request as jest.Mock;
-
-const upserts: Array<[string, string, unknown]> = [];
-const deletes: Array<[string, string]> = [];
-
-function entity(name: string) {
-	return {
-		upsertByEntityId: async (id: string, data: unknown) => {
-			upserts.push([name, id, data]);
-		},
-		deleteByEntityId: async (id: string) => {
-			deletes.push([name, id]);
-			return true;
-		},
-	};
-}
-
-const ctx = {
-	key: 'sk-ant-admin-test',
-	options: { inferenceKey: 'sk-ant-api-test' },
-	keys: {
-		get_api_key: async () => 'sk-ant-admin-test',
-		get_inference_key: async () => 'sk-ant-api-test',
-	},
-	db: {
-		users: entity('users'),
-		invites: entity('invites'),
-		workspaces: entity('workspaces'),
-		workspaceMembers: entity('workspaceMembers'),
-		apiKeys: entity('apiKeys'),
-	},
-	// Test-only partial context; endpoints read `key` and `db` only.
-} as unknown as AnthropicAdministratorContext;
-
-function ops() {
-	const plugin = anthropicadministrator({ key: 'sk-ant-admin-test' });
-	return plugin.endpoints as unknown as Record<
-		string,
-		Record<
-			string,
-			(
-				c: AnthropicAdministratorContext,
-				i: Record<string, unknown>,
-			) => Promise<unknown>
-		>
-	>;
-}
-
-function call(
-	group: string,
-	name: string,
-	input: Record<string, unknown> = {},
-) {
-	const fn = ops()[group]?.[name];
-	if (!fn) throw new Error(`missing endpoint ${group}.${name}`);
-	return fn(ctx, input);
-}
-
-function sent() {
-	const c = mockRequest.mock.calls.at(-1);
-	if (!c) throw new Error('request was never called');
-	return {
-		config: c[0] as { BASE: string; HEADERS: Record<string, string> },
-		options: c[1] as {
-			method: string;
-			url: string;
-			body?: Record<string, unknown>;
-			query?: Record<string, unknown>;
-		},
-	};
-}
-
+const ORGANIZATION = { id: 'org_1', name: 'Acme', type: 'organization' };
 const USER = {
 	id: 'user_1',
 	added_at: '2026-01-01T00:00:00Z',
-	email: 'a@b.com',
-	name: 'A',
+	email: 'ada@acme.dev',
+	name: 'Ada',
 	role: 'developer',
 	type: 'user',
+};
+const INVITE = {
+	id: 'invite_1',
+	accepted_at: null,
+	email: 'new@acme.dev',
+	expires_at: '2026-11-01T00:00:00Z',
+	invited_at: '2026-10-01T00:00:00Z',
+	rbac_group_ids: [],
+	role: 'developer',
+	status: 'pending',
+	type: 'invite',
 };
 const WORKSPACE = {
 	id: 'wrkspc_1',
 	archived_at: null,
+	compartment_id: 'cmp_1',
 	created_at: '2026-01-01T00:00:00Z',
-	name: 'W',
+	data_residency: {
+		allowed_inference_geos: 'unrestricted',
+		default_inference_geo: 'global',
+		workspace_geo: 'us',
+	},
+	display_color: '#6C5BB9',
+	external_key_id: null,
+	name: 'Prod',
+	tags: { env: 'prod' },
 	type: 'workspace',
+};
+const ARCHIVED_WORKSPACE = {
+	...WORKSPACE,
+	archived_at: '2026-10-02T00:00:00Z',
 };
 const MEMBER = {
 	type: 'workspace_member',
@@ -107,407 +61,575 @@ const MEMBER = {
 	workspace_id: 'wrkspc_1',
 	workspace_role: 'workspace_developer',
 };
+const API_KEY = {
+	id: 'apikey_1',
+	created_at: '2026-01-01T00:00:00Z',
+	created_by: { id: 'user_1', type: 'user' },
+	expires_at: null,
+	name: 'ci',
+	partial_key_hint: 'sk-ant-api03-R2D...igAA',
+	status: 'active',
+	type: 'api_key',
+	workspace_id: 'wrkspc_1',
+};
+const MESSAGE = {
+	id: 'msg_1',
+	type: 'message',
+	role: 'assistant',
+	content: [{ type: 'text', text: 'Hello.' }],
+	model: 'claude-opus-5',
+	stop_reason: 'end_turn',
+	stop_sequence: null,
+	usage: {
+		input_tokens: 12,
+		output_tokens: 3,
+		cache_creation_input_tokens: 2048,
+		cache_read_input_tokens: 0,
+	},
+};
+const MODEL = {
+	type: 'model',
+	id: 'claude-opus-5',
+	display_name: 'Claude Opus 5',
+	created_at: '2026-07-24T00:00:00Z',
+	deprecated_at: null,
+	lifecycle: 'active',
+	line: 'opus',
+	max_input_tokens: 200000,
+	max_tokens: 128000,
+	retires_at: null,
+};
 
-beforeEach(() => {
-	mockRequest.mockReset();
-	mockRequest.mockResolvedValue({});
-	upserts.length = 0;
-	deletes.length = 0;
-});
+function page(item: object, id: string) {
+	return { data: [item], first_id: id, has_more: false, last_id: id };
+}
 
-describe('Admin API transport', () => {
-	it('sends x-api-key and anthropic-version against api.anthropic.com', async () => {
-		await call('organization', 'getOrganization');
+type Case = {
+	op: string;
+	// Safe: each case's result is compared with toEqual against its literal response fixture.
+	// A narrower type is not practical because the table mixes the return types of all 26 operations.
+	run: (ctx: AnthropicAdministratorContext) => Promise<unknown>;
+	method: 'GET' | 'POST' | 'DELETE';
+	url: string;
+	body?: object;
+	response: object;
+};
 
-		expect(sent().config.BASE).toBe('https://api.anthropic.com');
-		expect(sent().config.HEADERS).toMatchObject({
-			'x-api-key': 'sk-ant-admin-test',
-			'anthropic-version': '2023-06-01',
-		});
-		// Anthropic authenticates with x-api-key, not a bearer token.
-		expect(sent().config.HEADERS.Authorization).toBeUndefined();
-		expect(sent().options.url).toBe('/v1/organizations/me');
-	});
-
-	it('sends an oauth token as a bearer credential, not x-api-key', async () => {
-		const plugin = anthropicadministrator({
-			key: 'oauth-access-token',
-			authType: 'oauth_2',
-		});
-		const groups = plugin.endpoints as unknown as Record<
-			string,
-			Record<
-				string,
-				(
-					c: AnthropicAdministratorContext,
-					i: Record<string, unknown>,
-				) => Promise<unknown>
-			>
-		>;
-		const oauthCtx = {
-			key: 'oauth-access-token',
-			options: { authType: 'oauth_2', key: 'oauth-access-token' },
-			keys: { get_access_token: async () => 'oauth-access-token' },
-			db: {},
-		} as unknown as AnthropicAdministratorContext;
-
-		const fn = groups.organization?.getOrganization;
-		if (!fn) throw new Error('missing endpoint');
-		await fn(oauthCtx, {});
-
-		expect(sent().config.HEADERS).toMatchObject({
-			authorization: 'Bearer oauth-access-token',
-			'anthropic-version': '2023-06-01',
-		});
-		expect(sent().config.HEADERS['x-api-key']).toBeUndefined();
-	});
-
-	it('never sends a body on GET or DELETE', async () => {
-		await call('users', 'listUsers', {});
-		expect(sent().options.body).toBeUndefined();
-
-		await call('users', 'removeUser', { user_id: 'user_1' });
-		expect(sent().options.method).toBe('DELETE');
-		expect(sent().options.body).toBeUndefined();
-	});
-});
-
-describe('Admin API routes', () => {
-	it.each([
-		['organization', 'getOrganization', {}, 'GET', '/v1/organizations/me'],
-		['users', 'listUsers', {}, 'GET', '/v1/organizations/users'],
-		[
-			'users',
-			'getUser',
-			{ user_id: 'u 1' },
-			'GET',
-			'/v1/organizations/users/u%201',
-		],
-		[
-			'users',
-			'updateUser',
-			{ user_id: 'u1', role: 'developer' },
-			'POST',
-			'/v1/organizations/users/u1',
-		],
-		[
-			'users',
-			'removeUser',
-			{ user_id: 'u1' },
-			'DELETE',
-			'/v1/organizations/users/u1',
-		],
-		['invites', 'listInvites', {}, 'GET', '/v1/organizations/invites'],
-		[
-			'invites',
-			'createInvite',
-			{ email: 'a@b.com', role: 'user' },
-			'POST',
-			'/v1/organizations/invites',
-		],
-		[
-			'invites',
-			'getInvite',
-			{ invite_id: 'i1' },
-			'GET',
-			'/v1/organizations/invites/i1',
-		],
-		[
-			'invites',
-			'deleteInvite',
-			{ invite_id: 'i1' },
-			'DELETE',
-			'/v1/organizations/invites/i1',
-		],
-		['workspaces', 'listWorkspaces', {}, 'GET', '/v1/organizations/workspaces'],
-		[
-			'workspaces',
-			'createWorkspace',
-			{ name: 'W' },
-			'POST',
-			'/v1/organizations/workspaces',
-		],
-		[
-			'workspaces',
-			'getWorkspace',
-			{ workspace_id: 'w1' },
-			'GET',
-			'/v1/organizations/workspaces/w1',
-		],
-		[
-			'workspaces',
-			'updateWorkspace',
-			{ workspace_id: 'w1', name: 'X' },
-			'POST',
-			'/v1/organizations/workspaces/w1',
-		],
-		[
-			'workspaces',
-			'archiveWorkspace',
-			{ workspace_id: 'w1' },
-			'POST',
-			'/v1/organizations/workspaces/w1/archive',
-		],
-		[
-			'workspaceMembers',
-			'listWorkspaceMembers',
-			{ workspace_id: 'w1' },
-			'GET',
-			'/v1/organizations/workspaces/w1/members',
-		],
-		[
-			'workspaceMembers',
-			'createWorkspaceMember',
-			{ workspace_id: 'w1', user_id: 'u1', workspace_role: 'workspace_user' },
-			'POST',
-			'/v1/organizations/workspaces/w1/members',
-		],
-		[
-			'workspaceMembers',
-			'getWorkspaceMember',
-			{ workspace_id: 'w1', user_id: 'u1' },
-			'GET',
-			'/v1/organizations/workspaces/w1/members/u1',
-		],
-		[
-			'workspaceMembers',
-			'updateWorkspaceMember',
-			{ workspace_id: 'w1', user_id: 'u1', workspace_role: 'workspace_admin' },
-			'POST',
-			'/v1/organizations/workspaces/w1/members/u1',
-		],
-		[
-			'workspaceMembers',
-			'deleteWorkspaceMember',
-			{ workspace_id: 'w1', user_id: 'u1' },
-			'DELETE',
-			'/v1/organizations/workspaces/w1/members/u1',
-		],
-		['apiKeys', 'listApiKeys', {}, 'GET', '/v1/organizations/api_keys'],
-		[
-			'apiKeys',
-			'getApiKey',
-			{ api_key_id: 'k1' },
-			'GET',
-			'/v1/organizations/api_keys/k1',
-		],
-		[
-			'apiKeys',
-			'updateApiKey',
-			{ api_key_id: 'k1', name: 'n' },
-			'POST',
-			'/v1/organizations/api_keys/k1',
-		],
-		[
-			'messages',
-			'createMessage',
-			{
-				model: 'claude-3-5-sonnet-20241022',
-				max_tokens: 10,
-				messages: [{ role: 'user', content: 'hi' }],
-			},
-			'POST',
-			'/v1/messages',
-		],
-		[
-			'models',
-			'getModel',
-			{ model_id: 'claude-3-5-sonnet-20241022' },
-			'GET',
-			'/v1/models/claude-3-5-sonnet-20241022',
-		],
-		['models', 'listModels', { limit: 20 }, 'GET', '/v1/models'],
-	] as const)('%s.%s -> %s', async (group, name, input, method, url) => {
-		mockRequest.mockResolvedValueOnce({ data: [] });
-		await call(group, name, input as Record<string, unknown>);
-
-		expect(sent().options.method).toBe(method);
-		expect(sent().options.url).toBe(url);
-	});
-
-	it('sends only the documented body fields, omitting undefined', async () => {
-		await call('workspaces', 'updateWorkspace', {
-			workspace_id: 'w1',
-			name: 'New name',
-		});
-
-		expect(sent().options.body).toEqual({ name: 'New name' });
-	});
-
-	it('passes list filters through as query parameters', async () => {
-		mockRequest.mockResolvedValueOnce({ data: [] });
-		await call('users', 'listUsers', {
-			limit: 50,
-			email: 'a@b.com',
-			roles: ['admin', 'developer'],
-		});
-
-		expect(sent().options.query).toMatchObject({
-			limit: 50,
-			email: 'a@b.com',
-			roles: ['admin', 'developer'],
-		});
-	});
-
-	it('rejects Admin calls when only an inference key is available', async () => {
-		const inferenceOnlyCtx = {
-			key: 'sk-ant-api-inference',
-			options: {},
-			keys: {
-				get_api_key: async () => undefined,
-				get_inference_key: async () => 'sk-ant-api-inference',
-			},
-			db: {},
-		} as unknown as AnthropicAdministratorContext;
-		const fn = ops().users?.listUsers;
-		if (!fn) throw new Error('missing endpoint');
-
-		await expect(fn(inferenceOnlyCtx, {})).rejects.toBeInstanceOf(
-			AuthMissingError,
-		);
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-});
-
-describe('Messages and Models API transport', () => {
-	it('uses the standard inference key, not the Admin credential', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
-		await call('messages', 'createMessage', {
-			model: 'claude-3-5-sonnet-20241022',
-			max_tokens: 10,
-			messages: [{ role: 'user', content: 'hi' }],
-		});
-
-		expect(sent().config.HEADERS['x-api-key']).toBe('sk-ant-api-test');
-		expect(sent().config.HEADERS['x-api-key']).not.toBe('sk-ant-admin-test');
-	});
-
-	it('prefers tenant-scoped inference_key over factory options', async () => {
-		const tenantCtx = {
-			key: 'sk-ant-admin-test',
-			options: { inferenceKey: 'sk-ant-api-factory' },
-			keys: {
-				get_inference_key: async () => 'sk-ant-api-tenant',
-			},
-			db: {},
-		} as unknown as AnthropicAdministratorContext;
-		const fn = ops().messages?.createMessage;
-		if (!fn) throw new Error('missing endpoint');
-		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
-		await fn(tenantCtx, {
-			model: 'claude-3-5-sonnet-20241022',
-			max_tokens: 10,
-			messages: [{ role: 'user', content: 'hi' }],
-		});
-
-		expect(sent().config.HEADERS['x-api-key']).toBe('sk-ant-api-tenant');
-	});
-
-	it('always sends stream false on createMessage', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
-		await call('messages', 'createMessage', {
-			model: 'claude-3-5-sonnet-20241022',
-			max_tokens: 10,
-			messages: [{ role: 'user', content: 'hi' }],
-		});
-
-		expect(sent().options.body).toMatchObject({ stream: false });
-	});
-
-	it('rejects stream=true in the input schema', () => {
-		expect(() =>
-			CreateMessageInputSchema.parse({
-				model: 'claude-3-5-sonnet-20241022',
-				max_tokens: 10,
-				stream: true,
-				messages: [{ role: 'user', content: 'hi' }],
+const CASES: Case[] = [
+	{
+		op: 'organization.getOrganization',
+		run: (c) => api.organization.getOrganization(c, {}),
+		method: 'GET',
+		url: '/v1/organizations/me',
+		response: ORGANIZATION,
+	},
+	{
+		op: 'users.listUsers',
+		run: (c) =>
+			api.users.listUsers(c, { limit: 5, roles: ['admin', 'developer'] }),
+		method: 'GET',
+		url: '/v1/organizations/users?limit=5&roles=admin&roles=developer',
+		response: page(USER, 'user_1'),
+	},
+	{
+		op: 'users.getUser',
+		run: (c) => api.users.getUser(c, { user_id: 'user_1' }),
+		method: 'GET',
+		url: '/v1/organizations/users/user_1',
+		response: USER,
+	},
+	{
+		op: 'users.updateUser',
+		run: (c) => api.users.updateUser(c, { user_id: 'user_1', role: 'admin' }),
+		method: 'POST',
+		url: '/v1/organizations/users/user_1',
+		body: { role: 'admin' },
+		response: { ...USER, role: 'admin' },
+	},
+	{
+		op: 'users.removeUser',
+		run: (c) => api.users.removeUser(c, { user_id: 'user_1' }),
+		method: 'DELETE',
+		url: '/v1/organizations/users/user_1',
+		response: { id: 'user_1', type: 'user_deleted' },
+	},
+	{
+		op: 'invites.listInvites',
+		run: (c) =>
+			api.invites.listInvites(c, {
+				email: 'new@acme.dev',
+				statuses: ['pending'],
 			}),
-		).toThrow(/Streaming is not supported/);
-	});
-
-	it('passes model list pagination through as query parameters', async () => {
-		mockRequest.mockResolvedValueOnce({ data: [], has_more: false });
-		await call('models', 'listModels', {
-			limit: 10,
-			after_id: 'model_1',
-		});
-
-		expect(sent().options.query).toMatchObject({
-			limit: 10,
-			after_id: 'model_1',
-		});
-	});
-});
-
-describe('Admin API cache mirroring', () => {
-	it('caches each item of a list page', async () => {
-		mockRequest.mockResolvedValueOnce({
-			data: [USER],
-			first_id: 'user_1',
-			has_more: false,
-			last_id: 'user_1',
-		});
-
-		await call('users', 'listUsers', {});
-
-		expect(upserts).toEqual([['users', 'user_1', USER]]);
-	});
-
-	it('caches a single fetched entity', async () => {
-		mockRequest.mockResolvedValueOnce(WORKSPACE);
-		await call('workspaces', 'getWorkspace', { workspace_id: 'wrkspc_1' });
-
-		expect(upserts).toEqual([['workspaces', 'wrkspc_1', WORKSPACE]]);
-	});
-
-	it('keys workspace members by workspace and user', async () => {
-		mockRequest.mockResolvedValueOnce(MEMBER);
-		await call('workspaceMembers', 'getWorkspaceMember', {
-			workspace_id: 'wrkspc_1',
-			user_id: 'user_1',
-		});
-
-		expect(upserts).toEqual([['workspaceMembers', 'wrkspc_1:user_1', MEMBER]]);
-	});
-
-	it('evicts on delete', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 'user_1', type: 'user_deleted' });
-		await call('users', 'removeUser', { user_id: 'user_1' });
-		expect(deletes).toEqual([['users', 'user_1']]);
-
-		mockRequest.mockResolvedValueOnce({
+		method: 'GET',
+		url: '/v1/organizations/invites?email=new%40acme.dev&statuses=pending',
+		response: page(INVITE, 'invite_1'),
+	},
+	{
+		op: 'invites.createInvite',
+		run: (c) =>
+			api.invites.createInvite(c, { email: 'new@acme.dev', role: 'developer' }),
+		method: 'POST',
+		url: '/v1/organizations/invites',
+		body: { email: 'new@acme.dev', role: 'developer' },
+		response: INVITE,
+	},
+	{
+		op: 'invites.getInvite',
+		run: (c) => api.invites.getInvite(c, { invite_id: 'invite_1' }),
+		method: 'GET',
+		url: '/v1/organizations/invites/invite_1',
+		response: INVITE,
+	},
+	{
+		op: 'invites.deleteInvite',
+		run: (c) => api.invites.deleteInvite(c, { invite_id: 'invite_1' }),
+		method: 'DELETE',
+		url: '/v1/organizations/invites/invite_1',
+		response: { id: 'invite_1', type: 'invite_deleted' },
+	},
+	{
+		op: 'workspaces.listWorkspaces',
+		run: (c) =>
+			api.workspaces.listWorkspaces(c, { include_archived: true, limit: 2 }),
+		method: 'GET',
+		url: '/v1/organizations/workspaces?include_archived=true&limit=2',
+		response: page(WORKSPACE, 'wrkspc_1'),
+	},
+	{
+		op: 'workspaces.createWorkspace',
+		run: (c) =>
+			api.workspaces.createWorkspace(c, {
+				name: 'Prod',
+				data_residency: {
+					allowed_inference_geos: ['us'],
+					default_inference_geo: 'us',
+				},
+				tags: { env: 'prod' },
+			}),
+		method: 'POST',
+		url: '/v1/organizations/workspaces',
+		body: {
+			name: 'Prod',
+			data_residency: {
+				allowed_inference_geos: ['us'],
+				default_inference_geo: 'us',
+			},
+			tags: { env: 'prod' },
+		},
+		response: WORKSPACE,
+	},
+	{
+		op: 'workspaces.getWorkspace',
+		run: (c) => api.workspaces.getWorkspace(c, { workspace_id: 'wrkspc_1' }),
+		method: 'GET',
+		url: '/v1/organizations/workspaces/wrkspc_1',
+		response: WORKSPACE,
+	},
+	{
+		op: 'workspaces.updateWorkspace',
+		run: (c) =>
+			api.workspaces.updateWorkspace(c, {
+				workspace_id: 'wrkspc_1',
+				name: 'Production',
+			}),
+		method: 'POST',
+		url: '/v1/organizations/workspaces/wrkspc_1',
+		body: { name: 'Production' },
+		response: { ...WORKSPACE, name: 'Production' },
+	},
+	{
+		op: 'workspaces.archiveWorkspace',
+		run: (c) =>
+			api.workspaces.archiveWorkspace(c, { workspace_id: 'wrkspc_1' }),
+		method: 'POST',
+		url: '/v1/organizations/workspaces/wrkspc_1/archive',
+		response: ARCHIVED_WORKSPACE,
+	},
+	{
+		op: 'workspaceMembers.listWorkspaceMembers',
+		run: (c) =>
+			api.workspaceMembers.listWorkspaceMembers(c, {
+				workspace_id: 'wrkspc_1',
+				limit: 10,
+			}),
+		method: 'GET',
+		url: '/v1/organizations/workspaces/wrkspc_1/members?limit=10',
+		response: page(MEMBER, 'user_1'),
+	},
+	{
+		op: 'workspaceMembers.createWorkspaceMember',
+		run: (c) =>
+			api.workspaceMembers.createWorkspaceMember(c, {
+				workspace_id: 'wrkspc_1',
+				user_id: 'user_1',
+				workspace_role: 'workspace_developer',
+			}),
+		method: 'POST',
+		url: '/v1/organizations/workspaces/wrkspc_1/members',
+		body: { user_id: 'user_1', workspace_role: 'workspace_developer' },
+		response: MEMBER,
+	},
+	{
+		op: 'workspaceMembers.getWorkspaceMember',
+		run: (c) =>
+			api.workspaceMembers.getWorkspaceMember(c, {
+				workspace_id: 'wrkspc_1',
+				user_id: 'user_1',
+			}),
+		method: 'GET',
+		url: '/v1/organizations/workspaces/wrkspc_1/members/user_1',
+		response: MEMBER,
+	},
+	{
+		op: 'workspaceMembers.updateWorkspaceMember',
+		run: (c) =>
+			api.workspaceMembers.updateWorkspaceMember(c, {
+				workspace_id: 'wrkspc_1',
+				user_id: 'user_1',
+				workspace_role: 'workspace_admin',
+			}),
+		method: 'POST',
+		url: '/v1/organizations/workspaces/wrkspc_1/members/user_1',
+		body: { workspace_role: 'workspace_admin' },
+		response: { ...MEMBER, workspace_role: 'workspace_admin' },
+	},
+	{
+		op: 'workspaceMembers.deleteWorkspaceMember',
+		run: (c) =>
+			api.workspaceMembers.deleteWorkspaceMember(c, {
+				workspace_id: 'wrkspc_1',
+				user_id: 'user_1',
+			}),
+		method: 'DELETE',
+		url: '/v1/organizations/workspaces/wrkspc_1/members/user_1',
+		response: {
 			type: 'workspace_member_deleted',
 			user_id: 'user_1',
 			workspace_id: 'wrkspc_1',
+		},
+	},
+	{
+		op: 'apiKeys.listApiKeys',
+		run: (c) =>
+			api.apiKeys.listApiKeys(c, {
+				limit: 20,
+				status: 'active',
+				workspace_id: 'wrkspc_1',
+			}),
+		method: 'GET',
+		url: '/v1/organizations/api_keys?limit=20&status=active&workspace_id=wrkspc_1',
+		response: page(API_KEY, 'apikey_1'),
+	},
+	{
+		op: 'apiKeys.getApiKey',
+		run: (c) => api.apiKeys.getApiKey(c, { api_key_id: 'apikey_1' }),
+		method: 'GET',
+		url: '/v1/organizations/api_keys/apikey_1',
+		response: API_KEY,
+	},
+	{
+		op: 'apiKeys.updateApiKey',
+		run: (c) =>
+			api.apiKeys.updateApiKey(c, {
+				api_key_id: 'apikey_1',
+				name: 'ci-renamed',
+				status: 'inactive',
+			}),
+		method: 'POST',
+		url: '/v1/organizations/api_keys/apikey_1',
+		body: { name: 'ci-renamed', status: 'inactive' },
+		response: { ...API_KEY, name: 'ci-renamed', status: 'inactive' },
+	},
+	{
+		op: 'messages.createMessage',
+		run: (c) =>
+			api.messages.createMessage(c, {
+				model: 'claude-opus-5',
+				max_tokens: 64,
+				messages: [{ role: 'user', content: 'Hi' }],
+				temperature: 0.2,
+			}),
+		method: 'POST',
+		url: '/v1/messages',
+		body: {
+			model: 'claude-opus-5',
+			max_tokens: 64,
+			messages: [{ role: 'user', content: 'Hi' }],
+			stream: false,
+			temperature: 0.2,
+		},
+		response: MESSAGE,
+	},
+	{
+		op: 'messages.createCachedMessage',
+		run: (c) =>
+			api.messages.createCachedMessage(c, {
+				model: 'claude-opus-5',
+				max_tokens: 64,
+				system: [{ type: 'text', text: 'Long reference document.' }],
+				messages: [{ role: 'user', content: 'Summarize it.' }],
+				ttl: '1h',
+			}),
+		method: 'POST',
+		url: '/v1/messages',
+		body: {
+			model: 'claude-opus-5',
+			max_tokens: 64,
+			system: [{ type: 'text', text: 'Long reference document.' }],
+			messages: [{ role: 'user', content: 'Summarize it.' }],
+			cache_control: { type: 'ephemeral', ttl: '1h' },
+			stream: false,
+		},
+		response: MESSAGE,
+	},
+	{
+		op: 'models.getModel',
+		run: (c) => api.models.getModel(c, { model_id: 'claude-opus-5' }),
+		method: 'GET',
+		url: '/v1/models/claude-opus-5',
+		response: MODEL,
+	},
+	{
+		op: 'models.listModels',
+		run: (c) =>
+			api.models.listModels(c, { limit: 2, lifecycle: ['active', 'retired'] }),
+		method: 'GET',
+		url: '/v1/models?limit=2&lifecycle%5B%5D=active&lifecycle%5B%5D=retired',
+		response: page(MODEL, 'claude-opus-5'),
+	},
+];
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+describe('every operation sends its documented request', () => {
+	it('covers every registered operation', () => {
+		expect(CASES.map((c) => c.op).sort()).toEqual(
+			Object.keys(anthropicAdministratorEndpointSchemas).sort(),
+		);
+	});
+
+	it.each(CASES.map((c) => [c.op, c] as const))('%s', async (_op, c) => {
+		const fetchMock = stubFetch(jsonResponse(200, c.response));
+		const { ctx } = makeContext();
+
+		const result = await c.run(ctx);
+
+		const sent = sentRequest(fetchMock);
+		expect(sent.method).toBe(c.method);
+		expect(sent.url).toBe(`${BASE}${c.url}`);
+		expect(sent.body).toEqual(c.body);
+		expect(sent.headers.get('anthropic-version')).toBe('2023-06-01');
+		expect(result).toEqual(c.response);
+	});
+});
+
+describe('credentials', () => {
+	it('sends the Admin key as x-api-key on Admin operations', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, ORGANIZATION));
+		const { ctx } = makeContext();
+
+		await api.organization.getOrganization(ctx, {});
+
+		const { headers } = sentRequest(fetchMock);
+		expect(headers.get('x-api-key')).toBe(ADMIN_KEY);
+		expect(headers.get('authorization')).toBeNull();
+	});
+
+	it('sends an OAuth token as a bearer credential', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, ORGANIZATION));
+		const { ctx } = makeContext({
+			authType: 'oauth_2',
+			admin: 'oauth-access-token',
 		});
-		await call('workspaceMembers', 'deleteWorkspaceMember', {
+
+		await api.organization.getOrganization(ctx, {});
+
+		const { headers } = sentRequest(fetchMock);
+		expect(headers.get('authorization')).toBe('Bearer oauth-access-token');
+		expect(headers.get('x-api-key')).toBeNull();
+	});
+
+	it('sends the inference key, not the Admin key, on Messages and Models', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, MODEL));
+		const { ctx } = makeContext({ authType: 'oauth_2' });
+
+		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
+
+		const { headers } = sentRequest(fetchMock);
+		expect(headers.get('x-api-key')).toBe(INFERENCE_KEY);
+		expect(headers.get('authorization')).toBeNull();
+	});
+
+	it('prefers the tenant inference key over the factory option', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, MODEL));
+		const { ctx } = makeContext({
+			tenantInference: 'sk-ant-api03-tenant',
+			optionsInference: 'sk-ant-api03-factory',
+		});
+
+		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
+
+		expect(sentRequest(fetchMock).headers.get('x-api-key')).toBe(
+			'sk-ant-api03-tenant',
+		);
+	});
+
+	it('falls back to the factory inference key', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, MODEL));
+		const { ctx } = makeContext({
+			tenantInference: null,
+			optionsInference: 'sk-ant-api03-factory',
+		});
+
+		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
+
+		expect(sentRequest(fetchMock).headers.get('x-api-key')).toBe(
+			'sk-ant-api03-factory',
+		);
+	});
+
+	it('refuses an Admin call without an Admin credential', async () => {
+		const fetchMock = stubFetch();
+		const { ctx } = makeContext({ admin: null });
+
+		await expect(api.users.getUser(ctx, { user_id: 'user_1' })).rejects.toThrow(
+			AuthMissingError,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a Messages call without an inference key', async () => {
+		const fetchMock = stubFetch();
+		const { ctx } = makeContext({ tenantInference: null });
+
+		await expect(
+			api.messages.createMessage(ctx, {
+				model: 'claude-opus-5',
+				max_tokens: 1,
+				messages: [{ role: 'user', content: 'Hi' }],
+			}),
+		).rejects.toThrow(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('messages input', () => {
+	const base = {
+		model: 'claude-opus-5',
+		max_tokens: 0,
+		messages: [{ role: 'user', content: 'Hi' }],
+	};
+
+	it('rejects stream=true so the response is always a single Message', () => {
+		expect(
+			CreateMessageInputSchema.safeParse({ ...base, stream: true }).success,
+		).toBe(false);
+	});
+
+	it('accepts max_tokens 0, which only warms the prompt cache', () => {
+		expect(CreateMessageInputSchema.safeParse(base).success).toBe(true);
+	});
+
+	it('rejects an unknown cache ttl', () => {
+		expect(
+			CreateMessageInputSchema.safeParse({
+				...base,
+				cache_control: { type: 'ephemeral', ttl: '1d' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('sends a 5m default cache breakpoint when no ttl is given', async () => {
+		const fetchMock = stubFetch(jsonResponse(200, MESSAGE));
+		const { ctx } = makeContext();
+
+		await api.messages.createCachedMessage(ctx, {
+			model: 'claude-opus-5',
+			max_tokens: 64,
+			messages: [{ role: 'user', content: 'Hi' }],
+		});
+
+		expect(sentRequest(fetchMock).body?.cache_control).toEqual({
+			type: 'ephemeral',
+		});
+	});
+});
+
+describe('response validation', () => {
+	it('throws when a response does not match the documented shape', async () => {
+		stubFetch(jsonResponse(200, { id: 'user_1', type: 'user' }));
+		const { ctx } = makeContext();
+
+		await expect(
+			api.users.getUser(ctx, { user_id: 'user_1' }),
+		).rejects.toBeInstanceOf(ZodError);
+	});
+});
+
+describe('cache mirroring', () => {
+	it('caches each item of a list page', async () => {
+		stubFetch(jsonResponse(200, page(USER, 'user_1')));
+		const { ctx, writes } = makeContext();
+
+		await api.users.listUsers(ctx, {});
+
+		expect(writes).toEqual([
+			{ op: 'upsert', entity: 'users', id: 'user_1', data: USER },
+		]);
+	});
+
+	it('keys workspace members by workspace and user', async () => {
+		stubFetch(jsonResponse(200, MEMBER));
+		const { ctx, writes } = makeContext();
+
+		await api.workspaceMembers.getWorkspaceMember(ctx, {
 			workspace_id: 'wrkspc_1',
 			user_id: 'user_1',
 		});
-		expect(deletes).toContainEqual(['workspaceMembers', 'wrkspc_1:user_1']);
+
+		expect(writes).toEqual([
+			{
+				op: 'upsert',
+				entity: 'workspaceMembers',
+				id: 'wrkspc_1:user_1',
+				data: MEMBER,
+			},
+		]);
+	});
+
+	it('evicts a removed user', async () => {
+		stubFetch(jsonResponse(200, { id: 'user_1', type: 'user_deleted' }));
+		const { ctx, writes } = makeContext();
+
+		await api.users.removeUser(ctx, { user_id: 'user_1' });
+
+		expect(writes).toEqual([{ op: 'delete', entity: 'users', id: 'user_1' }]);
 	});
 
 	it('refreshes rather than evicts an archived workspace', async () => {
-		mockRequest.mockResolvedValueOnce({
-			...WORKSPACE,
-			archived_at: '2026-02-01T00:00:00Z',
-		});
-		await call('workspaces', 'archiveWorkspace', { workspace_id: 'wrkspc_1' });
+		stubFetch(jsonResponse(200, ARCHIVED_WORKSPACE));
+		const { ctx, writes } = makeContext();
 
-		expect(deletes).toEqual([]);
-		expect(upserts[0]?.[0]).toBe('workspaces');
+		await api.workspaces.archiveWorkspace(ctx, { workspace_id: 'wrkspc_1' });
+
+		expect(writes).toEqual([
+			{
+				op: 'upsert',
+				entity: 'workspaces',
+				id: 'wrkspc_1',
+				data: ARCHIVED_WORKSPACE,
+			},
+		]);
 	});
 
-	it('does not throw when no database is bound', async () => {
-		const bare = {
-			key: 'k',
-			options: {},
-			keys: { get_api_key: async () => 'k' },
-		} as unknown as AnthropicAdministratorContext;
-		mockRequest.mockResolvedValueOnce(WORKSPACE);
-		const fn = ops().workspaces?.getWorkspace;
-		if (!fn) throw new Error('missing endpoint');
+	it('returns the response when no database is bound', async () => {
+		stubFetch(jsonResponse(200, USER));
+		const { ctx } = makeContext({ withDb: false });
 
-		await expect(fn(bare, { workspace_id: 'wrkspc_1' })).resolves.toBeDefined();
+		await expect(
+			api.users.getUser(ctx, { user_id: 'user_1' }),
+		).resolves.toEqual(USER);
 	});
 });

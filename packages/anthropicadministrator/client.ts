@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export type AnthropicAdministratorMethod = 'GET' | 'POST' | 'DELETE';
@@ -23,7 +27,9 @@ export type AnthropicAdministratorAuthType = 'api_key' | 'oauth_2';
 export type AnthropicAdministratorRequestOptions = {
 	method?: AnthropicAdministratorMethod;
 	authType?: AnthropicAdministratorAuthType;
-	/** Request payloads differ per operation; validated by per-op zod schemas. */
+	/** JSON request payload, already validated by the operation's input schema. */
+	// Safe: every body is built from an input that passed its zod schema and is only JSON-serialized.
+	// A narrower type is not practical because each of the 25 operations sends a different payload shape.
 	body?: Record<string, unknown>;
 	/**
 	 * Query values are heterogeneous across the Admin API (cursors, limits,
@@ -32,14 +38,6 @@ export type AnthropicAdministratorRequestOptions = {
 	query?: Record<string, string | number | boolean | string[] | undefined>;
 };
 
-/**
- * Performs a request against the Anthropic Admin API.
- *
- * Auth: an Admin API key (`sk-ant-admin…`) in the `x-api-key` header, or an
- * OAuth token with the `org:admin` scope in `authorization: Bearer`. Admin keys
- * are provisioned by organization admins and are distinct from standard API
- * keys.
- */
 /**
  * Upper bound on a request path.
  *
@@ -53,6 +51,12 @@ export type AnthropicAdministratorRequestOptions = {
  * documented mitigation when the regex itself is not owned here.
  */
 const MAX_ENDPOINT_LENGTH = 512;
+
+/**
+ * Non-streaming Messages calls can run for minutes, well past corsair's 20s
+ * default, so this matches the official SDK's 10 minute request timeout.
+ */
+const REQUEST_TIMEOUT_MS = 600_000;
 
 /** Total attempts for a retryable failure (1 initial + 2 retries). */
 const MAX_ATTEMPTS = 3;
@@ -78,6 +82,19 @@ function isRetryable(
 	return false;
 }
 
+/**
+ * Retrying is owned by the loop below, so corsair's built-in 429 retry is
+ * limited to the single attempt. Rate-limit detection stays on so a final 429
+ * still carries its `Retry-After` value.
+ */
+const SINGLE_ATTEMPT: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
 function retryDelayMs(error: ApiError, attempt: number): number {
 	const retryAfter = error.retryAfter;
 	if (typeof retryAfter === 'number' && retryAfter > 0) {
@@ -98,11 +115,13 @@ function retryDelayMs(error: ApiError, attempt: number): number {
  * binder, so a request that succeeds on retry returns that result to the
  * caller instead of surfacing the first failure.
  */
-export async function makeAnthropicAdministratorRequest<T>(
+// Safe: callers parse the returned body with the operation's zod output schema before use.
+// A narrower type is not practical because the response shape depends on which of the 25 endpoints was called.
+export async function makeAnthropicAdministratorRequest(
 	endpoint: string,
 	apiKey: string,
 	options: AnthropicAdministratorRequestOptions = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query, authType = 'api_key' } = options;
 
 	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
@@ -125,6 +144,7 @@ export async function makeAnthropicAdministratorRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		TIMEOUT: REQUEST_TIMEOUT_MS,
 		HEADERS: {
 			...credential,
 			'anthropic-version': ANTHROPIC_VERSION,
@@ -140,31 +160,26 @@ export async function makeAnthropicAdministratorRequest<T>(
 		query,
 	};
 
-	let lastError: unknown;
-
-	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+	for (let attempt = 1; ; attempt++) {
 		try {
-			return await request<T>(config, requestOptions);
+			// Safe: the raw body is validated by the caller's output schema.
+			// A narrower type is not practical because this transport is shared by every endpoint.
+			return await request<unknown>(config, requestOptions, {
+				rateLimitConfig: SINGLE_ATTEMPT,
+			});
 		} catch (error) {
-			lastError = error;
-
-			const status = error instanceof ApiError ? error.status : undefined;
-			const canRetry =
+			if (
 				error instanceof ApiError &&
 				attempt < MAX_ATTEMPTS &&
-				isRetryable(status, method);
-
-			if (!canRetry) break;
-
-			await sleep(retryDelayMs(error as ApiError, attempt));
+				isRetryable(error.status, method)
+			) {
+				await sleep(retryDelayMs(error, attempt));
+				continue;
+			}
+			throw new AnthropicAdministratorAPIError(
+				error instanceof Error ? error.message : 'Unknown error',
+				{ cause: error instanceof Error ? error : undefined, method },
+			);
 		}
 	}
-
-	if (lastError instanceof Error) {
-		throw new AnthropicAdministratorAPIError(lastError.message, {
-			cause: lastError,
-			method,
-		});
-	}
-	throw new AnthropicAdministratorAPIError('Unknown error', { method });
 }

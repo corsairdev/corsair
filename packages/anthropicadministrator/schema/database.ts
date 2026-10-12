@@ -4,11 +4,11 @@ import {
 	UserSchema,
 	WorkspaceMemberSchema,
 	WorkspaceSchema,
-} from '../endpoints/types';
+} from '../endpoints/types/index';
 
 /**
  * Cached entities are the Admin API response objects verbatim, so the schemas
- * are reused directly from `endpoints/types.ts` rather than restated — a
+ * are reused directly from `endpoints/types` rather than restated — a
  * second copy could drift from the shape the API actually returns.
  *
  * Workspace members have no standalone ID and are keyed by

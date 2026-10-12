@@ -6,10 +6,8 @@ import {
 	evictEntity,
 	workspaceMemberKey,
 } from './shared';
-import type {
-	AnthropicAdministratorEndpointOutputs as Outputs,
-	WorkspaceMember,
-} from './types/index';
+import type { WorkspaceMember } from './types/index';
+import { AnthropicAdministratorEndpointOutputSchemas as OutputSchemas } from './types/index';
 
 const BASE = '/v1/organizations/workspaces';
 
@@ -20,9 +18,10 @@ function membersPath(workspaceId: string): string {
 /** GET /v1/organizations/workspaces/{workspace_id}/members */
 export const listWorkspaceMembers: AnthropicAdministratorEndpoints['listWorkspaceMembers'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['listWorkspaceMembers']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaceMembers.listWorkspaceMembers',
+			OutputSchemas.listWorkspaceMembers,
 			membersPath(input.workspace_id),
 			{
 				method: 'GET',
@@ -47,9 +46,10 @@ export const listWorkspaceMembers: AnthropicAdministratorEndpoints['listWorkspac
 /** POST /v1/organizations/workspaces/{workspace_id}/members */
 export const createWorkspaceMember: AnthropicAdministratorEndpoints['createWorkspaceMember'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['createWorkspaceMember']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaceMembers.createWorkspaceMember',
+			OutputSchemas.createWorkspaceMember,
 			membersPath(input.workspace_id),
 			{
 				method: 'POST',
@@ -76,9 +76,10 @@ export const createWorkspaceMember: AnthropicAdministratorEndpoints['createWorks
 /** GET /v1/organizations/workspaces/{workspace_id}/members/{user_id} */
 export const getWorkspaceMember: AnthropicAdministratorEndpoints['getWorkspaceMember'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['getWorkspaceMember']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaceMembers.getWorkspaceMember',
+			OutputSchemas.getWorkspaceMember,
 			`${membersPath(input.workspace_id)}/${encodeURIComponent(input.user_id)}`,
 			{ method: 'GET' },
 			{ workspace_id: input.workspace_id, user_id: input.user_id },
@@ -96,9 +97,10 @@ export const getWorkspaceMember: AnthropicAdministratorEndpoints['getWorkspaceMe
 /** POST /v1/organizations/workspaces/{workspace_id}/members/{user_id} */
 export const updateWorkspaceMember: AnthropicAdministratorEndpoints['updateWorkspaceMember'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['updateWorkspaceMember']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaceMembers.updateWorkspaceMember',
+			OutputSchemas.updateWorkspaceMember,
 			`${membersPath(input.workspace_id)}/${encodeURIComponent(input.user_id)}`,
 			{ method: 'POST', body: { workspace_role: input.workspace_role } },
 			{ workspace_id: input.workspace_id, user_id: input.user_id },
@@ -116,9 +118,10 @@ export const updateWorkspaceMember: AnthropicAdministratorEndpoints['updateWorks
 /** DELETE /v1/organizations/workspaces/{workspace_id}/members/{user_id} */
 export const deleteWorkspaceMember: AnthropicAdministratorEndpoints['deleteWorkspaceMember'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['deleteWorkspaceMember']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaceMembers.deleteWorkspaceMember',
+			OutputSchemas.deleteWorkspaceMember,
 			`${membersPath(input.workspace_id)}/${encodeURIComponent(input.user_id)}`,
 			{ method: 'DELETE' },
 			{ workspace_id: input.workspace_id, user_id: input.user_id },

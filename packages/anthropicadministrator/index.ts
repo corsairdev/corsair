@@ -130,6 +130,8 @@ export type ExternalAnthropicAdministratorPlugin<
 export function anthropicadministrator<
 	const T extends AnthropicAdministratorPluginOptions,
 >(
+	// Safe: every option is optional, so an empty object is a valid default.
+	// A narrower type is not practical because T is the caller's literal options type, unknown until the call site.
 	incomingOptions: AnthropicAdministratorPluginOptions &
 		T = {} as AnthropicAdministratorPluginOptions & T,
 ): ExternalAnthropicAdministratorPlugin<T> {

@@ -1,24 +1,17 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import {
-	cacheEntity,
-	cacheList,
-	callAdminApi,
-	compact,
-	evictEntity,
-} from './shared';
-import type {
-	Invite,
-	AnthropicAdministratorEndpointOutputs as Outputs,
-} from './types/index';
+import { cacheEntity, cacheList, callAdminApi, evictEntity } from './shared';
+import type { Invite } from './types/index';
+import { AnthropicAdministratorEndpointOutputSchemas as OutputSchemas } from './types/index';
 
 const BASE = '/v1/organizations/invites';
 
 /** GET /v1/organizations/invites */
 export const listInvites: AnthropicAdministratorEndpoints['listInvites'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['listInvites']>(
+		const response = await callAdminApi(
 			ctx,
 			'invites.listInvites',
+			OutputSchemas.listInvites,
 			BASE,
 			{
 				method: 'GET',
@@ -40,17 +33,18 @@ export const listInvites: AnthropicAdministratorEndpoints['listInvites'] =
 /** POST /v1/organizations/invites */
 export const createInvite: AnthropicAdministratorEndpoints['createInvite'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['createInvite']>(
+		const response = await callAdminApi(
 			ctx,
 			'invites.createInvite',
+			OutputSchemas.createInvite,
 			BASE,
 			{
 				method: 'POST',
-				body: compact({
+				body: {
 					email: input.email,
 					role: input.role,
 					rbac_group_ids: input.rbac_group_ids,
-				}),
+				},
 			},
 			{ role: input.role },
 		);
@@ -64,9 +58,10 @@ export const getInvite: AnthropicAdministratorEndpoints['getInvite'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await callAdminApi<Outputs['getInvite']>(
+	const response = await callAdminApi(
 		ctx,
 		'invites.getInvite',
+		OutputSchemas.getInvite,
 		`${BASE}/${encodeURIComponent(input.invite_id)}`,
 		{ method: 'GET' },
 		{ invite_id: input.invite_id },
@@ -79,9 +74,10 @@ export const getInvite: AnthropicAdministratorEndpoints['getInvite'] = async (
 /** DELETE /v1/organizations/invites/{invite_id} */
 export const deleteInvite: AnthropicAdministratorEndpoints['deleteInvite'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['deleteInvite']>(
+		const response = await callAdminApi(
 			ctx,
 			'invites.deleteInvite',
+			OutputSchemas.deleteInvite,
 			`${BASE}/${encodeURIComponent(input.invite_id)}`,
 			{ method: 'DELETE' },
 			{ invite_id: input.invite_id },

@@ -1,14 +1,14 @@
 import { anthropicadministrator } from './index';
 import { anthropicAdministratorEndpointSchemas } from './meta';
 import { AnthropicAdministratorSchema } from './schema';
+import { makeKeyBuilderContext } from './test-helpers';
 
-function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
+function endpointPaths(tree: object, prefix = ''): string[] {
 	return Object.entries(tree).flatMap(([key, value]) => {
 		const path = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') return [path];
-		if (value && typeof value === 'object') {
-			// Test-only: walk the nested endpoint groups as a plain tree.
-			return endpointPaths(value as Record<string, unknown>, path);
+		if (typeof value === 'object' && value !== null) {
+			return endpointPaths(value, path);
 		}
 		return [];
 	});
@@ -22,6 +22,7 @@ const EXPECTED_OPERATIONS = [
 	'invites.deleteInvite',
 	'invites.getInvite',
 	'invites.listInvites',
+	'messages.createCachedMessage',
 	'messages.createMessage',
 	'models.getModel',
 	'models.listModels',
@@ -43,27 +44,23 @@ const EXPECTED_OPERATIONS = [
 ];
 
 /** `keyBuilder` is optional on the shared plugin type; assert it is wired. */
-function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
+function keyBuilderOf(plugin: ReturnType<typeof anthropicadministrator>) {
 	const keyBuilder = plugin.keyBuilder;
-	if (typeof keyBuilder !== 'function') {
-		throw new Error('keyBuilder is not registered');
-	}
-	return keyBuilder as (ctx: unknown, source: string) => Promise<string>;
+	if (!keyBuilder) throw new Error('keyBuilder is not registered');
+	return keyBuilder;
 }
 
 describe('anthropicadministrator plugin shape', () => {
 	const plugin = anthropicadministrator();
 
-	it('exposes exactly the 25 Admin API operations', () => {
-		expect(
-			endpointPaths(plugin.endpoints as Record<string, unknown>).sort(),
-		).toEqual(EXPECTED_OPERATIONS);
+	it('exposes exactly the 26 operations', () => {
+		expect(endpointPaths(plugin.endpoints ?? {}).sort()).toEqual(
+			EXPECTED_OPERATIONS,
+		);
 	});
 
 	it('keeps endpoints, schemas and metadata in lockstep', () => {
-		const paths = endpointPaths(
-			plugin.endpoints as Record<string, unknown>,
-		).sort();
+		const paths = endpointPaths(plugin.endpoints ?? {}).sort();
 		expect(Object.keys(anthropicAdministratorEndpointSchemas).sort()).toEqual(
 			paths,
 		);
@@ -78,23 +75,16 @@ describe('anthropicadministrator plugin shape', () => {
 	});
 
 	it('gives every operation a risk level and description', () => {
-		const meta = plugin.endpointMeta as unknown as Record<
-			string,
-			{ riskLevel: string; description?: string; irreversible?: boolean }
-		>;
-		for (const entry of Object.values(meta)) {
+		for (const entry of Object.values(plugin.endpointMeta ?? {})) {
 			expect(['read', 'write', 'destructive']).toContain(entry.riskLevel);
 			expect((entry.description ?? '').length).toBeGreaterThan(0);
 		}
 	});
 
 	it('marks every irreversible operation destructive', () => {
-		const meta = plugin.endpointMeta as unknown as Record<
-			string,
-			{ riskLevel: string; irreversible?: boolean }
-		>;
+		const meta = plugin.endpointMeta ?? {};
 		const irreversible = Object.entries(meta)
-			.filter(([, e]) => e.irreversible)
+			.filter(([, e]) => 'irreversible' in e && e.irreversible)
 			.map(([name]) => name)
 			.sort();
 
@@ -104,8 +94,10 @@ describe('anthropicadministrator plugin shape', () => {
 			'workspaceMembers.deleteWorkspaceMember',
 			'workspaces.archiveWorkspace',
 		]);
-		for (const name of irreversible) {
-			expect(meta[name]?.riskLevel).toBe('destructive');
+		for (const [name, entry] of Object.entries(meta)) {
+			if (irreversible.includes(name)) {
+				expect(entry.riskLevel).toBe('destructive');
+			}
 		}
 	});
 
@@ -131,14 +123,11 @@ describe('anthropicadministrator plugin shape', () => {
 describe('anthropicadministrator key resolution', () => {
 	it('prefers a statically configured key', async () => {
 		const plugin = anthropicadministrator({ key: 'sk-ant-admin-static' });
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: async () => {
-					throw new Error('key store should not be consulted');
-				},
+		const ctx = makeKeyBuilderContext('api_key', {
+			get_api_key: async () => {
+				throw new Error('key store should not be consulted');
 			},
-		};
+		});
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).resolves.toBe(
 			'sk-ant-admin-static',
@@ -147,33 +136,28 @@ describe('anthropicadministrator key resolution', () => {
 
 	it('fails closed rather than sending an empty x-api-key', async () => {
 		const plugin = anthropicadministrator();
-		const ctx = {
-			authType: 'api_key',
-			keys: { get_api_key: async () => undefined },
-		};
+		const ctx = makeKeyBuilderContext('api_key', {
+			get_api_key: async () => undefined,
+		});
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).rejects.toThrow();
 	});
 
 	it('fails closed when an oauth token is missing', async () => {
 		const plugin = anthropicadministrator({ authType: 'oauth_2' });
-		const ctx = {
-			authType: 'oauth_2',
-			keys: { get_access_token: async () => undefined },
-		};
+		const ctx = makeKeyBuilderContext('oauth_2', {
+			get_access_token: async () => undefined,
+		});
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).rejects.toThrow();
 	});
 
 	it('allows inference-only callers when inference_key is stored', async () => {
 		const plugin = anthropicadministrator();
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_api_key: async () => undefined,
-				get_inference_key: async () => 'sk-ant-api-tenant',
-			},
-		};
+		const ctx = makeKeyBuilderContext('api_key', {
+			get_api_key: async () => undefined,
+			get_inference_key: async () => 'sk-ant-api-tenant',
+		});
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).resolves.toBe(
 			'sk-ant-api-tenant',

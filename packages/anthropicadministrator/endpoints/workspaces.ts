@@ -1,18 +1,17 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import { cacheEntity, cacheList, callAdminApi, compact } from './shared';
-import type {
-	AnthropicAdministratorEndpointOutputs as Outputs,
-	Workspace,
-} from './types/index';
+import { cacheEntity, cacheList, callAdminApi } from './shared';
+import type { Workspace } from './types/index';
+import { AnthropicAdministratorEndpointOutputSchemas as OutputSchemas } from './types/index';
 
 const BASE = '/v1/organizations/workspaces';
 
 /** GET /v1/organizations/workspaces */
 export const listWorkspaces: AnthropicAdministratorEndpoints['listWorkspaces'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['listWorkspaces']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaces.listWorkspaces',
+			OutputSchemas.listWorkspaces,
 			BASE,
 			{
 				method: 'GET',
@@ -32,18 +31,19 @@ export const listWorkspaces: AnthropicAdministratorEndpoints['listWorkspaces'] =
 /** POST /v1/organizations/workspaces */
 export const createWorkspace: AnthropicAdministratorEndpoints['createWorkspace'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['createWorkspace']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaces.createWorkspace',
+			OutputSchemas.createWorkspace,
 			BASE,
 			{
 				method: 'POST',
-				body: compact({
+				body: {
 					name: input.name,
 					data_residency: input.data_residency,
 					external_key_id: input.external_key_id,
 					tags: input.tags,
-				}),
+				},
 			},
 			{ name: input.name },
 		);
@@ -55,9 +55,10 @@ export const createWorkspace: AnthropicAdministratorEndpoints['createWorkspace']
 /** GET /v1/organizations/workspaces/{workspace_id} */
 export const getWorkspace: AnthropicAdministratorEndpoints['getWorkspace'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['getWorkspace']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaces.getWorkspace',
+			OutputSchemas.getWorkspace,
 			`${BASE}/${encodeURIComponent(input.workspace_id)}`,
 			{ method: 'GET' },
 			{ workspace_id: input.workspace_id },
@@ -70,18 +71,19 @@ export const getWorkspace: AnthropicAdministratorEndpoints['getWorkspace'] =
 /** POST /v1/organizations/workspaces/{workspace_id} */
 export const updateWorkspace: AnthropicAdministratorEndpoints['updateWorkspace'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['updateWorkspace']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaces.updateWorkspace',
+			OutputSchemas.updateWorkspace,
 			`${BASE}/${encodeURIComponent(input.workspace_id)}`,
 			{
 				method: 'POST',
-				body: compact({
+				body: {
 					name: input.name,
 					data_residency: input.data_residency,
 					external_key_id: input.external_key_id,
 					tags: input.tags,
-				}),
+				},
 			},
 			{ workspace_id: input.workspace_id },
 		);
@@ -93,9 +95,10 @@ export const updateWorkspace: AnthropicAdministratorEndpoints['updateWorkspace']
 /** POST /v1/organizations/workspaces/{workspace_id}/archive */
 export const archiveWorkspace: AnthropicAdministratorEndpoints['archiveWorkspace'] =
 	async (ctx, input) => {
-		const response = await callAdminApi<Outputs['archiveWorkspace']>(
+		const response = await callAdminApi(
 			ctx,
 			'workspaces.archiveWorkspace',
+			OutputSchemas.archiveWorkspace,
 			`${BASE}/${encodeURIComponent(input.workspace_id)}/archive`,
 			{ method: 'POST' },
 			{ workspace_id: input.workspace_id },

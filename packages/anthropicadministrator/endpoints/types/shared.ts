@@ -56,3 +56,30 @@ export function listResponse<T extends z.ZodTypeAny>(item: T) {
 		})
 		.loose();
 }
+
+export const InferenceGeoSchema = z.enum(['global', 'us']);
+
+export const AllowedInferenceGeosSchema = z.union([
+	z.array(InferenceGeoSchema),
+	z.literal('unrestricted'),
+]);
+
+/** Workspace data residency as returned by the Admin API. */
+export const DataResidencySchema = z.object({
+	allowed_inference_geos: AllowedInferenceGeosSchema,
+	default_inference_geo: InferenceGeoSchema,
+	workspace_geo: z.literal('us'),
+});
+
+/** Data residency on create; every field defaults server-side when omitted. */
+export const DataResidencyCreateSchema = z.object({
+	allowed_inference_geos: AllowedInferenceGeosSchema.nullable().optional(),
+	default_inference_geo: InferenceGeoSchema.nullable().optional(),
+	workspace_geo: z.literal('us').nullable().optional(),
+});
+
+/** Data residency on update; `workspace_geo` is immutable after creation. */
+export const DataResidencyUpdateSchema = z.object({
+	allowed_inference_geos: AllowedInferenceGeosSchema.nullable().optional(),
+	default_inference_geo: InferenceGeoSchema.nullable().optional(),
+});

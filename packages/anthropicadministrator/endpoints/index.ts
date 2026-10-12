@@ -47,7 +47,14 @@ export const ApiKeysEndpoints = {
 	updateApiKey: ApiKeys.updateApiKey,
 };
 
-export const MessagesEndpoints = Messages.MessagesEndpoints;
-export const ModelsEndpoints = Models.ModelsEndpoints;
+export const MessagesEndpoints = {
+	createMessage: Messages.createMessage,
+	createCachedMessage: Messages.createCachedMessage,
+};
+
+export const ModelsEndpoints = {
+	getModel: Models.getModel,
+	listModels: Models.listModels,
+};
 
 export * from './types/index';

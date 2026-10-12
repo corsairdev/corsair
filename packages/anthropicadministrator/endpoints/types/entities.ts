@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { OrganizationRoleSchema, WorkspaceRoleSchema } from './shared';
+import {
+	DataResidencySchema,
+	OrganizationRoleSchema,
+	WorkspaceRoleSchema,
+} from './shared';
 
 export const OrganizationSchema = z
 	.object({
@@ -40,7 +44,7 @@ export const WorkspaceSchema = z
 		archived_at: z.string().nullable(),
 		compartment_id: z.string().optional(),
 		created_at: z.string(),
-		data_residency: z.record(z.string(), z.unknown()).nullable().optional(),
+		data_residency: DataResidencySchema.nullable().optional(),
 		display_color: z.string().optional(),
 		external_key_id: z.string().nullable().optional(),
 		name: z.string(),
@@ -78,21 +82,31 @@ export const ApiKeySchema = z
 	})
 	.loose();
 
+const ResponseContentBlockSchema = z
+	.object({
+		type: z.string(),
+		text: z.string().optional(),
+	})
+	.loose();
+
 export const MessageSchema = z
 	.object({
 		id: z.string(),
 		type: z.literal('message'),
-		role: z.string(),
-		content: z.array(z.any()),
+		role: z.literal('assistant'),
+		content: z.array(ResponseContentBlockSchema),
 		model: z.string(),
-		stop_reason: z.string().nullable().optional(),
+		stop_reason: z.string().nullable(),
 		stop_sequence: z.string().nullable().optional(),
-		usage: z.object({
-			input_tokens: z.number(),
-			output_tokens: z.number(),
-			cache_creation_input_tokens: z.number().optional(),
-			cache_read_input_tokens: z.number().optional(),
-		}),
+		usage: z
+			.object({
+				input_tokens: z.number(),
+				output_tokens: z.number(),
+				cache_creation_input_tokens: z.number().nullable().optional(),
+				cache_read_input_tokens: z.number().nullable().optional(),
+				service_tier: z.string().nullable().optional(),
+			})
+			.loose(),
 	})
 	.loose();
 
@@ -102,5 +116,11 @@ export const ModelSchema = z
 		id: z.string(),
 		display_name: z.string(),
 		created_at: z.string(),
+		deprecated_at: z.string().nullable().optional(),
+		retires_at: z.string().nullable().optional(),
+		lifecycle: z.enum(['active', 'deprecated', 'retired']).optional(),
+		line: z.string().nullable().optional(),
+		max_input_tokens: z.number().nullable().optional(),
+		max_tokens: z.number().nullable().optional(),
 	})
 	.loose();

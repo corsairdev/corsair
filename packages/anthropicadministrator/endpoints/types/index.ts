@@ -36,6 +36,7 @@ export const AnthropicAdministratorEndpointInputSchemas = {
 	getApiKey: inputs.GetApiKeyInputSchema,
 	updateApiKey: inputs.UpdateApiKeyInputSchema,
 	createMessage: inputs.CreateMessageInputSchema,
+	createCachedMessage: inputs.CreateCachedMessageInputSchema,
 	getModel: inputs.GetModelInputSchema,
 	listModels: inputs.ListModelsInputSchema,
 } as const;
@@ -64,6 +65,7 @@ export const AnthropicAdministratorEndpointOutputSchemas = {
 	getApiKey: ApiKeySchema,
 	updateApiKey: ApiKeySchema,
 	createMessage: MessageSchema,
+	createCachedMessage: MessageSchema,
 	getModel: ModelSchema,
 	listModels: responses.ListModelsResponseSchema,
 } as const;

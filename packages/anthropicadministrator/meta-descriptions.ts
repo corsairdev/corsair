@@ -98,6 +98,11 @@ export const anthropicAdministratorEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a Message',
 	},
+	'messages.createCachedMessage': {
+		riskLevel: 'write',
+		description:
+			'Create a Message with prompt caching, reusing the cached prompt prefix on later calls',
+	},
 	'models.getModel': {
 		riskLevel: 'read',
 		description: 'Get a Model',

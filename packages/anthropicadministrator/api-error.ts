@@ -1,4 +1,5 @@
 import { ApiError } from 'corsair/http';
+import { z } from 'zod';
 import type { AnthropicAdministratorMethod } from './client';
 
 /**
@@ -13,6 +14,8 @@ export class AnthropicAdministratorAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	/** Admin API error bodies are `{ type: "error", error: { type, message } }`. */
+	// Safe: the body is only read through `readErrorType`, which validates it with zod.
+	// A narrower type is not practical because gateways and proxies can return non-Anthropic error bodies.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	/** HTTP method of the failed request, so retries can tell reads from writes. */
@@ -39,11 +42,11 @@ export class AnthropicAdministratorAPIError extends Error {
 	}
 }
 
+const ErrorEnvelopeSchema = z.object({ error: z.object({ type: z.string() }) });
+
 /** Pulls `error.type` out of an Anthropic error envelope when present. */
+// Safe: the value is validated with `ErrorEnvelopeSchema` before any field is read.
+// A narrower type is not practical because the body comes straight off the wire.
 export function readErrorType(body: unknown): string | undefined {
-	if (typeof body !== 'object' || body === null) return undefined;
-	const error = (body as { error?: unknown }).error;
-	if (typeof error !== 'object' || error === null) return undefined;
-	const type = (error as { type?: unknown }).type;
-	return typeof type === 'string' ? type : undefined;
+	return ErrorEnvelopeSchema.safeParse(body).data?.error.type;
 }

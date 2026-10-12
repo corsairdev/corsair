@@ -98,6 +98,10 @@ export const anthropicAdministratorEndpointSchemas = {
 		input: AnthropicAdministratorEndpointInputSchemas.createMessage,
 		output: AnthropicAdministratorEndpointOutputSchemas.createMessage,
 	},
+	'messages.createCachedMessage': {
+		input: AnthropicAdministratorEndpointInputSchemas.createCachedMessage,
+		output: AnthropicAdministratorEndpointOutputSchemas.createCachedMessage,
+	},
 	'models.getModel': {
 		input: AnthropicAdministratorEndpointInputSchemas.getModel,
 		output: AnthropicAdministratorEndpointOutputSchemas.getModel,

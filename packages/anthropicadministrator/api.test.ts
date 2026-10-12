@@ -1,124 +1,60 @@
-import {
-	ApiKeySchema,
-	InviteSchema,
-	OrganizationSchema,
-	UserSchema,
-	WorkspaceSchema,
-} from './endpoints/types';
-import type { AnthropicAdministratorContext } from './index';
+import { AnthropicAdministratorAPIError } from './api-error';
+import { anthropicAdministratorEndpointsNested as api } from './index';
+import { makeContext } from './test-helpers';
 
 /**
  * Live suite against api.anthropic.com. Requires an Admin API key
- * (`sk-ant-admin…`) — a standard API key is rejected by these endpoints.
- * Excluded from CI by path; enable with:
+ * (`sk-ant-admin…`); a standard API key is rejected by these endpoints.
+ * Skipped unless enabled:
  *
  *   ANTHROPIC_ADMIN_API_KEY=sk-ant-admin-… LIVE_TEST=1 pnpm test
  *
  * Read-only operations only: this suite never creates, updates, archives or
- * deletes anything in a real organization.
+ * deletes anything in a real organization. Responses are validated against the
+ * documented schemas by the endpoints themselves, so a resolved call proves
+ * the shape.
  */
 const ADMIN_KEY = process.env.ANTHROPIC_ADMIN_API_KEY;
 const LIVE = process.env.LIVE_TEST === '1' || process.env.LIVE_TEST === 'true';
 
-type Ops = Record<
-	string,
-	Record<
-		string,
-		(
-			c: AnthropicAdministratorContext,
-			i: Record<string, unknown>,
-		) => Promise<unknown>
-	>
->;
+const live = ADMIN_KEY && LIVE ? describe : describe.skip;
 
-let ops: Ops;
-
-function op(group: string, name: string) {
-	const fn = ops[group]?.[name];
-	if (!fn) throw new Error(`missing endpoint ${group}.${name}`);
-	return fn;
-}
-
-function ctx(key = ADMIN_KEY): AnthropicAdministratorContext {
-	return {
-		key,
-		options: {},
-		db: {},
-	} as unknown as AnthropicAdministratorContext;
-}
-
-const suite = ADMIN_KEY && LIVE ? describe : describe.skip;
-
-suite('Anthropic Admin API (live)', () => {
-	beforeAll(async () => {
-		const mod = await import('./index');
-		ops = mod.anthropicAdministratorEndpointsNested as unknown as Ops;
-	});
+live('Anthropic Admin API (live)', () => {
+	const { ctx } = makeContext({ admin: ADMIN_KEY, withDb: false });
 
 	it('getOrganization returns the organization for the key', async () => {
-		const org = await op('organization', 'getOrganization')(ctx(), {});
-		expect(() => OrganizationSchema.parse(org)).not.toThrow();
+		const org = await api.organization.getOrganization(ctx, {});
+		expect(org.type).toBe('organization');
 	});
 
-	it('listUsers returns members matching the documented shape', async () => {
-		const res = (await op('users', 'listUsers')(ctx(), { limit: 5 })) as {
-			data: unknown[];
-			has_more: boolean;
-		};
-		expect(typeof res.has_more).toBe('boolean');
-		for (const user of res.data) {
-			expect(() => UserSchema.parse(user)).not.toThrow();
-		}
-	});
-
-	it('listInvites returns invites matching the documented shape', async () => {
-		const res = (await op('invites', 'listInvites')(ctx(), { limit: 5 })) as {
-			data: unknown[];
-		};
-		for (const invite of res.data) {
-			expect(() => InviteSchema.parse(invite)).not.toThrow();
-		}
-	});
-
-	it('listWorkspaces returns workspaces matching the documented shape', async () => {
-		const res = (await op('workspaces', 'listWorkspaces')(ctx(), {
-			limit: 5,
-		})) as { data: unknown[] };
-		for (const workspace of res.data) {
-			expect(() => WorkspaceSchema.parse(workspace)).not.toThrow();
-		}
-	});
-
-	it('listApiKeys returns API keys matching the documented shape', async () => {
-		const res = (await op('apiKeys', 'listApiKeys')(ctx(), { limit: 5 })) as {
-			data: unknown[];
-		};
-		for (const key of res.data) {
-			expect(() => ApiKeySchema.parse(key)).not.toThrow();
-		}
+	it('lists users, invites, workspaces and API keys', async () => {
+		expect(typeof (await api.users.listUsers(ctx, { limit: 5 })).has_more).toBe(
+			'boolean',
+		);
+		expect(
+			Array.isArray((await api.invites.listInvites(ctx, { limit: 5 })).data),
+		).toBe(true);
+		expect(
+			Array.isArray(
+				(await api.workspaces.listWorkspaces(ctx, { limit: 5 })).data,
+			),
+		).toBe(true);
+		expect(
+			Array.isArray((await api.apiKeys.listApiKeys(ctx, { limit: 5 })).data),
+		).toBe(true);
 	});
 
 	it('honours cursor pagination on listUsers', async () => {
-		const page = (await op('users', 'listUsers')(ctx(), { limit: 1 })) as {
-			data: unknown[];
-			last_id: string | null;
-			has_more: boolean;
-		};
-		expect(page.data.length).toBeLessThanOrEqual(1);
+		const first = await api.users.listUsers(ctx, { limit: 1 });
+		expect(first.data.length).toBeLessThanOrEqual(1);
 
-		if (page.has_more && page.last_id) {
-			const next = (await op('users', 'listUsers')(ctx(), {
+		if (first.has_more && first.last_id) {
+			const next = await api.users.listUsers(ctx, {
 				limit: 1,
-				after_id: page.last_id,
-			})) as { data: unknown[] };
-			expect(next.data).not.toEqual(page.data);
+				after_id: first.last_id,
+			});
+			expect(next.data).not.toEqual(first.data);
 		}
-	});
-
-	it('rejects a non-admin key', async () => {
-		await expect(
-			op('users', 'listUsers')(ctx('sk-ant-not-an-admin-key'), {}),
-		).rejects.toThrow();
 	});
 });
 
@@ -130,26 +66,32 @@ suite('Anthropic Admin API (live)', () => {
 const reachability = LIVE ? describe : describe.skip;
 
 reachability('Anthropic Admin API reachability (no key required)', () => {
-	beforeAll(async () => {
-		const mod = await import('./index');
-		ops = mod.anthropicAdministratorEndpointsNested as unknown as Ops;
+	const { ctx } = makeContext({
+		admin: 'sk-ant-admin-not-a-real-key',
+		withDb: false,
 	});
 
 	it.each([
-		['organization', 'getOrganization', {}],
-		['users', 'listUsers', { limit: 1 }],
-		['workspaces', 'listWorkspaces', { limit: 1 }],
-		['apiKeys', 'listApiKeys', { limit: 1 }],
-	] as const)(
-		'%s.%s resolves to a real endpoint',
-		async (group, name, input) => {
-			const error = (await op(group, name)(
-				ctx('sk-ant-admin-not-a-real-key'),
-				input as Record<string, unknown>,
-			).catch((e: unknown) => e)) as { status?: number; errorType?: string };
+		[
+			'organization.getOrganization',
+			() => api.organization.getOrganization(ctx, {}),
+		],
+		['users.listUsers', () => api.users.listUsers(ctx, { limit: 1 })],
+		[
+			'workspaces.listWorkspaces',
+			() => api.workspaces.listWorkspaces(ctx, { limit: 1 }),
+		],
+		['apiKeys.listApiKeys', () => api.apiKeys.listApiKeys(ctx, { limit: 1 })],
+	] as const)('%s resolves to a real endpoint', async (_op, run) => {
+		const error = await run().then(
+			() => undefined,
+			(e: Error) => e,
+		);
 
-			expect(error.status).toBe(401);
-			expect(error.errorType).toBe('authentication_error');
-		},
-	);
+		expect(error).toBeInstanceOf(AnthropicAdministratorAPIError);
+		expect(error).toMatchObject({
+			status: 401,
+			errorType: 'authentication_error',
+		});
+	});
 });
