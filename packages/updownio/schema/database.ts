@@ -67,9 +67,8 @@ export const UpdownIOCheck = z
 		created_at: z.string().nullable().optional(),
 		mute_until: z.string().nullable().optional(),
 		favicon_url: z.string().nullable().optional(),
-		// Safe: header values are stored as-is and never read by the plugin.
-		// A narrower type is not practical because users define arbitrary headers.
-		custom_headers: z.record(z.string(), z.unknown()).nullable().optional(),
+		// Header name to value, e.g. { "X-Api-Key": "..." } (updown.io API docs).
+		custom_headers: z.record(z.string(), z.string()).nullable().optional(),
 		http_verb: z.string().nullable().optional(),
 		http_body: z.string().nullable().optional(),
 		ssl: UpdownIOCheckSsl.nullable().optional(),
