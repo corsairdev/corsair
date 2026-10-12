@@ -11,10 +11,10 @@ const ctx = {
 	key: 'token',
 	db: {},
 	$getAccountId: async () => 'account',
-	// `unknown` is needed because the real endpoint context carries the full
-	// plugin runtime; the handler only passes it to the mocked client and the
-	// event logger, so a partial context is cast to the full type.
-} as unknown as Parameters<typeof getUserPlaylists>[0];
+	// The real endpoint context carries the full plugin runtime; the handler
+	// only passes it to the mocked client and the event logger, so this
+	// partial context is cast with `never`, which the handler accepts.
+} as never;
 
 describe('getUserPlaylists', () => {
 	beforeEach(() => request.mockClear());
