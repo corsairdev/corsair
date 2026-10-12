@@ -13,6 +13,15 @@ export const list: ComposioEndpoints['connectionsList'] = async (
 		ComposioEndpointOutputSchemas.connectionsList,
 		{ query: input },
 	);
+	if (ctx.db.connectedAccounts) {
+		for (const account of response.items) {
+			try {
+				await ctx.db.connectedAccounts.upsertByEntityId(account.id, account);
+			} catch (error) {
+				console.warn(`[composio] failed to save account ${account.id}:`, error);
+			}
+		}
+	}
 	// user_ids and auth_config_ids identify end users, so they stay out of logs.
 	await logEventFromContext(
 		ctx,
@@ -52,6 +61,18 @@ export const remove: ComposioEndpoints['connectionDelete'] = async (
 		ComposioEndpointOutputSchemas.connectionDelete,
 		{ method: 'DELETE', query: { revoke_on_delete: input.revoke_on_delete } },
 	);
+	if (ctx.db.connectedAccounts) {
+		try {
+			await ctx.db.connectedAccounts.deleteByEntityId(
+				input.connected_account_id,
+			);
+		} catch (error) {
+			console.warn(
+				`[composio] failed to drop account ${input.connected_account_id}:`,
+				error,
+			);
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'composio.connections.delete',

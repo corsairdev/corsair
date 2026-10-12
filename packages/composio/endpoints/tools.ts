@@ -1,7 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeComposioRequest } from '../client';
-import type { ComposioEndpoints } from '../index';
+import type { ComposioContext, ComposioEndpoints } from '../index';
+import type { Tool } from './types';
 import { ComposioEndpointOutputSchemas } from './types';
+
+async function saveTool(ctx: ComposioContext, tool: Tool) {
+	if (!ctx.db.tools) return;
+	try {
+		await ctx.db.tools.upsertByEntityId(tool.slug, { ...tool, id: tool.slug });
+	} catch (error) {
+		console.warn(`[composio] failed to save tool ${tool.slug}:`, error);
+	}
+}
 
 export const list: ComposioEndpoints['toolsList'] = async (ctx, input) => {
 	const response = await makeComposioRequest(
@@ -10,6 +20,9 @@ export const list: ComposioEndpoints['toolsList'] = async (ctx, input) => {
 		ComposioEndpointOutputSchemas.toolsList,
 		{ query: input },
 	);
+	for (const tool of response.items) {
+		await saveTool(ctx, tool);
+	}
 	await logEventFromContext(ctx, 'composio.tools.list', input, 'completed');
 	return response;
 };
@@ -21,6 +34,7 @@ export const get: ComposioEndpoints['toolGet'] = async (ctx, input) => {
 		ComposioEndpointOutputSchemas.toolGet,
 		{ query: { version: input.version } },
 	);
+	await saveTool(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'composio.tools.get',

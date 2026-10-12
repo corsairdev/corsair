@@ -131,8 +131,14 @@ await corsair.composio.api.connections.list({});
     slug: string
   },
   auth_config: {
-    id: string
-  }
+    id: string,
+    auth_scheme?: string,
+    is_composio_managed?: boolean,
+    is_disabled?: boolean
+  },
+  authScheme?: string,
+  word_id?: string | null,
+  status_reason?: string | null
 }[]
 ```
 </Accordion>
@@ -1286,6 +1292,8 @@ await corsair.composio.api.sessions.create({});
 | `session_id` | `string` | Yes | — |
 | `mcp` | `object` | Yes | — |
 | `tool_router_tools` | `string[]` | Yes | — |
+| `config` | `object` | No | — |
+| `config_version` | `number` | No | — |
 
 <AccordionGroup>
 <Accordion title="mcp full type">
@@ -1294,6 +1302,14 @@ await corsair.composio.api.sessions.create({});
 {
   type: http,
   url: string
+}
+```
+</Accordion>
+<Accordion title="config full type">
+
+```ts
+{
+  user_id?: string
 }
 ```
 </Accordion>
@@ -1352,7 +1368,23 @@ await corsair.composio.api.toolkits.list({});
   type: string,
   auth_schemes?: string[],
   no_auth?: boolean,
-  meta: Record<string, JsonValue>
+  composio_managed_auth_schemes?: string[],
+  is_local_toolkit?: boolean,
+  auth_guide_url?: string | null,
+  meta: {
+    created_at?: string,
+    updated_at?: string,
+    description?: string,
+    logo?: string,
+    app_url?: string | null,
+    categories?: {
+      id: string,
+      name: string
+    }[],
+    triggers_count?: number,
+    tools_count?: number,
+    version?: string
+  }
 }[]
 ```
 </Accordion>
@@ -1453,7 +1485,9 @@ await corsair.composio.api.tools.get({});
 | `no_auth` | `boolean` | Yes | — |
 | `version` | `string` | Yes | — |
 | `available_versions` | `string[]` | Yes | — |
+| `scopes` | `string[]` | No | — |
 | `tags` | `string[]` | Yes | — |
+| `human_description` | `string` | No | — |
 | `is_deprecated` | `boolean` | Yes | — |
 
 <AccordionGroup>
@@ -1542,7 +1576,9 @@ await corsair.composio.api.tools.list({});
   no_auth: boolean,
   version: string,
   available_versions: string[],
+  scopes?: string[],
   tags: string[],
+  human_description?: string,
   is_deprecated: boolean
 }[]
 ```

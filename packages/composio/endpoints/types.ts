@@ -67,7 +67,9 @@ const ToolSchema = z.object({
 	no_auth: z.boolean(),
 	version: z.string(),
 	available_versions: z.array(z.string()),
+	scopes: z.array(z.string()).optional(),
 	tags: z.array(z.string()),
+	human_description: z.string().optional(),
 	is_deprecated: z.boolean(),
 });
 export type Tool = z.infer<typeof ToolSchema>;
@@ -138,7 +140,15 @@ const ConnectionSchema = z.object({
 	updated_at: z.string(),
 	is_disabled: z.boolean(),
 	toolkit: z.object({ slug: z.string() }),
-	auth_config: z.object({ id: z.string() }),
+	auth_config: z.object({
+		id: z.string(),
+		auth_scheme: z.string().optional(),
+		is_composio_managed: z.boolean().optional(),
+		is_disabled: z.boolean().optional(),
+	}),
+	authScheme: z.string().optional(),
+	word_id: z.string().nullable().optional(),
+	status_reason: z.string().nullable().optional(),
 });
 export type Connection = z.infer<typeof ConnectionSchema>;
 
@@ -196,13 +206,30 @@ const ToolkitsListInputSchema = z.object({
 });
 export type ToolkitsListInput = z.infer<typeof ToolkitsListInputSchema>;
 
+export const ComposioToolkitMeta = z.object({
+	created_at: z.string().optional(),
+	updated_at: z.string().optional(),
+	description: z.string().optional(),
+	logo: z.string().optional(),
+	app_url: z.string().nullable().optional(),
+	categories: z
+		.array(z.object({ id: z.string(), name: z.string() }))
+		.optional(),
+	triggers_count: z.number().optional(),
+	tools_count: z.number().optional(),
+	version: z.string().optional(),
+});
+
 const ToolkitSchema = z.object({
 	slug: z.string(),
 	name: z.string(),
 	type: z.string(),
 	auth_schemes: z.array(z.string()).optional(),
 	no_auth: z.boolean().optional(),
-	meta: JsonObjectSchema,
+	composio_managed_auth_schemes: z.array(z.string()).optional(),
+	is_local_toolkit: z.boolean().optional(),
+	auth_guide_url: z.string().nullable().optional(),
+	meta: ComposioToolkitMeta,
 });
 export type Toolkit = z.infer<typeof ToolkitSchema>;
 
@@ -230,6 +257,8 @@ const SessionCreateResponseSchema = z.object({
 	session_id: z.string(),
 	mcp: z.object({ type: z.literal('http'), url: z.string() }),
 	tool_router_tools: z.array(z.string()),
+	config: z.object({ user_id: z.string().optional() }).optional(),
+	config_version: z.number().optional(),
 });
 export type SessionCreateResponse = z.infer<typeof SessionCreateResponseSchema>;
 

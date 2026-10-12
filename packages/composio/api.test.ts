@@ -12,9 +12,44 @@ jest.mock('corsair/core', () => ({
 
 const BASE = 'https://backend.composio.dev/api/v3.1';
 
-// Safe: endpoints only read ctx.key, and logEventFromContext is mocked.
-// A narrower type is not practical because ComposioContext also needs a live database and key store.
-const ctx = { key: 'ak_test' } as ComposioContext;
+const upsert = jest.fn().mockResolvedValue(undefined);
+const remove = jest.fn().mockResolvedValue(true);
+const entityClient = {
+	findByEntityId: jest.fn(),
+	existsByEntityId: jest.fn(),
+	findIdByEntityId: jest.fn(),
+	findById: jest.fn(),
+	findManyByEntityIds: jest.fn(),
+	list: jest.fn(),
+	search: jest.fn(),
+	upsertByEntityId: upsert,
+	deleteById: jest.fn(),
+	deleteByEntityId: remove,
+	count: jest.fn(),
+};
+
+// Safe: the object supplies every member of the context, with stubs for the ones endpoints never read.
+// A narrower type is not practical because ComposioContext is derived from the plugin's schema and endpoint types.
+const ctx = {
+	key: 'ak_test',
+	endpoints: {},
+	options: {},
+	keys: {
+		get_dek: async () => 'dek',
+		issue_new_dek: async () => 'dek',
+		get_api_key: async () => 'ak_test',
+		set_api_key: async () => {},
+		get_webhook_signature: async () => null,
+		set_webhook_signature: async () => {},
+	},
+	$getAccountId: async () => 'acct_1',
+	db: {
+		tools: entityClient,
+		toolkits: entityClient,
+		connectedAccounts: entityClient,
+		sessions: entityClient,
+	},
+} as ComposioContext;
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
 
@@ -45,6 +80,8 @@ function sentRequest() {
 
 beforeEach(() => {
 	fetchMock.mockReset();
+	upsert.mockClear();
+	remove.mockClear();
 });
 
 afterAll(() => {
@@ -520,6 +557,124 @@ describe('REST endpoints', () => {
 	});
 });
 
+describe('entity persistence', () => {
+	const page = {
+		next_cursor: null,
+		total_pages: 1,
+		current_page: 1,
+		total_items: 1,
+	};
+	const tool = {
+		slug: 'GMAIL_SEND_EMAIL',
+		name: 'Send email',
+		description: 'Send an email',
+		toolkit: { slug: 'gmail', name: 'Gmail' },
+		input_parameters: { type: 'object' },
+		output_parameters: { type: 'object' },
+		no_auth: false,
+		version: '20260917_00',
+		available_versions: ['20260917_00'],
+		tags: [],
+		is_deprecated: false,
+	};
+
+	it('tools.list and tools.get save each tool under its slug', async () => {
+		respond(200, { items: [tool], ...page });
+		await Tools.list(ctx, {});
+		expect(upsert).toHaveBeenCalledWith('GMAIL_SEND_EMAIL', {
+			...tool,
+			id: 'GMAIL_SEND_EMAIL',
+		});
+
+		upsert.mockClear();
+		fetchMock.mockReset();
+		respond(200, tool);
+		await Tools.get(ctx, { tool_slug: 'GMAIL_SEND_EMAIL' });
+		expect(upsert).toHaveBeenCalledWith('GMAIL_SEND_EMAIL', {
+			...tool,
+			id: 'GMAIL_SEND_EMAIL',
+		});
+	});
+
+	it('toolkits.list saves each toolkit under its slug', async () => {
+		const toolkit = {
+			slug: 'gmail',
+			name: 'Gmail',
+			type: 'native',
+			auth_schemes: ['OAUTH2'],
+			meta: { tools_count: 40, categories: [{ id: 'email', name: 'Email' }] },
+		};
+		respond(200, { items: [toolkit], ...page });
+		await Toolkits.list(ctx, {});
+		expect(upsert).toHaveBeenCalledWith('gmail', { ...toolkit, id: 'gmail' });
+	});
+
+	it('connections.list saves accounts without credential state', async () => {
+		const account = {
+			id: 'ca_1',
+			status: 'ACTIVE',
+			user_id: 'user_1',
+			alias: null,
+			created_at: '2026-10-01T00:00:00Z',
+			updated_at: '2026-10-01T00:00:00Z',
+			is_disabled: false,
+			toolkit: { slug: 'github' },
+			auth_config: { id: 'ac_1', auth_scheme: 'OAUTH2' },
+			state: { authScheme: 'OAUTH2', val: { access_token: 'secret' } },
+			data: { access_token: 'secret' },
+		};
+		respond(200, { items: [account], ...page });
+		await Connections.list(ctx, {});
+		const [id, saved] = upsert.mock.calls[0] ?? [];
+		expect(id).toBe('ca_1');
+		expect(saved).toEqual({
+			id: 'ca_1',
+			status: 'ACTIVE',
+			user_id: 'user_1',
+			alias: null,
+			created_at: '2026-10-01T00:00:00Z',
+			updated_at: '2026-10-01T00:00:00Z',
+			is_disabled: false,
+			toolkit: { slug: 'github' },
+			auth_config: { id: 'ac_1', auth_scheme: 'OAUTH2' },
+		});
+	});
+
+	it('connections.delete drops the saved account', async () => {
+		respond(200, { success: true });
+		await Connections.remove(ctx, { connected_account_id: 'ca_1' });
+		expect(remove).toHaveBeenCalledWith('ca_1');
+	});
+
+	it('sessions.create saves the session with its user', async () => {
+		respond(201, {
+			session_id: 'trs_1',
+			mcp: { type: 'http', url: 'https://app.composio.dev/mcp/trs_1' },
+			tool_router_tools: ['COMPOSIO_SEARCH_TOOLS'],
+			config_version: 1,
+		});
+		await Sessions.create(ctx, { user_id: 'user_1' });
+		expect(upsert).toHaveBeenCalledWith('trs_1', {
+			id: 'trs_1',
+			session_id: 'trs_1',
+			user_id: 'user_1',
+			mcp: { type: 'http', url: 'https://app.composio.dev/mcp/trs_1' },
+			tool_router_tools: ['COMPOSIO_SEARCH_TOOLS'],
+			config_version: 1,
+		});
+	});
+
+	it('a failing save does not fail the API call', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		upsert.mockRejectedValueOnce(new Error('db down'));
+		respond(200, tool);
+		await expect(
+			Tools.get(ctx, { tool_slug: 'GMAIL_SEND_EMAIL' }),
+		).resolves.toEqual(tool);
+		warn.mockRestore();
+	});
+});
+
 describe('errors', () => {
 	it('a 401 becomes a ComposioAPIError that AUTH_ERROR does not retry', async () => {
 		respond(401, { error: { message: 'Invalid API key' } });
@@ -570,6 +725,15 @@ describe('errors', () => {
 });
 
 describe('plugin', () => {
+	it('registers one entity per Composio resource', () => {
+		expect(Object.keys(composio().schema?.entities ?? {}).sort()).toEqual([
+			'connectedAccounts',
+			'sessions',
+			'toolkits',
+			'tools',
+		]);
+	});
+
 	it('defines no webhooks and one schema per endpoint', () => {
 		const plugin = composio({ key: 'ak_test' });
 		expect(plugin.webhooks).toEqual({});

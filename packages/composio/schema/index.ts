@@ -1,6 +1,16 @@
-// Tools, toolkits, and connected accounts live in Composio. Every endpoint is a
-// stateless API call, so this plugin keeps no local entities.
+import {
+	ComposioConnectedAccount,
+	ComposioSession,
+	ComposioTool,
+	ComposioToolkit,
+} from './database';
+
 export const ComposioSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		tools: ComposioTool,
+		toolkits: ComposioToolkit,
+		connectedAccounts: ComposioConnectedAccount,
+		sessions: ComposioSession,
+	},
 } as const;
