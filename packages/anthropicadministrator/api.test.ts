@@ -1,4 +1,4 @@
-import { AnthropicAdministratorAPIError } from './api-error';
+import { AnthropicAdministratorAPIError } from './client';
 import { anthropicAdministratorEndpointsNested as api } from './index';
 import { makeContext } from './test-helpers';
 

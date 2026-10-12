@@ -1,5 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { AnthropicAdministratorAPIError } from './api-error';
+import { AnthropicAdministratorAPIError } from './client';
 
 /**
  * Handlers classify failures for logging and policy; they deliberately do not

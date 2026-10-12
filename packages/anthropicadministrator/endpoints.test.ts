@@ -2,8 +2,10 @@ import { AuthMissingError } from 'corsair/core';
 import { ZodError } from 'zod';
 import { CreateMessageInputSchema } from './endpoints/types/inputs';
 import type { AnthropicAdministratorContext } from './index';
-import { anthropicAdministratorEndpointsNested as api } from './index';
-import { anthropicAdministratorEndpointSchemas } from './meta';
+import {
+	anthropicAdministratorEndpointSchemas,
+	anthropicAdministratorEndpointsNested as api,
+} from './index';
 import {
 	ADMIN_KEY,
 	INFERENCE_KEY,

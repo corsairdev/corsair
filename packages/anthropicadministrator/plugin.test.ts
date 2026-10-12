@@ -1,5 +1,7 @@
-import { anthropicadministrator } from './index';
-import { anthropicAdministratorEndpointSchemas } from './meta';
+import {
+	anthropicAdministratorEndpointSchemas,
+	anthropicadministrator,
+} from './index';
 import { AnthropicAdministratorSchema } from './schema';
 import { makeKeyBuilderContext } from './test-helpers';
 
