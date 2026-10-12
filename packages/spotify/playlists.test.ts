@@ -10,17 +10,16 @@ jest.mock('./client', () => ({
 
 const request = jest.mocked(makeAuthenticatedSpotifyRequest);
 
-async function createSpotifyClient() {
-	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.db, 'spotify', 'default');
-	return createCorsair({
-		plugins: [spotify({ authType: 'oauth_2', key: 'token' })],
-		database: testDb.db,
-		kek: 'test-kek',
-	});
-}
+const testDb = createTestDatabase();
+const corsair = createCorsair({
+	plugins: [spotify({ authType: 'oauth_2', key: 'token' })],
+	database: testDb.db,
+	kek: 'test-kek',
+});
 
 describe('getUserPlaylists', () => {
+	beforeAll(() => createIntegrationAndAccount(testDb.db, 'spotify', 'default'));
+	afterAll(() => testDb.cleanup());
 	beforeEach(() => request.mockClear());
 
 	it.each([
@@ -28,8 +27,6 @@ describe('getUserPlaylists', () => {
 		[{ user_id: 'me' }, 'me/playlists'],
 		[{ user_id: 'spotify' }, 'users/spotify/playlists'],
 	])('routes %j to %s', async (input, endpoint) => {
-		const corsair = await createSpotifyClient();
-
 		await corsair.spotify.api.playlists.getUserPlaylists(input);
 
 		expect(request).toHaveBeenCalledWith(endpoint, expect.anything(), {
@@ -39,8 +36,6 @@ describe('getUserPlaylists', () => {
 	});
 
 	it('forwards pagination without leaking user_id into the query', async () => {
-		const corsair = await createSpotifyClient();
-
 		await corsair.spotify.api.playlists.getUserPlaylists({
 			user_id: 'spotify',
 			limit: 5,
