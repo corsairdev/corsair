@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, findLocalProject, persistProject } from '../utils';
+import { enc, persistProject, resolveProjectId } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['projectsList'] = async (ctx, input) => {
@@ -117,21 +117,12 @@ export const deleteProject: GitlabEndpoints['projectsDelete'] = async (
 
 	if (ctx.db.projects) {
 		try {
-			const project = await findLocalProject(input.project_id, ctx.db);
-			if (project.status === 'found') {
-				await ctx.db.projects.deleteByEntityId(project.entityId);
-			} else if (project.status === 'ambiguous') {
-				console.warn(
-					`gitlab.projects.delete: ${project.count} local projects match "${input.project_id}"; skipping local DB cleanup to avoid deleting the wrong record`,
-				);
-			} else if (project.status === 'invalid') {
-				console.warn(
-					`gitlab.projects.delete: invalid project identifier "${input.project_id}"; skipping local DB cleanup`,
-				);
-			} else {
-				console.warn(
-					`gitlab.projects.delete: no local project found for "${input.project_id}"; skipping local DB cleanup`,
-				);
+			const projectId = await resolveProjectId(
+				input.project_id,
+				ctx.db.projects,
+			);
+			if (projectId !== null) {
+				await ctx.db.projects.deleteByEntityId(String(projectId));
 			}
 		} catch (error) {
 			console.warn('Failed to delete project from database:', error);

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, persistIssue, resolveNumericProjectId } from '../utils';
+import { deleteByIid, enc, persistIssue } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['issuesList'] = async (ctx, input) => {
@@ -116,48 +116,15 @@ export const deleteIssue: GitlabEndpoints['issuesDelete'] = async (
 		baseUrl: ctx.options.baseUrl,
 	});
 
-	if (ctx.db.issues) {
-		try {
-			const resolvedProjectId = await resolveNumericProjectId(
-				input.project_id,
-				ctx.db,
-			);
-			if (resolvedProjectId === null) {
-				console.warn(
-					`gitlab.issues.delete: could not resolve project_id "${input.project_id}" to a numeric ID; skipping local DB cleanup`,
-				);
-			} else if (
-				typeof input.issue_iid !== 'number' ||
-				!Number.isSafeInteger(input.issue_iid) ||
-				input.issue_iid <= 0
-			) {
-				console.warn(
-					`gitlab.issues.delete: invalid issue_iid "${input.issue_iid}"; skipping local DB cleanup`,
-				);
-			} else {
-				// Note: 'as any' is required because Zod 4's .loose() index signature
-				// on GitlabIssue conflicts with Corsair ORM's DataSearchFilter.
-				const candidates = await ctx.db.issues.search({
-					data: { iid: input.issue_iid } as any,
-				});
-				const matches = candidates.filter(
-					(e) => e.data?.project_id === resolvedProjectId,
-				);
-				if (matches.length === 1) {
-					await ctx.db.issues.deleteByEntityId(matches[0]!.entity_id);
-				} else if (matches.length === 0) {
-					console.warn(
-						`gitlab.issues.delete: no local issue found for iid ${input.issue_iid} in project ${resolvedProjectId}; skipping local DB cleanup`,
-					);
-				} else {
-					console.warn(
-						`gitlab.issues.delete: ${matches.length} local issues match iid ${input.issue_iid} in project ${resolvedProjectId}; skipping local DB cleanup to avoid deleting the wrong record`,
-					);
-				}
-			}
-		} catch (error) {
-			console.warn('Failed to delete issue from database:', error);
-		}
+	try {
+		await deleteByIid(
+			ctx.db.issues,
+			ctx.db.projects,
+			input.project_id,
+			input.issue_iid,
+		);
+	} catch (error) {
+		console.warn('Failed to delete issue from database:', error);
 	}
 
 	await logEventFromContext(

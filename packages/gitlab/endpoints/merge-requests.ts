@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, persistMergeRequest, resolveNumericProjectId } from '../utils';
+import { deleteByIid, enc, persistMergeRequest } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['mergeRequestsList'] = async (
@@ -127,49 +127,15 @@ export const deleteMr: GitlabEndpoints['mergeRequestsDelete'] = async (
 		{ method: 'DELETE', baseUrl: ctx.options.baseUrl },
 	);
 
-	if (ctx.db.mergeRequests) {
-		try {
-			const resolvedProjectId = await resolveNumericProjectId(
-				input.project_id,
-				ctx.db,
-			);
-			if (resolvedProjectId === null) {
-				console.warn(
-					`gitlab.mergeRequests.delete: could not resolve project_id "${input.project_id}" to a numeric ID; skipping local DB cleanup`,
-				);
-			} else if (
-				typeof input.merge_request_iid !== 'number' ||
-				!Number.isSafeInteger(input.merge_request_iid) ||
-				input.merge_request_iid <= 0
-			) {
-				console.warn(
-					`gitlab.mergeRequests.delete: invalid merge_request_iid "${input.merge_request_iid}"; skipping local DB cleanup`,
-				);
-			} else {
-				// Note: 'as any' is required because Zod 4's .loose() index signature
-				// on GitlabMergeRequest conflicts with Corsair ORM's DataSearchFilter.
-				const candidates = await ctx.db.mergeRequests.search({
-					data: { iid: input.merge_request_iid } as any,
-				});
-				const matches = candidates.filter(
-					(e: { data?: { project_id?: number } }) =>
-						e.data?.project_id === resolvedProjectId,
-				);
-				if (matches.length === 1) {
-					await ctx.db.mergeRequests.deleteByEntityId(matches[0]!.entity_id);
-				} else if (matches.length === 0) {
-					console.warn(
-						`gitlab.mergeRequests.delete: no local MR found for iid ${input.merge_request_iid} in project ${resolvedProjectId}; skipping local DB cleanup`,
-					);
-				} else {
-					console.warn(
-						`gitlab.mergeRequests.delete: ${matches.length} local MRs match iid ${input.merge_request_iid} in project ${resolvedProjectId}; skipping local DB cleanup to avoid deleting the wrong record`,
-					);
-				}
-			}
-		} catch (error) {
-			console.warn('Failed to delete merge request from database:', error);
-		}
+	try {
+		await deleteByIid(
+			ctx.db.mergeRequests,
+			ctx.db.projects,
+			input.project_id,
+			input.merge_request_iid,
+		);
+	} catch (error) {
+		console.warn('Failed to delete merge request from database:', error);
 	}
 
 	await logEventFromContext(
