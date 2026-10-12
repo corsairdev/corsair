@@ -49,6 +49,8 @@ export async function makeBuiltWithRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
+	// `unknown` is safe because raw is only passed to parseBody, which narrows it; the transport returns
+	// an unvalidated body (string or parsed JSON), so no more specific type is available.
 	let raw: unknown;
 	try {
 		raw = await request<unknown>(config, requestOptions);
@@ -66,11 +68,14 @@ export async function makeBuiltWithRequest<T>(
 	const parsed = parseBody(raw);
 	const failure = lookupFailure(parsed);
 	if (failure) throw failure;
-	// Callers validate the parsed JSON with their endpoint's zod output schema.
+	// Safe: callers validate the parsed JSON with their endpoint's zod output schema before using it.
+	// A better type was not practical because T is chosen per call site and the provider JSON shape is only known there.
 	return parsed as T;
 }
 
 // BuiltWith serves JSON as `text/json`, which core `request` returns as a raw string.
+// `unknown` is safe because the input is only narrowed by typeof/JSON.parse and never read by field here;
+// no better type exists because the response shape is unverified until the caller's zod schema runs.
 function parseBody(raw: unknown): unknown {
 	if (typeof raw !== 'string') return raw;
 	try {
@@ -82,6 +87,8 @@ function parseBody(raw: unknown): unknown {
 
 // BuiltWith reports failures (e.g. depleted credits, bad key) as HTTP 200 with
 // `{ Errors: [{ Message, Code }] }` and no results.
+// `unknown` is safe because every property is read only after typeof/`in`/Array.isArray narrowing;
+// no better type exists because this runs before any schema validation, on an arbitrary provider body.
 function lookupFailure(body: unknown): BuiltWithAPIError | undefined {
 	if (typeof body !== 'object' || body === null || !('Errors' in body)) {
 		return undefined;
@@ -90,6 +97,7 @@ function lookupFailure(body: unknown): BuiltWithAPIError | undefined {
 	const results =
 		'Results' in body && Array.isArray(body.Results) ? body.Results : [];
 	if (errors.length === 0 || results.length > 0) return undefined;
+	// Safe: narrowed with typeof/`in` below before any field read; elements of the provider's Errors array are unvalidated.
 	const first: unknown = errors[0];
 	const message =
 		typeof first === 'object' &&

@@ -18,11 +18,9 @@ jest.mock('corsair/http', () => {
 	};
 });
 
-// jest.mock above replaces these imports with jest.fn wrappers, which their static types do not reflect.
-const mockRequest = request as jest.MockedFunction<typeof request>;
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+// jest.mock above replaces these imports with jest.fn wrappers; jest.mocked exposes that without a cast.
+const mockRequest = jest.mocked(request);
+const mockLogEvent = jest.mocked(logEventFromContext);
 
 type CapturedRequest = {
 	url: string;
@@ -35,33 +33,28 @@ const RESPONSE_BODY = { ok: true };
 let requests: CapturedRequest[] = [];
 
 function makeCtx(key = 'test-builtwith-key') {
-	// Endpoints only read ctx.key; building a full plugin context here adds nothing to these tests.
-	return { key } as unknown as BuiltWithContext;
+	// Safe: endpoints under test read only ctx.key. A better type was not practical because the full
+	// context carries DB handles that cannot be built without a real corsair instance.
+	return { key } as BuiltWithContext;
 }
 
 beforeEach(() => {
 	mockLogEvent.mockClear();
 	requests = [];
-	global.fetch = (async (url: string | URL, init?: RequestInit) => {
+	global.fetch = async (url: string | URL | Request, init?: RequestInit) => {
 		const headers = Object.fromEntries(new Headers(init?.headers));
 
 		requests.push({
-			url: String(url),
+			url: url instanceof Request ? url.url : String(url),
 			method: init?.method ?? 'GET',
 			headers,
 		});
 
-		return {
-			ok: true,
+		return new Response(JSON.stringify(RESPONSE_BODY), {
 			status: 200,
-			statusText: 'OK',
-			url: String(url),
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => RESPONSE_BODY,
-			text: async () => JSON.stringify(RESPONSE_BODY),
-		};
-		// The stub implements only the Response members the HTTP client reads.
-	}) as unknown as typeof global.fetch;
+			headers: { 'Content-Type': 'application/json' },
+		});
+	};
 });
 
 describe('BuiltWith endpoints', () => {
@@ -95,7 +88,8 @@ describe('BuiltWith endpoints', () => {
 	});
 
 	it('createDomainListFile defaults to txt when format is omitted', async () => {
-		// The endpoint input type is the schema output, where format is already defaulted; omit it to exercise the default.
+		// Safe: only the defaulted `format` key is missing, and the endpoint's runtime schema fills it in.
+		// A better type was not practical because the endpoint input type is the schema output, where format is already required.
 		const input = { domains: [' a.com ', 'b.com'] } as Parameters<
 			typeof BuiltWithEndpoints.createDomainListFile
 		>[1];
