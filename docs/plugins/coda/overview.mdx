@@ -1,0 +1,169 @@
+---
+title: Overview
+description: "All-in-one doc for teams that combines pages, tables, automations and Packs."
+---
+
+Use **Coda** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 110 typed API operations
+- 2 synced entities (`documents`, `tables`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/coda
+```
+```bash yarn
+yarn add corsair @corsair-dev/coda
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/coda
+```
+```bash bun
+bun add corsair @corsair-dev/coda
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { coda } from '@corsair-dev/coda';
+
+export const corsair = createCorsair({
+	plugins: [
+		coda(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+coda()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'coda',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List docs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.coda.api.docs.list({});
+```
+
+
+**Insert rows into a table**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.coda.api.rows.upsert({
+	docId: 'AbCDeFGH',
+	tableIdOrName: 'Tasks',
+	rows: [{
+		cells: [{ column: 'Name', value: 'Ship the launch plan' }],
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/coda/api) page.
+
+## Query synced data
+
+Search synced Coda docs without hitting the API.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.coda.db.documents.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `documents`, `tables`. See [Database](/plugins/coda/database) for filters and operators.
+
+## Webhooks
+
+Fires when a doc is created or copied in your Coda organization (Admin API audit webhook, Enterprise plan).
+
+```ts
+coda({
+    webhookHooks: {
+        docs: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Coda docs created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/coda/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/coda/api">
+    Every `coda.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/coda/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/coda/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

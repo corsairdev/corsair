@@ -1,26 +1,17 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import type { OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class CodaAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'CodaAPIError';
-	}
-}
-
-// Coda REST API v1 Base URL
 const CODA_API_BASE = 'https://coda.io/apis/v1';
+
+type QueryValue = string | number | boolean | (string | number)[] | undefined;
 
 export async function makeCodaRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		body?: object;
+		query?: Record<string, QueryValue>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -37,26 +28,21 @@ export async function makeCodaRequest<T>(
 		},
 	};
 
-	const requestOptions: ApiRequestOptions = {
+	// Coda takes list query parameters as one comma-separated value (OpenAPI `explode: false`).
+	const flatQuery = query
+		? Object.fromEntries(
+				Object.entries(query).map(([key, value]) => [
+					key,
+					Array.isArray(value) ? value.join(',') : value,
+				]),
+			)
+		: undefined;
+
+	return request<T>(config, {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
-	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new CodaAPIError(error.message);
-		}
-		throw new CodaAPIError('Unknown error occurred while calling Coda API');
-	}
+		query: flatQuery,
+	});
 }

@@ -1,10 +1,28 @@
-import { insertRows, listDocs, listTables, whoami } from './handlers';
-
-export const CodaActions = {
-	whoami,
-	listDocs,
-	listTables,
-	insertRows,
-};
-
+export { Account } from './account';
+export { Analytics } from './analytics';
+export { Automations } from './automations';
+export { Categories } from './categories';
+export { Columns } from './columns';
+export { Controls } from './controls';
+export { Docs } from './docs';
+export { Domains } from './domains';
+export { Folders } from './folders';
+export { Formulas } from './formulas';
+export { PackAssets } from './pack-assets';
+export { PackCategories } from './pack-categories';
+export { PackConnections } from './pack-connections';
+export { PackFeaturedDocs } from './pack-featured-docs';
+export { PackInvitations } from './pack-invitations';
+export { PackListings } from './pack-listings';
+export { PackLogs } from './pack-logs';
+export { PackMakers } from './pack-makers';
+export { PackPermissions } from './pack-permissions';
+export { PackReleases } from './pack-releases';
+export { PackVersions } from './pack-versions';
+export { Packs } from './packs';
+export { Pages } from './pages';
+export { Permissions } from './permissions';
+export { Rows } from './rows';
+export { Tables } from './tables';
 export * from './types';
+export { Workspaces } from './workspaces';
