@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkListRequest, makeChatworkRequest } from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -70,16 +70,13 @@ export const listTasks: ChatworkEndpoints['accountListTasks'] = async (
 ) => {
 	const parsedInput =
 		ChatworkEndpointInputSchemas.accountListTasks.parse(input);
-	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['accountListTasks'] | null
-	>('my/tasks', ctx.key, {
+	const result = await makeChatworkListRequest('my/tasks', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
 		authType: ctx.options?.authType,
 	});
-	const validatedResult = ChatworkEndpointOutputSchemas.accountListTasks.parse(
-		result ?? [],
-	);
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.accountListTasks.parse(result);
 
 	if (ctx.db.tasks) {
 		try {

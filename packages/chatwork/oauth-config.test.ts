@@ -43,6 +43,7 @@ describe('Chatwork OAuth and Auth Configuration', () => {
 				authType: 'api_key',
 			};
 
+			// keyBuilder is typed as a union of option shapes; test only, cast to call it directly.
 			const keyBuilder = plugin.keyBuilder as any;
 			expect(keyBuilder).toBeDefined();
 			const key = await keyBuilder(ctx, 'endpoint');
@@ -60,6 +61,7 @@ describe('Chatwork OAuth and Auth Configuration', () => {
 				authType: 'oauth_2',
 			};
 
+			// keyBuilder is typed as a union of option shapes; test only, cast to call it directly.
 			const keyBuilder = plugin.keyBuilder as any;
 			expect(keyBuilder).toBeDefined();
 			const key = await keyBuilder(ctx, 'endpoint');
@@ -74,11 +76,13 @@ describe('Chatwork OAuth and Auth Configuration', () => {
 				},
 			};
 
+			// keyBuilder is typed as a union of option shapes; test only, cast to call it directly.
 			const keyBuilderWithOptions = pluginWithOptions.keyBuilder as any;
 			const key1 = await keyBuilderWithOptions(ctx, 'webhook');
 			expect(key1).toBe('secret-option');
 
 			const defaultPlugin = chatwork();
+			// keyBuilder is typed as a union of option shapes; test only, cast to call it directly.
 			const defaultKeyBuilder = defaultPlugin.keyBuilder as any;
 			const key2 = await defaultKeyBuilder(ctx, 'webhook');
 			expect(key2).toBe('stored-secret');

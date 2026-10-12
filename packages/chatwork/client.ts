@@ -48,6 +48,7 @@ export interface ChatworkRequestOptions {
 	multipart?: FormData;
 	query?: ChatworkParams;
 	authType?: 'api_key' | 'oauth_2';
+	errors?: Record<number, string>;
 }
 
 export function pathSegment(value: string | number): string {
@@ -81,6 +82,7 @@ export async function makeChatworkRequest<T>(
 		multipart,
 		query,
 		authType = 'oauth_2',
+		errors,
 	} = options;
 
 	const headers: Record<string, string> = {};
@@ -113,6 +115,7 @@ export async function makeChatworkRequest<T>(
 		body,
 		mediaType,
 		query: query ? encodeParams(query) : undefined,
+		errors,
 	};
 
 	try {
@@ -123,9 +126,14 @@ export async function makeChatworkRequest<T>(
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const bodyData = error.body as { errors?: string[] } | undefined;
-			const errorList = Array.isArray(bodyData?.errors)
-				? bodyData.errors
+			// error.body is arbitrary JSON from the provider; narrowed with typeof/in checks below.
+			const body: unknown = error.body;
+			const rawErrors =
+				body !== null && typeof body === 'object' && 'errors' in body
+					? body.errors
+					: undefined;
+			const errorList = Array.isArray(rawErrors)
+				? rawErrors.filter((e): e is string => typeof e === 'string')
 				: undefined;
 			const message =
 				errorList && errorList.length > 0
@@ -142,5 +150,29 @@ export async function makeChatworkRequest<T>(
 			throw new ChatworkAPIError(error.message);
 		}
 		throw new ChatworkAPIError('Unknown Chatwork API error');
+	}
+}
+
+// Chatwork answers an empty list with 204 No Content, and corsair/http returns
+// undefined for both that and an unparseable body. Treating 204 as an error
+// here keeps the two apart: only a real 204 becomes an empty list, anything
+// else reaches the caller's output schema and fails validation.
+// Return value is the raw JSON body (or empty for 204); callers validate or ignore it.
+export async function makeChatworkListRequest(
+	endpoint: string,
+	token: string,
+	options: Omit<ChatworkRequestOptions, 'errors'> = {},
+): Promise<unknown> {
+	try {
+		// Generic is unknown because 204 and JSON bodies differ; result is returned unparsed.
+		return await makeChatworkRequest<unknown>(endpoint, token, {
+			...options,
+			errors: { 204: 'No Content' },
+		});
+	} catch (error) {
+		if (error instanceof ChatworkAPIError && error.status === 204) {
+			return [];
+		}
+		throw error;
 	}
 }

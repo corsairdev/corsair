@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest } from '../client';
+import { makeChatworkListRequest } from '../client';
 import type { ChatworkEndpoints } from '../index';
-import type { ChatworkEndpointOutputs } from './types';
 import {
 	ChatworkEndpointInputSchemas,
 	ChatworkEndpointOutputSchemas,
@@ -9,15 +8,12 @@ import {
 
 export const list: ChatworkEndpoints['contactsList'] = async (ctx, input) => {
 	const parsedInput = ChatworkEndpointInputSchemas.contactsList.parse(input);
-	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['contactsList'] | null
-	>('contacts', ctx.key, {
+	const result = await makeChatworkListRequest('contacts', ctx.key, {
 		method: 'GET',
 		authType: ctx.options?.authType,
 	});
-	const validatedResult = ChatworkEndpointOutputSchemas.contactsList.parse(
-		result ?? [],
-	);
+	const validatedResult =
+		ChatworkEndpointOutputSchemas.contactsList.parse(result);
 
 	if (ctx.db.accounts) {
 		try {
@@ -46,16 +42,12 @@ export const listIncomingRequests: ChatworkEndpoints['contactsListIncomingReques
 	async (ctx, input) => {
 		const parsedInput =
 			ChatworkEndpointInputSchemas.contactsListIncomingRequests.parse(input);
-		const result = await makeChatworkRequest<
-			ChatworkEndpointOutputs['contactsListIncomingRequests'] | null
-		>('incoming_requests', ctx.key, {
+		const result = await makeChatworkListRequest('incoming_requests', ctx.key, {
 			method: 'GET',
 			authType: ctx.options?.authType,
 		});
 		const validatedResult =
-			ChatworkEndpointOutputSchemas.contactsListIncomingRequests.parse(
-				result ?? [],
-			);
+			ChatworkEndpointOutputSchemas.contactsListIncomingRequests.parse(result);
 
 		await logEventFromContext(
 			ctx,

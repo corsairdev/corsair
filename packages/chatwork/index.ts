@@ -489,6 +489,8 @@ export type ExternalChatworkPlugin<T extends ChatworkPluginOptions> =
 	BaseChatworkPlugin<T>;
 
 export function chatwork<const T extends ChatworkPluginOptions>(
+	// Every ChatworkPluginOptions field is optional, so {} is a valid value; the
+	// cast only widens it to the caller's generic T, matching the other plugins.
 	incomingOptions: ChatworkPluginOptions & T = {} as ChatworkPluginOptions & T,
 ): ExternalChatworkPlugin<T> {
 	const options = {

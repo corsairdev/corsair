@@ -17,6 +17,7 @@ import type {
 } from './webhooks/types';
 
 function testContext(key = 'dGVzdC1zZWNyZXQta2V5'): ChatworkContext {
+	// Partial stub with only the fields the handlers read; test only.
 	return {
 		key,
 		$getAccountId: () => 'test-account-id',
@@ -97,6 +98,7 @@ describe('Chatwork Webhooks Signature Verification', () => {
 
 	it('verifies signature via WebhookRequest object with headers', () => {
 		const validSig = computeSignature(rawBody, secretBase64);
+		// Payload is parsed JSON with no static shape; the signature check only reads headers and raw body.
 		const req: WebhookRequest<unknown> = {
 			payload: JSON.parse(rawBody),
 			headers: {
@@ -224,6 +226,7 @@ describe('Chatwork Webhook Handlers', () => {
 			},
 		});
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// Partial stub with only the fields the handlers read; test only.
 		const dbCtx = {
 			...ctx,
 			db: {
@@ -282,6 +285,7 @@ describe('Chatwork Webhook Handlers', () => {
 			},
 		});
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// Partial stub with only the fields the handlers read; test only.
 		const dbCtx = {
 			...ctx,
 			db: {
@@ -442,6 +446,7 @@ describe('Chatwork Webhook Tenant Matcher', () => {
 	it('returns null when no account_id is present', () => {
 		const req: RawWebhookRequest = {
 			headers: {},
+			// Deliberately unrecognized payload key used to exercise the unknown-event path.
 			body: { unknown: 'payload' },
 		};
 
@@ -491,6 +496,7 @@ describe('Chatwork OAuth Tenant Link Resolver', () => {
 	it('fetches /me from Chatwork when token response omits account_id', async () => {
 		const originalFetch = global.fetch;
 		global.fetch = jest.fn().mockResolvedValueOnce({
+			// Minimal fetch Response stub with only ok and json; test only.
 			ok: true,
 			json: async () => ({ account_id: 88888 }),
 		} as Response);

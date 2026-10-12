@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeChatworkRequest, pathSegment } from '../client';
+import {
+	makeChatworkListRequest,
+	makeChatworkRequest,
+	pathSegment,
+} from '../client';
 import type { ChatworkEndpoints } from '../index';
 import type { ChatworkEndpointOutputs } from './types';
 import {
@@ -10,16 +14,16 @@ import {
 export const list: ChatworkEndpoints['filesList'] = async (ctx, input) => {
 	const { room_id, ...query } =
 		ChatworkEndpointInputSchemas.filesList.parse(input);
-	const result = await makeChatworkRequest<
-		ChatworkEndpointOutputs['filesList'] | null
-	>(`rooms/${pathSegment(room_id)}/files`, ctx.key, {
-		method: 'GET',
-		query,
-		authType: ctx.options?.authType,
-	});
-	const validatedResult = ChatworkEndpointOutputSchemas.filesList.parse(
-		result ?? [],
+	const result = await makeChatworkListRequest(
+		`rooms/${pathSegment(room_id)}/files`,
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+			authType: ctx.options?.authType,
+		},
 	);
+	const validatedResult = ChatworkEndpointOutputSchemas.filesList.parse(result);
 
 	if (ctx.db.files) {
 		try {

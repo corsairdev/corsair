@@ -99,22 +99,23 @@ export type ChatworkWebhookOutputs = {
 	mentionToMe: MentionToMeWebhookPayload;
 };
 
+// Type guard input is arbitrary; narrowed to a record here.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+// Webhook body may be a raw string or parsed JSON; normalized to a record.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
-			const parsed = JSON.parse(body);
-			return parsed !== null &&
-				typeof parsed === 'object' &&
-				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
+			// JSON.parse result is arbitrary; narrowed by isRecord.
+			const parsed: unknown = JSON.parse(body);
+			return isRecord(parsed) ? parsed : null;
 		} catch {
 			return null;
 		}
 	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
+	return isRecord(body) ? body : null;
 }
 
 export function createChatworkMatch(eventType: string): CorsairWebhookMatcher {
@@ -125,6 +126,7 @@ export function createChatworkMatch(eventType: string): CorsairWebhookMatcher {
 }
 
 export function verifyChatworkWebhookSignature(
+	// Payload shape is not known before the signature is verified.
 	requestOrBody: WebhookRequest<unknown> | RawWebhookRequest | string | Buffer,
 	secretOrSignature: string,
 	secretIfBody?: string,
@@ -142,7 +144,7 @@ export function verifyChatworkWebhookSignature(
 		if ('hubVerified' in requestOrBody && requestOrBody.hubVerified === true) {
 			return { valid: true };
 		}
-		const req = requestOrBody as RawWebhookRequest & { rawBody?: string };
+		const req = requestOrBody;
 		const headers = req.headers ?? {};
 		const rawSig =
 			headers['x-chatworkwebhooksignature'] ??
@@ -151,9 +153,9 @@ export function verifyChatworkWebhookSignature(
 			req.query?.chatwork_webhook_signature;
 		signature = Array.isArray(rawSig) ? rawSig[0] : rawSig;
 
-		if (req.rawBody) {
+		if ('rawBody' in req && req.rawBody) {
 			rawBody = req.rawBody;
-		} else if (typeof req.body === 'string') {
+		} else if ('body' in req && typeof req.body === 'string') {
 			rawBody = req.body;
 		} else {
 			return {
@@ -186,6 +188,9 @@ export function verifyChatworkWebhookSignature(
 		const valid = timingSafeEqual(sigBuf, expectedBuf);
 		return { valid, error: valid ? undefined : 'Invalid webhook signature' };
 	} catch (e) {
-		return { valid: false, error: (e as Error).message };
+		return {
+			valid: false,
+			error: e instanceof Error ? e.message : String(e),
+		};
 	}
 }

@@ -17,8 +17,13 @@ export async function resolveChatworkOAuthWebhookTenantLink(
 			headers: { Authorization: `Bearer ${accessToken}` },
 		});
 		if (!response.ok) return null;
-		const payload = (await response.json()) as { account_id?: number | string };
-		const fetchedId = toExternalId(payload.account_id);
+		// Response body is arbitrary JSON; narrowed with typeof/in checks below.
+		const payload: unknown = await response.json();
+		const accountId =
+			payload !== null && typeof payload === 'object' && 'account_id' in payload
+				? payload.account_id
+				: undefined;
+		const fetchedId = toExternalId(accountId);
 		return fetchedId ? { linkType: 'account_id', externalId: fetchedId } : null;
 	} catch {
 		return null;

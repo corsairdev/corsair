@@ -27,7 +27,9 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.Mock;
 
+// Overrides are merged into the stub context; any shape is fine for tests.
 function testContext(overrides: Record<string, unknown> = {}): ChatworkContext {
+	// Partial stub with only the fields the endpoints read; test only.
 	return {
 		key: 'test-token',
 		$getAccountId: () => 'test-account-id',
@@ -96,7 +98,7 @@ describe('Chatwork Plugin Structure', () => {
 
 describe('Chatwork Endpoints', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		jest.resetAllMocks();
 	});
 
 	describe('account.get', () => {
@@ -256,16 +258,34 @@ describe('Chatwork Endpoints', () => {
 			ChatworkEndpointOutputSchemas.messagesList.parse(result);
 		});
 
-		it('handles HTTP 204 No Content gracefully by returning an empty array', async () => {
-			// When Chatwork returns 204, corsair/http request returns undefined
-			mockRequest.mockResolvedValueOnce(undefined);
+		it('returns an empty array on HTTP 204 No Content', async () => {
+			mockRequest.mockRejectedValueOnce(
+				new ApiError(
+					{ method: 'GET', url: 'rooms/1001/messages' },
+					{
+						status: 204,
+						statusText: 'No Content',
+						ok: true,
+						body: undefined,
+						url: 'https://api.chatwork.com/v2/rooms/1001/messages',
+					},
+					'No Content',
+				),
+			);
 
 			const ctx = testContext();
 			const result = await Messages.list(ctx, { room_id: 1001 });
 
 			expect(result).toEqual([]);
-			const parsed = ChatworkEndpointOutputSchemas.messagesList.parse(result);
-			expect(parsed).toEqual([]);
+			const [, reqOptions] = mockRequest.mock.calls[0];
+			expect(reqOptions.errors).toEqual({ 204: 'No Content' });
+		});
+
+		it('rejects an unparseable body instead of returning an empty array', async () => {
+			mockRequest.mockResolvedValueOnce(undefined);
+
+			const ctx = testContext();
+			await expect(Messages.list(ctx, { room_id: 1001 })).rejects.toThrow();
 		});
 	});
 
@@ -398,12 +418,14 @@ describe('Chatwork Endpoints', () => {
 
 	type EndpointCase = {
 		name: string;
+		// Response fixtures are arbitrary JSON per endpoint; test only.
 		call: (ctx: ChatworkContext) => Promise<unknown>;
 		response: unknown;
 		method: string;
 		url: string;
 		query?: Record<string, string>;
 		form?: Record<string, string>;
+		// Expected value is arbitrary JSON compared via toEqual; test only.
 		expected?: unknown;
 	};
 
@@ -695,9 +717,11 @@ describe('Chatwork Endpoints', () => {
 			expect(reqOptions.method).toBe('POST');
 			expect(reqOptions.url).toBe('rooms/1001/files');
 			expect(reqOptions.mediaType).toBeUndefined();
+			// Body is known to be FormData for file uploads; asserted with toBeInstanceOf next line.
 			const body = reqOptions.body as FormData;
 			expect(body).toBeInstanceOf(FormData);
 			expect(body.get('message')).toBe('See attached');
+			// form field "file" is known to be a File in this test.
 			const file = body.get('file') as File;
 			expect(file.name).toBe('hello.txt');
 			expect(file.type).toBe('text/plain');
@@ -748,6 +772,7 @@ describe('Chatwork Endpoints', () => {
 				fail('Expected error to be thrown');
 			} catch (err) {
 				expect(err).toBeInstanceOf(ChatworkAPIError);
+				// Already asserted instanceof ChatworkAPIError above; cast gives access to status.
 				const cwError = err as ChatworkAPIError;
 				expect(cwError.status).toBe(429);
 				expect(cwError.retryAfter).toBe(60);
