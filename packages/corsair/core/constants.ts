@@ -167,6 +167,7 @@ export const BaseProviders = [
 	'digitalocean',
 	'discord',
 	'dockerhub',
+	'docupost',
 	'docusign',
 	'dodopayments',
 	'doppler',
@@ -516,6 +517,7 @@ export const ProviderDisplayNames = {
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
+	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
@@ -872,6 +874,7 @@ export type AllProviders =
 	| 'digitalocean'
 	| 'discord'
 	| 'dockerhub'
+	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
 	| 'doppler'
