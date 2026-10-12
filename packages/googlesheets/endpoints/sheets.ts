@@ -30,22 +30,19 @@ export const appendRow: GoogleSheetsEndpoints['sheetsAppendRow'] = async (
 		},
 	});
 
-	if (result.responses && result.responses.length > 0 && ctx.db.rows) {
+	if (ctx.db.rows) {
 		try {
-			const response = result.responses[0];
-			if (response) {
-				const updatedRange = response.updatedRange || range;
-				const sheetName = input.sheetName || 'Sheet1';
-				const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
-				await ctx.db.rows.upsertByEntityId(rowId, {
-					rowId,
-					spreadsheetId: input.spreadsheetId,
-					sheetName,
-					range: updatedRange,
-					values: input.values,
-					createdAt: new Date(),
-				});
-			}
+			const updatedRange = result.updates?.updatedRange || range;
+			const sheetName = input.sheetName || 'Sheet1';
+			const rowId = `${input.spreadsheetId}_${sheetName}_${updatedRange}`;
+			await ctx.db.rows.upsertByEntityId(rowId, {
+				rowId,
+				spreadsheetId: input.spreadsheetId,
+				sheetName,
+				range: updatedRange,
+				values: input.values,
+				createdAt: new Date(),
+			});
 		} catch (error) {
 			console.warn('Failed to save row to database:', error);
 		}
