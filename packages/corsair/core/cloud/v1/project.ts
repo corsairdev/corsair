@@ -103,33 +103,39 @@ export function buildProjectPlane(transport: V1Transport) {
 				assertInstanceKey(input.instance_key, 'instances.create');
 				return req<CloudInstance>('POST', '/instances', input, options);
 			},
-			get: (instanceKey: string, options?: RequestOptions) =>
-				req<CloudInstance>(
+			get: (instanceKey: string, options?: RequestOptions) => {
+				assertInstanceKey(instanceKey, 'instances.get');
+				return req<CloudInstance>(
 					'GET',
 					refPath('/instances', instanceKey),
 					undefined,
 					options,
-				),
+				);
+			},
 			update: (
 				instanceKey: string,
 				input: UpdateInstanceInput,
 				options?: RequestOptions,
-			) =>
-				req<CloudInstance>(
+			) => {
+				assertInstanceKey(instanceKey, 'instances.update');
+				return req<CloudInstance>(
 					'PATCH',
 					refPath('/instances', instanceKey),
 					input,
 					options,
-				),
+				);
+			},
 			/** Permanent. Destroys the instance's data and its tenants' stored
 			 *  credentials. */
-			delete: (instanceKey: string, options?: RequestOptions) =>
-				req<CloudDeleted>(
+			delete: (instanceKey: string, options?: RequestOptions) => {
+				assertInstanceKey(instanceKey, 'instances.delete');
+				return req<CloudDeleted>(
 					'DELETE',
 					refPath('/instances', instanceKey),
 					undefined,
 					options,
-				),
+				);
+			},
 		},
 
 		integrations: {

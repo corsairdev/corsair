@@ -185,6 +185,48 @@ export type CloudKeyRotation = CloudKey & {
 
 /** `Extra` defaults to no extra fields, not to a forbidden-key record: an
  *  intersection with `Record<string, never>` would make `object` unassignable. */
+/** The result of pushing an instance's stored configuration into the runtime. */
+export type CloudInstanceApply = {
+	object: 'instance_apply';
+	id: string;
+	instance: string;
+	/** False when the instance was already serving and this re-pushed it. */
+	first_apply: boolean;
+	/** Where the instance answers, once it is serving. */
+	url: string | null;
+};
+
+/** The result of dropping an instance's runtime record. */
+export type CloudInstanceRemoval = {
+	object: 'instance_removal';
+	id: string;
+	instance: string;
+	removed: true;
+	/** The configuration survives, so one apply rebuilds it. */
+	config_retained: true;
+};
+
+/** One operation an integration exposes. */
+export type CloudOperation = {
+	object: 'operation';
+	/** The dotted path, as `overrides` keys it. */
+	id: string;
+	description: string | null;
+	/** What a permission mode judges it by. */
+	risk_level: 'read' | 'write' | 'destructive';
+};
+
+/** An integration's operations, with the policy currently stored for it. */
+export type CloudIntegrationOperations = {
+	object: 'integration_operations';
+	id: string;
+	instance: string;
+	integration: string;
+	mode: PermissionMode | null;
+	overrides: Record<string, PermissionDecision>;
+	data: CloudOperation[];
+};
+
 export type CloudDeleted<Extra = Record<never, never>> = {
 	object: string;
 	id: string;

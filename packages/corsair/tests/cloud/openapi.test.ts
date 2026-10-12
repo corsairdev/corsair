@@ -83,6 +83,7 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 	await instance.integrations.get(PLUGIN);
 	await instance.integrations.put(PLUGIN, {});
 	await instance.integrations.delete(PLUGIN);
+	await instance.integrations.operations(PLUGIN);
 	await instance.integrations.oauthApp.get(PLUGIN);
 	await instance.integrations.oauthApp.put(PLUGIN, {
 		client_id: 'c',
@@ -98,6 +99,8 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 	await instance.webhooks.deliveries.retry(PLUGIN, ID);
 	await instance.signingSecret.get();
 	await instance.signingSecret.rotate();
+	await instance.apply();
+	await instance.removeFromRuntime();
 	await instance.reconcile();
 }
 
@@ -133,8 +136,8 @@ describe('management contract', () => {
 		).toEqual([]);
 	});
 
-	it('covers all 47 operations', () => {
-		expect(specOperations().size).toBe(47);
-		expect(called.size).toBe(47);
+	it('covers all 50 operations', () => {
+		expect(specOperations().size).toBe(50);
+		expect(called.size).toBe(50);
 	});
 });

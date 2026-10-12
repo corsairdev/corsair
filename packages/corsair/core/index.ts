@@ -399,6 +399,9 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+// The runtime plane throws this one, so a caller needs it to tell a provider
+// failure from a transport failure. CloudApiError extends it.
+export { ManagementApiError } from './management/errors';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

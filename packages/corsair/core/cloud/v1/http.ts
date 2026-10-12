@@ -55,7 +55,7 @@ const INSTANCE_KEY = /^[a-z][a-z0-9-]{0,31}$/;
 export function assertInstanceKey(key: string, context: string): void {
 	if (!INSTANCE_KEY.test(key)) {
 		throw new Error(
-			`${context}: "${key}" is not a valid instance key — lowercase letter first, then letters, digits or hyphens, up to 32 characters.`,
+			`${context}: "${key}" is not a valid instance key. Lowercase letter first, then letters, digits or hyphens, up to 32 characters.`,
 		);
 	}
 }

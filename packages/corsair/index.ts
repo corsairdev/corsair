@@ -22,6 +22,7 @@ export {
 	CorsairKekMissingError,
 	corsairCloud,
 	createCorsair,
+	ManagementApiError,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	ReconnectRequiredError,

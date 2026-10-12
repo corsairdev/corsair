@@ -206,6 +206,46 @@ paths:
         "401": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
 
+  /instances/{key}/apply:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: applyInstance
+      tags: [instances]
+      summary: Push the instance's stored configuration into the runtime.
+      description: >
+        The same call performs a first apply and a re-apply. 201 the first time, 200 after. Refuses an instance holding no integrations, which is 409.
+      responses:
+        "200":
+          description: Re-applied.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceApply" } }
+        "201":
+          description: Applied for the first time.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceApply" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/remove:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: removeInstanceFromRuntime
+      tags: [instances]
+      summary: Drop the instance's runtime record and keep its configuration.
+      description: >
+        One apply rebuilds it. DELETE /instances/{key} destroys the instance instead. The tenants' stored credentials go with the tables, so they reconnect.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceRemoval" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
   /instances/{key}/signing-secret/rotate:
     parameters:
       - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
@@ -314,6 +354,23 @@ paths:
           content:
             application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
         "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /integrations/{ref}/operations:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: listIntegrationOperations
+      tags: [integrations]
+      summary: The operations this integration exposes.
+      description: >
+        Each carries the risk level a permission mode judges it by. `permissions.overrides` is keyed by operation id, so this is what a caller names in one.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/IntegrationOperations" } }
         "401": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
 
@@ -1145,6 +1202,43 @@ components:
         object: { type: string, enum: [instance_reconcile] }
         id: { type: string }
         instance: { type: string }
+    InstanceApply:
+      type: object
+      required: [object, id, instance, first_apply, url]
+      properties:
+        object: { type: string, enum: [instance_apply] }
+        id: { type: string }
+        instance: { type: string }
+        first_apply: { type: boolean, description: 'False when the instance was already serving and this re-pushed it.' }
+        url: { type: [string, 'null'], description: 'Where the instance answers, once it is serving.' }
+    InstanceRemoval:
+      type: object
+      required: [object, id, instance, removed, config_retained]
+      properties:
+        object: { type: string, enum: [instance_removal] }
+        id: { type: string }
+        instance: { type: string }
+        removed: { type: boolean, enum: [true] }
+        config_retained: { type: boolean, enum: [true], description: 'The configuration survives, so one apply rebuilds it.' }
+    Operation:
+      type: object
+      required: [object, id, description, risk_level]
+      properties:
+        object: { type: string, enum: [operation] }
+        id: { type: string, description: 'The dotted path, as `overrides` keys it.' }
+        description: { type: [string, 'null'] }
+        risk_level: { type: string, enum: [read, write, destructive], description: 'What a permission mode judges it by.' }
+    IntegrationOperations:
+      type: object
+      required: [object, id, instance, integration, mode, overrides, data]
+      properties:
+        object: { type: string, enum: [integration_operations] }
+        id: { type: string }
+        instance: { type: string }
+        integration: { type: string }
+        mode: { oneOf: [{ $ref: "#/components/schemas/PermissionMode" }, { type: 'null' }] }
+        overrides: { type: object, additionalProperties: { $ref: "#/components/schemas/PermissionDecision" } }
+        data: { type: array, items: { $ref: "#/components/schemas/Operation" } }
     SigningSecret:
       type: object
       required: [object, id, instance, signing_secret]

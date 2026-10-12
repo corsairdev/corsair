@@ -7,7 +7,10 @@ import type {
 	CloudConnectSession,
 	CloudDeleted,
 	CloudDelivery,
+	CloudInstanceApply,
+	CloudInstanceRemoval,
 	CloudIntegration,
+	CloudIntegrationOperations,
 	CloudOauthApp,
 	CloudSigningSecret,
 	CloudSigningSecretRotation,
@@ -33,6 +36,8 @@ export type UpdateTenantInput = {
 
 export type SetAccessInput = {
 	permission: Permission;
+	/** Omit to leave a stored quota alone; `null` on either half clears it. */
+	quota?: { limit: number | null; window: string | null };
 	label?: string;
 	/** Stored on the tenant, so it changes every line that tenant holds. */
 	email?: string;
@@ -262,6 +267,20 @@ export function buildInstancePlane(
 					undefined,
 					options,
 				),
+			/**
+			 * What this integration exposes, each operation with the risk level a
+			 * permission mode judges it by.
+			 *
+			 * `permissions.overrides` is keyed by operation id, so this is how a
+			 * caller learns what it may name.
+			 */
+			operations: (integration: string, options?: RequestOptions) =>
+				req<CloudIntegrationOperations>(
+					'GET',
+					`${refPath('/integrations', ref(integration))}/operations`,
+					undefined,
+					options,
+				),
 			/** Your own OAuth app for this integration, in place of Corsair's. */
 			oauthApp: {
 				get: (integration: string, options?: RequestOptions) =>
@@ -398,8 +417,35 @@ export function buildInstancePlane(
 				),
 		},
 
-		/** Pushes the stored config, plugins, keys and memberships into the
-		 *  deployed runtime again. */
+		/**
+		 * Pushes the instance's stored configuration into the runtime.
+		 *
+		 * The same call performs a first apply and a re-apply. Refuses an
+		 * instance holding no integrations: add one with `integrations.put`.
+		 */
+		apply: (options?: RequestOptions) =>
+			req<CloudInstanceApply>(
+				'POST',
+				instancePath('/apply'),
+				undefined,
+				options,
+			),
+
+		/**
+		 * Drops the instance's runtime record and keeps its configuration, so
+		 * one `apply` rebuilds it. `instances.delete` destroys the instance.
+		 *
+		 * The tenants' stored credentials go with the tables, so they reconnect.
+		 */
+		removeFromRuntime: (options?: RequestOptions) =>
+			req<CloudInstanceRemoval>(
+				'POST',
+				instancePath('/remove'),
+				undefined,
+				options,
+			),
+
+		/** @deprecated Use `apply`, which is idempotent. */
 		reconcile: (options?: RequestOptions) =>
 			req<{ object: 'instance_reconcile'; id: string; instance: string }>(
 				'POST',
