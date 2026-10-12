@@ -38,6 +38,20 @@ export function appDeliveryUrlHeader(hub: HubConfig): Record<string, string> {
 	return url ? { 'x-corsair-delivery-url': url } : {};
 }
 
+/**
+ * Which instance of the project this call is about.
+ *
+ * A project key spans every instance of its project, so a callback that mutates
+ * state — a connection status report, a webhook link — cannot be resolved from
+ * the key alone. Hub rejects those unpinned rather than guess at the project's
+ * primary. One process can serve several instances, so this travels on the
+ * config a Corsair was built with, never an environment variable.
+ */
+export function instanceKeyHeader(hub: HubConfig): Record<string, string> {
+	const key = hub.instanceKey?.trim();
+	return key ? { 'x-corsair-instance-key': key } : {};
+}
+
 export async function readHubJsonResponse(
 	response: Response,
 ): Promise<unknown> {
@@ -115,6 +129,7 @@ export async function hubApiPost<T>(input: {
 			'content-type': 'application/json',
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
+			...instanceKeyHeader(input.hub),
 		},
 		body: JSON.stringify(input.body),
 	});
@@ -140,6 +155,7 @@ export async function hubApiGet<T>(input: {
 		headers: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
+			...instanceKeyHeader(input.hub),
 		},
 	});
 
