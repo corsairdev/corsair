@@ -35,6 +35,9 @@ function transportRateLimitConfig(
 
 const REQUEST_TIMEOUT_MS = 20_000;
 
+/** DocuSign account IDs are GUIDs or numeric IDs. */
+const ACCOUNT_ID_PATTERN = /^[A-Za-z0-9-]+$/;
+
 function joinUrl(base: string, path: string): string {
 	const baseUrl = base.endsWith('/') ? base.slice(0, -1) : base;
 	return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
@@ -333,6 +336,11 @@ export class DocusignClient {
 	private isDemoEnvironment: boolean;
 
 	constructor(options: DocusignAuthOptions) {
+		if (!ACCOUNT_ID_PATTERN.test(options.accountId)) {
+			throw new Error(
+				'Invalid DocuSign accountId: only letters, digits and hyphens are allowed.',
+			);
+		}
 		this.accessToken = options.accessToken;
 		this.accountId = options.accountId;
 		const { baseUri, isDemoEnvironment } = this.resolveAndValidateBaseUri(

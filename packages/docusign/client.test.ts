@@ -50,6 +50,15 @@ describe('DocusignClient', () => {
 		jest.restoreAllMocks();
 	});
 
+	it.each(['..', '%2e%2e', '123/../456', 'acct?x=1'])(
+		'rejects unsafe accountId %s',
+		(accountId) => {
+			expect(
+				() => new DocusignClient({ accessToken: 'mock_token', accountId }),
+			).toThrow('Invalid DocuSign accountId');
+		},
+	);
+
 	it('sends requests through fetch with bearer auth', async () => {
 		const client = makeClient();
 		await client.request('/templates');
