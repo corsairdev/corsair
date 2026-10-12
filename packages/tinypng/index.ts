@@ -175,7 +175,8 @@ export type ExternalTinypngPlugin<T extends TinypngPluginOptions> =
  * Plugin
  * -------------------------------- */
 
-// The default is only used when called with no options, so T is inferred as {}.
+// Safe: the default only applies when no options are passed, where T infers as {} and {} satisfies it;
+// TypeScript cannot prove that for a generic default, and an overload would duplicate the signature.
 export function tinypng<const T extends TinypngPluginOptions>(
 	incomingOptions: TinypngPluginOptions & T = {} as TinypngPluginOptions & T,
 ): ExternalTinypngPlugin<T> {

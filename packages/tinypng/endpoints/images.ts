@@ -30,8 +30,9 @@ async function shrinkSource(apiKey: string, source: ShrinkInput['source']) {
 				: new Uint8Array(Buffer.from(source.base64, 'base64')),
 	});
 	const location = response.headers.get('location');
-	// unknown: parsed by ShrinkResponseSchema below.
-	const json = readJson(response) as { input?: unknown; output?: unknown };
+	const json = ShrinkResponseSchema.pick({ input: true, output: true }).parse(
+		readJson(response),
+	);
 	return ShrinkResponseSchema.parse({
 		imageId: imageIdFromLocation(location),
 		outputUrl: location,

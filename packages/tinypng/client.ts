@@ -96,7 +96,8 @@ export async function tinifyRequest(
 	};
 }
 
-// unknown: provider returns arbitrary JSON; callers validate it with zod schemas.
+// unknown: this is raw provider JSON, safe because every caller parses it with a zod schema;
+// a concrete type here would be an unchecked claim about the response shape.
 export function readJson(response: TinifyResponse): unknown {
 	return JSON.parse(new TextDecoder().decode(response.body));
 }

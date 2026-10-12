@@ -6,7 +6,11 @@ function classify(error: Error) {
 }
 
 describe('tinypng error handlers', () => {
-	it.each([
+	it.each<{
+		error: Error;
+		name: keyof typeof errorHandlers;
+		retries: number;
+	}>([
 		{
 			error: new TinypngAPIError('Too Many Requests', 429),
 			name: 'RATE_LIMIT_ERROR',
@@ -36,7 +40,7 @@ describe('tinypng error handlers', () => {
 		'routes $error.name $error.status to $name',
 		async ({ error, name, retries }) => {
 			expect(classify(error)).toBe(name);
-			const handler = errorHandlers[name as keyof typeof errorHandlers];
+			const handler = errorHandlers[name];
 			await expect(handler.handler()).resolves.toMatchObject({
 				maxRetries: retries,
 			});
