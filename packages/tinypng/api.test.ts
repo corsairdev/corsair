@@ -10,10 +10,12 @@ jest.mock('corsair/core', () => ({
 
 const mockLog = jest.mocked(logEventFromContext);
 const fetchMock = jest.fn<Promise<Response>, [string, RequestInit]>();
+// Test-only: jest mock only implements the fetch surface the client uses.
 global.fetch = fetchMock as unknown as typeof fetch;
 
 // unknown: endpoints are called with a stub context, not the full plugin context.
 type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
+// Test-only: endpoints are typed per input, so cast to a loose signature to call them uniformly.
 const call = (endpoint: unknown, input: unknown) =>
 	(endpoint as AnyEndpoint)({ key: 'test-key' }, input);
 
@@ -55,6 +57,7 @@ function request(n: number) {
 	return {
 		url,
 		method: init?.method,
+		// Endpoint always passes a plain header object; RequestInit types it more loosely. Test only.
 		headers: init?.headers as Record<string, string>,
 		redirect: init?.redirect,
 		json: typeof init?.body === 'string' ? JSON.parse(init.body) : undefined,
@@ -123,6 +126,7 @@ describe('images.shrink', () => {
 
 		const sent = request(0);
 		expect(sent.headers['Content-Type']).toBeUndefined();
+		// Mock request body is a Uint8Array in this test; cast is for comparison only.
 		expect(Array.from(sent.body as Uint8Array)).toEqual(Array.from(PNG));
 	});
 
@@ -144,6 +148,7 @@ describe('images.shrink', () => {
 				message: 'Credentials are invalid',
 			}),
 		);
+		// unknown: caught value is only inspected with instanceof/field checks below; test only.
 		const error = await call(Images.shrink, {
 			source: { url: 'https://example.com/a.png' },
 		}).catch((e: unknown) => e);
@@ -311,6 +316,7 @@ describe('images.compressAndStoreInAzure', () => {
 				'x-ms-blob-cache-control': 'public, max-age=31536000',
 			},
 		});
+		// Mock request body is a Uint8Array in this test; cast is for comparison only.
 		expect(Array.from(put.body as Uint8Array)).toEqual(Array.from(PNG));
 		expect(result).toEqual({
 			imageId: 'cciutldm823k9e9r',
@@ -348,6 +354,7 @@ describe('images.compressAndStoreInAzure', () => {
 		respond(200, PNG, { 'Content-Type': 'image/png' });
 		respond(403, 'AuthenticationFailed');
 
+		// unknown: caught value is only inspected with instanceof/field checks below; test only.
 		const error = await call(Images.compressAndStoreInAzure, {
 			source: { url: 'https://tinypng.com/images/panda-happy.png' },
 			blobUrl,

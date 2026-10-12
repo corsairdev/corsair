@@ -96,6 +96,7 @@ export async function tinifyRequest(
 	};
 }
 
+// unknown: provider returns arbitrary JSON; callers validate it with zod schemas.
 export function readJson(response: TinifyResponse): unknown {
 	return JSON.parse(new TextDecoder().decode(response.body));
 }
