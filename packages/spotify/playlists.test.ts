@@ -1,20 +1,24 @@
+import { createCorsair } from 'corsair/core';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { makeAuthenticatedSpotifyRequest } from './client';
-import { getUserPlaylists } from './endpoints/playlists';
+import { spotify } from './index';
 
 jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
 	makeAuthenticatedSpotifyRequest: jest.fn(async () => ({ items: [] })),
 }));
 
 const request = jest.mocked(makeAuthenticatedSpotifyRequest);
 
-const ctx = {
-	key: 'token',
-	db: {},
-	$getAccountId: async () => 'account',
-	// The real endpoint context carries the full plugin runtime; the handler
-	// only passes it to the mocked client and the event logger, so this
-	// partial context is cast with `never`, which the handler accepts.
-} as never;
+async function createSpotifyClient() {
+	const testDb = createTestDatabase();
+	await createIntegrationAndAccount(testDb.db, 'spotify', 'default');
+	return createCorsair({
+		plugins: [spotify({ authType: 'oauth_2', key: 'token' })],
+		database: testDb.db,
+		kek: 'test-kek',
+	});
+}
 
 describe('getUserPlaylists', () => {
 	beforeEach(() => request.mockClear());
@@ -24,20 +28,29 @@ describe('getUserPlaylists', () => {
 		[{ user_id: 'me' }, 'me/playlists'],
 		[{ user_id: 'spotify' }, 'users/spotify/playlists'],
 	])('routes %j to %s', async (input, endpoint) => {
-		await getUserPlaylists(ctx, input);
+		const corsair = await createSpotifyClient();
 
-		expect(request).toHaveBeenCalledWith(endpoint, ctx, {
+		await corsair.spotify.api.playlists.getUserPlaylists(input);
+
+		expect(request).toHaveBeenCalledWith(endpoint, expect.anything(), {
 			method: 'GET',
 			query: {},
 		});
 	});
 
 	it('forwards pagination without leaking user_id into the query', async () => {
-		await getUserPlaylists(ctx, { user_id: 'spotify', limit: 5, offset: 10 });
+		const corsair = await createSpotifyClient();
 
-		expect(request).toHaveBeenCalledWith('users/spotify/playlists', ctx, {
-			method: 'GET',
-			query: { limit: 5, offset: 10 },
+		await corsair.spotify.api.playlists.getUserPlaylists({
+			user_id: 'spotify',
+			limit: 5,
+			offset: 10,
 		});
+
+		expect(request).toHaveBeenCalledWith(
+			'users/spotify/playlists',
+			expect.anything(),
+			{ method: 'GET', query: { limit: 5, offset: 10 } },
+		);
 	});
 });
