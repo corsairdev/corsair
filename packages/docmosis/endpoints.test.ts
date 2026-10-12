@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDocmosisRequest } from './client';
+import type { DocmosisContext, DocmosisPluginOptions } from './index';
 import { docmosis } from './index';
 
 jest.mock('corsair/core', () => {
@@ -15,18 +16,40 @@ jest.mock('./client', () => {
 	};
 });
 
-const mockRequest = makeDocmosisRequest as jest.MockedFunction<
-	typeof makeDocmosisRequest
->;
+const mockRequest = jest.mocked(makeDocmosisRequest);
+const mockLogEvent = jest.mocked(logEventFromContext);
 
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+type EntityStore = {
+	upsertByEntityId: (entityId: string, data: object) => Promise<object>;
+	deleteByEntityId: (entityId: string) => Promise<boolean>;
+};
+
+type MockStore = {
+	upsertByEntityId: jest.Mock<Promise<object>, [string, object]>;
+	deleteByEntityId: jest.Mock<Promise<boolean>, [string]>;
+};
+
+const makeStore = (): MockStore => ({
+	upsertByEntityId: jest.fn<Promise<object>, [string, object]>(
+		async () => ({}),
+	),
+	deleteByEntityId: jest.fn<Promise<boolean>, [string]>(async () => true),
+});
+
+function makeCtx(
+	options: DocmosisPluginOptions = {},
+	key = 'test-key',
+	db: { [K in keyof DocmosisContext['db']]?: EntityStore } = {},
+): DocmosisContext {
+	// Safe: the endpoints read only key, options and db from the context.
+	// A narrower type is not practical because a full CorsairPluginContext needs the hub, keys and database.
+	return { key, options, db, endpoints: {} } as DocmosisContext;
+}
 
 describe('Docmosis endpoints', () => {
 	const plugin = docmosis({ key: 'test-key' });
 	const endpoints = plugin.endpoints!;
-	const ctx = { key: 'test-key', authType: 'api_key', options: {} } as never;
+	const ctx = makeCtx();
 
 	beforeEach(() => {
 		mockRequest.mockReset();
@@ -64,7 +87,7 @@ describe('Docmosis endpoints', () => {
 
 	it('getApiKey returns only a masked preview without calling the API', async () => {
 		const result = await endpoints.auth.getApiKey(
-			{ key: 'dXNlcjEyMzQ1Njc4', authType: 'api_key', options: {} } as never,
+			makeCtx({}, 'dXNlcjEyMzQ1Njc4'),
 			{},
 		);
 
@@ -74,14 +97,7 @@ describe('Docmosis endpoints', () => {
 
 	it('forwards the configured region to the client', async () => {
 		mockRequest.mockResolvedValue({ succeeded: true });
-		await endpoints.admin.getRenderQueue(
-			{
-				key: 'test-key',
-				authType: 'api_key',
-				options: { region: 'eu1' },
-			} as never,
-			{},
-		);
+		await endpoints.admin.getRenderQueue(makeCtx({ region: 'eu1' }), {});
 
 		expect(mockRequest).toHaveBeenCalledWith('getRenderQueue', 'test-key', {
 			method: 'POST',
@@ -432,16 +448,11 @@ describe('Docmosis endpoints', () => {
 	});
 
 	it('registers schemas/meta for all 18 operations', () => {
-		// test only: widened to Record so keys can be enumerated; values are not read
-		const schemas = plugin.endpointSchemas as Record<string, unknown>;
-		// test only: widened to Record so keys can be enumerated; values are not read
-		const meta = plugin.endpointMeta as Record<string, unknown>;
-		const keys = Object.keys(schemas);
+		const keys = Object.keys(plugin.endpointSchemas ?? {});
+		const metaKeys = Object.keys(plugin.endpointMeta ?? {});
 
 		expect(keys).toHaveLength(18);
-		for (const key of keys) {
-			expect(meta[key]).toBeDefined();
-		}
+		expect(metaKeys.sort()).toEqual([...keys].sort());
 	});
 
 	it('logs a completion event for each endpoint call', async () => {
@@ -454,5 +465,195 @@ describe('Docmosis endpoints', () => {
 			{},
 			'completed',
 		);
+	});
+
+	describe('entity persistence', () => {
+		it('listTemplates upserts each template under its folder-qualified path', async () => {
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				templateList: [
+					{ name: 'a.docx', sizeBytes: 10, md5: 'abc' },
+					{ name: '/b.docx', lastModifiedISO8601: '2024-01-01T00:00:00Z' },
+				],
+			});
+			const templates = makeStore();
+			await endpoints.templates.list(makeCtx({}, 'test-key', { templates }), {
+				folder: '/samples/',
+			});
+
+			expect(templates.upsertByEntityId).toHaveBeenCalledTimes(2);
+			expect(templates.upsertByEntityId).toHaveBeenNthCalledWith(
+				1,
+				'samples/a.docx',
+				{ id: 'samples/a.docx', name: 'a.docx', sizeBytes: 10, md5: 'abc' },
+			);
+			expect(templates.upsertByEntityId).toHaveBeenNthCalledWith(
+				2,
+				'samples/b.docx',
+				{
+					id: 'samples/b.docx',
+					name: '/b.docx',
+					lastModifiedISO8601: '2024-01-01T00:00:00Z',
+				},
+			);
+		});
+
+		it('getTemplateDetails upserts the template under the requested path', async () => {
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				templateDetails: { name: 'x.docx', templateHasErrors: false },
+			});
+			const templates = makeStore();
+			await endpoints.templates.getDetails(
+				makeCtx({}, 'test-key', { templates }),
+				{ templateName: '/x.docx' },
+			);
+
+			expect(templates.upsertByEntityId).toHaveBeenCalledWith('x.docx', {
+				id: 'x.docx',
+				name: 'x.docx',
+				templateHasErrors: false,
+			});
+		});
+
+		it('deleteTemplate removes rows only when the provider reports success', async () => {
+			const templates = makeStore();
+			const dbCtx = makeCtx({}, 'test-key', { templates });
+			mockRequest.mockResolvedValue({ succeeded: false });
+			await endpoints.templates.delete(dbCtx, { templateName: '/a.docx' });
+			expect(templates.deleteByEntityId).not.toHaveBeenCalled();
+
+			mockRequest.mockResolvedValue({ succeeded: true });
+			await endpoints.templates.delete(dbCtx, {
+				templateName: ['/a.docx', 'dir/b.docx'],
+			});
+			expect(templates.deleteByEntityId).toHaveBeenNthCalledWith(1, 'a.docx');
+			expect(templates.deleteByEntityId).toHaveBeenNthCalledWith(
+				2,
+				'dir/b.docx',
+			);
+		});
+
+		it('listImages upserts and deleteImage removes image rows', async () => {
+			const images = makeStore();
+			const dbCtx = makeCtx({}, 'test-key', { images });
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				imageList: [{ name: 'logo.png', sizeBytes: 5, md5: 'm' }],
+			});
+			await endpoints.images.list(dbCtx, {});
+			expect(images.upsertByEntityId).toHaveBeenCalledWith('logo.png', {
+				id: 'logo.png',
+				name: 'logo.png',
+				sizeBytes: 5,
+				md5: 'm',
+			});
+
+			mockRequest.mockResolvedValue({ succeeded: true });
+			await endpoints.images.delete(dbCtx, { imageName: 'logo.png' });
+			expect(images.deleteByEntityId).toHaveBeenCalledWith('logo.png');
+		});
+
+		it('getBatchUploadStatus upserts the job keyed by userJobId', async () => {
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				jobStatus: {
+					userJobId: 'job-1',
+					isEnded: true,
+					status: 'done',
+					pctComplete: 100,
+					jobResult: { uploadedTotalCount: 3 },
+				},
+			});
+			const batchUploadJobs = makeStore();
+			await endpoints.admin.getBatchUploadStatus(
+				makeCtx({}, 'test-key', { batchUploadJobs }),
+				{ userJobId: 'job-1' },
+			);
+
+			expect(batchUploadJobs.upsertByEntityId).toHaveBeenCalledWith('job-1', {
+				id: 'job-1',
+				isEnded: true,
+				status: 'done',
+				pctComplete: 100,
+				jobResult: { uploadedTotalCount: 3 },
+			});
+		});
+
+		it('environmentSummary upserts the environment keyed by name', async () => {
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				accountEnvironmentSummary: {
+					ready: 'true',
+					accountEnvDetails: { name: 'Development', isDisabled: 'false' },
+					pageQuota: { used: '467', quota: '230' },
+					plan: { name: 'Free Trial' },
+				},
+			});
+			const environments = makeStore();
+			await endpoints.admin.environmentSummary(
+				makeCtx({}, 'test-key', { environments }),
+				{},
+			);
+
+			expect(environments.upsertByEntityId).toHaveBeenCalledWith(
+				'Development',
+				{
+					id: 'Development',
+					name: 'Development',
+					ready: 'true',
+					isDisabled: 'false',
+					pageQuota: { used: '467', quota: '230' },
+					planName: 'Free Trial',
+				},
+			);
+		});
+
+		it('render records metadata of the produced document, not its bytes', async () => {
+			mockRequest.mockResolvedValue({
+				contentType: 'application/pdf',
+				dataBase64: 'JVBERg==',
+				byteLength: 5,
+			});
+			const renders = makeStore();
+			await endpoints.templates.render(makeCtx({}, 'test-key', { renders }), {
+				templateName: '/t.docx',
+				data: { a: 1 },
+				outputName: 'out.pdf',
+				devMode: 'yes',
+			});
+
+			expect(renders.upsertByEntityId).toHaveBeenCalledTimes(1);
+			const [id, row] = renders.upsertByEntityId.mock.calls[0]!;
+			expect(row).toEqual({
+				id,
+				templateName: '/t.docx',
+				outputName: 'out.pdf',
+				contentType: 'application/pdf',
+				byteLength: 5,
+				devMode: true,
+				createdAt: expect.any(Date),
+			});
+			expect(row).not.toHaveProperty('dataBase64');
+		});
+
+		it('keeps the response when the database write fails', async () => {
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				imageList: [{ name: 'a.png' }],
+			});
+			const images = makeStore();
+			images.upsertByEntityId.mockRejectedValue(new Error('db down'));
+
+			const result = await endpoints.images.list(
+				makeCtx({}, 'test-key', { images }),
+				{},
+			);
+
+			expect(result.imageList).toEqual([{ name: 'a.png' }]);
+			expect(warn).toHaveBeenCalled();
+			warn.mockRestore();
+		});
 	});
 });

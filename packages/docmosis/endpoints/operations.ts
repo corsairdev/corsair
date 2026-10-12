@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import type { DocmosisEndpoints } from '..';
 import { makeDocmosisRequest } from '../client';
@@ -14,6 +15,31 @@ function boolLikeToString(
 	if (value === undefined) return undefined;
 	if (typeof value === 'boolean') return value ? 'true' : 'false';
 	return value;
+}
+
+/** Entity ids are template/image paths without a leading slash, joined onto the listed folder. */
+function entityPath(name: string, folder?: string): string {
+	const trimmed = name.replace(/^\/+/, '');
+	if (!folder) return trimmed;
+	return `${folder.replace(/^\/+|\/+$/g, '')}/${trimmed}`;
+}
+
+// Safe: the saved value is discarded; only success or failure matters.
+// A narrower type is not practical because each entity client returns a different row type.
+async function persist(label: string, save: () => Promise<unknown>) {
+	try {
+		await save();
+	} catch (error) {
+		console.warn(`Failed to save ${label} to database:`, error);
+	}
+}
+
+function boolLikeToBoolean(
+	value: boolean | string | undefined,
+): boolean | undefined {
+	if (value === undefined) return undefined;
+	if (typeof value === 'boolean') return value;
+	return ['y', 'yes', 'true'].includes(value);
 }
 
 export const environmentReady: DocmosisEndpoints['environmentReady'] = async (
@@ -39,6 +65,24 @@ export const environmentSummary: DocmosisEndpoints['environmentSummary'] =
 		});
 		const response =
 			DocmosisEndpointOutputSchemas.environmentSummary.parse(raw);
+
+		const summary = response.accountEnvironmentSummary;
+		const envName = summary?.accountEnvDetails?.name;
+		if (ctx.db.environments && summary && envName) {
+			await persist('environment', () =>
+				ctx.db.environments.upsertByEntityId(envName, {
+					id: envName,
+					name: envName,
+					description: summary.accountEnvDetails?.description,
+					ready: summary.ready,
+					isActivated: summary.accountEnvDetails?.isActivated,
+					isDisabled: summary.accountEnvDetails?.isDisabled,
+					isDeleted: summary.accountEnvDetails?.isDeleted,
+					pageQuota: summary.pageQuota,
+					planName: summary.plan?.name,
+				}),
+			);
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -91,6 +135,14 @@ export const deleteImage: DocmosisEndpoints['deleteImage'] = async (
 	});
 	const response = DocmosisEndpointOutputSchemas.deleteImage.parse(raw);
 
+	if (response.succeeded && ctx.db.images) {
+		for (const name of asArray(input.imageName)) {
+			await persist('image', () =>
+				ctx.db.images.deleteByEntityId(entityPath(name)),
+			);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'docmosis.images.delete',
@@ -110,6 +162,14 @@ export const deleteTemplate: DocmosisEndpoints['deleteTemplate'] = async (
 		formData: { templateName: asArray(input.templateName) },
 	});
 	const response = DocmosisEndpointOutputSchemas.deleteTemplate.parse(raw);
+
+	if (response.succeeded && ctx.db.templates) {
+		for (const name of asArray(input.templateName)) {
+			await persist('template', () =>
+				ctx.db.templates.deleteByEntityId(entityPath(name)),
+			);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -133,6 +193,17 @@ export const listImages: DocmosisEndpoints['listImages'] = async (
 		},
 	});
 	const response = DocmosisEndpointOutputSchemas.listImages.parse(raw);
+
+	if (ctx.db.images) {
+		for (const image of response.imageList ?? []) {
+			const name = image.name;
+			if (!name) continue;
+			const id = entityPath(name, input.folder);
+			await persist('image', () =>
+				ctx.db.images.upsertByEntityId(id, { ...image, id, name }),
+			);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -160,6 +231,21 @@ export const listTemplates: DocmosisEndpoints['listTemplates'] = async (
 		},
 	});
 	const response = DocmosisEndpointOutputSchemas.listTemplates.parse(raw);
+
+	if (ctx.db.templates) {
+		for (const template of response.templateList ?? []) {
+			const name = template.name;
+			if (!name) continue;
+			const id = entityPath(name, input.folder);
+			await persist('template', () =>
+				ctx.db.templates.upsertByEntityId(id, {
+					...template,
+					id,
+					name,
+				}),
+			);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -223,6 +309,15 @@ export const getBatchUploadStatus: DocmosisEndpoints['getBatchUploadStatus'] =
 		const response =
 			DocmosisEndpointOutputSchemas.getBatchUploadStatus.parse(raw);
 
+		const job = response.jobStatus;
+		if (job && ctx.db.batchUploadJobs) {
+			const id = job.userJobId ?? input.userJobId;
+			const { userJobId: _userJobId, ...fields } = job;
+			await persist('batch upload job', () =>
+				ctx.db.batchUploadJobs.upsertByEntityId(id, { ...fields, id }),
+			);
+		}
+
 		await logEventFromContext(
 			ctx,
 			'docmosis.templates.batchStatus',
@@ -258,6 +353,18 @@ export const getTemplateDetails: DocmosisEndpoints['getTemplateDetails'] =
 		});
 		const response =
 			DocmosisEndpointOutputSchemas.getTemplateDetails.parse(raw);
+
+		const details = response.templateDetails;
+		if (details && ctx.db.templates) {
+			const id = entityPath(input.templateName);
+			await persist('template', () =>
+				ctx.db.templates.upsertByEntityId(id, {
+					...details,
+					id,
+					name: details.name ?? input.templateName,
+				}),
+			);
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -365,6 +472,23 @@ export const render: DocmosisEndpoints['render'] = async (ctx, input) => {
 		responseType: 'arrayBuffer',
 	});
 	const response = DocmosisEndpointOutputSchemas.render.parse(raw);
+
+	if (ctx.db.renders) {
+		const id = randomUUID();
+		await persist('render', () =>
+			ctx.db.renders.upsertByEntityId(id, {
+				id,
+				templateName: input.templateName,
+				outputName: input.outputName,
+				outputFormat: input.outputFormat,
+				contentType: response.contentType,
+				byteLength: response.byteLength,
+				devMode: boolLikeToBoolean(input.devMode),
+				tags: input.tags,
+				createdAt: new Date(),
+			}),
+		);
+	}
 
 	await logEventFromContext(
 		ctx,

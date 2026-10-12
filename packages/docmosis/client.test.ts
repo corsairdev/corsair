@@ -6,7 +6,7 @@ jest.mock('corsair/http', () => {
 	return { ...actual, request: jest.fn() };
 });
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockRequest = jest.mocked(request);
 
 describe('makeDocmosisRequest', () => {
 	beforeEach(() => {
@@ -28,9 +28,7 @@ describe('makeDocmosisRequest', () => {
 
 		const [config] = mockRequest.mock.calls[0]!;
 		expect(config.BASE).toBe(base);
-		// test only: the request mock config types HEADERS loosely; the client sets string headers
-		const headers = config.HEADERS as Record<string, string>;
-		expect(headers.accessKey).toBe('key-1');
+		expect(config.HEADERS).toMatchObject({ accessKey: 'key-1' });
 		expect(config.TOKEN).toBeUndefined();
 	});
 
@@ -107,10 +105,8 @@ describe('makeDocmosisRequest', () => {
 			throw new Error('expected failure');
 		} catch (error) {
 			expect(error).toBeInstanceOf(DocmosisAPIError);
-			// safe: instanceof DocmosisAPIError asserted above; catch variable is untyped
-			expect((error as DocmosisAPIError).message).toBe('network down');
-			// safe: instanceof DocmosisAPIError asserted above; catch variable is untyped
-			expect((error as DocmosisAPIError).status).toBeUndefined();
+			expect(error).toMatchObject({ message: 'network down' });
+			expect(error).not.toHaveProperty('status', expect.anything());
 		}
 	});
 
@@ -120,7 +116,8 @@ describe('makeDocmosisRequest', () => {
 			ok: true,
 			headers: new Headers({ 'Content-Type': 'image/png' }),
 			arrayBuffer: async () => bytes,
-			// test only: partial fetch Response stub with just the fields the client reads
+			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
+			// A narrower type is not practical because Response has no partial constructor.
 		} as Response);
 
 		const result = await makeDocmosisRequest('getImage', 'key-5', {
@@ -156,7 +153,8 @@ describe('makeDocmosisRequest', () => {
 					shortMsg: 'Rate limited',
 					longMsg: 'Try again later',
 				}),
-			// test only: partial fetch Response stub with just the fields the client reads
+			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
+			// A narrower type is not practical because Response has no partial constructor.
 		} as Response);
 
 		await expect(
@@ -186,7 +184,8 @@ describe('makeDocmosisRequest', () => {
 					shortMsg: 'Queue full',
 					longMsg: 'Please retry shortly',
 				}),
-			// test only: partial fetch Response stub with just the fields the client reads
+			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
+			// A narrower type is not practical because Response has no partial constructor.
 		} as Response);
 
 		await expect(
@@ -213,7 +212,8 @@ describe('makeDocmosisRequest', () => {
 			ok: true,
 			headers: new Headers({ 'Content-Type': 'application/zip' }),
 			arrayBuffer: async () => new ArrayBuffer(0),
-			// test only: partial fetch Response stub with just the fields the client reads
+			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
+			// A narrower type is not practical because Response has no partial constructor.
 		} as Response);
 
 		await makeDocmosisRequest('getTemplate', 'key-8', {
@@ -237,7 +237,8 @@ describe('makeDocmosisRequest', () => {
 			statusText: 'Internal Server Error',
 			headers: new Headers(),
 			text: async () => '<html>oops</html>',
-			// test only: partial fetch Response stub with just the fields the client reads
+			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
+			// A narrower type is not practical because Response has no partial constructor.
 		} as Response);
 
 		await expect(

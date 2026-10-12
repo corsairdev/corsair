@@ -3,11 +3,12 @@ title: Overview
 description: "Generate documents from templates with Docmosis Cloud, including template/image management and environment diagnostics."
 ---
 
-Use **Docmosis** through Corsair: one client, typed API calls.
+Use **Docmosis** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 18 typed API operations
+- 5 synced entities (`batchUploadJobs`, `environments`, `images`, `renders`, `templates`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -110,11 +111,20 @@ await tenant.docmosis.api.templates.render({
 
 See the full list on the [API](/plugins/docmosis/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.docmosis.db.<entity>.search()` and `.list()`: `batchUploadJobs`, `environments`, `images`, `renders`, `templates`.
+
+See [Database](/plugins/docmosis/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/docmosis/api">
     Every `docmosis.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/docmosis/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

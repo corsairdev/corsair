@@ -55,8 +55,8 @@ const AccountEnvironmentDetailsSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	isActivated: z.union([z.boolean(), z.string()]).optional(),
-	isDisabled: z.boolean().optional(),
-	isDeleted: z.boolean().optional(),
+	isDisabled: z.union([z.boolean(), z.string()]).optional(),
+	isDeleted: z.union([z.boolean(), z.string()]).optional(),
 	auditInfo: AuditInfoSchema.optional(),
 });
 
