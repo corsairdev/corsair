@@ -37,7 +37,7 @@ await corsair.coinmarketcal.api.categories.list({});
 
 ```ts
 {
-  id?: string | number,
+  id: string | number,
   name?: string,
   slug?: string
 }[]
@@ -75,9 +75,15 @@ await corsair.coinmarketcal.api.coins.get({ slug: 'bitcoin' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slug` | `string` | No | — |
+| `slug` | `string` | Yes | — |
 | `symbol` | `string` | No | — |
 | `name` | `string` | No | — |
+| `rank` | `number` | No | — |
+| `tracked` | `boolean` | No | — |
+| `iconUrl` | `string` | No | — |
+| `upcomingCount` | `number` | No | — |
+| `majorCount` | `number` | No | — |
+| `peakImpact` | `number` | No | — |
 
 
 
@@ -118,9 +124,15 @@ await corsair.coinmarketcal.api.coins.list({ q: 'bitcoin', tracked: true, limit:
 
 ```ts
 {
-  slug?: string,
+  slug: string,
   symbol?: string,
-  name?: string
+  name?: string,
+  rank?: number | null,
+  tracked?: boolean,
+  iconUrl?: string | null,
+  upcomingCount?: number | null,
+  majorCount?: number | null,
+  peakImpact?: number | null
 }[]
 ```
 </Accordion>
@@ -167,7 +179,7 @@ await corsair.coinmarketcal.api.events.get({ id: '12345' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
@@ -182,15 +194,18 @@ await corsair.coinmarketcal.api.events.get({ id: '12345' });
 | `impactSummary` | `string` | No | — |
 | `sourceUrl` | `string` | No | — |
 | `snapshotUrl` | `string` | No | — |
+| `lastVerifiedAt` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="coins full type">
 
 ```ts
 {
-  slug?: string,
-  symbol?: string,
-  name?: string
+  slug: string,
+  symbol: string,
+  name: string
 }[]
 ```
 </Accordion>
@@ -245,7 +260,7 @@ await corsair.coinmarketcal.api.events.list({
 
 ```ts
 {
-  id?: string,
+  id: string,
   slug?: string,
   title?: string,
   description?: string | null,
@@ -256,14 +271,17 @@ await corsair.coinmarketcal.api.events.list({
   displayedDate?: string,
   categories?: string[],
   coins?: {
-    slug?: string,
-    symbol?: string,
-    name?: string
+    slug: string,
+    symbol: string,
+    name: string
   }[],
   impact?: number | string | null,
   impactSummary?: string | null,
   sourceUrl?: string | null,
-  snapshotUrl?: string | null
+  snapshotUrl?: string | null,
+  lastVerifiedAt?: string | null,
+  createdAt?: string,
+  updatedAt?: string
 }[]
 ```
 </Accordion>

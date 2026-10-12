@@ -1,6 +1,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { CoinmarketcalEndpointOutputSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type {
 	CoinmarketcalContext,
 	CoinmarketcalKeyBuilderContext,
@@ -23,11 +24,41 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
-// Safe: endpoints under test read only key and options, and the full context
-// carries DB handles that cannot be built without a real corsair instance.
+// Every method of the ORM table client is a jest.fn(); only upsertByEntityId is asserted on.
+function fakeTable(upsertByEntityId: jest.Mock) {
+	return {
+		upsertByEntityId,
+		findByEntityId: jest.fn(),
+		existsByEntityId: jest.fn(),
+		findIdByEntityId: jest.fn(),
+		findById: jest.fn(),
+		findManyByEntityIds: jest.fn(),
+		list: jest.fn(),
+		search: jest.fn(),
+		deleteById: jest.fn(),
+		deleteByEntityId: jest.fn(),
+		count: jest.fn(),
+	};
+}
+
+const upsertCoin = jest.fn().mockResolvedValue(undefined);
+const upsertEvent = jest.fn().mockResolvedValue(undefined);
+const upsertCategory = jest.fn().mockResolvedValue(undefined);
+
+// Safe: endpoints under test read only key, options and the entity tables, and
+// the remaining context members are inert stubs.
+// A narrower type is not practical because the real context type is generated from the plugin schema.
 const mockCtx = {
 	key: 'coinmarketcal_test_key',
+	endpoints: {},
+	$getAccountId: async () => 'acct',
+	keys: createKeyBuilderContext(async () => null).keys,
 	options: {},
+	db: {
+		coins: fakeTable(upsertCoin),
+		events: fakeTable(upsertEvent),
+		categories: fakeTable(upsertCategory),
+	},
 } as CoinmarketcalContext;
 
 // Calls the plugin's keyBuilder (optional on the plugin type) with a typed context.
@@ -122,6 +153,9 @@ describe('Coinmarketcal endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
+		upsertCoin.mockClear();
+		upsertEvent.mockClear();
+		upsertCategory.mockClear();
 	});
 
 	it('surfaces the provider error message on rejected requests', async () => {
@@ -296,6 +330,147 @@ describe('Coinmarketcal endpoints', () => {
 			{},
 			'completed',
 		);
+	});
+});
+
+const bitcoin = {
+	slug: 'bitcoin',
+	symbol: 'btc',
+	name: 'Bitcoin',
+	rank: 1,
+	tracked: true,
+	iconUrl: 'https://example.com/bitcoin.png',
+	upcomingCount: 0,
+	majorCount: null,
+	peakImpact: null,
+};
+
+const sampleEvent = {
+	id: '97726',
+	slug: 'susdd-incentives-launch-81239181-1',
+	title: 'sUSDD Incentives Launch',
+	description: null,
+	date: '2026-08-27T00:00:00Z',
+	dateEnd: '2026-11-27T00:00:00Z',
+	dateType: 'date',
+	isEstimated: false,
+	displayedDate: '27 Aug → 27 Nov',
+	coins: [{ slug: 'pendle', symbol: 'pendle', name: 'Pendle' }],
+	impact: null,
+	impactSummary: null,
+	sourceUrl: null,
+	snapshotUrl: null,
+	lastVerifiedAt: null,
+	createdAt: '2026-08-27T00:04:17Z',
+	updatedAt: '2026-09-01T14:30:02Z',
+};
+
+describe('Coinmarketcal persistence', () => {
+	const endpoints = coinmarketcal().endpoints!;
+
+	beforeEach(() => {
+		mockRequest.mockReset();
+		upsertCoin.mockClear();
+		upsertEvent.mockClear();
+		upsertCategory.mockClear();
+	});
+
+	it('coins.list upserts each coin by slug', async () => {
+		mockRequest.mockResolvedValue({ data: [bitcoin], meta: { total: 1 } });
+		await endpoints.coins.list(mockCtx, {});
+		expect(upsertCoin).toHaveBeenCalledTimes(1);
+		expect(upsertCoin).toHaveBeenCalledWith('bitcoin', bitcoin);
+	});
+
+	it('coins.get upserts the coin by slug', async () => {
+		mockRequest.mockResolvedValue(bitcoin);
+		await endpoints.coins.get(mockCtx, { slug: 'bitcoin' });
+		expect(upsertCoin).toHaveBeenCalledWith('bitcoin', bitcoin);
+	});
+
+	it('events.list upserts each event by id', async () => {
+		mockRequest.mockResolvedValue({ data: [sampleEvent], meta: { total: 1 } });
+		await endpoints.events.list(mockCtx, {});
+		expect(upsertEvent).toHaveBeenCalledTimes(1);
+		expect(upsertEvent).toHaveBeenCalledWith('97726', sampleEvent);
+	});
+
+	it('events.get upserts the event by id', async () => {
+		mockRequest.mockResolvedValue(sampleEvent);
+		await endpoints.events.get(mockCtx, { id: '97726' });
+		expect(upsertEvent).toHaveBeenCalledWith('97726', sampleEvent);
+	});
+
+	it('categories.list upserts each category by stringified id', async () => {
+		mockRequest.mockResolvedValue({
+			data: [{ id: 7, name: 'Exchange', slug: 'exchange' }],
+		});
+		await endpoints.categories.list(mockCtx, {});
+		expect(upsertCategory).toHaveBeenCalledWith('7', {
+			id: '7',
+			name: 'Exchange',
+			slug: 'exchange',
+		});
+	});
+
+	it('does not write when the response carries no rows', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await endpoints.events.list(mockCtx, {});
+		expect(upsertEvent).not.toHaveBeenCalled();
+	});
+
+	it('still returns the response when a database write fails', async () => {
+		mockRequest.mockResolvedValue(sampleEvent);
+		upsertEvent.mockRejectedValueOnce(new Error('db down'));
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		await expect(
+			endpoints.events.get(mockCtx, { id: '97726' }),
+		).resolves.toEqual(sampleEvent);
+		warn.mockRestore();
+	});
+});
+
+describe('Coinmarketcal error handling', () => {
+	const handlers = errorHandlers;
+
+	function apiError(status: number, retryAfter?: number): ApiError {
+		return new ApiError(
+			{ method: 'GET', url: '/v2/events' },
+			{
+				url: 'https://api.coinmarketcal.com/v2/events',
+				ok: false,
+				status,
+				statusText: 'Error',
+				body: { error: 'failed' },
+			},
+			'Error',
+			{ retryAfter },
+		);
+	}
+
+	it('treats 401 as a non-retried auth error', async () => {
+		const error = apiError(401);
+		expect(handlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(handlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		await expect(handlers.AUTH_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
+	it('honours Retry-After on 429', async () => {
+		const error = apiError(429, 7000);
+		expect(handlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(handlers.RATE_LIMIT_ERROR.handler(error)).resolves.toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 7000,
+		});
+	});
+
+	it('propagates a 401 from an endpoint call', async () => {
+		mockRequest.mockRejectedValue(apiError(401));
+		await expect(
+			coinmarketcal().endpoints!.events.list(mockCtx, {}),
+		).rejects.toMatchObject({ status: 401 });
 	});
 });
 

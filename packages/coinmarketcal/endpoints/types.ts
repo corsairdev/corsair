@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import {
+	CoinmarketcalCategory,
+	CoinmarketcalCoin,
+	CoinmarketcalEvent,
+} from '../schema/database';
 
-const CoinSchema = z.object({
-	slug: z.string().optional(),
-	symbol: z.string().optional(),
-	name: z.string().optional(),
-});
+const CoinSchema = CoinmarketcalCoin;
 
 const PaginationMetaSchema = z.object({
 	total: z.number().optional(),
@@ -54,23 +55,7 @@ const EventGetInputSchema = z.object({
 	id: z.string().min(1),
 });
 
-const EventSchema = z.object({
-	id: z.string().optional(),
-	slug: z.string().optional(),
-	title: z.string().optional(),
-	description: z.string().nullable().optional(),
-	date: z.string().optional(),
-	dateEnd: z.string().nullable().optional(),
-	dateType: z.string().optional(),
-	isEstimated: z.boolean().optional(),
-	displayedDate: z.string().optional(),
-	categories: z.array(z.string()).optional(),
-	coins: z.array(CoinSchema).optional(),
-	impact: z.union([z.number(), z.string()]).nullable().optional(),
-	impactSummary: z.string().nullable().optional(),
-	sourceUrl: z.string().nullable().optional(),
-	snapshotUrl: z.string().nullable().optional(),
-});
+const EventSchema = CoinmarketcalEvent;
 
 const EventsResponseSchema = z.object({
 	data: z.array(EventSchema).optional(),
@@ -82,9 +67,8 @@ const EventGetResponseSchema = EventSchema;
 const CategoriesInputSchema = z.object({});
 
 const CategorySchema = z.object({
-	id: z.union([z.string(), z.number()]).optional(),
-	name: z.string().optional(),
-	slug: z.string().optional(),
+	...CoinmarketcalCategory.shape,
+	id: z.union([z.string(), z.number()]),
 });
 
 const CategoriesResponseSchema = z.object({

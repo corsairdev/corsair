@@ -153,6 +153,7 @@ export function coinmarketcal<const T extends CoinmarketcalPluginOptions>(
 	// Safe: every option is optional, so an empty object satisfies the options
 	// type; T is a caller-supplied refinement of those optional fields and a
 	// default value cannot be typed generically without the assertion.
+	// A narrower type is not practical because T is only known at the call site.
 	incomingOptions: CoinmarketcalPluginOptions &
 		T = {} as CoinmarketcalPluginOptions & T,
 ): ExternalCoinmarketcalPlugin<T> {

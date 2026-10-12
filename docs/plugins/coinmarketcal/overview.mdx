@@ -3,11 +3,12 @@ title: Overview
 description: "Curated calendar of cryptocurrency events with impacted coins, dates, sources, and impact scores."
 ---
 
-Use **CoinMarketCal** through Corsair: one client, typed API calls.
+Use **CoinMarketCal** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 5 typed API operations
+- 3 synced entities (`categories`, `coins`, `events`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -103,11 +104,20 @@ _No write-style endpoint inferred; pick any operation from the [API](/plugins/co
 
 See the full list on the [API](/plugins/coinmarketcal/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.coinmarketcal.db.<entity>.search()` and `.list()`: `categories`, `coins`, `events`.
+
+See [Database](/plugins/coinmarketcal/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/coinmarketcal/api">
     Every `coinmarketcal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/coinmarketcal/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

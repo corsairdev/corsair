@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CoinmarketcalEndpoints } from '..';
 import { makeCoinmarketcalRequest } from '../client';
+import { persistCoins } from './persist';
 import type { CoinmarketcalEndpointOutputs } from './types';
 
 export const list: CoinmarketcalEndpoints['coinsList'] = async (ctx, input) => {
@@ -10,6 +11,8 @@ export const list: CoinmarketcalEndpoints['coinsList'] = async (ctx, input) => {
 		method: 'GET',
 		query: input,
 	});
+
+	await persistCoins(ctx, response.data);
 
 	await logEventFromContext(
 		ctx,
@@ -27,6 +30,8 @@ export const get: CoinmarketcalEndpoints['coinsGet'] = async (ctx, input) => {
 	>(`/v2/coins/${encodeURIComponent(input.slug)}`, ctx.key, {
 		method: 'GET',
 	});
+
+	await persistCoins(ctx, [response]);
 
 	await logEventFromContext(
 		ctx,
