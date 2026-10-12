@@ -447,13 +447,26 @@ Get webhook payloads
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.webhooks.getPayloads({});
+await corsair.airtable.api.webhooks.getPayloads({ baseId: 'appXXXXXXXXXXXXXX', webhookId: 'achXXXXXXXXXXXXXX' });
 ```
 
-**Input:** `unknown`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `cursor` | `number` | No | — |
 
 
-**Output:** `unknown`
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursorForNextPayload` | `number` | No | — |
+| `payloads` | `any[]` | Yes | — |
+
 
 
 ---
