@@ -38,6 +38,7 @@ await corsair.gemini.api.content.countTokens({});
   role?: user | model,
   parts: {
     text?: string,
+    thought?: boolean,
     inlineData?: {
       mimeType: string,
       data: string
@@ -90,6 +91,7 @@ await corsair.gemini.api.content.embedContent({});
   role?: user | model,
   parts: {
     text?: string,
+    thought?: boolean,
     inlineData?: {
       mimeType: string,
       data: string
@@ -131,6 +133,14 @@ Generate text or speech audio from a prompt using a Gemini Flash/Pro model
 
 **Risk:** `read`
 
+<Info>
+The Corsair-only `stripFences?: boolean` input controls formatting of the
+convenience `text` field and is removed before the request is sent to Gemini.
+Each response part is typed as `thought?: boolean`; parts marked `thought: true`
+are excluded from `text`, while all other text parts from the first candidate
+are concatenated in response order.
+</Info>
+
 ```ts
 await corsair.gemini.api.content.generateContent({});
 ```
@@ -141,6 +151,7 @@ await corsair.gemini.api.content.generateContent({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro |
 | `contents` | `object[]` | Yes | Conversation contents to generate a response for |
+| `stripFences` | `boolean` | No | Strip markdown code fences from the convenience text field |
 | `generationConfig` | `object` | No | — |
 | `safetySettings` | `object[]` | No | — |
 | `systemInstruction` | `object` | No | — |
@@ -153,6 +164,7 @@ await corsair.gemini.api.content.generateContent({});
   role?: user | model,
   parts: {
     text?: string,
+    thought?: boolean,
     inlineData?: {
       mimeType: string,
       data: string
@@ -194,6 +206,7 @@ await corsair.gemini.api.content.generateContent({});
   role?: user | model,
   parts: {
     text?: string,
+    thought?: boolean,
     inlineData?: {
       mimeType: string,
       data: string
@@ -212,7 +225,7 @@ await corsair.gemini.api.content.generateContent({});
 |------|------|----------|-------------|
 | `candidates` | `object[]` | No | — |
 | `usageMetadata` | `object` | No | — |
-| `text` | `string` | No | Convenience field: first candidate text with markdown code fences stripped |
+| `text` | `string` | No | Convenience field: concatenated non-thought text from the first candidate |
 
 <AccordionGroup>
 <Accordion title="candidates full type">
@@ -223,6 +236,7 @@ await corsair.gemini.api.content.generateContent({});
     role?: user | model,
     parts: {
       text?: string,
+      thought?: boolean,
       inlineData?: {
         mimeType: string,
         data: string
@@ -332,6 +346,7 @@ await corsair.gemini.api.images.generateImage({});
     role?: user | model,
     parts: {
       text?: string,
+      thought?: boolean,
       inlineData?: {
         mimeType: string,
         data: string
@@ -597,4 +612,3 @@ await corsair.gemini.api.videos.waitForVideo({});
 
 
 ---
-
