@@ -111,6 +111,32 @@ describe('googlesheets sheets.appendRow db persistence (issue #1835)', () => {
 		);
 	});
 
+	it('handles quoted sheet names containing ! and escaped quotes', async () => {
+		const rows = makeStore();
+		const ctx = makeCtx({ rows });
+
+		mockRequest.mockResolvedValue({
+			spreadsheetId: 'sheet-1',
+			updates: { updatedRange: "'Sales!West'!A101:C101" },
+		});
+		await appendRow(ctx, { spreadsheetId: 'sheet-1', values: ['a'] });
+		expect(rows.upsertByEntityId).toHaveBeenCalledWith(
+			"sheet-1_Sales!West_'Sales!West'!A101:C101",
+			expect.objectContaining({ sheetName: 'Sales!West' }),
+		);
+
+		rows.upsertByEntityId.mockClear();
+		mockRequest.mockResolvedValue({
+			spreadsheetId: 'sheet-1',
+			updates: { updatedRange: "'Bob''s Data'!A101:C101" },
+		});
+		await appendRow(ctx, { spreadsheetId: 'sheet-1', values: ['b'] });
+		expect(rows.upsertByEntityId).toHaveBeenCalledWith(
+			"sheet-1_Bob's Data_'Bob''s Data'!A101:C101",
+			expect.objectContaining({ sheetName: "Bob's Data" }),
+		);
+	});
+
 	it('skips persistence when the response has no updatedRange', async () => {
 		mockRequest.mockResolvedValue({ spreadsheetId: 'sheet-2' });
 		const rows = makeStore();
