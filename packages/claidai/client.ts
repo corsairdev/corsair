@@ -1,11 +1,13 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class ClaidAiAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
+	constructor(message: string) {
 		super(message);
 		this.name = 'ClaidAiAPIError';
 	}
@@ -13,16 +15,29 @@ export class ClaidAiAPIError extends Error {
 
 const CLAIDAI_API_BASE = 'https://api.claid.ai/v1';
 
-export async function makeClaidAiRequest<T>(
+// Claid.ai sends RateLimit-Reset as seconds until the quota resets, which is
+// the same unit Retry-After uses, so it drives the retry delay on a 429.
+const CLAIDAI_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'ratelimit-reset',
+		remaining: 'ratelimit-remaining',
+	},
+};
+
+export async function makeClaidAiRequest<S extends z.ZodType>(
 	endpoint: string,
 	apiKey: string,
+	responseSchema: S,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
+		body?: object;
 	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+): Promise<z.infer<S>> {
+	const { method = 'GET', body } = options;
 
 	if (!apiKey) {
 		throw new ClaidAiAPIError('Missing Claid.ai API key');
@@ -34,25 +49,22 @@ export async function makeClaidAiRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
+		// Generative edits run synchronously and often outlast the 20s default.
+		TIMEOUT: 120_000,
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body,
+		mediaType: body ? 'application/json' : undefined,
 	};
 
+	let raw: Awaited<ReturnType<typeof request>>;
 	try {
-		return await request<T>(config, requestOptions);
+		raw = await request(config, requestOptions, {
+			rateLimitConfig: CLAIDAI_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;
@@ -60,6 +72,8 @@ export async function makeClaidAiRequest<T>(
 		if (error instanceof Error) {
 			throw new ClaidAiAPIError(error.message);
 		}
-		throw new ClaidAiAPIError('Unknown error');
+		throw new ClaidAiAPIError('Unknown Claid.ai API error');
 	}
+
+	return responseSchema.parse(raw);
 }

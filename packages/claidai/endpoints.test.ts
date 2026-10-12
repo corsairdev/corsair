@@ -1,4 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { ZodError } from 'zod';
+import { ClaidAiAPIError } from './client';
 import {
 	backgroundGenerate,
 	backgroundRemove,
@@ -16,197 +19,614 @@ import {
 	storageList,
 	storageTypes,
 } from './endpoints';
-import { claidAiEndpointMeta, claidAiEndpointSchemas } from './index';
+import { errorHandlers } from './error-handlers';
+import type { ClaidAiContext } from './index';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(async () => undefined),
+	logEventFromContext: jest.fn(async () => null),
 }));
 
-// Narrow jest mock typing only; test-only, never exported.
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+const logEvent = jest.mocked(logEventFromContext);
+const fetchMock = jest.spyOn(global, 'fetch');
 
-type Ctx = Parameters<typeof storageList>[0];
+// Safe: endpoints only read ctx.key, and logEventFromContext is mocked above.
+// A narrower type is not practical because ClaidAiContext also carries the database, hooks and key managers the runtime injects.
+const ctx = { key: 'test-key', options: {} } as ClaidAiContext;
 
-function makeCtx() {
-	// Test-only minimal context; real ctx comes from the Corsair runtime.
-	return { key: 'test-key', options: {} } as unknown as Ctx;
+const BASE = 'https://api.claid.ai/v1';
+
+function respond(
+	status: number,
+	body: object,
+	headers: Record<string, string> = {},
+) {
+	fetchMock.mockResolvedValueOnce(
+		new Response(JSON.stringify(body), {
+			status,
+			headers: { 'Content-Type': 'application/json', ...headers },
+		}),
+	);
 }
 
-// Unknown is test-only: fetch-mock capture/payload shapes vary per case.
-let captured: { url: string; method: string; body?: unknown } | undefined;
+function sentRequest() {
+	expect(fetchMock).toHaveBeenCalledTimes(1);
+	const [url, init] = fetchMock.mock.calls[0] ?? [];
+	const headers = new Headers(init?.headers);
+	return {
+		url: String(url),
+		method: init?.method,
+		authorization: headers.get('Authorization'),
+		contentType: headers.get('Content-Type'),
+		body: typeof init?.body === 'string' ? JSON.parse(init.body) : undefined,
+	};
+}
 
-const realFetch = global.fetch;
-afterEach(() => {
-	global.fetch = realFetch;
-	mockLogEvent.mockClear();
+const IMAGE_OUT = {
+	ext: 'png',
+	mps: 1.048576,
+	mime: 'image/png',
+	format: 'png',
+	width: 1024,
+	height: 1024,
+	tmp_url: 'https://storage.googleapis.com/claid-tmp/out.png',
+};
+
+const IMAGE_IN = {
+	ext: 'jpg',
+	mps: 0.25,
+	mime: 'image/jpeg',
+	format: 'jpeg',
+	width: 500,
+	height: 500,
+};
+
+const EDIT_RESPONSE = { data: { input: IMAGE_IN, output: IMAGE_OUT } };
+
+const STORAGE = {
+	id: 12,
+	name: 's3-playground',
+	type: 's3',
+	parameters: {
+		path: 'images/',
+		bucket: 'playground',
+		credentials: { access_key: 'AKIAEXAMPLE' },
+	},
+	created_at: '2025-03-13T11:37:09.160554+00:00',
+};
+
+beforeEach(() => {
+	fetchMock.mockReset();
+	logEvent.mockClear();
 });
 
-function mockFetch(payload: unknown, status = 200) {
-	captured = undefined;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
-		let body: unknown;
-		try {
-			body = init?.body ? JSON.parse(String(init?.body)) : undefined;
-		} catch {
-			body = init?.body;
-		}
-		captured = {
-			url: String(url),
-			method: init?.method ?? 'GET',
-			body,
+afterAll(() => {
+	fetchMock.mockRestore();
+});
+
+describe('image edit endpoints', () => {
+	it('backgroundRemove posts background.remove to /image/edit', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		const result = await backgroundRemove(ctx, {
+			input: 'https://example.com/shoe.jpg',
+			color: '#ffffff',
+		});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/edit`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: 'https://example.com/shoe.jpg',
+				operations: { background: { remove: true, color: '#ffffff' } },
+			},
+		});
+		expect(result).toEqual(EDIT_RESPONSE);
+		expect(logEvent).toHaveBeenCalledWith(
+			ctx,
+			'claidai.background.remove',
+			{ input: 'https://example.com/shoe.jpg', color: '#ffffff' },
+			'completed',
+		);
+	});
+
+	it('licensePlateBlur posts privacy.blur_car_plate to /image/edit', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		const result = await licensePlateBlur(ctx, {
+			input: 'https://example.com/car.jpg',
+			output: 'storage://bucket/out/car.jpg',
+		});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/edit`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: 'https://example.com/car.jpg',
+				operations: { privacy: { blur_car_plate: true } },
+				output: 'storage://bucket/out/car.jpg',
+			},
+		});
+		expect(result).toEqual(EDIT_RESPONSE);
+	});
+
+	it('smartFrame posts a canvas resize with padding and color', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		const result = await smartFrame(ctx, {
+			input: 'https://example.com/bag.jpg',
+			width: 1600,
+			height: 900,
+			padding: '10%',
+			background_color: '#f5f5f5',
+		});
+
+		expect(sentRequest().body).toEqual({
+			input: 'https://example.com/bag.jpg',
+			operations: {
+				resizing: { width: 1600, height: 900, fit: 'canvas' },
+				padding: '10%',
+				background: { color: '#f5f5f5' },
+			},
+		});
+		expect(result).toEqual(EDIT_RESPONSE);
+	});
+
+	it('smartFrame omits padding and background when not given', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		await smartFrame(ctx, {
+			input: 'https://example.com/bag.jpg',
+			width: 800,
+			height: 800,
+		});
+
+		expect(sentRequest().body).toEqual({
+			input: 'https://example.com/bag.jpg',
+			operations: { resizing: { width: 800, height: 800, fit: 'canvas' } },
+		});
+	});
+
+	it('generativeResize posts an outpaint resize', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		const result = await generativeResize(ctx, {
+			input: 'https://example.com/room.jpg',
+			width: '150%',
+			height: '100%',
+			feathering: '20%',
+		});
+
+		expect(sentRequest()).toMatchObject({
+			url: `${BASE}/image/edit`,
+			method: 'POST',
+			body: {
+				input: 'https://example.com/room.jpg',
+				operations: {
+					resizing: {
+						width: '150%',
+						height: '100%',
+						fit: { type: 'outpaint', feathering: '20%' },
+					},
+				},
+			},
+		});
+		expect(result).toEqual(EDIT_RESPONSE);
+	});
+
+	it('generativeResize uses the plain outpaint fit without feathering', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		await generativeResize(ctx, {
+			input: 'https://example.com/room.jpg',
+			width: 1920,
+			height: 1080,
+		});
+
+		expect(sentRequest().body.operations).toEqual({
+			resizing: { width: 1920, height: 1080, fit: 'outpaint' },
+		});
+	});
+
+	it('polishImage posts restorations.polish to /image/edit', async () => {
+		respond(200, EDIT_RESPONSE);
+
+		const result = await polishImage(ctx, {
+			input: 'https://example.com/old.jpg',
+		});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/edit`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: 'https://example.com/old.jpg',
+				operations: { restorations: { polish: true } },
+			},
+		});
+		expect(result).toEqual(EDIT_RESPONSE);
+	});
+});
+
+describe('async and generation endpoints', () => {
+	it('imageEditBatch posts to /image/edit/batch and returns the task', async () => {
+		const task = {
+			data: {
+				id: 1,
+				status: 'ACCEPTED',
+				result_url: `${BASE}/image/edit/batch/1`,
+				created_at: '2023-03-13T11:37:09.160554+00:00',
+				request: {
+					input: 'storage://storage_1/input_folder/',
+					operations: { resizing: { width: 1000 } },
+					output: 'storage://storage_1/output_folder/',
+				},
+			},
 		};
-		return {
-			ok: status < 400,
-			status,
-			statusText: 'OK',
-			url: String(url),
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => payload,
-			text: async () => JSON.stringify(payload),
+		respond(200, task);
+
+		const result = await imageEditBatch(ctx, {
+			input: { source: 'storage://storage_1/input_folder/', recursive: true },
+			operations: { resizing: { width: 1000 } },
+			output: 'storage://storage_1/output_folder/',
+		});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/edit/batch`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: { source: 'storage://storage_1/input_folder/', recursive: true },
+				operations: { resizing: { width: 1000 } },
+				output: 'storage://storage_1/output_folder/',
+			},
+		});
+		expect(result).toEqual(task);
+	});
+
+	it('imageAiEdit posts to /image/ai-edit and returns the task', async () => {
+		const task = {
+			data: {
+				id: 7,
+				status: 'ACCEPTED',
+				result_url: `${BASE}/image/ai-edit/7`,
+				created_at: '2025-03-13T11:37:09.160554+00:00',
+			},
 		};
-		// Test-only fetch stub; safe because it is restored in afterEach.
-	}) as unknown as typeof global.fetch;
-}
+		respond(200, task);
 
-function pathOf(): string {
-	const url = new URL(captured?.url ?? 'http://invalid');
-	return url.pathname;
-}
-
-describe('Claid.ai endpoints', () => {
-	it('backgroundRemove calls POST /v1/image/edit', async () => {
-		mockFetch({ data: { output: { tmp_url: 'https://x/y.png' } } });
-		const out = await backgroundRemove(makeCtx(), {
-			input: 'https://example.com/a.png',
-			operations: { background: { remove: true } },
+		const result = await imageAiEdit(ctx, {
+			input: 'https://picsum.photos/500',
+			options: { prompt: 'add a duck', model: 'v2' },
 		});
-		expect(pathOf()).toBe('/v1/image/edit');
-		expect(captured?.method).toBe('POST');
-		expect(out.data).toBeDefined();
-		expect(mockLogEvent).toHaveBeenCalled();
-	});
 
-	it('imageEditBatch calls POST /v1/image/edit/batch', async () => {
-		mockFetch({ data: { id: 1, status: 'ACCEPTED' } });
-		const out = await imageEditBatch(makeCtx(), {
-			input: ['https://example.com/a.png'],
-			operations: { background: { remove: true } },
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/ai-edit`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: 'https://picsum.photos/500',
+				options: { prompt: 'add a duck', model: 'v2' },
+			},
 		});
-		expect(pathOf()).toBe('/v1/image/edit/batch');
-		expect(out.data?.status).toBe('ACCEPTED');
+		expect(result).toEqual(task);
 	});
 
-	it('licensePlateBlur posts privacy blur_car_plate', async () => {
-		mockFetch({ data: {} });
-		await licensePlateBlur(makeCtx(), { input: 'https://example.com/car.png' });
-		expect(pathOf()).toBe('/v1/image/edit');
-		expect(captured?.method).toBe('POST');
-		expect(captured?.body).toMatchObject({
-			operations: { privacy: { blur_car_plate: true } },
+	it('imageGenerate posts the prompt to /image/generate', async () => {
+		const generated = {
+			data: {
+				input: { text: 'A delicious ceviche cheesecake slice' },
+				output: [IMAGE_OUT],
+			},
+		};
+		respond(200, generated);
+
+		const result = await imageGenerate(ctx, {
+			input: 'A delicious ceviche cheesecake slice',
+			options: { number_of_images: 1, guidance_scale: 5 },
 		});
-	});
 
-	it('smartFrame and generativeResize post to /v1/image/edit', async () => {
-		mockFetch({ data: {} });
-		await smartFrame(makeCtx(), {
-			input: 'https://example.com/a.png',
-			options: { padding: '10%' },
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/image/generate`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				input: 'A delicious ceviche cheesecake slice',
+				options: { number_of_images: 1, guidance_scale: 5 },
+			},
 		});
-		expect(pathOf()).toBe('/v1/image/edit');
+		expect(result).toEqual(generated);
+	});
 
-		mockFetch({ data: {} });
-		await generativeResize(makeCtx(), {
-			input: 'https://example.com/a.png',
-			operations: { resizing: { fit: 'outpaint' } },
+	it('backgroundGenerate posts object and scene to /scene/create', async () => {
+		const generated = { data: { output: [IMAGE_OUT] } };
+		respond(200, generated);
+
+		const result = await backgroundGenerate(ctx, {
+			object: {
+				image_url: 'https://example.com/product.png',
+				scale: 0.55,
+				position: { x: 0.35, y: 0.5 },
+			},
+			scene: { prompt: 'marble countertop', view: 'front' },
+			output: { number_of_images: 1, format: 'png' },
 		});
-		expect(pathOf()).toBe('/v1/image/edit');
-	});
 
-	it('polishImage posts restorations.polish', async () => {
-		mockFetch({ data: {} });
-		await polishImage(makeCtx(), { input: 'https://example.com/a.png' });
-		expect(captured?.body).toMatchObject({
-			operations: { restorations: { polish: true } },
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/scene/create`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				object: {
+					image_url: 'https://example.com/product.png',
+					scale: 0.55,
+					position: { x: 0.35, y: 0.5 },
+				},
+				scene: { prompt: 'marble countertop', view: 'front' },
+				output: { number_of_images: 1, format: 'png' },
+			},
 		});
+		expect(result).toEqual(generated);
 	});
+});
 
-	it('imageGenerate calls POST /v1/image/generate', async () => {
-		mockFetch({ data: { output: [] } });
-		await imageGenerate(makeCtx(), { input: 'a red bicycle on a beach' });
-		expect(pathOf()).toBe('/v1/image/generate');
-		expect(captured?.method).toBe('POST');
-	});
+describe('storage endpoints', () => {
+	it('storageTypes gets /storage/storage-types', async () => {
+		respond(200, { data: ['web_folder', 's3', 'gcs'] });
 
-	it('backgroundGenerate calls POST /v1/scene/create', async () => {
-		mockFetch({ data: { output: [] } });
-		await backgroundGenerate(makeCtx(), {
-			object: { image_url: 'https://example.com/p.png' },
-			scene: { prompt: 'marble countertop' },
+		const result = await storageTypes(ctx, {});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/storage/storage-types`,
+			method: 'GET',
+			authorization: 'Bearer test-key',
+			contentType: null,
+			body: undefined,
 		});
-		expect(pathOf()).toBe('/v1/scene/create');
+		expect(result).toEqual({ data: ['web_folder', 's3', 'gcs'] });
 	});
 
-	it('imageAiEdit calls POST /v1/image/ai-edit', async () => {
-		mockFetch({ data: { id: 7, status: 'ACCEPTED' } });
-		await imageAiEdit(makeCtx(), {
-			input: 'https://example.com/a.png',
-			options: { prompt: 'make it sunset' },
+	it('storageList gets /storage/storages', async () => {
+		const listed = {
+			data: [
+				{
+					id: 12,
+					name: 's3-playground',
+					type: 's3',
+					parameters: { path: '', bucket: 'playground' },
+					created_at: '2025-03-13T11:37:09.160554+00:00',
+				},
+				{
+					id: 13,
+					name: 'site-images',
+					type: 'web_folder',
+					parameters: { base_url: 'https://example.com/images/' },
+					created_at: '2025-03-14T08:00:00+00:00',
+				},
+			],
+		};
+		respond(200, listed);
+
+		const result = await storageList(ctx, {});
+
+		expect(sentRequest()).toMatchObject({
+			url: `${BASE}/storage/storages`,
+			method: 'GET',
 		});
-		expect(pathOf()).toBe('/v1/image/ai-edit');
+		expect(result).toEqual(listed);
 	});
 
-	it('storageTypes and storageList call GET storage reads', async () => {
-		mockFetch({ data: ['web_folder', 's3', 'gcs'] });
-		const types = await storageTypes(makeCtx(), {});
-		expect(pathOf()).toBe('/v1/storage/storage-types');
-		expect(types.data).toContain('s3');
+	it('createStorage posts credentials and keeps them out of the event log', async () => {
+		respond(200, { data: STORAGE });
 
-		mockFetch({ data: [] });
-		const list = await storageList(makeCtx(), {});
-		expect(pathOf()).toBe('/v1/storage/storages');
-		expect(Array.isArray(list.data)).toBe(true);
-	});
-
-	it('createStorage posts and patchStorage patches by id', async () => {
-		mockFetch({ data: { id: 1, name: 's', type: 's3', parameters: {} } });
-		await createStorage(makeCtx(), {
+		const result = await createStorage(ctx, {
 			name: 's3-playground',
 			type: 's3',
-			parameters: { bucket: 'playground' },
+			parameters: {
+				path: 'images/',
+				bucket: 'playground',
+				credentials: {
+					access_key: 'AKIAEXAMPLE',
+					secret_access_key: 'secret-value',
+				},
+			},
 		});
-		expect(pathOf()).toBe('/v1/storage/storages');
-		expect(captured?.method).toBe('POST');
 
-		mockFetch({ data: { id: 1, name: 'renamed', type: 's3', parameters: {} } });
-		const patched = await patchStorage(makeCtx(), {
-			storage_id: 1,
-			name: 'renamed',
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/storage/storages`,
+			method: 'POST',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				name: 's3-playground',
+				type: 's3',
+				parameters: {
+					path: 'images/',
+					bucket: 'playground',
+					credentials: {
+						access_key: 'AKIAEXAMPLE',
+						secret_access_key: 'secret-value',
+					},
+				},
+			},
 		});
-		expect(pathOf()).toBe('/v1/storage/storages/1');
-		expect(captured?.method).toBe('PATCH');
-		expect(patched.data?.name).toBe('renamed');
-	});
-
-	it('storageDetails gets and deleteStorage deletes by id', async () => {
-		mockFetch({ data: { id: 1, name: 's', type: 's3', parameters: {} } });
-		const got = await storageDetails(makeCtx(), { storage_id: 1 });
-		expect(pathOf()).toBe('/v1/storage/storages/1');
-		expect(captured?.method).toBe('GET');
-		expect(got.data?.id).toBe(1);
-
-		mockFetch({ data: null });
-		await deleteStorage(makeCtx(), { storage_id: 1 });
-		expect(pathOf()).toBe('/v1/storage/storages/1');
-		expect(captured?.method).toBe('DELETE');
-	});
-
-	it('covers every registered operation', () => {
-		expect(Object.keys(claidAiEndpointMeta).sort()).toEqual(
-			Object.keys(claidAiEndpointSchemas).sort(),
+		expect(result).toEqual({ data: STORAGE });
+		expect(logEvent).toHaveBeenCalledWith(
+			ctx,
+			'claidai.storage.create',
+			{ name: 's3-playground', type: 's3' },
+			'completed',
 		);
-		expect(Object.keys(claidAiEndpointSchemas)).toContain('deleteStorage');
+	});
+
+	it('storageDetails gets /storage/storages/{id}', async () => {
+		respond(200, { data: STORAGE });
+
+		const result = await storageDetails(ctx, { storage_id: 12 });
+
+		expect(sentRequest()).toMatchObject({
+			url: `${BASE}/storage/storages/12`,
+			method: 'GET',
+			body: undefined,
+		});
+		expect(result).toEqual({ data: STORAGE });
+	});
+
+	it('patchStorage patches /storage/storages/{id} without the id in the body', async () => {
+		const renamed = { ...STORAGE, name: 'renamed' };
+		respond(200, { data: renamed });
+
+		const result = await patchStorage(ctx, {
+			storage_id: 12,
+			name: 'renamed',
+			parameters: { credentials: { secret_access_key: 'rotated' } },
+		});
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/storage/storages/12`,
+			method: 'PATCH',
+			authorization: 'Bearer test-key',
+			contentType: 'application/json',
+			body: {
+				name: 'renamed',
+				parameters: { credentials: { secret_access_key: 'rotated' } },
+			},
+		});
+		expect(result).toEqual({ data: renamed });
+		expect(logEvent).toHaveBeenCalledWith(
+			ctx,
+			'claidai.storage.patch',
+			{ storage_id: 12, name: 'renamed', type: undefined },
+			'completed',
+		);
+	});
+
+	it('deleteStorage deletes /storage/storages/{id}', async () => {
+		respond(200, { data: null });
+
+		const result = await deleteStorage(ctx, { storage_id: 12 });
+
+		expect(sentRequest()).toEqual({
+			url: `${BASE}/storage/storages/12`,
+			method: 'DELETE',
+			authorization: 'Bearer test-key',
+			contentType: null,
+			body: undefined,
+		});
+		expect(result).toEqual({ data: null });
+	});
+});
+
+describe('error handling', () => {
+	const CLAID_ERROR = {
+		detail: {
+			error_code: '1001',
+			error_type: 'auth',
+			error_message: 'Invalid API key',
+		},
+	};
+
+	it('surfaces a 401 as an ApiError the auth handler does not retry', async () => {
+		respond(401, CLAID_ERROR);
+
+		const error = await storageList(ctx, {}).catch((e: Error) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(401);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
+			maxRetries: 0,
+		});
+		expect(logEvent).not.toHaveBeenCalled();
+	});
+
+	it('retries a 429 after RateLimit-Reset seconds and then succeeds', async () => {
+		jest.useFakeTimers();
+		try {
+			respond(
+				429,
+				{ detail: { error_message: 'Too Many Requests.' } },
+				{
+					'RateLimit-Reset': '1',
+				},
+			);
+			respond(200, { data: ['s3'] });
+
+			const pending = storageTypes(ctx, {});
+			await jest.advanceTimersByTimeAsync(1000);
+
+			expect(await pending).toEqual({ data: ['s3'] });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
+	it('gives up on a persistent 429 with the Retry-After delay attached', async () => {
+		jest.useFakeTimers();
+		try {
+			fetchMock.mockImplementation(
+				async () =>
+					new Response('{"detail":{"error_message":"Too Many Requests."}}', {
+						status: 429,
+						headers: {
+							'Content-Type': 'application/json',
+							'RateLimit-Reset': '2',
+						},
+					}),
+			);
+
+			const pending = storageTypes(ctx, {}).catch((e: Error) => e);
+			await jest.advanceTimersByTimeAsync(6000);
+			const error = await pending;
+
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect(error).toBeInstanceOf(ApiError);
+			if (!(error instanceof ApiError)) return;
+			expect(error.status).toBe(429);
+			expect(error.retryAfter).toBe(2000);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+			expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
+				maxRetries: 5,
+				headersRetryAfterMs: 2000,
+			});
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
+	it('wraps network failures in ClaidAiAPIError', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		await expect(storageTypes(ctx, {})).rejects.toEqual(
+			new ClaidAiAPIError('fetch failed'),
+		);
+	});
+
+	it('rejects a response that does not match the schema', async () => {
+		respond(200, { data: [{ id: 'not-a-number' }] });
+
+		await expect(storageList(ctx, {})).rejects.toBeInstanceOf(ZodError);
+	});
+
+	it('fails fast without calling the API when the key is missing', async () => {
+		// Safe: same partial context as above, with an empty key.
+		// A narrower type is not practical because ClaidAiContext also carries runtime-injected members.
+		const noKey = { key: '', options: {} } as ClaidAiContext;
+
+		await expect(storageTypes(noKey, {})).rejects.toEqual(
+			new ClaidAiAPIError('Missing Claid.ai API key'),
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

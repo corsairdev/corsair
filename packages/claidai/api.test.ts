@@ -1,35 +1,27 @@
 import 'dotenv/config';
 import { makeClaidAiRequest } from './client';
-import { ClaidAiEndpointOutputSchemas } from './endpoints/types';
+import { ClaidAiEndpointOutputSchemas as Out } from './endpoints/types';
 
-// Non-null is safe here: describeLive skips the suite when the key is missing.
-const TEST_KEY = process.env.CLAIDAI_API_KEY!;
+const TEST_KEY = process.env.CLAIDAI_API_KEY ?? '';
 
-const describeLive = process.env.CLAIDAI_API_KEY ? describe : describe.skip;
+const describeLive = TEST_KEY ? describe : describe.skip;
 
 describeLive('Claid.ai live API', () => {
-	it('storageTypes returns supported types', async () => {
-		const response = await makeClaidAiRequest<{
-			data: Array<'web_folder' | 's3' | 'gcs'>;
-		}>('storage/storage-types', TEST_KEY, { method: 'GET' });
-		const parsed = ClaidAiEndpointOutputSchemas.storageTypes.parse(response);
-		expect(parsed).toBeDefined();
-		expect(parsed.data).toBeDefined();
-		expect(Array.isArray(parsed.data)).toBe(true);
-		expect(parsed.data?.length).toBeGreaterThan(0);
-		expect(parsed.data).toContain('s3');
+	it('storageTypes returns the supported connector types', async () => {
+		const result = await makeClaidAiRequest(
+			'storage/storage-types',
+			TEST_KEY,
+			Out.storageTypes,
+		);
+		expect(result.data).toEqual(expect.arrayContaining(['s3', 'gcs']));
 	});
 
 	it('storageList returns connected storages', async () => {
-		// Unknown is safe here: the raw payload is immediately validated below.
-		const response = await makeClaidAiRequest<unknown>(
+		const result = await makeClaidAiRequest(
 			'storage/storages',
 			TEST_KEY,
-			{ method: 'GET' },
+			Out.storageList,
 		);
-		const parsed = ClaidAiEndpointOutputSchemas.storageList.parse(response);
-		expect(parsed).toBeDefined();
-		expect(parsed.data).toBeDefined();
-		expect(Array.isArray(parsed.data)).toBe(true);
+		expect(Array.isArray(result.data)).toBe(true);
 	});
 });

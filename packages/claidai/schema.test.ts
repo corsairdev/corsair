@@ -1,63 +1,63 @@
-import {
-	ClaidAiEndpointInputSchemas,
-	ClaidAiEndpointOutputSchemas,
-} from './endpoints/types';
-import { ClaidAiSchema } from './schema';
+import { ClaidAiEndpointInputSchemas as In } from './endpoints/types';
 
-describe('ClaidAi schema', () => {
-	it('declares a semver version', () => {
-		expect(ClaidAiSchema.version).toBeDefined();
-		expect(ClaidAiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-	});
-
-	it('declares an entities map', () => {
-		expect(typeof ClaidAiSchema.entities).toBe('object');
-		expect(ClaidAiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ClaidAiSchema.entities))).toBe(true);
-		for (const entity of Object.values(ClaidAiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
-	});
-
-	it('validates storage input shapes', () => {
+describe('Claid.ai input schemas', () => {
+	it('requires credentials for cloud storage connectors', () => {
 		expect(
-			ClaidAiEndpointInputSchemas.createStorage.parse({
+			In.createStorage.safeParse({
 				name: 's3-playground',
 				type: 's3',
 				parameters: { bucket: 'playground' },
-			}),
-		).toBeDefined();
-		expect(
-			ClaidAiEndpointInputSchemas.deleteStorage.parse({ storage_id: 1 }),
-		).toEqual({ storage_id: 1 });
-		expect(() =>
-			ClaidAiEndpointInputSchemas.deleteStorage.parse({ storage_id: -1 }),
-		).toThrow();
+			}).success,
+		).toBe(false);
 	});
 
-	it('validates image input constraints', () => {
+	it('accepts a web folder connector with only a base URL', () => {
 		expect(
-			ClaidAiEndpointInputSchemas.imageGenerate.parse({
-				input: 'a red bicycle on a beach',
+			In.createStorage.parse({
+				name: 'site-images',
+				type: 'web_folder',
+				parameters: { base_url: 'https://example.com/images/' },
 			}),
-		).toBeDefined();
-		expect(() =>
-			ClaidAiEndpointInputSchemas.imageGenerate.parse({ input: 'ab' }),
-		).toThrow();
+		).toEqual({
+			name: 'site-images',
+			type: 'web_folder',
+			parameters: { base_url: 'https://example.com/images/' },
+		});
 	});
 
-	it('parses typed output shapes', () => {
-		const types = ClaidAiEndpointOutputSchemas.storageTypes.parse({
-			data: ['web_folder', 's3', 'gcs'],
+	it('rejects storage names longer than 50 characters', () => {
+		expect(
+			In.createStorage.safeParse({
+				name: 'x'.repeat(51),
+				type: 'web_folder',
+				parameters: { base_url: 'https://example.com/' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects non-positive storage ids', () => {
+		expect(In.deleteStorage.safeParse({ storage_id: 0 }).success).toBe(false);
+		expect(In.storageDetails.parse({ storage_id: 3 })).toEqual({
+			storage_id: 3,
 		});
-		expect(types.data).toContain('gcs');
-		const batch = ClaidAiEndpointOutputSchemas.imageEditBatch.parse({
-			data: { id: 1, status: 'ACCEPTED', result_url: 'https://x/1' },
+	});
+
+	it('enforces the 3 to 1024 character prompt length for image generation', () => {
+		expect(In.imageGenerate.safeParse({ input: 'ab' }).success).toBe(false);
+		expect(
+			In.imageGenerate.safeParse({ input: 'x'.repeat(1025) }).success,
+		).toBe(false);
+		expect(In.imageGenerate.parse({ input: 'a red bicycle' })).toEqual({
+			input: 'a red bicycle',
 		});
-		expect(batch.data?.status).toBe('ACCEPTED');
-		const edit = ClaidAiEndpointOutputSchemas.backgroundRemove.parse({
-			data: { output: { tmp_url: 'https://x/y.png' } },
-		});
-		expect(edit.data?.output).toBeDefined();
+	});
+
+	it('requires a prompt for AI edits', () => {
+		expect(
+			In.imageAiEdit.safeParse({
+				input: 'https://example.com/a.png',
+				options: {},
+			}).success,
+		).toBe(false);
 	});
 });

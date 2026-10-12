@@ -1,221 +1,385 @@
 import { z } from 'zod';
 
-// z.unknown() below is intentional and narrow: Claid.ai returns free-form
-// provider payloads (echoed batch request, per-image results/errors, delete
-// wrapper) with no stable schema, so unknown keeps validation open while
-// every exported surface stays typed via the named schemas below.
-const AnyObjectSchema = z.record(z.string(), z.unknown());
+const JsonPrimitiveSchema = z
+	.union([z.string(), z.number(), z.boolean(), z.null()])
+	.describe('Primitive JSON value');
+type JsonPrimitive = z.infer<typeof JsonPrimitiveSchema>;
 
-const PipelineImageObjectSchema = z
+export type JsonValue =
+	| JsonPrimitive
+	| { [key: string]: JsonValue }
+	| JsonValue[];
+
+const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
+	z
+		.union([
+			JsonPrimitiveSchema,
+			z.array(JsonValueSchema),
+			z.record(z.string(), JsonValueSchema),
+		])
+		.describe('Arbitrary JSON value'),
+);
+
+const JsonObjectSchema = z
+	.record(z.string(), JsonValueSchema)
+	.describe('JSON object mapping string keys to JSON values');
+
+const StorageTypeSchema = z
+	.enum(['web_folder', 's3', 'gcs'])
+	.describe('Storage connector type');
+
+const ImageFormatSchema = z
+	.enum(['jpeg', 'png', 'webp', 'avif', 'tiff'])
+	.describe('Output image format');
+
+const OutputSettingsSchema = z
 	.object({
-		ext: z.string().optional(),
-		mps: z.number().optional(),
-		mime: z.string().optional(),
-		format: z.string().optional(),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		tmp_url: z.string().optional(),
-		object_key: z.string().optional(),
-		object_bucket: z.string().optional(),
-		object_uri: z.string().optional(),
-		claid_storage_uri: z.string().optional(),
+		destination: z
+			.string()
+			.optional()
+			.describe('Storage URI to save the result to'),
+		format: ImageFormatSchema.optional(),
 	})
-	.passthrough();
+	.describe('Output settings');
 
-const ImageEditResponseSchema = z
+const OutputDestinationSchema = z
+	.union([z.string(), OutputSettingsSchema])
+	.describe('Output destination: a storage URI or an output settings object');
+
+const DimensionSchema = z
+	.union([z.number().int().positive(), z.string()])
+	.describe('Size in pixels, or a string such as "150%" or "auto"');
+
+// ─── Responses ───────────────────────────────────────────────────────────────
+
+const ImageObjectSchema = z
 	.object({
-		data: z
-			.object({
-				input: PipelineImageObjectSchema.optional(),
-				output: z
-					.union([
-						PipelineImageObjectSchema,
-						z.array(PipelineImageObjectSchema),
-					])
-					.optional(),
-			})
-			.passthrough()
-			.optional(),
+		ext: z.string().optional().describe('File extension'),
+		mps: z.number().optional().describe('Image size in megapixels'),
+		mime: z.string().optional().describe('MIME type'),
+		format: z.string().optional().describe('Image format'),
+		width: z.number().optional().describe('Width in pixels'),
+		height: z.number().optional().describe('Height in pixels'),
+		tmp_url: z.string().optional().describe('Temporary download URL'),
+		object_key: z.string().optional().describe('Object key in the storage'),
+		object_bucket: z
+			.string()
+			.optional()
+			.describe('Bucket of the stored object'),
+		object_uri: z.string().optional().describe('URI of the stored object'),
+		claid_storage_uri: z
+			.string()
+			.optional()
+			.describe('Claid storage URI of the output'),
 	})
-	.passthrough();
+	.describe('Image metadata returned by Claid.ai');
 
-const ImageBatchResponseSchema = z
-	.object({
-		data: z
-			.object({
-				id: z.union([z.number(), z.string()]).optional(),
-				status: z.string().optional(),
-				result_url: z.string().optional(),
-				created_at: z.string().optional(),
-				// Unknown: echoes the submitted batch/async request verbatim.
-				request: z.unknown().optional(),
-				// Unknown: per-image result/error items vary by operation.
-				results: z.array(z.unknown()).optional(),
-				errors: z.array(z.unknown()).optional(),
-			})
-			.passthrough()
-			.optional(),
-	})
-	.passthrough();
+const ImageEditResponseSchema = z.object({
+	data: z.object({
+		input: ImageObjectSchema.optional(),
+		output: z.union([ImageObjectSchema, z.array(ImageObjectSchema)]).optional(),
+	}),
+});
 
-const ImageGenerateResponseSchema = z
-	.object({
-		data: z
-			.object({
-				// Unknown: generate/scene echo the prompt input object verbatim.
-				input: z.unknown().optional(),
-				output: z.array(PipelineImageObjectSchema).optional(),
-			})
-			.passthrough()
-			.optional(),
-	})
-	.passthrough();
+const ImageGenerateResponseSchema = z.object({
+	data: z.object({
+		input: JsonObjectSchema.optional().describe(
+			'Echo of the input the image was generated from',
+		),
+		output: z.array(ImageObjectSchema).optional(),
+	}),
+});
 
-const StorageItemSchema = z
-	.object({
-		id: z.number(),
-		name: z.string(),
-		type: z.enum(['web_folder', 's3', 'gcs']),
-		parameters: AnyObjectSchema,
+const AsyncTaskResultSchema = z.object({
+	input_object: ImageObjectSchema.optional(),
+	output_object: ImageObjectSchema.optional(),
+	output_objects: z.array(ImageObjectSchema).optional(),
+});
+
+const AsyncTaskErrorSchema = z.object({
+	error: z.string().describe('Error message'),
+	created_at: z
+		.union([z.string(), z.number()])
+		.optional()
+		.describe('When the error occurred'),
+});
+
+const AsyncTaskResponseSchema = z.object({
+	data: z.object({
+		id: z.number().describe('Task ID'),
+		status: z
+			.string()
+			.describe('Task status: ACCEPTED, PROCESSING, DONE or ERROR'),
+		result_url: z.string().optional().describe('URL to poll for the result'),
 		created_at: z.string().optional(),
-	})
-	.passthrough();
+		request: JsonObjectSchema.optional().describe(
+			'Echo of the submitted request',
+		),
+		errors: z.array(AsyncTaskErrorSchema).optional(),
+		result: AsyncTaskResultSchema.optional(),
+		results: z.array(AsyncTaskResultSchema).optional(),
+	}),
+});
 
-const StorageDetailResponseSchema = z
-	.object({
-		data: StorageItemSchema.optional(),
-	})
-	.passthrough();
+const StorageParametersOutSchema = z
+	.union([
+		z.object({
+			path: z.string().optional().describe('Path prefix inside the bucket'),
+			bucket: z.string().describe('Bucket name'),
+			credentials: z
+				.object({ access_key: z.string().describe('Access key') })
+				.optional(),
+		}),
+		z.object({ base_url: z.string().describe('Web folder base URL') }),
+	])
+	.describe('Storage connection parameters (secrets are not returned)');
 
-const StorageListResponseSchema = z
-	.object({
-		data: z.array(StorageItemSchema).optional(),
-	})
-	.passthrough();
+const StorageItemSchema = z.object({
+	id: z.number().describe('Storage ID'),
+	name: z.string().describe('Storage name'),
+	type: StorageTypeSchema,
+	parameters: StorageParametersOutSchema,
+	created_at: z.string().describe('Creation time'),
+});
 
-const StorageTypesResponseSchema = z
-	.object({
-		data: z.array(z.enum(['web_folder', 's3', 'gcs'])).optional(),
-	})
-	.passthrough();
+const StorageDetailResponseSchema = z.object({
+	data: StorageItemSchema,
+});
 
-const DeleteStorageResponseSchema = z
-	.object({
-		// Unknown: delete returns an empty/generic wrapper with no stable shape.
-		data: z.unknown().optional(),
-	})
-	.passthrough();
+const StorageListResponseSchema = z.object({
+	data: z.array(StorageItemSchema),
+});
+
+const StorageTypesResponseSchema = z.object({
+	data: z.array(StorageTypeSchema),
+});
+
+const DeleteStorageResponseSchema = z.object({
+	data: JsonValueSchema.optional().describe('Deletion result'),
+});
+
+// ─── Inputs ──────────────────────────────────────────────────────────────────
+
+const ImageUrlSchema = z
+	.string()
+	.min(1)
+	.describe('Image URL or storage URI of the input image');
 
 const BackgroundRemoveInputSchema = z.object({
-	input: z.string().min(1),
-	operations: AnyObjectSchema,
+	input: ImageUrlSchema,
+	color: z
+		.string()
+		.optional()
+		.describe('Background color, for example "#ffffff" or "transparent"'),
+	output: OutputDestinationSchema.optional(),
 });
 
 const ImageEditBatchInputSchema = z.object({
-	input: z.union([
-		z.string().min(1),
-		z.array(z.string().min(1)),
-		z.object({
-			source: z.string().min(1),
-			recursive: z.boolean().optional(),
-		}),
-	]),
-	operations: AnyObjectSchema,
-	output: z.union([z.string(), AnyObjectSchema]).optional(),
+	input: z
+		.union([
+			z.string().min(1),
+			z.array(z.string().min(1)),
+			z.object({
+				source: z.string().min(1).describe('Storage folder URI'),
+				recursive: z
+					.boolean()
+					.optional()
+					.describe('Include images from subfolders'),
+			}),
+		])
+		.describe('Storage folder URI, list of image URLs, or a source object'),
+	operations: JsonObjectSchema.describe(
+		'Image editing operations, for example { resizing: { width: 1000 } }',
+	),
+	output: OutputDestinationSchema.optional(),
 });
 
-const LicensePlateBlurInputSchema = z.object({
-	input: z.string().min(1),
+const SingleImageInputSchema = z.object({
+	input: ImageUrlSchema,
+	output: OutputDestinationSchema.optional(),
 });
 
 const SmartFrameInputSchema = z.object({
-	input: z.string().min(1),
-	options: AnyObjectSchema,
-});
-
-const CreateStorageInputSchema = z.object({
-	name: z.string().min(1).max(50),
-	type: z.enum(['web_folder', 's3', 'gcs']),
-	parameters: AnyObjectSchema,
-});
-
-const BackgroundGenerateInputSchema = z.object({
-	object: AnyObjectSchema,
-	scene: AnyObjectSchema,
-	output: AnyObjectSchema.optional(),
-});
-
-const ImageGenerateInputSchema = z.object({
-	input: z.string().min(3).max(1024),
-	options: AnyObjectSchema.optional(),
-	output: z.union([z.string(), AnyObjectSchema]).optional(),
+	input: ImageUrlSchema,
+	width: DimensionSchema.describe('Canvas width'),
+	height: DimensionSchema.describe('Canvas height'),
+	padding: z
+		.string()
+		.optional()
+		.describe('Space around the object, for example "10%" or "30px"'),
+	background_color: z
+		.string()
+		.optional()
+		.describe('Canvas color, for example "#ffffff"'),
+	output: OutputDestinationSchema.optional(),
 });
 
 const GenerativeResizeInputSchema = z.object({
-	input: z.string().min(1),
-	operations: AnyObjectSchema,
+	input: ImageUrlSchema,
+	width: DimensionSchema.describe('Target width'),
+	height: DimensionSchema.describe('Target height'),
+	feathering: z
+		.string()
+		.optional()
+		.describe('Transition smoothness, for example "20%"'),
+	output: OutputDestinationSchema.optional(),
 });
 
-const StorageDetailsInputSchema = z.object({
-	storage_id: z.number().int().positive(),
+const CloudCredentialsSchema = z.object({
+	access_key: z.string().min(1).describe('Access key'),
+	secret_access_key: z.string().min(1).describe('Secret access key'),
 });
 
-const DeleteStorageInputSchema = z.object({
-	storage_id: z.number().int().positive(),
+const CloudParametersSchema = z.object({
+	path: z.string().optional().describe('Path prefix inside the bucket'),
+	bucket: z.string().min(1).describe('Bucket name'),
+	credentials: CloudCredentialsSchema,
 });
 
-const ImageAiEditInputSchema = z.object({
-	input: z.string().min(1),
-	options: AnyObjectSchema,
-	output: z.union([z.string(), AnyObjectSchema]).optional(),
+const WebFolderParametersSchema = z.object({
+	base_url: z.string().min(1).describe('Web folder base URL'),
 });
 
-const StorageListInputSchema = z.object({});
+const StorageNameSchema = z.string().min(1).max(50).describe('Storage name');
 
-const PolishImageInputSchema = z.object({
-	input: z.string().min(1),
+const CreateStorageInputSchema = z.discriminatedUnion('type', [
+	z.object({
+		name: StorageNameSchema,
+		type: z.literal('s3'),
+		parameters: CloudParametersSchema,
+	}),
+	z.object({
+		name: StorageNameSchema,
+		type: z.literal('gcs'),
+		parameters: CloudParametersSchema,
+	}),
+	z.object({
+		name: StorageNameSchema,
+		type: z.literal('web_folder'),
+		parameters: WebFolderParametersSchema,
+	}),
+]);
+
+const StorageIdSchema = z.number().int().positive().describe('Storage ID');
+
+const StorageIdInputSchema = z.object({
+	storage_id: StorageIdSchema,
 });
 
 const PatchStorageInputSchema = z.object({
-	storage_id: z.number().int().positive(),
-	name: z.string().min(1).max(50).optional(),
-	type: z.enum(['web_folder', 's3', 'gcs']).optional(),
-	parameters: AnyObjectSchema.optional(),
+	storage_id: StorageIdSchema,
+	name: StorageNameSchema.optional(),
+	type: StorageTypeSchema.optional(),
+	parameters: z
+		.union([
+			z.object({
+				path: z.string().optional().describe('Path prefix inside the bucket'),
+				bucket: z.string().min(1).optional().describe('Bucket name'),
+				credentials: CloudCredentialsSchema.partial().optional(),
+			}),
+			WebFolderParametersSchema,
+		])
+		.optional()
+		.describe('Storage connection parameters to update'),
 });
 
-const StorageTypesInputSchema = z.object({});
+const BackgroundGenerateInputSchema = z.object({
+	object: z
+		.object({
+			image_url: ImageUrlSchema,
+			placement_type: z.enum(['absolute', 'original']).optional(),
+			rotation_degree: z.number().optional(),
+			scale: z.number().optional(),
+			position: z
+				.object({ x: z.number(), y: z.number() })
+				.optional()
+				.describe('Relative object position on the scene'),
+		})
+		.describe('Product object to place on the scene'),
+	scene: z
+		.object({
+			prompt: z
+				.union([
+					z.string(),
+					z.object({
+						generate: z.boolean(),
+						guidelines: z.string().optional(),
+					}),
+				])
+				.optional()
+				.describe('Scene description, or a request to generate one'),
+			negative_prompt: z.string().optional(),
+			model: z.enum(['v1', 'v2']).optional(),
+			template_url: z.string().optional(),
+			template_mode: z.enum(['transform', 'adjust', 'lock']).optional(),
+			color: z.string().optional(),
+			view: z.enum(['top', 'front']).optional(),
+			aspect_ratio: z.string().optional().describe('For example "1:1"'),
+			preference: z.enum(['fast', 'optimal', 'best']).optional(),
+		})
+		.describe('Scene settings'),
+	output: z
+		.object({
+			destination: z.string().optional(),
+			number_of_images: z.number().int().positive().optional(),
+			format: z.enum(['png', 'jpeg', 'webp', 'avif']).optional(),
+		})
+		.optional()
+		.describe('Output settings'),
+});
+
+const ImageGenerateInputSchema = z.object({
+	input: z.string().min(3).max(1024).describe('Text prompt'),
+	options: z
+		.object({
+			number_of_images: z.number().int().positive().optional(),
+			guidance_scale: z.number().optional(),
+		})
+		.optional()
+		.describe('Generation options'),
+	output: z.string().optional().describe('Storage folder URI for results'),
+});
+
+const ImageAiEditInputSchema = z.object({
+	input: ImageUrlSchema,
+	options: z
+		.object({
+			prompt: z.string().min(1).describe('Edit instruction'),
+			model: z.enum(['v1', 'v2']).optional(),
+			inference_steps: z.number().int().positive().optional(),
+			guidance_scale: z.number().optional(),
+			aspect_ratio: z.string().optional().describe('For example "1:1"'),
+		})
+		.describe('AI edit options'),
+	output: z
+		.object({
+			destination: z.string().optional(),
+			format: z.enum(['png', 'jpeg']).optional(),
+			number_of_images: z.number().int().positive().optional(),
+		})
+		.optional()
+		.describe('Output settings'),
+});
+
+const EmptyInputSchema = z.object({});
 
 export type BackgroundRemoveInput = z.infer<typeof BackgroundRemoveInputSchema>;
-
 export type ImageEditBatchInput = z.infer<typeof ImageEditBatchInputSchema>;
-
-export type LicensePlateBlurInput = z.infer<typeof LicensePlateBlurInputSchema>;
-
+export type LicensePlateBlurInput = z.infer<typeof SingleImageInputSchema>;
 export type SmartFrameInput = z.infer<typeof SmartFrameInputSchema>;
-
 export type CreateStorageInput = z.infer<typeof CreateStorageInputSchema>;
-
 export type BackgroundGenerateInput = z.infer<
 	typeof BackgroundGenerateInputSchema
 >;
-
 export type ImageGenerateInput = z.infer<typeof ImageGenerateInputSchema>;
-
 export type GenerativeResizeInput = z.infer<typeof GenerativeResizeInputSchema>;
-
-export type StorageDetailsInput = z.infer<typeof StorageDetailsInputSchema>;
-
-export type DeleteStorageInput = z.infer<typeof DeleteStorageInputSchema>;
-
+export type StorageDetailsInput = z.infer<typeof StorageIdInputSchema>;
+export type DeleteStorageInput = z.infer<typeof StorageIdInputSchema>;
 export type ImageAiEditInput = z.infer<typeof ImageAiEditInputSchema>;
-
-export type StorageListInput = z.infer<typeof StorageListInputSchema>;
-
-export type PolishImageInput = z.infer<typeof PolishImageInputSchema>;
-
+export type StorageListInput = z.infer<typeof EmptyInputSchema>;
+export type PolishImageInput = z.infer<typeof SingleImageInputSchema>;
 export type PatchStorageInput = z.infer<typeof PatchStorageInputSchema>;
-
-export type StorageTypesInput = z.infer<typeof StorageTypesInputSchema>;
+export type StorageTypesInput = z.infer<typeof EmptyInputSchema>;
 
 export type ClaidAiEndpointInputs = {
 	backgroundRemove: BackgroundRemoveInput;
@@ -235,45 +399,27 @@ export type ClaidAiEndpointInputs = {
 	storageTypes: StorageTypesInput;
 };
 
-export type ClaidAiEndpointOutputs = {
-	backgroundRemove: z.infer<typeof ImageEditResponseSchema>;
-	imageEditBatch: z.infer<typeof ImageBatchResponseSchema>;
-	licensePlateBlur: z.infer<typeof ImageEditResponseSchema>;
-	smartFrame: z.infer<typeof ImageEditResponseSchema>;
-	createStorage: z.infer<typeof StorageDetailResponseSchema>;
-	backgroundGenerate: z.infer<typeof ImageGenerateResponseSchema>;
-	imageGenerate: z.infer<typeof ImageGenerateResponseSchema>;
-	generativeResize: z.infer<typeof ImageEditResponseSchema>;
-	storageDetails: z.infer<typeof StorageDetailResponseSchema>;
-	deleteStorage: z.infer<typeof DeleteStorageResponseSchema>;
-	imageAiEdit: z.infer<typeof ImageBatchResponseSchema>;
-	storageList: z.infer<typeof StorageListResponseSchema>;
-	polishImage: z.infer<typeof ImageEditResponseSchema>;
-	patchStorage: z.infer<typeof StorageDetailResponseSchema>;
-	storageTypes: z.infer<typeof StorageTypesResponseSchema>;
-};
-
 export const ClaidAiEndpointInputSchemas = {
 	backgroundRemove: BackgroundRemoveInputSchema,
 	imageEditBatch: ImageEditBatchInputSchema,
-	licensePlateBlur: LicensePlateBlurInputSchema,
+	licensePlateBlur: SingleImageInputSchema,
 	smartFrame: SmartFrameInputSchema,
 	createStorage: CreateStorageInputSchema,
 	backgroundGenerate: BackgroundGenerateInputSchema,
 	imageGenerate: ImageGenerateInputSchema,
 	generativeResize: GenerativeResizeInputSchema,
-	storageDetails: StorageDetailsInputSchema,
-	deleteStorage: DeleteStorageInputSchema,
+	storageDetails: StorageIdInputSchema,
+	deleteStorage: StorageIdInputSchema,
 	imageAiEdit: ImageAiEditInputSchema,
-	storageList: StorageListInputSchema,
-	polishImage: PolishImageInputSchema,
+	storageList: EmptyInputSchema,
+	polishImage: SingleImageInputSchema,
 	patchStorage: PatchStorageInputSchema,
-	storageTypes: StorageTypesInputSchema,
+	storageTypes: EmptyInputSchema,
 } as const;
 
 export const ClaidAiEndpointOutputSchemas = {
 	backgroundRemove: ImageEditResponseSchema,
-	imageEditBatch: ImageBatchResponseSchema,
+	imageEditBatch: AsyncTaskResponseSchema,
 	licensePlateBlur: ImageEditResponseSchema,
 	smartFrame: ImageEditResponseSchema,
 	createStorage: StorageDetailResponseSchema,
@@ -282,9 +428,15 @@ export const ClaidAiEndpointOutputSchemas = {
 	generativeResize: ImageEditResponseSchema,
 	storageDetails: StorageDetailResponseSchema,
 	deleteStorage: DeleteStorageResponseSchema,
-	imageAiEdit: ImageBatchResponseSchema,
+	imageAiEdit: AsyncTaskResponseSchema,
 	storageList: StorageListResponseSchema,
 	polishImage: ImageEditResponseSchema,
 	patchStorage: StorageDetailResponseSchema,
 	storageTypes: StorageTypesResponseSchema,
 } as const;
+
+export type ClaidAiEndpointOutputs = {
+	[K in keyof typeof ClaidAiEndpointOutputSchemas]: z.infer<
+		(typeof ClaidAiEndpointOutputSchemas)[K]
+	>;
+};

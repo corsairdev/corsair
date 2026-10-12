@@ -252,6 +252,8 @@ export type ExternalClaidAiPlugin<T extends ClaidAiPluginOptions> =
 	BaseClaidAiPlugin<T>;
 
 export function claidai<const T extends ClaidAiPluginOptions>(
+	// Safe: every ClaidAiPluginOptions field is optional, so an empty object satisfies it.
+	// A narrower type is not practical because T is a caller-supplied subtype known only at the call site.
 	incomingOptions: ClaidAiPluginOptions & T = {} as ClaidAiPluginOptions & T,
 ): ExternalClaidAiPlugin<T> {
 	const options = {
