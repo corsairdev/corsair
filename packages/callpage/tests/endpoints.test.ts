@@ -450,3 +450,40 @@ describe('CallPage input schemas', () => {
 		expect(schema.safeParse({ id: 2, user_id: [] }).success).toBe(false);
 	});
 });
+
+describe('CallPage output schemas', () => {
+	it('parses call records and keeps provider fields it does not model', () => {
+		expect(
+			CallPageEndpointOutputSchemas.callsGet.parse({
+				id: '99',
+				status: 'completed',
+				tel: '+48123123123',
+				widget_id: 2,
+				created_at: 1700000000,
+				duration: 42,
+			}),
+		).toEqual({
+			id: 99,
+			status: 'completed',
+			tel: '+48123123123',
+			widget_id: 2,
+			created_at: 1700000000,
+			duration: 42,
+		});
+	});
+
+	it('rejects a call record without an id', () => {
+		expect(
+			CallPageEndpointOutputSchemas.callsHistory.safeParse([
+				{ status: 'completed' },
+			]).success,
+		).toBe(false);
+	});
+
+	it('rejects a non-string status from widgets.call', () => {
+		expect(
+			CallPageEndpointOutputSchemas.widgetsCall.safeParse({ status: 1 })
+				.success,
+		).toBe(false);
+	});
+});

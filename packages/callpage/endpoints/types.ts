@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 const IdSchema = z.coerce.number().int().positive();
-const JsonObject = z.record(z.string(), z.unknown());
+// Widget settings are a provider-defined map whose keys change with the
+// widget's configured features, so only the outer object shape is enforced.
+const WidgetSettingsSchema = z.record(z.string(), z.unknown());
 
 const UserSchema = z
 	.object({
@@ -22,7 +24,7 @@ const WidgetSchema = z
 		description: z.string().optional(),
 		locale_code: z.string().optional(),
 		enabled: z.boolean().optional(),
-		settings: JsonObject.optional(),
+		settings: WidgetSettingsSchema.optional(),
 	})
 	.loose();
 
@@ -103,9 +105,30 @@ const ResetInputSchema = z.object({
 	message_id: z.string().min(1).optional(),
 });
 
-const CallRecordSchema = JsonObject;
+const NullableIdSchema = z
+	.union([z.number(), z.string()])
+	.nullable()
+	.optional();
+const TimestampSchema = z.union([z.string(), z.number()]).nullable().optional();
+
+const CallRecordSchema = z
+	.object({
+		id: IdSchema,
+		status: z.string().optional(),
+		tel: z.string().nullable().optional(),
+		widget_id: NullableIdSchema,
+		user_id: NullableIdSchema,
+		created_at: TimestampSchema,
+		scheduled_at: TimestampSchema,
+	})
+	.loose();
 const CallHistorySchema = z.array(CallRecordSchema);
-const MutationResponseSchema = JsonObject;
+const CallRequestResultSchema = z
+	.object({
+		id: IdSchema.optional(),
+		status: z.string().optional(),
+	})
+	.loose();
 const NullResponseSchema = z.null();
 
 export const CallPageEndpointInputSchemas = {
@@ -164,7 +187,7 @@ export const CallPageEndpointInputSchemas = {
 	widgetsCreate: z.object({
 		url: z.string().url(),
 		description: z.string().optional(),
-		settings: JsonObject.optional(),
+		settings: WidgetSettingsSchema.optional(),
 		locale_code: z.string().optional(),
 		enabled: z.boolean().optional(),
 	}),
@@ -172,7 +195,7 @@ export const CallPageEndpointInputSchemas = {
 		id: IdSchema,
 		url: z.string().url(),
 		description: z.string().optional(),
-		settings: JsonObject.optional(),
+		settings: WidgetSettingsSchema.optional(),
 		locale_code: z.string().optional(),
 		enabled: z.boolean().optional(),
 	}),
@@ -232,8 +255,8 @@ export const CallPageEndpointOutputSchemas = {
 	widgetsCreate: WidgetSchema,
 	widgetsUpdate: WidgetSchema,
 	widgetsDelete: NullResponseSchema,
-	widgetsCall: MutationResponseSchema,
-	widgetsCallOrSchedule: MutationResponseSchema,
+	widgetsCall: CallRequestResultSchema,
+	widgetsCallOrSchedule: CallRequestResultSchema,
 	widgetsAddUsers: z.array(
 		z.object({ user_id: IdSchema, manager_id: IdSchema }).loose(),
 	),

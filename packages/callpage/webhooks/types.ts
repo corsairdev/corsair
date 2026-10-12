@@ -27,8 +27,8 @@ export type CallPageWebhookOutputs = {
 	event: CallPageWebhookEvent;
 };
 
-export function verifyCallPageWebhookToken(
-	request: WebhookRequest<unknown>,
+export function verifyCallPageWebhookToken<TPayload>(
+	request: WebhookRequest<TPayload>,
 	token?: string,
 ): { valid: boolean; error?: string } {
 	// bind.ts skips keyBuilder when the hub already verified the delivery.
