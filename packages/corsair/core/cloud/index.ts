@@ -326,7 +326,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// An empty or slash-suffixed override falls through to the derived URL
 	// rather than disabling v1 or doubling a slash.
 	const managementUrl =
-		config.managementUrl?.trim().replace(/\/+$/, '') || undefined;
+		stripTrailingSlashes(config.managementUrl?.trim() ?? '') || undefined;
 	const v1BaseUrl =
 		managementUrl ?? (slug ? managementUrlFromBase(baseUrl, slug) : null);
 	if (v1BaseUrl) assertCloudUrlSecure(v1BaseUrl, 'Management base URL');
