@@ -22,10 +22,14 @@ const UserInfoSchema = z
 	.passthrough();
 
 describeLive('DocuSign live API', () => {
-	const client = new DocusignClient({
-		accessToken: accessToken ?? '',
-		accountId: accountId ?? '',
-		...(baseUri === undefined ? {} : { baseUri }),
+	let client: DocusignClient;
+
+	beforeAll(() => {
+		client = new DocusignClient({
+			accessToken: accessToken ?? '',
+			accountId: accountId ?? '',
+			...(baseUri === undefined ? {} : { baseUri }),
+		});
 	});
 
 	it('validates the token and returns accounts via userinfo', async () => {
