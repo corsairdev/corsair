@@ -4,7 +4,7 @@ export const UPDOWN_IO_API_BASE = 'https://updown.io/api';
 export class UpdownIOAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
-	// Response body is arbitrary JSON or text from the API; callers narrow it before use.
+	// unknown: the body is arbitrary JSON or text, so it is safe only because callers narrow it before use; no static shape exists across routes.
 	public readonly body?: unknown;
 	public readonly retryAfterMs?: number;
 
@@ -14,7 +14,7 @@ export class UpdownIOAPIError extends Error {
 			cause?: Error;
 			status?: number;
 			statusText?: string;
-			// Same arbitrary response body as the field above.
+			// unknown: same arbitrary response body as the field above; no single static shape exists.
 			body?: unknown;
 			retryAfterMs?: number;
 		},
@@ -37,7 +37,7 @@ export type UpdownIORequestOptions = {
 	requiresAuth?: boolean;
 };
 
-// Body is arbitrary JSON or text; the endpoint schemas validate it downstream.
+// unknown: safe because every endpoint parses the result with its output schema; no shared static shape exists across routes.
 async function parseResponseBody(response: Response): Promise<unknown> {
 	const contentType = response.headers.get('Content-Type')?.toLowerCase() ?? '';
 	if (contentType.startsWith('application/json')) {
@@ -52,7 +52,7 @@ function retryAfterMsOf(response: Response): number | undefined {
 	return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : undefined;
 }
 
-// Arbitrary error body; narrowed with typeof/in checks below before any access.
+// unknown: safe because typeof/in checks narrow it before any access; error bodies have no guaranteed shape.
 function messageFromBody(body: unknown): string | undefined {
 	if (body && typeof body === 'object' && 'error' in body) {
 		if (typeof body.error === 'string') return body.error;
@@ -61,7 +61,7 @@ function messageFromBody(body: unknown): string | undefined {
 	return undefined;
 }
 
-// Returns the parsed response body as-is; each endpoint validates it with its output schema.
+// unknown: safe because each endpoint validates it with its output schema; the response shape differs per route, so no single type fits.
 export async function makeUpdownIORequest(
 	endpoint: string,
 	apiKey: string,

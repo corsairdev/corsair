@@ -138,8 +138,7 @@ export type ExternalUpdownIOPlugin<T extends UpdownIOPluginOptions> =
 	BaseUpdownIOPlugin<T>;
 
 export function updownio<const T extends UpdownIOPluginOptions>(
-	// Every option is optional, so `{}` is a valid UpdownIOPluginOptions; the
-	// assertion only lets the empty default stand in for the caller's narrower T.
+	// Safe: every option is optional, so `{}` satisfies UpdownIOPluginOptions; TypeScript cannot prove `{}` assignable to the generic T, so no better type is practical.
 	incomingOptions: UpdownIOPluginOptions & T = {} as UpdownIOPluginOptions & T,
 ): ExternalUpdownIOPlugin<T> {
 	const options = {
