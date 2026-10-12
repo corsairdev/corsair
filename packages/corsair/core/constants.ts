@@ -148,7 +148,11 @@ export const BaseProviders = [
 	'confluence',
 	'connecteam',
 	'contentfulgraphql',
+	'contextsevenmcp',
 	'convex',
+	'convoloai',
+	'cosmic',
+	'countdownapi',
 	'crowterminal',
 	'currentsapi',
 	'cursor',
@@ -268,6 +272,7 @@ export const BaseProviders = [
 	'pushbullet',
 	'razorpay',
 	'reddit',
+	'reducto',
 	'replicate',
 	'removebg',
 	'replyio',
@@ -493,7 +498,11 @@ export const ProviderDisplayNames = {
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextsevenmcp: 'Context7',
 	convex: 'Convex',
+	convoloai: 'ConvoloAi',
+	cosmic: 'Cosmic',
+	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
@@ -613,6 +622,7 @@ export const ProviderDisplayNames = {
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	reducto: 'Reducto',
 	replicate: 'Replicate',
 	removebg: 'remove.bg',
 	replyio: 'Reply.io',
@@ -845,7 +855,11 @@ export type AllProviders =
 	| 'confluence'
 	| 'connecteam'
 	| 'contentfulgraphql'
+	| 'contextsevenmcp'
 	| 'convex'
+	| 'convoloai'
+	| 'cosmic'
+	| 'countdownapi'
 	| 'crowterminal'
 	| 'currentsapi'
 	| 'cursor'
@@ -965,6 +979,7 @@ export type AllProviders =
 	| 'pushbullet'
 	| 'razorpay'
 	| 'reddit'
+	| 'reducto'
 	| 'replicate'
 	| 'removebg'
 	| 'replyio'
