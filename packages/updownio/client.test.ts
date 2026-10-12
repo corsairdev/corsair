@@ -6,22 +6,47 @@ import { errorHandlers } from './error-handlers';
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
 
+/** Every member of the entity client, as a jest.fn, so the mock satisfies the real type. */
+function makeEntityClient() {
+	return {
+		findByEntityId: jest.fn(),
+		existsByEntityId: jest.fn(),
+		findIdByEntityId: jest.fn(),
+		findById: jest.fn(),
+		findManyByEntityIds: jest.fn(),
+		list: jest.fn(),
+		search: jest.fn(),
+		upsertByEntityId: jest.fn(),
+		deleteById: jest.fn(),
+		deleteByEntityId: jest.fn(),
+		count: jest.fn(),
+	};
+}
+
 const db = {
-	checks: { upsertByEntityId: jest.fn() },
-	nodes: { upsertByEntityId: jest.fn() },
+	checks: makeEntityClient(),
+	nodes: makeEntityClient(),
 };
 
 type Ctx = Parameters<typeof listChecks>[0];
 
 /** Builds a context for the given key; the account-scoped routes need a connected key. */
 function makeCtx(key: string): Ctx {
-	// Safe: these routes only read key, db upsert and $getAccountId, all provided; a better type is impractical because the mock db implements only upsertByEntityId, not the full entity client.
 	return {
 		key,
 		options: {},
 		db,
+		endpoints: {},
 		$getAccountId: async () => 'test-account',
-	} as unknown as Ctx;
+		keys: {
+			get_dek: async () => '',
+			get_api_key: async () => key,
+			set_api_key: async () => {},
+			get_webhook_signature: async () => null,
+			set_webhook_signature: async () => {},
+			issue_new_dek: async () => '',
+		},
+	};
 }
 
 const ctx = makeCtx('updown-test-key');
