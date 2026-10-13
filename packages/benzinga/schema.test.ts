@@ -18,6 +18,26 @@ describe('Benzinga schema', () => {
 	});
 });
 
+describe('Benzinga entities', () => {
+	it('models every durable object the API returns', () => {
+		expect(Object.keys(BenzingaSchema.entities).sort()).toEqual([
+			'conferenceCalls',
+			'consensusRatings',
+			'dividends',
+			'earnings',
+			'economics',
+			'guidance',
+			'ipos',
+			'newsArticles',
+			'newsChannels',
+			'ratings',
+			'removedCalendarEvents',
+			'removedNewsItems',
+			'splits',
+		]);
+	});
+});
+
 describe('Benzinga endpoint registry', () => {
 	it('registers every endpoint with input and output schemas', () => {
 		expect(Object.keys(benzingaEndpointSchemas).sort()).toEqual([

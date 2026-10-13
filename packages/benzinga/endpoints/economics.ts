@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
 
 export const listEconomics: BenzingaEndpoints['listEconomics'] = async (
@@ -21,6 +22,8 @@ export const listEconomics: BenzingaEndpoints['listEconomics'] = async (
 		event_name: input.event_name,
 		event_category: input.event_category,
 	});
+
+	await persistEntities(ctx.db.economics, response.economics, (r) => r.id);
 
 	await logEventFromContext(
 		ctx,

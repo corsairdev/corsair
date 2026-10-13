@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
 
 export const getConsensusRatings: BenzingaEndpoints['getConsensusRatings'] =
@@ -15,6 +16,13 @@ export const getConsensusRatings: BenzingaEndpoints['getConsensusRatings'] =
 			simplify: input.simplify,
 			aggregate_type: input.aggregateType,
 		});
+
+		const ticker = input.ticker.toUpperCase();
+		await persistEntities(
+			ctx.db.consensusRatings,
+			[{ ...response, ticker }],
+			(r) => r.ticker,
+		);
 
 		await logEventFromContext(
 			ctx,

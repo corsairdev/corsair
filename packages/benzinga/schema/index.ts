@@ -1,4 +1,6 @@
+import { BenzingaEntities } from './database';
+
 export const BenzingaSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: BenzingaEntities,
 } as const;

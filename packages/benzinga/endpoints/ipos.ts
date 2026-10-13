@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs, ListIposRawResponse } from './types';
 import { ListIposRawResponseSchema } from './types';
 
@@ -24,6 +25,8 @@ export const listIpos: BenzingaEndpoints['listIpos'] = async (ctx, input) => {
 	const response: BenzingaEndpointOutputs['listIpos'] = Array.isArray(parsed)
 		? { ipos: parsed }
 		: parsed;
+
+	await persistEntities(ctx.db.ipos, response.ipos, (r) => r.id);
 
 	await logEventFromContext(
 		ctx,

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
 
 export const listNewsChannels: BenzingaEndpoints['listNewsChannels'] = async (
@@ -10,6 +11,10 @@ export const listNewsChannels: BenzingaEndpoints['listNewsChannels'] = async (
 	const response = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listNewsChannels']
 	>('/api/v2.1/news/channels', ctx.key);
+
+	await persistEntities(ctx.db.newsChannels, response.data, (r) =>
+		String(r.id),
+	);
 
 	await logEventFromContext(
 		ctx,

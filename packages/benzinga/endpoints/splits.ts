@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
 
 export const listSplits: BenzingaEndpoints['listSplits'] = async (
@@ -20,6 +21,8 @@ export const listSplits: BenzingaEndpoints['listSplits'] = async (
 		'parameters[tickers]': input.tickers,
 		'parameters[updated]': input.updated,
 	});
+
+	await persistEntities(ctx.db.splits, response.splits, (r) => r.id);
 
 	await logEventFromContext(
 		ctx,

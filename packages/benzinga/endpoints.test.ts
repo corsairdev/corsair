@@ -40,9 +40,60 @@ jest.mock('corsair/core', () => {
 const mockRequest = jest.mocked(makeBenzingaRequest);
 const mockLogEvent = jest.mocked(logEventFromContext);
 
-// Safe: handlers under test only read ctx.key, and request execution and event logging are both mocked above.
-// A narrower type is not practical because BenzingaContext also requires the database, keys and hook wiring that only a live corsair instance builds.
-const testCtx = () => ({ key: 'test-key' }) as BenzingaContext;
+const entityTables = [
+	'newsArticles',
+	'newsChannels',
+	'earnings',
+	'dividends',
+	'ratings',
+	'guidance',
+	'ipos',
+	'splits',
+	'economics',
+	'conferenceCalls',
+	'consensusRatings',
+	'removedCalendarEvents',
+	'removedNewsItems',
+] as const;
+
+type EntityTable = (typeof entityTables)[number];
+const upserts = {
+	newsArticles: jest.fn().mockResolvedValue(undefined),
+	newsChannels: jest.fn().mockResolvedValue(undefined),
+	earnings: jest.fn().mockResolvedValue(undefined),
+	dividends: jest.fn().mockResolvedValue(undefined),
+	ratings: jest.fn().mockResolvedValue(undefined),
+	guidance: jest.fn().mockResolvedValue(undefined),
+	ipos: jest.fn().mockResolvedValue(undefined),
+	splits: jest.fn().mockResolvedValue(undefined),
+	economics: jest.fn().mockResolvedValue(undefined),
+	conferenceCalls: jest.fn().mockResolvedValue(undefined),
+	consensusRatings: jest.fn().mockResolvedValue(undefined),
+	removedCalendarEvents: jest.fn().mockResolvedValue(undefined),
+	removedNewsItems: jest.fn().mockResolvedValue(undefined),
+} satisfies Record<EntityTable, jest.Mock>;
+const table = (fn: jest.Mock) => ({
+	upsertByEntityId: (id: string, data: object) => fn(id, data),
+});
+const db = {
+	newsArticles: table(upserts.newsArticles),
+	newsChannels: table(upserts.newsChannels),
+	earnings: table(upserts.earnings),
+	dividends: table(upserts.dividends),
+	ratings: table(upserts.ratings),
+	guidance: table(upserts.guidance),
+	ipos: table(upserts.ipos),
+	splits: table(upserts.splits),
+	economics: table(upserts.economics),
+	conferenceCalls: table(upserts.conferenceCalls),
+	consensusRatings: table(upserts.consensusRatings),
+	removedCalendarEvents: table(upserts.removedCalendarEvents),
+	removedNewsItems: table(upserts.removedNewsItems),
+};
+
+// Safe: handlers under test only read ctx.key and ctx.db tables, and request execution and event logging are both mocked above.
+// A narrower type is not practical because BenzingaContext also requires keys and hook wiring that only a live corsair instance builds.
+const testCtx = () => ({ key: 'test-key', db }) as BenzingaContext;
 
 describe('Benzinga endpoint schemas', () => {
 	it('accepts a fully populated news query', () => {
@@ -786,5 +837,79 @@ describe('calendar endpoints', () => {
 			{ isins: 'US0378331005' },
 			'completed',
 		);
+	});
+});
+
+describe('entity persistence', () => {
+	const calls = (table: EntityTable) => upserts[table].mock.calls;
+
+	it('news.get upserts each article by stringified id', async () => {
+		const article = { id: 123456, title: 'Apple Announces New iPhone' };
+		mockRequest.mockResolvedValue([article]);
+		await getNews(testCtx(), {});
+		expect(calls('newsArticles')).toEqual([['123456', article]]);
+	});
+
+	it('news.listChannels upserts each channel', async () => {
+		const channel = { id: 26, parent: 0, channel: 'After-Hours Center' };
+		mockRequest.mockResolvedValue({ ok: true, data: [channel] });
+		await listNewsChannels(testCtx(), {});
+		expect(calls('newsChannels')).toEqual([['26', channel]]);
+	});
+
+	it.each([
+		['earnings', 'earnings', listEarnings],
+		['dividends', 'dividends', listDividends],
+		['ratings', 'ratings', listRatings],
+		['guidance', 'guidance', listGuidance],
+		['ipos', 'ipos', listIpos],
+		['splits', 'splits', listSplits],
+		['economics', 'economics', listEconomics],
+		['conferenceCalls', 'conference', listConferenceCalls],
+	] as const)(
+		'calendar %s upserts each record by id',
+		async (table, key, fn) => {
+			const record = { id: 'abc123', updated: 1704819600 };
+			mockRequest.mockResolvedValue({ [key]: [record] });
+			await fn(testCtx(), {});
+			expect(calls(table)).toEqual([['abc123', record]]);
+		},
+	);
+
+	it('calendar.getConsensusRatings upserts under the requested ticker', async () => {
+		const payload = { consensus_rating: 'BUY', total_analyst_count: 50 };
+		mockRequest.mockResolvedValue(payload);
+		await getConsensusRatings(testCtx(), { ticker: 'aapl' });
+		expect(calls('consensusRatings')).toEqual([
+			['AAPL', { ...payload, ticker: 'AAPL' }],
+		]);
+	});
+
+	it('calendar.listRemoved upserts each removed event', async () => {
+		const removed = {
+			id: '5b5d22b5be523300016fd411',
+			type: 'dividends',
+			updated: 0,
+		};
+		mockRequest.mockResolvedValue({ removed: [removed] });
+		await listRemovedCalendarEvents(testCtx(), {});
+		expect(calls('removedCalendarEvents')).toEqual([[removed.id, removed]]);
+	});
+
+	it('news.listRemoved upserts items from every response key', async () => {
+		const item = { id: 123456, updated: 'Wed, 17 May 2017 14:20:15 -0400' };
+		mockRequest.mockResolvedValue({ data: [item] });
+		await listRemovedNews(testCtx(), {});
+		expect(calls('removedNewsItems')).toEqual([['123456', item]]);
+	});
+
+	it('still returns the API response when the database write fails', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		upserts.earnings.mockRejectedValueOnce(new Error('db down'));
+		const payload = { earnings: [{ id: 'abc123' }] };
+		mockRequest.mockResolvedValue(payload);
+		await expect(listEarnings(testCtx(), {})).resolves.toEqual(payload);
+		expect(warn).toHaveBeenCalled();
+		warn.mockRestore();
 	});
 });

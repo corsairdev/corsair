@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
 
 export const listRemovedCalendarEvents: BenzingaEndpoints['listRemovedCalendarEvents'] =
@@ -13,6 +14,12 @@ export const listRemovedCalendarEvents: BenzingaEndpoints['listRemovedCalendarEv
 			type: input.type,
 			updated: input.updated,
 		});
+
+		await persistEntities(
+			ctx.db.removedCalendarEvents,
+			response.removed,
+			(r) => r.id,
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -35,6 +42,12 @@ export const listRemovedNews: BenzingaEndpoints['listRemovedNews'] = async (
 		pageSize: input.pageSize,
 		updatedSince: input.updatedSince,
 	});
+
+	await persistEntities(
+		ctx.db.removedNewsItems,
+		Object.values(response).flat(),
+		(r) => String(r.id),
+	);
 
 	await logEventFromContext(
 		ctx,

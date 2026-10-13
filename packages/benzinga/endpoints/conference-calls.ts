@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
+import { persistEntities } from './persist';
 import type { ListConferenceCallsRawResponse } from './types';
 import { ListConferenceCallsRawResponseSchema } from './types';
 
@@ -24,6 +25,12 @@ export const listConferenceCalls: BenzingaEndpoints['listConferenceCalls'] =
 		const response = {
 			conference: parsed.conference ?? parsed['conference-calls'] ?? [],
 		};
+
+		await persistEntities(
+			ctx.db.conferenceCalls,
+			response.conference,
+			(r) => r.id,
+		);
 
 		await logEventFromContext(
 			ctx,

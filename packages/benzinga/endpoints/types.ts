@@ -1,4 +1,19 @@
 import { z } from 'zod';
+import {
+	BenzingaConferenceCall,
+	BenzingaConsensusRating,
+	BenzingaDividend,
+	BenzingaEarning,
+	BenzingaEconomic,
+	BenzingaGuidance,
+	BenzingaIpo,
+	BenzingaNewsArticle,
+	BenzingaNewsChannel,
+	BenzingaRating,
+	BenzingaRemovedCalendarEvent,
+	BenzingaRemovedNewsItem,
+	BenzingaSplit,
+} from '../schema/database';
 
 /**
  * Benzinga uses `YYYY-MM-DD` calendar dates across the news and calendar APIs
@@ -77,45 +92,7 @@ const GetNewsInputSchema = z.object({
 
 export type GetNewsInput = z.infer<typeof GetNewsInputSchema>;
 
-const BenzingaImageSchema = z.object({
-	size: z.string(),
-	url: z.string(),
-	alt: z.string().optional(),
-});
-
-const BenzingaChannelSchema = z.object({
-	name: z.string(),
-});
-
-const BenzingaStockSchema = z.object({
-	name: z.string(),
-	cusip: z.string().optional(),
-	isin: z.string().optional(),
-	exchange: z.string().optional(),
-});
-
-const BenzingaTagSchema = z.object({
-	name: z.string(),
-});
-
-const GetNewsResponseSchema = z.array(
-	z.object({
-		id: z.number(),
-		author: z.string(),
-		created: z.string(),
-		updated: z.string(),
-		title: z.string(),
-		teaser: z.string(),
-		body: z.string(),
-		url: z.string(),
-		image: z.array(BenzingaImageSchema).optional(),
-		channels: z.array(BenzingaChannelSchema).optional(),
-		stocks: z.array(BenzingaStockSchema).optional(),
-		tags: z.array(BenzingaTagSchema).optional(),
-		importance_rank: z.number().optional(),
-		original_id: z.number().optional(),
-	}),
-);
+const GetNewsResponseSchema = z.array(BenzingaNewsArticle);
 
 export type GetNewsResponse = z.infer<typeof GetNewsResponseSchema>;
 
@@ -126,19 +103,10 @@ const ListNewsChannelsInputSchema = z.object({});
 
 export type ListNewsChannelsInput = z.infer<typeof ListNewsChannelsInputSchema>;
 
-const NewsChannelSchema = z
-	.object({
-		id: z.number(),
-		parent: z.number(),
-		channel: z.string(),
-		weight: z.number(),
-	})
-	.loose();
-
 const ListNewsChannelsResponseSchema = z
 	.object({
 		ok: z.boolean(),
-		data: z.array(NewsChannelSchema),
+		data: z.array(BenzingaNewsChannel),
 	})
 	.loose();
 
@@ -177,37 +145,8 @@ const ListEarningsInputSchema = CalendarPaginationSchema.extend(
 
 export type ListEarningsInput = z.infer<typeof ListEarningsInputSchema>;
 
-const EarningSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		currency: z.string().optional(),
-		period: z.string().optional(),
-		period_year: z.number().optional(),
-		eps: z.string().optional(),
-		eps_est: z.string().optional(),
-		eps_prior: z.string().optional(),
-		eps_surprise: z.string().optional(),
-		eps_surprise_percent: z.string().optional(),
-		eps_type: z.string().optional(),
-		revenue: z.string().optional(),
-		revenue_est: z.string().optional(),
-		revenue_prior: z.string().optional(),
-		revenue_surprise: z.string().optional(),
-		revenue_surprise_percent: z.string().optional(),
-		revenue_type: z.string().optional(),
-		importance: z.number().optional(),
-		time: z.string().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListEarningsResponseSchema = z.object({
-	earnings: z.array(EarningSchema),
+	earnings: z.array(BenzingaEarning),
 });
 
 export type ListEarningsResponse = z.infer<typeof ListEarningsResponseSchema>;
@@ -225,33 +164,8 @@ const ListDividendsInputSchema = CalendarPaginationSchema.extend(
 
 export type ListDividendsInput = z.infer<typeof ListDividendsInputSchema>;
 
-const DividendSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		currency: z.string().optional(),
-		dividend: z.string().optional(),
-		dividend_prior: z.string().optional(),
-		dividend_type: z.string().optional(),
-		dividend_yield: z.string().optional(),
-		ex_dividend_date: z.string().optional(),
-		payable_date: z.string().optional(),
-		record_date: z.string().optional(),
-		frequency: z.number().optional(),
-		confirmed: z.boolean().optional(),
-		period: z.string().optional(),
-		year: z.number().optional(),
-		importance: z.number().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListDividendsResponseSchema = z.object({
-	dividends: z.array(DividendSchema),
+	dividends: z.array(BenzingaDividend),
 });
 
 export type ListDividendsResponse = z.infer<typeof ListDividendsResponseSchema>;
@@ -287,34 +201,8 @@ const ListRatingsInputSchema = CalendarPaginationSchema.extend(
 
 export type ListRatingsInput = z.infer<typeof ListRatingsInputSchema>;
 
-const RatingSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		analyst: z.string().optional(),
-		analyst_id: z.string().optional(),
-		analyst_name: z.string().optional(),
-		firm_id: z.string().optional(),
-		action_company: z.string().optional(),
-		action_pt: z.string().optional(),
-		rating_current: z.string().optional(),
-		rating_prior: z.string().optional(),
-		pt_current: z.string().optional(),
-		pt_prior: z.string().optional(),
-		pt_pct_change: z.string().optional(),
-		currency: z.string().optional(),
-		importance: z.number().optional(),
-		time: z.string().optional(),
-		updated: z.number().optional(),
-		url: z.string().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListRatingsResponseSchema = z.object({
-	ratings: z.array(RatingSchema),
+	ratings: z.array(BenzingaRating),
 });
 
 export type ListRatingsResponse = z.infer<typeof ListRatingsResponseSchema>;
@@ -330,32 +218,8 @@ const ListGuidanceInputSchema = CalendarPaginationSchema.extend(
 
 export type ListGuidanceInput = z.infer<typeof ListGuidanceInputSchema>;
 
-const GuidanceSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		currency: z.string().optional(),
-		period: z.string().optional(),
-		period_year: z.number().optional(),
-		eps_guidance_min: z.string().optional(),
-		eps_guidance_max: z.string().optional(),
-		eps_guidance_est: z.string().optional(),
-		revenue_guidance_min: z.string().optional(),
-		revenue_guidance_max: z.string().optional(),
-		revenue_guidance_est: z.string().optional(),
-		is_primary: z.string().optional(),
-		importance: z.number().optional(),
-		time: z.string().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListGuidanceResponseSchema = z.object({
-	guidance: z.array(GuidanceSchema),
+	guidance: z.array(BenzingaGuidance),
 });
 
 export type ListGuidanceResponse = z.infer<typeof ListGuidanceResponseSchema>;
@@ -376,23 +240,7 @@ const ListIposInputSchema = z.object({
 
 export type ListIposInput = z.infer<typeof ListIposInputSchema>;
 
-export const IpoSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		deal_status: z.string().optional(),
-		ipo_type: z.string().optional(),
-		price_public_offering: z.string().optional(),
-		price_min: z.string().optional(),
-		price_max: z.string().optional(),
-		offering_shares: z.number().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
+export const IpoSchema = BenzingaIpo;
 
 export type Ipo = z.infer<typeof IpoSchema>;
 
@@ -426,27 +274,8 @@ const ListSplitsInputSchema = CalendarPaginationSchema.extend(
 
 export type ListSplitsInput = z.infer<typeof ListSplitsInputSchema>;
 
-const SplitSchema = z
-	.object({
-		id: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		ratio: z.string().optional(),
-		split_type: z.string().optional(),
-		date_announced: z.string().optional(),
-		date_ex: z.string().optional(),
-		date_distribution: z.string().optional(),
-		date_recorded: z.string().optional(),
-		optionable: z.boolean().optional(),
-		importance: z.number().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListSplitsResponseSchema = z.object({
-	splits: z.array(SplitSchema),
+	splits: z.array(BenzingaSplit),
 });
 
 export type ListSplitsResponse = z.infer<typeof ListSplitsResponseSchema>;
@@ -465,27 +294,8 @@ const ListEconomicsInputSchema = CalendarPaginationSchema.extend(
 
 export type ListEconomicsInput = z.infer<typeof ListEconomicsInputSchema>;
 
-const EconomicSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		event_name: z.string(),
-		event_category: z.string().optional(),
-		country: z.string().optional(),
-		actual: z.string().optional(),
-		consensus: z.string().optional(),
-		prior: z.string().optional(),
-		period_year: z.number().optional(),
-		importance: z.number().optional(),
-		time: z.string().optional(),
-		updated: z.number().optional(),
-		description: z.string().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListEconomicsResponseSchema = z.object({
-	economics: z.array(EconomicSchema),
+	economics: z.array(BenzingaEconomic),
 });
 
 export type ListEconomicsResponse = z.infer<typeof ListEconomicsResponseSchema>;
@@ -505,33 +315,8 @@ export type ListConferenceCallsInput = z.infer<
 	typeof ListConferenceCallsInputSchema
 >;
 
-const ConferenceCallSchema = z
-	.object({
-		id: z.string(),
-		date: z.string(),
-		ticker: z.string(),
-		name: z.string(),
-		exchange: z.string().optional(),
-		cusip: z.string().optional(),
-		isin: z.string().optional(),
-		access_code: z.string().optional(),
-		confirmed: z.boolean().optional(),
-		international_num: z.string().optional(),
-		phone_num: z.string().optional(),
-		reservation_num: z.string().optional(),
-		period: z.string().optional(),
-		period_year: z.number().optional(),
-		start_time: z.string().optional(),
-		time: z.string().optional(),
-		webcast_url: z.string().optional(),
-		importance: z.number().optional(),
-		updated: z.number().optional(),
-		notes: z.string().optional(),
-	})
-	.loose();
-
 const ListConferenceCallsResponseSchema = z.object({
-	conference: z.array(ConferenceCallSchema),
+	conference: z.array(BenzingaConferenceCall),
 });
 
 export type ListConferenceCallsResponse = z.infer<
@@ -544,8 +329,8 @@ export type ListConferenceCallsResponse = z.infer<
  * normalized to `{ conference }` in `endpoints/conference-calls.ts`.
  */
 export const ListConferenceCallsRawResponseSchema = z.object({
-	conference: z.array(ConferenceCallSchema).optional(),
-	'conference-calls': z.array(ConferenceCallSchema).optional(),
+	conference: z.array(BenzingaConferenceCall).optional(),
+	'conference-calls': z.array(BenzingaConferenceCall).optional(),
 });
 
 export type ListConferenceCallsRawResponse = z.infer<
@@ -568,28 +353,9 @@ export type GetConsensusRatingsInput = z.infer<
 	typeof GetConsensusRatingsInputSchema
 >;
 
-const GetConsensusRatingsResponseSchema = z
-	.object({
-		aggregate_ratings: z
-			.object({
-				strong_buy: z.number().optional(),
-				buy: z.number().optional(),
-				hold: z.number().optional(),
-				sell: z.number().optional(),
-				strong_sell: z.number().optional(),
-			})
-			.optional(),
-		aggregate_type: z.string().optional(),
-		consensus_price_target: z.number().optional(),
-		consensus_rating: z.string().optional(),
-		consensus_rating_val: z.number().optional(),
-		high_price_target: z.number().optional(),
-		low_price_target: z.number().optional(),
-		total_analyst_count: z.number().optional(),
-		unique_analyst_count: z.number().optional(),
-		updated_at: z.string().optional(),
-	})
-	.loose();
+const GetConsensusRatingsResponseSchema = BenzingaConsensusRating.omit({
+	ticker: true,
+}).loose();
 
 export type GetConsensusRatingsResponse = z.infer<
 	typeof GetConsensusRatingsResponseSchema
@@ -623,13 +389,7 @@ export type ListRemovedCalendarEventsInput = z.infer<
 >;
 
 const ListRemovedCalendarEventsResponseSchema = z.object({
-	removed: z.array(
-		z.object({
-			id: z.string(),
-			type: z.string(),
-			updated: z.number(),
-		}),
-	),
+	removed: z.array(BenzingaRemovedCalendarEvent),
 });
 
 export type ListRemovedCalendarEventsResponse = z.infer<
@@ -654,12 +414,7 @@ export type ListRemovedNewsInput = z.infer<typeof ListRemovedNewsInputSchema>;
  */
 const ListRemovedNewsResponseSchema = z.record(
 	z.string(),
-	z.array(
-		z.object({
-			id: z.number(),
-			updated: z.string(),
-		}),
-	),
+	z.array(BenzingaRemovedNewsItem),
 );
 
 export type ListRemovedNewsResponse = z.infer<

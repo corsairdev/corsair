@@ -9,4 +9,517 @@ The Benzinga plugin syncs data locally. Use `corsair.benzinga.db.<entity>.search
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Conference Calls
+
+Path: `benzinga.db.conferenceCalls.search`
+
+```ts
+const rows = await corsair.benzinga.db.conferenceCalls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `access_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmed` | `boolean` | equals |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `international_num` | `string` | equals, contains, startsWith, endsWith, in |
+| `isin` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_year` | `number` | equals, gt, gte, lt, lte, in |
+| `phone_num` | `string` | equals, contains, startsWith, endsWith, in |
+| `reservation_num` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `webcast_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Consensus Ratings
+
+Path: `benzinga.db.consensusRatings.search`
+
+```ts
+const rows = await corsair.benzinga.db.consensusRatings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `aggregate_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `consensus_price_target` | `number` | equals, gt, gte, lt, lte, in |
+| `consensus_rating` | `string` | equals, contains, startsWith, endsWith, in |
+| `consensus_rating_val` | `number` | equals, gt, gte, lt, lte, in |
+| `high_price_target` | `number` | equals, gt, gte, lt, lte, in |
+| `low_price_target` | `number` | equals, gt, gte, lt, lte, in |
+| `total_analyst_count` | `number` | equals, gt, gte, lt, lte, in |
+| `unique_analyst_count` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Dividends
+
+Path: `benzinga.db.dividends.search`
+
+```ts
+const rows = await corsair.benzinga.db.dividends.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmed` | `boolean` | equals |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `dividend` | `string` | equals, contains, startsWith, endsWith, in |
+| `dividend_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `dividend_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `dividend_yield` | `string` | equals, contains, startsWith, endsWith, in |
+| `end_regular_dividend` | `boolean` | equals |
+| `ex_dividend_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `frequency` | `number` | equals, gt, gte, lt, lte, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `isin` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `payable_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `string` | equals, contains, startsWith, endsWith, in |
+| `record_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `year` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Earnings
+
+Path: `benzinga.db.earnings.search`
+
+```ts
+const rows = await corsair.benzinga.db.earnings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_confirmed` | `number` | equals, gt, gte, lt, lte, in |
+| `eps` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_est` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_surprise` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_surprise_percent` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `isin` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_year` | `number` | equals, gt, gte, lt, lte, in |
+| `revenue` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_est` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_surprise` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_surprise_percent` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Economics
+
+Path: `benzinga.db.economics.search`
+
+```ts
+const rows = await corsair.benzinga.db.economics.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `actual` | `string` | equals, contains, startsWith, endsWith, in |
+| `actual_t` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmed` | `boolean` | equals |
+| `consensus` | `string` | equals, contains, startsWith, endsWith, in |
+| `consensus_t` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_category` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_period` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_year` | `number` | equals, gt, gte, lt, lte, in |
+| `prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `prior_t` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Guidance
+
+Path: `benzinga.db.guidance.search`
+
+```ts
+const rows = await corsair.benzinga.db.guidance.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmed` | `boolean` | equals |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_guidance_est` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_guidance_max` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_guidance_min` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_guidance_prior_max` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_guidance_prior_min` | `string` | equals, contains, startsWith, endsWith, in |
+| `eps_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `is_primary` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_year` | `number` | equals, gt, gte, lt, lte, in |
+| `prelim` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_guidance_est` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_guidance_max` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_guidance_min` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_guidance_prior_max` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_guidance_prior_min` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Ipos
+
+Path: `benzinga.db.ipos.search`
+
+```ts
+const rows = await corsair.benzinga.db.ipos.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `deal_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `initial_filing_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `insider_lockup_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `insider_lockup_days` | `number` | equals, gt, gte, lt, lte, in |
+| `ipo_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_yr_income` | `number` | equals, gt, gte, lt, lte, in |
+| `last_yr_income_year` | `number` | equals, gt, gte, lt, lte, in |
+| `last_yr_revenue` | `number` | equals, gt, gte, lt, lte, in |
+| `last_yr_revenue_year` | `number` | equals, gt, gte, lt, lte, in |
+| `market_cap_at_offer` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `offering_shares` | `number` | equals, gt, gte, lt, lte, in |
+| `offering_shares_ord_adr` | `number` | equals, gt, gte, lt, lte, in |
+| `offering_value` | `number` | equals, gt, gte, lt, lte, in |
+| `open_date_verified` | `boolean` | equals |
+| `ord_shares_out_after_offer` | `number` | equals, gt, gte, lt, lte, in |
+| `price_max` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_min` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_open` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_public_offering` | `string` | equals, contains, startsWith, endsWith, in |
+| `pricing_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `pricing_date_verified` | `boolean` | equals |
+| `sec_accession_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `sec_filing_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `shares_outstanding` | `number` | equals, gt, gte, lt, lte, in |
+| `sic` | `number` | equals, gt, gte, lt, lte, in |
+| `spac_converted_to_target` | `boolean` | equals |
+| `state_location` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `underwriter_quiet_expiration_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `underwriter_quiet_expiration_days` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## News Articles
+
+Path: `benzinga.db.newsArticles.search`
+
+```ts
+const rows = await corsair.benzinga.db.newsArticles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `teaser` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance_rank` | `number` | equals, gt, gte, lt, lte, in |
+| `original_id` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## News Channels
+
+Path: `benzinga.db.newsChannels.search`
+
+```ts
+const rows = await corsair.benzinga.db.newsChannels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `parent` | `number` | equals, gt, gte, lt, lte, in |
+| `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `weight` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Ratings
+
+Path: `benzinga.db.ratings.search`
+
+```ts
+const rows = await corsair.benzinga.db.ratings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `action_company` | `string` | equals, contains, startsWith, endsWith, in |
+| `action_pt` | `string` | equals, contains, startsWith, endsWith, in |
+| `adjusted_pt_current` | `string` | equals, contains, startsWith, endsWith, in |
+| `adjusted_pt_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `analyst` | `string` | equals, contains, startsWith, endsWith, in |
+| `analyst_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `analyst_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `firm_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `isin` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `pt_current` | `string` | equals, contains, startsWith, endsWith, in |
+| `pt_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `rating_current` | `string` | equals, contains, startsWith, endsWith, in |
+| `rating_prior` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `url_calendar` | `string` | equals, contains, startsWith, endsWith, in |
+| `url_news` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Removed Calendar Events
+
+Path: `benzinga.db.removedCalendarEvents.search`
+
+```ts
+const rows = await corsair.benzinga.db.removedCalendarEvents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Removed News Items
+
+Path: `benzinga.db.removedNewsItems.search`
+
+```ts
+const rows = await corsair.benzinga.db.removedNewsItems.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Splits
+
+Path: `benzinga.db.splits.search`
+
+```ts
+const rows = await corsair.benzinga.db.splits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cusip` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_announced` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_distribution` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_ex` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_recorded` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `optionable` | `boolean` | equals |
+| `ratio` | `string` | equals, contains, startsWith, endsWith, in |
+| `split_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
 

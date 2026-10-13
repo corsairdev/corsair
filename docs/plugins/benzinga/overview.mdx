@@ -3,11 +3,12 @@ title: Overview
 description: "Benzinga plugin for Corsair"
 ---
 
-Use **Benzinga** through Corsair: one client, typed API calls.
+Use **Benzinga** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 15 typed API operations
+- 13 synced entities (`conferenceCalls`, `consensusRatings`, `dividends`, `earnings`, `economics`, `guidance`, and 7 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -103,11 +104,20 @@ _No write-style endpoint inferred; pick any operation from the [API](/plugins/be
 
 See the full list on the [API](/plugins/benzinga/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.benzinga.db.<entity>.search()` and `.list()`: `conferenceCalls`, `consensusRatings`, `dividends`, `earnings`, `economics`, `guidance`, `ipos`, `newsArticles`, `newsChannels`, `ratings`, `removedCalendarEvents`, `removedNewsItems`, `splits`.
+
+See [Database](/plugins/benzinga/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/benzinga/api">
     Every `benzinga.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/benzinga/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
