@@ -15,6 +15,18 @@ async function persist(write: () => Promise<void>): Promise<void> {
 	}
 }
 
+/**
+ * The docs name the filter `call_direction`, but the live API only reads
+ * `direction` (it returns that name too), so the value is sent under both.
+ */
+function withDirection<T extends { call_direction?: string | null }>(
+	fields: T,
+): T & { direction?: string | null } {
+	return fields.call_direction === undefined
+		? fields
+		: { ...fields, direction: fields.call_direction };
+}
+
 const segment = (id: string | number) => encodeURIComponent(String(id));
 
 // Leads
@@ -221,14 +233,14 @@ export const listUsers: CallinglyEndpoints['listUsers'] = async (
 		await makeCallinglyRequest('agents', ctx.key, { accountId: account_id }),
 	);
 	await persist(async () => {
-		for (const agent of agents) {
+		for (const agent of agents.data) {
 			await ctx.db.users?.upsertByEntityId(String(agent.id), agent);
 		}
 	});
 	await logEventFromContext(
 		ctx,
 		'callingly.agents.list',
-		{ count: agents.length },
+		{ count: agents.data.length },
 		'completed',
 	);
 	return agents;
@@ -366,14 +378,14 @@ export const listTeams: CallinglyEndpoints['listTeams'] = async (
 		await makeCallinglyRequest('teams', ctx.key, { accountId: account_id }),
 	);
 	await persist(async () => {
-		for (const team of teams) {
+		for (const team of teams.data) {
 			await ctx.db.teams?.upsertByEntityId(String(team.id), team);
 		}
 	});
 	await logEventFromContext(
 		ctx,
 		'callingly.teams.list',
-		{ count: teams.length },
+		{ count: teams.data.length },
 		'completed',
 	);
 	return teams;
@@ -539,14 +551,14 @@ export const listClients: CallinglyEndpoints['listClients'] = async (
 		await makeCallinglyRequest('clients', ctx.key),
 	);
 	await persist(async () => {
-		for (const client of clients) {
+		for (const client of clients.data) {
 			await ctx.db.clients?.upsertByEntityId(String(client.id), client);
 		}
 	});
 	await logEventFromContext(
 		ctx,
 		'callingly.clients.list',
-		{ count: clients.length },
+		{ count: clients.data.length },
 		'completed',
 	);
 	return clients;
@@ -599,22 +611,19 @@ export const setClientActive: CallinglyEndpoints['setClientActive'] = async (
 	input,
 ) => {
 	const { clientId, is_active } = In.setClientActive.parse(input);
-	const client = Out.setClientActive.parse(
+	const result = Out.setClientActive.parse(
 		await makeCallinglyRequest(`clients/${segment(clientId)}/active`, ctx.key, {
 			method: 'POST',
 			body: { is_active },
 		}),
 	);
-	await persist(async () => {
-		await ctx.db.clients?.upsertByEntityId(String(client.id), client);
-	});
 	await logEventFromContext(
 		ctx,
 		'callingly.clients.activateDeactivate',
 		{ clientId, is_active },
 		'completed',
 	);
-	return client;
+	return result;
 };
 
 // Webhooks
@@ -667,11 +676,11 @@ export const createWebhook: CallinglyEndpoints['createWebhook'] = async (
 	ctx,
 	input,
 ) => {
-	const { account_id, ...body } = In.createWebhook.parse(input);
+	const { account_id, ...fields } = In.createWebhook.parse(input);
 	const webhook = Out.createWebhook.parse(
 		await makeCallinglyRequest('webhooks', ctx.key, {
 			method: 'POST',
-			body,
+			body: withDirection(fields),
 			accountId: account_id,
 		}),
 	);
@@ -691,11 +700,11 @@ export const updateWebhook: CallinglyEndpoints['updateWebhook'] = async (
 	ctx,
 	input,
 ) => {
-	const { webhookId, account_id, ...body } = In.updateWebhook.parse(input);
+	const { webhookId, account_id, ...fields } = In.updateWebhook.parse(input);
 	const webhook = Out.updateWebhook.parse(
 		await makeCallinglyRequest(`webhooks/${segment(webhookId)}`, ctx.key, {
 			method: 'PUT',
-			body,
+			body: withDirection(fields),
 			accountId: account_id,
 		}),
 	);

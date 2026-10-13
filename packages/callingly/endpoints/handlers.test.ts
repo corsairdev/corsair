@@ -415,14 +415,22 @@ describe('agents', () => {
 	});
 
 	it('listUsers sends GET /agents with the agency account_id', async () => {
-		fetchMock.mockResolvedValueOnce(json([agent]));
+		fetchMock.mockResolvedValueOnce(json({ data: [agent], count: 1 }));
 		const result = await Handlers.listUsers(ctx, { account_id: 1 });
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			url: `${API}/agents?account_id=1`,
 		});
-		expect(result).toEqual([agent]);
+		expect(result).toEqual({ data: [agent], count: 1 });
 		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('123', agent);
+	});
+
+	it('listUsers keeps the live boolean donotdisturb and extra agent fields', async () => {
+		const live = { ...agent, donotdisturb: false, name: 'John Smith' };
+		fetchMock.mockResolvedValueOnce(json({ data: [live], count: 1 }));
+		const result = await Handlers.listUsers(ctx, {});
+		expect(result).toEqual({ data: [live], count: 1 });
+		expect(db.users.upsertByEntityId).toHaveBeenCalledWith('123', live);
 	});
 
 	it('updateAgent sends PUT /agents/{id}', async () => {
@@ -503,11 +511,29 @@ describe('teams', () => {
 
 	it('listTeams sends GET /teams', async () => {
 		fetchMock.mockResolvedValueOnce(
-			json([{ id: 123, account_id: 1, name: 'Main Team' }]),
+			json({ data: [{ id: 123, account_id: 1, name: 'Main Team' }] }),
 		);
 		const result = await Handlers.listTeams(ctx, {});
 		expect(lastRequest()).toMatchObject({ method: 'GET', url: `${API}/teams` });
-		expect(result).toEqual([{ id: 123, account_id: 1, name: 'Main Team' }]);
+		expect(result).toEqual({
+			data: [{ id: 123, account_id: 1, name: 'Main Team' }],
+		});
+		expect(db.teams.upsertByEntityId).toHaveBeenCalledWith('123', {
+			id: 123,
+			account_id: 1,
+			name: 'Main Team',
+		});
+	});
+
+	it('getTeam parses live boolean flags and { unit, value } retry steps', async () => {
+		const live = {
+			id: 123,
+			name: 'Main Team',
+			is_record: true,
+			retry_schedule: [{ unit: 'minutes', value: 5 }],
+		};
+		fetchMock.mockResolvedValueOnce(json(live));
+		expect(await Handlers.getTeam(ctx, { teamId: 123 })).toEqual(live);
 	});
 
 	it('getTeam sends GET /teams/{id}', async () => {
@@ -633,13 +659,14 @@ describe('teams', () => {
 
 describe('clients', () => {
 	it('listClients sends GET /clients', async () => {
-		fetchMock.mockResolvedValueOnce(json([client]));
+		fetchMock.mockResolvedValueOnce(json({ data: [client] }));
 		const result = await Handlers.listClients(ctx, {});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			url: `${API}/clients`,
 		});
-		expect(result).toEqual([client]);
+		expect(result).toEqual({ data: [client] });
+		expect(db.clients.upsertByEntityId).toHaveBeenCalledWith('123', client);
 	});
 
 	it('createClient sends POST /clients', async () => {
@@ -679,7 +706,7 @@ describe('clients', () => {
 	});
 
 	it('setClientActive sends POST /clients/{id}/active with is_active', async () => {
-		fetchMock.mockResolvedValueOnce(json(client));
+		fetchMock.mockResolvedValueOnce(json({ success: true }));
 		const result = await Handlers.setClientActive(ctx, {
 			clientId: 123,
 			is_active: 0,
@@ -689,7 +716,7 @@ describe('clients', () => {
 			url: `${API}/clients/123/active`,
 			body: { is_active: 0 },
 		});
-		expect(result).toEqual(client);
+		expect(result).toEqual({ success: true });
 	});
 });
 
@@ -736,6 +763,28 @@ describe('webhooks', () => {
 			},
 		});
 		expect(result).toEqual(webhook);
+	});
+
+	it('createWebhook also sends call_direction as the live-API direction field', async () => {
+		const live = { ...webhook, direction: 'inbound', is_active: true };
+		fetchMock.mockResolvedValueOnce(json(live));
+		const result = await Handlers.createWebhook(ctx, {
+			name: 'My Webhook',
+			event: 'call_completed',
+			target_url: 'http://example.com/',
+			call_direction: 'inbound',
+		});
+		expect(lastRequest()).toMatchObject({
+			body: {
+				name: 'My Webhook',
+				event: 'call_completed',
+				target_url: 'http://example.com/',
+				call_direction: 'inbound',
+				direction: 'inbound',
+			},
+		});
+		expect(result).toEqual(live);
+		expect(db.webhooks.upsertByEntityId).toHaveBeenCalledWith('1123', live);
 	});
 
 	it('updateWebhook sends a partial PUT /webhooks/{id}', async () => {

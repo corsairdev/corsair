@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 const Id = z.union([z.string(), z.number()]);
 
+/** The docs show 0/1 flags, the live API returns some of them as booleans. */
+const Flag = z.union([z.boolean(), z.number()]);
+
 /**
  * PHP serializes an empty related record as `[]` instead of `null`,
  * which is what GET /v1/calls returns for calls with no member, lead or profile.
@@ -134,16 +137,30 @@ export const CallinglyCall = z.object({
 export const CallinglyUser = z.object({
 	id: Id,
 	account_id: Id.optional(),
+	name: z.string().optional(),
 	fname: z.string().optional(),
 	lname: z.string().optional(),
+	email: z.string().nullable().optional(),
 	phone_number: z.string().optional(),
 	ext: z.string().nullable().optional(),
-	donotdisturb: z.number().optional(),
+	on_call_id: Id.nullable().optional(),
+	custom_id: Id.nullable().optional(),
+	fub_id: Id.nullable().optional(),
+	hubspot_id: Id.nullable().optional(),
+	donotdisturb: Flag.optional(),
 	donotdisturb_until: z.string().nullable().optional(),
 	priority: z.number().optional(),
 	timezone: z.string().optional(),
 	is_available: z.boolean().optional(),
 });
+
+/**
+ * The docs show retry delays as minutes; the live API returns `{ unit, value }`.
+ */
+const RetryStep = z.union([
+	z.number(),
+	z.object({ unit: z.string(), value: z.number() }),
+]);
 
 /**
  * Team fields from GET /v1/teams and GET /v1/teams/{id}.
@@ -152,20 +169,20 @@ export const CallinglyTeam = z.object({
 	id: Id,
 	account_id: Id.optional(),
 	name: z.string(),
-	is_record: z.number().optional(),
+	is_record: Flag.optional(),
 	call_mode: z.string().optional(),
 	whispertext: z.string().optional(),
 	post_whispertext: z.string().optional(),
 	language: z.string().optional(),
 	delay: z.number().optional(),
-	is_retry: z.number().optional(),
+	is_retry: Flag.optional(),
 	retries: z.number().optional(),
-	retry_schedule: z.array(z.number()).optional(),
-	is_reschedule: z.number().optional(),
-	is_retry_lead: z.number().optional(),
+	retry_schedule: z.array(RetryStep).optional(),
+	is_reschedule: Flag.optional(),
+	is_retry_lead: Flag.optional(),
 	lead_retries: z.number().optional(),
-	lead_retry_schedule: z.array(z.number()).optional(),
-	is_sms: z.number().optional(),
+	lead_retry_schedule: z.array(RetryStep).optional(),
+	is_sms: Flag.optional(),
 	sms_body: z.string().optional(),
 	whispertext_voice: z.string().optional(),
 	is_users_available_for_call: z.boolean().optional(),
@@ -179,6 +196,8 @@ export const CallinglyTeamUser = z.object({
 	id: Id,
 	team_id: Id.optional(),
 	name: z.string().optional(),
+	custom_id: Id.nullable().optional(),
+	fub_id: Id.nullable().optional(),
 	priority: z.number().optional(),
 	cap: z.number().nullable().optional(),
 });
@@ -214,6 +233,8 @@ export const CallinglyClient = z.object({
 	id: Id,
 	name: z.string().optional(),
 	email: z.string().optional(),
+	billing_email: z.string().optional(),
+	is_active: Flag.optional(),
 	billed_users: z.number().optional(),
 	billed_numbers: z.number().optional(),
 });
@@ -252,6 +273,7 @@ export const CallinglyWebhookConfig = z.object({
 	name: z.string().optional(),
 	event: z.string().optional(),
 	target_url: z.string().optional(),
+	direction: z.string().nullable().optional(),
 	call_direction: z.string().nullable().optional(),
 	call_status: z.string().nullable().optional(),
 	call_lead_status: z.string().nullable().optional(),
@@ -259,6 +281,10 @@ export const CallinglyWebhookConfig = z.object({
 	number_id: Id.nullable().optional(),
 	field: z.string().nullable().optional(),
 	filter: z.string().nullable().optional(),
+	is_active: Flag.optional(),
+	consecutive_failures: z.number().optional(),
+	last_failed_at: z.string().nullable().optional(),
+	is_auto_disabled: Flag.optional(),
 });
 
 export type CallinglyLead = z.infer<typeof CallinglyLead>;

@@ -174,7 +174,10 @@ export const UpdateAgentScheduleInputSchema = z.object({
 });
 
 export const AgentScheduleResponseSchema = z.array(CallinglyScheduleDay);
-export const ListUsersResponseSchema = z.array(CallinglyUser);
+export const ListUsersResponseSchema = z.object({
+	data: z.array(CallinglyUser),
+	count: z.number().optional(),
+});
 
 export type CreateAgentInput = z.infer<typeof CreateAgentInputSchema>;
 export type ListUsersInput = z.infer<typeof ListUsersInputSchema>;
@@ -243,7 +246,9 @@ export const RemoveTeamAgentInputSchema = z.object({
 	account_id: AccountId,
 });
 
-export const ListTeamsResponseSchema = z.array(CallinglyTeam);
+export const ListTeamsResponseSchema = z.object({
+	data: z.array(CallinglyTeam),
+});
 
 export const ListTeamUsersResponseSchema = z.object({
 	agents: z.array(CallinglyTeamUser),
@@ -297,7 +302,9 @@ export const SetClientActiveInputSchema = z.object({
 		.describe('1 activates calling for the client, 0 deactivates it'),
 });
 
-export const ListClientsResponseSchema = z.array(CallinglyClient);
+export const ListClientsResponseSchema = z.object({
+	data: z.array(CallinglyClient),
+});
 
 export type ListClientsInput = z.infer<typeof ListClientsInputSchema>;
 export type CreateClientInput = z.infer<typeof CreateClientInputSchema>;
@@ -440,7 +447,7 @@ export type CallinglyEndpointOutputs = {
 	listClients: ListClientsResponse;
 	createClient: CallinglyClient;
 	deleteClient: AckResponse;
-	setClientActive: CallinglyClient;
+	setClientActive: AckResponse;
 
 	listWebhooks: ListWebhooksResponse;
 	getWebhook: CallinglyWebhookConfig;
@@ -514,7 +521,7 @@ export const CallinglyEndpointOutputSchemas = {
 	listClients: ListClientsResponseSchema,
 	createClient: CallinglyClient,
 	deleteClient: AckResponseSchema,
-	setClientActive: CallinglyClient,
+	setClientActive: AckResponseSchema,
 
 	listWebhooks: ListWebhooksResponseSchema,
 	getWebhook: CallinglyWebhookConfig,
