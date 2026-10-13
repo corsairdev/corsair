@@ -269,12 +269,12 @@ const PatchStorageInputSchema = z.object({
 	type: StorageTypeSchema.optional(),
 	parameters: z
 		.union([
+			WebFolderParametersSchema,
 			z.object({
 				path: z.string().optional().describe('Path prefix inside the bucket'),
 				bucket: z.string().min(1).optional().describe('Bucket name'),
 				credentials: CloudCredentialsSchema.partial().optional(),
 			}),
-			WebFolderParametersSchema,
 		])
 		.optional()
 		.describe('Storage connection parameters to update'),

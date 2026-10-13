@@ -60,4 +60,16 @@ describe('Claid.ai input schemas', () => {
 			}).success,
 		).toBe(false);
 	});
+
+	it('keeps base_url when patching a web folder storage', () => {
+		expect(
+			In.patchStorage.parse({
+				storage_id: 3,
+				parameters: { base_url: 'https://example.com/new/' },
+			}),
+		).toEqual({
+			storage_id: 3,
+			parameters: { base_url: 'https://example.com/new/' },
+		});
+	});
 });

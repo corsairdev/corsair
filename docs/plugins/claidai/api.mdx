@@ -941,14 +941,14 @@ await corsair.claidai.api.patchStorage({});
 
 ```ts
 {
+  base_url: string
+} | {
   path?: string,
   bucket?: string,
   credentials?: {
     access_key?: string,
     secret_access_key?: string
   }
-} | {
-  base_url: string
 }
 ```
 </Accordion>

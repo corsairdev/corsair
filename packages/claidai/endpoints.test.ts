@@ -652,6 +652,16 @@ describe('error handling', () => {
 	});
 });
 
+describe('input validation', () => {
+	it('rejects invalid input before calling the API', async () => {
+		await expect(deleteStorage(ctx, { storage_id: 0 })).rejects.toBeInstanceOf(
+			ZodError,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(db.storages.deleteByEntityId).not.toHaveBeenCalled();
+	});
+});
+
 describe('database persistence', () => {
 	it('accepts null storage fields as the live API returns them', async () => {
 		const live = {

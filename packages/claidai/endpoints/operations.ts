@@ -9,12 +9,16 @@ import {
 	saveStorages,
 	saveStorageTypes,
 } from './persist';
-import { ClaidAiEndpointOutputSchemas as Out } from './types';
+import {
+	ClaidAiEndpointInputSchemas as In,
+	ClaidAiEndpointOutputSchemas as Out,
+} from './types';
 
 export const backgroundRemove: ClaidAiEndpoints['backgroundRemove'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.backgroundRemove.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit',
 		ctx.key,
@@ -44,6 +48,7 @@ export const imageEditBatch: ClaidAiEndpoints['imageEditBatch'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.imageEditBatch.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit/batch',
 		ctx.key,
@@ -64,6 +69,7 @@ export const licensePlateBlur: ClaidAiEndpoints['licensePlateBlur'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.licensePlateBlur.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit',
 		ctx.key,
@@ -91,6 +97,7 @@ export const smartFrame: ClaidAiEndpoints['smartFrame'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.smartFrame.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit',
 		ctx.key,
@@ -119,6 +126,7 @@ export const createStorage: ClaidAiEndpoints['createStorage'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.createStorage.parse(input);
 	const response = await makeClaidAiRequest(
 		'storage/storages',
 		ctx.key,
@@ -137,6 +145,7 @@ export const createStorage: ClaidAiEndpoints['createStorage'] = async (
 
 export const backgroundGenerate: ClaidAiEndpoints['backgroundGenerate'] =
 	async (ctx, input) => {
+		input = In.backgroundGenerate.parse(input);
 		const response = await makeClaidAiRequest(
 			'scene/create',
 			ctx.key,
@@ -157,6 +166,7 @@ export const imageGenerate: ClaidAiEndpoints['imageGenerate'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.imageGenerate.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/generate',
 		ctx.key,
@@ -172,6 +182,7 @@ export const generativeResize: ClaidAiEndpoints['generativeResize'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.generativeResize.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit',
 		ctx.key,
@@ -207,6 +218,7 @@ export const storageDetails: ClaidAiEndpoints['storageDetails'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.storageDetails.parse(input);
 	const response = await makeClaidAiRequest(
 		`storage/storages/${input.storage_id}`,
 		ctx.key,
@@ -221,6 +233,7 @@ export const deleteStorage: ClaidAiEndpoints['deleteStorage'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.deleteStorage.parse(input);
 	const response = await makeClaidAiRequest(
 		`storage/storages/${input.storage_id}`,
 		ctx.key,
@@ -236,6 +249,7 @@ export const imageAiEdit: ClaidAiEndpoints['imageAiEdit'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.imageAiEdit.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/ai-edit',
 		ctx.key,
@@ -251,6 +265,7 @@ export const storageList: ClaidAiEndpoints['storageList'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.storageList.parse(input);
 	const response = await makeClaidAiRequest(
 		'storage/storages',
 		ctx.key,
@@ -265,6 +280,7 @@ export const polishImage: ClaidAiEndpoints['polishImage'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.polishImage.parse(input);
 	const response = await makeClaidAiRequest(
 		'image/edit',
 		ctx.key,
@@ -287,6 +303,7 @@ export const patchStorage: ClaidAiEndpoints['patchStorage'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.patchStorage.parse(input);
 	const { storage_id, ...body } = input;
 	const response = await makeClaidAiRequest(
 		`storage/storages/${storage_id}`,
@@ -308,6 +325,7 @@ export const storageTypes: ClaidAiEndpoints['storageTypes'] = async (
 	ctx,
 	input,
 ) => {
+	input = In.storageTypes.parse(input);
 	const response = await makeClaidAiRequest(
 		'storage/storage-types',
 		ctx.key,
