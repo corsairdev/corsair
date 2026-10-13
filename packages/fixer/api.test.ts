@@ -216,6 +216,24 @@ describe('Fixer entity persistence', () => {
 		expect(row?.data.rates).toEqual({ USD: 1.04, GBP: 0.85 });
 	});
 
+	it('a later latest fetch replaces rates from an earlier timestamp', async () => {
+		const day = { success: true, base: 'EUR', date: '2026-10-12' };
+		stubFetch(
+			{ body: { ...day, timestamp: 1700000000, rates: { USD: 1.08 } } },
+			{ body: { ...day, timestamp: 1700003600, rates: { GBP: 0.85 } } },
+		);
+		const api = await createFixer();
+
+		await api.rates.latest({ symbols: ['USD'] });
+		await api.rates.latest({ symbols: ['GBP'] });
+
+		const row = await fixerDb.rates.findByEntityId('EUR:2026-10-12');
+		expect(row?.data).toMatchObject({
+			timestamp: 1700003600,
+			rates: { GBP: 0.85 },
+		});
+	});
+
 	it('rates.convert stores the conversion', async () => {
 		stubFetch({
 			body: {
