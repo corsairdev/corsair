@@ -16,7 +16,10 @@ export const ClosestRegionResponseSchema = z
 		server: z
 			.string()
 			.describe('Location code for the server that answered the request'),
-		client: z.string().describe('Location code for the requesting client'),
+		client: z
+			.string()
+			.optional()
+			.describe('Location code for the requesting client'),
 	})
 	.loose();
 

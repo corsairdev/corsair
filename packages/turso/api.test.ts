@@ -38,7 +38,7 @@ describeLive('Turso live API integration tests', () => {
 		expect(typeof parsed.server).toBe('string');
 		expect(parsed.server.length).toBeGreaterThan(0);
 		expect(typeof parsed.client).toBe('string');
-		expect(parsed.client.length).toBeGreaterThan(0);
+		expect(parsed.client?.length).toBeGreaterThan(0);
 	});
 
 	it('2. TURSO_VALIDATE_API_TOKEN - validates API token and retrieves expiry', async () => {

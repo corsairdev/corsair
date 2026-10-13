@@ -276,8 +276,13 @@ describe('Regions.closest', () => {
 		});
 	});
 
-	it('rejects a malformed region payload', async () => {
+	it('accepts a response without a client code', async () => {
 		mockFetch().mockResolvedValueOnce(jsonResponse({ server: 'lhr' }));
+		expect(await Regions.closest(ctx, {})).toEqual({ server: 'lhr' });
+	});
+
+	it('rejects a malformed region payload', async () => {
+		mockFetch().mockResolvedValueOnce(jsonResponse({ client: 'lhr' }));
 		await expect(Regions.closest(ctx, {})).rejects.toThrow();
 	});
 });
@@ -454,6 +459,54 @@ describe('Changes.listen', () => {
 			mode: 'health_check',
 			databaseReachable: false,
 		});
+	});
+
+	it('keeps events received before the stream drops and persists them', async () => {
+		const encoder = new TextEncoder();
+		let sent = false;
+		const stream = new ReadableStream<Uint8Array>({
+			pull(controller) {
+				if (!sent) {
+					sent = true;
+					controller.enqueue(encoder.encode('data: {"id":1}\n\n'));
+					return;
+				}
+				controller.error(new Error('connection reset'));
+			},
+		});
+		mockFetch().mockResolvedValueOnce(new Response(stream, { status: 200 }));
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = createTestContext({
+			db: {
+				changeEvents: createMockChangeEventsRepository({ upsertByEntityId }),
+			},
+		});
+
+		const result = await Changes.listen(dbCtx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		if (result.mode !== 'stream') throw new Error('expected stream');
+		expect(result.events).toHaveLength(1);
+		expect(result.stoppedBy).toBe('stream_closed');
+		expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
+
+	it('bounds the fallback health check by timeoutMs', async () => {
+		const spy = jest.spyOn(AbortSignal, 'timeout');
+		mockFetch()
+			.mockResolvedValueOnce(jsonResponse({ error: 'nope' }, 404))
+			.mockResolvedValueOnce(jsonResponse({ results: [] }));
+		await Changes.listen(ctx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+			timeoutMs: 2_000,
+		});
+		expect(spy).toHaveBeenCalledWith(2_000);
+		spy.mockRestore();
 	});
 
 	it('surfaces 401 as a TursoAPIError with status 401', async () => {

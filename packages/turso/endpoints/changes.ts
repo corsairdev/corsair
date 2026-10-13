@@ -107,7 +107,11 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 		action: input.action,
 		listenAvailable: false,
 		reason,
-		databaseReachable: await tursoPipelineHealthCheck(base, databaseToken),
+		databaseReachable: await tursoPipelineHealthCheck(
+			base,
+			databaseToken,
+			input.timeoutMs,
+		),
 	});
 
 	let result: ListenToChangesResponse;
@@ -162,8 +166,13 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 				if (events.length >= input.maxEvents) stoppedBy = 'max_events';
 			} catch (err) {
 				// An abort here is the timeout firing, which is a normal stop.
-				if (!(err instanceof Error && err.name === 'AbortError')) throw err;
-				stoppedBy = 'timeout';
+				if (err instanceof Error && err.name === 'AbortError') {
+					stoppedBy = 'timeout';
+				} else if (events.length === 0) {
+					throw err;
+				}
+				// A drop after events arrived keeps them: a retried subscription
+				// cannot recover the changes already observed.
 			} finally {
 				await reader.cancel().catch(() => undefined);
 			}

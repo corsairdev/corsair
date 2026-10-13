@@ -173,6 +173,8 @@ export async function tursoFetchJson(
 	options: {
 		method?: 'GET' | 'POST';
 		apiKey?: string;
+		/** Request timeout in milliseconds, defaults to 30 seconds. */
+		timeoutMs?: number;
 		// Safe: values are only serialised with JSON.stringify.
 		// A narrower type is not practical because request payloads vary per Turso endpoint.
 		body?: Record<string, unknown>;
@@ -180,7 +182,12 @@ export async function tursoFetchJson(
 	// Safe: every caller validates the result with a zod schema.
 	// A narrower type is not practical because the response is untrusted external data whose shape differs per endpoint.
 ): Promise<unknown> {
-	const { method = 'GET', apiKey, body } = options;
+	const {
+		method = 'GET',
+		apiKey,
+		body,
+		timeoutMs = REQUEST_TIMEOUT_MS,
+	} = options;
 
 	if (apiKey && !isTursoHost(url)) {
 		throw new TursoAPIError(
@@ -200,7 +207,7 @@ export async function tursoFetchJson(
 			headers,
 			body: body ? JSON.stringify(body) : undefined,
 			redirect: 'error',
-			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+			signal: AbortSignal.timeout(timeoutMs),
 		});
 	} catch (err) {
 		if (err instanceof TursoAPIError) throw err;
@@ -290,6 +297,7 @@ export function parseSseBuffer(buffer: string): {
 export async function tursoPipelineHealthCheck(
 	databaseUrl: string,
 	apiKey: string,
+	timeoutMs?: number,
 ): Promise<boolean> {
 	if (!isTursoDatabaseUrl(databaseUrl)) {
 		return false;
@@ -299,6 +307,7 @@ export async function tursoPipelineHealthCheck(
 		await tursoFetchJson(`${base}/v2/pipeline`, {
 			method: 'POST',
 			apiKey,
+			timeoutMs,
 			body: {
 				requests: [
 					{ type: 'execute', stmt: { sql: 'SELECT 1' } },

@@ -25,9 +25,12 @@ describe('ClosestRegionResponseSchema', () => {
 		).toMatchObject({ server: 'lhr', client: 'lhr' });
 	});
 
-	it('requires both location codes', () => {
+	it('requires the server code and treats the client code as optional', () => {
+		expect(ClosestRegionResponseSchema.parse({ server: 'lhr' })).toEqual({
+			server: 'lhr',
+		});
 		expect(() =>
-			ClosestRegionResponseSchema.parse({ server: 'lhr' }),
+			ClosestRegionResponseSchema.parse({ client: 'lhr' }),
 		).toThrow();
 		expect(() => ClosestRegionResponseSchema.parse({})).toThrow();
 	});
