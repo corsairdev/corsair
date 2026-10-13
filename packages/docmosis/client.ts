@@ -1,5 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 import type { JsonValue } from './endpoints/types';
 
@@ -15,15 +13,10 @@ export class DocmosisAPIError extends Error {
 		super(message, options);
 		this.name = 'DocmosisAPIError';
 
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.retryAfter = options.cause.retryAfter;
-		} else if (typeof code === 'number') {
+		if (typeof code === 'number') {
 			this.status = code;
-			this.retryAfter = options?.retryAfter;
-		} else if (options?.retryAfter !== undefined) {
-			this.retryAfter = options.retryAfter;
 		}
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
@@ -127,51 +120,50 @@ function bufferToBase64(buffer: ArrayBuffer): string {
 	return Buffer.from(buffer).toString('base64');
 }
 
-async function fetchBinaryResponse(
+async function send(
 	url: string,
 	options: {
 		method: string;
-		headers: Record<string, string>;
+		apiKey: string;
 		body?: FormData;
 	},
-): Promise<DocmosisBinaryResponse> {
-	const response = await fetch(url, {
-		method: options.method,
-		headers: options.headers,
-		body: options.body,
-		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-	});
-
-	if (!response.ok) {
-		let message = response.statusText;
-		try {
-			message =
-				errorMessageFromBody(JSON.parse(await response.text())) ?? message;
-		} catch {
-			// binary or non-JSON error body
-		}
-
-		const retryAfterMs =
-			parseRetryHeaderSeconds(response.headers.get('Retry-After')) ??
-			parseRetryHeaderSeconds(
-				response.headers.get('X-Docmosis-Queue-Delay-Seconds'),
-			);
-
-		throw new DocmosisAPIError(message, response.status, {
-			retryAfter: retryAfterMs,
+): Promise<Response> {
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: options.method,
+			headers: { Accept: 'application/json', accessKey: options.apiKey },
+			body: options.body,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
+	} catch (error) {
+		if (error instanceof Error) {
+			throw new DocmosisAPIError(error.message, undefined, { cause: error });
+		}
+		throw new DocmosisAPIError('Unknown error');
 	}
 
-	const buffer = await response.arrayBuffer();
-	const contentType =
-		response.headers.get('Content-Type')?.split(';')[0]?.trim() ??
-		'application/octet-stream';
+	if (response.ok) {
+		return response;
+	}
 
-	return {
-		contentType,
-		dataBase64: bufferToBase64(buffer),
-		byteLength: buffer.byteLength,
-	};
+	let message = response.statusText;
+	try {
+		message =
+			errorMessageFromBody(JSON.parse(await response.text())) ?? message;
+	} catch {
+		// binary or non-JSON error body
+	}
+
+	const retryAfterMs =
+		parseRetryHeaderSeconds(response.headers.get('Retry-After')) ??
+		parseRetryHeaderSeconds(
+			response.headers.get('X-Docmosis-Queue-Delay-Seconds'),
+		);
+
+	throw new DocmosisAPIError(message, response.status, {
+		retryAfter: retryAfterMs,
+	});
 }
 
 /** Returns the raw provider payload; every caller validates it with zod. */
@@ -194,47 +186,22 @@ export async function makeDocmosisRequest(
 		region = 'us1',
 	} = options;
 
+	const response = await send(
+		buildUrl(DOCMOSIS_API_BASES[region], endpoint, query),
+		{ method, apiKey, body: buildFormData(formData) },
+	);
+
 	if (responseType === 'arrayBuffer') {
-		const url = buildUrl(DOCMOSIS_API_BASES[region], endpoint, query);
-		const requestBody = buildFormData(formData);
-		return fetchBinaryResponse(url, {
-			method,
-			headers: { accessKey: apiKey },
-			body: requestBody,
-		});
+		const buffer = await response.arrayBuffer();
+		return {
+			contentType:
+				response.headers.get('Content-Type')?.split(';')[0]?.trim() ??
+				'application/octet-stream',
+			dataBase64: bufferToBase64(buffer),
+			byteLength: buffer.byteLength,
+		};
 	}
 
-	const config: OpenAPIConfig = {
-		BASE: DOCMOSIS_API_BASES[region],
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		HEADERS: {
-			Accept: 'application/json',
-			accessKey: apiKey,
-		},
-	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		query,
-		formData,
-		mediaType: 'application/x-www-form-urlencoded',
-	};
-
-	try {
-		return await request<JsonValue>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			const message = errorMessageFromBody(error.body) ?? error.message;
-			throw new DocmosisAPIError(message, error.status, { cause: error });
-		}
-
-		if (error instanceof Error) {
-			throw new DocmosisAPIError(error.message, undefined, { cause: error });
-		}
-
-		throw new DocmosisAPIError('Unknown error');
-	}
+	const text = await response.text();
+	return text ? JSON.parse(text) : {};
 }

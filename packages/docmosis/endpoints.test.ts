@@ -498,6 +498,22 @@ describe('Docmosis endpoints', () => {
 			);
 		});
 
+		it('listTemplates on the root folder saves the same id as getTemplateDetails', async () => {
+			mockRequest.mockResolvedValue({
+				succeeded: true,
+				templateList: [{ name: 'a.docx' }],
+			});
+			const templates = makeStore();
+			await endpoints.templates.list(makeCtx({}, 'test-key', { templates }), {
+				folder: '/',
+			});
+
+			expect(templates.upsertByEntityId).toHaveBeenCalledWith('a.docx', {
+				id: 'a.docx',
+				name: 'a.docx',
+			});
+		});
+
 		it('getTemplateDetails upserts the template under the requested path', async () => {
 			mockRequest.mockResolvedValue({
 				succeeded: true,

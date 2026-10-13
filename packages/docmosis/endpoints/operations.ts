@@ -20,8 +20,8 @@ function boolLikeToString(
 /** Entity ids are template/image paths without a leading slash, joined onto the listed folder. */
 function entityPath(name: string, folder?: string): string {
 	const trimmed = name.replace(/^\/+/, '');
-	if (!folder) return trimmed;
-	return `${folder.replace(/^\/+|\/+$/g, '')}/${trimmed}`;
+	const parent = folder?.replace(/^\/+|\/+$/g, '');
+	return parent ? `${parent}/${trimmed}` : trimmed;
 }
 
 // Safe: the saved value is discarded; only success or failure matters.

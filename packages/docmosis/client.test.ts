@@ -1,24 +1,29 @@
-import { ApiError, request } from 'corsair/http';
 import { DocmosisAPIError, makeDocmosisRequest } from './client';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
-
-const mockRequest = jest.mocked(request);
+const json = (body: object, init: ResponseInit = {}) =>
+	new Response(JSON.stringify(body), { status: 200, ...init });
 
 describe('makeDocmosisRequest', () => {
+	let fetchMock: jest.SpyInstance<Promise<Response>, Parameters<typeof fetch>>;
+
 	beforeEach(() => {
-		mockRequest.mockReset();
+		fetchMock = jest.spyOn(globalThis, 'fetch');
 	});
+	afterEach(() => {
+		fetchMock.mockRestore();
+	});
+
+	function call() {
+		const [url, init] = fetchMock.mock.calls[0]!;
+		return { url: String(url), init: init! };
+	}
 
 	it.each([
 		['us1', 'https://us1.dws4.docmosis.com/api'],
 		['eu1', 'https://eu1.dws4.docmosis.com/api'],
 		['au1', 'https://au1.dws4.docmosis.com/api'],
 	] as const)('uses %s region base URL', async (region, base) => {
-		mockRequest.mockResolvedValue({ succeeded: true });
+		fetchMock.mockResolvedValue(json({ succeeded: true }));
 
 		await makeDocmosisRequest('listTemplates', 'key-1', {
 			method: 'POST',
@@ -26,99 +31,124 @@ describe('makeDocmosisRequest', () => {
 			formData: {},
 		});
 
-		const [config] = mockRequest.mock.calls[0]!;
-		expect(config.BASE).toBe(base);
-		expect(config.HEADERS).toMatchObject({ accessKey: 'key-1' });
-		expect(config.TOKEN).toBeUndefined();
+		expect(call().url).toBe(`${base}/listTemplates`);
+		expect(new Headers(call().init.headers).get('accessKey')).toBe('key-1');
 	});
 
-	it('sends endpoint and form data exactly as provided', async () => {
-		mockRequest.mockResolvedValue({ succeeded: true });
+	it('sends endpoint, method and form data exactly as provided', async () => {
+		fetchMock.mockResolvedValue(json({ succeeded: true }));
 
-		await makeDocmosisRequest('getTemplateDetails', 'key-2', {
+		const result = await makeDocmosisRequest('getTemplateDetails', 'key-2', {
 			method: 'POST',
 			formData: { templateName: '/t.docx', stringify: 'true' },
 		});
 
-		const [, requestOptions] = mockRequest.mock.calls[0]!;
-		expect(requestOptions.url).toBe('getTemplateDetails');
-		expect(requestOptions.method).toBe('POST');
-		expect(requestOptions.formData).toEqual({
-			templateName: '/t.docx',
-			stringify: 'true',
-		});
-		expect(requestOptions.mediaType).toBe('application/x-www-form-urlencoded');
-	});
-
-	it('preserves ApiError status/retryAfter for downstream handlers', async () => {
-		const apiError = new ApiError(
-			{ method: 'POST', url: 'listTemplates' },
-			{
-				url: 'https://us1.dws4.docmosis.com/api/listTemplates',
-				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
-				body: {},
-			},
-			'Too Many Requests',
-			{ retryAfter: 1200 },
+		expect(result).toEqual({ succeeded: true });
+		expect(call().url).toBe(
+			'https://us1.dws4.docmosis.com/api/getTemplateDetails',
 		);
-		mockRequest.mockRejectedValue(apiError);
-
-		await expect(
-			makeDocmosisRequest('listTemplates', 'key-3', {
-				method: 'POST',
-				formData: {},
-			}),
-		).rejects.toMatchObject({
-			name: 'DocmosisAPIError',
-			status: 429,
-			retryAfter: 1200,
-		});
+		expect(call().init.method).toBe('POST');
+		const body = call().init.body;
+		expect(body).toBeInstanceOf(FormData);
+		if (body instanceof FormData) {
+			expect(Object.fromEntries(body)).toEqual({
+				templateName: '/t.docx',
+				stringify: 'true',
+			});
+		}
 	});
 
-	it('uses the Docmosis error message from the response body', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'POST', url: 'environment/ready' },
-				{
-					url: 'https://us1.dws4.docmosis.com/api/environment/ready',
-					ok: false,
-					status: 400,
-					statusText: 'Bad Request',
-					body: { succeeded: false, shortMsg: 'Invalid accessKey' },
-				},
-				'Bad Request',
+	it('returns an empty object for an empty 200 body', async () => {
+		fetchMock.mockResolvedValue(new Response('', { status: 200 }));
+
+		expect(await makeDocmosisRequest('ping', 'key', { method: 'GET' })).toEqual(
+			{},
+		);
+		expect(call().init.body).toBeUndefined();
+	});
+
+	it('uses the Docmosis error message and status from the response body', async () => {
+		fetchMock.mockResolvedValue(
+			json(
+				{ succeeded: false, shortMsg: 'Invalid accessKey' },
+				{ status: 400 },
 			),
 		);
 
 		await expect(
 			makeDocmosisRequest('environment/ready', 'bad', { formData: {} }),
-		).rejects.toMatchObject({ message: 'Invalid accessKey', status: 400 });
+		).rejects.toMatchObject({
+			name: 'DocmosisAPIError',
+			message: 'Invalid accessKey',
+			status: 400,
+		});
 	});
 
-	it('wraps non-ApiError failures in DocmosisAPIError', async () => {
-		mockRequest.mockRejectedValue(new Error('network down'));
+	it('prefers longMsg over shortMsg', async () => {
+		fetchMock.mockResolvedValue(
+			json({ shortMsg: 'short', longMsg: 'long detail' }, { status: 400 }),
+		);
 
-		try {
-			await makeDocmosisRequest('ping', 'key-4', { method: 'GET' });
-			throw new Error('expected failure');
-		} catch (error) {
-			expect(error).toBeInstanceOf(DocmosisAPIError);
-			expect(error).toMatchObject({ message: 'network down' });
-			expect(error).not.toHaveProperty('status', expect.anything());
-		}
+		await expect(makeDocmosisRequest('render', 'k')).rejects.toMatchObject({
+			message: 'long detail',
+		});
 	});
 
-	it('fetches binary responses without using the JSON transport', async () => {
-		const bytes = new Uint8Array([1, 2, 3, 4]).buffer;
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			ok: true,
-			headers: new Headers({ 'Content-Type': 'image/png' }),
-			arrayBuffer: async () => bytes,
-			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
-			// A narrower type is not practical because Response has no partial constructor.
-		} as Response);
+	it('maps a 401 to a DocmosisAPIError with status 401', async () => {
+		fetchMock.mockResolvedValue(new Response('', { status: 401 }));
+
+		await expect(
+			makeDocmosisRequest('listTemplates', 'k'),
+		).rejects.toMatchObject({ name: 'DocmosisAPIError', status: 401 });
+	});
+
+	it('wraps network failures without a status', async () => {
+		fetchMock.mockRejectedValue(new Error('network down'));
+
+		const error = await makeDocmosisRequest('ping', 'key-4', {
+			method: 'GET',
+		}).catch((e: Error) => e);
+
+		expect(error).toBeInstanceOf(DocmosisAPIError);
+		expect(error).toMatchObject({ message: 'network down' });
+		expect(error).toHaveProperty('status', undefined);
+	});
+
+	it('keeps the Retry-After delay on JSON 429 responses', async () => {
+		fetchMock.mockResolvedValue(
+			json(
+				{ shortMsg: 'Rate limited' },
+				{ status: 429, headers: { 'Retry-After': '2' } },
+			),
+		);
+
+		await expect(
+			makeDocmosisRequest('listTemplates', 'k'),
+		).rejects.toMatchObject({ status: 429, retryAfter: 2000 });
+	});
+
+	it('uses the queue-delay header on JSON 429 responses without Retry-After', async () => {
+		fetchMock.mockResolvedValue(
+			json(
+				{ shortMsg: 'Queue full' },
+				{ status: 429, headers: { 'X-Docmosis-Queue-Delay-Seconds': '3' } },
+			),
+		);
+
+		await expect(makeDocmosisRequest('render', 'k')).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 3000,
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('fetches binary responses as base64', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(new Uint8Array([1, 2, 3, 4]), {
+				status: 200,
+				headers: { 'Content-Type': 'image/png; charset=binary' },
+			}),
+		);
 
 		const result = await makeDocmosisRequest('getImage', 'key-5', {
 			method: 'POST',
@@ -128,125 +158,58 @@ describe('makeDocmosisRequest', () => {
 
 		expect(result).toEqual({
 			contentType: 'image/png',
-			dataBase64: Buffer.from(bytes).toString('base64'),
+			dataBase64: 'AQIDBA==',
 			byteLength: 4,
 		});
-		expect(fetchMock).toHaveBeenCalledWith(
-			'https://us1.dws4.docmosis.com/api/getImage',
-			expect.objectContaining({
-				method: 'POST',
-				headers: { accessKey: 'key-5' },
-			}),
+		expect(call().url).toBe('https://us1.dws4.docmosis.com/api/getImage');
+	});
+
+	it('keeps the queue-delay header on binary 429 responses', async () => {
+		fetchMock.mockResolvedValue(
+			json(
+				{ shortMsg: 'Queue full', longMsg: 'Please retry shortly' },
+				{ status: 429, headers: { 'X-Docmosis-Queue-Delay-Seconds': '3' } },
+			),
 		);
-		expect(mockRequest).not.toHaveBeenCalled();
-		fetchMock.mockRestore();
-	});
-
-	it('preserves HTTP status and retryAfter for binary transport errors', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			ok: false,
-			status: 429,
-			statusText: 'Too Many Requests',
-			headers: new Headers({ 'Retry-After': '2' }),
-			text: async () =>
-				JSON.stringify({
-					shortMsg: 'Rate limited',
-					longMsg: 'Try again later',
-				}),
-			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
-			// A narrower type is not practical because Response has no partial constructor.
-		} as Response);
 
 		await expect(
-			makeDocmosisRequest('render', 'key-6', {
-				method: 'POST',
-				formData: { templateName: '/t.docx' },
+			makeDocmosisRequest('render', 'k', {
+				formData: { templateName: '/t.docx', data: '{}' },
 				responseType: 'arrayBuffer',
 			}),
 		).rejects.toMatchObject({
-			name: 'DocmosisAPIError',
-			message: 'Try again later',
-			status: 429,
-			retryAfter: 2000,
-		});
-
-		fetchMock.mockRestore();
-	});
-
-	it('uses Docmosis queue-delay header when Retry-After is absent', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			ok: false,
-			status: 429,
-			statusText: 'Too Many Requests',
-			headers: new Headers({ 'X-Docmosis-Queue-Delay-Seconds': '3' }),
-			text: async () =>
-				JSON.stringify({
-					shortMsg: 'Queue full',
-					longMsg: 'Please retry shortly',
-				}),
-			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
-			// A narrower type is not practical because Response has no partial constructor.
-		} as Response);
-
-		await expect(
-			makeDocmosisRequest('render', 'key-7', {
-				method: 'POST',
-				formData: {
-					templateName: '/t.docx',
-					outputName: 'output.pdf',
-					data: '{}',
-				},
-				responseType: 'arrayBuffer',
-			}),
-		).rejects.toMatchObject({
-			name: 'DocmosisAPIError',
+			message: 'Please retry shortly',
 			status: 429,
 			retryAfter: 3000,
 		});
-
-		fetchMock.mockRestore();
 	});
 
-	it('encodes array and numeric form fields for binary requests', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			ok: true,
-			headers: new Headers({ 'Content-Type': 'application/zip' }),
-			arrayBuffer: async () => new ArrayBuffer(0),
-			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
-			// A narrower type is not practical because Response has no partial constructor.
-		} as Response);
+	it('encodes array and numeric form fields', async () => {
+		fetchMock.mockResolvedValue(json({ succeeded: true }));
 
 		await makeDocmosisRequest('getTemplate', 'key-8', {
 			formData: { templateName: ['/a.docx', '/b.docx'], pageSize: 5 },
-			responseType: 'arrayBuffer',
 		});
 
-		const body = fetchMock.mock.calls[0]?.[1]?.body;
+		const body = call().init.body;
 		expect(body).toBeInstanceOf(FormData);
 		if (body instanceof FormData) {
 			expect(body.getAll('templateName')).toEqual(['/a.docx', '/b.docx']);
 			expect(body.get('pageSize')).toBe('5');
 		}
-		fetchMock.mockRestore();
 	});
 
 	it('falls back to the status text when the error body is not JSON', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-			ok: false,
-			status: 500,
-			statusText: 'Internal Server Error',
-			headers: new Headers(),
-			text: async () => '<html>oops</html>',
-			// Safe: the client reads only ok, status, statusText, headers, text and arrayBuffer.
-			// A narrower type is not practical because Response has no partial constructor.
-		} as Response);
+		fetchMock.mockResolvedValue(
+			new Response('<html>oops</html>', {
+				status: 500,
+				statusText: 'Internal Server Error',
+			}),
+		);
 
-		await expect(
-			makeDocmosisRequest('render', 'key-9', { responseType: 'arrayBuffer' }),
-		).rejects.toMatchObject({
+		await expect(makeDocmosisRequest('render', 'k')).rejects.toMatchObject({
 			message: 'Internal Server Error',
 			status: 500,
 		});
-		fetchMock.mockRestore();
 	});
 });
