@@ -76,8 +76,7 @@ const ItemDeletedResponseSchema = z
 	.loose();
 
 /** Remoet refuses a PATCH with nothing to change. */
-// unknown is used here because the check runs on any group's parsed update
-// input and reads only whether each value is undefined.
+// unknown: the check runs on any group's parsed update input and only tests each value for undefined.
 function hasFieldBesidesId(input: Record<string, unknown>): boolean {
 	return Object.entries(input).some(
 		([key, value]) => key !== 'id' && value !== undefined,

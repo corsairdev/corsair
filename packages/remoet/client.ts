@@ -7,8 +7,7 @@ import { ApiError, request } from 'corsair/http';
 
 export class RemoetAPIError extends Error {
 	public readonly status?: number;
-	// unknown is used here because the provider error payload is untyped wire
-	// JSON; it is only stored for inspection and read through type guards.
+	// unknown: the provider error payload is untyped wire JSON, kept for inspection via type guards.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -56,18 +55,13 @@ function messageOf(error: ApiError): string {
 	return error.message;
 }
 
-/**
- * Sends an authenticated request to the Remoet API. It resolves to unknown
- * because the response is unvalidated wire JSON: every caller parses it with
- * its endpoint's zod output schema.
- */
+/** Resolves to unknown: the response is unvalidated wire JSON, parsed by each caller's zod output schema. */
 export async function makeRemoetRequest(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-		// unknown is used here because request bodies carry arbitrary
-		// provider JSON; values are serialized as-is and never cast.
+		// unknown: request bodies carry arbitrary provider JSON, serialized as-is and never cast.
 		body?: Record<string, unknown>;
 		// A string[] value is sent as repeated keys (`k=a&k=b`) by the transport.
 		query?: Record<string, string | string[] | number | boolean | undefined>;
@@ -94,8 +88,7 @@ export async function makeRemoetRequest(
 	};
 
 	try {
-		// unknown is used here because the response is unvalidated wire JSON,
-		// as the return type above explains.
+		// unknown: unvalidated wire JSON, parsed by the caller's zod output schema (see return type).
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: REMOET_RATE_LIMIT_CONFIG,
 		});
