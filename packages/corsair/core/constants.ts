@@ -117,6 +117,7 @@ export const BaseProviders = [
 	'byteforms',
 	'cal',
 	'calendly',
+	'callingly',
 	'campaigncleaner',
 	'campayn',
 	'canny',
@@ -466,6 +467,7 @@ export const ProviderDisplayNames = {
 	byteforms: 'ByteForms',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	callingly: 'Callingly',
 	campaigncleaner: 'Campaign Cleaner',
 	campayn: 'Campayn',
 	canny: 'Canny',
@@ -822,6 +824,7 @@ export type AllProviders =
 	| 'byteforms'
 	| 'cal'
 	| 'calendly'
+	| 'callingly'
 	| 'campaigncleaner'
 	| 'campayn'
 	| 'canny'
