@@ -1,6 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClaidAiEndpoints } from '..';
 import { makeClaidAiRequest } from '../client';
+import {
+	deleteStorageRow,
+	saveEditedImages,
+	saveGeneratedImages,
+	saveImageTask,
+	saveStorages,
+	saveStorageTypes,
+} from './persist';
 import { ClaidAiEndpointOutputSchemas as Out } from './types';
 
 export const backgroundRemove: ClaidAiEndpoints['backgroundRemove'] = async (
@@ -22,6 +30,7 @@ export const backgroundRemove: ClaidAiEndpoints['backgroundRemove'] = async (
 			},
 		},
 	);
+	await saveEditedImages(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'claidai.background.remove',
@@ -41,6 +50,7 @@ export const imageEditBatch: ClaidAiEndpoints['imageEditBatch'] = async (
 		Out.imageEditBatch,
 		{ method: 'POST', body: input },
 	);
+	await saveImageTask(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'claidai.image_edit.batch',
@@ -67,6 +77,7 @@ export const licensePlateBlur: ClaidAiEndpoints['licensePlateBlur'] = async (
 			},
 		},
 	);
+	await saveEditedImages(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'claidai.license_plate.blur',
@@ -99,6 +110,7 @@ export const smartFrame: ClaidAiEndpoints['smartFrame'] = async (
 			},
 		},
 	);
+	await saveEditedImages(ctx, response);
 	await logEventFromContext(ctx, 'claidai.smart_frame', input, 'completed');
 	return response;
 };
@@ -113,6 +125,7 @@ export const createStorage: ClaidAiEndpoints['createStorage'] = async (
 		Out.createStorage,
 		{ method: 'POST', body: input },
 	);
+	await saveStorages(ctx, [response.data]);
 	await logEventFromContext(
 		ctx,
 		'claidai.storage.create',
@@ -130,6 +143,7 @@ export const backgroundGenerate: ClaidAiEndpoints['backgroundGenerate'] =
 			Out.backgroundGenerate,
 			{ method: 'POST', body: input },
 		);
+		await saveGeneratedImages(ctx, response);
 		await logEventFromContext(
 			ctx,
 			'claidai.background.generate',
@@ -149,6 +163,7 @@ export const imageGenerate: ClaidAiEndpoints['imageGenerate'] = async (
 		Out.imageGenerate,
 		{ method: 'POST', body: input },
 	);
+	await saveGeneratedImages(ctx, response);
 	await logEventFromContext(ctx, 'claidai.image.generate', input, 'completed');
 	return response;
 };
@@ -178,6 +193,7 @@ export const generativeResize: ClaidAiEndpoints['generativeResize'] = async (
 			},
 		},
 	);
+	await saveEditedImages(ctx, response);
 	await logEventFromContext(
 		ctx,
 		'claidai.generative_resize',
@@ -196,6 +212,7 @@ export const storageDetails: ClaidAiEndpoints['storageDetails'] = async (
 		ctx.key,
 		Out.storageDetails,
 	);
+	await saveStorages(ctx, [response.data]);
 	await logEventFromContext(ctx, 'claidai.storage.details', input, 'completed');
 	return response;
 };
@@ -210,6 +227,7 @@ export const deleteStorage: ClaidAiEndpoints['deleteStorage'] = async (
 		Out.deleteStorage,
 		{ method: 'DELETE' },
 	);
+	await deleteStorageRow(ctx, input.storage_id);
 	await logEventFromContext(ctx, 'claidai.storage.delete', input, 'completed');
 	return response;
 };
@@ -224,6 +242,7 @@ export const imageAiEdit: ClaidAiEndpoints['imageAiEdit'] = async (
 		Out.imageAiEdit,
 		{ method: 'POST', body: input },
 	);
+	await saveImageTask(ctx, response);
 	await logEventFromContext(ctx, 'claidai.image.ai_edit', input, 'completed');
 	return response;
 };
@@ -237,6 +256,7 @@ export const storageList: ClaidAiEndpoints['storageList'] = async (
 		ctx.key,
 		Out.storageList,
 	);
+	await saveStorages(ctx, response.data);
 	await logEventFromContext(ctx, 'claidai.storage.list', input, 'completed');
 	return response;
 };
@@ -258,6 +278,7 @@ export const polishImage: ClaidAiEndpoints['polishImage'] = async (
 			},
 		},
 	);
+	await saveEditedImages(ctx, response);
 	await logEventFromContext(ctx, 'claidai.polish_image', input, 'completed');
 	return response;
 };
@@ -273,6 +294,7 @@ export const patchStorage: ClaidAiEndpoints['patchStorage'] = async (
 		Out.patchStorage,
 		{ method: 'PATCH', body },
 	);
+	await saveStorages(ctx, [response.data]);
 	await logEventFromContext(
 		ctx,
 		'claidai.storage.patch',
@@ -291,6 +313,7 @@ export const storageTypes: ClaidAiEndpoints['storageTypes'] = async (
 		ctx.key,
 		Out.storageTypes,
 	);
+	await saveStorageTypes(ctx, response.data);
 	await logEventFromContext(ctx, 'claidai.storage.types', input, 'completed');
 	return response;
 };

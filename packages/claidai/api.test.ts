@@ -24,4 +24,21 @@ describeLive('Claid.ai live API', () => {
 		);
 		expect(Array.isArray(result.data)).toBe(true);
 	});
+
+	it('image/edit output parses with null storage fields', async () => {
+		const result = await makeClaidAiRequest(
+			'image/edit',
+			TEST_KEY,
+			Out.polishImage,
+			{
+				method: 'POST',
+				body: {
+					input:
+						'https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png',
+					operations: { resizing: { width: 100 } },
+				},
+			},
+		);
+		expect(result.data.output).toMatchObject({ width: 100 });
+	});
 });

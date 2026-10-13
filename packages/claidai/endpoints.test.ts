@@ -30,9 +30,26 @@ jest.mock('corsair/core', () => ({
 const logEvent = jest.mocked(logEventFromContext);
 const fetchMock = jest.spyOn(global, 'fetch');
 
-// Safe: endpoints only read ctx.key, and logEventFromContext is mocked above.
-// A narrower type is not practical because ClaidAiContext also carries the database, hooks and key managers the runtime injects.
-const ctx = { key: 'test-key', options: {} } as ClaidAiContext;
+function makeStore() {
+	return {
+		upsertByEntityId: jest.fn(async (_id: string, _data: object) => undefined),
+		deleteByEntityId: jest.fn(async (_id: string) => true),
+	};
+}
+
+const db = {
+	editedImages: makeStore(),
+	generatedImages: makeStore(),
+	imageTasks: makeStore(),
+	storages: makeStore(),
+	storageTypes: makeStore(),
+};
+
+// Safe: endpoints only read ctx.key, and ctx.db is attached with mock stores; the rest is unused and logEventFromContext is mocked above.
+// A narrower type is not practical because ClaidAiContext also carries the hooks and key managers the runtime injects.
+const ctx = Object.assign({ key: 'test-key', options: {} } as ClaidAiContext, {
+	db,
+});
 
 const BASE = 'https://api.claid.ai/v1';
 
@@ -98,6 +115,10 @@ const STORAGE = {
 beforeEach(() => {
 	fetchMock.mockReset();
 	logEvent.mockClear();
+	for (const store of Object.values(db)) {
+		store.upsertByEntityId.mockClear();
+		store.deleteByEntityId.mockClear();
+	}
 });
 
 afterAll(() => {
@@ -628,5 +649,127 @@ describe('error handling', () => {
 			new ClaidAiAPIError('Missing Claid.ai API key'),
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('database persistence', () => {
+	it('accepts null storage fields as the live API returns them', async () => {
+		const live = {
+			data: {
+				output: {
+					...IMAGE_OUT,
+					object_key: null,
+					object_bucket: null,
+					object_uri: null,
+					claid_storage_uri: null,
+				},
+			},
+		};
+		respond(200, live);
+
+		expect(
+			await polishImage(ctx, { input: 'https://example.com/a.jpg' }),
+		).toEqual(live);
+		expect(db.editedImages.upsertByEntityId).toHaveBeenCalledWith(
+			IMAGE_OUT.tmp_url,
+			expect.objectContaining({ id: IMAGE_OUT.tmp_url, object_key: null }),
+		);
+	});
+
+	it('stores sync edit outputs keyed by their temporary URL', async () => {
+		respond(200, EDIT_RESPONSE);
+		await polishImage(ctx, { input: 'https://example.com/a.jpg' });
+
+		expect(db.editedImages.upsertByEntityId).toHaveBeenCalledTimes(1);
+		expect(db.editedImages.upsertByEntityId).toHaveBeenCalledWith(
+			IMAGE_OUT.tmp_url,
+			{ id: IMAGE_OUT.tmp_url, ...IMAGE_OUT },
+		);
+	});
+
+	it('prefers the Claid storage URI as the image id and stores every output', async () => {
+		const a = { ...IMAGE_OUT, claid_storage_uri: 'storage://s/a.png' };
+		const b = { ...IMAGE_OUT, tmp_url: 'https://tmp.example/b.png' };
+		respond(200, { data: { output: [a, b] } });
+		await backgroundRemove(ctx, { input: 'https://example.com/a.jpg' });
+
+		expect(
+			db.editedImages.upsertByEntityId.mock.calls.map(([id]) => id),
+		).toEqual(['storage://s/a.png', 'https://tmp.example/b.png']);
+	});
+
+	it('stores generated images', async () => {
+		respond(200, { data: { output: [IMAGE_OUT] } });
+		await imageGenerate(ctx, { input: 'a red bicycle' });
+
+		expect(db.generatedImages.upsertByEntityId).toHaveBeenCalledWith(
+			IMAGE_OUT.tmp_url,
+			{ id: IMAGE_OUT.tmp_url, ...IMAGE_OUT },
+		);
+		expect(db.editedImages.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('stores async tasks by id', async () => {
+		respond(200, {
+			data: {
+				id: 7,
+				status: 'ACCEPTED',
+				result_url: `${BASE}/image/ai-edit/7`,
+				created_at: '2025-03-13T11:37:09.160554+00:00',
+			},
+		});
+		await imageAiEdit(ctx, {
+			input: 'https://example.com/a.jpg',
+			options: { prompt: 'make it blue' },
+		});
+
+		expect(db.imageTasks.upsertByEntityId).toHaveBeenCalledWith('7', {
+			id: '7',
+			status: 'ACCEPTED',
+			result_url: `${BASE}/image/ai-edit/7`,
+			created_at: '2025-03-13T11:37:09.160554+00:00',
+		});
+	});
+
+	it('stores storages without connection parameters or credentials', async () => {
+		respond(200, { data: STORAGE });
+		await storageDetails(ctx, { storage_id: 12 });
+
+		expect(db.storages.upsertByEntityId).toHaveBeenCalledWith('12', {
+			id: '12',
+			name: 's3-playground',
+			type: 's3',
+			created_at: '2025-03-13T11:37:09.160554+00:00',
+		});
+	});
+
+	it('stores every listed storage and every storage type', async () => {
+		respond(200, { data: [STORAGE, { ...STORAGE, id: 13 }] });
+		await storageList(ctx, {});
+		expect(db.storages.upsertByEntityId.mock.calls.map(([id]) => id)).toEqual([
+			'12',
+			'13',
+		]);
+
+		fetchMock.mockReset();
+		respond(200, { data: ['web_folder', 's3', 'gcs'] });
+		await storageTypes(ctx, {});
+		expect(
+			db.storageTypes.upsertByEntityId.mock.calls.map(([id]) => id),
+		).toEqual(['web_folder', 's3', 'gcs']);
+	});
+
+	it('removes the storage row on delete', async () => {
+		respond(200, { data: null });
+		await deleteStorage(ctx, { storage_id: 12 });
+
+		expect(db.storages.deleteByEntityId).toHaveBeenCalledWith('12');
+	});
+
+	it('does not write when the API call fails', async () => {
+		respond(401, { error: { message: 'bad key' } });
+		await expect(storageList(ctx, {})).rejects.toBeInstanceOf(Error);
+
+		expect(db.storages.upsertByEntityId).not.toHaveBeenCalled();
 	});
 });

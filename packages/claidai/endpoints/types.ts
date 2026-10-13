@@ -54,22 +54,19 @@ const DimensionSchema = z
 
 const ImageObjectSchema = z
 	.object({
-		ext: z.string().optional().describe('File extension'),
-		mps: z.number().optional().describe('Image size in megapixels'),
-		mime: z.string().optional().describe('MIME type'),
-		format: z.string().optional().describe('Image format'),
-		width: z.number().optional().describe('Width in pixels'),
-		height: z.number().optional().describe('Height in pixels'),
-		tmp_url: z.string().optional().describe('Temporary download URL'),
-		object_key: z.string().optional().describe('Object key in the storage'),
-		object_bucket: z
-			.string()
-			.optional()
-			.describe('Bucket of the stored object'),
-		object_uri: z.string().optional().describe('URI of the stored object'),
+		ext: z.string().nullish().describe('File extension'),
+		mps: z.number().nullish().describe('Image size in megapixels'),
+		mime: z.string().nullish().describe('MIME type'),
+		format: z.string().nullish().describe('Image format'),
+		width: z.number().nullish().describe('Width in pixels'),
+		height: z.number().nullish().describe('Height in pixels'),
+		tmp_url: z.string().nullish().describe('Temporary download URL'),
+		object_key: z.string().nullish().describe('Object key in the storage'),
+		object_bucket: z.string().nullish().describe('Bucket of the stored object'),
+		object_uri: z.string().nullish().describe('URI of the stored object'),
 		claid_storage_uri: z
 			.string()
-			.optional()
+			.nullish()
 			.describe('Claid storage URI of the output'),
 	})
 	.describe('Image metadata returned by Claid.ai');

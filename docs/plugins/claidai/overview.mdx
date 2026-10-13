@@ -3,11 +3,12 @@ title: Overview
 description: "Claid.ai plugin for Corsair"
 ---
 
-Use **Claid.ai** through Corsair: one client, typed API calls.
+Use **Claid.ai** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 15 typed API operations
+- 5 synced entities (`editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -106,11 +107,20 @@ await tenant.claidai.api.backgroundGenerate({});
 
 See the full list on the [API](/plugins/claidai/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.claidai.db.<entity>.search()` and `.list()`: `editedImages`, `generatedImages`, `imageTasks`, `storages`, `storageTypes`.
+
+See [Database](/plugins/claidai/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/claidai/api">
     Every `claidai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/claidai/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
