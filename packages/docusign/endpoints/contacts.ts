@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddContactsToContactsListInputSchema = z.object({
@@ -101,6 +102,7 @@ export const getDocusignAccountContacts = async (
 			method: 'GET',
 		},
 	);
+	await persistList(ctxOrClient, 'contacts', data, 'contacts', 'contactId');
 	return GetDocusignAccountContactsOutputSchema.parse(data);
 };
 

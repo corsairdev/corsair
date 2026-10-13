@@ -9,7 +9,7 @@ import type { DocusignAuthOptions } from './client';
 import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
 import * as errorHandlers from './error-handlers';
-import * as schema from './schema';
+import { DocusignSchema } from './schema';
 
 export * from './client';
 export * from './endpoints';
@@ -105,7 +105,7 @@ export const docusignPlugin = {
 	endpointMeta: docusignEndpointMeta,
 	endpointSchemas: endpoints.docusignEndpointSchemas,
 	errorHandlers: errorHandlers.docusignErrorHandlers,
-	schema,
+	schema: DocusignSchema,
 	keyBuilder: async (
 		ctx: DocusignKeyBuilderContext,
 		source: 'endpoint' | 'webhook',

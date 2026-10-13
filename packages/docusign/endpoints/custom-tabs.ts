@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateCustomTabWithPropertiesInputSchema = z.object({
@@ -24,6 +25,7 @@ export const createCustomTabWithProperties = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistOne(ctxOrClient, 'customTabs', data, 'customTabId');
 	return CreateCustomTabWithPropertiesOutputSchema.parse(data);
 };
 
@@ -77,6 +79,7 @@ export const retrieveAllAccountTabs = async (
 	const data = await client.request(`/tab_definitions` + qs, {
 		method: 'GET',
 	});
+	await persistList(ctxOrClient, 'customTabs', data, 'tabs', 'customTabId');
 	return RetrieveAllAccountTabsOutputSchema.parse(data);
 };
 
@@ -104,6 +107,7 @@ export const retrieveCustomTabInformation = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(ctxOrClient, 'customTabs', data, 'customTabId');
 	return RetrieveCustomTabInformationOutputSchema.parse(data);
 };
 

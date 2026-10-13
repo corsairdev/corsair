@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateBrandProfilesForAccountInputSchema = z.object({
@@ -24,6 +25,7 @@ export const createBrandProfilesForAccount = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistList(ctxOrClient, 'brands', data, 'brands', 'brandId');
 	return CreateBrandProfilesForAccountOutputSchema.parse(data);
 };
 
@@ -213,6 +215,7 @@ export const listBrandsForAccount = async (
 	const data = await client.request(`/brands` + qs, {
 		method: 'GET',
 	});
+	await persistList(ctxOrClient, 'brands', data, 'brands', 'brandId');
 	return ListBrandsForAccountOutputSchema.parse(data);
 };
 
@@ -251,6 +254,7 @@ export const retrieveAccountBrandInformation = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(ctxOrClient, 'brands', data, 'brandId');
 	return RetrieveAccountBrandInformationOutputSchema.parse(data);
 };
 
@@ -312,6 +316,7 @@ export const updateAccountBrandSettings = async (
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
 		},
 	);
+	await persistOne(ctxOrClient, 'brands', data, 'brandId');
 	return UpdateAccountBrandSettingsOutputSchema.parse(data);
 };
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const ApplyActionToBulkSendEnvelopesInputSchema = z.object({
@@ -130,6 +131,13 @@ export const getBulkSendListsInformation = async (
 	const data = await client.request(`/bulk_send_lists`, {
 		method: 'GET',
 	});
+	await persistList(
+		ctxOrClient,
+		'bulkSendLists',
+		data,
+		'bulkListSummaries',
+		'listId',
+	);
 	return GetBulkSendListsInformationOutputSchema.parse(data);
 };
 

@@ -36,16 +36,34 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 	});
 
 	describe('DocusignSchema', () => {
-		it('should validate envelope and template schemas', () => {
-			expect(DocusignSchema).toBeDefined();
-			expect(DocusignSchema.envelope).toBeDefined();
-			expect(DocusignSchema.template).toBeDefined();
+		it('registers every documented entity', () => {
+			expect(Object.keys(DocusignSchema.entities).sort()).toEqual(
+				[
+					'accounts',
+					'bulkSendLists',
+					'brands',
+					'connectConfigurations',
+					'contacts',
+					'customTabs',
+					'documents',
+					'envelopes',
+					'groups',
+					'permissionProfiles',
+					'recipients',
+					'signingGroups',
+					'templates',
+					'users',
+					'workspaces',
+				].sort(),
+			);
+		});
 
-			const sampleEnvelope = {
+		it('parses an envelope response', () => {
+			const result = DocusignSchema.entities.envelopes.safeParse({
 				envelopeId: 'env_123',
 				status: 'sent',
-			};
-			const result = DocusignSchema.envelope.safeParse(sampleEnvelope);
+				sender: { userName: 'Jane' },
+			});
 			expect(result.success).toBe(true);
 		});
 
@@ -173,7 +191,9 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 		});
 
 		it('should require envelope fields in storage schemas', () => {
-			expect(DocusignSchema.envelope.safeParse({}).success).toBe(false);
+			expect(DocusignSchema.entities.envelopes.safeParse({}).success).toBe(
+				false,
+			);
 		});
 	});
 });

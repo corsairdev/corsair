@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistOne, persistRecipients } from './persistence';
 import type {
 	CreateEnvelopeParams,
 	CreateRecipientViewUrlParams,
@@ -31,6 +32,7 @@ export const createEnvelope = async (
 		method: 'POST',
 		body: JSON.stringify(input),
 	});
+	await persistOne(ctxOrClient, 'envelopes', data, 'envelopeId');
 	return CreateEnvelopeOutputSchema.parse(data);
 };
 
@@ -43,6 +45,7 @@ export const getEnvelope = async (
 	const data = await client.request(
 		`/envelopes/${encodeURIComponent(input.envelopeId)}`,
 	);
+	await persistOne(ctxOrClient, 'envelopes', data, 'envelopeId');
 	return GetEnvelopeOutputSchema.parse(data);
 };
 
@@ -97,22 +100,19 @@ const EnvelopeRecipientSchema = z
 	})
 	.passthrough();
 
+// `EnvelopeRecipients: list` returns the recipient groups at the top level.
 const EnvelopeRecipientsResponseSchema = z
 	.object({
-		recipients: z
-			.object({
-				signers: z.array(EnvelopeRecipientSchema).optional(),
-				carbonCopies: z.array(EnvelopeRecipientSchema).optional(),
-				certifiedDeliveries: z.array(EnvelopeRecipientSchema).optional(),
-				inPersonSigners: z.array(EnvelopeRecipientSchema).optional(),
-				agents: z.array(EnvelopeRecipientSchema).optional(),
-				editors: z.array(EnvelopeRecipientSchema).optional(),
-				intermediaries: z.array(EnvelopeRecipientSchema).optional(),
-				witnesses: z.array(EnvelopeRecipientSchema).optional(),
-				seals: z.array(EnvelopeRecipientSchema).optional(),
-				notaries: z.array(EnvelopeRecipientSchema).optional(),
-			})
-			.optional(),
+		signers: z.array(EnvelopeRecipientSchema).optional(),
+		carbonCopies: z.array(EnvelopeRecipientSchema).optional(),
+		certifiedDeliveries: z.array(EnvelopeRecipientSchema).optional(),
+		inPersonSigners: z.array(EnvelopeRecipientSchema).optional(),
+		agents: z.array(EnvelopeRecipientSchema).optional(),
+		editors: z.array(EnvelopeRecipientSchema).optional(),
+		intermediaries: z.array(EnvelopeRecipientSchema).optional(),
+		witnesses: z.array(EnvelopeRecipientSchema).optional(),
+		seals: z.array(EnvelopeRecipientSchema).optional(),
+		notaries: z.array(EnvelopeRecipientSchema).optional(),
 	})
 	.passthrough();
 
@@ -122,15 +122,24 @@ export const fetchRecipientNamesForEmail = async (
 ) => {
 	const input = FetchRecipientNamesForEmailInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = EnvelopeRecipientsResponseSchema.parse(
-		await client.request(
-			`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients`,
-		),
+	const raw = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients`,
 	);
+	await persistRecipients(ctxOrClient, input.envelopeId, raw);
+	const data = EnvelopeRecipientsResponseSchema.parse(raw);
 	const target = input.email.toLowerCase();
-	const candidates = Object.values(data.recipients ?? {}).flatMap(
-		(recipients) => recipients ?? [],
-	);
+	const candidates = [
+		data.signers,
+		data.carbonCopies,
+		data.certifiedDeliveries,
+		data.inPersonSigners,
+		data.agents,
+		data.editors,
+		data.intermediaries,
+		data.witnesses,
+		data.seals,
+		data.notaries,
+	].flatMap((recipients) => recipients ?? []);
 	const names = candidates
 		.filter((recipient) => recipient.email?.toLowerCase() === target)
 		.map((recipient) => recipient.name ?? recipient.userName ?? '')

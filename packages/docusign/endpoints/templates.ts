@@ -1,4 +1,5 @@
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type {
 	DocusignExecutionContext,
 	GetTemplateParams,
@@ -23,6 +24,13 @@ export const listTemplates = async (
 		query.append('start_position', String(input.startPosition));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(`/templates${qs}`);
+	await persistList(
+		ctxOrClient,
+		'templates',
+		data,
+		'envelopeTemplates',
+		'templateId',
+	);
 	return ListTemplatesOutputSchema.parse(data);
 };
 
@@ -35,5 +43,6 @@ export const getTemplate = async (
 	const data = await client.request(
 		`/templates/${encodeURIComponent(input.templateId)}`,
 	);
+	await persistOne(ctxOrClient, 'templates', data, 'templateId');
 	return GetTemplateOutputSchema.parse(data);
 };

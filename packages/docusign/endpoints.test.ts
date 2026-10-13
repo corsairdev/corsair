@@ -190,12 +190,10 @@ describe('DocuSign generated endpoints', () => {
 	it('fetchRecipientNamesForEmail filters recipients by email', async () => {
 		const client = makeClient();
 		mockFetchJson({
-			recipients: {
-				signers: [
-					{ email: 'jane@example.com', name: 'Jane Doe' },
-					{ email: 'john@example.com', name: 'John Smith' },
-				],
-			},
+			signers: [
+				{ email: 'jane@example.com', name: 'Jane Doe' },
+				{ email: 'john@example.com', name: 'John Smith' },
+			],
 		});
 		const res = await endpoints.fetchRecipientNamesForEmail(
 			{ client },
@@ -208,11 +206,9 @@ describe('DocuSign generated endpoints', () => {
 	it('fetchRecipientNamesForEmail finds non-signer recipient types', async () => {
 		const client = makeClient();
 		mockFetchJson({
-			recipients: {
-				signers: [],
-				agents: [{ email: 'agent@example.com', name: 'Agent Alice' }],
-				editors: [{ email: 'agent@example.com', userName: 'Editor Ed' }],
-			},
+			signers: [],
+			agents: [{ email: 'agent@example.com', name: 'Agent Alice' }],
+			editors: [{ email: 'agent@example.com', userName: 'Editor Ed' }],
 		});
 		const res = await endpoints.fetchRecipientNamesForEmail(
 			{ client },

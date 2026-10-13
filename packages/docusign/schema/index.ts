@@ -1,24 +1,40 @@
-import { z } from 'zod';
+import {
+	DocusignAccount,
+	DocusignBrand,
+	DocusignBulkSendList,
+	DocusignConnectConfiguration,
+	DocusignContact,
+	DocusignCustomTab,
+	DocusignDocument,
+	DocusignEnvelope,
+	DocusignGroup,
+	DocusignPermissionProfile,
+	DocusignRecipient,
+	DocusignSigningGroup,
+	DocusignTemplate,
+	DocusignUser,
+	DocusignWorkspace,
+} from './database';
 
-export const EnvelopeSchema = z.object({
-	envelopeId: z.string(),
-	status: z.string(),
-	emailSubject: z.string().optional(),
-	createdDateTime: z.string().optional(),
-	statusChangedDateTime: z.string().optional(),
-});
-
-export const TemplateSchema = z.object({
-	templateId: z.string(),
-	name: z.string().optional(),
-	description: z.string().optional(),
-});
+export * from './database';
 
 export const DocusignSchema = {
-	envelope: EnvelopeSchema,
-	template: TemplateSchema,
-};
-
-export const docusignSchema = DocusignSchema;
-
-export default DocusignSchema;
+	version: '1.0.0',
+	entities: {
+		envelopes: DocusignEnvelope,
+		recipients: DocusignRecipient,
+		documents: DocusignDocument,
+		templates: DocusignTemplate,
+		users: DocusignUser,
+		groups: DocusignGroup,
+		signingGroups: DocusignSigningGroup,
+		brands: DocusignBrand,
+		accounts: DocusignAccount,
+		permissionProfiles: DocusignPermissionProfile,
+		workspaces: DocusignWorkspace,
+		bulkSendLists: DocusignBulkSendList,
+		connectConfigurations: DocusignConnectConfiguration,
+		customTabs: DocusignCustomTab,
+		contacts: DocusignContact,
+	},
+} as const;

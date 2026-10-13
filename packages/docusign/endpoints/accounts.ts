@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddOrUpdateAccountStampsInputSchema = z.object({
@@ -703,6 +704,7 @@ export const retrieveAccountInformationForSpecifiedAccount = async (
 	const data = await client.request(`` + qs, {
 		method: 'GET',
 	});
+	await persistOne(ctxOrClient, 'accounts', data, 'accountIdGuid');
 	return RetrieveAccountInformationForSpecifiedAccountOutputSchema.parse(data);
 };
 

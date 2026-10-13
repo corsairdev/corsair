@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddNewUsersToASpecifiedAccountInputSchema = z.object({
@@ -24,6 +25,7 @@ export const addNewUsersToASpecifiedAccount = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistList(ctxOrClient, 'users', data, 'newUsers', 'userId');
 	return AddNewUsersToASpecifiedAccountOutputSchema.parse(data);
 };
 
@@ -537,6 +539,7 @@ export const getUserInformationById = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(ctxOrClient, 'users', data, 'userId');
 	return GetUserInformationByIdOutputSchema.parse(data);
 };
 
@@ -602,6 +605,7 @@ export const listUsersForAccount = async (
 	const data = await client.request(`/users` + qs, {
 		method: 'GET',
 	});
+	await persistList(ctxOrClient, 'users', data, 'users', 'userId');
 	return ListUsersForAccountOutputSchema.parse(data);
 };
 
@@ -965,6 +969,7 @@ export const updateUserInformationForSpecifiedUser = async (
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
 		},
 	);
+	await persistOne(ctxOrClient, 'users', data, 'userId');
 	return UpdateUserInformationForSpecifiedUserOutputSchema.parse(data);
 };
 

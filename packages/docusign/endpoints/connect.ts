@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateConnectConfigurationForAccountInputSchema = z.object({
@@ -250,6 +251,13 @@ export const retrieveConnectConfigurations = async (
 	const data = await client.request(`/connect`, {
 		method: 'GET',
 	});
+	await persistList(
+		ctxOrClient,
+		'connectConfigurations',
+		data,
+		'configurations',
+		'connectId',
+	);
 	return RetrieveConnectConfigurationsOutputSchema.parse(data);
 };
 

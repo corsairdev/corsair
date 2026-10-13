@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddFileToWorkspaceInputSchema = z.object({
@@ -52,6 +53,7 @@ export const createACollaborativeWorkspace = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistOne(ctxOrClient, 'workspaces', data, 'workspaceId');
 	return CreateACollaborativeWorkspaceOutputSchema.parse(data);
 };
 
@@ -255,6 +257,13 @@ export const listWorkspaces = async (
 	const data = await client.request(`/workspaces`, {
 		method: 'GET',
 	});
+	await persistList(
+		ctxOrClient,
+		'workspaces',
+		data,
+		'workspaces',
+		'workspaceId',
+	);
 	return ListWorkspacesOutputSchema.parse(data);
 };
 
@@ -282,6 +291,7 @@ export const retrievePropertiesAboutWorkspace = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(ctxOrClient, 'workspaces', data, 'workspaceId');
 	return RetrievePropertiesAboutWorkspaceOutputSchema.parse(data);
 };
 
@@ -311,6 +321,7 @@ export const updateWorkspaceInformation = async (
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
 		},
 	);
+	await persistOne(ctxOrClient, 'workspaces', data, 'workspaceId');
 	return UpdateWorkspaceInformationOutputSchema.parse(data);
 };
 

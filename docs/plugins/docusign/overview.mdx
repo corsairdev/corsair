@@ -3,11 +3,12 @@ title: Overview
 description: "Docusign plugin for Corsair"
 ---
 
-Use **Docusign** through Corsair: one client, typed API calls.
+Use **Docusign** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 340 typed API operations
+- 15 synced entities (`accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, and 9 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -110,11 +111,20 @@ await tenant.docusign.api.addContactsToContactsList({});
 
 See the full list on the [API](/plugins/docusign/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.docusign.db.<entity>.search()` and `.list()`: `accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, `documents`, `envelopes`, `groups`, `permissionProfiles`, `recipients`, `signingGroups`, `templates`, `users`, `workspaces`.
+
+See [Database](/plugins/docusign/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/docusign/api">
     Every `docusign.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/docusign/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

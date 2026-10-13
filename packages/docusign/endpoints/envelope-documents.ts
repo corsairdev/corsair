@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistDocuments } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddEnvelopeAttachmentsInputSchema = z.object({
@@ -451,6 +452,7 @@ export const retrieveEnvelopeDocuments = async (
 			method: 'GET',
 		},
 	);
+	await persistDocuments(ctxOrClient, input.envelopeId, data);
 	return RetrieveEnvelopeDocumentsOutputSchema.parse(data);
 };
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
 export const AddExistingBrandToGroupInputSchema = z.object({
@@ -103,6 +104,7 @@ export const createGroupsForAccount = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistList(ctxOrClient, 'groups', data, 'groups', 'groupId');
 	return CreateGroupsForAccountOutputSchema.parse(data);
 };
 
@@ -133,6 +135,12 @@ export const createNewAccountPermissionProfile = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistOne(
+		ctxOrClient,
+		'permissionProfiles',
+		data,
+		'permissionProfileId',
+	);
 	return CreateNewAccountPermissionProfileOutputSchema.parse(data);
 };
 
@@ -156,6 +164,13 @@ export const createSigningGroup = async (
 		method: 'POST',
 		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
+	await persistList(
+		ctxOrClient,
+		'signingGroups',
+		data,
+		'groups',
+		'signingGroupId',
+	);
 	return CreateSigningGroupOutputSchema.parse(data);
 };
 
@@ -411,6 +426,7 @@ export const getGroupsInformationForAccount = async (
 	const data = await client.request(`/groups` + qs, {
 		method: 'GET',
 	});
+	await persistList(ctxOrClient, 'groups', data, 'groups', 'groupId');
 	return GetGroupsInformationForAccountOutputSchema.parse(data);
 };
 
@@ -439,6 +455,13 @@ export const getListOfAccountPermissionProfiles = async (
 	const data = await client.request(`/permission_profiles` + qs, {
 		method: 'GET',
 	});
+	await persistList(
+		ctxOrClient,
+		'permissionProfiles',
+		data,
+		'permissionProfiles',
+		'permissionProfileId',
+	);
 	return GetListOfAccountPermissionProfilesOutputSchema.parse(data);
 };
 
@@ -497,6 +520,12 @@ export const getPermissionProfileForAccount = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(
+		ctxOrClient,
+		'permissionProfiles',
+		data,
+		'permissionProfileId',
+	);
 	return GetPermissionProfileForAccountOutputSchema.parse(data);
 };
 
@@ -524,6 +553,7 @@ export const getSigningGroupInformation = async (
 			method: 'GET',
 		},
 	);
+	await persistOne(ctxOrClient, 'signingGroups', data, 'signingGroupId');
 	return GetSigningGroupInformationOutputSchema.parse(data);
 };
 
@@ -585,6 +615,13 @@ export const retrieveAccountSigningGroups = async (
 	const data = await client.request(`/signing_groups` + qs, {
 		method: 'GET',
 	});
+	await persistList(
+		ctxOrClient,
+		'signingGroups',
+		data,
+		'groups',
+		'signingGroupId',
+	);
 	return RetrieveAccountSigningGroupsOutputSchema.parse(data);
 };
 

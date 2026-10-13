@@ -9,4 +9,519 @@ The Docusign plugin syncs data locally. Use `corsair.docusign.db.<entity>.search
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Accounts
+
+Path: `docusign.db.accounts.search`
+
+```ts
+const rows = await corsair.docusign.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountIdGuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountName` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `planName` | `string` | equals, contains, startsWith, endsWith, in |
+| `planClassification` | `string` | equals, contains, startsWith, endsWith, in |
+| `planStartDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `planEndDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `currentPlanId` | `string` | equals, contains, startsWith, endsWith, in |
+| `currencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `billingPeriodStartDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `billingPeriodEndDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `billingPeriodEnvelopesAllowed` | `string` | equals, contains, startsWith, endsWith, in |
+| `billingPeriodEnvelopesSent` | `string` | equals, contains, startsWith, endsWith, in |
+| `billingPeriodDaysRemaining` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectPermission` | `string` | equals, contains, startsWith, endsWith, in |
+| `distributorCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `envelopeSendingBlocked` | `string` | equals, contains, startsWith, endsWith, in |
+| `suspensionStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `suspensionDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `usesAPI` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Brands
+
+Path: `docusign.db.brands.search`
+
+```ts
+const rows = await corsair.docusign.db.brands.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandId` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandName` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandCompany` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultBrandLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `isOverridingCompanyName` | `boolean` | equals |
+| `isSendingDefault` | `boolean` | equals |
+| `isSigningDefault` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Bulk Send Lists
+
+Path: `docusign.db.bulkSendLists.search`
+
+```ts
+const rows = await corsair.docusign.db.bulkSendLists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `listId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdByUser` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Connect Configurations
+
+Path: `docusign.db.connectConfigurations.search`
+
+```ts
+const rows = await corsair.docusign.db.connectConfigurations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `urlToPublishTo` | `string` | equals, contains, startsWith, endsWith, in |
+| `configurationType` | `string` | equals, contains, startsWith, endsWith, in |
+| `allUsers` | `string` | equals, contains, startsWith, endsWith, in |
+| `allowEnvelopePublish` | `string` | equals, contains, startsWith, endsWith, in |
+| `enableLog` | `string` | equals, contains, startsWith, endsWith, in |
+| `includeDocuments` | `string` | equals, contains, startsWith, endsWith, in |
+| `includeCertificateOfCompletion` | `string` | equals, contains, startsWith, endsWith, in |
+| `includeHMAC` | `string` | equals, contains, startsWith, endsWith, in |
+| `includeTimeZoneInformation` | `string` | equals, contains, startsWith, endsWith, in |
+| `requiresAcknowledgement` | `string` | equals, contains, startsWith, endsWith, in |
+| `useSoapInterface` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `docusign.db.contacts.search`
+
+```ts
+const rows = await corsair.docusign.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactUri` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Custom Tabs
+
+Path: `docusign.db.customTabs.search`
+
+```ts
+const rows = await corsair.docusign.db.customTabs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `customTabId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tabLabel` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `anchor` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `string` | equals, contains, startsWith, endsWith, in |
+| `required` | `string` | equals, contains, startsWith, endsWith, in |
+| `locked` | `string` | equals, contains, startsWith, endsWith, in |
+| `height` | `string` | equals, contains, startsWith, endsWith, in |
+| `width` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedByDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdByDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Documents
+
+Path: `docusign.db.documents.search`
+
+```ts
+const rows = await corsair.docusign.db.documents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `envelopeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `documentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `documentIdGuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `order` | `string` | equals, contains, startsWith, endsWith, in |
+| `display` | `string` | equals, contains, startsWith, endsWith, in |
+| `includeInDownload` | `string` | equals, contains, startsWith, endsWith, in |
+| `signerMustAcknowledge` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateRequired` | `string` | equals, contains, startsWith, endsWith, in |
+| `containsPdfFormFields` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Envelopes
+
+Path: `docusign.db.envelopes.search`
+
+```ts
+const rows = await corsair.docusign.db.envelopes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `envelopeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailSubject` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailBlurb` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `envelopeUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `documentsUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipientsUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `templatesUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `customFieldsUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `notificationUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `attachmentsUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `brandId` | `string` | equals, contains, startsWith, endsWith, in |
+| `allowMarkup` | `string` | equals, contains, startsWith, endsWith, in |
+| `allowReassign` | `string` | equals, contains, startsWith, endsWith, in |
+| `allowViewHistory` | `string` | equals, contains, startsWith, endsWith, in |
+| `enableWetSign` | `string` | equals, contains, startsWith, endsWith, in |
+| `isSignatureProviderEnvelope` | `string` | equals, contains, startsWith, endsWith, in |
+| `purgeState` | `string` | equals, contains, startsWith, endsWith, in |
+| `voidedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `deliveredDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `completedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `declinedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `voidedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `deletedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `initialSentDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `statusChangedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `statusDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Groups
+
+Path: `docusign.db.groups.search`
+
+```ts
+const rows = await corsair.docusign.db.groups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupId` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupName` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupType` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissionProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `usersCount` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Permission Profiles
+
+Path: `docusign.db.permissionProfiles.search`
+
+```ts
+const rows = await corsair.docusign.db.permissionProfiles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissionProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissionProfileName` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedByUsername` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `userCount` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Recipients
+
+Path: `docusign.db.recipients.search`
+
+```ts
+const rows = await corsair.docusign.db.recipients.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `envelopeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipientId` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipientType` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipientIdGuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `userName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `roleName` | `string` | equals, contains, startsWith, endsWith, in |
+| `routingOrder` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `note` | `string` | equals, contains, startsWith, endsWith, in |
+| `deliveryMethod` | `string` | equals, contains, startsWith, endsWith, in |
+| `declinedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `deliveredDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `signedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `declinedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Signing Groups
+
+Path: `docusign.db.signingGroups.search`
+
+```ts
+const rows = await corsair.docusign.db.signingGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `signingGroupId` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupName` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupType` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupEmail` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedBy` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `docusign.db.templates.search`
+
+```ts
+const rows = await corsair.docusign.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageCount` | `number` | equals, gt, gte, lt, lte, in |
+| `folderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `folderName` | `string` | equals, contains, startsWith, endsWith, in |
+| `folderUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailSubject` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailBlurb` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUsed` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `docusign.db.users.search`
+
+```ts
+const rows = await corsair.docusign.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `userName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `middleName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `suffixName` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `userStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `userType` | `string` | equals, contains, startsWith, endsWith, in |
+| `isAdmin` | `string` | equals, contains, startsWith, endsWith, in |
+| `loginStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissionProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `permissionProfileName` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastLogin` | `string` | equals, contains, startsWith, endsWith, in |
+| `userAddedToAccountDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `enableConnectForUser` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspaces
+
+Path: `docusign.db.workspaces.search`
+
+```ts
+const rows = await corsair.docusign.db.workspaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceName` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `workspaceUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `billableAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
 
