@@ -71,10 +71,20 @@ export type PutOauthAppInput = {
 	app_install_slug?: string;
 };
 
+export type RotateWebhookSecretInput = {
+	/** The provider's new signing secret. Required: this replaces the stored
+	 *  one rather than generating a value of its own. */
+	signing_secret: string;
+};
+
 export type CreateWebhookInput = {
 	integration: string;
 	/** The provider's own signing secret, so inbound deliveries can be
-	 *  verified. Write-only. Unrelated to the instance signing secret. */
+	 *  verified. Write-only. Unrelated to the instance signing secret.
+	 *
+	 *  Required for a new endpoint: without it the ingress answers 401 to every
+	 *  delivery, so hub refuses to mint one. Omit it on a repeat create and the
+	 *  stored secret stands. */
 	signing_secret?: string;
 };
 
@@ -338,16 +348,17 @@ export function buildInstancePlane(
 					undefined,
 					options,
 				),
-			/** Replaces the provider's signing secret held for this endpoint. */
+			/** Replaces the provider's signing secret held for this endpoint. The
+			 *  URL is unaffected, so the provider needs no reconfiguring. */
 			rotateSecret: (
 				integration: string,
-				signingSecret: string,
+				input: RotateWebhookSecretInput,
 				options?: RequestOptions,
 			) =>
 				req<CloudWebhook>(
 					'POST',
 					`${refPath('/webhooks', ref(integration))}/rotate-secret`,
-					{ signing_secret: signingSecret },
+					input,
 					options,
 				),
 			/** The log of what this endpoint received. */
@@ -375,7 +386,9 @@ export function buildInstancePlane(
 						options,
 					),
 				/** Re-posts the stored event to the instance's current delivery
-				 *  target. Answers 502 if that POST fails. */
+				 *  target. Answers 502 if that POST fails, and 400 when the row
+				 *  cannot be replayed at all — a delivery that never routed to a
+				 *  tenant has no one to be re-sent as. */
 				retry: (
 					integration: string,
 					deliveryId: string,

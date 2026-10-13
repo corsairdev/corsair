@@ -23,8 +23,15 @@ export type CreateInstanceInput = {
 export type UpdateInstanceInput = {
 	/** `null` clears it. */
 	description?: string | null;
-	/** Allows write and destructive operations on this instance. */
+	/** Allows write and destructive operations on this instance.
+	 *
+	 *  Only settable once the instance has been applied: the row this lands on
+	 *  is created by `apply`, and `apply` in turn refuses an instance holding
+	 *  no integrations. The order is create, `integrations.put`, `apply`, then
+	 *  this. */
 	writable?: boolean;
+	/** Same ordering as `writable`. Settable at create instead, where it needs
+	 *  no deployed instance. */
 	credential_source?: CredentialSource;
 };
 
@@ -180,7 +187,10 @@ export function buildProjectPlane(transport: V1Transport) {
 						undefined,
 						options,
 					),
-				/** New URL for the same lines. The old URL is revoked. */
+				/** New URL for the same lines, and a **new id**: the old link is
+				 *  revoked and the returned object is the one to hold from here.
+				 *  A caller that keeps the id it passed in will 404 on its next
+				 *  call. Answers 201. */
 				rotate: (id: string, options?: RequestOptions) =>
 					req<CloudLink>(
 						'POST',

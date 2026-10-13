@@ -12,6 +12,7 @@ export type {
 	CreateWebhookInput,
 	PutIntegrationInput,
 	PutOauthAppInput,
+	RotateWebhookSecretInput,
 	SetAccessInput,
 	UpdateTenantInput,
 } from './instance';
