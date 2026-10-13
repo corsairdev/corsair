@@ -16,6 +16,17 @@ export const getPaymentTransaction: BlackbaudEndpoints['getPaymentTransaction'] 
 			},
 		);
 
+		if (response.id && ctx.db.paymentTransactions) {
+			try {
+				await ctx.db.paymentTransactions.upsertByEntityId(response.id, {
+					...response,
+					id: response.id,
+				});
+			} catch (error) {
+				console.warn('Failed to save payment transaction to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'blackbaud.payments.get_transaction',

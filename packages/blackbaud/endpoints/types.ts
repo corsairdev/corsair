@@ -112,7 +112,7 @@ const PaymentReadSchema = z.object({
 	reference_date: FuzzyDateSchema.optional(),
 });
 
-const GiftReadShape = {
+export const GiftReadShape = {
 	id: z.string().optional(),
 	constituent_id: z.string().optional(),
 	amount: CurrencySchema.optional(),
@@ -227,7 +227,7 @@ export type GetMembershipDetailsInput = z.infer<
 >;
 
 // MembershipDetails from the Membership API.
-const GetMembershipDetailsResponseSchema = z.object({
+export const GetMembershipDetailsResponseSchema = z.object({
 	dues: z.number().nullable().optional(),
 	category_name: z.string().nullable().optional(),
 	program_name: z.string().nullable().optional(),
@@ -260,7 +260,7 @@ export type GetPaymentTransactionInput = z.infer<
 
 // TransactionRead from the Payments API. Amounts are integers in the
 // smallest currency unit.
-const GetPaymentTransactionResponseSchema = z.object({
+export const GetPaymentTransactionResponseSchema = z.object({
 	id: z.string().optional(),
 	amount: z.number().int().optional(),
 	net_amount: z.number().int().optional(),
@@ -339,7 +339,7 @@ export type OneRosterOAuth2BaseApiInput = z.infer<
 	typeof OneRosterOAuth2BaseApiInputSchema
 >;
 
-const JsonWebKeySchema = z.object({
+export const JsonWebKeySchema = z.object({
 	kty: z.string(),
 	alg: z.string().optional(),
 	use: z.string().optional(),

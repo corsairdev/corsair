@@ -3,11 +3,12 @@ title: Overview
 description: "Blackbaud plugin for Corsair"
 ---
 
-Use **Blackbaud** through Corsair: one client, typed API calls.
+Use **Blackbaud** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 5 typed API operations
+- 5 synced entities (`batchGifts`, `gifts`, `memberships`, `oneRosterKeys`, `paymentTransactions`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -106,11 +107,20 @@ await tenant.blackbaud.api.batch.addGiftsToBatch({});
 
 See the full list on the [API](/plugins/blackbaud/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.blackbaud.db.<entity>.search()` and `.list()`: `batchGifts`, `gifts`, `memberships`, `oneRosterKeys`, `paymentTransactions`.
+
+See [Database](/plugins/blackbaud/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/blackbaud/api">
     Every `blackbaud.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/blackbaud/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

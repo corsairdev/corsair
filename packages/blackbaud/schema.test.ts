@@ -14,9 +14,13 @@ describe('Blackbaud schema', () => {
 		expect(typeof BlackbaudSchema.entities).toBe('object');
 		expect(BlackbaudSchema.entities).not.toBeNull();
 		expect(Array.isArray(BlackbaudSchema.entities)).toBe(false);
-		for (const entity of Object.values(BlackbaudSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(Object.keys(BlackbaudSchema.entities)).toEqual([
+			'gifts',
+			'batchGifts',
+			'memberships',
+			'paymentTransactions',
+			'oneRosterKeys',
+		]);
 	});
 
 	it('accepts valid endpoint inputs', () => {

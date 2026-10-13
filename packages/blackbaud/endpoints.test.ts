@@ -53,13 +53,46 @@ function json(
 	});
 }
 
-function testCtx(): BlackbaudContext {
-	// Safe: handlers only read key and options, and logEventFromContext is mocked above.
-	// A narrower type is not practical because BlackbaudContext also requires database and hook members no handler touches.
+const entityNames = [
+	'gifts',
+	'batchGifts',
+	'memberships',
+	'paymentTransactions',
+	'oneRosterKeys',
+] as const;
+
+type EntityUpsert = jest.Mock<Promise<void>, [string, object]>;
+
+function makeDb(): Record<
+	(typeof entityNames)[number],
+	{ upsertByEntityId: EntityUpsert }
+> {
+	return {
+		gifts: { upsertByEntityId: jest.fn() },
+		batchGifts: { upsertByEntityId: jest.fn() },
+		memberships: { upsertByEntityId: jest.fn() },
+		paymentTransactions: { upsertByEntityId: jest.fn() },
+		oneRosterKeys: { upsertByEntityId: jest.fn() },
+	};
+}
+
+let db: ReturnType<typeof makeDb>;
+
+function testCtx() {
 	return {
 		key: 'test-access-token',
 		options: { subscriptionKey: 'test-sub-key' },
-	} as BlackbaudContext;
+		db,
+	};
+}
+
+// Reflect.apply skips the structural BlackbaudContext check: handlers only read
+// key, options and db.<entity>.upsertByEntityId, which testCtx supplies.
+function invoke<I, O>(
+	handler: (ctx: BlackbaudContext, input: I) => Promise<O>,
+	input: I,
+): Promise<O> {
+	return Reflect.apply(handler, undefined, [testCtx(), input]);
 }
 
 function expectSkyHeaders(call: RecordedCall | undefined) {
@@ -69,6 +102,7 @@ function expectSkyHeaders(call: RecordedCall | undefined) {
 
 beforeEach(() => {
 	calls = [];
+	db = makeDb();
 	jest.clearAllMocks();
 });
 
@@ -91,7 +125,7 @@ describe('gifts.getGiftById', () => {
 	it('GETs gift/v1/gifts/{gift_id} and returns the gift record', async () => {
 		stubFetch(json(gift));
 
-		const result = await getGiftById(testCtx(), { gift_id: '1140' });
+		const result = await invoke(getGiftById, { gift_id: '1140' });
 
 		expect(calls).toHaveLength(1);
 		expect(calls[0]?.url).toBe(
@@ -115,7 +149,7 @@ describe('gifts.getGiftById', () => {
 	it('encodes the gift id into a single path segment', async () => {
 		stubFetch(json(gift));
 
-		await getGiftById(testCtx(), { gift_id: '../x?y=1' });
+		await invoke(getGiftById, { gift_id: '../x?y=1' });
 
 		expect(calls[0]?.url).toBe(
 			'https://api.sky.blackbaud.com/gift/v1/gifts/..%2Fx%3Fy%3D1',
@@ -155,7 +189,7 @@ describe('batch.addGiftsToBatch', () => {
 	it('POSTs the gifts to gift/v1/giftbatches/{batch_id}/gifts', async () => {
 		stubFetch(json(added));
 
-		const result = await addGiftsToBatch(testCtx(), { batch_id: '12', gifts });
+		const result = await invoke(addGiftsToBatch, { batch_id: '12', gifts });
 
 		expect(calls).toHaveLength(1);
 		expect(calls[0]?.url).toBe(
@@ -197,7 +231,7 @@ describe('membership.getMembershipDetails', () => {
 	it('GETs membership/v1/memberships/{member_junction_id}/membershipdetails', async () => {
 		stubFetch(json(details));
 
-		const result = await getMembershipDetails(testCtx(), {
+		const result = await invoke(getMembershipDetails, {
 			member_junction_id: '6f1a0b52-1c55-4e0f-9b1a-2d7c0c3e4a10',
 		});
 
@@ -240,7 +274,7 @@ describe('payments.getPaymentTransaction', () => {
 	it('GETs payments/v1/transactions/{transaction_id}', async () => {
 		stubFetch(json(transaction));
 
-		const result = await getPaymentTransaction(testCtx(), {
+		const result = await invoke(getPaymentTransaction, {
 			transaction_id: '92844827-5b74-40db-907f-480b13242eb5',
 		});
 
@@ -274,7 +308,7 @@ describe('oneRoster.oneRosterOAuth2BaseApi', () => {
 		};
 		stubFetch(json(discovery));
 
-		const result = await oneRosterOAuth2BaseApi(testCtx(), {
+		const result = await invoke(oneRosterOAuth2BaseApi, {
 			operation: 'openid-configuration',
 		});
 
@@ -303,7 +337,7 @@ describe('oneRoster.oneRosterOAuth2BaseApi', () => {
 		};
 		stubFetch(json(jwks));
 
-		const result = await oneRosterOAuth2BaseApi(testCtx(), {
+		const result = await invoke(oneRosterOAuth2BaseApi, {
 			operation: 'publickeys',
 		});
 
@@ -334,7 +368,7 @@ describe('error responses', () => {
 	it('surfaces 401 as an ApiError the AUTH_ERROR handler matches', async () => {
 		stubFetch(json({ statusCode: 401, message: 'Access denied' }, 401));
 
-		const error = await getGiftById(testCtx(), { gift_id: '1140' }).then(
+		const error = await invoke(getGiftById, { gift_id: '1140' }).then(
 			() => undefined,
 			(caught: Error) => caught,
 		);
@@ -355,11 +389,108 @@ describe('error responses', () => {
 		);
 		const started = Date.now();
 
-		const result = await getGiftById(testCtx(), { gift_id: '1140' });
+		const result = await invoke(getGiftById, { gift_id: '1140' });
 
 		expect(Date.now() - started).toBeGreaterThanOrEqual(900);
 		expect(calls).toHaveLength(2);
 		expect(calls[1]?.url).toBe(calls[0]?.url);
 		expect(result).toEqual({ id: '1140' });
+	});
+});
+
+describe('entity persistence', () => {
+	it('stores a fetched gift under its id', async () => {
+		const gift = { id: '1140', constituent_id: '190', type: 'Donation' };
+		stubFetch(json(gift));
+
+		await invoke(getGiftById, { gift_id: '1140' });
+
+		expect(db.gifts.upsertByEntityId).toHaveBeenCalledWith('1140', gift);
+	});
+
+	it('stores each batch gift with the batch id', async () => {
+		stubFetch(
+			json({
+				gifts: [
+					{ id: '1', constituent_id: '280' },
+					{ id: '2', batch_id: '12', constituent_id: '281' },
+				],
+			}),
+		);
+
+		await invoke(addGiftsToBatch, {
+			batch_id: '12',
+			gifts: [
+				{
+					amount: { value: 1 },
+					constituent_id: '280',
+					gift_splits: [{ amount: { value: 1 }, fund_id: '41' }],
+					type: 'Donation',
+					payments: [{ payment_method: 'Cash' }],
+				},
+			],
+		});
+
+		expect(db.batchGifts.upsertByEntityId.mock.calls).toEqual([
+			['1', { id: '1', batch_id: '12', constituent_id: '280' }],
+			['2', { id: '2', batch_id: '12', constituent_id: '281' }],
+		]);
+	});
+
+	it('stores membership details under the member junction id', async () => {
+		stubFetch(json({ category_name: 'Gold', constituent_id: '280' }));
+
+		await invoke(getMembershipDetails, { member_junction_id: 'mj-1' });
+
+		expect(db.memberships.upsertByEntityId).toHaveBeenCalledWith('mj-1', {
+			id: 'mj-1',
+			category_name: 'Gold',
+			constituent_id: '280',
+		});
+	});
+
+	it('stores a payment transaction under its id', async () => {
+		const transaction = { id: 'tx-1', amount: 1000, state: 'Processed' };
+		stubFetch(json(transaction));
+
+		await invoke(getPaymentTransaction, { transaction_id: 'tx-1' });
+
+		expect(db.paymentTransactions.upsertByEntityId).toHaveBeenCalledWith(
+			'tx-1',
+			transaction,
+		);
+	});
+
+	it('stores each OneRoster public key under its kid and skips discovery docs', async () => {
+		stubFetch(
+			json({
+				keys: [
+					{ kty: 'RSA', kid: 'k1' },
+					{ kty: 'RSA', kid: 'k2' },
+				],
+			}),
+			json({ issuer: 'https://oauth2.sky.blackbaud.com/' }),
+		);
+
+		await invoke(oneRosterOAuth2BaseApi, { operation: 'publickeys' });
+		await invoke(oneRosterOAuth2BaseApi, {
+			operation: 'openid-configuration',
+		});
+
+		expect(db.oneRosterKeys.upsertByEntityId.mock.calls).toEqual([
+			['k1', { kty: 'RSA', kid: 'k1', id: 'k1' }],
+			['k2', { kty: 'RSA', kid: 'k2', id: 'k2' }],
+		]);
+	});
+
+	it('still returns the API result when persistence fails', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		db.gifts.upsertByEntityId.mockRejectedValue(new Error('db down'));
+		stubFetch(json({ id: '1140' }));
+
+		await expect(invoke(getGiftById, { gift_id: '1140' })).resolves.toEqual({
+			id: '1140',
+		});
+		expect(warn).toHaveBeenCalled();
 	});
 });

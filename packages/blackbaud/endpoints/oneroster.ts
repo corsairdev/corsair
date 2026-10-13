@@ -29,6 +29,20 @@ export const oneRosterOAuth2BaseApi: BlackbaudEndpoints['oneRosterOAuth2BaseApi'
 			subscriptionKey: ctx.options.subscriptionKey,
 		});
 
+		if (ctx.db.oneRosterKeys) {
+			for (const key of response.keys ?? []) {
+				if (!key.kid) continue;
+				try {
+					await ctx.db.oneRosterKeys.upsertByEntityId(key.kid, {
+						...key,
+						id: key.kid,
+					});
+				} catch (error) {
+					console.warn('Failed to save OneRoster key to database:', error);
+				}
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'blackbaud.oneroster.oauth2',

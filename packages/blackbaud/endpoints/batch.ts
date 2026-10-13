@@ -20,6 +20,21 @@ export const addGiftsToBatch: BlackbaudEndpoints['addGiftsToBatch'] = async (
 		},
 	);
 
+	if (ctx.db.batchGifts) {
+		for (const gift of response.gifts ?? []) {
+			if (!gift.id) continue;
+			try {
+				await ctx.db.batchGifts.upsertByEntityId(gift.id, {
+					...gift,
+					id: gift.id,
+					batch_id: gift.batch_id ?? input.batch_id,
+				});
+			} catch (error) {
+				console.warn('Failed to save batch gift to database:', error);
+			}
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'blackbaud.gifts.add_to_batch',

@@ -17,6 +17,17 @@ export const getMembershipDetails: BlackbaudEndpoints['getMembershipDetails'] =
 			},
 		);
 
+		if (ctx.db.memberships) {
+			try {
+				await ctx.db.memberships.upsertByEntityId(input.member_junction_id, {
+					...response,
+					id: input.member_junction_id,
+				});
+			} catch (error) {
+				console.warn('Failed to save membership to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'blackbaud.membership.get_details',

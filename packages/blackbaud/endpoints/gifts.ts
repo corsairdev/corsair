@@ -14,6 +14,17 @@ export const getGiftById: BlackbaudEndpoints['getGiftById'] = async (
 		subscriptionKey: ctx.options.subscriptionKey,
 	});
 
+	if (response.id && ctx.db.gifts) {
+		try {
+			await ctx.db.gifts.upsertByEntityId(response.id, {
+				...response,
+				id: response.id,
+			});
+		} catch (error) {
+			console.warn('Failed to save gift to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'blackbaud.gifts.get',
