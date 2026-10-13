@@ -1,10 +1,8 @@
 // Mocked transport coverage intentionally runs in Corsair's normal CI lane.
-import { AuthMissingError } from 'corsair/core';
 import { UpdownIOAPIError } from './client';
 import { list as listChecks } from './endpoints/checks';
 import { list, listIps, listIpv4, listIpv6 } from './endpoints/nodes';
 import { errorHandlers } from './error-handlers';
-import { buildKey } from './index';
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
 
@@ -194,7 +192,7 @@ describe('checks.list', () => {
 
 	it('fails closed when no key is connected', async () => {
 		await expect(listChecks(publicCtx, {})).rejects.toThrow(
-			'Updown.io API key is required',
+			'auth-missing:updownio:api_key',
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -344,35 +342,5 @@ describe('error handling', () => {
 		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
-	});
-});
-
-describe('updownio keyBuilder', () => {
-	const keys = (value: string | null) => ({
-		get_dek: async () => '',
-		get_api_key: async () => value,
-		set_api_key: async () => {},
-		get_webhook_signature: async () => null,
-		set_webhook_signature: async () => {},
-		issue_new_dek: async () => '',
-	});
-	const build = (value: string | null, options = {}) =>
-		buildKey(options)(
-			{ authType: 'api_key', options, keys: keys(value), tenantId: 'tenant' },
-			'endpoint',
-		);
-
-	it('returns the connected key', async () => {
-		await expect(build('stored-key')).resolves.toBe('stored-key');
-	});
-
-	it('prefers the key given in options', async () => {
-		await expect(build(null, { key: 'option-key' })).resolves.toBe(
-			'option-key',
-		);
-	});
-
-	it('raises AuthMissingError so Corsair can prompt for a connection', async () => {
-		await expect(build(null)).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

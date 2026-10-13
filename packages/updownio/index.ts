@@ -137,17 +137,6 @@ export type InternalUpdownIOPlugin = BaseUpdownIOPlugin<UpdownIOPluginOptions>;
 export type ExternalUpdownIOPlugin<T extends UpdownIOPluginOptions> =
 	BaseUpdownIOPlugin<T>;
 
-export const buildKey =
-	(options: UpdownIOPluginOptions) =>
-	async (ctx: UpdownIOKeyBuilderContext, source: 'endpoint' | 'webhook') => {
-		if (source === 'endpoint' && options.key) return options.key;
-		if (source === 'endpoint') {
-			const key = await ctx.keys.get_api_key();
-			if (key) return key;
-		}
-		throw new AuthMissingError('updownio', 'api_key');
-	};
-
 export function updownio<const T extends UpdownIOPluginOptions>(
 	// Safe: every option is optional, so `{}` satisfies UpdownIOPluginOptions; TypeScript cannot prove `{}` assignable to the generic T, so no better type is practical.
 	incomingOptions: UpdownIOPluginOptions & T = {} as UpdownIOPluginOptions & T,
@@ -170,7 +159,24 @@ export function updownio<const T extends UpdownIOPluginOptions>(
 		webhookSchemas: updownIOWebhookSchemas,
 		pluginWebhookMatcher: undefined,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
-		keyBuilder: buildKey(options),
+		keyBuilder: async (ctx: UpdownIOKeyBuilderContext, source) => {
+			if (source === 'endpoint' && options.key !== undefined)
+				return options.key;
+			if (source === 'endpoint') {
+				try {
+					return (await ctx.keys.get_api_key()) ?? '';
+				} catch (error) {
+					if (
+						error instanceof AuthMissingError ||
+						(error instanceof Error && /no dek found/i.test(error.message))
+					) {
+						return '';
+					}
+					throw error;
+				}
+			}
+			throw new AuthMissingError('updownio', 'api_key');
+		},
 	} satisfies InternalUpdownIOPlugin;
 }
 

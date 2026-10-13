@@ -1,10 +1,11 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeUpdownIORequest } from '../client';
 import type { UpdownIOEndpoints } from '../index';
 import { ChecksResponseSchema, ListChecksInputSchema } from './types';
 
 export const list: UpdownIOEndpoints['checksList'] = async (ctx, rawInput) => {
 	ListChecksInputSchema.parse(rawInput);
+	if (!ctx.key.trim()) throw new AuthMissingError('updownio', 'api_key');
 	const response = ChecksResponseSchema.parse(
 		await makeUpdownIORequest('/checks', ctx.key, {
 			requiresAuth: true,
