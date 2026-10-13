@@ -14,6 +14,7 @@ export const list: CeligoEndpoints['importsList'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'imports',
 			path: ['imports'],
 			query: {
 				externalId: i.externalId,
@@ -27,6 +28,7 @@ export const list: CeligoEndpoints['importsList'] = (ctx, input) =>
 export const get: CeligoEndpoints['importsGet'] = (ctx, input) =>
 	callCeligo(ctx, 'imports.get', In.importsGet, Out.importsGet, input, (i) => ({
 		method: 'GET',
+		save: 'imports',
 		path: ['imports', i.id],
 	}));
 
@@ -39,6 +41,7 @@ export const create: CeligoEndpoints['importsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'imports',
 			path: ['imports'],
 			body: i,
 		}),
@@ -53,6 +56,7 @@ export const update: CeligoEndpoints['importsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'imports',
 			path: ['imports', id],
 			body,
 		}),
@@ -82,6 +86,7 @@ export const remove: CeligoEndpoints['importsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'imports',
 			path: ['imports', i.id],
 			empty: { success: true },
 		}),

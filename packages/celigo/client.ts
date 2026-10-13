@@ -19,15 +19,16 @@ export function celigoBaseUrl(region: CeligoRegion = 'us'): string {
 
 export type CeligoQueryValue = string | number | boolean | string[] | undefined;
 
-// Returns unknown: callCeligo parses every response with the endpoint's output schema.
+// Safe: callCeligo parses every response with the endpoint's output schema.
+// A narrower type is not practical because the response shape differs per endpoint.
 export async function makeCeligoRequest(
 	path: string,
 	apiKey: string,
 	options: {
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		query?: Record<string, CeligoQueryValue>;
-		// unknown: bodies are validated endpoint inputs, JSON Patch arrays, or
-		// arbitrary state values.
+		// Safe: bodies are validated endpoint inputs, JSON Patch arrays or state values.
+		// A narrower type is not practical because the body shape differs per endpoint.
 		body?: unknown;
 		region?: CeligoRegion;
 	},
@@ -54,7 +55,8 @@ export async function makeCeligoRequest(
 	};
 
 	try {
-		// unknown: the raw response is parsed by the caller, not trusted here.
+		// Safe: the caller parses the raw response with the output schema.
+		// A narrower type is not practical because the response shape differs per endpoint.
 		return await request<unknown>(config, requestOptions);
 	} catch (error) {
 		// ApiError keeps status and retryAfter for the 429 and 401 handlers.

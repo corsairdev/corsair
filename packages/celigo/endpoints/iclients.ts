@@ -14,6 +14,7 @@ export const list: CeligoEndpoints['iClientsList'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'iclients',
 			path: ['iclients'],
 			query: { limit: i.limit, after: i.after },
 			empty: [],
@@ -29,6 +30,7 @@ export const get: CeligoEndpoints['iClientsGet'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'iclients',
 			path: ['iclients', i.id],
 		}),
 	);
@@ -42,6 +44,7 @@ export const create: CeligoEndpoints['iClientsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'iclients',
 			path: ['iclients'],
 			body: i,
 		}),
@@ -56,6 +59,7 @@ export const update: CeligoEndpoints['iClientsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'iclients',
 			path: ['iclients', id],
 			body,
 		}),
@@ -85,6 +89,7 @@ export const remove: CeligoEndpoints['iClientsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'iclients',
 			path: ['iclients', i.id],
 			empty: { success: true },
 		}),

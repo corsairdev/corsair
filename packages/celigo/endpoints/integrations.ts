@@ -14,6 +14,7 @@ export const list: CeligoEndpoints['integrationsList'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'integrations',
 			path: ['integrations'],
 			query: { include: i.include, exclude: i.exclude, limit: i.limit },
 			empty: [],
@@ -29,6 +30,7 @@ export const get: CeligoEndpoints['integrationsGet'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'integrations',
 			path: ['integrations', i.id],
 		}),
 	);
@@ -42,6 +44,7 @@ export const create: CeligoEndpoints['integrationsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'integrations',
 			path: ['integrations'],
 			body: i,
 		}),
@@ -56,6 +59,7 @@ export const update: CeligoEndpoints['integrationsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'integrations',
 			path: ['integrations', id],
 			body,
 		}),
@@ -85,6 +89,7 @@ export const remove: CeligoEndpoints['integrationsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'integrations',
 			path: ['integrations', i.id],
 			empty: { success: true },
 		}),
@@ -155,6 +160,7 @@ export const listFlows: CeligoEndpoints['integrationsListFlows'] = (
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'flows',
 			path: ['integrations', i.id, 'flows'],
 			query: { limit: i.limit, includeInstances: i.includeInstances },
 			empty: [],
@@ -173,6 +179,7 @@ export const listExports: CeligoEndpoints['integrationsListExports'] = (
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'exports',
 			path: ['integrations', i.id, 'exports'],
 			query: { limit: i.limit },
 			empty: [],
@@ -191,6 +198,7 @@ export const listImports: CeligoEndpoints['integrationsListImports'] = (
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'imports',
 			path: ['integrations', i.id, 'imports'],
 			query: { limit: i.limit },
 			empty: [],
@@ -209,6 +217,7 @@ export const listConnections: CeligoEndpoints['integrationsListConnections'] = (
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'connections',
 			path: ['integrations', i.id, 'connections'],
 			query: { limit: i.limit },
 			empty: [],

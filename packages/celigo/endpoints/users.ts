@@ -8,6 +8,7 @@ import {
 export const list: CeligoEndpoints['usersList'] = (ctx, input) =>
 	callCeligo(ctx, 'users.list', In.usersList, Out.usersList, input, (i) => ({
 		method: 'GET',
+		save: 'users',
 		path: ['ashares'],
 		query: { userType: i.userType },
 		empty: [],
@@ -16,6 +17,7 @@ export const list: CeligoEndpoints['usersList'] = (ctx, input) =>
 export const get: CeligoEndpoints['usersGet'] = (ctx, input) =>
 	callCeligo(ctx, 'users.get', In.usersGet, Out.usersGet, input, (i) => ({
 		method: 'GET',
+		save: 'users',
 		path: ['ashares', i.id],
 	}));
 
@@ -28,6 +30,7 @@ export const invite: CeligoEndpoints['usersInvite'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'users',
 			path: ['invite'],
 			body: i,
 		}),
@@ -74,6 +77,7 @@ export const remove: CeligoEndpoints['usersDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'users',
 			path: ['ashares', i.id],
 			empty: { success: true },
 		}),

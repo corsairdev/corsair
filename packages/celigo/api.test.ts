@@ -1,46 +1,67 @@
-import { logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
-import type { CeligoContext } from './index';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { celigo } from './index';
+
+const mockRequest = jest.fn<
+	Promise<Json | undefined>,
+	[OpenAPIConfig, ApiRequestOptions]
+>();
+const mockLogEvent = jest.fn<Promise<void>, never[]>(async () => undefined);
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
-	request: jest.fn(),
+	request: (...args: [OpenAPIConfig, ApiRequestOptions]) =>
+		mockRequest(...args),
 }));
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(async () => undefined),
+	logEventFromContext: (...args: never[]) => mockLogEvent(...args),
 }));
-
-const mockRequest = request as jest.MockedFunction<typeof request>;
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
 
 const plugin = celigo({ key: 'test-api-key' });
 
-function ctx(region?: 'us' | 'eu' | 'au' | 'ca'): CeligoContext {
-	return {
-		key: 'test-api-key',
-		options: { region },
-	} as CeligoContext;
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+type JsonObject = { [key: string]: Json };
+
+const entityNames = Object.keys(plugin.schema?.entities ?? {});
+
+const tables = Object.fromEntries(
+	entityNames.map((name) => [
+		name,
+		{ upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	]),
+);
+
+type TestContext = {
+	key: string;
+	options: { region?: 'us' | 'eu' | 'au' | 'ca' };
+	db: typeof tables;
+};
+
+function ctx(region?: 'us' | 'eu' | 'au' | 'ca'): TestContext {
+	return { key: 'test-api-key', options: { region }, db: tables };
 }
 
-type Endpoint = (
-	ctx: CeligoContext,
-	input: Record<string, unknown>,
-) => Promise<unknown>;
+type Endpoint = (ctx: TestContext, input: JsonObject) => Promise<Json>;
 
 function endpoint(path: string): Endpoint {
 	const [group = '', name = ''] = path.split('.');
-	const groups = plugin.endpoints as unknown as Record<
-		string,
-		Record<string, Endpoint>
-	>;
-	const fn = groups[group]?.[name];
-	if (!fn) throw new Error(`no endpoint ${path}`);
-	return fn;
+	const fn = Reflect.get(
+		Reflect.get(plugin.endpoints ?? {}, group) ?? {},
+		name,
+	);
+	if (typeof fn !== 'function') throw new Error(`no endpoint ${path}`);
+	return (c, input) => fn(c, input);
+}
+
+function errorContext(error: Error) {
+	return {
+		pluginId: 'celigo',
+		operation: 'flows.list',
+		input: {},
+		originalError: error,
+	};
 }
 
 function sentRequest() {
@@ -51,13 +72,13 @@ function sentRequest() {
 
 type Case = {
 	path: string;
-	input: Record<string, unknown>;
-	response: unknown;
+	input: JsonObject;
+	response: Json | undefined;
 	method: string;
 	url: string;
-	query?: Record<string, unknown>;
-	body?: unknown;
-	result: unknown;
+	query?: JsonObject;
+	body?: Json;
+	result: Json;
 };
 
 // One row per endpoint: the request Celigo should receive and the value the
@@ -1149,7 +1170,7 @@ describe('Celigo endpoints', () => {
 	});
 
 	it.each(cases)('$path sends $method /$url', async (c) => {
-		mockRequest.mockResolvedValueOnce(c.response as never);
+		mockRequest.mockResolvedValueOnce(c.response);
 
 		const result = await endpoint(c.path)(ctx(), c.input);
 
@@ -1172,7 +1193,7 @@ describe('Celigo endpoints', () => {
 
 describe('Celigo request handling', () => {
 	it('routes to the regional host', async () => {
-		mockRequest.mockResolvedValueOnce({ _userId: 'u1' } as never);
+		mockRequest.mockResolvedValueOnce({ _userId: 'u1' });
 
 		await endpoint('account.getTokenInfo')(ctx('eu'), {});
 
@@ -1180,7 +1201,7 @@ describe('Celigo request handling', () => {
 	});
 
 	it('encodes each id as a single path segment', async () => {
-		mockRequest.mockResolvedValueOnce({ _id: 'a b' } as never);
+		mockRequest.mockResolvedValueOnce({ _id: 'a b' });
 
 		await endpoint('flows.get')(ctx(), { id: 'a b' });
 
@@ -1196,7 +1217,7 @@ describe('Celigo request handling', () => {
 	);
 
 	it('rejects a response missing _id', async () => {
-		mockRequest.mockResolvedValueOnce({ name: 'no id' } as never);
+		mockRequest.mockResolvedValueOnce({ name: 'no id' });
 
 		await expect(endpoint('flows.get')(ctx(), { id: 'f1' })).rejects.toThrow();
 	});
@@ -1205,7 +1226,7 @@ describe('Celigo request handling', () => {
 		mockRequest.mockResolvedValueOnce({
 			_id: 'e1',
 			http: { relativeURI: '/orders' },
-		} as never);
+		});
 
 		const result = await endpoint('exports.get')(ctx(), { id: 'e1' });
 
@@ -1229,26 +1250,266 @@ describe('Celigo request handling', () => {
 
 		await expect(endpoint('flows.list')(ctx(), {})).rejects.toBe(rateLimited);
 		expect(
-			await plugin.errorHandlers?.RATE_LIMIT_ERROR?.handler(rateLimited, {
-				operation: 'flows.list',
-			} as never),
+			await plugin.errorHandlers?.RATE_LIMIT_ERROR?.handler(
+				rateLimited,
+				errorContext(rateLimited),
+			),
 		).toEqual({ maxRetries: 5, headersRetryAfterMs: 3000 });
+	});
+
+	it('rethrows a 401 and maps it to the auth handler', async () => {
+		const unauthorized = new ApiError(
+			{ method: 'GET', url: 'flows' },
+			{
+				body: { message: 'Unauthorized' },
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				url: 'https://api.integrator.io/v1/flows',
+			},
+			'Unauthorized',
+		);
+		mockRequest.mockRejectedValueOnce(unauthorized);
+
+		await expect(endpoint('flows.list')(ctx(), {})).rejects.toBe(unauthorized);
+		expect(
+			plugin.errorHandlers?.AUTH_ERROR?.match(
+				unauthorized,
+				errorContext(unauthorized),
+			),
+		).toBe(true);
 	});
 });
 
 describe('Celigo plugin metadata', () => {
 	it('marks every delete as destructive and irreversible', () => {
-		const meta = plugin.endpointMeta as Record<
-			string,
-			{ riskLevel: string; irreversible?: boolean }
-		>;
-		const deletes = Object.keys(meta).filter((k) => /\.delete/.test(k));
+		const deletes = Object.entries(plugin.endpointMeta ?? {}).filter(([k]) =>
+			/\.delete/.test(k),
+		);
 		expect(deletes.length).toBeGreaterThan(10);
-		for (const k of deletes) {
-			expect(meta[k]).toMatchObject({
+		for (const [, meta] of deletes) {
+			expect(meta).toMatchObject({
 				riskLevel: 'destructive',
 				irreversible: true,
 			});
 		}
+	});
+});
+
+describe('Celigo database persistence', () => {
+	const stamp = '2024-05-01T10:00:00.000Z';
+	const when = new Date(stamp);
+
+	const saves: {
+		path: string;
+		input: JsonObject;
+		response: Json;
+		entity: string;
+		id: string;
+		row: JsonObject;
+	}[] = [
+		{
+			path: 'integrations.get',
+			input: { id: 'i1' },
+			response: {
+				_id: 'i1',
+				name: 'ERP',
+				_connectorId: 'c9',
+				lastModified: stamp,
+			},
+			entity: 'integrations',
+			id: 'i1',
+			row: { id: 'i1', name: 'ERP', connectorId: 'c9' },
+		},
+		{
+			path: 'flows.get',
+			input: { id: 'f1' },
+			response: {
+				_id: 'f1',
+				name: 'Sync',
+				_integrationId: 'i1',
+				disabled: false,
+			},
+			entity: 'flows',
+			id: 'f1',
+			row: { id: 'f1', name: 'Sync', integrationId: 'i1', disabled: false },
+		},
+		{
+			path: 'connections.create',
+			input: { type: 'http', name: 'API' },
+			response: { _id: 'c1', name: 'API', type: 'http', offline: false },
+			entity: 'connections',
+			id: 'c1',
+			row: { id: 'c1', name: 'API', type: 'http', offline: false },
+		},
+		{
+			path: 'exports.update',
+			input: { id: 'e1', name: 'Orders', adaptorType: 'HTTPExport' },
+			response: {
+				_id: 'e1',
+				name: 'Orders',
+				adaptorType: 'HTTPExport',
+				_connectionId: 'c1',
+			},
+			entity: 'exports',
+			id: 'e1',
+			row: { id: 'e1', adaptorType: 'HTTPExport', connectionId: 'c1' },
+		},
+		{
+			path: 'imports.get',
+			input: { id: 'm1' },
+			response: { _id: 'm1', adaptorType: 'HTTPImport', ignoreExisting: true },
+			entity: 'imports',
+			id: 'm1',
+			row: { id: 'm1', adaptorType: 'HTTPImport', ignoreExisting: true },
+		},
+		{
+			path: 'scripts.get',
+			input: { id: 's1' },
+			response: {
+				_id: 's1',
+				name: 'Hook',
+				content: 'function f(){}',
+				createdAt: stamp,
+				lastModified: stamp,
+			},
+			entity: 'scripts',
+			id: 's1',
+			row: { id: 's1', name: 'Hook', content: 'function f(){}' },
+		},
+		{
+			path: 'tags.create',
+			input: { tag: 'prod' },
+			response: { _id: 't1', tag: 'prod', tagId: 'tg1' },
+			entity: 'tags',
+			id: 't1',
+			row: { id: 't1', tag: 'prod', tagId: 'tg1' },
+		},
+		{
+			path: 'iClients.get',
+			input: { id: 'ic1' },
+			response: { _id: 'ic1', provider: 'custom_oauth2', published: true },
+			entity: 'iclients',
+			id: 'ic1',
+			row: { id: 'ic1', provider: 'custom_oauth2', published: true },
+		},
+		{
+			path: 'users.get',
+			input: { id: 'u1' },
+			response: { _id: 'u1', accessLevel: 'manage', accepted: true },
+			entity: 'users',
+			id: 'u1',
+			row: { id: 'u1', accessLevel: 'manage', accepted: true },
+		},
+		{
+			path: 'jobs.list',
+			input: {},
+			response: [
+				{
+					_id: 'j1',
+					type: 'flow',
+					status: 'completed',
+					_flowId: 'f1',
+					numError: 2,
+				},
+			],
+			entity: 'jobs',
+			id: 'j1',
+			row: { id: 'j1', status: 'completed', flowId: 'f1', numError: 2 },
+		},
+		{
+			path: 'flows.getLatestJobs',
+			input: { id: 'f1' },
+			response: [{ _id: 'j2', status: 'running', _flowId: 'f1' }],
+			entity: 'jobs',
+			id: 'j2',
+			row: { id: 'j2', status: 'running', flowId: 'f1' },
+		},
+		{
+			path: 'integrations.listFlows',
+			input: { id: 'i1' },
+			response: [{ _id: 'f7', name: 'Nested', _integrationId: 'i1' }],
+			entity: 'flows',
+			id: 'f7',
+			row: { id: 'f7', name: 'Nested', integrationId: 'i1' },
+		},
+	];
+
+	it.each(saves)('$path upserts into $entity', async (c) => {
+		mockRequest.mockResolvedValueOnce(c.response);
+
+		await endpoint(c.path)(ctx(), c.input);
+
+		expect(tables[c.entity]?.upsertByEntityId).toHaveBeenCalledTimes(1);
+		expect(tables[c.entity]?.upsertByEntityId).toHaveBeenCalledWith(
+			c.id,
+			expect.objectContaining(c.row),
+		);
+	});
+
+	it('stores timestamps as dates', async () => {
+		mockRequest.mockResolvedValueOnce({ _id: 'i1', lastModified: stamp });
+
+		await endpoint('integrations.get')(ctx(), { id: 'i1' });
+
+		expect(tables.integrations?.upsertByEntityId).toHaveBeenCalledWith(
+			'i1',
+			expect.objectContaining({ lastModified: when }),
+		);
+	});
+
+	it('upserts every row of a list', async () => {
+		mockRequest.mockResolvedValueOnce([{ _id: 'f1' }, { _id: 'f2' }]);
+
+		await endpoint('flows.list')(ctx(), {});
+
+		expect(tables.flows?.upsertByEntityId).toHaveBeenCalledTimes(2);
+		expect(tables.flows?.upsertByEntityId).toHaveBeenCalledWith(
+			'f2',
+			expect.objectContaining({ id: 'f2' }),
+		);
+	});
+
+	it.each([
+		['flows.delete', 'flows'],
+		['connections.delete', 'connections'],
+		['exports.delete', 'exports'],
+		['imports.delete', 'imports'],
+		['integrations.delete', 'integrations'],
+		['scripts.delete', 'scripts'],
+		['tags.delete', 'tags'],
+		['iClients.delete', 'iclients'],
+		['users.delete', 'users'],
+	])('%s removes the stored %s row', async (path, entity) => {
+		mockRequest.mockResolvedValueOnce(undefined);
+
+		await endpoint(path)(ctx(), { id: 'x1' });
+
+		expect(tables[entity]?.deleteByEntityId).toHaveBeenCalledWith('x1');
+	});
+
+	it('does not store anything for a patch', async () => {
+		mockRequest.mockResolvedValueOnce(undefined);
+
+		await endpoint('flows.patch')(ctx(), {
+			id: 'f1',
+			operations: [{ op: 'replace', path: '/name', value: 'x' }],
+		});
+
+		expect(tables.flows?.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('returns the response when the database write fails', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		tables.flows?.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+		mockRequest.mockResolvedValueOnce({ _id: 'f1', name: 'Sync' });
+
+		const result = await endpoint('flows.get')(ctx(), { id: 'f1' });
+
+		expect(result).toEqual({ _id: 'f1', name: 'Sync' });
+		expect(warn).toHaveBeenCalled();
+		warn.mockRestore();
 	});
 });

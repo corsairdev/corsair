@@ -8,6 +8,7 @@ import {
 export const list: CeligoEndpoints['flowsList'] = (ctx, input) =>
 	callCeligo(ctx, 'flows.list', In.flowsList, Out.flowsList, input, (i) => ({
 		method: 'GET',
+		save: 'flows',
 		path: ['flows'],
 		query: {
 			_abstractFlowId: i._abstractFlowId,
@@ -28,6 +29,7 @@ export const list: CeligoEndpoints['flowsList'] = (ctx, input) =>
 export const get: CeligoEndpoints['flowsGet'] = (ctx, input) =>
 	callCeligo(ctx, 'flows.get', In.flowsGet, Out.flowsGet, input, (i) => ({
 		method: 'GET',
+		save: 'flows',
 		path: ['flows', i.id],
 		query: { mergeInstance: i.mergeInstance },
 	}));
@@ -41,6 +43,7 @@ export const create: CeligoEndpoints['flowsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'flows',
 			path: ['flows'],
 			body: i,
 		}),
@@ -55,6 +58,7 @@ export const update: CeligoEndpoints['flowsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'flows',
 			path: ['flows', id],
 			body,
 		}),
@@ -77,6 +81,7 @@ export const remove: CeligoEndpoints['flowsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'flows',
 			path: ['flows', i.id],
 			empty: { success: true },
 		}),
@@ -177,6 +182,7 @@ export const getLatestJobs: CeligoEndpoints['flowsGetLatestJobs'] = (
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'jobs',
 			path: ['flows', i.id, 'jobs', 'latest'],
 			query: { include: i.include, exclude: i.exclude },
 			empty: [],

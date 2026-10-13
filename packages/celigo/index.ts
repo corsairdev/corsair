@@ -1356,6 +1356,8 @@ export type ExternalCeligoPlugin<T extends CeligoPluginOptions> =
 	BaseCeligoPlugin<T>;
 
 export function celigo<const T extends CeligoPluginOptions>(
+	// Safe: every CeligoPluginOptions field is optional, so {} satisfies it.
+	// A narrower type is not practical because T is the caller's literal options type.
 	incomingOptions: CeligoPluginOptions & T = {} as CeligoPluginOptions & T,
 ): ExternalCeligoPlugin<T> {
 	const options = {

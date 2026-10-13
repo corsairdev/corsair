@@ -8,6 +8,7 @@ import {
 export const list: CeligoEndpoints['jobsList'] = (ctx, input) =>
 	callCeligo(ctx, 'jobs.list', In.jobsList, Out.jobsList, input, (i) => ({
 		method: 'GET',
+		save: 'jobs',
 		path: ['jobs'],
 		query: {
 			_integrationId: i._integrationId,

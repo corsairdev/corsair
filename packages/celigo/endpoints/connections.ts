@@ -14,6 +14,7 @@ export const list: CeligoEndpoints['connectionsList'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'connections',
 			path: ['connections'],
 			query: {
 				limit: i.limit,
@@ -36,6 +37,7 @@ export const get: CeligoEndpoints['connectionsGet'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'GET',
+			save: 'connections',
 			path: ['connections', i.id],
 		}),
 	);
@@ -49,6 +51,7 @@ export const create: CeligoEndpoints['connectionsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'connections',
 			path: ['connections'],
 			body: i,
 		}),
@@ -63,6 +66,7 @@ export const update: CeligoEndpoints['connectionsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'connections',
 			path: ['connections', id],
 			body,
 		}),
@@ -92,6 +96,7 @@ export const remove: CeligoEndpoints['connectionsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'connections',
 			path: ['connections', i.id],
 			empty: { success: true },
 		}),

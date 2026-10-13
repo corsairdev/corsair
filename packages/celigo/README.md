@@ -135,6 +135,10 @@ pnpm add @corsair-dev/celigo
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
 
+## Database
+
+Resources returned by the API are stored locally and searchable through `corsair.celigo.db.<entity>`: `integrations`, `flows`, `connections`, `exports`, `imports`, `scripts`, `tags`, `iclients`, `users` and `jobs`. Deletes remove the stored row.
+
 ## Webhooks
 
 No webhooks.

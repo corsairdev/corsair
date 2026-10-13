@@ -3,20 +3,28 @@ import type { z } from 'zod';
 import type { CeligoQueryValue } from '../client';
 import { makeCeligoRequest } from '../client';
 import type { CeligoContext } from '../index';
+import type { CeligoEntity } from './db';
+import { deleteEntity, saveEntities } from './db';
 
 export type CeligoRoute = {
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	// Each segment is URL-encoded on its own, so an id can never add a path level.
 	path: string[];
 	query?: Record<string, CeligoQueryValue>;
-	// unknown: built from already-validated input; its shape differs per endpoint.
+	// Safe: the body is built from input the endpoint schema already validated.
+	// A narrower type is not practical because the body shape differs per endpoint.
 	body?: unknown;
 	// Celigo answers 204 with no body for deletes, patches and empty lists.
-	// This value stands in for the missing body. unknown: it goes through the
-	// output schema like a real response.
+	// This value stands in for the missing body and goes through the output schema.
+	// Safe: the output schema parses it like a real response.
+	// A narrower type is not practical because each endpoint has its own output shape.
 	empty?: unknown;
 	// Text responses (debug logs, state writes) are wrapped under this key.
 	wrap?: string;
+	// Entity table that receives the documents this call returns.
+	save?: CeligoEntity;
+	// Entity table whose row for path[1] is removed once the call succeeds.
+	drop?: CeligoEntity;
 };
 
 export async function callCeligo<TInput, TOutput>(
@@ -24,12 +32,14 @@ export async function callCeligo<TInput, TOutput>(
 	operation: string,
 	inputSchema: z.ZodType<TInput>,
 	outputSchema: z.ZodType<TOutput>,
-	// unknown: endpoint input is raw until inputSchema.parse.
+	// Safe: inputSchema.parse validates it on the next line.
+	// A narrower type is not practical because callers pass raw, untrusted input.
 	input: unknown,
 	route: (input: TInput) => CeligoRoute,
 ): Promise<TOutput> {
 	const validated = inputSchema.parse(input);
-	const { method, path, query, body, empty, wrap } = route(validated);
+	const { method, path, query, body, empty, wrap, save, drop } =
+		route(validated);
 	const raw = await makeCeligoRequest(
 		path.map(encodeURIComponent).join('/'),
 		ctx.key,
@@ -37,6 +47,8 @@ export async function callCeligo<TInput, TOutput>(
 	);
 	const filled = raw === undefined || raw === '' ? empty : raw;
 	const response = outputSchema.parse(wrap ? { [wrap]: filled ?? '' } : filled);
+	if (save) await saveEntities(ctx, save, response);
+	if (drop && path[1]) await deleteEntity(ctx, drop, path[1]);
 	await logEventFromContext(ctx, `celigo.${operation}`, {}, 'completed');
 	return response;
 }

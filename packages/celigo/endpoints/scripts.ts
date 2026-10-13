@@ -8,6 +8,7 @@ import {
 export const get: CeligoEndpoints['scriptsGet'] = (ctx, input) =>
 	callCeligo(ctx, 'scripts.get', In.scriptsGet, Out.scriptsGet, input, (i) => ({
 		method: 'GET',
+		save: 'scripts',
 		path: ['scripts', i.id],
 	}));
 
@@ -20,6 +21,7 @@ export const create: CeligoEndpoints['scriptsCreate'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'POST',
+			save: 'scripts',
 			path: ['scripts'],
 			body: i,
 		}),
@@ -34,6 +36,7 @@ export const update: CeligoEndpoints['scriptsUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PUT',
+			save: 'scripts',
 			path: ['scripts', id],
 			body,
 		}),
@@ -48,6 +51,7 @@ export const remove: CeligoEndpoints['scriptsDelete'] = (ctx, input) =>
 		input,
 		(i) => ({
 			method: 'DELETE',
+			drop: 'scripts',
 			path: ['scripts', i.id],
 			empty: { success: true },
 		}),

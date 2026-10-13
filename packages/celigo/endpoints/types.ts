@@ -15,6 +15,8 @@ const PathSegment = z
 const Id = PathSegment.describe('Celigo resource _id');
 // Connector-specific blocks (http, netsuite, salesforce, ...) and user-defined
 // settings have no fixed schema in the Celigo API, so they stay open records.
+// Safe: the schema only checks the value is a JSON object and passes it through.
+// A narrower type is not practical because connector blocks and user settings have no fixed schema in the Celigo API.
 const Json = z.record(z.string(), z.unknown());
 const Records = z.array(Json);
 
@@ -152,6 +154,8 @@ const PingResult = z.union([
 ]);
 const DebugLogs = z.object({ logs: z.string() });
 // Keyed by dependent resource type (flows, imports, ...); entry shape differs per type.
+// Safe: the schema only checks the keys and passes values through.
+// A narrower type is not practical because dependency lists differ per resource type and Celigo does not fix their shape.
 const Dependencies = z.record(z.string(), z.unknown());
 
 const VirtualExportInput = IdInput.extend({
@@ -184,6 +188,8 @@ const ImportResultList = z.array(
 	}),
 );
 // Celigo documents this as "the set of post-mapped records" without a schema.
+// Safe: the elements are returned to the caller untouched.
+// A narrower type is not practical because mapped records follow the caller's own mapping, so their shape is open.
 const MappedRecords = z.union([z.array(z.unknown()), Json]);
 
 // Flow step errors
@@ -270,6 +276,8 @@ const JsonPatchOp = z.object({
 	op: z.enum(['replace', 'add', 'remove']),
 	path: z.string().min(1).describe('JSON Pointer, e.g. /name'),
 	// RFC 6902 allows any JSON value here.
+	// Safe: the value is forwarded to Celigo as the JSON Patch value.
+	// A narrower type is not practical because a patch value can be any JSON type.
 	value: z.unknown().optional(),
 });
 const PatchInput = IdInput.extend({
@@ -478,6 +486,8 @@ const GenerateStructuredFileInput = z.object({
 const ParsedRecords = z.looseObject({
 	mediaType: z.string().optional(),
 	// Rows parsed from the caller's file, so their fields are whatever the file holds.
+	// Safe: the records are forwarded to Celigo as given.
+	// A narrower type is not practical because record shape is defined by the caller's file definition.
 	data: z.array(z.unknown()),
 	duration: z.number().optional(),
 });
@@ -522,6 +532,8 @@ const ScriptLogs = z.looseObject({
 const StateKey = PathSegment.describe('State key');
 const StateResourceType = z.enum(['exports', 'imports', 'integrations']);
 // State values are arbitrary JSON the caller stores and reads back.
+// Safe: state values are stored and returned without inspection.
+// A narrower type is not practical because state values are arbitrary JSON the caller chooses.
 const StateValueBody = z.union([Json, z.array(z.unknown())]);
 const StateKeys = z.object({ keys: z.array(z.string()) });
 const StateKeyInput = z.object({ key: StateKey });
