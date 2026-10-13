@@ -80,6 +80,7 @@ export async function v1Request<T>(
 	transport: V1Transport,
 	method: string,
 	path: string,
+	// Caller-shaped: each route's input is typed at its own call site.
 	body?: unknown,
 	options: RequestOptions = {},
 ): Promise<T> {
@@ -117,6 +118,7 @@ export async function v1Request<T>(
 		});
 
 		const text = await res.text();
+		// Off the wire, so it is narrowed by the envelope checks below.
 		let parsed: unknown;
 		try {
 			parsed = text ? JSON.parse(text) : undefined;
@@ -134,13 +136,15 @@ export async function v1Request<T>(
 		// A caller's own abort is theirs to see.
 		if (options.signal?.aborted) throw err;
 		if (err instanceof CloudApiError) throw err;
-		// An idempotent method, or one the server dedupes, is safe to repeat
-		// whatever happened. Otherwise: before the server answers nothing is
-		// known, and after it answers a lost body says nothing about whether the
-		// write landed, so retryability follows the status.
-		const safeToRepeat =
-			REPEATABLE_METHODS.has(method) || options.idempotencyKey !== undefined;
-		const retryable = safeToRepeat ? true : res ? undefined : false;
+		// Whether a route honours an idempotency key is the server's business, so
+		// past the response only an idempotent method is safe to repeat. Before
+		// it, nothing is known and the key is the caller's only signal.
+		const idempotent = REPEATABLE_METHODS.has(method);
+		const retryable = res
+			? idempotent
+				? true
+				: undefined
+			: idempotent || Boolean(options.idempotencyKey);
 		throw mapV1Error(
 			res?.status ?? 0,
 			{

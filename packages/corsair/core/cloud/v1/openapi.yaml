@@ -764,24 +764,6 @@ paths:
         "409": { $ref: "#/components/responses/Error" }
         "429": { $ref: "#/components/responses/Error" }
 
-  /mcp/links/{id}/send:
-    parameters:
-      - { name: id, in: path, required: true, schema: { type: string }, description: 'The link id, which is also the token in its URL.' }
-    post:
-      operationId: sendLink
-      tags: [mcp]
-      summary: Mail the link to the address on it.
-      description: >
-        Not deduped: a retry sends a second mail.
-      responses:
-        "200":
-          description: Success.
-          content:
-            application/json: { schema: { $ref: "#/components/schemas/LinkSend" } }
-        "400": { $ref: "#/components/responses/Error" }
-        "401": { $ref: "#/components/responses/Error" }
-        "404": { $ref: "#/components/responses/Error" }
-
   /mcp/tokens:
     post:
       operationId: mintToken
@@ -1445,7 +1427,6 @@ components:
       required: [instances]
       properties:
         recipient: { type: [string, "null"], description: "Who the link is for. A label, not an address." }
-        email: { type: [string, "null"], format: email, description: "Where `POST /mcp/links/{id}/send` mails it." }
         instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Every line must name access you already hold." }
     UpdateLink:
       type: object
@@ -1454,14 +1435,6 @@ components:
         recipient: { type: [string, "null"] }
         email: { type: [string, "null"], format: email }
         instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Replaces the whole set. Omit to leave the lines alone." }
-    LinkSend:
-      type: object
-      required: [object, id, email, sent]
-      properties:
-        object: { type: string, enum: [mcp_link_send] }
-        id: { type: string }
-        email: { type: string, format: email }
-        sent: { type: boolean, enum: [true] }
     MintToken:
       type: object
       required: [instance, tenant]

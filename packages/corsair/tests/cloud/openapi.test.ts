@@ -62,7 +62,6 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 	await manage.mcp.links.update(ID, {});
 	await manage.mcp.links.delete(ID);
 	await manage.mcp.links.rotate(ID);
-	await manage.mcp.links.send(ID);
 	await manage.mcp.tokens.mint({ instance: INSTANCE, tenant: TENANT });
 
 	const instance = buildInstancePlane(transport, INSTANCE);
@@ -137,8 +136,8 @@ describe('management contract', () => {
 		).toEqual([]);
 	});
 
-	it('covers all 51 operations', () => {
-		expect(specOperations().size).toBe(51);
-		expect(called.size).toBe(51);
+	it('covers all 50 operations', () => {
+		expect(specOperations().size).toBe(50);
+		expect(called.size).toBe(50);
 	});
 });

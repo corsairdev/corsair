@@ -311,13 +311,31 @@ describe('error mapping', () => {
 		});
 	});
 
-	// The case the read must not weaken: a POST with no idempotency key may
-	// have landed, and a lost body says nothing either way.
+	// A key is not proof that repeating is safe.
 	it('does not call an unsafe write retryable past the response', async () => {
-		const err = await buildProjectPlane(losesBody())
-			.mcp.tokens.mint({ instance: 'app', tenant: 'acme' })
+		for (const options of [undefined, { idempotencyKey: 'k1' }]) {
+			const err = await buildProjectPlane(losesBody())
+				.mcp.tokens.mint({ instance: 'app', tenant: 'acme' }, options)
+				.catch((e: unknown) => e);
+			expect(err).toMatchObject({ status: 200, retryable: false });
+		}
+	});
+
+	it('still treats a pre-response failure with a key as repeatable', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async () => {
+				throw new Error('connection refused');
+			}) as unknown as typeof fetch,
+		};
+		const err = await buildProjectPlane(transport)
+			.mcp.tokens.mint(
+				{ instance: 'app', tenant: 'acme' },
+				{ idempotencyKey: 'k1' },
+			)
 			.catch((e: unknown) => e);
-		expect(err).toMatchObject({ status: 200, retryable: false });
+		expect(err).toMatchObject({ retryable: true });
 	});
 
 	it('does not send the request when the caller signal is already aborted', async () => {

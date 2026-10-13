@@ -40,15 +40,12 @@ export type LinkLine = {
 export type MintLinkInput = {
 	/** Who the link is for. Shown in the console; not an address. */
 	recipient?: string | null;
-	/** Where `mcp.links.send` mails the link. */
-	email?: string | null;
 	/** Every line must name access you already hold. */
 	instances: LinkLine[];
 };
 
 export type UpdateLinkInput = {
 	recipient?: string | null;
-	email?: string | null;
 	/** Replaces the whole set. Omit to leave the lines alone. */
 	instances?: LinkLine[];
 };
@@ -190,15 +187,6 @@ export function buildProjectPlane(transport: V1Transport) {
 						undefined,
 						options,
 					),
-				/** Mails the link to the address on it. Not deduped, so a retry
-				 *  sends a second mail. */
-				send: (id: string, options?: RequestOptions) =>
-					req<{
-						object: 'mcp_link_send';
-						id: string;
-						email: string;
-						sent: true;
-					}>('POST', `${refPath('/mcp/links', id)}/send`, undefined, options),
 			},
 			tokens: {
 				/** Mints a bearer token for the project's shared MCP URL. It

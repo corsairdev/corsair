@@ -59,6 +59,7 @@ export type PutIntegrationInput = {
 		overrides?: Record<string, PermissionDecision>;
 	};
 	/** Write-only. Omit to leave the stored credentials in place. */
+	// Keys are the plugin's own credential field names, known at runtime.
 	credentials?: Record<string, string>;
 };
 

@@ -399,8 +399,7 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
-// For a host reaching the entity store in-process: the readonly check lives in
-// callPluginDb, not on the entity clients.
+// The readonly check lives in callPluginDb, not on the entity clients.
 export {
 	callPluginDb,
 	DB_METHOD_RISK,

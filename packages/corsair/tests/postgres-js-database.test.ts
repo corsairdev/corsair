@@ -96,6 +96,9 @@ describe('postgres-js database integration', () => {
 	let connectable = false;
 
 	beforeAll(async () => {
+		// These hooks drop and recreate TEST_SCHEMA, so they must not run
+		// against a database the gate excluded.
+		if (liveDisabled) return;
 		connectable = await canConnect();
 		if (!connectable) {
 			// eslint-disable-next-line no-console

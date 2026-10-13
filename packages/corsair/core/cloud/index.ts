@@ -350,8 +350,8 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// withInstance() — concurrent callers await the same in-flight promise
 	// instead of firing duplicate requests.
 	let instancesPromise: Promise<Map<string, string>> | null = null;
-	// `stale` is the promise whose map lacked the key; replacing only that one
-	// keeps a concurrent burst sharing a single refresh.
+	// Replacing only the promise whose map lacked the key keeps a concurrent
+	// burst on one refresh.
 	function resolveInstances(
 		stale?: Promise<Map<string, string>>,
 	): Promise<Map<string, string>> {
