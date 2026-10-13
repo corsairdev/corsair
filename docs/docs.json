@@ -956,6 +956,14 @@
                 ]
               },
               {
+                "group": "Bugherd",
+                "pages": [
+                  "plugins/bugherd/overview",
+                  "plugins/bugherd/api",
+                  "plugins/bugherd/database"
+                ]
+              },
+              {
                 "group": "Bugsnag",
                 "pages": [
                   "plugins/bugsnag/overview",
