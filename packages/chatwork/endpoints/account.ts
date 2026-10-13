@@ -81,7 +81,11 @@ export const listTasks: ChatworkEndpoints['accountListTasks'] = async (
 	if (ctx.db.tasks) {
 		try {
 			for (const task of validatedResult) {
-				await ctx.db.tasks.upsertByEntityId(String(task.task_id), {
+				const entityId = String(task.task_id);
+				// my/tasks omits the assignee, so keep what tasks.get or tasks.list stored.
+				const existing = await ctx.db.tasks.findByEntityId(entityId);
+				await ctx.db.tasks.upsertByEntityId(entityId, {
+					...existing?.data,
 					...task,
 					room_id: task.room.room_id,
 				});

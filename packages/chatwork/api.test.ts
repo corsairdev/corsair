@@ -908,6 +908,38 @@ describe('Chatwork persistence', () => {
 		expect(row?.data.room_id).toBe(1001);
 	});
 
+	it('account.listTasks keeps the assignee stored by tasks.get', async () => {
+		mockRequest.mockResolvedValueOnce({
+			task_id: 3,
+			account: sender,
+			assigned_by_account: sender,
+			message_id: '13',
+			body: 'buy milk',
+			limit_time: 1384354799,
+			status: 'open',
+			limit_type: 'date',
+		});
+		await api.tasks.get({ room_id: 1001, task_id: 3 });
+
+		mockRequest.mockResolvedValueOnce([
+			{
+				task_id: 3,
+				room: { room_id: 1001, name: 'General', icon_path: 'x' },
+				assigned_by_account: sender,
+				message_id: '13',
+				body: 'buy milk',
+				limit_time: 1384354799,
+				status: 'done',
+				limit_type: 'date',
+			},
+		]);
+		await api.account.listTasks({});
+
+		const row = await client.chatwork.db.tasks.findByEntityId('3');
+		expect(row?.data.status).toBe('done');
+		expect(row?.data.account?.account_id).toBe(5);
+	});
+
 	it('files.list stores each file', async () => {
 		mockRequest.mockResolvedValueOnce([
 			{
@@ -950,6 +982,24 @@ describe('Chatwork endpoint errors', () => {
 			status: 401,
 			message: 'status 401',
 		});
+	});
+
+	it('raises auth-missing when no API key is configured', async () => {
+		cleanup();
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'chatwork', 'default');
+		cleanup = testDb.cleanup;
+		const corsair = createCorsair({
+			plugins: [chatwork()],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		await corsair.chatwork.keys.issue_new_dek();
+
+		await expect(corsair.chatwork.api.account.get({})).rejects.toThrow(
+			/auth-missing/,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('surfaces a 429 with Retry-After from an endpoint', async () => {

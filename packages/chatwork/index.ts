@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	Account,
 	Contacts,
@@ -266,6 +267,8 @@ export const chatworkEndpointSchemas = {
 	typeof chatworkEndpointsNested
 >;
 
+const CHATWORK_OAUTH_TOKEN_URL = 'https://oauth.chatwork.com/token';
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const chatworkEndpointMeta = {
@@ -434,7 +437,7 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 		oauthConfig: {
 			providerName: 'Chatwork',
 			authUrl: 'https://www.chatwork.com/packages/oauth2/login.php',
-			tokenUrl: 'https://oauth.chatwork.com/token',
+			tokenUrl: CHATWORK_OAUTH_TOKEN_URL,
 			scopes: [
 				'users.profile.me:read',
 				'users.status.me:read',
@@ -473,15 +476,21 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('chatwork', 'api_key');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				return getOAuthAccessToken(ctx, {
+					plugin: 'chatwork',
+					tokenUrl: CHATWORK_OAUTH_TOKEN_URL,
+					tokenAuthMethod: 'basic',
+				});
 			}
 
-			return '';
+			throw new AuthMissingError('chatwork', 'api_key');
 		},
 	} satisfies InternalChatworkPlugin;
 }
