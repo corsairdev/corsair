@@ -1082,6 +1082,14 @@
                 ]
               },
               {
+                "group": "Celigo",
+                "pages": [
+                  "plugins/celigo/overview",
+                  "plugins/celigo/api",
+                  "plugins/celigo/database"
+                ]
+              },
+              {
                 "group": "Certifier",
                 "pages": [
                   "plugins/certifier/overview",
