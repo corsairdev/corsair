@@ -2754,6 +2754,14 @@
                 ]
               },
               {
+                "group": "Updown.io",
+                "pages": [
+                  "plugins/updownio/overview",
+                  "plugins/updownio/api",
+                  "plugins/updownio/database"
+                ]
+              },
+              {
                 "group": "Uploadcare",
                 "pages": [
                   "plugins/uploadcare/overview",
