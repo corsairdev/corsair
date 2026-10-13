@@ -505,7 +505,9 @@ describe('Changes.listen', () => {
 			action: 'insert',
 			timeoutMs: 2_000,
 		});
-		expect(spy).toHaveBeenCalledWith(2_000);
+		const [requested] = spy.mock.calls[0]!;
+		expect(requested).toBeGreaterThan(0);
+		expect(requested).toBeLessThanOrEqual(2_000);
 		spy.mockRestore();
 	});
 

@@ -96,6 +96,7 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	url.searchParams.set('action', input.action);
 
 	const controller = new AbortController();
+	const deadline = Date.now() + input.timeoutMs;
 	const timer = setTimeout(() => controller.abort(), input.timeoutMs);
 
 	/** Builds the documented fallback result. */
@@ -110,7 +111,7 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 		databaseReachable: await tursoPipelineHealthCheck(
 			base,
 			databaseToken,
-			input.timeoutMs,
+			Math.max(1, deadline - Date.now()),
 		),
 	});
 
