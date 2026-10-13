@@ -196,6 +196,26 @@ describe('Fixer entity persistence', () => {
 		expect(row?.data).toMatchObject({ historical: true, rates: { USD: 1.25 } });
 	});
 
+	it('a symbols-filtered fetch keeps rates stored earlier for the same base and date', async () => {
+		const day = {
+			success: true,
+			historical: true,
+			date: '2026-01-01',
+			base: 'EUR',
+		};
+		stubFetch(
+			{ body: { ...day, rates: { USD: 1.04 } } },
+			{ body: { ...day, rates: { GBP: 0.85 } } },
+		);
+		const api = await createFixer();
+
+		await api.rates.historical({ date: '2026-01-01', symbols: ['USD'] });
+		await api.rates.historical({ date: '2026-01-01', symbols: ['GBP'] });
+
+		const row = await fixerDb.rates.findByEntityId('EUR:2026-01-01');
+		expect(row?.data.rates).toEqual({ USD: 1.04, GBP: 0.85 });
+	});
+
 	it('rates.convert stores the conversion', async () => {
 		stubFetch({
 			body: {

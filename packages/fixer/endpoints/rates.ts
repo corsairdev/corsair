@@ -22,12 +22,14 @@ async function saveSnapshot(
 	}
 	const base = response.base ?? requestedBase ?? 'EUR';
 	try {
-		await ctx.db.rates.upsertByEntityId(`${base}:${response.date}`, {
+		const entityId = `${base}:${response.date}`;
+		const existing = await ctx.db.rates.findByEntityId(entityId);
+		await ctx.db.rates.upsertByEntityId(entityId, {
 			base,
 			date: response.date,
 			timestamp: 'timestamp' in response ? response.timestamp : undefined,
 			historical,
-			rates: response.rates,
+			rates: { ...existing?.data.rates, ...response.rates },
 		});
 	} catch (error) {
 		console.warn('Failed to save rates to database:', error);
