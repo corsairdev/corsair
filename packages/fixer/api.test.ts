@@ -28,7 +28,15 @@ function requested(index = 0) {
 	return { url: String(url), method: init?.method };
 }
 
+let fixerDb: Awaited<ReturnType<typeof setup>>['db'];
+
 async function createFixer() {
+	const { api, db } = await setup();
+	fixerDb = db;
+	return api;
+}
+
+async function setup() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'fixer', 'default');
 	cleanup = testDb.cleanup;
@@ -37,7 +45,7 @@ async function createFixer() {
 		database: testDb.db,
 		kek: '0123456789abcdef0123456789abcdef',
 	});
-	return corsair.fixer.api;
+	return { api: corsair.fixer.api, db: corsair.fixer.db };
 }
 
 afterEach(() => {
@@ -142,6 +150,102 @@ describe('Fixer endpoints', () => {
 			method: 'GET',
 		});
 		expect(result).toEqual(body);
+	});
+});
+
+describe('Fixer entity persistence', () => {
+	it('rates.latest stores a snapshot keyed by base and date', async () => {
+		stubFetch({
+			body: {
+				success: true,
+				timestamp: 1700000000,
+				base: 'EUR',
+				date: '2026-10-12',
+				rates: { USD: 1.08, GBP: 0.85 },
+			},
+		});
+		const api = await createFixer();
+
+		await api.rates.latest({});
+
+		const row = await fixerDb.rates.findByEntityId('EUR:2026-10-12');
+		expect(row?.data).toMatchObject({
+			base: 'EUR',
+			date: '2026-10-12',
+			timestamp: 1700000000,
+			historical: false,
+			rates: { USD: 1.08, GBP: 0.85 },
+		});
+	});
+
+	it('rates.historical stores a historical snapshot', async () => {
+		stubFetch({
+			body: {
+				success: true,
+				historical: true,
+				date: '2026-01-01',
+				base: 'GBP',
+				rates: { USD: 1.25 },
+			},
+		});
+		const api = await createFixer();
+
+		await api.rates.historical({ date: '2026-01-01', base: 'GBP' });
+
+		const row = await fixerDb.rates.findByEntityId('GBP:2026-01-01');
+		expect(row?.data).toMatchObject({ historical: true, rates: { USD: 1.25 } });
+	});
+
+	it('rates.convert stores the conversion', async () => {
+		stubFetch({
+			body: {
+				success: true,
+				query: { from: 'USD', to: 'EUR', amount: 100 },
+				info: { timestamp: 1700000000, rate: 0.92 },
+				date: '2026-01-01',
+				result: 92,
+			},
+		});
+		const api = await createFixer();
+
+		await api.rates.convert({
+			from: 'USD',
+			to: 'EUR',
+			amount: 100,
+			date: '2026-01-01',
+		});
+
+		const row = await fixerDb.conversions.findByEntityId(
+			'USD:EUR:100:2026-01-01',
+		);
+		expect(row?.data).toMatchObject({
+			from: 'USD',
+			to: 'EUR',
+			amount: 100,
+			rate: 0.92,
+			result: 92,
+			date: '2026-01-01',
+		});
+	});
+
+	it('currencies.getAll stores one row per symbol', async () => {
+		stubFetch({
+			body: {
+				success: true,
+				symbols: { USD: 'United States Dollar', EUR: 'Euro' },
+			},
+		});
+		const api = await createFixer();
+
+		await api.currencies.getAll({});
+
+		const usd = await fixerDb.currencies.findByEntityId('USD');
+		const eur = await fixerDb.currencies.findByEntityId('EUR');
+		expect(usd?.data).toMatchObject({
+			code: 'USD',
+			name: 'United States Dollar',
+		});
+		expect(eur?.data).toMatchObject({ code: 'EUR', name: 'Euro' });
 	});
 });
 
