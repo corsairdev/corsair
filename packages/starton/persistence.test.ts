@@ -293,6 +293,8 @@ describe('database persistence', () => {
 	it('nested customGas and uiData drop undocumented keys before the request', async () => {
 		const stores = makeStores();
 		let sent = '';
+		// Safe: fetch is only ever called as (url, init), which the stub implements.
+		// A narrower type is not practical because typeof fetch also carries static members that are not worth mocking.
 		globalThis.fetch = (async (_url: string | URL, init?: RequestInit) => {
 			sent = typeof init?.body === 'string' ? init.body : '';
 			return new Response(
