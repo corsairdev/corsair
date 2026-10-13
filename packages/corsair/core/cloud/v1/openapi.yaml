@@ -1129,6 +1129,10 @@ components:
       type: string
       enum: [open, cautious, strict, readonly]
       description: The default decision for an operation, before per-operation overrides.
+    PermissionDecision:
+      type: string
+      enum: [allow, deny, require_approval]
+
     Permissions:
       type: object
       required: [mode]
@@ -1136,7 +1140,7 @@ components:
         mode: { $ref: "#/components/schemas/PermissionMode" }
         overrides:
           type: object
-          additionalProperties: { type: string, enum: [allow, deny, require_approval] }
+          additionalProperties: { $ref: "#/components/schemas/PermissionDecision" }
           description: Keyed by operation id. Overrides `mode` for that one operation.
 
     Project:
@@ -1371,6 +1375,13 @@ components:
       required: [permission]
       properties:
         permission: { $ref: "#/components/schemas/Permission" }
+        quota:
+          type: object
+          required: [limit, window]
+          description: Omitted leaves a stored quota alone; `null` on either half clears it.
+          properties:
+            limit: { type: [integer, "null"] }
+            window: { type: [string, "null"] }
         label: { type: string }
         email: { type: string, format: email, description: "Stored on the tenant, so it changes every line that tenant holds." }
 

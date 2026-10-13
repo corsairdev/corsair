@@ -286,28 +286,38 @@ describe('error mapping', () => {
 		});
 	});
 
-	it('does not call a failure past the response retryable — the write may have landed', async () => {
-		const transport: V1Transport = {
-			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
-			apiKey: 'ck',
-			fetch: (async () => ({
-				ok: true,
-				status: 200,
-				headers: new Headers(),
-				text: async () => {
-					throw new Error('socket reset mid-body');
-				},
-			})) as unknown as typeof fetch,
-		};
-		const err = await buildProjectPlane(transport)
+	const losesBody = (): V1Transport => ({
+		baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+		apiKey: 'ck',
+		fetch: (async () => ({
+			ok: true,
+			status: 200,
+			headers: new Headers(),
+			text: async () => {
+				throw new Error('socket reset mid-body');
+			},
+		})) as unknown as typeof fetch,
+	});
+
+	it('keeps a read retryable when the body is lost after the response', async () => {
+		const err = await buildProjectPlane(losesBody())
 			.keys.get()
 			.catch((e: unknown) => e);
 		expect(err).toBeInstanceOf(CloudApiError);
 		expect(err).toMatchObject({
 			status: 200,
 			code: 'request_failed',
-			retryable: false,
+			retryable: true,
 		});
+	});
+
+	// The case the read must not weaken: a POST with no idempotency key may
+	// have landed, and a lost body says nothing either way.
+	it('does not call an unsafe write retryable past the response', async () => {
+		const err = await buildProjectPlane(losesBody())
+			.mcp.tokens.mint({ instance: 'app', tenant: 'acme' })
+			.catch((e: unknown) => e);
+		expect(err).toMatchObject({ status: 200, retryable: false });
 	});
 
 	it('does not send the request when the caller signal is already aborted', async () => {
@@ -346,7 +356,7 @@ describe('error mapping', () => {
 		const err = await buildProjectPlane(transport)
 			.keys.get()
 			.catch((e: unknown) => e);
-		expect(err).toMatchObject({ status: 200, retryable: false });
+		expect(err).toMatchObject({ status: 200, retryable: true });
 	});
 
 	it('treats a 429 with no envelope as retryable', async () => {

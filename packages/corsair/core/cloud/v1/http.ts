@@ -134,13 +134,13 @@ export async function v1Request<T>(
 		// A caller's own abort is theirs to see.
 		if (options.signal?.aborted) throw err;
 		if (err instanceof CloudApiError) throw err;
-		// Once the server has answered, a failure reading the body says nothing
-		// about whether the write landed, so retryability follows the status it
-		// answered with. Before that, repeating is only safe for a method that is
-		// idempotent anyway, or for a call the server will dedupe.
-		const retryable = res
-			? undefined
-			: REPEATABLE_METHODS.has(method) || options.idempotencyKey !== undefined;
+		// An idempotent method, or one the server dedupes, is safe to repeat
+		// whatever happened. Otherwise: before the server answers nothing is
+		// known, and after it answers a lost body says nothing about whether the
+		// write landed, so retryability follows the status.
+		const safeToRepeat =
+			REPEATABLE_METHODS.has(method) || options.idempotencyKey !== undefined;
+		const retryable = safeToRepeat ? true : res ? undefined : false;
 		throw mapV1Error(
 			res?.status ?? 0,
 			{

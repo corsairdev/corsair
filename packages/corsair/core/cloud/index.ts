@@ -350,8 +350,12 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// withInstance() — concurrent callers await the same in-flight promise
 	// instead of firing duplicate requests.
 	let instancesPromise: Promise<Map<string, string>> | null = null;
-	function resolveInstances(refresh = false): Promise<Map<string, string>> {
-		if (refresh) instancesPromise = null;
+	// `stale` is the promise whose map lacked the key; replacing only that one
+	// keeps a concurrent burst sharing a single refresh.
+	function resolveInstances(
+		stale?: Promise<Map<string, string>>,
+	): Promise<Map<string, string>> {
+		if (stale && instancesPromise === stale) instancesPromise = null;
 		if (!instancesPromise) {
 			instancesPromise = fetchInstanceMap(transport).catch((err) => {
 				instancesPromise = null;
@@ -365,8 +369,9 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// called missing: an instance created or deployed after the first resolve
 	// would otherwise stay unreachable for the process's life.
 	async function instanceUrl(name: string): Promise<string> {
-		const cached = await resolveInstances();
-		const url = cached.get(name) ?? (await resolveInstances(true)).get(name);
+		const first = resolveInstances();
+		const cached = await first;
+		const url = cached.get(name) ?? (await resolveInstances(first)).get(name);
 		if (url) return url;
 		const available = [...(await resolveInstances()).keys()].join(', ');
 		throw new Error(

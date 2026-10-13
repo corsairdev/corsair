@@ -94,7 +94,7 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 	await instance.webhooks.create({ integration: PLUGIN });
 	await instance.webhooks.get(PLUGIN);
 	await instance.webhooks.delete(PLUGIN);
-	await instance.webhooks.rotateSecret(PLUGIN, 'whsec');
+	await instance.webhooks.rotateSecret(PLUGIN, { signing_secret: 'whsec' });
 	await instance.webhooks.deliveries.list(PLUGIN);
 	await instance.webhooks.deliveries.get(PLUGIN, ID);
 	await instance.webhooks.deliveries.retry(PLUGIN, ID);
