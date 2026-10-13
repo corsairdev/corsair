@@ -14,8 +14,6 @@ import type {
 /** Scalar fields recorded with each completed operation. */
 type LogPayload = Record<string, string | number | boolean | undefined>;
 
-const INFERENCE_KEY_MISSING =
-	'Standard Anthropic API key (inference_key) is required for Messages and Models endpoints.';
 const ADMIN_KEY_MISSING =
 	'An Admin API credential is required for this endpoint.';
 
@@ -35,19 +33,6 @@ async function resolveAdminKey(
 		'anthropicadministrator',
 		authType,
 		ADMIN_KEY_MISSING,
-	);
-}
-
-/** Tenant-scoped standard API key (`sk-ant-api…`) for Messages and Models. */
-export async function resolveInferenceKey(
-	ctx: AnthropicAdministratorContext,
-): Promise<string> {
-	const fromTenant = ctx.keys ? await ctx.keys.get_inference_key() : null;
-	if (fromTenant) return fromTenant;
-	throw new AuthMissingError(
-		'anthropicadministrator',
-		'api_key',
-		INFERENCE_KEY_MISSING,
 	);
 }
 
@@ -192,28 +177,6 @@ export async function callAdminApi<S extends z.ZodType>(
 		path,
 		await resolveAdminKey(ctx),
 		{ ...options, authType: ctx.options?.authType },
-	);
-	const response = schema.parse(raw);
-	await logCompleted(ctx, operation, logPayload);
-	return response;
-}
-
-/**
- * Issues a standard Anthropic API request (Messages, Models) with the
- * inference key rather than the Admin credential.
- */
-export async function callStandardApi<S extends z.ZodType>(
-	ctx: AnthropicAdministratorContext,
-	operation: string,
-	schema: S,
-	path: string,
-	options: AnthropicAdministratorRequestOptions = {},
-	logPayload: LogPayload = {},
-): Promise<z.output<S>> {
-	const raw = await makeAnthropicAdministratorRequest(
-		path,
-		await resolveInferenceKey(ctx),
-		{ ...options, authType: 'api_key' },
 	);
 	const response = schema.parse(raw);
 	await logCompleted(ctx, operation, logPayload);

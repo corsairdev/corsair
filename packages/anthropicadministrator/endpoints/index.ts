@@ -1,7 +1,5 @@
 import * as ApiKeys from './api-keys';
 import * as Invites from './invites';
-import * as Messages from './messages';
-import * as Models from './models';
 import * as Organization from './organization';
 import * as Users from './users';
 import * as WorkspaceMembers from './workspace-members';
@@ -45,16 +43,6 @@ export const ApiKeysEndpoints = {
 	listApiKeys: ApiKeys.listApiKeys,
 	getApiKey: ApiKeys.getApiKey,
 	updateApiKey: ApiKeys.updateApiKey,
-};
-
-export const MessagesEndpoints = {
-	createMessage: Messages.createMessage,
-	createCachedMessage: Messages.createCachedMessage,
-};
-
-export const ModelsEndpoints = {
-	getModel: Models.getModel,
-	listModels: Models.listModels,
 };
 
 export * from './types/index';

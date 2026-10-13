@@ -5,11 +5,9 @@ import type {
 } from './index';
 
 export const ADMIN_KEY = 'sk-ant-admin01-test';
-export const INFERENCE_KEY = 'sk-ant-api03-test';
 
 type ContextOptions = {
 	admin?: string | null;
-	tenantInference?: string | null;
 	authType?: 'api_key' | 'oauth_2';
 	withDb?: boolean;
 };
@@ -24,7 +22,6 @@ export type CacheWrite =
  */
 export function makeContext({
 	admin = ADMIN_KEY,
-	tenantInference = INFERENCE_KEY,
 	authType = 'api_key',
 	withDb = true,
 }: ContextOptions = {}) {
@@ -45,7 +42,6 @@ export function makeContext({
 		keys: {
 			get_api_key: async () => admin,
 			get_access_token: async () => admin,
-			get_inference_key: async () => tenantInference,
 		},
 		db: withDb
 			? {
@@ -70,7 +66,6 @@ export function makeKeyBuilderContext(
 	keys: {
 		get_api_key?: () => Promise<string | undefined>;
 		get_access_token?: () => Promise<string | undefined>;
-		get_inference_key?: () => Promise<string | undefined>;
 	},
 ) {
 	// Safe: the key builder reads only authType and the three key getters supplied here.

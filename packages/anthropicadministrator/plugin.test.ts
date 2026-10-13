@@ -24,10 +24,6 @@ const EXPECTED_OPERATIONS = [
 	'invites.deleteInvite',
 	'invites.getInvite',
 	'invites.listInvites',
-	'messages.createCachedMessage',
-	'messages.createMessage',
-	'models.getModel',
-	'models.listModels',
 	'organization.getOrganization',
 	'users.getUser',
 	'users.listUsers',
@@ -113,11 +109,11 @@ describe('anthropicadministrator plugin shape', () => {
 		]);
 	});
 
-	it('supports api key and oauth auth with tenant inference_key', () => {
+	it('supports api key and oauth auth', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['inference_key'] },
-			oauth_2: { account: ['inference_key'] },
+			api_key: {},
+			oauth_2: {},
 		});
 	});
 });
@@ -152,17 +148,5 @@ describe('anthropicadministrator key resolution', () => {
 		});
 
 		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).rejects.toThrow();
-	});
-
-	it('allows inference-only callers when inference_key is stored', async () => {
-		const plugin = anthropicadministrator();
-		const ctx = makeKeyBuilderContext('api_key', {
-			get_api_key: async () => undefined,
-			get_inference_key: async () => 'sk-ant-api-tenant',
-		});
-
-		await expect(keyBuilderOf(plugin)(ctx, 'endpoint')).resolves.toBe(
-			'sk-ant-api-tenant',
-		);
 	});
 });

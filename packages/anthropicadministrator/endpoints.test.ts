@@ -1,6 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
 import { ZodError } from 'zod';
-import { CreateMessageInputSchema } from './endpoints/types/inputs';
 import type { AnthropicAdministratorContext } from './index';
 import {
 	anthropicAdministratorEndpointSchemas,
@@ -8,7 +7,6 @@ import {
 } from './index';
 import {
 	ADMIN_KEY,
-	INFERENCE_KEY,
 	jsonResponse,
 	makeContext,
 	sentRequest,
@@ -74,34 +72,6 @@ const API_KEY = {
 	type: 'api_key',
 	workspace_id: 'wrkspc_1',
 };
-const MESSAGE = {
-	id: 'msg_1',
-	type: 'message',
-	role: 'assistant',
-	content: [{ type: 'text', text: 'Hello.' }],
-	model: 'claude-opus-5',
-	stop_reason: 'end_turn',
-	stop_sequence: null,
-	usage: {
-		input_tokens: 12,
-		output_tokens: 3,
-		cache_creation_input_tokens: 2048,
-		cache_read_input_tokens: 0,
-	},
-};
-const MODEL = {
-	type: 'model',
-	id: 'claude-opus-5',
-	display_name: 'Claude Opus 5',
-	created_at: '2026-07-24T00:00:00Z',
-	deprecated_at: null,
-	lifecycle: 'active',
-	line: 'opus',
-	max_input_tokens: 200000,
-	max_tokens: 128000,
-	retires_at: null,
-};
-
 function page(item: object, id: string) {
 	return { data: [item], first_id: id, has_more: false, last_id: id };
 }
@@ -342,63 +312,6 @@ const CASES: Case[] = [
 		body: { name: 'ci-renamed', status: 'inactive' },
 		response: { ...API_KEY, name: 'ci-renamed', status: 'inactive' },
 	},
-	{
-		op: 'messages.createMessage',
-		run: (c) =>
-			api.messages.createMessage(c, {
-				model: 'claude-opus-5',
-				max_tokens: 64,
-				messages: [{ role: 'user', content: 'Hi' }],
-				temperature: 0.2,
-			}),
-		method: 'POST',
-		url: '/v1/messages',
-		body: {
-			model: 'claude-opus-5',
-			max_tokens: 64,
-			messages: [{ role: 'user', content: 'Hi' }],
-			stream: false,
-			temperature: 0.2,
-		},
-		response: MESSAGE,
-	},
-	{
-		op: 'messages.createCachedMessage',
-		run: (c) =>
-			api.messages.createCachedMessage(c, {
-				model: 'claude-opus-5',
-				max_tokens: 64,
-				system: [{ type: 'text', text: 'Long reference document.' }],
-				messages: [{ role: 'user', content: 'Summarize it.' }],
-				ttl: '1h',
-			}),
-		method: 'POST',
-		url: '/v1/messages',
-		body: {
-			model: 'claude-opus-5',
-			max_tokens: 64,
-			system: [{ type: 'text', text: 'Long reference document.' }],
-			messages: [{ role: 'user', content: 'Summarize it.' }],
-			cache_control: { type: 'ephemeral', ttl: '1h' },
-			stream: false,
-		},
-		response: MESSAGE,
-	},
-	{
-		op: 'models.getModel',
-		run: (c) => api.models.getModel(c, { model_id: 'claude-opus-5' }),
-		method: 'GET',
-		url: '/v1/models/claude-opus-5',
-		response: MODEL,
-	},
-	{
-		op: 'models.listModels',
-		run: (c) =>
-			api.models.listModels(c, { limit: 2, lifecycle: ['active', 'retired'] }),
-		method: 'GET',
-		url: '/v1/models?limit=2&lifecycle%5B%5D=active&lifecycle%5B%5D=retired',
-		response: page(MODEL, 'claude-opus-5'),
-	},
 ];
 
 afterEach(() => {
@@ -453,27 +366,6 @@ describe('credentials', () => {
 		expect(headers.get('x-api-key')).toBeNull();
 	});
 
-	it('sends the inference key, not the Admin key, on Messages and Models', async () => {
-		const fetchMock = stubFetch(jsonResponse(200, MODEL));
-		const { ctx } = makeContext({ authType: 'oauth_2' });
-
-		await api.models.getModel(ctx, { model_id: 'claude-opus-5' });
-
-		const { headers } = sentRequest(fetchMock);
-		expect(headers.get('x-api-key')).toBe(INFERENCE_KEY);
-		expect(headers.get('authorization')).toBeNull();
-	});
-
-	it('refuses Models without a tenant inference key', async () => {
-		const fetchMock = stubFetch();
-		const { ctx } = makeContext({ tenantInference: null });
-
-		await expect(
-			api.models.getModel(ctx, { model_id: 'claude-opus-5' }),
-		).rejects.toThrow(AuthMissingError);
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
 	it('refuses an Admin call without an Admin credential', async () => {
 		const fetchMock = stubFetch();
 		const { ctx } = makeContext({ admin: null });
@@ -482,62 +374,6 @@ describe('credentials', () => {
 			AuthMissingError,
 		);
 		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('refuses a Messages call without an inference key', async () => {
-		const fetchMock = stubFetch();
-		const { ctx } = makeContext({ tenantInference: null });
-
-		await expect(
-			api.messages.createMessage(ctx, {
-				model: 'claude-opus-5',
-				max_tokens: 1,
-				messages: [{ role: 'user', content: 'Hi' }],
-			}),
-		).rejects.toThrow(AuthMissingError);
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-});
-
-describe('messages input', () => {
-	const base = {
-		model: 'claude-opus-5',
-		max_tokens: 0,
-		messages: [{ role: 'user', content: 'Hi' }],
-	};
-
-	it('rejects stream=true so the response is always a single Message', () => {
-		expect(
-			CreateMessageInputSchema.safeParse({ ...base, stream: true }).success,
-		).toBe(false);
-	});
-
-	it('accepts max_tokens 0, which only warms the prompt cache', () => {
-		expect(CreateMessageInputSchema.safeParse(base).success).toBe(true);
-	});
-
-	it('rejects an unknown cache ttl', () => {
-		expect(
-			CreateMessageInputSchema.safeParse({
-				...base,
-				cache_control: { type: 'ephemeral', ttl: '1d' },
-			}).success,
-		).toBe(false);
-	});
-
-	it('sends a 5m default cache breakpoint when no ttl is given', async () => {
-		const fetchMock = stubFetch(jsonResponse(200, MESSAGE));
-		const { ctx } = makeContext();
-
-		await api.messages.createCachedMessage(ctx, {
-			model: 'claude-opus-5',
-			max_tokens: 64,
-			messages: [{ role: 'user', content: 'Hi' }],
-		});
-
-		expect(sentRequest(fetchMock).body?.cache_control).toEqual({
-			type: 'ephemeral',
-		});
 	});
 });
 

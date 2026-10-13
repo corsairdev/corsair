@@ -1,2 +1,2 @@
 displayName: Anthropic Admin
-description: Admin API for managing Anthropic organization members, workspaces, and API keys, plus Messages (with prompt caching) and Models.
+description: Admin API for managing Anthropic organization members, workspaces, and API keys.

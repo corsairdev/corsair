@@ -15,8 +15,6 @@ import { AuthMissingError } from 'corsair/core';
 import {
 	ApiKeysEndpoints,
 	InvitesEndpoints,
-	MessagesEndpoints,
-	ModelsEndpoints,
 	OrganizationEndpoints,
 	UsersEndpoints,
 	WorkspaceMembersEndpoints,
@@ -66,8 +64,6 @@ const anthropicAdministratorEndpointsNested = {
 	workspaces: WorkspacesEndpoints,
 	workspaceMembers: WorkspaceMembersEndpoints,
 	apiKeys: ApiKeysEndpoints,
-	messages: MessagesEndpoints,
-	models: ModelsEndpoints,
 } as const;
 
 const anthropicAdministratorWebhooksNested = {} as const;
@@ -160,22 +156,6 @@ export const anthropicAdministratorEndpointSchemas = {
 	'apiKeys.updateApiKey': {
 		input: AnthropicAdministratorEndpointInputSchemas.updateApiKey,
 		output: AnthropicAdministratorEndpointOutputSchemas.updateApiKey,
-	},
-	'messages.createMessage': {
-		input: AnthropicAdministratorEndpointInputSchemas.createMessage,
-		output: AnthropicAdministratorEndpointOutputSchemas.createMessage,
-	},
-	'messages.createCachedMessage': {
-		input: AnthropicAdministratorEndpointInputSchemas.createCachedMessage,
-		output: AnthropicAdministratorEndpointOutputSchemas.createCachedMessage,
-	},
-	'models.getModel': {
-		input: AnthropicAdministratorEndpointInputSchemas.getModel,
-		output: AnthropicAdministratorEndpointOutputSchemas.getModel,
-	},
-	'models.listModels': {
-		input: AnthropicAdministratorEndpointInputSchemas.listModels,
-		output: AnthropicAdministratorEndpointOutputSchemas.listModels,
 	},
 } satisfies RequiredPluginEndpointSchemas<
 	typeof anthropicAdministratorEndpointsNested
@@ -275,25 +255,6 @@ export const anthropicAdministratorEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Rename an API key or change its active status',
 	},
-	'messages.createMessage': {
-		riskLevel: 'write',
-		description:
-			'Send a conversation to a Claude model and get its reply (non-streaming)',
-	},
-	'messages.createCachedMessage': {
-		riskLevel: 'write',
-		description:
-			'Create a Message with prompt caching, reusing the cached prompt prefix on later calls',
-	},
-	'models.getModel': {
-		riskLevel: 'read',
-		description: 'Get a model by ID or alias',
-	},
-	'models.listModels': {
-		riskLevel: 'read',
-		description:
-			'List available models, newest first, optionally filtered by lifecycle stage',
-	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof anthropicAdministratorEndpointsNested
 >;
@@ -301,12 +262,8 @@ export const anthropicAdministratorEndpointMeta = {
 const defaultAuthType = 'api_key' as const;
 
 export const anthropicAdministratorAuthConfig = {
-	api_key: {
-		account: ['inference_key'] as const,
-	},
-	oauth_2: {
-		account: ['inference_key'] as const,
-	},
+	api_key: {},
+	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
 export type AnthropicAdministratorContext = CorsairPluginContext<
@@ -342,12 +299,10 @@ export type ExternalAnthropicAdministratorPlugin<
 
 /**
  * Anthropic Admin API plugin: organization members, invites, workspaces,
- * workspace members and API keys, plus Messages (with prompt caching) and
- * Models.
+ * workspace members and API keys.
  *
- * Admin operations require an Admin API key (`sk-ant-admin…`) or an OAuth
- * token with the `org:admin` scope. Messages and Models use a standard API key
- * (`sk-ant-api…`) from the tenant `inference_key` account field.
+ * Operations require an Admin API key (`sk-ant-admin…`) or an OAuth token
+ * with the `org:admin` scope.
  */
 export function anthropicadministrator<
 	const T extends AnthropicAdministratorPluginOptions,
@@ -394,16 +349,12 @@ export function anthropicadministrator<
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const admin = await ctx.keys.get_api_key();
 				if (admin) return admin;
-				const inference = await ctx.keys.get_inference_key();
-				if (inference) return inference;
 				throw new AuthMissingError('anthropicadministrator', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const admin = await ctx.keys.get_access_token();
 				if (admin) return admin;
-				const inference = await ctx.keys.get_inference_key();
-				if (inference) return inference;
 				throw new AuthMissingError('anthropicadministrator', 'oauth_2');
 			}
 
@@ -425,8 +376,6 @@ export type {
 	AnthropicAdministratorEndpointOutputs,
 	ApiKey,
 	Invite,
-	Message,
-	Model,
 	Organization,
 	User,
 	Workspace,

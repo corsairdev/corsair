@@ -1,7 +1,6 @@
 import {
 	ApiKeySchema,
 	InviteSchema,
-	ModelSchema,
 	UserSchema,
 	WorkspaceMemberSchema,
 	WorkspaceSchema,
@@ -16,4 +15,3 @@ export const ListWorkspaceMembersResponseSchema = listResponse(
 	WorkspaceMemberSchema,
 );
 export const ListApiKeysResponseSchema = listResponse(ApiKeySchema);
-export const ListModelsResponseSchema = listResponse(ModelSchema);

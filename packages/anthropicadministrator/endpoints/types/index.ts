@@ -2,8 +2,6 @@ import type { z } from 'zod';
 import {
 	ApiKeySchema,
 	InviteSchema,
-	MessageSchema,
-	ModelSchema,
 	OrganizationSchema,
 	UserSchema,
 	WorkspaceMemberSchema,
@@ -35,10 +33,6 @@ export const AnthropicAdministratorEndpointInputSchemas = {
 	listApiKeys: inputs.ListApiKeysInputSchema,
 	getApiKey: inputs.GetApiKeyInputSchema,
 	updateApiKey: inputs.UpdateApiKeyInputSchema,
-	createMessage: inputs.CreateMessageInputSchema,
-	createCachedMessage: inputs.CreateCachedMessageInputSchema,
-	getModel: inputs.GetModelInputSchema,
-	listModels: inputs.ListModelsInputSchema,
 } as const;
 
 export const AnthropicAdministratorEndpointOutputSchemas = {
@@ -64,10 +58,6 @@ export const AnthropicAdministratorEndpointOutputSchemas = {
 	listApiKeys: responses.ListApiKeysResponseSchema,
 	getApiKey: ApiKeySchema,
 	updateApiKey: ApiKeySchema,
-	createMessage: MessageSchema,
-	createCachedMessage: MessageSchema,
-	getModel: ModelSchema,
-	listModels: responses.ListModelsResponseSchema,
 } as const;
 
 export type AnthropicAdministratorEndpointInputs = {
@@ -88,8 +78,6 @@ export type Invite = z.infer<typeof InviteSchema>;
 export type Workspace = z.infer<typeof WorkspaceSchema>;
 export type WorkspaceMember = z.infer<typeof WorkspaceMemberSchema>;
 export type ApiKey = z.infer<typeof ApiKeySchema>;
-export type Message = z.infer<typeof MessageSchema>;
-export type Model = z.infer<typeof ModelSchema>;
 
 export * from './entities';
 export * from './inputs';

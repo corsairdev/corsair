@@ -100,12 +100,6 @@ export type AnthropicAdministratorRequestOptions = {
  */
 const MAX_ENDPOINT_LENGTH = 512;
 
-/**
- * Non-streaming Messages calls can run for minutes, well past corsair's 20s
- * default, so this matches the official SDK's 10 minute request timeout.
- */
-const REQUEST_TIMEOUT_MS = 600_000;
-
 /** Total attempts for a retryable failure (1 initial + 2 retries). */
 const MAX_ATTEMPTS = 3;
 
@@ -192,7 +186,6 @@ export async function makeAnthropicAdministratorRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
-		TIMEOUT: REQUEST_TIMEOUT_MS,
 		HEADERS: {
 			...credential,
 			'anthropic-version': ANTHROPIC_VERSION,
