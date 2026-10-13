@@ -147,7 +147,7 @@ function ctxWith(stores: Stores): StartonContext {
 }
 
 const originalFetch = globalThis.fetch;
-function respondWith(body: object) {
+function respondWith(body: object | number) {
 	// Safe: fetch is only ever called as (url, init), which the stub implements.
 	// A narrower type is not practical because typeof fetch also carries static members that are not worth mocking.
 	globalThis.fetch = (async () =>
@@ -279,6 +279,55 @@ describe('database persistence', () => {
 			filename: 'hi.txt',
 		});
 		expect(stores.pins.upsertByEntityId).toHaveBeenCalledWith('pin_1', PIN);
+	});
+
+	it('Watcher.delete removes the saved watcher', async () => {
+		const stores = makeStores();
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
+		Object.assign(stores.watchers, { deleteByEntityId });
+		respondWith(1);
+		await Watcher.delete(ctxWith(stores), { id: 'w_1' });
+		expect(deleteByEntityId).toHaveBeenCalledWith('w_1');
+	});
+
+	it('nested customGas and uiData drop undocumented keys before the request', async () => {
+		const stores = makeStores();
+		let sent = '';
+		globalThis.fetch = (async (_url: string | URL, init?: RequestInit) => {
+			sent = typeof init?.body === 'string' ? init.body : '';
+			return new Response(
+				JSON.stringify({ smartContract: CONTRACT, transaction: TX }),
+				{
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				},
+			);
+		}) as typeof fetch;
+		// Variables, not literals, so the compiler's excess-property check does not
+		// reject the undocumented keys this test sends on purpose.
+		const customGas = { gasPrice: '1', extra: 'x' };
+		const uiData = {
+			version: '1' as const,
+			deployMethod: 'kms' as const,
+			imported: false,
+			extra: 'x',
+		};
+		await SmartContract.deployFromTemplate(ctxWith(stores), {
+			network: 'polygon-mumbai',
+			signerWallet: '0x298e760768c8481780397eE28A127eAd584df4ee',
+			templateId: 'ERC20',
+			name: 'Token',
+			params: [],
+			customGas,
+			uiData,
+		});
+		const body = JSON.parse(sent);
+		expect(body.customGas).toEqual({ gasPrice: '1' });
+		expect(body.uiData).toEqual({
+			version: '1',
+			deployMethod: 'kms',
+			imported: false,
+		});
 	});
 
 	it('a database failure does not fail the API call', async () => {

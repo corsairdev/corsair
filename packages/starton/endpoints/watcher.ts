@@ -54,6 +54,11 @@ export const deleteWatcher: StartonEndpoints['watcherDelete'] = async (
 		{ method: 'DELETE' },
 	);
 	const deleted = StartonEndpointOutputSchemas.watcherDelete.parse(response);
+	try {
+		await ctx.db.watchers.deleteByEntityId(id);
+	} catch (error) {
+		console.warn('Failed to remove Starton watcher from database:', error);
+	}
 	await logEventFromContext(ctx, 'starton.watcher.delete', { id }, 'completed');
 	return deleted;
 };

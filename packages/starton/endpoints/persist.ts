@@ -4,6 +4,8 @@
  * swallowed (same behaviour as the Linear plugin).
  */
 type EntityStore<T> = {
+	// Safe: the helper ignores the saved row, whose type varies by store.
+	// A narrower type is not practical because the helper never reads the return value.
 	upsertByEntityId: (entityId: string, data: T) => Promise<unknown>;
 };
 

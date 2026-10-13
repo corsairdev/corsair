@@ -18,6 +18,11 @@ import {
 // Shared primitives
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Request-only copies of the response schemas: a plain z.object strips unknown
+// keys, so nothing undocumented reaches Starton from these nested inputs.
+const CustomGasInput = z.object(StartonCustomGas.shape);
+const SmartContractUIInput = z.object(StartonSmartContractUI.shape);
+
 // Safe: the values are only forwarded to Starton, never read.
 // A narrower type is not practical because the API documents no stricter shape.
 const JsonObject = z.record(z.string(), z.unknown());
@@ -137,7 +142,7 @@ const SmartContractDeployFromTemplateInputSchema = z.object({
 	speed: StartonSpeed.optional().describe(
 		'Gas speed. Defaults to `average`; use `custom` to supply customGas.',
 	),
-	customGas: StartonCustomGas.optional().describe(
+	customGas: CustomGasInput.optional().describe(
 		'Custom gas settings. Only used when speed is set to `custom`.',
 	),
 	nonce: z
@@ -155,7 +160,7 @@ const SmartContractDeployFromTemplateInputSchema = z.object({
 	metadata: JsonObject.optional().describe(
 		'Arbitrary JSON stored alongside the contract.',
 	),
-	uiData: StartonSmartContractUI.nullish().describe(
+	uiData: SmartContractUIInput.nullish().describe(
 		'Dashboard display metadata Starton stores with the contract.',
 	),
 	simulate: z
@@ -204,7 +209,7 @@ const SmartContractCallInputSchema = z.object({
 	speed: StartonSpeed.optional().describe(
 		'Gas speed. Defaults to `average`; use `custom` to supply customGas.',
 	),
-	customGas: StartonCustomGas.optional().describe(
+	customGas: CustomGasInput.optional().describe(
 		'Custom gas settings. Only used when speed is set to `custom`.',
 	),
 	gasLimit: z.string().optional().describe('Optional gas limit.'),
