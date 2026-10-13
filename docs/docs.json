@@ -674,6 +674,14 @@
                 ]
               },
               {
+                "group": "Benzinga",
+                "pages": [
+                  "plugins/benzinga/overview",
+                  "plugins/benzinga/api",
+                  "plugins/benzinga/database"
+                ]
+              },
+              {
                 "group": "Best Buy Remix API",
                 "pages": [
                   "plugins/bestbuy/overview",
