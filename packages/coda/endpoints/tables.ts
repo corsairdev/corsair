@@ -11,7 +11,7 @@ const list: CodaEndpoints['tablesList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
-	await saveTables(ctx, response.items);
+	await saveTables(ctx, response.items, true);
 	await logEventFromContext(ctx, 'coda.tables.list', { ...input }, 'completed');
 	return response;
 };

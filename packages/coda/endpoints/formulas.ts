@@ -11,7 +11,7 @@ const list: CodaEndpoints['formulasList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
-	await saveFormulas(ctx, response.items);
+	await saveFormulas(ctx, response.items, true);
 	await logEventFromContext(
 		ctx,
 		'coda.formulas.list',

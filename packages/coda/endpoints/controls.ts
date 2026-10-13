@@ -11,7 +11,7 @@ const list: CodaEndpoints['controlsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
-	await saveControls(ctx, response.items);
+	await saveControls(ctx, response.items, true);
 	await logEventFromContext(
 		ctx,
 		'coda.controls.list',

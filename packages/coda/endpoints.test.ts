@@ -1038,6 +1038,45 @@ describe('Coda endpoints', () => {
 		]);
 	});
 
+	it('tables.get replaces the stored table so removed fields are cleared', async () => {
+		const table = {
+			id: 'grid-pqRst-U',
+			type: 'table',
+			tableType: 'table',
+			browserLink: 'https://coda.io/d/_dAbCDeFGH/#Tasks_tpqRst-U',
+			href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U',
+			name: 'Tasks',
+			parent: {
+				id: 'canvas-IjkLmnO',
+				type: 'page',
+				browserLink: 'https://coda.io/d/_dAbCDeFGH/_suIjkLmnO',
+				href: 'https://coda.io/apis/v1/docs/AbCDeFGH/pages/canvas-IjkLmnO',
+				name: 'Launch Status',
+			},
+			displayColumn: {
+				id: 'c-tuVwxYz',
+				type: 'column',
+				href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U/columns/c-tuVwxYz',
+			},
+			rowCount: 2,
+			sorts: [],
+			layout: 'default',
+			createdAt: '2018-04-11T00:18:57.946Z',
+			updatedAt: '2018-04-11T00:18:57.946Z',
+		};
+		db.tables.findByEntityId.mockResolvedValue({
+			data: { ...table, filter: { valid: true } },
+		});
+		respondWith(200, table);
+
+		await Tables.get(ctx, { docId: 'AbCDeFGH', tableIdOrName: 'grid-pqRst-U' });
+
+		expect(db.tables.upsertByEntityId.mock.calls).toEqual([
+			['grid-pqRst-U', table],
+		]);
+		db.tables.findByEntityId.mockReset();
+	});
+
 	it('tables.get sends GET /docs/{docId}/tables/{tableIdOrName}', async () => {
 		const expected = {
 			id: 'grid-pqRst-U',

@@ -10,7 +10,7 @@ const list: CodaEndpoints['packsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query: input },
 	);
-	await savePacks(ctx, response.items);
+	await savePacks(ctx, response.items, true);
 	await logEventFromContext(ctx, 'coda.packs.list', { ...input }, 'completed');
 	return response;
 };
