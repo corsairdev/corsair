@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { encodeStartonPathSegment, makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -23,8 +24,8 @@ export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTempla
 		// keys so only DeployFromTemplateDto fields reach Starton.
 		const { simulate, ...body } =
 			StartonEndpointInputSchemas.smartContractDeployFromTemplate.parse(input);
-		// unknown: safe because the zod parse below validates the payload before it is
-		// used; no static type fits since the request layer cannot know each response.
+		// Safe: the zod parse below validates the payload before it is used.
+		// A narrower type is not practical because the request layer cannot know each response shape.
 		const response = await makeStartonRequest<unknown>(
 			'v3/smart-contract/from-template',
 			ctx.key,
@@ -36,6 +37,26 @@ export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTempla
 			StartonEndpointOutputSchemas.smartContractDeployFromTemplate.parse(
 				response,
 			);
+		await persistEntities(
+			ctx.db.smartContracts,
+			[
+				{
+					entityId: deployment.smartContract.id,
+					data: deployment.smartContract,
+				},
+			],
+			'smart contract',
+		);
+		await persistEntities(
+			ctx.db.transactions,
+			[
+				{
+					entityId: deployment.transaction.id,
+					data: deployment.transaction,
+				},
+			],
+			'transaction',
+		);
 		await logEventFromContext(
 			ctx,
 			'starton.smartContract.deployFromTemplate',
@@ -63,8 +84,8 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 ) => {
 	const { network, address, simulate, ...body } =
 		StartonEndpointInputSchemas.smartContractCall.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/call`,
 		ctx.key,
@@ -73,6 +94,11 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 	);
 	const transaction =
 		StartonEndpointOutputSchemas.smartContractCall.parse(response);
+	await persistEntities(
+		ctx.db.transactions,
+		[{ entityId: transaction.id, data: transaction }],
+		'transaction',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.call',
@@ -93,14 +119,19 @@ export const list: StartonEndpoints['smartContractList'] = async (
 	input,
 ) => {
 	const query = StartonEndpointInputSchemas.smartContractList.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		'v3/smart-contract',
 		ctx.key,
 		{ method: 'GET', query },
 	);
 	const page = StartonEndpointOutputSchemas.smartContractList.parse(response);
+	await persistEntities(
+		ctx.db.smartContracts,
+		page.items.map((data) => ({ entityId: data.id, data })),
+		'smart contracts',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.list',
@@ -123,8 +154,8 @@ export const read: StartonEndpoints['smartContractRead'] = async (
 ) => {
 	const { network, address, ...body } =
 		StartonEndpointInputSchemas.smartContractRead.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,

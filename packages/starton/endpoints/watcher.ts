@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { encodeStartonPathSegment, makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -13,14 +14,19 @@ import {
  */
 export const get: StartonEndpoints['watcherGet'] = async (ctx, input) => {
 	const { id } = StartonEndpointInputSchemas.watcherGet.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 	const watcher = StartonEndpointOutputSchemas.watcherGet.parse(response);
+	await persistEntities(
+		ctx.db.watchers,
+		[{ entityId: watcher.id, data: watcher }],
+		'watcher',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.watcher.get',
@@ -40,8 +46,8 @@ export const deleteWatcher: StartonEndpoints['watcherDelete'] = async (
 	input,
 ) => {
 	const { id } = StartonEndpointInputSchemas.watcherDelete.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		`v3/watcher/${encodeStartonPathSegment(id)}`,
 		ctx.key,

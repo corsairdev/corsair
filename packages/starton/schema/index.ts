@@ -1,7 +1,11 @@
 import {
+	StartonPin,
 	StartonSmartContract,
+	StartonSmartContractTemplate,
 	StartonTransaction,
 	StartonWallet,
+	StartonWatcher,
+	StartonWebhook,
 } from './database';
 
 export const StartonSchema = {
@@ -10,6 +14,10 @@ export const StartonSchema = {
 		wallets: StartonWallet,
 		smartContracts: StartonSmartContract,
 		transactions: StartonTransaction,
+		templates: StartonSmartContractTemplate,
+		watchers: StartonWatcher,
+		webhooks: StartonWebhook,
+		pins: StartonPin,
 	},
 } as const;
 

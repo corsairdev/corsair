@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -21,8 +22,8 @@ export const uploadFile: StartonEndpoints['ipfsUploadFile'] = async (
 	const file = new File([Buffer.from(content, 'base64')], filename, {
 		type: contentType ?? 'application/octet-stream',
 	});
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>('v3/ipfs/file', ctx.key, {
 		method: 'POST',
 		formData: { file, metadata },
@@ -30,6 +31,7 @@ export const uploadFile: StartonEndpoints['ipfsUploadFile'] = async (
 		replayable: false,
 	});
 	const pin = StartonEndpointOutputSchemas.ipfsUploadFile.parse(response);
+	await persistEntities(ctx.db.pins, [{ entityId: pin.id, data: pin }], 'pin');
 	await logEventFromContext(
 		ctx,
 		'starton.ipfs.uploadFile',

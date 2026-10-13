@@ -216,8 +216,8 @@ export type ExternalStartonPlugin<T extends StartonPluginOptions> =
 	BaseStartonPlugin<T>;
 
 export function starton<const T extends StartonPluginOptions>(
-	// Safe: every StartonPluginOptions field is optional, so {} satisfies it. TypeScript
-	// cannot prove {} fits the open generic T, and a default of T is not expressible.
+	// Safe: every StartonPluginOptions field is optional, so {} satisfies it.
+	// A narrower type is not practical because TypeScript cannot prove {} fits the open generic T, and a default of T is not expressible.
 	incomingOptions: StartonPluginOptions & T = {} as StartonPluginOptions & T,
 ): ExternalStartonPlugin<T> {
 	const options = {

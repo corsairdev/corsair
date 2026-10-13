@@ -8,7 +8,7 @@ Use **Starton** through Corsair: one client, typed API calls, local DB sync.
 **What you get:**
 
 - 12 typed API operations
-- 3 synced entities (`smartContracts`, `transactions`, `wallets`) for fast `.search()` / `.list()`
+- 7 synced entities (`pins`, `smartContracts`, `templates`, `transactions`, `wallets`, `watchers`, and 1 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -109,7 +109,7 @@ See the full list on the [API](/plugins/starton/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.starton.db.<entity>.search()` and `.list()`: `smartContracts`, `transactions`, `wallets`.
+Synced entities support `tenant.starton.db.<entity>.search()` and `.list()`: `pins`, `smartContracts`, `templates`, `transactions`, `wallets`, `watchers`, `webhooks`.
 
 See [Database](/plugins/starton/database) for filters and operators.
 

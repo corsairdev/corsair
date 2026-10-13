@@ -61,12 +61,12 @@ const NO_AUTOMATIC_REPLAY: RateLimitConfig = {
 
 export type StartonRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	// unknown: safe because the body is only passed to JSON.stringify, never read;
-	// each endpoint sends a different shape, so no single type fits.
+	// Safe: the body is only passed to JSON.stringify, never read.
+	// A narrower type is not practical because each endpoint sends a different shape.
 	body?: unknown;
 	/** Sent as multipart/form-data instead of a JSON body. */
-	// unknown: safe because each value is only appended to FormData, never read;
-	// field value types differ per endpoint, so no single type fits.
+	// Safe: each value is only appended to FormData, never read.
+	// A narrower type is not practical because field value types differ per endpoint.
 	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**

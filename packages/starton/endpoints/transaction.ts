@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { encodeStartonPathSegment, makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -18,8 +19,8 @@ export const get: StartonEndpoints['transactionGet'] = async (ctx, input) => {
 	// Validate before the request so a malformed id fails locally rather than
 	// being interpolated into the URL.
 	const { id } = StartonEndpointInputSchemas.transactionGet.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		`v3/transaction/${encodeStartonPathSegment(id)}`,
 		ctx.key,
@@ -28,6 +29,11 @@ export const get: StartonEndpoints['transactionGet'] = async (ctx, input) => {
 	// Validate the provider payload before returning it as typed data.
 	const transaction =
 		StartonEndpointOutputSchemas.transactionGet.parse(response);
+	await persistEntities(
+		ctx.db.transactions,
+		[{ entityId: transaction.id, data: transaction }],
+		'transaction',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.transaction.get',

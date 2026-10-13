@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -14,13 +15,18 @@ import {
  */
 export const list: StartonEndpoints['webhookList'] = async (ctx, input) => {
 	const query = StartonEndpointInputSchemas.webhookList.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>('v3/webhook', ctx.key, {
 		method: 'GET',
 		query,
 	});
 	const page = StartonEndpointOutputSchemas.webhookList.parse(response);
+	await persistEntities(
+		ctx.db.webhooks,
+		page.items.map((data) => ({ entityId: data.id, data })),
+		'webhooks',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.webhook.list',

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { makeStartonRequest } from '../client';
+import { persistEntities } from './persist';
 import {
 	StartonEndpointInputSchemas,
 	StartonEndpointOutputSchemas,
@@ -18,8 +19,8 @@ export const create: StartonEndpoints['walletCreate'] = async (ctx, input) => {
 	// round trip and strips unknown keys, so only documented CreateWalletDto
 	// fields reach Starton.
 	const body = StartonEndpointInputSchemas.walletCreate.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>(
 		'v3/kms/wallet',
 		ctx.key,
@@ -28,6 +29,11 @@ export const create: StartonEndpoints['walletCreate'] = async (ctx, input) => {
 	);
 	// Validate the provider payload before returning it as typed data.
 	const wallet = StartonEndpointOutputSchemas.walletCreate.parse(response);
+	await persistEntities(
+		ctx.db.wallets,
+		[{ entityId: wallet.address, data: wallet }],
+		'wallet',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.wallet.create',
@@ -46,13 +52,18 @@ export const create: StartonEndpoints['walletCreate'] = async (ctx, input) => {
 export const list: StartonEndpoints['walletList'] = async (ctx, input) => {
 	// Parsing also keeps unknown keys out of the query string.
 	const query = StartonEndpointInputSchemas.walletList.parse(input);
-	// unknown: safe because the zod parse below validates the payload before it is
-	// used; no static type fits since the request layer cannot know each response.
+	// Safe: the zod parse below validates the payload before it is used.
+	// A narrower type is not practical because the request layer cannot know each response shape.
 	const response = await makeStartonRequest<unknown>('v3/kms/wallet', ctx.key, {
 		method: 'GET',
 		query: { ...query },
 	});
 	const page = StartonEndpointOutputSchemas.walletList.parse(response);
+	await persistEntities(
+		ctx.db.wallets,
+		page.items.map((data) => ({ entityId: data.address, data })),
+		'wallets',
+	);
 	await logEventFromContext(
 		ctx,
 		'starton.wallet.list',

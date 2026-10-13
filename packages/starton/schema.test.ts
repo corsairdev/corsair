@@ -10,9 +10,13 @@ describe('Starton schema', () => {
 		expect(typeof StartonSchema.entities).toBe('object');
 		expect(StartonSchema.entities).not.toBeNull();
 		expect(Object.keys(StartonSchema.entities).sort()).toEqual([
+			'pins',
 			'smartContracts',
+			'templates',
 			'transactions',
 			'wallets',
+			'watchers',
+			'webhooks',
 		]);
 		for (const entity of Object.values(StartonSchema.entities)) {
 			expect(entity).toBeDefined();

@@ -21,7 +21,11 @@ import {
 	NON_IDEMPOTENT_OPERATIONS,
 	RETRY_SAFE_OPERATIONS,
 } from './idempotency';
-import type { StartonContext } from './index';
+import type {
+	InternalStartonPlugin,
+	StartonContext,
+	StartonKeyBuilderContext,
+} from './index';
 import { starton, startonEndpointSchemas } from './index';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,8 +42,8 @@ type CapturedRequest = {
 };
 
 let captured: CapturedRequest | undefined;
-// unknown: the mock serializes whatever JSON a test sets and never reads it, and
-// each test uses a different response shape, so no single type fits.
+// Safe: the mock only serializes whatever JSON a test sets and never reads it.
+// A narrower type is not practical because each test uses a different response shape.
 let nextResponseBody: unknown = {};
 let nextResponseStatus = 200;
 
@@ -49,9 +53,8 @@ beforeEach(() => {
 	captured = undefined;
 	nextResponseBody = {};
 	nextResponseStatus = 200;
-	// Test only: the stub implements just the call signature the code under test
-	// uses; the cast is safe because fetch is only called as (url, init), and
-	// typeof fetch also carries static members that are not practical to mock.
+	// Safe: fetch is only ever called as (url, init), which the stub implements.
+	// A narrower type is not practical because typeof fetch also carries static members that are not worth mocking.
 	globalThis.fetch = (async (url: string | URL, init?: RequestInit) => {
 		const headers: Record<string, string> = {};
 		new Headers(init?.headers).forEach((value, key) => {
@@ -76,26 +79,26 @@ afterEach(() => {
 	globalThis.fetch = originalFetch;
 });
 
-// Test only: partial stub with only the fields the endpoints read, so the cast
-// is safe; a full context needs the database and key manager, not worth building.
+// Safe: partial stub with only the fields the endpoints read.
+// A narrower type is not practical because a full context needs the database and key manager.
 const ctx = {
 	key: 'test-starton-api-key',
 	$getAccountId: async () => 'acct_test',
 	database: undefined,
+	db: {},
 	endpoints: {},
 } as StartonContext;
 
-// Cast is safe: the value only reaches the endpoint under test, whose zod schema
-// must reject or strip it at runtime. No typed alternative: the compiler
-// (correctly) refuses to build a value that violates the input type.
+// Safe: the value only reaches the endpoint under test, whose zod schema must reject or strip it at runtime.
+// A narrower type is not practical because the compiler (correctly) refuses to build a value that violates the input type.
 function invalidInput<T>(value: object): T {
 	return value as T;
 }
 
 // Awaits a promise expected to reject and returns the thrown Error. The
 // instanceof narrowing replaces an `as Error` on the caught value.
-// unknown: the resolved value is discarded; only the rejection matters, and
-// callers pass promises of many different types.
+// Safe: the resolved value is discarded; only the rejection matters.
+// A narrower type is not practical because callers pass promises of many different types.
 async function rejectionOf(promise: Promise<unknown>): Promise<Error> {
 	try {
 		await promise;
@@ -107,7 +110,8 @@ async function rejectionOf(promise: Promise<unknown>): Promise<Error> {
 }
 
 // Same as rejectionOf, narrowed to ApiError so status and body are readable.
-// unknown: same as rejectionOf, the resolved value is discarded.
+// Safe: same as rejectionOf, the resolved value is discarded.
+// A narrower type is not practical because callers pass promises of many different types.
 async function apiRejectionOf(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await rejectionOf(promise);
 	if (error instanceof ApiError) return error;
@@ -638,8 +642,8 @@ describe('schema coverage', () => {
 	});
 
 	it('every endpoint schema entry has an input and output schema', () => {
-		// unknown: only presence is asserted, never the schema type, and the entries
-		// differ per endpoint, so there is no common schema type to use.
+		// Safe: only presence is asserted, never the schema type.
+		// A narrower type is not practical because the entries differ per endpoint, so there is no common schema type.
 		const entries: Record<string, { input?: unknown; output?: unknown }> =
 			startonEndpointSchemas;
 		for (const key of schemaKeys) {
@@ -840,24 +844,32 @@ describe('starton() plugin', () => {
 	});
 
 	it('keyBuilder returns the configured key and throws when none is available', async () => {
-		const plugin = starton({ key: 'test-starton-api-key' });
-		const withKey = { authType: 'api_key' };
+		const plugin: InternalStartonPlugin = starton({
+			key: 'test-starton-api-key',
+		});
+		const withKey = { authType: 'api_key' as const };
 		await expect(
-			// Test only: keyBuilder's parameter infers as `never` on the generic plugin
-			// type, so no context type fits; the stub holds the only field it reads here
-			// (the configured key short-circuits), and building a real context is not practical.
-			plugin.keyBuilder?.(withKey as never, 'endpoint'),
+			// Safe: the stub holds the only field keyBuilder reads here (the configured key short-circuits).
+			// A narrower type is not practical because a real key-builder context needs the key manager.
+			plugin.keyBuilder?.(withKey as StartonKeyBuilderContext, 'endpoint'),
 		).resolves.toBe('test-starton-api-key');
 
-		const noKey = starton();
+		const noKey: InternalStartonPlugin = starton();
 		const emptyCtx = {
-			authType: 'api_key',
-			keys: { get_api_key: async () => undefined },
+			authType: 'api_key' as const,
+			options: {},
+			tenantId: 'tenant_test',
+			keys: {
+				get_api_key: async () => null,
+				get_webhook_signature: async () => null,
+				get_dek: async () => 'dek',
+				issue_new_dek: async () => 'dek',
+			},
 		};
 		await expect(
-			// Test only: same `never` parameter as above; the stub holds the only fields
-			// keyBuilder reads on this path, and a real key manager is not practical to build.
-			noKey.keyBuilder?.(emptyCtx as never, 'endpoint'),
+			// Safe: the stub holds the only fields keyBuilder reads on this path.
+			// A narrower type is not practical because a real key manager is not worth building here.
+			noKey.keyBuilder?.(emptyCtx as StartonKeyBuilderContext, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
@@ -1314,9 +1326,8 @@ function errorContext(operation: string) {
 /** Count fetch attempts, optionally succeeding once the Nth attempt is reached. */
 function countingFetch(status: number, succeedOnAttempt?: number) {
 	let attempts = 0;
-	// Test only: the stub implements just the call signature the code under test
-	// uses; the cast is safe because fetch is only called as (url, init), and
-	// typeof fetch also carries static members that are not practical to mock.
+	// Safe: fetch is only ever called as (url, init), which the stub implements.
+	// A narrower type is not practical because typeof fetch also carries static members that are not worth mocking.
 	globalThis.fetch = (async () => {
 		attempts += 1;
 		const ok = succeedOnAttempt !== undefined && attempts >= succeedOnAttempt;
@@ -1608,9 +1619,8 @@ describe('credential secrecy', () => {
 	});
 
 	it('never leaks the key into a thrown transport error', async () => {
-		// Test only: the stub implements just the call signature the code under test
-		// uses; the cast is safe because fetch is only called as (url, init), and
-		// typeof fetch also carries static members that are not practical to mock.
+		// Safe: fetch is only ever called as (url, init), which the stub implements.
+		// A narrower type is not practical because typeof fetch also carries static members that are not worth mocking.
 		globalThis.fetch = (async () => {
 			throw new Error('socket hang up');
 		}) as typeof fetch;
