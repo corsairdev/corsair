@@ -1,4 +1,4 @@
-# Corsair: Connect your users to their apps
+# Corsair: Connect your users to their apps.
 
 <div align="center">
 
