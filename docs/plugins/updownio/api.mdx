@@ -62,7 +62,17 @@ await corsair.updownio.api.checks.list({});
     tested_at?: string | null,
     expires_at?: string | null,
     valid?: boolean | null,
-    error?: string | null
+    error?: string | null,
+    cert?: {
+      subject?: string | null,
+      subject_org?: string | null,
+      san?: string[] | null,
+      issuer?: string | null,
+      issuer_org?: string | null,
+      from?: string | null,
+      to?: string | null,
+      algorithm?: string | null
+    } | null
   } | null,
   domain?: {
     tested_at?: string | null,

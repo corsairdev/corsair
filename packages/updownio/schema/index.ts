@@ -12,5 +12,6 @@ export {
 	UpdownIOCheck,
 	UpdownIOCheckDomain,
 	UpdownIOCheckSsl,
+	UpdownIOCheckSslCert,
 	UpdownIONode,
 } from './database';

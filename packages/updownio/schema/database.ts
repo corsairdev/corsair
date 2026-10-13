@@ -8,6 +8,25 @@ import { z } from 'zod';
  */
 
 /**
+ * Certificate details nested in a check's `ssl` state.
+ * Official: GET /api/checks -> `ssl.cert`
+ * https://updown.io/api
+ */
+export const UpdownIOCheckSslCert = z
+	.object({
+		subject: z.string().nullable().optional(),
+		subject_org: z.string().nullable().optional(),
+		san: z.array(z.string()).nullable().optional(),
+		issuer: z.string().nullable().optional(),
+		issuer_org: z.string().nullable().optional(),
+		from: z.string().nullable().optional(),
+		to: z.string().nullable().optional(),
+		algorithm: z.string().nullable().optional(),
+	})
+	.loose();
+export type UpdownIOCheckSslCert = z.infer<typeof UpdownIOCheckSslCert>;
+
+/**
  * TLS certificate state for a check, as tested by updown.io.
  * Official: GET /api/checks -> `ssl`
  * https://updown.io/api
@@ -18,6 +37,7 @@ export const UpdownIOCheckSsl = z
 		expires_at: z.string().nullable().optional(),
 		valid: z.boolean().nullable().optional(),
 		error: z.string().nullable().optional(),
+		cert: UpdownIOCheckSslCert.nullable().optional(),
 	})
 	.loose();
 export type UpdownIOCheckSsl = z.infer<typeof UpdownIOCheckSsl>;

@@ -94,6 +94,16 @@ const exampleCheck = {
 		expires_at: '2022-02-21T15:57:36Z',
 		valid: true,
 		error: null,
+		cert: {
+			subject: 'updown.io',
+			subject_org: '',
+			san: ['pulse.updown.io', 'www.updown.io'],
+			issuer: 'YE1',
+			issuer_org: "Let's Encrypt",
+			from: '2026-08-22T13:03:54Z',
+			to: '2026-11-20T13:03:53Z',
+			algorithm: 'ECDSA with SHA-384',
+		},
 	},
 	domain: {
 		tested_at: '2021-12-17T12:00:00Z',
@@ -152,6 +162,7 @@ describe('checks.list', () => {
 		const [check] = await listChecks(ctx, {});
 
 		expect(check?.ssl?.valid).toBe(true);
+		expect(check?.ssl?.cert?.issuer_org).toBe("Let's Encrypt");
 		expect(check?.domain?.remaining_days).toBe(758);
 		expect(check?.http_verb).toBe('GET/HEAD');
 		expect(check?.favicon_url).toBe('https://updown.io/favicon.png');
