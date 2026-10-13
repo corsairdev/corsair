@@ -89,6 +89,7 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 		client_id: 'c',
 		client_secret: 's',
 	});
+	await instance.integrations.oauthApp.delete(PLUGIN);
 	await instance.webhooks.list();
 	await instance.webhooks.create({ integration: PLUGIN });
 	await instance.webhooks.get(PLUGIN);
@@ -136,8 +137,8 @@ describe('management contract', () => {
 		).toEqual([]);
 	});
 
-	it('covers all 50 operations', () => {
-		expect(specOperations().size).toBe(50);
-		expect(called.size).toBe(50);
+	it('covers all 51 operations', () => {
+		expect(specOperations().size).toBe(51);
+		expect(called.size).toBe(51);
 	});
 });

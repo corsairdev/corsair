@@ -405,6 +405,18 @@ paths:
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteOauthApp
+      tags: [integrations]
+      summary: Drop your own OAuth app, leaving the integration configured.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
 
   /tenants:
     get:

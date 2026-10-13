@@ -308,6 +308,15 @@ export function buildInstancePlane(
 						input,
 						options,
 					),
+				/** Drops the app; the integration stays configured. 404 when
+				 *  there is none. */
+				delete: (integration: string, options?: RequestOptions) =>
+					req<CloudDeleted>(
+						'DELETE',
+						`${refPath('/integrations', ref(integration))}/oauth-app`,
+						undefined,
+						options,
+					),
 			},
 		},
 
