@@ -9,12 +9,24 @@ import type { HubConfig } from './types';
 export async function getWebhookEndpointUrl(
 	hub: HubConfig,
 	plugin: string,
-): Promise<string | null> {
+): Promise<{ url: string; clientState?: string } | null> {
 	try {
-		return await hubApiGet<string | null>({
+		return await hubApiGet<{ url: string; clientState?: string } | null>({
 			hub,
 			path: `/webhooks/endpoint?plugin=${encodeURIComponent(plugin)}`,
-			parseResponse: (payload) => (payload as { url?: string })?.url ?? null,
+			// clientState is present for Microsoft Graph plugins: the endpoint's
+			// single shared secret every subscription must use (see Hub verifyMsGraph).
+			parseResponse: (payload) => {
+				const p = payload as { url?: unknown; clientState?: unknown };
+				if (typeof p?.url !== 'string' || !p.url) return null;
+				if (
+					p.clientState !== undefined &&
+					(typeof p.clientState !== 'string' || !p.clientState)
+				) {
+					return null;
+				}
+				return { url: p.url, clientState: p.clientState };
+			},
 		});
 	} catch {
 		return null;

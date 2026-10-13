@@ -1,3 +1,4 @@
+import { AuthMissingError } from '../core';
 import { renewAccounts } from '../oauth/renewal';
 
 const internalBase = {
@@ -31,6 +32,7 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 		expect(result).toEqual({
 			renewed: ['outlook/t1', 'outlook/t2'],
 			failed: [],
+			skipped: [],
 		});
 	});
 
@@ -81,7 +83,38 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 		expect(result).toEqual({
 			renewed: ['outlook/good'],
 			failed: ['outlook/bad'],
+			skipped: [],
 		});
+	});
+
+	it('skips not-connected accounts (AuthMissingError) instead of failing them', async () => {
+		// Renewal enumerates every dek-bearing row, so it routinely meets accounts
+		// with no live credential for a subscribable plugin (never connected, or the
+		// managed connection was revoked). Those must not warn-spam or count as
+		// failures — the tenant simply hasn't connected this plugin.
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const outlook = { id: 'outlook', subscribe: async () => ({}) };
+		const result = await renewAccounts({
+			corsair: {},
+			internal: { ...internalBase, plugins: [outlook] },
+			rows: [
+				{ tenantId: 'connected', integrationName: 'outlook' },
+				{ tenantId: 'ghost', integrationName: 'outlook' },
+			],
+			subscribeAndReport: async (_c, _p, tenantId) => {
+				if (tenantId === 'ghost') {
+					throw new AuthMissingError('outlook', 'managed');
+				}
+			},
+		});
+
+		expect(result).toEqual({
+			renewed: ['outlook/connected'],
+			failed: [],
+			skipped: ['outlook/ghost'],
+		});
+		expect(warn).not.toHaveBeenCalled();
+		warn.mockRestore();
 	});
 
 	it('primes a managed plugin with its authType AND hub, expiry forced', async () => {

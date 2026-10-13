@@ -6,7 +6,7 @@ import type { TeamsWebhooks } from '../index';
 import {
 	createTeamsNotificationMatch,
 	extractODataId,
-	verifyTeamsClientState,
+	verifyTeamsWebhook,
 } from './types';
 
 export const channelCreated: TeamsWebhooks['channelCreated'] = {
@@ -16,8 +16,7 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 	),
 
 	handler: async (ctx, request) => {
-		const clientState = ctx.key;
-		const verification = verifyTeamsClientState(request.payload, clientState);
+		const verification = verifyTeamsWebhook(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

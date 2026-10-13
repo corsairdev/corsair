@@ -12,6 +12,8 @@ A plugin PR may only touch:
 
 - `packages/<plugin>/**` (exactly one plugin per PR)
 - the registration edit in `packages/corsair/core/constants.ts`
+- for Microsoft Graph plugins that change subscribe plumbing, the companion
+  core files listed in `scripts/pr-review/gate.ts` (`MS_GRAPH_COMPANION_FILES`)
 - `pnpm-lock.yaml`
 - `docs/plugins/<plugin>/**` (generated docs for that same plugin)
 - `docs/docs.json` (Mintlify nav; `generate:docs` updates this)
