@@ -1135,6 +1135,59 @@ describe('Coda endpoints', () => {
 		expect(CodaEndpointOutputSchemas.tablesGet.parse(result)).toEqual(expected);
 	});
 
+	it('columns.list keeps the parent a previous columns.get stored', async () => {
+		const column = {
+			id: 'c-tuVwxYz',
+			type: 'column',
+			href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U/columns/c-tuVwxYz',
+			name: 'Product',
+			format: { type: 'text', isArray: false },
+		};
+		const parent = {
+			id: 'grid-pqRst-U',
+			type: 'table',
+			tableType: 'table',
+			href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U',
+			browserLink: 'https://coda.io/d/_dAbCDeFGH/#Tasks_tpqRst-U',
+			name: 'Tasks',
+		};
+		db.columns.findByEntityId.mockResolvedValueOnce({
+			data: { ...column, parent },
+		});
+		respondWith(200, { items: [column] });
+
+		await Columns.list(ctx, {
+			docId: 'AbCDeFGH',
+			tableIdOrName: 'grid-pqRst-U',
+		});
+
+		expect(db.columns.upsertByEntityId.mock.calls).toEqual([
+			['c-tuVwxYz', { ...column, parent }],
+		]);
+	});
+
+	it('columns.get replaces the stored column', async () => {
+		const column = {
+			id: 'c-tuVwxYz',
+			type: 'column',
+			href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U/columns/c-tuVwxYz',
+			name: 'Product',
+			format: { type: 'text', isArray: false },
+		};
+		respondWith(200, column);
+
+		await Columns.get(ctx, {
+			docId: 'AbCDeFGH',
+			tableIdOrName: 'grid-pqRst-U',
+			columnIdOrName: 'c-tuVwxYz',
+		});
+
+		expect(db.columns.findByEntityId).not.toHaveBeenCalled();
+		expect(db.columns.upsertByEntityId.mock.calls).toEqual([
+			['c-tuVwxYz', column],
+		]);
+	});
+
 	it('columns.list sends GET /docs/{docId}/tables/{tableIdOrName}/columns', async () => {
 		const expected = {
 			items: [

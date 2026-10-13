@@ -38,8 +38,12 @@ function byId<T extends { id: string }>(items: T[]) {
 	return items.map((data) => ({ entityId: data.id, data }));
 }
 
-export function saveDocs(ctx: CodaContext, docs: CodaDocument[]) {
-	return save(ctx.db.documents, 'document', byId(docs), false);
+export function saveDocs(
+	ctx: CodaContext,
+	docs: CodaDocument[],
+	partial = false,
+) {
+	return save(ctx.db.documents, 'document', byId(docs), partial);
 }
 
 export function savePages(ctx: CodaContext, pages: CodaPage[]) {
@@ -54,8 +58,12 @@ export function saveTables(
 	return save(ctx.db.tables, 'table', byId(tables), partial);
 }
 
-export function saveColumns(ctx: CodaContext, columns: CodaColumn[]) {
-	return save(ctx.db.columns, 'column', byId(columns), false);
+export function saveColumns(
+	ctx: CodaContext,
+	columns: CodaColumn[],
+	partial = false,
+) {
+	return save(ctx.db.columns, 'column', byId(columns), partial);
 }
 
 export function saveRows(ctx: CodaContext, rows: CodaRow[]) {

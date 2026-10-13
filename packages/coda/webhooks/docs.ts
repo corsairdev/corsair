@@ -21,6 +21,7 @@ const created: CodaWebhooks['docsCreated'] = {
 		await saveDocs(
 			ctx,
 			(response.data?.events ?? []).map((event) => event.entity.doc),
+			true,
 		);
 		return response;
 	},

@@ -11,7 +11,7 @@ const list: CodaEndpoints['columnsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
-	await saveColumns(ctx, response.items);
+	await saveColumns(ctx, response.items, true);
 	await logEventFromContext(
 		ctx,
 		'coda.columns.list',

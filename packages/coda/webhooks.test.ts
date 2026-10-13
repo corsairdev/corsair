@@ -199,6 +199,32 @@ describe('Coda webhooks', () => {
 		]);
 	});
 
+	it('docs.created keeps the detail fields docs.get stored', async () => {
+		db.documents.findByEntityId.mockResolvedValueOnce({
+			data: {
+				id: 'AbCDeFGH',
+				name: 'Old name',
+				owner: 'user@example.com',
+				published: {
+					browserLink: 'https://coda.io/@u/launch',
+					discoverable: true,
+					earnCredit: false,
+					mode: 'view',
+					categories: [],
+				},
+			},
+		});
+
+		await DocWebhooks.created.handler(ctx, delivery());
+
+		expect(db.documents.upsertByEntityId.mock.calls[0]?.[1]).toMatchObject({
+			id: 'AbCDeFGH',
+			name: 'Launch plan',
+			owner: 'user@example.com',
+			published: { mode: 'view' },
+		});
+	});
+
 	it('docs.deleted returns deleted docs and removes them', async () => {
 		const response = await DocWebhooks.deleted.handler(ctx, delivery());
 
