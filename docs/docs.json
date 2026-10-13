@@ -2310,6 +2310,14 @@
                 ]
               },
               {
+                "group": "Reducto",
+                "pages": [
+                  "plugins/reducto/overview",
+                  "plugins/reducto/api",
+                  "plugins/reducto/database"
+                ]
+              },
+              {
                 "group": "remove.bg",
                 "pages": [
                   "plugins/removebg/overview",
