@@ -1009,6 +1009,35 @@ describe('Coda endpoints', () => {
 		);
 	});
 
+	it('tables.list keeps the detail fields a previous tables.get stored', async () => {
+		const reference = {
+			id: 'grid-pqRst-U',
+			type: 'table',
+			tableType: 'table',
+			browserLink: 'https://coda.io/d/_dAbCDeFGH/#Tasks_tpqRst-U',
+			href: 'https://coda.io/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U',
+			name: 'Tasks',
+		};
+		db.tables.findByEntityId.mockResolvedValueOnce({
+			data: { ...reference, rowCount: 12, layout: 'default' },
+		});
+		respondWith(200, { items: [{ ...reference, name: 'Tasks renamed' }] });
+
+		await Tables.list(ctx, { docId: 'AbCDeFGH' });
+
+		expect(db.tables.upsertByEntityId.mock.calls).toEqual([
+			[
+				'grid-pqRst-U',
+				{
+					...reference,
+					name: 'Tasks renamed',
+					rowCount: 12,
+					layout: 'default',
+				},
+			],
+		]);
+	});
+
 	it('tables.get sends GET /docs/{docId}/tables/{tableIdOrName}', async () => {
 		const expected = {
 			id: 'grid-pqRst-U',

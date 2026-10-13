@@ -12,6 +12,7 @@ import type {
 } from '../schema/database';
 
 type EntityClient<T> = {
+	findByEntityId: (entityId: string) => Promise<{ data: T } | null>;
 	upsertByEntityId: (entityId: string, data: T) => Promise<object>;
 };
 
@@ -23,7 +24,9 @@ async function save<T>(
 	if (!client) return;
 	for (const { entityId, data } of items) {
 		try {
-			await client.upsertByEntityId(entityId, data);
+			// List endpoints return references without the detail fields, so keep what a get already stored.
+			const existing = await client.findByEntityId(entityId);
+			await client.upsertByEntityId(entityId, { ...existing?.data, ...data });
 		} catch (error) {
 			console.warn(`Failed to save Coda ${label} ${entityId}:`, error);
 		}
