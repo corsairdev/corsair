@@ -1257,6 +1257,56 @@ describe('Celigo request handling', () => {
 		).toEqual({ maxRetries: 5, headersRetryAfterMs: 3000 });
 	});
 
+	it('follows nextPageURL to the next page of open errors', async () => {
+		mockRequest.mockResolvedValueOnce({ errors: [{ errorId: 'x2' }] });
+
+		const result = await endpoint('errors.list')(ctx(), {
+			id: 'f1',
+			stepId: 'e1',
+			nextPageURL:
+				'/api/v1/flows/f1/e1/errors?occurredAt_gte=2024-01-01&after=x1&tags=a&tags=b',
+		});
+
+		const { options } = sentRequest();
+		expect(options.method).toBe('GET');
+		expect(options.url).toBe('flows/f1/e1/errors');
+		expect(options.query).toEqual({
+			occurredAt_gte: '2024-01-01',
+			after: 'x1',
+			tags: ['a', 'b'],
+		});
+		expect(result).toEqual({ errors: [{ errorId: 'x2' }] });
+	});
+
+	it('follows nextPageURL to the next page of resolved errors', async () => {
+		mockRequest.mockResolvedValueOnce({ resolved: [{ errorId: 'x3' }] });
+
+		await endpoint('errors.listResolved')(ctx(), {
+			id: 'f1',
+			stepId: 'e1',
+			nextPageURL:
+				'/v1/flows/f1/e1/resolved?resolvedAt_gte=2024-01-01&after=x2',
+		});
+
+		const { options } = sentRequest();
+		expect(options.url).toBe('flows/f1/e1/resolved');
+		expect(options.query).toEqual({
+			resolvedAt_gte: '2024-01-01',
+			after: 'x2',
+		});
+	});
+
+	it.each([
+		'https://api.integrator.io/v1/flows/f1/e1/resolved?after=x',
+		'/v1/integrations/i1/flows',
+		'/v1/flows/f1/e1/errors/extra',
+	])('rejects nextPageURL %s for open errors', async (nextPageURL) => {
+		await expect(
+			endpoint('errors.list')(ctx(), { id: 'f1', stepId: 'e1', nextPageURL }),
+		).rejects.toThrow('not a flow step errors page');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rethrows a 401 and maps it to the auth handler', async () => {
 		const unauthorized = new ApiError(
 			{ method: 'GET', url: 'flows' },
@@ -1486,6 +1536,21 @@ describe('Celigo database persistence', () => {
 		await endpoint(path)(ctx(), { id: 'x1' });
 
 		expect(tables[entity]?.deleteByEntityId).toHaveBeenCalledWith('x1');
+	});
+
+	it.each([
+		['include', 'flows.list'],
+		['exclude', 'flows.list'],
+		['include', 'connections.list'],
+	])('skips the write when %s trims the fields of %s', async (key, path) => {
+		mockRequest.mockResolvedValueOnce([{ _id: 'f1', name: 'Sync' }]);
+
+		await endpoint(path)(ctx(), { [key]: 'name' });
+
+		expect(sentRequest().options.query).toEqual({ [key]: 'name' });
+		for (const table of Object.values(tables)) {
+			expect(table.upsertByEntityId).not.toHaveBeenCalled();
+		}
 	});
 
 	it('does not store anything for a patch', async () => {

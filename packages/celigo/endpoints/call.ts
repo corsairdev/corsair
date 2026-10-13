@@ -47,7 +47,11 @@ export async function callCeligo<TInput, TOutput>(
 	);
 	const filled = raw === undefined || raw === '' ? empty : raw;
 	const response = outputSchema.parse(wrap ? { [wrap]: filled ?? '' } : filled);
-	if (save) await saveEntities(ctx, save, response);
+	// include and exclude return partial documents, and a partial row would
+	// overwrite the stored full one.
+	const projected =
+		query?.include !== undefined || query?.exclude !== undefined;
+	if (save && !projected) await saveEntities(ctx, save, response);
 	if (drop && path[1]) await deleteEntity(ctx, drop, path[1]);
 	await logEventFromContext(ctx, `celigo.${operation}`, {}, 'completed');
 	return response;

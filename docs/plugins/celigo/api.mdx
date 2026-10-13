@@ -908,6 +908,7 @@ await corsair.celigo.api.errors.list({});
 | `occurredAt_gte` | `string` | No | — |
 | `occurredAt_lte` | `string` | No | — |
 | `tags` | `string[]` | No | — |
+| `nextPageURL` | `string` | No | nextPageURL from the previous response; when set, it replaces the filters |
 
 
 
@@ -962,6 +963,7 @@ await corsair.celigo.api.errors.listResolved({});
 | `occurredAt_gte` | `string` | No | — |
 | `occurredAt_lte` | `string` | No | — |
 | `tags` | `string[]` | No | — |
+| `nextPageURL` | `string` | No | nextPageURL from the previous response; when set, it replaces the filters |
 | `resolvedAt_gte` | `string` | No | — |
 | `resolvedAt_lte` | `string` | No | — |
 | `resolvedBy` | `string[]` | No | — |

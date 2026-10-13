@@ -203,9 +203,21 @@ const ErrorFilterFields = {
 	occurredAt_lte: z.string().optional(),
 	tags: z.array(z.string()).optional(),
 };
-const ListStepErrorsInput = StepInput.extend(ErrorFilterFields);
+const NextPageField = {
+	nextPageURL: z
+		.string()
+		.optional()
+		.describe(
+			'nextPageURL from the previous response; when set, it replaces the filters',
+		),
+};
+const ListStepErrorsInput = StepInput.extend({
+	...ErrorFilterFields,
+	...NextPageField,
+});
 const ListResolvedErrorsInput = StepInput.extend({
 	...ErrorFilterFields,
+	...NextPageField,
 	resolvedAt_gte: z.string().optional(),
 	resolvedAt_lte: z.string().optional(),
 	resolvedBy: z.array(z.string()).optional(),
