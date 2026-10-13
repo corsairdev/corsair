@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Docusign: every `docusign.api.*` operation with input and output types."
+description: "API reference for DocuSign: every `docusign.api.*` operation with input and output types."
 ---
 
 Every `docusign.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -628,7 +628,7 @@ await corsair.docusign.api.addUsersToExistingGroup({});
 
 This endpoint allows users to apply specific actions (resend, correct, or void) to all envelopes within a specified DocuSign bulk send batch. It's designed for managing large-scale document signing processes efficiently, enabling users to update the status or take action on multiple envelopes simult
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.docusign.api.applyActionToBulkSendEnvelopes({});
@@ -2480,6 +2480,17 @@ await corsair.docusign.api.deleteCustomFieldsInTemplate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2734,6 +2745,18 @@ await corsair.docusign.api.deleteEnvelopeLock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
+| `lockToken` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3300,6 +3323,18 @@ await corsair.docusign.api.deleteTemplateLock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
+| `lockToken` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -6559,7 +6594,22 @@ Removes one or more templates from an account's list of favorite templates in Do
 await corsair.docusign.api.removeTemplatesFromFavorites({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 **Output:** _empty object_
@@ -8715,17 +8765,8 @@ await corsair.docusign.api.setUserSignatureImage({});
 | `signatureId` | `string` | Yes | — |
 | `imageType` | `string` | Yes | — |
 | `transparent_png` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `imageBase64` | `string` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
 
 
 
@@ -9929,6 +9970,7 @@ await corsair.docusign.api.updateLockForEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
+| `lockToken` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
@@ -10317,6 +10359,7 @@ await corsair.docusign.api.updateTemplateLockInformation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
+| `lockToken` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
@@ -10662,17 +10705,8 @@ await corsair.docusign.api.updateUserProfileImage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `imageBase64` | `string` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
 
 
 

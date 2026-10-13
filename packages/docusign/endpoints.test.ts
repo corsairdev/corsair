@@ -39,6 +39,8 @@ const schemasByName = new Map(
 );
 
 const IMAGE_ENDPOINTS = new Set([
+	'updateUserProfileImage',
+	'setUserSignatureImage',
 	'setInitialsImageForAccountlessSigner',
 	'setSignatureImageForNoAccountSigner',
 ]);
@@ -449,5 +451,84 @@ describe('DocuSign plugin meta', () => {
 			expect(schemasByName.get(name)?.input).toBeInstanceOf(z.ZodType);
 			expect(schemasByName.get(name)?.output).toBeInstanceOf(z.ZodType);
 		}
+	});
+});
+
+describe('DocuSign edit locks and risk levels', () => {
+	const client = new DocusignClient({
+		accessToken: 'mock_token',
+		accountId: '12345',
+	});
+
+	beforeEach(() => {
+		mockFetchJson({});
+	});
+
+	it('sends the lock token header when releasing a template lock', async () => {
+		await endpoints.deleteTemplateLock(
+			{ client },
+			{ templateId: 't1', lockToken: 'tok-1' },
+		);
+		const { url, init } = lastFetchCall();
+		expect(url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/templates/t1/lock',
+		);
+		expect(init.method).toBe('DELETE');
+		expect(new Headers(init.headers).get('X-DocuSign-Edit')).toBe(
+			'{"LockToken":"tok-1"}',
+		);
+	});
+
+	it('sends the lock token header when extending an envelope lock', async () => {
+		await endpoints.updateLockForEnvelope(
+			{ client },
+			{
+				envelopeId: 'e1',
+				lockToken: 'tok-2',
+				body: { lockDurationInSeconds: '300' },
+			},
+		);
+		const { init } = lastFetchCall();
+		expect(init.method).toBe('PUT');
+		expect(new Headers(init.headers).get('X-DocuSign-Edit')).toBe(
+			'{"LockToken":"tok-2"}',
+		);
+		expect(init.body).toBe('{"lockDurationInSeconds":"300"}');
+	});
+
+	it('omits the lock header when no token is given', async () => {
+		await endpoints.deleteEnvelopeLock({ client }, { envelopeId: 'e1' });
+		expect(
+			new Headers(lastFetchCall().init.headers).get('X-DocuSign-Edit'),
+		).toBe(null);
+	});
+
+	it('uploads the profile image as raw bytes with its content type', async () => {
+		await endpoints.updateUserProfileImage(
+			{ client },
+			{ userId: 'u1', imageBase64: 'aGVsbG8=', contentType: 'image/jpeg' },
+		);
+		const { url, init } = lastFetchCall();
+		expect(url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/users/u1/profile/image',
+		);
+		expect(init.method).toBe('PUT');
+		expect(new Headers(init.headers).get('Content-Type')).toBe('image/jpeg');
+		expect(await new Response(init.body).text()).toBe('hello');
+	});
+
+	it('marks voiding a bulk send batch as destructive', () => {
+		expect(docusignEndpointMeta.applyActionToBulkSendEnvelopes.riskLevel).toBe(
+			'destructive',
+		);
+	});
+
+	it('registers the default factory with a tenant auth type', () => {
+		expect(docusign().options).toEqual({ authType: 'oauth_2' });
+		expect(docusign({ accessToken: 't', accountId: 'a' }).options).toEqual({
+			authType: 'oauth_2',
+			accessToken: 't',
+			accountId: 'a',
+		});
 	});
 });

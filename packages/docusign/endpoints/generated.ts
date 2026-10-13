@@ -1718,7 +1718,7 @@ export const generatedEndpointMeta = {
 	applyActionToBulkSendEnvelopes: {
 		description:
 			"This endpoint allows users to apply specific actions (resend, correct, or void) to all envelopes within a specified DocuSign bulk send batch. It's designed for managing large-scale document signing processes efficiently, enabling users to update the status or take action on multiple envelopes simult",
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	createBulkSendRequest: {
 		description:

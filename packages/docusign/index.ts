@@ -157,10 +157,8 @@ export const docusign = (config?: Partial<DocusignPluginOptions>) => ({
 	// bound endpoints to resolve their client at runtime.
 	// `authType` makes the runtime provision the tenant key manager so the
 	// keyBuilder can resolve per-tenant credentials.
-	...(config && {
-		config,
-		options: { authType: 'oauth_2', ...config },
-	}),
+	...(config && { config }),
+	options: { authType: 'oauth_2', ...config },
 });
 
 export default docusign;

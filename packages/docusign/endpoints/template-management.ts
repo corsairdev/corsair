@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { lockHeaders } from './images';
 import type { DocusignExecutionContext } from './types';
 
 export const CreateCustomFieldsInTemplateDocumentInputSchema = z.object({
@@ -219,6 +220,7 @@ export const deleteCustomDocumentFieldsFromTemplate = async (
 
 export const DeleteCustomFieldsInTemplateInputSchema = z.object({
 	templateId: z.string(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const DeleteCustomFieldsInTemplateOutputSchema = z
@@ -239,6 +241,7 @@ export const deleteCustomFieldsInTemplate = async (
 		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'DELETE',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
 		},
 	);
 	return DeleteCustomFieldsInTemplateOutputSchema.parse(data);
@@ -275,6 +278,8 @@ export const deletePageFromTemplateDocument = async (
 
 export const DeleteTemplateLockInputSchema = z.object({
 	templateId: z.string(),
+	lockToken: z.string().optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const DeleteTemplateLockOutputSchema = z.object({}).passthrough();
@@ -293,6 +298,8 @@ export const deleteTemplateLock = async (
 		`/templates/${encodeURIComponent(input.templateId)}/lock`,
 		{
 			method: 'DELETE',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			headers: lockHeaders(input.lockToken),
 		},
 	);
 	return DeleteTemplateLockOutputSchema.parse(data);
@@ -491,7 +498,9 @@ export const removeGroupSharingPermissionsForTemplate = async (
 	return RemoveGroupSharingPermissionsForTemplateOutputSchema.parse(data);
 };
 
-export const RemoveTemplatesFromFavoritesInputSchema = z.object({});
+export const RemoveTemplatesFromFavoritesInputSchema = z.object({
+	body: z.record(z.string(), z.json()).optional(),
+});
 
 export const RemoveTemplatesFromFavoritesOutputSchema = z
 	.object({})
@@ -509,6 +518,7 @@ export const removeTemplatesFromFavorites = async (
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(`/favorite_templates`, {
 		method: 'DELETE',
+		body: input.body === undefined ? undefined : JSON.stringify(input.body),
 	});
 	return RemoveTemplatesFromFavoritesOutputSchema.parse(data);
 };
@@ -888,6 +898,7 @@ export const updateTemplateDocVisibility = async (
 
 export const UpdateTemplateLockInformationInputSchema = z.object({
 	templateId: z.string(),
+	lockToken: z.string().optional(),
 	body: z.record(z.string(), z.json()).optional(),
 });
 
@@ -910,6 +921,7 @@ export const updateTemplateLockInformation = async (
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			headers: lockHeaders(input.lockToken),
 		},
 	);
 	return UpdateTemplateLockInformationOutputSchema.parse(data);

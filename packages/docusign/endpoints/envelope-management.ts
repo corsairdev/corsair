@@ -1,10 +1,9 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { base64ToBytes, SignatureImageContentTypeSchema } from './images';
 import type { DocusignExecutionContext } from './types';
 
-function base64ToBytes(imageBase64: string): Uint8Array {
-	return Buffer.from(imageBase64, 'base64');
-}
+export { SignatureImageContentTypeSchema } from './images';
 
 export const DeletePageFromDocumentInEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
@@ -334,13 +333,6 @@ export const rotatePageImageForEnvelope = async (
 	);
 	return RotatePageImageForEnvelopeOutputSchema.parse(data);
 };
-
-export const SignatureImageContentTypeSchema = z.enum([
-	'image/gif',
-	'image/png',
-	'image/jpeg',
-	'image/bmp',
-]);
 
 export const SetInitialsImageForAccountlessSignerInputSchema = z.object({
 	envelopeId: z.string(),

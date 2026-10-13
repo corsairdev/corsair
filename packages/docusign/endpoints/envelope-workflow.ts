@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { lockHeaders } from './images';
 import type { DocusignExecutionContext } from './types';
 
 export const AddEmailOverridesToEnvelopeInputSchema = z.object({
@@ -303,6 +304,8 @@ export const deleteEnvelopeEmailSettings = async (
 
 export const DeleteEnvelopeLockInputSchema = z.object({
 	envelopeId: z.string(),
+	lockToken: z.string().optional(),
+	body: z.record(z.string(), z.json()).optional(),
 });
 
 export const DeleteEnvelopeLockOutputSchema = z.object({}).passthrough();
@@ -321,6 +324,8 @@ export const deleteEnvelopeLock = async (
 		`/envelopes/${encodeURIComponent(input.envelopeId)}/lock`,
 		{
 			method: 'DELETE',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			headers: lockHeaders(input.lockToken),
 		},
 	);
 	return DeleteEnvelopeLockOutputSchema.parse(data);
@@ -1172,6 +1177,7 @@ export const updateEnvelopeWorkflowStep = async (
 
 export const UpdateLockForEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
+	lockToken: z.string().optional(),
 	body: z.record(z.string(), z.json()).optional(),
 });
 
@@ -1192,6 +1198,7 @@ export const updateLockForEnvelope = async (
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			headers: lockHeaders(input.lockToken),
 		},
 	);
 	return UpdateLockForEnvelopeOutputSchema.parse(data);

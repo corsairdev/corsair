@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Docusign plugin for Corsair"
+description: "Electronic signature platform for sending, signing, and managing agreements."
 ---
 
-Use **Docusign** through Corsair: one client, typed API calls, local DB sync.
+Use **DocuSign** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -61,7 +61,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="OAuth 2.0 (Recommended)">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Docusign OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your DocuSign OAuth app.
 
 ```ts
 docusign({
@@ -93,19 +93,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`deprecatedEndpointForTabBlob`**
+**Get an envelope**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docusign.api.deprecatedEndpointForTabBlob({});
+await tenant.docusign.api.getEnvelope({ envelopeId: '3a1b2c4d-0000-1111-2222-333344445555' });
 ```
 
 
-**`addContactsToContactsList`**
+**Send an envelope from a template**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docusign.api.addContactsToContactsList({});
+await tenant.docusign.api.createEnvelope({
+	emailSubject: 'Please sign the agreement',
+	templateId: '7f6e5d4c-0000-1111-2222-333344445555',
+	templateRoles: [{ email: 'jane@example.com', name: 'Jane Doe', roleName: 'Signer' }],
+});
 ```
 
 
@@ -113,9 +117,17 @@ See the full list on the [API](/plugins/docusign/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.docusign.db.<entity>.search()` and `.list()`: `accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, `documents`, `envelopes`, `groups`, `permissionProfiles`, `recipients`, `signingGroups`, `templates`, `users`, `workspaces`.
+Search envelopes synced from earlier getEnvelope calls.
 
-See [Database](/plugins/docusign/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.docusign.db.envelopes.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `brands`, `bulkSendLists`, `connectConfigurations`, `contacts`, `customTabs`, `documents`, `envelopes`, `groups`, `permissionProfiles`, `recipients`, `signingGroups`, `templates`, `users`, `workspaces`. See [Database](/plugins/docusign/database) for filters and operators.
 
 ## What's next
 

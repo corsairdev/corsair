@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { resolveClient } from './context';
+import { base64ToBytes, SignatureImageContentTypeSchema } from './images';
 import { persistList, persistOne } from './persistence';
 import type { DocusignExecutionContext } from './types';
 
@@ -846,7 +847,8 @@ export const SetUserSignatureImageInputSchema = z.object({
 	signatureId: z.string(),
 	imageType: z.string(),
 	transparent_png: z.string().optional(),
-	body: z.record(z.string(), z.json()).optional(),
+	imageBase64: z.string().min(1),
+	contentType: SignatureImageContentTypeSchema.default('image/png'),
 });
 
 export const SetUserSignatureImageOutputSchema = z.object({}).passthrough();
@@ -870,7 +872,8 @@ export const setUserSignatureImage = async (
 			qs,
 		{
 			method: 'PUT',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: base64ToBytes(input.imageBase64),
+			contentType: input.contentType,
 		},
 	);
 	return SetUserSignatureImageOutputSchema.parse(data);
@@ -975,7 +978,8 @@ export const updateUserInformationForSpecifiedUser = async (
 
 export const UpdateUserProfileImageInputSchema = z.object({
 	userId: z.string(),
-	body: z.record(z.string(), z.json()).optional(),
+	imageBase64: z.string().min(1),
+	contentType: SignatureImageContentTypeSchema.default('image/png'),
 });
 
 export const UpdateUserProfileImageOutputSchema = z.object({}).passthrough();
@@ -994,7 +998,8 @@ export const updateUserProfileImage = async (
 		`/users/${encodeURIComponent(input.userId)}/profile/image`,
 		{
 			method: 'PUT',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: base64ToBytes(input.imageBase64),
+			contentType: input.contentType,
 		},
 	);
 	return UpdateUserProfileImageOutputSchema.parse(data);

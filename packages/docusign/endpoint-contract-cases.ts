@@ -2922,7 +2922,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/templates/{templateId}/custom_fields',
 		pathParams: ['templateId'],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'deletePageFromTemplateDocument',
@@ -3002,7 +3002,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/favorite_templates',
 		pathParams: [],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'retrieveAccountFavoriteTemplates',

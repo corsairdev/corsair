@@ -441,7 +441,9 @@ export class DocusignClient {
 				segment === 'restapi' && segments[index + 1] === 'v2.1',
 		);
 		if (restApiIndex === -1) {
-			path = `${path}/restapi/v2.1`;
+			path = segments.includes('restapi')
+				? `${path}/v2.1`
+				: `${path}/restapi/v2.1`;
 		}
 		const accountsIndex = segments.findIndex(
 			(segment, index) => segment === 'accounts' && index + 1 < segments.length,

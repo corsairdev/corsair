@@ -59,6 +59,14 @@ describe('DocusignClient', () => {
 		},
 	);
 
+	it('appends only the version when baseUri already ends in /restapi', async () => {
+		const client = makeClient('https://na4.docusign.net/restapi');
+		await client.request('/templates');
+		expect(lastFetchCall().url).toBe(
+			'https://na4.docusign.net/restapi/v2.1/accounts/12345/templates',
+		);
+	});
+
 	it('sends requests through fetch with bearer auth', async () => {
 		const client = makeClient();
 		await client.request('/templates');
