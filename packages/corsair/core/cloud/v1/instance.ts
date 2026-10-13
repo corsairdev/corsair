@@ -72,8 +72,7 @@ export type PutOauthAppInput = {
 };
 
 export type RotateWebhookSecretInput = {
-	/** The provider's new signing secret. Required: this replaces the stored
-	 *  one rather than generating a value of its own. */
+	/** Replaces the stored secret; it is not generated. */
 	signing_secret: string;
 };
 
@@ -81,10 +80,8 @@ export type CreateWebhookInput = {
 	integration: string;
 	/** The provider's own signing secret, so inbound deliveries can be
 	 *  verified. Write-only. Unrelated to the instance signing secret.
-	 *
-	 *  Required for a new endpoint: without it the ingress answers 401 to every
-	 *  delivery, so hub refuses to mint one. Omit it on a repeat create and the
-	 *  stored secret stands. */
+	 *  Required for a new endpoint; omit it on a repeat and the stored one
+	 *  stands. */
 	signing_secret?: string;
 };
 
@@ -348,8 +345,7 @@ export function buildInstancePlane(
 					undefined,
 					options,
 				),
-			/** Replaces the provider's signing secret held for this endpoint. The
-			 *  URL is unaffected, so the provider needs no reconfiguring. */
+			/** Replaces the provider's signing secret. The URL is unaffected. */
 			rotateSecret: (
 				integration: string,
 				input: RotateWebhookSecretInput,
@@ -385,10 +381,8 @@ export function buildInstancePlane(
 						undefined,
 						options,
 					),
-				/** Re-posts the stored event to the instance's current delivery
-				 *  target. Answers 502 if that POST fails, and 400 when the row
-				 *  cannot be replayed at all — a delivery that never routed to a
-				 *  tenant has no one to be re-sent as. */
+				/** Re-posts the stored event. 502 if that POST fails, 400 if the
+				 *  row never routed to a tenant and so cannot be replayed. */
 				retry: (
 					integration: string,
 					deliveryId: string,

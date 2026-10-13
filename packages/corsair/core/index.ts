@@ -399,10 +399,8 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
-// A host that reaches the entity store without going through the HTTP route —
-// the cloud runtime's script sandbox — needs the risk check with it. Walking
-// `<plugin>.db.<entity>.<method>` directly would skip it, because the entity
-// clients carry no permission wrapper of their own.
+// For a host reaching the entity store in-process: the readonly check lives in
+// callPluginDb, not on the entity clients.
 export {
 	callPluginDb,
 	DB_METHOD_RISK,
