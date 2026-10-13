@@ -2,18 +2,26 @@ import { logEventFromContext } from 'corsair/core';
 import type { CoinmarketcalEndpoints } from '..';
 import { makeCoinmarketcalRequest } from '../client';
 import { persistCategories } from './persist';
-import type { CoinmarketcalEndpointOutputs } from './types';
+import {
+	CoinmarketcalEndpointInputSchemas,
+	CoinmarketcalEndpointOutputSchemas,
+} from './types';
 
 export const list: CoinmarketcalEndpoints['categoriesList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeCoinmarketcalRequest<
-		CoinmarketcalEndpointOutputs['categoriesList']
-	>('/v2/categories', ctx.key, {
-		method: 'GET',
-		query: input,
-	});
+	const input =
+		CoinmarketcalEndpointInputSchemas.categoriesList.parse(rawInput);
+	const raw = await makeCoinmarketcalRequest<object>(
+		'/v2/categories',
+		ctx.key,
+		{
+			method: 'GET',
+			query: input,
+		},
+	);
+	const response = CoinmarketcalEndpointOutputSchemas.categoriesList.parse(raw);
 
 	await persistCategories(ctx, response.data);
 

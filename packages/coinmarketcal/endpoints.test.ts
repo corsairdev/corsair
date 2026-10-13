@@ -430,6 +430,29 @@ describe('Coinmarketcal persistence', () => {
 	});
 });
 
+describe('Coinmarketcal validation', () => {
+	const endpoints = coinmarketcal().endpoints!;
+
+	beforeEach(() => {
+		mockRequest.mockReset();
+		upsertEvent.mockClear();
+	});
+
+	it('rejects invalid input before any request is made', async () => {
+		await expect(
+			endpoints.coins.list(mockCtx, { limit: 201 }),
+		).rejects.toThrow();
+		await expect(endpoints.events.get(mockCtx, { id: '' })).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that does not match the documented shape', async () => {
+		mockRequest.mockResolvedValue({ data: [{ id: 42 }] });
+		await expect(endpoints.events.list(mockCtx, {})).rejects.toThrow();
+		expect(upsertEvent).not.toHaveBeenCalled();
+	});
+});
+
 describe('Coinmarketcal error handling', () => {
 	const handlers = errorHandlers;
 
