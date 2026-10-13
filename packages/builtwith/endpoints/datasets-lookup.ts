@@ -1,21 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const datasetsLookup: BuiltWithEndpoints['datasetsLookup'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['datasetsLookup']
-	>('trends/v6/api.json', ctx.key, {
-		method: 'GET',
-		query: {
-			TECH: input.tech,
-			DATE: input.date,
+	const input = BuiltWithEndpointInputSchemas.datasetsLookup.parse(rawInput);
+	const response = await makeBuiltWithRequest(
+		'trends/v6/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.datasetsLookup,
+		{
+			method: 'GET',
+			query: {
+				TECH: input.tech,
+				DATE: input.date,
+			},
 		},
-	});
+	);
 
 	const tech = response.Tech;
 	if (tech && ctx.db.technologies) {

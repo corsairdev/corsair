@@ -1,18 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const financialApiLookup: BuiltWithEndpoints['financialApiLookup'] =
-	async (ctx, input) => {
-		const response = await makeBuiltWithRequest<
-			BuiltWithEndpointOutputs['financialApiLookup']
-		>('financial1/api.json', ctx.key, {
-			method: 'GET',
-			query: {
-				LOOKUP: input.lookup,
+	async (ctx, rawInput) => {
+		const input =
+			BuiltWithEndpointInputSchemas.financialApiLookup.parse(rawInput);
+		const response = await makeBuiltWithRequest(
+			'financial1/api.json',
+			ctx.key,
+			BuiltWithEndpointOutputSchemas.financialApiLookup,
+			{
+				method: 'GET',
+				query: {
+					LOOKUP: input.lookup,
+				},
 			},
-		});
+		);
 
 		if (response.domain && ctx.db.companyFinancials) {
 			try {

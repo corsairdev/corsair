@@ -1,12 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const domainApiLookup: BuiltWithEndpoints['domainApiLookup'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = BuiltWithEndpointInputSchemas.domainApiLookup.parse(rawInput);
 	const query: Record<string, string> = {
 		LOOKUP: input.lookup,
 	};
@@ -21,12 +25,15 @@ export const domainApiLookup: BuiltWithEndpoints['domainApiLookup'] = async (
 	if (input.fdrange) query.FDRANGE = input.fdrange;
 	if (input.ldrange) query.LDRANGE = input.ldrange;
 
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['domainApiLookup']
-	>('v26/api.json', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeBuiltWithRequest(
+		'v26/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.domainApiLookup,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	if (ctx.db.domains || ctx.db.domainTechnologies) {
 		try {

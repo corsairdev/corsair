@@ -1,20 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const socialApiLookup: BuiltWithEndpoints['socialApiLookup'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['socialApiLookup']
-	>('social1/api.json', ctx.key, {
-		method: 'GET',
-		query: {
-			LOOKUP: input.lookup,
+	const input = BuiltWithEndpointInputSchemas.socialApiLookup.parse(rawInput);
+	const response = await makeBuiltWithRequest(
+		'social1/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.socialApiLookup,
+		{
+			method: 'GET',
+			query: {
+				LOOKUP: input.lookup,
+			},
 		},
-	});
+	);
 
 	if (ctx.db.socialLinks) {
 		try {

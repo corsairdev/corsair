@@ -1,12 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const listsApiGetList: BuiltWithEndpoints['listsApiGetList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = BuiltWithEndpointInputSchemas.listsApiGetList.parse(rawInput);
 	const query: Record<string, string> = {
 		TECH: input.tech,
 	};
@@ -18,12 +22,15 @@ export const listsApiGetList: BuiltWithEndpoints['listsApiGetList'] = async (
 	if (input.offset) query.OFFSET = input.offset;
 	if (input.since) query.SINCE = input.since;
 
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['listsApiGetList']
-	>('lists13/api.json', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeBuiltWithRequest(
+		'lists13/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.listsApiGetList,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	if (response.Results && ctx.db.listSites) {
 		try {

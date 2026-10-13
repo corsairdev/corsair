@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class BuiltWithAPIError extends Error {
 	constructor(
@@ -13,9 +14,10 @@ export class BuiltWithAPIError extends Error {
 
 const BUILTWITH_API_BASE = 'https://api.builtwith.com';
 
-export async function makeBuiltWithRequest<T>(
+export async function makeBuiltWithRequest<S extends z.ZodType>(
 	endpoint: string,
 	apiKey: string,
+	schema: S,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// Safe: the body is only serialized with JSON.stringify and never read by field.
@@ -23,7 +25,7 @@ export async function makeBuiltWithRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
-): Promise<T> {
+): Promise<z.infer<S>> {
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -71,9 +73,7 @@ export async function makeBuiltWithRequest<T>(
 	const parsed = parseBody(raw);
 	const failure = lookupFailure(parsed);
 	if (failure) throw failure;
-	// Safe: T is the endpoint's zod-inferred output type, chosen by the one caller that knows the provider shape.
-	// A narrower type is not practical because the shape differs per endpoint and the body is parsed JSON of unknown structure here.
-	return parsed as T;
+	return schema.parse(parsed);
 }
 
 // BuiltWith serves JSON as `text/json`, which core `request` returns as a raw string.

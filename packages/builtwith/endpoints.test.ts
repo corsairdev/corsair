@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 import { BuiltWithAPIError, makeBuiltWithRequest } from './client';
 import { BuiltWithEndpoints } from './endpoints';
 import { errorHandlers } from './error-handlers';
@@ -28,7 +29,9 @@ type CapturedRequest = {
 	headers: Record<string, string>;
 };
 
-const RESPONSE_BODY = { ok: true };
+const AnyBody = z.looseObject({});
+
+let responseBody: object = { ok: true };
 
 let requests: CapturedRequest[] = [];
 
@@ -39,6 +42,7 @@ function makeCtx(key = 'test-builtwith-key') {
 }
 
 beforeEach(() => {
+	responseBody = { ok: true };
 	mockLogEvent.mockClear();
 	requests = [];
 	global.fetch = async (url: string | URL | Request, init?: RequestInit) => {
@@ -50,7 +54,7 @@ beforeEach(() => {
 			headers,
 		});
 
-		return new Response(JSON.stringify(RESPONSE_BODY), {
+		return new Response(JSON.stringify(responseBody), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },
 		});
@@ -139,6 +143,7 @@ describe('BuiltWith endpoints', () => {
 	});
 
 	it('freeApiLookup GETs free1/api.json', async () => {
+		responseBody = { domain: 'builtwith.com', groups: [] };
 		await BuiltWithEndpoints.freeApiLookup(makeCtx(), {
 			lookup: 'builtwith.com',
 		});
@@ -175,6 +180,7 @@ describe('BuiltWith endpoints', () => {
 	});
 
 	it('mcpApiLookup GETs mcp2/api.json with search, category and offset', async () => {
+		responseBody = [];
 		await BuiltWithEndpoints.mcpApiLookup(makeCtx(), {
 			search: 'stripe',
 			category: 'ecommerce',
@@ -245,7 +251,7 @@ describe('makeBuiltWithRequest', () => {
 		mockRequest.mockRejectedValueOnce(apiError);
 
 		await expect(
-			makeBuiltWithRequest('v23/api.json', 'test-key', {
+			makeBuiltWithRequest('v23/api.json', 'test-key', AnyBody, {
 				query: { LOOKUP: 'example.com' },
 			}),
 		).rejects.toBe(apiError);
@@ -255,7 +261,7 @@ describe('makeBuiltWithRequest', () => {
 		mockRequest.mockResolvedValueOnce('{"domain":"builtwith.com","groups":[]}');
 
 		await expect(
-			makeBuiltWithRequest('free1/api.json', 'test-key', {
+			makeBuiltWithRequest('free1/api.json', 'test-key', AnyBody, {
 				query: { LOOKUP: 'builtwith.com' },
 			}),
 		).resolves.toEqual({ domain: 'builtwith.com', groups: [] });
@@ -268,9 +274,14 @@ describe('makeBuiltWithRequest', () => {
 
 		// Safe: the caught value is only passed to expect matchers.
 		// A narrower type is not practical because a rejected promise can carry any thrown value.
-		const error = await makeBuiltWithRequest('v26/api.json', 'test-key', {
-			query: { LOOKUP: 'builtwith.com' },
-		}).catch((e: unknown) => e);
+		const error = await makeBuiltWithRequest(
+			'v26/api.json',
+			'test-key',
+			AnyBody,
+			{
+				query: { LOOKUP: 'builtwith.com' },
+			},
+		).catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(BuiltWithAPIError);
 		expect(error).toMatchObject({
@@ -287,7 +298,7 @@ describe('makeBuiltWithRequest', () => {
 		mockRequest.mockResolvedValueOnce(body);
 
 		await expect(
-			makeBuiltWithRequest('v26/api.json', 'test-key'),
+			makeBuiltWithRequest('v26/api.json', 'test-key', AnyBody),
 		).resolves.toEqual(body);
 	});
 });
@@ -299,10 +310,23 @@ describe('makeBuiltWithRequest string bodies', () => {
 		);
 
 		await expect(
-			makeBuiltWithRequest('productv1/api.json', 'test-key'),
+			makeBuiltWithRequest('productv1/api.json', 'test-key', AnyBody),
 		).rejects.toMatchObject({
 			message: 'You do not have enough product credits.',
 		});
+	});
+});
+
+describe('BuiltWith input validation', () => {
+	it('rejects lists input combining all with since before any request', async () => {
+		await expect(
+			BuiltWithEndpoints.listsApiGetList(makeCtx(), {
+				tech: 'Shopify',
+				all: true,
+				since: '2024-01-01',
+			}),
+		).rejects.toThrow('all cannot be combined with since');
+		expect(requests).toHaveLength(0);
 	});
 });
 

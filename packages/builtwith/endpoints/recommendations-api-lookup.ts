@@ -1,18 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const recommendationsApiLookup: BuiltWithEndpoints['recommendationsApiLookup'] =
-	async (ctx, input) => {
-		const response = await makeBuiltWithRequest<
-			BuiltWithEndpointOutputs['recommendationsApiLookup']
-		>('rec1/api.json', ctx.key, {
-			method: 'GET',
-			query: {
-				LOOKUP: input.lookup,
+	async (ctx, rawInput) => {
+		const input =
+			BuiltWithEndpointInputSchemas.recommendationsApiLookup.parse(rawInput);
+		const response = await makeBuiltWithRequest(
+			'rec1/api.json',
+			ctx.key,
+			BuiltWithEndpointOutputSchemas.recommendationsApiLookup,
+			{
+				method: 'GET',
+				query: {
+					LOOKUP: input.lookup,
+				},
 			},
-		});
+		);
 
 		if (ctx.db.recommendations) {
 			try {

@@ -6,6 +6,10 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
+// Safe: Row is only forwarded to the jest mock and compared with toEqual, never read by field.
+// A narrower type is not practical because the stub serves eleven entity clients with different row shapes.
+type Row = Record<string, unknown>;
+
 function makeCtx() {
 	const upserts = {
 		domains: jest.fn(),
@@ -22,47 +26,47 @@ function makeCtx() {
 	};
 	const db = {
 		domains: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.domains(id, data),
 		},
 		domainTechnologies: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.domainTechnologies(id, data),
 		},
 		technologies: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.technologies(id, data),
 		},
 		domainCoverage: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.domainCoverage(id, data),
 		},
 		listSites: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.listSites(id, data),
 		},
 		recommendations: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.recommendations(id, data),
 		},
 		redirects: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.redirects(id, data),
 		},
 		companyFinancials: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.companyFinancials(id, data),
 		},
 		socialLinks: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.socialLinks(id, data),
 		},
 		products: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.products(id, data),
 		},
 		mcpServers: {
-			upsertByEntityId: async (id: string, data: Record<string, unknown>) =>
+			upsertByEntityId: async (id: string, data: Row) =>
 				upserts.mcpServers(id, data),
 		},
 	};

@@ -1,18 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const redirectsApiLookup: BuiltWithEndpoints['redirectsApiLookup'] =
-	async (ctx, input) => {
-		const response = await makeBuiltWithRequest<
-			BuiltWithEndpointOutputs['redirectsApiLookup']
-		>('redirect1/api.json', ctx.key, {
-			method: 'GET',
-			query: {
-				LOOKUP: input.lookup,
+	async (ctx, rawInput) => {
+		const input =
+			BuiltWithEndpointInputSchemas.redirectsApiLookup.parse(rawInput);
+		const response = await makeBuiltWithRequest(
+			'redirect1/api.json',
+			ctx.key,
+			BuiltWithEndpointOutputSchemas.redirectsApiLookup,
+			{
+				method: 'GET',
+				query: {
+					LOOKUP: input.lookup,
+				},
 			},
-		});
+		);
 
 		if (response.Lookup && ctx.db.redirects) {
 			try {

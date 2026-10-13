@@ -1,22 +1,29 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const mcpApiLookup: BuiltWithEndpoints['mcpApiLookup'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['mcpApiLookup']
-	>('mcp2/api.json', ctx.key, {
-		method: 'GET',
-		query: {
-			SEARCH: input.search,
-			CATEGORY: input.category,
-			OFFSET: input.offset,
+	const input = BuiltWithEndpointInputSchemas.mcpApiLookup.parse(rawInput);
+	const response = await makeBuiltWithRequest(
+		'mcp2/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.mcpApiLookup,
+		{
+			method: 'GET',
+			query: {
+				SEARCH: input.search,
+				CATEGORY: input.category,
+				OFFSET: input.offset,
+			},
 		},
-	});
+	);
 
 	if (ctx.db.mcpServers) {
 		try {

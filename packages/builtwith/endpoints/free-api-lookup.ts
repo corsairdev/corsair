@@ -1,20 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuiltWithEndpoints } from '..';
 import { makeBuiltWithRequest } from '../client';
-import type { BuiltWithEndpointOutputs } from './types';
+import {
+	BuiltWithEndpointInputSchemas,
+	BuiltWithEndpointOutputSchemas,
+} from './types';
 
 export const freeApiLookup: BuiltWithEndpoints['freeApiLookup'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBuiltWithRequest<
-		BuiltWithEndpointOutputs['freeApiLookup']
-	>('free1/api.json', ctx.key, {
-		method: 'GET',
-		query: {
-			LOOKUP: input.lookup,
+	const input = BuiltWithEndpointInputSchemas.freeApiLookup.parse(rawInput);
+	const response = await makeBuiltWithRequest(
+		'free1/api.json',
+		ctx.key,
+		BuiltWithEndpointOutputSchemas.freeApiLookup,
+		{
+			method: 'GET',
+			query: {
+				LOOKUP: input.lookup,
+			},
 		},
-	});
+	);
 
 	if (response.domain && ctx.db.domainCoverage) {
 		try {
