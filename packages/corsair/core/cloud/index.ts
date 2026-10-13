@@ -221,7 +221,13 @@ export interface CorsairCloudRegistry {}
 // (not an index signature, which noUncheckedIndexedAccess would make undefined).
 type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 	? any
-	: { [K in keyof Registry]: { api: Registry[K] } };
+	: {
+			[K in keyof Registry]: {
+				api: Registry[K];
+				// Entity names are not in the Registry.
+				db: any;
+			};
+		};
 
 // `<projectBase>/api/corsair` (the per-op transport root) and
 // `<projectBase>/instances` (the resolve endpoint) are siblings under the same
