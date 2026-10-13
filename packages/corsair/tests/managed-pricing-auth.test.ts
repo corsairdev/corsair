@@ -87,4 +87,45 @@ describe('getManagedPricingApiKey', () => {
 		expect(second.fromCache).toBe(true);
 		expect(global.fetch).toHaveBeenCalledTimes(1);
 	});
+
+	it('does not reuse cache across different Hub project keys on the same cache object', async () => {
+		global.fetch = jest
+			.fn()
+			.mockImplementationOnce(async () => ({
+				ok: true,
+				status: 200,
+				headers: { get: () => 'application/json' },
+				text: async () =>
+					JSON.stringify({ api_key: 'key-project-a', expires_in: 3600 }),
+			}))
+			.mockImplementationOnce(async () => ({
+				ok: true,
+				status: 200,
+				headers: { get: () => 'application/json' },
+				text: async () =>
+					JSON.stringify({ api_key: 'key-project-b', expires_in: 3600 }),
+			})) as typeof fetch;
+
+		const sharedCache = createManagedPricingCredentialCache();
+
+		const first = await getManagedPricingApiKey({
+			hub,
+			plugin: 'firecrawl',
+			tenantId: 'default',
+			cache: sharedCache,
+		});
+		const second = await getManagedPricingApiKey({
+			hub: {
+				...hub,
+				projectApiKey: 'ck_dev_other_project',
+			},
+			plugin: 'firecrawl',
+			tenantId: 'default',
+			cache: sharedCache,
+		});
+
+		expect(first.apiKey).toBe('key-project-a');
+		expect(second.apiKey).toBe('key-project-b');
+		expect(global.fetch).toHaveBeenCalledTimes(2);
+	});
 });

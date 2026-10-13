@@ -126,6 +126,7 @@ export {
 	getManagedPricingApiKey,
 	type ManagedPricingApiKeyResult,
 	type ManagedPricingAuthContext,
+	managedPricingHubScope,
 	requireHubForManagedPricing,
 } from './managed-pricing-auth';
 export {

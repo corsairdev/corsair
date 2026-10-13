@@ -36,14 +36,23 @@ const credentialCache = new WeakMap<
 	Map<string, CachedManagedPricingCredential>
 >();
 
+/** Separates in-process cache and single-flight by Hub project + instance. */
+export function managedPricingHubScope(hub: HubConfig): string {
+	const instanceKey = hub.instanceKey?.trim() ?? '';
+	return instanceKey
+		? `${hub.projectApiKey}:${instanceKey}`
+		: hub.projectApiKey;
+}
+
 function cacheKey(
+	hub: HubConfig,
 	plugin: string,
 	tenantId: string,
 	operation?: string,
 ): string {
-	return operation
-		? `${plugin}:${tenantId}:${operation}`
-		: `${plugin}:${tenantId}`;
+	const scope = managedPricingHubScope(hub);
+	const base = `${scope}:${plugin}:${tenantId}`;
+	return operation ? `${base}:${operation}` : base;
 }
 
 function readCache(
@@ -98,11 +107,16 @@ export async function getManagedPricingApiKey(
 	requireHubForManagedPricing(ctx.plugin, ctx.hub);
 
 	const forceRefresh = options?.forceRefresh ?? false;
-	const flightKey = `managed_pricing:${cacheKey(ctx.plugin, ctx.tenantId, options?.operation)}`;
+	const storageKey = cacheKey(
+		ctx.hub,
+		ctx.plugin,
+		ctx.tenantId,
+		options?.operation,
+	);
+	const flightKey = `managed_pricing:${storageKey}`;
 
 	return singleFlight(ctx.cache, flightKey, async () => {
 		const now = Math.floor(Date.now() / 1000);
-		const storageKey = cacheKey(ctx.plugin, ctx.tenantId, options?.operation);
 
 		if (!forceRefresh) {
 			const cached = readCache(ctx.cache, storageKey);
