@@ -173,14 +173,12 @@ export async function tursoFetchJson(
 	options: {
 		method?: 'GET' | 'POST';
 		apiKey?: string;
-		/**
-		 * JSON request body.
-		 * Using unknown for values because request payloads vary per Turso endpoint and are serialised directly to JSON.
-		 */
+		// Safe: values are only serialised with JSON.stringify.
+		// A narrower type is not practical because request payloads vary per Turso endpoint.
 		body?: Record<string, unknown>;
 	} = {},
-	// Using unknown for the return type because response payloads are untrusted from external Turso API
-	// and must be parsed and validated by caller Zod schemas.
+	// Safe: every caller validates the result with a zod schema.
+	// A narrower type is not practical because the response is untrusted external data whose shape differs per endpoint.
 ): Promise<unknown> {
 	const { method = 'GET', apiKey, body } = options;
 

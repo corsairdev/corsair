@@ -2692,6 +2692,14 @@
                 ]
               },
               {
+                "group": "Turso",
+                "pages": [
+                  "plugins/turso/overview",
+                  "plugins/turso/api",
+                  "plugins/turso/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",

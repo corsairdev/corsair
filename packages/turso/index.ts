@@ -195,9 +195,8 @@ export type ExternalTursoPlugin<T extends TursoPluginOptions> =
  * @returns The configured Turso plugin instance.
  */
 export function turso<const T extends TursoPluginOptions>(
-	// Every field of TursoPluginOptions is optional, so `{}` is a valid default;
-	// the assertion only supplies the inferred `T`, which TypeScript cannot
-	// synthesise for a defaulted generic parameter.
+	// Safe: every field of TursoPluginOptions is optional, so `{}` satisfies it.
+	// A narrower type is not practical because TypeScript cannot infer the defaulted generic `T` from an empty literal.
 	incomingOptions: TursoPluginOptions & T = {} as TursoPluginOptions & T,
 ): ExternalTursoPlugin<T> {
 	const options = {

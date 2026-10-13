@@ -112,10 +112,11 @@ describe('tursoFetchJson security', () => {
 			throw new Error('expected tursoFetchJson to throw');
 		} catch (error) {
 			expect(error).toBeInstanceOf(TursoAPIError);
-			const apiError = error as TursoAPIError;
-			expect(apiError.message).toBe('Too Many Requests');
-			expect(apiError.status).toBe(429);
-			expect(apiError.retryAfter).toBe(1_500);
+			expect(error).toMatchObject({
+				message: 'Too Many Requests',
+				status: 429,
+				retryAfter: 1_500,
+			});
 		} finally {
 			global.fetch = originalFetch;
 		}

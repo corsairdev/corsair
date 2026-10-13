@@ -9,24 +9,158 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { TursoAPIError } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
-import type { ChangeAction } from './endpoints/types';
-import type { TursoContext, TursoKeyBuilderContext } from './index';
+import type { ListenToChangesInput } from './endpoints/types';
+import type {
+	TursoContext,
+	TursoKeyBuilderContext,
+	TursoPluginOptions,
+} from './index';
 import { turso } from './index';
-import {
-	createKeyBuilderContext,
-	createMockChangeEventsRepository,
-	createTestContext,
-	DB_URL,
-	jsonResponse,
-	sseResponse,
-	TEST_TOKEN,
-} from './test-harness';
+
+const TEST_TOKEN = 'test-turso-token-123';
+const DB_URL = 'https://mydb-myorg.turso.io';
+
+// Safe: the handlers under test never read ctx.endpoints.
+// A narrower type is not practical because the real bound endpoint tree needs the full plugin runtime.
+const testEndpoints = {} as TursoContext['endpoints'];
+
+/**
+ * Default key-manager doubles for Turso unit tests.
+ */
+function createDefaultKeys(
+	overrides?: Partial<TursoContext['keys']>,
+): TursoContext['keys'] {
+	return {
+		get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN),
+		get_database_token: jest.fn().mockResolvedValue(null),
+		get_webhook_signature: jest.fn().mockResolvedValue(null),
+		set_api_key: jest.fn().mockResolvedValue(undefined),
+		set_database_token: jest.fn().mockResolvedValue(undefined),
+		set_webhook_signature: jest.fn().mockResolvedValue(undefined),
+		get_dek: jest.fn().mockResolvedValue('test-dek'),
+		issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
+		...overrides,
+	};
+}
+
+/**
+ * Creates an explicitly typed mock repository for the `changeEvents` entity table.
+ */
+function createMockChangeEventsRepository(
+	overrides?: Partial<TursoContext['db']['changeEvents']>,
+): TursoContext['db']['changeEvents'] {
+	return {
+		findByEntityId: jest.fn().mockResolvedValue(null),
+		existsByEntityId: jest.fn().mockResolvedValue(false),
+		findIdByEntityId: jest.fn().mockResolvedValue(null),
+		findById: jest.fn().mockResolvedValue(null),
+		findManyByEntityIds: jest.fn().mockResolvedValue([]),
+		list: jest.fn().mockResolvedValue([]),
+		search: jest.fn().mockResolvedValue([]),
+		upsertByEntityId: jest.fn().mockResolvedValue({
+			id: 'mock-uuid-1',
+			account_id: 'test-account',
+			entity_type: 'changeEvents',
+			entity_id: 'mock-event-1',
+			version: '1.0.0',
+			data: {
+				databaseUrl: DB_URL,
+				table: 'users',
+				action: 'insert',
+				receivedAt: '2026-09-14T00:00:00.000Z',
+				data: null,
+			},
+			created_at: new Date(),
+			updated_at: new Date(),
+		}),
+		deleteById: jest.fn().mockResolvedValue(true),
+		deleteByEntityId: jest.fn().mockResolvedValue(true),
+		count: jest.fn().mockResolvedValue(0),
+		...overrides,
+	};
+}
+
+/**
+ * Builds a strongly typed `TursoContext` fixture for endpoint unit tests.
+ */
+function createTestContext(
+	overrides: {
+		key?: string;
+		options?: TursoPluginOptions;
+		keys?: Partial<TursoContext['keys']>;
+		db?: Partial<TursoContext['db']>;
+	} = {},
+): TursoContext {
+	const defaultChangeEvents = createMockChangeEventsRepository();
+	return {
+		key: overrides.key ?? TEST_TOKEN,
+		options: overrides.options ?? {},
+		keys: createDefaultKeys(overrides.keys),
+		db: {
+			changeEvents: overrides.db?.changeEvents ?? defaultChangeEvents,
+		},
+		$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
+		endpoints: testEndpoints,
+	};
+}
+
+/**
+ * Builds a `TursoKeyBuilderContext` for keyBuilder tests.
+ */
+function createKeyBuilderContext(
+	apiKeyVal: string | null = TEST_TOKEN,
+): TursoKeyBuilderContext {
+	return {
+		authType: 'api_key',
+		options: {},
+		tenantId: 'test-tenant',
+		keys: createDefaultKeys({
+			get_api_key: jest.fn().mockResolvedValue(apiKeyVal),
+		}),
+	};
+}
+
+/**
+ * Builds a Response whose body streams the given SSE chunks.
+ */
+function sseResponse(chunks: string[]): Response {
+	const encoder = new TextEncoder();
+	let i = 0;
+	const stream = new ReadableStream<Uint8Array>({
+		pull(controller) {
+			if (i < chunks.length) {
+				controller.enqueue(encoder.encode(chunks[i]!));
+				i += 1;
+				return;
+			}
+			controller.close();
+		},
+	});
+	return new Response(stream, {
+		status: 200,
+		headers: { 'content-type': 'text/event-stream' },
+	});
+}
+
+/**
+ * Builds a JSON Response with the given status.
+ */
+// Safe: the payload is only passed to JSON.stringify.
+// A narrower type is not practical because tests feed arbitrary provider bodies, including malformed ones.
+function jsonResponse(payload: unknown, status: number = 200): Response {
+	return new Response(JSON.stringify(payload), {
+		status,
+		headers: { 'content-type': 'application/json' },
+	});
+}
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
+// Safe: the module is replaced by jest.mock above.
+// A narrower type is not practical because jest.mock does not change the declared type of the import.
 const mockLog = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
@@ -45,6 +179,8 @@ afterAll(() => {
 });
 
 const mockFetch = (): jest.MockedFunction<typeof fetch> =>
+	// Safe: the beforeEach hook assigns jest.fn() to global.fetch.
+	// A narrower type is not practical because global.fetch is declared with the plain fetch type.
 	global.fetch as jest.MockedFunction<typeof fetch>;
 
 type KeyBuilderFn = (
@@ -76,12 +212,16 @@ describe('plugin shape', () => {
 
 	it('resolves the token from options or context and rejects webhook lookup', async () => {
 		const pluginWithKey = turso({ key: TEST_TOKEN });
+		// Safe: KeyBuilderFn matches the keyBuilder the plugin factory returns.
+		// A narrower type is not practical because the plugin type erases the keyBuilder context parameter.
 		const withKeyBuilder = pluginWithKey.keyBuilder as KeyBuilderFn;
 		await expect(
 			withKeyBuilder(createKeyBuilderContext(), 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		const plugin = turso();
+		// Safe: KeyBuilderFn matches the keyBuilder the plugin factory returns.
+		// A narrower type is not practical because the plugin type erases the keyBuilder context parameter.
 		const keyBuilder = plugin.keyBuilder as KeyBuilderFn;
 		await expect(
 			keyBuilder(createKeyBuilderContext(TEST_TOKEN), 'endpoint'),
@@ -113,9 +253,7 @@ describe('Regions.closest', () => {
 		expect(calledUrl).toBe('https://region.turso.io');
 		expect(calledOptions?.method).toBe('GET');
 		// The service is unauthenticated — no credential should be attached.
-		expect(
-			(calledOptions?.headers as Record<string, string>).Authorization,
-		).toBeUndefined();
+		expect(new Headers(calledOptions?.headers).get('authorization')).toBeNull();
 
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
@@ -123,6 +261,19 @@ describe('Regions.closest', () => {
 			{},
 			'completed',
 		);
+	});
+
+	it('surfaces 429 with the Retry-After delay', async () => {
+		mockFetch().mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				headers: { 'retry-after': '7' },
+			}),
+		);
+		await expect(Regions.closest(ctx, {})).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 7000,
+		});
 	});
 
 	it('rejects a malformed region payload', async () => {
@@ -141,9 +292,9 @@ describe('Tokens.validate', () => {
 
 		const [calledUrl, calledOptions] = mockFetch().mock.calls[0]!;
 		expect(calledUrl).toBe('https://api.turso.tech/v1/auth/validate');
-		expect(
-			(calledOptions?.headers as Record<string, string>).Authorization,
-		).toBe(`Bearer ${TEST_TOKEN}`);
+		expect(new Headers(calledOptions?.headers).get('authorization')).toBe(
+			`Bearer ${TEST_TOKEN}`,
+		);
 	});
 
 	it('returns an epoch expiry for a token that does expire', async () => {
@@ -158,8 +309,7 @@ describe('Tokens.validate', () => {
 
 		await Tokens.validate(ctx, {});
 
-		// Using unknown values because log event metadata carries arbitrary telemetry records
-		const meta = mockLog.mock.calls[0]![2] as Record<string, unknown>;
+		const meta = mockLog.mock.calls[0]![2];
 		expect(meta).toEqual({ exp: -1 });
 		expect(JSON.stringify(meta)).not.toContain(TEST_TOKEN);
 	});
@@ -179,6 +329,19 @@ describe('Tokens.validate', () => {
 		await expect(Tokens.validate(ctx, {})).rejects.toThrow(
 			'could not validate token',
 		);
+	});
+
+	it('surfaces 429 with the Retry-After delay', async () => {
+		mockFetch().mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				headers: { 'retry-after': '7' },
+			}),
+		);
+		await expect(Tokens.validate(ctx, {})).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 7000,
+		});
 	});
 
 	it('rejects a non-integer expiry', async () => {
@@ -293,6 +456,38 @@ describe('Changes.listen', () => {
 		});
 	});
 
+	it('surfaces 401 as a TursoAPIError with status 401', async () => {
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({ error: 'unauthorized' }, 401),
+		);
+		await expect(
+			Changes.listen(ctx, {
+				databaseUrl: DB_URL,
+				table: 'users',
+				action: 'insert',
+			}),
+		).rejects.toMatchObject({
+			status: 401,
+			message: 'Turso listen request failed with status 401',
+		});
+	});
+
+	it('surfaces 429 with the Retry-After delay', async () => {
+		mockFetch().mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				headers: { 'retry-after': '7' },
+			}),
+		);
+		await expect(
+			Changes.listen(ctx, {
+				databaseUrl: DB_URL,
+				table: 'users',
+				action: 'insert',
+			}),
+		).rejects.toMatchObject({ status: 429, retryAfter: 7000 });
+	});
+
 	it('raises rather than falling back on an unexpected status', async () => {
 		mockFetch().mockResolvedValueOnce(jsonResponse({ error: 'boom' }, 500));
 
@@ -347,24 +542,18 @@ describe('Changes.listen', () => {
 	});
 
 	it('enforces input validation on table, action and bounds', async () => {
-		const bad = [
-			{ databaseUrl: DB_URL, table: '', action: 'insert' as ChangeAction },
-			{ databaseUrl: DB_URL, table: 'users', action: 'upsert' as ChangeAction },
-			{
-				databaseUrl: DB_URL,
-				table: 'users',
-				action: 'insert' as ChangeAction,
-				maxEvents: 0,
-			},
-			{
-				databaseUrl: DB_URL,
-				table: 'users',
-				action: 'insert' as ChangeAction,
-				timeoutMs: 100,
-			},
+		const bad: Array<Record<string, string | number>> = [
+			{ databaseUrl: DB_URL, table: '', action: 'insert' },
+			{ databaseUrl: DB_URL, table: 'users', action: 'upsert' },
+			{ databaseUrl: DB_URL, table: 'users', action: 'insert', maxEvents: 0 },
+			{ databaseUrl: DB_URL, table: 'users', action: 'insert', timeoutMs: 100 },
 		];
 		for (const input of bad) {
-			await expect(Changes.listen(ctx, input)).rejects.toThrow();
+			await expect(
+				// Safe: the inputs are deliberately invalid and must be rejected at runtime.
+				// A narrower type is not practical because a valid ListenToChangesInput would defeat the test.
+				Changes.listen(ctx, input as ListenToChangesInput),
+			).rejects.toThrow();
 		}
 		expect(mockFetch()).not.toHaveBeenCalled();
 	});
@@ -395,7 +584,7 @@ describe('Changes.listen', () => {
 		});
 
 		const [, opts] = mockFetch().mock.calls[0]!;
-		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+		expect(new Headers(opts?.headers).get('authorization')).toBe(
 			'Bearer db-scoped-token',
 		);
 	});
@@ -423,7 +612,7 @@ describe('Changes.listen', () => {
 		});
 
 		const [, opts] = mockFetch().mock.calls[0]!;
-		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+		expect(new Headers(opts?.headers).get('authorization')).toBe(
 			'Bearer stored-tenant-db-token',
 		);
 	});
@@ -442,7 +631,7 @@ describe('Changes.listen', () => {
 		});
 
 		const [, opts] = mockFetch().mock.calls[0]!;
-		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+		expect(new Headers(opts?.headers).get('authorization')).toBe(
 			`Bearer ${TEST_TOKEN}`,
 		);
 	});
@@ -493,11 +682,11 @@ describe('Changes.listen', () => {
 		const ids = upsertByEntityId.mock.calls.map((c) => c[0]);
 		expect(new Set(ids).size).toBe(3);
 		// Each row is still persisted in full.
-		expect(
-			upsertByEntityId.mock.calls.map(
-				(c) => (c[1].data as Record<string, unknown> | null)?.n as number,
-			),
-		).toEqual([1, 2, 3]);
+		expect(upsertByEntityId.mock.calls.map((c) => c[1].data)).toEqual([
+			{ id: 42, n: 1 },
+			{ id: 42, n: 2 },
+			{ id: 42, n: 3 },
+		]);
 	});
 
 	it('mirrors streamed events into the changeEvents entity', async () => {
@@ -562,8 +751,7 @@ describe('Changes.listen', () => {
 			action: 'insert',
 		});
 
-		// Using unknown values because log event metadata carries arbitrary telemetry records
-		const meta = mockLog.mock.calls[0]![2] as Record<string, unknown>;
+		const meta = mockLog.mock.calls[0]![2];
 		expect(meta).toEqual({
 			table: 'people',
 			action: 'insert',

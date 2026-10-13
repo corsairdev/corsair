@@ -3,6 +3,7 @@ import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import {
 	isTursoDatabaseUrl,
 	parseSseBuffer,
+	retryAfterMs,
 	TRANSPORT_ERROR_CODE,
 	TursoAPIError,
 	tryGetStoredKey,
@@ -31,8 +32,8 @@ function toChangeEvent(
 ): ChangeEvent {
 	const receivedAt = new Date().toISOString();
 	try {
-		// Using unknown because the parsed SSE stream payload is unvalidated external data,
-		// narrowed with asRecord before mapping to the ChangeEvent object.
+		// Safe: it is narrowed with asRecord before use.
+		// A narrower type is not practical because the SSE payload is unvalidated external data of arbitrary shape.
 		const parsed: unknown = JSON.parse(payload);
 		const record = asRecord(parsed);
 		if (record) {
@@ -131,6 +132,7 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 					`Turso listen request failed with status ${response.status}`,
 					undefined,
 					response.status,
+					retryAfterMs(response),
 				);
 			}
 		} else if (!response.body) {

@@ -4,9 +4,9 @@ import { errorHandlers } from './error-handlers';
 /** Returns the first handler key whose matcher claims the error. */
 function route(error: Error): string {
 	return (
-		Object.keys(errorHandlers).find((name) =>
-			errorHandlers[name as keyof typeof errorHandlers].match(error),
-		) ?? 'UNMATCHED'
+		Object.entries(errorHandlers).find(([, handler]) =>
+			handler.match(error),
+		)?.[0] ?? 'UNMATCHED'
 	);
 }
 

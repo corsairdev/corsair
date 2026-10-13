@@ -1,0 +1,13 @@
+displayName: Turso
+description: Serverless SQLite databases on libSQL with global replication.
+recommendedAuth: api_key
+examples:
+  read:
+    path: tokens.validate
+    title: Validate the API token
+dbExample:
+  entity: changeEvents
+  note: Search change events streamed by changes.listen without listening again.
+  data:
+    table: users
+  limit: 20

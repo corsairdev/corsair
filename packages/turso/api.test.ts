@@ -6,11 +6,27 @@ import {
 } from './client';
 import { Changes, Tokens } from './endpoints';
 import { TursoEndpointOutputSchemas } from './endpoints/types';
-import { createLiveTestContext } from './test-harness';
+import type { TursoContext, TursoPluginOptions } from './index';
 
-const API_KEY = process.env.TURSO_API_KEY;
+const API_KEY = process.env.TURSO_API_TOKEN;
 const DATABASE_URL = process.env.TURSO_DATABASE_URL;
 const DATABASE_TOKEN = process.env.TURSO_DATABASE_TOKEN;
+
+function createLiveTestContext(
+	key: string,
+	options: TursoPluginOptions,
+): TursoContext {
+	// Safe: the endpoints under test read only key, options and keys.
+	// A narrower type is not practical because a full TursoContext needs the plugin runtime.
+	return {
+		key,
+		options,
+		keys: {
+			get_api_key: async () => key,
+			get_database_token: async () => options.databaseToken ?? null,
+		},
+	} as TursoContext;
+}
 
 const describeLive = API_KEY ? describe : describe.skip;
 
@@ -26,7 +42,7 @@ describeLive('Turso live API integration tests', () => {
 	});
 
 	it('2. TURSO_VALIDATE_API_TOKEN - validates API token and retrieves expiry', async () => {
-		const key = API_KEY as string;
+		const key = API_KEY ?? '';
 		const raw = await tursoFetchJson(`${TURSO_API_BASE}/v1/auth/validate`, {
 			apiKey: key,
 		});
@@ -43,7 +59,7 @@ describeLive('Turso live API integration tests', () => {
 
 	if (DATABASE_URL) {
 		it('3. TURSO_LISTEN_TO_CHANGES - queries database changes or health check fallback', async () => {
-			const key = API_KEY as string;
+			const key = API_KEY ?? '';
 			const liveCtx = createLiveTestContext(key, {
 				key,
 				databaseToken: DATABASE_TOKEN,
