@@ -21,7 +21,16 @@ const CuttlyStatsSchema = z
 		twitter: z.number().optional().describe('Clicks from Twitter'),
 		linkedin: z.number().optional().describe('Clicks from LinkedIn'),
 		rest: z.number().optional().describe('Other clicks'),
-		bots: z.number().optional().describe('Clicks from bots'),
+		// Live-verified 2026-10-13: on plans without bot analytics the
+		// provider returns a notice string instead of a count, e.g.
+		// "Insufficient subscription level". The union models exactly what
+		// the API sends; callers check `typeof` before arithmetic.
+		bots: z
+			.union([z.number(), z.string()])
+			.optional()
+			.describe(
+				'Bot-click count on eligible plans, otherwise the provider notice string',
+			),
 	})
 	.loose();
 
