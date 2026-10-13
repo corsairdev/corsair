@@ -128,4 +128,77 @@ describe('getManagedPricingApiKey', () => {
 		expect(second.apiKey).toBe('key-project-b');
 		expect(global.fetch).toHaveBeenCalledTimes(2);
 	});
+
+	it('does not reuse cache across different Hub apiUrl values', async () => {
+		global.fetch = jest
+			.fn()
+			.mockImplementationOnce(async () => ({
+				ok: true,
+				status: 200,
+				headers: { get: () => 'application/json' },
+				text: async () =>
+					JSON.stringify({ api_key: 'key-hub-a', expires_in: 3600 }),
+			}))
+			.mockImplementationOnce(async () => ({
+				ok: true,
+				status: 200,
+				headers: { get: () => 'application/json' },
+				text: async () =>
+					JSON.stringify({ api_key: 'key-hub-b', expires_in: 3600 }),
+			})) as typeof fetch;
+
+		const sharedCache = createManagedPricingCredentialCache();
+
+		const first = await getManagedPricingApiKey({
+			hub,
+			plugin: 'firecrawl',
+			tenantId: 'default',
+			cache: sharedCache,
+		});
+		const second = await getManagedPricingApiKey({
+			hub: {
+				...hub,
+				apiUrl: 'https://other-hub.test/',
+			},
+			plugin: 'firecrawl',
+			tenantId: 'default',
+			cache: sharedCache,
+		});
+
+		expect(first.apiKey).toBe('key-hub-a');
+		expect(second.apiKey).toBe('key-hub-b');
+		expect(global.fetch).toHaveBeenCalledTimes(2);
+	});
+
+	it('forceRefresh contacts Hub even when a fresh credential is cached', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			headers: { get: () => 'application/json' },
+			text: async () =>
+				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+		})) as typeof fetch;
+
+		const localCache = createManagedPricingCredentialCache();
+
+		await getManagedPricingApiKey({
+			hub,
+			plugin: 'firecrawl',
+			tenantId: 'tenant_a',
+			cache: localCache,
+		});
+
+		const forced = await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'tenant_a',
+				cache: localCache,
+			},
+			{ forceRefresh: true },
+		);
+
+		expect(forced.fromCache).toBe(false);
+		expect(global.fetch).toHaveBeenCalledTimes(2);
+	});
 });

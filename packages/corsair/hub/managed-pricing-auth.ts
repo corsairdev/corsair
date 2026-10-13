@@ -1,8 +1,11 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { singleFlight } from '../core/auth/single-flight';
-import { hubApiPost } from './client/http';
+import { hubApiPost, normalizeHubApiUrl } from './client/http';
 import { parseManagedPricingCredentialsResponse } from './contracts/managed-pricing-api';
 import type { HubConfig } from './types';
+
+/** Separates scope segments — must not appear in encoded field values. */
+const HUB_SCOPE_FIELD_SEP = '\x1e';
 
 const CREDENTIAL_REFRESH_BUFFER_SECONDS = 60;
 
@@ -36,12 +39,15 @@ const credentialCache = new WeakMap<
 	Map<string, CachedManagedPricingCredential>
 >();
 
-/** Separates in-process cache and single-flight by Hub project + instance. */
+/** Separates in-process cache and single-flight by Hub authority + project + instance. */
 export function managedPricingHubScope(hub: HubConfig): string {
+	const apiUrl = normalizeHubApiUrl(hub.apiUrl);
 	const instanceKey = hub.instanceKey?.trim() ?? '';
-	return instanceKey
-		? `${hub.projectApiKey}:${instanceKey}`
-		: hub.projectApiKey;
+	return [
+		encodeURIComponent(apiUrl),
+		encodeURIComponent(hub.projectApiKey),
+		encodeURIComponent(instanceKey),
+	].join(HUB_SCOPE_FIELD_SEP);
 }
 
 function cacheKey(
@@ -113,7 +119,8 @@ export async function getManagedPricingApiKey(
 		ctx.tenantId,
 		options?.operation,
 	);
-	const flightKey = `managed_pricing:${storageKey}`;
+	const flightKind = forceRefresh ? 'force' : 'routine';
+	const flightKey = `managed_pricing:${flightKind}:${storageKey}`;
 
 	return singleFlight(ctx.cache, flightKey, async () => {
 		const now = Math.floor(Date.now() / 1000);
