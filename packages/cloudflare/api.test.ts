@@ -51,7 +51,9 @@ async function resolveAccountId(token: string): Promise<string | undefined> {
 	return accounts[0]?.id;
 }
 
-describe('Cloudflare API Type Tests', () => {
+const describeLive = TEST_API_TOKEN ? describe : describe.skip;
+
+describeLive('Cloudflare API Type Tests', () => {
 	let zoneId: string | undefined = ZONE_ID_OVERRIDE;
 	let accountId: string | undefined = ACCOUNT_ID_OVERRIDE;
 

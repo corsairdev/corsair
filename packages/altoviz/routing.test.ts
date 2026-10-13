@@ -62,7 +62,6 @@ function seededDb() {
 
 type Fixture = {
 	path: string;
-	// biome-ignore lint/suspicious/noExplicitAny: a fixture table over 67 differently-typed handlers needs a common call shape
 	fn: (ctx: any, input: any) => Promise<unknown>;
 	input: Record<string, unknown>;
 	method: string;
