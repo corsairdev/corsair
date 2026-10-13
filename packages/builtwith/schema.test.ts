@@ -20,6 +20,24 @@ describe('BuiltWith schema', () => {
 	});
 });
 
+describe('BuiltWith entities', () => {
+	it('registers one entity per durable BuiltWith object', () => {
+		expect(Object.keys(BuiltWithSchema.entities).sort()).toEqual([
+			'companyFinancials',
+			'domainCoverage',
+			'domainTechnologies',
+			'domains',
+			'listSites',
+			'mcpServers',
+			'products',
+			'recommendations',
+			'redirects',
+			'socialLinks',
+			'technologies',
+		]);
+	});
+});
+
 describe('BuiltWith endpoint input schemas', () => {
 	it('createDomainListFile accepts only txt and zip formats', () => {
 		expect(

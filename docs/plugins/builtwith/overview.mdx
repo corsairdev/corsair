@@ -3,11 +3,12 @@ title: Overview
 description: "Web technology profiling for domains, technology adoption lists, trends, redirects, and company financials."
 ---
 
-Use **BuiltWith** through Corsair: one client, typed API calls.
+Use **BuiltWith** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 11 typed API operations
+- 11 synced entities (`companyFinancials`, `domainCoverage`, `domains`, `domainTechnologies`, `listSites`, `mcpServers`, and 5 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -106,11 +107,20 @@ await tenant.builtwith.api.createDomainListFile({});
 
 See the full list on the [API](/plugins/builtwith/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.builtwith.db.<entity>.search()` and `.list()`: `companyFinancials`, `domainCoverage`, `domains`, `domainTechnologies`, `listSites`, `mcpServers`, `products`, `recommendations`, `redirects`, `socialLinks`, `technologies`.
+
+See [Database](/plugins/builtwith/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/builtwith/api">
     Every `builtwith.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/builtwith/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

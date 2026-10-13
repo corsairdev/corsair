@@ -14,6 +14,32 @@ export const recommendationsApiLookup: BuiltWithEndpoints['recommendationsApiLoo
 			},
 		});
 
+		if (ctx.db.recommendations) {
+			try {
+				for (const rec of response.Recommendations ?? []) {
+					for (const tech of rec.Recommendations ?? []) {
+						const id = `${rec.Domain}|${tech.name}`;
+						await ctx.db.recommendations.upsertByEntityId(id, {
+							id,
+							domain: rec.Domain,
+							compiled: rec.Compiled,
+							name: tech.name,
+							link: tech.link,
+							tag: tech.tag,
+							categories: tech.categories,
+							stars: tech.stars,
+							match: tech.match,
+						});
+					}
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to save BuiltWith recommendations to database:',
+					error,
+				);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'builtwith.recommendations.api.lookup',

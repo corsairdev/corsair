@@ -33,9 +33,9 @@ const RESPONSE_BODY = { ok: true };
 let requests: CapturedRequest[] = [];
 
 function makeCtx(key = 'test-builtwith-key') {
-	// Safe: endpoints under test read only ctx.key. A better type was not practical because the full
-	// context carries DB handles that cannot be built without a real corsair instance.
-	return { key } as BuiltWithContext;
+	// Safe: endpoints under test read only ctx.key, and ctx.db is empty so persistence is skipped.
+	// A narrower type is not practical because the full context carries DB handles that cannot be built without a real corsair instance.
+	return { key, db: {} } as BuiltWithContext;
 }
 
 beforeEach(() => {
@@ -89,7 +89,7 @@ describe('BuiltWith endpoints', () => {
 
 	it('createDomainListFile defaults to txt when format is omitted', async () => {
 		// Safe: only the defaulted `format` key is missing, and the endpoint's runtime schema fills it in.
-		// A better type was not practical because the endpoint input type is the schema output, where format is already required.
+		// A narrower type is not practical because the endpoint input type is the schema output, where format is already required.
 		const input = { domains: [' a.com ', 'b.com'] } as Parameters<
 			typeof BuiltWithEndpoints.createDomainListFile
 		>[1];
@@ -266,6 +266,8 @@ describe('makeBuiltWithRequest', () => {
 			'{"Errors":[{"Message":"API Credits: 0 - Used: 0 - API allocation depleted","Code":-3}]}',
 		);
 
+		// Safe: the caught value is only passed to expect matchers.
+		// A narrower type is not practical because a rejected promise can carry any thrown value.
 		const error = await makeBuiltWithRequest('v26/api.json', 'test-key', {
 			query: { LOOKUP: 'builtwith.com' },
 		}).catch((e: unknown) => e);
@@ -287,6 +289,46 @@ describe('makeBuiltWithRequest', () => {
 		await expect(
 			makeBuiltWithRequest('v26/api.json', 'test-key'),
 		).resolves.toEqual(body);
+	});
+});
+
+describe('makeBuiltWithRequest string bodies', () => {
+	it('treats a bare string body as an API error', async () => {
+		mockRequest.mockResolvedValueOnce(
+			'"You do not have enough product credits."',
+		);
+
+		await expect(
+			makeBuiltWithRequest('productv1/api.json', 'test-key'),
+		).rejects.toMatchObject({
+			message: 'You do not have enough product credits.',
+		});
+	});
+});
+
+describe('BuiltWith HTTP errors', () => {
+	it('surfaces 401 as an ApiError with status 401', async () => {
+		global.fetch = async () =>
+			new Response('{"message":"unauthorized"}', {
+				status: 401,
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+		await expect(
+			BuiltWithEndpoints.freeApiLookup(makeCtx(), { lookup: 'example.com' }),
+		).rejects.toMatchObject({ status: 401 });
+	});
+
+	it('surfaces 429 with Retry-After as retryAfter milliseconds', async () => {
+		global.fetch = async () =>
+			new Response('{"message":"slow down"}', {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '7' },
+			});
+
+		await expect(
+			BuiltWithEndpoints.freeApiLookup(makeCtx(), { lookup: 'example.com' }),
+		).rejects.toMatchObject({ status: 429, retryAfter: 7000 });
 	});
 });
 

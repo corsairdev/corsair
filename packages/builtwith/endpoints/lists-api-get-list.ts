@@ -25,6 +25,34 @@ export const listsApiGetList: BuiltWithEndpoints['listsApiGetList'] = async (
 		query,
 	});
 
+	if (response.Results && ctx.db.listSites) {
+		try {
+			for (const site of response.Results) {
+				const id = `${input.tech}|${site.D}`;
+				await ctx.db.listSites.upsertByEntityId(id, {
+					id,
+					tech: input.tech,
+					domain: site.D,
+					locations: site.LOS,
+					firstDetected: site.FD,
+					lastDetected: site.LD,
+					monthlySpend: site.S,
+					skuCount: site.SKU,
+					salesRevenue: site.R,
+					socialFollowers: site.F,
+					employees: site.E,
+					pageRank: site.A,
+					trancoRank: site.Q,
+					majesticRank: site.M,
+					umbrellaRank: site.U,
+					meta: site.META,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save BuiltWith list sites to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'builtwith.lists.api.get_list',

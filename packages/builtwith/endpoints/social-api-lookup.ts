@@ -16,6 +16,26 @@ export const socialApiLookup: BuiltWithEndpoints['socialApiLookup'] = async (
 		},
 	});
 
+	if (ctx.db.socialLinks) {
+		try {
+			for (const social of response.Socials ?? []) {
+				for (const result of social.Results ?? []) {
+					for (const domain of result.Domains ?? []) {
+						const id = `${result.SocialUrl}|${domain.Root}`;
+						await ctx.db.socialLinks.upsertByEntityId(id, {
+							id,
+							socialUrl: result.SocialUrl,
+							root: domain.Root,
+							builtWithRank: domain.BuiltWithRank,
+						});
+					}
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save BuiltWith social links to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'builtwith.social.api.lookup',

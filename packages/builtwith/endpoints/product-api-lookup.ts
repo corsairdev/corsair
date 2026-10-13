@@ -21,6 +21,27 @@ export const productApiLookup: BuiltWithEndpoints['productApiLookup'] = async (
 		query,
 	});
 
+	if (response.shops && ctx.db.products) {
+		try {
+			for (const shop of response.shops) {
+				for (const product of shop.Products ?? []) {
+					const id = `${shop.Domain}|${product.Url ?? product.Title}`;
+					await ctx.db.products.upsertByEntityId(id, {
+						id,
+						shop: shop.Domain,
+						title: product.Title,
+						url: product.Url,
+						indexed: product.Indexed,
+						firstIndexed: product.FirstIndexed,
+						price: product.Price,
+					});
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to save BuiltWith products to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'builtwith.product.api.lookup',

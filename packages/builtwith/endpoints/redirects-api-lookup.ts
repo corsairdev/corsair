@@ -14,6 +14,31 @@ export const redirectsApiLookup: BuiltWithEndpoints['redirectsApiLookup'] =
 			},
 		});
 
+		if (response.Lookup && ctx.db.redirects) {
+			try {
+				const lookup = response.Lookup;
+				const directions = [
+					['inbound', response.Inbound],
+					['outbound', response.Outbound],
+				] as const;
+				for (const [direction, rows] of directions) {
+					for (const row of rows ?? []) {
+						const id = `${lookup}|${direction}|${row.Domain}`;
+						await ctx.db.redirects.upsertByEntityId(id, {
+							id,
+							lookup,
+							direction,
+							domain: row.Domain,
+							firstDetected: row.FirstDetected,
+							lastDetected: row.LastDetected,
+						});
+					}
+				}
+			} catch (error) {
+				console.warn('Failed to save BuiltWith redirects to database:', error);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'builtwith.redirects.api.lookup',

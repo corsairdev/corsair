@@ -18,7 +18,8 @@ export async function makeBuiltWithRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Request bodies are arbitrary JSON per endpoint; they are only serialized with JSON.stringify.
+		// Safe: the body is only serialized with JSON.stringify and never read by field.
+		// A narrower type is not practical because no BuiltWith endpoint in this plugin sends a body, so there is no shape to name.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -49,10 +50,12 @@ export async function makeBuiltWithRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	// `unknown` is safe because raw is only passed to parseBody, which narrows it; the transport returns
-	// an unvalidated body (string or parsed JSON), so no more specific type is available.
+	// Safe: raw is only passed to parseBody, which narrows it before use.
+	// A narrower type is not practical because the transport returns an unvalidated body (string or parsed JSON).
 	let raw: unknown;
 	try {
+		// Safe: same unvalidated transport body as `raw` above.
+		// A narrower type is not practical because the response shape differs per endpoint and is only known to the caller.
 		raw = await request<unknown>(config, requestOptions);
 	} catch (error) {
 		// ApiError carries status and rate-limit headers for error-handlers.ts.
@@ -68,14 +71,14 @@ export async function makeBuiltWithRequest<T>(
 	const parsed = parseBody(raw);
 	const failure = lookupFailure(parsed);
 	if (failure) throw failure;
-	// Safe: callers validate the parsed JSON with their endpoint's zod output schema before using it.
-	// A better type was not practical because T is chosen per call site and the provider JSON shape is only known there.
+	// Safe: T is the endpoint's zod-inferred output type, chosen by the one caller that knows the provider shape.
+	// A narrower type is not practical because the shape differs per endpoint and the body is parsed JSON of unknown structure here.
 	return parsed as T;
 }
 
 // BuiltWith serves JSON as `text/json`, which core `request` returns as a raw string.
-// `unknown` is safe because the input is only narrowed by typeof/JSON.parse and never read by field here;
-// no better type exists because the response shape is unverified until the caller's zod schema runs.
+// Safe: the input is only narrowed by typeof and JSON.parse and never read by field here.
+// A narrower type is not practical because the response shape differs per endpoint.
 function parseBody(raw: unknown): unknown {
 	if (typeof raw !== 'string') return raw;
 	try {
@@ -87,9 +90,11 @@ function parseBody(raw: unknown): unknown {
 
 // BuiltWith reports failures (e.g. depleted credits, bad key) as HTTP 200 with
 // `{ Errors: [{ Message, Code }] }` and no results.
-// `unknown` is safe because every property is read only after typeof/`in`/Array.isArray narrowing;
-// no better type exists because this runs before any schema validation, on an arbitrary provider body.
+// Safe: every property is read only after typeof, `in` or Array.isArray narrowing.
+// A narrower type is not practical because this runs on an arbitrary provider body before any typing.
 function lookupFailure(body: unknown): BuiltWithAPIError | undefined {
+	// Some endpoints (e.g. Product API without credits) answer with a bare string message instead of JSON.
+	if (typeof body === 'string') return new BuiltWithAPIError(body);
 	if (typeof body !== 'object' || body === null || !('Errors' in body)) {
 		return undefined;
 	}
@@ -97,7 +102,8 @@ function lookupFailure(body: unknown): BuiltWithAPIError | undefined {
 	const results =
 		'Results' in body && Array.isArray(body.Results) ? body.Results : [];
 	if (errors.length === 0 || results.length > 0) return undefined;
-	// Safe: narrowed with typeof/`in` below before any field read; elements of the provider's Errors array are unvalidated.
+	// Safe: narrowed with typeof and `in` below before any field is read.
+	// A narrower type is not practical because elements of the provider's Errors array are unvalidated.
 	const first: unknown = errors[0];
 	const message =
 		typeof first === 'object' &&

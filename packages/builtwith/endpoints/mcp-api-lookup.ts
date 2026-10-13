@@ -18,6 +18,23 @@ export const mcpApiLookup: BuiltWithEndpoints['mcpApiLookup'] = async (
 		},
 	});
 
+	if (ctx.db.mcpServers) {
+		try {
+			for (const server of response) {
+				if (!server.Domain) continue;
+				await ctx.db.mcpServers.upsertByEntityId(server.Domain, {
+					id: server.Domain,
+					domain: server.Domain,
+					category: server.Category,
+					description: server.Description,
+					endpoints: server.Endpoints,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save BuiltWith MCP servers to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'builtwith.mcp.api.lookup',
