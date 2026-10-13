@@ -202,7 +202,8 @@ const ListRatingsInputSchema = CalendarPaginationSchema.extend(
 export type ListRatingsInput = z.infer<typeof ListRatingsInputSchema>;
 
 const ListRatingsResponseSchema = z.object({
-	ratings: z.array(BenzingaRating),
+	// `fields` projects the response, so every field (including `id`) may be absent.
+	ratings: z.array(BenzingaRating.partial()),
 });
 
 export type ListRatingsResponse = z.infer<typeof ListRatingsResponseSchema>;

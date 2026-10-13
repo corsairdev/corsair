@@ -857,6 +857,22 @@ describe('entity persistence', () => {
 		expect(calls('newsArticles')).toEqual([]);
 	});
 
+	it('calendar.listRatings accepts projected records without id and writes nothing', async () => {
+		const projected = { ratings: [{ date: '2026-01-05', ticker: 'MNDY' }] };
+		mockRequest.mockResolvedValue(projected);
+		await expect(
+			listRatings(testCtx(), { fields: 'date,ticker' }),
+		).resolves.toEqual(projected);
+		expect(calls('ratings')).toEqual([]);
+	});
+
+	it('calendar.listRatings skips records without id on a full call', async () => {
+		const full = { id: 'r1', ticker: 'MNDY' };
+		mockRequest.mockResolvedValue({ ratings: [full, { ticker: 'X' }] });
+		await listRatings(testCtx(), {});
+		expect(calls('ratings')).toEqual([['r1', full]]);
+	});
+
 	it('news.listChannels upserts each channel', async () => {
 		const channel = { id: 26, parent: 0, channel: 'After-Hours Center' };
 		mockRequest.mockResolvedValue({ ok: true, data: [channel] });

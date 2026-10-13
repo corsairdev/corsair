@@ -36,7 +36,17 @@ export const listRatings: BenzingaEndpoints['listRatings'] = async (
 	);
 	const response = BenzingaEndpointOutputSchemas.listRatings.parse(raw);
 
-	await persistEntities(ctx.db.ratings, response.ratings, (r) => r.id);
+	// A projected (`fields`) or simplified response is partial and must not
+	// overwrite the full stored row.
+	if (input.fields === undefined && !input.simplify) {
+		await persistEntities(
+			ctx.db.ratings,
+			response.ratings.flatMap((r) =>
+				r.id === undefined ? [] : [{ ...r, id: r.id }],
+			),
+			(r) => r.id,
+		);
+	}
 
 	await logEventFromContext(
 		ctx,
