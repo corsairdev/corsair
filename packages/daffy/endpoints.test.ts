@@ -7,12 +7,14 @@ import { Accounts, Gifts, NonProfits } from './endpoints';
 jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 jest.mock('./client', () => ({ makeDaffyRequest: jest.fn() }));
 
-const mockedRequest = makeDaffyRequest as jest.Mock;
+const mockedRequest = jest.mocked(makeDaffyRequest);
 
 type Ctx = Parameters<typeof Accounts.getBalance>[0];
 
 function makeCtx(): Ctx {
-	// unknown: fixture only supplies ctx.key; endpoints read nothing else.
+	// unknown: test fixture supplies only ctx.key; endpoints read nothing else.
+	// The single `as unknown as` below is the minimal escape hatch for that
+	// partial fixture (no full DaffyContext is constructed in unit tests).
 	return { key: 'test-key' } as unknown as Ctx;
 }
 
@@ -127,6 +129,51 @@ beforeEach(() => {
 });
 
 describe('Daffy endpoints', () => {
+	it('accounts.cancelDonation sends DELETE for the donation', async () => {
+		mockedRequest.mockResolvedValue({});
+		await Accounts.cancelDonation(ctx, { donationId: 1234 });
+		expect(mockedRequest).toHaveBeenCalledWith('/donations/1234', 'test-key', {
+			method: 'DELETE',
+		});
+	});
+
+	it('accounts.createDonation posts to the default donations path', async () => {
+		mockedRequest.mockResolvedValue(donation);
+		await Accounts.createDonation(ctx, {
+			amount: 25,
+			ein: '941156258',
+			note: 'love what they do!',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith('/donations', 'test-key', {
+			method: 'POST',
+			body: { amount: 25, ein: '941156258', note: 'love what they do!' },
+		});
+	});
+
+	it('accounts.createDonation maps privateMemo and the user path', async () => {
+		mockedRequest.mockResolvedValue(publicDonation);
+		await Accounts.createDonation(ctx, {
+			amount: 25,
+			ein: '941156258',
+			note: 'love what they do!',
+			privateMemo: 'year-end giving',
+			userId: 1234,
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/users/1234/donations',
+			'test-key',
+			{
+				method: 'POST',
+				body: {
+					amount: 25,
+					ein: '941156258',
+					note: 'love what they do!',
+					private_memo: 'year-end giving',
+				},
+			},
+		);
+	});
+
 	it('accounts.getBalance requests the authenticated balance', async () => {
 		const response = {
 			amount: 1,
@@ -145,6 +192,15 @@ describe('Daffy endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/contributions', 'test-key', {
 			query: { page: 2 },
 		});
+	});
+
+	it('accounts.getDonation requests the single-donation route', async () => {
+		mockedRequest.mockResolvedValue(publicDonation);
+		await Accounts.getDonation(ctx, { userId: 1234, donationId: 5678 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/users/1234/donations/5678',
+			'test-key',
+		);
 	});
 
 	it('accounts.getDonations passes the requested page', async () => {

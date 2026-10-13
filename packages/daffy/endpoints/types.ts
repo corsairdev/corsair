@@ -149,12 +149,32 @@ const PageInputSchema = z.object({
 });
 
 export const DaffyEndpointInputSchemas = {
+	cancelDonation: z.object({
+		donationId: z.number().int().positive(),
+	}),
+	createDonation: z.object({
+		// Docs (ref/donations "Create Donation") list amount/ein/note/private_memo
+		// without marking any required or optional. amount >= 10 is the only
+		// documented constraint; ein identifies the recipient so both are required.
+		// note/privateMemo are optional: accepted when present, omitted otherwise.
+		amount: z.number().min(10),
+		ein: z.string().trim().min(1),
+		note: z.string().trim().min(1).optional(),
+		privateMemo: z.string().trim().min(1).optional(),
+		// Selects the alternate documented path POST /v1/users/:user_id/donations.
+		// Omitted by default: POST /v1/donations.
+		userId: z.number().int().positive().optional(),
+	}),
 	createGift: z.object({
 		name: z.string().trim().min(1),
 		amount: z.number().min(18),
 	}),
 	getBalance: z.object({}),
 	getContributions: PageInputSchema,
+	getDonation: z.object({
+		userId: z.number().int().positive(),
+		donationId: z.number().int().positive(),
+	}),
 	getDonations: PageInputSchema,
 	getGiftByCode: z.object({ code: z.string().uuid() }),
 	getGifts: PageInputSchema,
@@ -172,6 +192,8 @@ export const DaffyEndpointInputSchemas = {
 } as const;
 
 export const DaffyEndpointOutputSchemas = {
+	cancelDonation: z.object({}),
+	createDonation: DonationSchema,
 	createGift: GiftSchema,
 	getBalance: z.object({
 		amount: z.number(),
@@ -180,6 +202,7 @@ export const DaffyEndpointOutputSchemas = {
 		available_balance: z.number(),
 	}),
 	getContributions: paginated(ContributionSchema),
+	getDonation: DonationSchema,
 	getDonations: paginated(DonationSchema),
 	getGiftByCode: GiftSchema,
 	getGifts: paginated(GiftSchema),

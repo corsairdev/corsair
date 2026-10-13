@@ -3,6 +3,56 @@ import type { DaffyEndpoints } from '..';
 import { makeDaffyRequest } from '../client';
 import { DaffyEndpointInputSchemas, DaffyEndpointOutputSchemas } from './types';
 
+export const cancelDonation: DaffyEndpoints['cancelDonation'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = DaffyEndpointInputSchemas.cancelDonation.parse(rawInput);
+	const response = DaffyEndpointOutputSchemas.cancelDonation.parse(
+		await makeDaffyRequest(`/donations/${input.donationId}`, ctx.key, {
+			method: 'DELETE',
+		}),
+	);
+	await logEventFromContext(
+		ctx,
+		'daffy.accounts.cancelDonation',
+		input,
+		'completed',
+	);
+	return response;
+};
+
+export const createDonation: DaffyEndpoints['createDonation'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = DaffyEndpointInputSchemas.createDonation.parse(rawInput);
+	const body: Record<string, number | string> = {
+		amount: input.amount,
+		ein: input.ein,
+	};
+	if (input.note !== undefined) {
+		body.note = input.note;
+	}
+	if (input.privateMemo !== undefined) {
+		body.private_memo = input.privateMemo;
+	}
+	const path =
+		input.userId === undefined
+			? '/donations'
+			: `/users/${input.userId}/donations`;
+	const response = DaffyEndpointOutputSchemas.createDonation.parse(
+		await makeDaffyRequest(path, ctx.key, { method: 'POST', body }),
+	);
+	await logEventFromContext(
+		ctx,
+		'daffy.accounts.createDonation',
+		{ amount: input.amount },
+		'completed',
+	);
+	return response;
+};
+
 export const getBalance: DaffyEndpoints['getBalance'] = async (
 	ctx,
 	rawInput,
@@ -28,6 +78,26 @@ export const getContributions: DaffyEndpoints['getContributions'] = async (
 	await logEventFromContext(
 		ctx,
 		'daffy.accounts.getContributions',
+		input,
+		'completed',
+	);
+	return response;
+};
+
+export const getDonation: DaffyEndpoints['getDonation'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = DaffyEndpointInputSchemas.getDonation.parse(rawInput);
+	const response = DaffyEndpointOutputSchemas.getDonation.parse(
+		await makeDaffyRequest(
+			`/users/${input.userId}/donations/${input.donationId}`,
+			ctx.key,
+		),
+	);
+	await logEventFromContext(
+		ctx,
+		'daffy.accounts.getDonation',
 		input,
 		'completed',
 	);

@@ -6,19 +6,16 @@ let calls: { url: string; init: RequestInit }[] = [];
 const realFetch = global.fetch;
 
 function mockFetch(): void {
-	global.fetch = (async (url: string, init: RequestInit) => {
-		calls.push({ url, init });
-		return {
-			ok: true,
+	// No type assertions: serve a real Response so the stub already satisfies
+	// fetch's type instead of casting a partial object.
+	const stub: typeof global.fetch = async (input, init) => {
+		calls.push({ url: String(input), init: init ?? {} });
+		return new Response('{}', {
 			status: 200,
-			statusText: 'OK',
-			url,
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => ({}),
-			text: async () => '{}',
-		};
-		// unknown: Jest's fetch stub lacks the full Response type.
-	}) as unknown as typeof global.fetch;
+			headers: { 'Content-Type': 'application/json' },
+		});
+	};
+	global.fetch = stub;
 }
 
 beforeEach(() => {
@@ -68,6 +65,16 @@ describe('Daffy client', () => {
 			{ page: 2 },
 			'https://public.daffy.org/v1/users/1/donations?page=2',
 		],
+		[
+			'/users/1/donations/2',
+			undefined,
+			'https://public.daffy.org/v1/users/1/donations/2',
+		],
+		[
+			'/donations/1234',
+			undefined,
+			'https://public.daffy.org/v1/donations/1234',
+		],
 		['/users/me', undefined, 'https://public.daffy.org/v1/users/me'],
 		[
 			'/users/api-user',
@@ -84,6 +91,43 @@ describe('Daffy client', () => {
 			);
 		},
 	);
+
+	it('disables transport retries for donation creation POSTs', async () => {
+		const requestSpy = jest.spyOn(http, 'request').mockResolvedValue({});
+		await makeDaffyRequest('/donations', TEST_KEY, {
+			method: 'POST',
+			body: { amount: 25, ein: '941156258', note: 'love what they do!' },
+		});
+		expect(requestSpy).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ method: 'POST', url: '/donations' }),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: false,
+					maxRetries: 0,
+				}),
+			}),
+		);
+		requestSpy.mockRestore();
+	});
+
+	it('disables transport retries for donation cancel DELETEs', async () => {
+		const requestSpy = jest.spyOn(http, 'request').mockResolvedValue({});
+		await makeDaffyRequest('/donations/1234', TEST_KEY, {
+			method: 'DELETE',
+		});
+		expect(requestSpy).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ method: 'DELETE', url: '/donations/1234' }),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: false,
+					maxRetries: 0,
+				}),
+			}),
+		);
+		requestSpy.mockRestore();
+	});
 
 	it('disables transport retries for gift creation POSTs', async () => {
 		const requestSpy = jest.spyOn(http, 'request').mockResolvedValue({});

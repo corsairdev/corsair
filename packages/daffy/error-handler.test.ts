@@ -35,6 +35,15 @@ describe('Daffy error handlers', () => {
 		expect(result).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not replay donation creation after a rate-limit response', async () => {
+		const error = rateLimitError(2000);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			error,
+			context('accounts.createDonation', error),
+		);
+		expect(result).toEqual({ maxRetries: 0 });
+	});
+
 	it('does not replay read operations after transport retries', async () => {
 		const error = rateLimitError(2000);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
@@ -44,8 +53,10 @@ describe('Daffy error handlers', () => {
 		expect(result).toEqual({ maxRetries: 0, headersRetryAfterMs: 2000 });
 	});
 
-	it('classifies only gift creation as non-idempotent', () => {
+	it('classifies only creations as non-idempotent', () => {
 		expect(isNonIdempotent('gifts.create')).toBe(true);
+		expect(isNonIdempotent('accounts.createDonation')).toBe(true);
+		expect(isNonIdempotent('accounts.cancelDonation')).toBe(false);
 		expect(isNonIdempotent('gifts.list')).toBe(false);
 	});
 });

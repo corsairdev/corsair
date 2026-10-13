@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -44,9 +43,12 @@ type DaffyEndpoint<K extends keyof DaffyEndpointOutputs> = CorsairEndpoint<
 	DaffyEndpointOutputs[K]
 >;
 export type DaffyEndpoints = {
+	cancelDonation: DaffyEndpoint<'cancelDonation'>;
+	createDonation: DaffyEndpoint<'createDonation'>;
 	createGift: DaffyEndpoint<'createGift'>;
 	getBalance: DaffyEndpoint<'getBalance'>;
 	getContributions: DaffyEndpoint<'getContributions'>;
+	getDonation: DaffyEndpoint<'getDonation'>;
 	getDonations: DaffyEndpoint<'getDonations'>;
 	getGiftByCode: DaffyEndpoint<'getGiftByCode'>;
 	getGifts: DaffyEndpoint<'getGifts'>;
@@ -60,8 +62,11 @@ export type DaffyEndpoints = {
 
 const daffyEndpointsNested = {
 	accounts: {
+		cancelDonation: Accounts.cancelDonation,
+		createDonation: Accounts.createDonation,
 		getBalance: Accounts.getBalance,
 		getContributions: Accounts.getContributions,
+		getDonation: Accounts.getDonation,
 		getDonations: Accounts.getDonations,
 		getUserCauses: Accounts.getUserCauses,
 		getUserDonations: Accounts.getUserDonations,
@@ -73,6 +78,14 @@ const daffyEndpointsNested = {
 } as const;
 
 export const daffyEndpointSchemas = {
+	'accounts.cancelDonation': {
+		input: DaffyEndpointInputSchemas.cancelDonation,
+		output: DaffyEndpointOutputSchemas.cancelDonation,
+	},
+	'accounts.createDonation': {
+		input: DaffyEndpointInputSchemas.createDonation,
+		output: DaffyEndpointOutputSchemas.createDonation,
+	},
 	'accounts.getBalance': {
 		input: DaffyEndpointInputSchemas.getBalance,
 		output: DaffyEndpointOutputSchemas.getBalance,
@@ -80,6 +93,10 @@ export const daffyEndpointSchemas = {
 	'accounts.getContributions': {
 		input: DaffyEndpointInputSchemas.getContributions,
 		output: DaffyEndpointOutputSchemas.getContributions,
+	},
+	'accounts.getDonation': {
+		input: DaffyEndpointInputSchemas.getDonation,
+		output: DaffyEndpointOutputSchemas.getDonation,
 	},
 	'accounts.getDonations': {
 		input: DaffyEndpointInputSchemas.getDonations,
@@ -124,6 +141,14 @@ export const daffyEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<typeof daffyEndpointsNested>;
 
 const daffyEndpointMeta = {
+	'accounts.cancelDonation': {
+		riskLevel: 'destructive',
+		description: 'Cancel a pending donation owned by the API key holder.',
+	},
+	'accounts.createDonation': {
+		riskLevel: 'write',
+		description: 'Create a donation to a nonprofit (minimum $10 USD).',
+	},
 	'accounts.getBalance': {
 		riskLevel: 'read',
 		description: "Retrieve the authenticated user's fund balance.",
@@ -131,6 +156,10 @@ const daffyEndpointMeta = {
 	'accounts.getContributions': {
 		riskLevel: 'read',
 		description: 'List contributions made to the authenticated fund.',
+	},
+	'accounts.getDonation': {
+		riskLevel: 'read',
+		description: 'Retrieve a single donation by user and donation ID.',
 	},
 	'accounts.getDonations': {
 		riskLevel: 'read',
@@ -174,7 +203,7 @@ const daffyEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof daffyEndpointsNested>;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: PickAuth<'api_key'> = 'api_key';
 export const daffyAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
@@ -192,6 +221,9 @@ export type ExternalDaffyPlugin<T extends DaffyPluginOptions> =
 	BaseDaffyPlugin<T>;
 
 export function daffy<const T extends DaffyPluginOptions>(
+	// `as`: TypeScript offers no syntax for a default value typed by a generic
+	// parameter, so `{}` is asserted to `DaffyPluginOptions & T`. This matches
+	// the `pnpm generate:plugin` scaffold and every sibling plugin factory.
 	incomingOptions: DaffyPluginOptions & T = {} as DaffyPluginOptions & T,
 ): ExternalDaffyPlugin<T> {
 	const options = {

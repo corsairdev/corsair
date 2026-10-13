@@ -5,13 +5,15 @@ import { ApiError } from 'corsair/http';
  * Operations that persist server-side state without an idempotency key.
  *
  * Corsair replays the whole endpoint when a handler requests a retry, so a 429
- * raised after Daffy already created the gift would duplicate it on the next
- * attempt. `makeDaffyRequest` disables transport retries for POSTs; this set
- * ensures the plugin error policy also returns `maxRetries: 0` for gift
- * creation.
+ * raised after Daffy already created the gift/donation would duplicate it on
+ * the next attempt. `makeDaffyRequest` disables transport retries for
+ * POSTs/DELETEs; this set ensures the plugin error policy also returns
+ * `maxRetries: 0` for creations. Cancel is intentionally absent: replaying a
+ * cancel cannot duplicate state.
  */
 export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
 	'gifts.create',
+	'accounts.createDonation',
 ]);
 
 export function isNonIdempotent(operation: string): boolean {

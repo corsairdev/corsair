@@ -12,9 +12,18 @@ examples:
       name: Jamie
       amount: 18
 apiExamples:
+  accounts.cancelDonation:
+    donationId: 1234
+  accounts.createDonation:
+    amount: 25
+    ein: '941156258'
+    note: love what they do!
   accounts.getBalance: {}
   accounts.getContributions:
     page: 1
+  accounts.getDonation:
+    userId: 1234
+    donationId: 5678
   accounts.getDonations:
     page: 1
   accounts.getUserCauses:
