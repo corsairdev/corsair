@@ -37,6 +37,7 @@ import type {
 	PermissionPolicy,
 } from '../plugins';
 import { ensureTenantProvisioned } from '../tenant-provision';
+import { managedPricingDisablesWebhooks } from '../utils/plugin-auth';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -558,7 +559,10 @@ export function buildCorsairClient<
 			| Record<string, unknown>
 			| undefined;
 
-		if (Object.keys(webhooks).length > 0) {
+		if (
+			Object.keys(webhooks).length > 0 &&
+			!managedPricingDisablesWebhooks(pluginOptions?.authType)
+		) {
 			const boundWebhooks: Record<string, unknown> = {};
 			bindWebhooksRecursively({
 				webhooks,

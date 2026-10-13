@@ -345,7 +345,7 @@ components:
       description: "Shape follows the SDK's management PluginInfo type; treated as open."
       properties:
         id: { type: string }
-        authType: { type: [string, "null"], enum: [oauth_2, api_key, bot_token, managed, null] }
+        authType: { type: [string, "null"], enum: [oauth_2, api_key, bot_token, managed, managed_pricing, null] }
         configured: { type: boolean }
         missingFields: { type: array, items: { type: string } }
         oauth:

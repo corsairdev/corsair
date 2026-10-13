@@ -111,7 +111,8 @@ function isPluginAuthTypeValue(value: unknown): value is AuthTypes {
 		value === 'oauth_2' ||
 		value === 'api_key' ||
 		value === 'bot_token' ||
-		value === 'managed'
+		value === 'managed' ||
+		value === 'managed_pricing'
 	);
 }
 

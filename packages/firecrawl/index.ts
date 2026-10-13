@@ -11,6 +11,11 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	createManagedPricingCredentialCache,
+	getManagedPricingApiKey,
+	requireHubForManagedPricing,
+} from 'corsair/hub';
+import {
 	AgentEndpoints,
 	CrawlEndpoints,
 	MapEndpoints,
@@ -70,7 +75,7 @@ const firecrawlEndpointsNested = {
 } as const;
 
 export type FirecrawlPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalFirecrawlPlugin['hooks'];
@@ -250,6 +255,8 @@ const firecrawlWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+const firecrawlManagedPricingCache = createManagedPricingCredentialCache();
+
 const firecrawlEndpointMeta = {
 	'scrape.run': {
 		riskLevel: 'read',
@@ -338,11 +345,17 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 		keyBuilder: async (ctx: FirecrawlKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 
+			if (source === 'webhook' && ctx.authType === 'managed_pricing') {
+				throw new Error(
+					'[firecrawl:managed_pricing]: Webhooks are not supported for managed pricing auth.',
+				);
+			}
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
-			if (source === 'webhook') {
+			if (source === 'webhook' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_webhook_signature();
 				return res ?? '';
 			}
@@ -356,7 +369,18 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new AuthMissingError('firecrawl', 'api_key');
+			if (source === 'endpoint' && ctx.authType === 'managed_pricing') {
+				requireHubForManagedPricing('firecrawl', ctx.hub);
+				const result = await getManagedPricingApiKey({
+					hub: ctx.hub,
+					plugin: 'firecrawl',
+					tenantId: ctx.tenantId,
+					cache: firecrawlManagedPricingCache,
+				});
+				return result.apiKey;
+			}
+
+			throw new AuthMissingError('firecrawl', authType ?? 'api_key');
 		},
 	} satisfies InternalFirecrawlPlugin;
 }

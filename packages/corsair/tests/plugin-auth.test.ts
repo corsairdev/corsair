@@ -6,6 +6,10 @@ describe('plugin-auth', () => {
 		expect(isAuthType('managed')).toBe(true);
 	});
 
+	it('recognizes managed_pricing as a valid auth type', () => {
+		expect(isAuthType('managed_pricing')).toBe(true);
+	});
+
 	it('returns managed from getPluginAuthType', () => {
 		const plugin = {
 			id: 'github',
