@@ -1118,8 +1118,7 @@
                 "pages": [
                   "plugins/chatwork/overview",
                   "plugins/chatwork/api",
-                  "plugins/chatwork/database",
-                  "plugins/chatwork/webhooks"
+                  "plugins/chatwork/database"
                 ]
               },
               {

@@ -49,6 +49,22 @@ export const listIncomingRequests: ChatworkEndpoints['contactsListIncomingReques
 		const validatedResult =
 			ChatworkEndpointOutputSchemas.contactsListIncomingRequests.parse(result);
 
+		if (ctx.db.incomingRequests) {
+			try {
+				for (const request of validatedResult) {
+					await ctx.db.incomingRequests.upsertByEntityId(
+						String(request.request_id),
+						request,
+					);
+				}
+			} catch (error) {
+				console.warn(
+					'Failed to save Chatwork incoming requests to database:',
+					error,
+				);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'chatwork.contacts.listIncomingRequests',

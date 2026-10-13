@@ -1,6 +1,7 @@
 import {
 	ChatworkAccount,
 	ChatworkFile,
+	ChatworkIncomingRequest,
 	ChatworkMember,
 	ChatworkMessage,
 	ChatworkRoom,
@@ -16,6 +17,7 @@ export const ChatworkSchema = {
 		members: ChatworkMember,
 		tasks: ChatworkTask,
 		files: ChatworkFile,
+		incomingRequests: ChatworkIncomingRequest,
 	},
 } as const;
 

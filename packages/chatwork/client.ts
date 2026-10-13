@@ -126,7 +126,8 @@ export async function makeChatworkRequest<T>(
 		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// error.body is arbitrary JSON from the provider; narrowed with typeof/in checks below.
+			// Safe: error.body is arbitrary JSON, narrowed with typeof and in checks below.
+			// A narrower type is not practical because the provider body shape is not guaranteed.
 			const body: unknown = error.body;
 			const rawErrors =
 				body !== null && typeof body === 'object' && 'errors' in body
@@ -157,14 +158,16 @@ export async function makeChatworkRequest<T>(
 // undefined for both that and an unparseable body. Treating 204 as an error
 // here keeps the two apart: only a real 204 becomes an empty list, anything
 // else reaches the caller's output schema and fails validation.
-// Return value is the raw JSON body (or empty for 204); callers validate or ignore it.
+// Safe: the return value is the raw JSON body (or empty for 204) and callers parse it with a schema.
+// A narrower type is not practical because the body is unvalidated until that parse.
 export async function makeChatworkListRequest(
 	endpoint: string,
 	token: string,
 	options: Omit<ChatworkRequestOptions, 'errors'> = {},
 ): Promise<unknown> {
 	try {
-		// Generic is unknown because 204 and JSON bodies differ; result is returned unparsed.
+		// Safe: the result is returned unparsed to a caller that validates it.
+		// A narrower type is not practical because 204 and JSON bodies differ.
 		return await makeChatworkRequest<unknown>(endpoint, token, {
 			...options,
 			errors: { 204: 'No Content' },

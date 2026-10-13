@@ -17,6 +17,7 @@ export const AccountGetResponseSchema = z.object({
 	title: z.string().optional().describe('The user title/position'),
 	url: z.string().optional().describe('The user website URL'),
 	introduction: z.string().optional().describe('The user profile introduction'),
+	login_mail: z.string().optional().describe('The login email address'),
 	mail: z.string().optional().describe('The user email address'),
 	tel_organization: z.string().optional().describe('Organization phone number'),
 	tel_extension: z.string().optional().describe('Extension phone number'),

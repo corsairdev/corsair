@@ -11,6 +11,7 @@ export const ChatworkAccount = z.object({
 	title: z.string().optional(),
 	url: z.string().optional(),
 	introduction: z.string().optional(),
+	login_mail: z.string().optional(),
 	mail: z.string().optional(),
 	tel_organization: z.string().optional(),
 	tel_extension: z.string().optional(),
@@ -99,6 +100,21 @@ export const ChatworkFile = z.object({
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
+// https://developer.chatwork.com/reference/get-incoming_requests
+export const ChatworkIncomingRequest = z.object({
+	request_id: z.number(),
+	account_id: z.number(),
+	message: z.string().nullable().optional(),
+	name: z.string(),
+	chatwork_id: z.string().optional(),
+	organization_id: z.number().optional(),
+	organization_name: z.string().optional(),
+	department: z.string().optional(),
+	avatar_image_url: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export type ChatworkIncomingRequest = z.infer<typeof ChatworkIncomingRequest>;
 export type ChatworkAccount = z.infer<typeof ChatworkAccount>;
 export type ChatworkTask = z.infer<typeof ChatworkTask>;
 export type ChatworkFile = z.infer<typeof ChatworkFile>;

@@ -3,13 +3,12 @@ title: Overview
 description: "Business chat and communication tool for team messaging, room management, and collaboration."
 ---
 
-Use **Chatwork** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Chatwork** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 30 typed API operations
-- 6 synced entities (`accounts`, `files`, `members`, `messages`, `rooms`, `tasks`) for fast `.search()` / `.list()`
-- 3 incoming webhook event types
+- 7 synced entities (`accounts`, `files`, `incomingRequests`, `members`, `messages`, `rooms`, and 1 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -41,7 +40,9 @@ import { chatwork } from '@corsair-dev/chatwork';
 
 export const corsair = createCorsair({
 	plugins: [
-		chatwork(),
+		chatwork({
+			authType: 'oauth_2',
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -63,7 +64,9 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Chatwork OAuth app.
 
 ```ts
-chatwork()
+chatwork({
+	authType: 'oauth_2',
+})
 ```
 
 More: [OAuth 2.0](/concepts/oauth)
@@ -74,9 +77,7 @@ More: [OAuth 2.0](/concepts/oauth)
 No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
-chatwork({
-	authType: 'api_key',
-})
+chatwork()
 ```
 
 More: [API Key](/concepts/api-key)
@@ -133,28 +134,7 @@ const rows = await tenant.chatwork.db.rooms.search({
 });
 ```
 
-Synced entities: `accounts`, `files`, `members`, `messages`, `rooms`, `tasks`. See [Database](/plugins/chatwork/database) for filters and operators.
-
-## Webhooks
-
-React when someone posts a new message in a room.
-
-```ts
-chatwork({
-    webhookHooks: {
-        messages: {
-            created: {
-                after: async (ctx, result) => {
-                    const body = result.data?.webhook_event?.body;
-                    console.log('New message received:', body);
-                }
-            },
-        },
-    },
-})
-```
-
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/chatwork/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+Synced entities: `accounts`, `files`, `incomingRequests`, `members`, `messages`, `rooms`, `tasks`. See [Database](/plugins/chatwork/database) for filters and operators.
 
 ## What's next
 
@@ -164,9 +144,6 @@ Mount your framework handler once (see [Frameworks](/frameworks/next)), then poi
   </Card>
   <Card title="Database" href="/plugins/chatwork/database">
     Synced entities, search filters, and operators.
-  </Card>
-  <Card title="Webhooks" href="/plugins/chatwork/webhooks">
-    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

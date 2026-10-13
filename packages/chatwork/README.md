@@ -45,11 +45,7 @@ pnpm add @corsair-dev/chatwork
 
 ## Auth
 
-Auth: API key, OAuth 2.0 (default OAuth 2.0). Set `authType` on the plugin factory to pick one.
-
-## Webhooks
-
-Handles 3 webhook events. See the reference for payloads and `webhookHooks`.
+Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
 
 ## Reference
 

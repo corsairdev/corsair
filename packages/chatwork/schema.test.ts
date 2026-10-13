@@ -6,6 +6,18 @@ describe('Chatwork schema', () => {
 		expect(ChatworkSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
+	it('registers an entity for every persisted Chatwork object', () => {
+		expect(Object.keys(ChatworkSchema.entities).sort()).toEqual([
+			'accounts',
+			'files',
+			'incomingRequests',
+			'members',
+			'messages',
+			'rooms',
+			'tasks',
+		]);
+	});
+
 	it('declares an entities map', () => {
 		expect(typeof ChatworkSchema.entities).toBe('object');
 		expect(ChatworkSchema.entities).not.toBeNull();

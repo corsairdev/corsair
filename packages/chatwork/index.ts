@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import {
 	Account,
@@ -35,27 +32,10 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ChatworkSchema } from './schema';
-import { MentionsWebhooks, MessagesWebhooks } from './webhooks';
-import { resolveChatworkOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchChatworkTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ChatworkWebhookOutputs,
-	MentionToMeWebhookPayload,
-	MessageCreatedWebhookPayload,
-	MessageUpdatedWebhookPayload,
-} from './webhooks/types';
-import {
-	MentionToMeWebhookPayloadSchema,
-	MessageCreatedWebhookPayloadSchema,
-	MessageUpdatedWebhookPayloadSchema,
-} from './webhooks/types';
-
 export type ChatworkPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalChatworkPlugin['hooks'];
-	webhookHooks?: InternalChatworkPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof chatworkEndpointsNested>;
 };
@@ -112,25 +92,6 @@ export type ChatworkEndpoints = {
 	filesUpload: ChatworkEndpoint<'filesUpload'>;
 };
 
-type ChatworkWebhook<
-	K extends keyof ChatworkWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ChatworkContext, TEvent, ChatworkWebhookOutputs[K]>;
-
-export type ChatworkWebhooks = {
-	messageCreated: ChatworkWebhook<
-		'messageCreated',
-		MessageCreatedWebhookPayload
-	>;
-	messageUpdated: ChatworkWebhook<
-		'messageUpdated',
-		MessageUpdatedWebhookPayload
-	>;
-	mentionToMe: ChatworkWebhook<'mentionToMe', MentionToMeWebhookPayload>;
-};
-
-export type ChatworkBoundWebhooks = BindWebhooks<ChatworkWebhooks>;
-
 const chatworkEndpointsNested = {
 	account: {
 		get: Account.get,
@@ -177,16 +138,6 @@ const chatworkEndpointsNested = {
 		list: Files.list,
 		get: Files.get,
 		upload: Files.upload,
-	},
-} as const;
-
-const chatworkWebhooksNested = {
-	messages: {
-		created: MessagesWebhooks.created,
-		updated: MessagesWebhooks.updated,
-	},
-	mentions: {
-		toMe: MentionsWebhooks.toMe,
 	},
 } as const;
 
@@ -315,27 +266,7 @@ export const chatworkEndpointSchemas = {
 	typeof chatworkEndpointsNested
 >;
 
-const chatworkWebhookSchemas = {
-	'messages.created': {
-		description: 'A message was created in a room',
-		payload: MessageCreatedWebhookPayloadSchema,
-		response: MessageCreatedWebhookPayloadSchema,
-	},
-	'messages.updated': {
-		description: 'A message was updated in a room',
-		payload: MessageUpdatedWebhookPayloadSchema,
-		response: MessageUpdatedWebhookPayloadSchema,
-	},
-	'mentions.toMe': {
-		description: 'Current user was mentioned in a room message',
-		payload: MentionToMeWebhookPayloadSchema,
-		response: MentionToMeWebhookPayloadSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof chatworkWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'oauth_2' as const;
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const chatworkEndpointMeta = {
 	'account.get': {
@@ -478,7 +409,7 @@ export type BaseChatworkPlugin<T extends ChatworkPluginOptions> = CorsairPlugin<
 	'chatwork',
 	typeof ChatworkSchema,
 	typeof chatworkEndpointsNested,
-	typeof chatworkWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -489,8 +420,8 @@ export type ExternalChatworkPlugin<T extends ChatworkPluginOptions> =
 	BaseChatworkPlugin<T>;
 
 export function chatwork<const T extends ChatworkPluginOptions>(
-	// Every ChatworkPluginOptions field is optional, so {} is a valid value; the
-	// cast only widens it to the caller's generic T, matching the other plugins.
+	// Safe: every ChatworkPluginOptions field is optional, so {} is valid; the cast only widens it to the caller's generic T.
+	// A narrower type is not practical because T is chosen by the caller and cannot be constructed here.
 	incomingOptions: ChatworkPluginOptions & T = {} as ChatworkPluginOptions & T,
 ): ExternalChatworkPlugin<T> {
 	const options = {
@@ -526,38 +457,16 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 		schema: ChatworkSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: chatworkEndpointsNested,
-		webhooks: chatworkWebhooksNested,
+		webhooks: {},
 		endpointMeta: chatworkEndpointMeta,
 		endpointSchemas: chatworkEndpointSchemas,
-		webhookSchemas: chatworkWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			const signatureInQuery =
-				typeof request.query?.chatwork_webhook_signature === 'string';
-			return (
-				signatureInQuery ||
-				'x-chatworkwebhooksignature' in headers ||
-				'x-chatwork-signature' in headers
-			);
-		},
-		pluginTenantWebhookMatcher: matchChatworkTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveChatworkOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ChatworkKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -638,13 +547,3 @@ export type {
 } from './endpoints/types';
 export * from './error-handlers';
 export * from './schema';
-export type {
-	ChatworkWebhookOutputs,
-	MentionToMeWebhookPayload,
-	MessageCreatedWebhookPayload,
-	MessageUpdatedWebhookPayload,
-} from './webhooks/types';
-export {
-	createChatworkMatch,
-	verifyChatworkWebhookSignature,
-} from './webhooks/types';
