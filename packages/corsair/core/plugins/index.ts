@@ -383,6 +383,8 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  *     return await ctx.keys.get_bot_token();
  *   } else if (ctx.authType === 'managed') {
  *     return await ctx.keys.get_access_token();
+ *   } else if (ctx.authType === 'managed_pricing') {
+ *     return (await getManagedPricingApiKey({ hub: ctx.hub!, plugin: '…', tenantId: ctx.tenantId, cache })).apiKey;
  *   }
  *   return '';
  * }

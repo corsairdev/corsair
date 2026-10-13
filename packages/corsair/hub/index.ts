@@ -85,6 +85,11 @@ export {
 	usesBrowserDelivery,
 	validateProductionDeliveryUrl,
 } from './contracts/environment';
+export type {
+	HubManagedPricingCredentialsRequest,
+	HubManagedPricingCredentialsResponse,
+} from './contracts/managed-pricing-api';
+export { parseManagedPricingCredentialsResponse } from './contracts/managed-pricing-api';
 export {
 	type BrowserDeliveryMode,
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
@@ -115,6 +120,15 @@ export {
 	type ProcessManagedOAuthDeliveryResult,
 	processManagedOAuthDelivery,
 } from './managed-oauth';
+export {
+	createManagedPricingCredentialCache,
+	type GetManagedPricingApiKeyOptions,
+	getManagedPricingApiKey,
+	type ManagedPricingApiKeyResult,
+	type ManagedPricingAuthContext,
+	managedPricingHubScope,
+	requireHubForManagedPricing,
+} from './managed-pricing-auth';
 export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
