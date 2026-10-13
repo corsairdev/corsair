@@ -160,8 +160,7 @@ export function updownio<const T extends UpdownIOPluginOptions>(
 		pluginWebhookMatcher: undefined,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: UpdownIOKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key !== undefined)
-				return options.key;
+			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint') {
 				try {
 					return (await ctx.keys.get_api_key()) ?? '';
