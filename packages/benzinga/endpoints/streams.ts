@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaEndpoints } from '..';
 import type { StreamConnection } from './types';
+import { BenzingaEndpointInputSchemas } from './types';
 
 const BENZINGA_STREAM_BASE = 'wss://api.benzinga.com';
 
@@ -23,8 +24,9 @@ function streamConnection(
 
 export const getEarningsStream: BenzingaEndpoints['getEarningsStream'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = BenzingaEndpointInputSchemas.getEarningsStream.parse(rawInput);
 	const response = streamConnection('/api/v2.1/calendar/earnings/stream', {
 		tickers: input.tickers,
 		isins: input.isins,
@@ -42,8 +44,9 @@ export const getEarningsStream: BenzingaEndpoints['getEarningsStream'] = async (
 
 export const getNewsStream: BenzingaEndpoints['getNewsStream'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = BenzingaEndpointInputSchemas.getNewsStream.parse(rawInput);
 	const response = streamConnection('/api/v1/news/stream', {
 		tickers: input.tickers,
 		channels: input.channels,

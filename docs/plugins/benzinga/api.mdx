@@ -56,11 +56,11 @@ await corsair.benzinga.api.calendar.getConsensusRatings({});
 
 ```ts
 {
-  strong_buy?: number,
-  buy?: number,
-  hold?: number,
-  sell?: number,
-  strong_sell?: number
+  strong_buy?: number | null,
+  buy?: number | null,
+  hold?: number | null,
+  sell?: number | null,
+  strong_sell?: number | null
 }
 ```
 </Accordion>
@@ -141,25 +141,25 @@ await corsair.benzinga.api.calendar.listConferenceCalls({});
 ```ts
 {
   id: string,
-  access_code?: string,
-  confirmed?: boolean,
-  cusip?: string,
-  date?: string,
-  exchange?: string,
-  importance?: number,
-  international_num?: string,
-  isin?: string,
-  name?: string,
-  notes?: string,
-  period?: string,
-  period_year?: number,
-  phone_num?: string,
-  reservation_num?: string,
-  start_time?: string,
-  ticker?: string,
-  time?: string,
-  updated?: number,
-  webcast_url?: string
+  access_code?: string | null,
+  confirmed?: boolean | null,
+  cusip?: string | null,
+  date?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  international_num?: string | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  phone_num?: string | null,
+  reservation_num?: string | null,
+  start_time?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null,
+  webcast_url?: string | null
 }[]
 ```
 </Accordion>
@@ -211,28 +211,28 @@ await corsair.benzinga.api.calendar.listDividends({});
 ```ts
 {
   id: string,
-  confirmed?: boolean,
-  currency?: string,
-  cusip?: string,
-  date?: string,
-  dividend?: string,
-  dividend_prior?: string,
-  dividend_type?: string,
-  dividend_yield?: string,
-  end_regular_dividend?: boolean,
-  ex_dividend_date?: string,
-  exchange?: string,
-  frequency?: number,
-  importance?: number,
-  isin?: string,
-  name?: string,
-  notes?: string,
-  payable_date?: string,
-  period?: string,
-  record_date?: string,
-  ticker?: string,
-  updated?: number,
-  year?: number
+  confirmed?: boolean | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  dividend?: string | null,
+  dividend_prior?: string | null,
+  dividend_type?: string | null,
+  dividend_yield?: string | null,
+  end_regular_dividend?: boolean | null,
+  ex_dividend_date?: string | null,
+  exchange?: string | null,
+  frequency?: number | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  payable_date?: string | null,
+  period?: string | null,
+  record_date?: string | null,
+  ticker?: string | null,
+  updated?: number | null,
+  year?: number | null
 }[]
 ```
 </Accordion>
@@ -282,32 +282,32 @@ await corsair.benzinga.api.calendar.listEarnings({});
 ```ts
 {
   id: string,
-  currency?: string,
-  cusip?: string,
-  date?: string,
-  date_confirmed?: number,
-  eps?: string,
-  eps_est?: string,
-  eps_prior?: string,
-  eps_surprise?: string,
-  eps_surprise_percent?: string,
-  eps_type?: string,
-  exchange?: string,
-  importance?: number,
-  isin?: string,
-  name?: string,
-  notes?: string,
-  period?: string,
-  period_year?: number,
-  revenue?: string,
-  revenue_est?: string,
-  revenue_prior?: string,
-  revenue_surprise?: string,
-  revenue_surprise_percent?: string,
-  revenue_type?: string,
-  ticker?: string,
-  time?: string,
-  updated?: number
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  date_confirmed?: number | null,
+  eps?: string | null,
+  eps_est?: string | null,
+  eps_prior?: string | null,
+  eps_surprise?: string | null,
+  eps_surprise_percent?: string | null,
+  eps_type?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  revenue?: string | null,
+  revenue_est?: string | null,
+  revenue_prior?: string | null,
+  revenue_surprise?: string | null,
+  revenue_surprise_percent?: string | null,
+  revenue_type?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -358,24 +358,24 @@ await corsair.benzinga.api.calendar.listEconomics({});
 ```ts
 {
   id: string,
-  actual?: string,
-  actual_t?: string,
-  confirmed?: boolean,
-  consensus?: string,
-  consensus_t?: string,
-  country?: string,
-  date?: string,
-  description?: string,
-  event_category?: string,
-  event_name?: string,
-  event_period?: string,
-  importance?: number,
-  notes?: string,
-  period_year?: number,
-  prior?: string,
-  prior_t?: string,
-  time?: string,
-  updated?: number
+  actual?: string | null,
+  actual_t?: string | null,
+  confirmed?: boolean | null,
+  consensus?: string | null,
+  consensus_t?: string | null,
+  country?: string | null,
+  date?: string | null,
+  description?: string | null,
+  event_category?: string | null,
+  event_name?: string | null,
+  event_period?: string | null,
+  importance?: number | null,
+  notes?: string | null,
+  period_year?: number | null,
+  prior?: string | null,
+  prior_t?: string | null,
+  time?: string | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -425,33 +425,33 @@ await corsair.benzinga.api.calendar.listGuidance({});
 ```ts
 {
   id: string,
-  confirmed?: boolean,
-  currency?: string,
-  cusip?: string,
-  date?: string,
-  eps_guidance_est?: string,
-  eps_guidance_max?: string,
-  eps_guidance_min?: string,
-  eps_guidance_prior_max?: string,
-  eps_guidance_prior_min?: string,
-  eps_type?: string,
-  exchange?: string,
-  importance?: number,
-  is_primary?: string,
-  name?: string,
-  notes?: string,
-  period?: string,
-  period_year?: number,
-  prelim?: string,
-  revenue_guidance_est?: string,
-  revenue_guidance_max?: string,
-  revenue_guidance_min?: string,
-  revenue_guidance_prior_max?: string,
-  revenue_guidance_prior_min?: string,
-  revenue_type?: string,
-  ticker?: string,
-  time?: string,
-  updated?: number
+  confirmed?: boolean | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  eps_guidance_est?: string | null,
+  eps_guidance_max?: string | null,
+  eps_guidance_min?: string | null,
+  eps_guidance_prior_max?: string | null,
+  eps_guidance_prior_min?: string | null,
+  eps_type?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  is_primary?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  period?: string | null,
+  period_year?: number | null,
+  prelim?: string | null,
+  revenue_guidance_est?: string | null,
+  revenue_guidance_max?: string | null,
+  revenue_guidance_min?: string | null,
+  revenue_guidance_prior_max?: string | null,
+  revenue_guidance_prior_min?: string | null,
+  revenue_type?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -500,47 +500,47 @@ await corsair.benzinga.api.calendar.listIpos({});
 ```ts
 {
   id: string,
-  currency?: string,
-  cusip?: string,
-  date?: string,
-  deal_status?: string,
-  description?: string,
-  exchange?: string,
-  initial_filing_date?: string,
-  insider_lockup_date?: string,
-  insider_lockup_days?: number,
-  ipo_type?: string,
-  last_yr_income?: number,
-  last_yr_income_year?: number,
-  last_yr_revenue?: number,
-  last_yr_revenue_year?: number,
-  lead_underwriters?: string[],
-  market_cap_at_offer?: number,
-  name?: string,
-  notes?: string,
-  offering_shares?: number,
-  offering_shares_ord_adr?: number,
-  offering_value?: number,
-  open_date_verified?: boolean,
-  ord_shares_out_after_offer?: number,
-  other_underwriters?: string[],
-  price_max?: string,
-  price_min?: string,
-  price_open?: string,
-  price_public_offering?: string,
-  pricing_date?: string,
-  pricing_date_verified?: boolean,
-  sec_accession_number?: string,
-  sec_filing_url?: string,
-  shares_outstanding?: number,
-  sic?: number,
-  spac_converted_to_target?: boolean,
-  state_location?: string,
-  ticker?: string,
-  time?: string,
-  underwriter_quiet_expiration_date?: string,
-  underwriter_quiet_expiration_days?: number,
-  updated?: number
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  deal_status?: string | null,
+  description?: string | null,
+  exchange?: string | null,
+  initial_filing_date?: string | null,
+  insider_lockup_date?: string | null,
+  insider_lockup_days?: number | null,
+  ipo_type?: string | null,
+  last_yr_income?: number | null,
+  last_yr_income_year?: number | null,
+  last_yr_revenue?: number | null,
+  last_yr_revenue_year?: number | null,
+  lead_underwriters?: string[] | null,
+  market_cap_at_offer?: number | null,
+  name?: string | null,
+  notes?: string | null,
+  offering_shares?: number | null,
+  offering_shares_ord_adr?: number | null,
+  offering_value?: number | null,
+  open_date_verified?: boolean | null,
+  ord_shares_out_after_offer?: number | null,
+  other_underwriters?: string[] | null,
+  price_max?: string | null,
+  price_min?: string | null,
+  price_open?: string | null,
+  price_public_offering?: string | null,
+  pricing_date?: string | null,
+  pricing_date_verified?: boolean | null,
+  sec_accession_number?: string | null,
+  sec_filing_url?: string | null,
+  shares_outstanding?: number | null,
+  sic?: number | null,
+  spac_converted_to_target?: boolean | null,
+  state_location?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  underwriter_quiet_expiration_date?: string | null,
+  underwriter_quiet_expiration_days?: number | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -596,32 +596,32 @@ await corsair.benzinga.api.calendar.listRatings({});
 ```ts
 {
   id: string,
-  action_company?: string,
-  action_pt?: string,
-  adjusted_pt_current?: string,
-  adjusted_pt_prior?: string,
-  analyst?: string,
-  analyst_id?: string,
-  analyst_name?: string,
-  currency?: string,
-  cusip?: string,
-  date?: string,
-  exchange?: string,
-  firm_id?: string,
-  importance?: number,
-  isin?: string,
-  name?: string,
-  notes?: string,
-  pt_current?: string,
-  pt_prior?: string,
-  rating_current?: string,
-  rating_prior?: string,
-  ticker?: string,
-  time?: string,
-  updated?: number,
-  url?: string,
-  url_calendar?: string,
-  url_news?: string
+  action_company?: string | null,
+  action_pt?: string | null,
+  adjusted_pt_current?: string | null,
+  adjusted_pt_prior?: string | null,
+  analyst?: string | null,
+  analyst_id?: string | null,
+  analyst_name?: string | null,
+  currency?: string | null,
+  cusip?: string | null,
+  date?: string | null,
+  exchange?: string | null,
+  firm_id?: string | null,
+  importance?: number | null,
+  isin?: string | null,
+  name?: string | null,
+  notes?: string | null,
+  pt_current?: string | null,
+  pt_prior?: string | null,
+  rating_current?: string | null,
+  rating_prior?: string | null,
+  ticker?: string | null,
+  time?: string | null,
+  updated?: number | null,
+  url?: string | null,
+  url_calendar?: string | null,
+  url_news?: string | null
 }[]
 ```
 </Accordion>
@@ -666,8 +666,8 @@ await corsair.benzinga.api.calendar.listRemoved({});
 ```ts
 {
   id: string,
-  type?: string,
-  updated?: number
+  type?: string | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -717,20 +717,20 @@ await corsair.benzinga.api.calendar.listSplits({});
 ```ts
 {
   id: string,
-  cusip?: string,
-  date_announced?: string,
-  date_distribution?: string,
-  date_ex?: string,
-  date_recorded?: string,
-  exchange?: string,
-  importance?: number,
-  name?: string,
-  notes?: string,
-  optionable?: boolean,
-  ratio?: string,
-  split_type?: string,
-  ticker?: string,
-  updated?: number
+  cusip?: string | null,
+  date_announced?: string | null,
+  date_distribution?: string | null,
+  date_ex?: string | null,
+  date_recorded?: string | null,
+  exchange?: string | null,
+  importance?: number | null,
+  name?: string | null,
+  notes?: string | null,
+  optionable?: boolean | null,
+  ratio?: string | null,
+  split_type?: string | null,
+  ticker?: string | null,
+  updated?: number | null
 }[]
 ```
 </Accordion>
@@ -791,35 +791,35 @@ await corsair.benzinga.api.news.get({});
 ```ts
 {
   id: number,
-  author?: string,
-  created?: string,
-  updated?: string,
-  title?: string,
-  teaser?: string,
-  body?: string,
-  url?: string,
+  author?: string | null,
+  created?: string | null,
+  updated?: string | null,
+  title?: string | null,
+  teaser?: string | null,
+  body?: string | null,
+  url?: string | null,
   image?: {
-    size?: string,
-    url?: string,
-    alt?: string
-  }[],
+    size?: string | null,
+    url?: string | null,
+    alt?: string | null
+  }[] | null,
   channels?: {
     name: string
-  }[],
+  }[] | null,
   stocks?: {
     name: string,
-    cusip?: string,
-    isin?: string,
-    exchange?: string,
-    gics?: string,
-    gics_code?: string,
-    sector?: string
-  }[],
+    cusip?: string | null,
+    isin?: string | null,
+    exchange?: string | null,
+    gics?: string | null,
+    gics_code?: string | null,
+    sector?: string | null
+  }[] | null,
   tags?: {
     name: string
-  }[],
-  importance_rank?: number,
-  original_id?: number
+  }[] | null,
+  importance_rank?: number | null,
+  original_id?: number | null
 }[]
 ```
 </Accordion>
@@ -889,9 +889,9 @@ await corsair.benzinga.api.news.listChannels({});
 ```ts
 {
   id: number,
-  parent?: number,
-  channel?: string,
-  weight?: number
+  parent?: number | null,
+  channel?: string | null,
+  weight?: number | null
 }[]
 ```
 </Accordion>
@@ -932,7 +932,7 @@ await corsair.benzinga.api.news.listRemoved({});
 {
   [key: string]: {
     id: number,
-    updated: string,
+    updated?: string,
   }[],
 }
 ```

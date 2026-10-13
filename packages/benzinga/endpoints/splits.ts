@@ -3,24 +3,32 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const listSplits: BenzingaEndpoints['listSplits'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBenzingaRequest<
-		BenzingaEndpointOutputs['listSplits']
-	>('/api/v2.1/calendar/splits', ctx.key, {
-		page: input.page,
-		pagesize: input.pagesize,
-		'parameters[date]': input.date,
-		'parameters[date_from]': input.dateFrom,
-		'parameters[date_to]': input.dateTo,
-		'parameters[date_search_field]': input.date_search_field,
-		'parameters[importance]': input.importance,
-		'parameters[tickers]': input.tickers,
-		'parameters[updated]': input.updated,
-	});
+	const input = BenzingaEndpointInputSchemas.listSplits.parse(rawInput);
+	const raw = await makeBenzingaRequest<BenzingaEndpointOutputs['listSplits']>(
+		'/api/v2.1/calendar/splits',
+		ctx.key,
+		{
+			page: input.page,
+			pagesize: input.pagesize,
+			'parameters[date]': input.date,
+			'parameters[date_from]': input.dateFrom,
+			'parameters[date_to]': input.dateTo,
+			'parameters[date_search_field]': input.date_search_field,
+			'parameters[importance]': input.importance,
+			'parameters[tickers]': input.tickers,
+			'parameters[updated]': input.updated,
+		},
+	);
+	const response = BenzingaEndpointOutputSchemas.listSplits.parse(raw);
 
 	await persistEntities(ctx.db.splits, response.splits, (r) => r.id);
 

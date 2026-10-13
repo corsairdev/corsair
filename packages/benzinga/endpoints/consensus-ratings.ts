@@ -3,10 +3,16 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const getConsensusRatings: BenzingaEndpoints['getConsensusRatings'] =
-	async (ctx, input) => {
-		const response = await makeBenzingaRequest<
+	async (ctx, rawInput) => {
+		const input =
+			BenzingaEndpointInputSchemas.getConsensusRatings.parse(rawInput);
+		const raw = await makeBenzingaRequest<
 			BenzingaEndpointOutputs['getConsensusRatings']
 		>('/api/v1/consensus-ratings', ctx.key, {
 			'parameters[tickers]': input.ticker,
@@ -16,6 +22,8 @@ export const getConsensusRatings: BenzingaEndpoints['getConsensusRatings'] =
 			simplify: input.simplify,
 			aggregate_type: input.aggregateType,
 		});
+		const response =
+			BenzingaEndpointOutputSchemas.getConsensusRatings.parse(raw);
 
 		const ticker = input.ticker.toUpperCase();
 		await persistEntities(

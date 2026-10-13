@@ -3,12 +3,17 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const listEconomics: BenzingaEndpoints['listEconomics'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBenzingaRequest<
+	const input = BenzingaEndpointInputSchemas.listEconomics.parse(rawInput);
+	const raw = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listEconomics']
 	>('/api/v2.1/calendar/economics', ctx.key, {
 		page: input.page,
@@ -22,6 +27,7 @@ export const listEconomics: BenzingaEndpoints['listEconomics'] = async (
 		event_name: input.event_name,
 		event_category: input.event_category,
 	});
+	const response = BenzingaEndpointOutputSchemas.listEconomics.parse(raw);
 
 	await persistEntities(ctx.db.economics, response.economics, (r) => r.id);
 

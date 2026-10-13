@@ -3,10 +3,16 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const listRemovedCalendarEvents: BenzingaEndpoints['listRemovedCalendarEvents'] =
-	async (ctx, input) => {
-		const response = await makeBenzingaRequest<
+	async (ctx, rawInput) => {
+		const input =
+			BenzingaEndpointInputSchemas.listRemovedCalendarEvents.parse(rawInput);
+		const raw = await makeBenzingaRequest<
 			BenzingaEndpointOutputs['listRemovedCalendarEvents']
 		>('/api/v2.1/calendar-removed/', ctx.key, {
 			page: input.page,
@@ -14,6 +20,8 @@ export const listRemovedCalendarEvents: BenzingaEndpoints['listRemovedCalendarEv
 			type: input.type,
 			updated: input.updated,
 		});
+		const response =
+			BenzingaEndpointOutputSchemas.listRemovedCalendarEvents.parse(raw);
 
 		await persistEntities(
 			ctx.db.removedCalendarEvents,
@@ -33,15 +41,17 @@ export const listRemovedCalendarEvents: BenzingaEndpoints['listRemovedCalendarEv
 
 export const listRemovedNews: BenzingaEndpoints['listRemovedNews'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBenzingaRequest<
+	const input = BenzingaEndpointInputSchemas.listRemovedNews.parse(rawInput);
+	const raw = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listRemovedNews']
 	>('/api/v2/news-removed', ctx.key, {
 		page: input.page,
 		pageSize: input.pageSize,
 		updatedSince: input.updatedSince,
 	});
+	const response = BenzingaEndpointOutputSchemas.listRemovedNews.parse(raw);
 
 	await persistEntities(
 		ctx.db.removedNewsItems,

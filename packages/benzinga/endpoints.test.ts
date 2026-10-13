@@ -850,6 +850,13 @@ describe('entity persistence', () => {
 		expect(calls('newsArticles')).toEqual([['123456', article]]);
 	});
 
+	it('news.get does not overwrite stored articles with headline or abstract output', async () => {
+		mockRequest.mockResolvedValue([{ id: 1, title: 'Only a headline' }]);
+		await getNews(testCtx(), { displayOutput: 'headline' });
+		await getNews(testCtx(), { displayOutput: 'abstract' });
+		expect(calls('newsArticles')).toEqual([]);
+	});
+
 	it('news.listChannels upserts each channel', async () => {
 		const channel = { id: 26, parent: 0, channel: 'After-Hours Center' };
 		mockRequest.mockResolvedValue({ ok: true, data: [channel] });
@@ -911,5 +918,24 @@ describe('entity persistence', () => {
 		await expect(listEarnings(testCtx(), {})).resolves.toEqual(payload);
 		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
+	});
+});
+
+describe('schema enforcement', () => {
+	it('rejects invalid input before any request is made', async () => {
+		await expect(getNews(testCtx(), { pageSize: 500 })).rejects.toThrow();
+		await expect(
+			listEarnings(testCtx(), { date: '2026-02-30' }),
+		).rejects.toThrow();
+		await expect(
+			getConsensusRatings(testCtx(), { ticker: '' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that does not match the output schema', async () => {
+		mockRequest.mockResolvedValue({ earnings: [{ date: '2026-01-01' }] });
+		await expect(listEarnings(testCtx(), {})).rejects.toThrow();
+		expect(upserts.earnings).not.toHaveBeenCalled();
 	});
 });

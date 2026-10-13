@@ -3,12 +3,17 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const listGuidance: BenzingaEndpoints['listGuidance'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBenzingaRequest<
+	const input = BenzingaEndpointInputSchemas.listGuidance.parse(rawInput);
+	const raw = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listGuidance']
 	>('/api/v2.1/calendar/guidance', ctx.key, {
 		page: input.page,
@@ -21,6 +26,7 @@ export const listGuidance: BenzingaEndpoints['listGuidance'] = async (
 		'parameters[tickers]': input.tickers,
 		'parameters[updated]': input.updated,
 	});
+	const response = BenzingaEndpointOutputSchemas.listGuidance.parse(raw);
 
 	await persistEntities(ctx.db.guidance, response.guidance, (r) => r.id);
 

@@ -3,12 +3,17 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { BenzingaEndpointOutputs } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	BenzingaEndpointOutputSchemas,
+} from './types';
 
 export const listDividends: BenzingaEndpoints['listDividends'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeBenzingaRequest<
+	const input = BenzingaEndpointInputSchemas.listDividends.parse(rawInput);
+	const raw = await makeBenzingaRequest<
 		BenzingaEndpointOutputs['listDividends']
 	>('/api/v2.2/calendar/dividends', ctx.key, {
 		page: input.page,
@@ -23,6 +28,7 @@ export const listDividends: BenzingaEndpoints['listDividends'] = async (
 		'parameters[tickers]': input.tickers,
 		'parameters[updated]': input.updated,
 	});
+	const response = BenzingaEndpointOutputSchemas.listDividends.parse(raw);
 
 	await persistEntities(ctx.db.dividends, response.dividends, (r) => r.id);
 

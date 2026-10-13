@@ -3,10 +3,15 @@ import type { BenzingaEndpoints } from '..';
 import { makeBenzingaRequest } from '../client';
 import { persistEntities } from './persist';
 import type { ListConferenceCallsRawResponse } from './types';
-import { ListConferenceCallsRawResponseSchema } from './types';
+import {
+	BenzingaEndpointInputSchemas,
+	ListConferenceCallsRawResponseSchema,
+} from './types';
 
 export const listConferenceCalls: BenzingaEndpoints['listConferenceCalls'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input =
+			BenzingaEndpointInputSchemas.listConferenceCalls.parse(rawInput);
 		const raw = await makeBenzingaRequest<ListConferenceCallsRawResponse>(
 			'/api/v2.1/calendar/conference-calls',
 			ctx.key,
