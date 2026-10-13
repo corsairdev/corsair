@@ -399,6 +399,16 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+// A host that reaches the entity store without going through the HTTP route —
+// the cloud runtime's script sandbox — needs the risk check with it. Walking
+// `<plugin>.db.<entity>.<method>` directly would skip it, because the entity
+// clients carry no permission wrapper of their own.
+export {
+	callPluginDb,
+	DB_METHOD_RISK,
+	decodeDbArgs,
+	encodeDbArgs,
+} from './management/db';
 // The runtime plane throws this one, so a caller needs it to tell a provider
 // failure from a transport failure. CloudApiError extends it.
 export { ManagementApiError } from './management/errors';
