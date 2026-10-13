@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodaEndpoints } from '..';
 import { makeCodaRequest } from '../client';
+import { saveFolders } from './persist';
 import type { CodaEndpointOutputs } from './types';
 
 const list: CodaEndpoints['foldersList'] = async (ctx, input) => {
@@ -9,6 +10,7 @@ const list: CodaEndpoints['foldersList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query: input },
 	);
+	await saveFolders(ctx, response.items);
 	await logEventFromContext(
 		ctx,
 		'coda.folders.list',
@@ -25,6 +27,7 @@ const get: CodaEndpoints['foldersGet'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET' },
 	);
+	await saveFolders(ctx, [response]);
 	await logEventFromContext(ctx, 'coda.folders.get', { ...input }, 'completed');
 	return response;
 };
@@ -35,6 +38,7 @@ const create: CodaEndpoints['foldersCreate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: input },
 	);
+	await saveFolders(ctx, [response]);
 	await logEventFromContext(
 		ctx,
 		'coda.folders.create',
@@ -51,6 +55,7 @@ const update: CodaEndpoints['foldersUpdate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'PATCH', body },
 	);
+	await saveFolders(ctx, [response]);
 	await logEventFromContext(
 		ctx,
 		'coda.folders.update',

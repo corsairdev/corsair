@@ -54,8 +54,17 @@ function entityClient() {
 	};
 }
 
-const documents = entityClient();
-const tables = entityClient();
+const db = {
+	documents: entityClient(),
+	pages: entityClient(),
+	tables: entityClient(),
+	columns: entityClient(),
+	rows: entityClient(),
+	folders: entityClient(),
+	formulas: entityClient(),
+	controls: entityClient(),
+	packs: entityClient(),
+};
 
 // Safe: the handlers only read `key` and `db` from the context, and logEventFromContext is mocked.
 // A narrower type is not practical because CodaContext also requires the database adapter, tenant and options wiring of a full Corsair instance.
@@ -72,7 +81,7 @@ const ctx = {
 		set_webhook_signature: jest.fn(),
 	},
 	endpoints: {},
-	db: { documents, tables },
+	db,
 } as CodaContext;
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
@@ -256,19 +265,10 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.documents.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.docsList.parse(result)).toEqual(expected);
-		expect(documents.upsertByEntityId.mock.calls).toEqual([
-			[
-				'AbCDeFGH',
-				{
-					id: 'AbCDeFGH',
-					name: 'Product Launch Hub',
-					type: 'doc',
-					href: 'https://docs.superhuman.com/apis/v1/docs/AbCDeFGH',
-					browserLink: 'https://docs.superhuman.com/d/_dAbCDeFGH',
-				},
-			],
-		]);
 	});
 
 	it('docs.get sends GET /docs/{docId}', async () => {
@@ -308,19 +308,10 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
-		expect(CodaEndpointOutputSchemas.docsGet.parse(result)).toEqual(expected);
-		expect(documents.upsertByEntityId.mock.calls).toEqual([
-			[
-				'AbCDeFGH',
-				{
-					id: 'AbCDeFGH',
-					name: 'Product Launch Hub',
-					type: 'doc',
-					href: 'https://docs.superhuman.com/apis/v1/docs/AbCDeFGH',
-					browserLink: 'https://docs.superhuman.com/d/_dAbCDeFGH',
-				},
-			],
+		expect(db.documents.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
 		]);
+		expect(CodaEndpointOutputSchemas.docsGet.parse(result)).toEqual(expected);
 	});
 
 	it('docs.create sends POST /docs', async () => {
@@ -362,6 +353,9 @@ describe('Coda endpoints', () => {
 			},
 		});
 		expect(result).toEqual(expected);
+		expect(db.documents.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.docsCreate.parse(result)).toEqual(
 			expected,
 		);
@@ -408,6 +402,9 @@ describe('Coda endpoints', () => {
 			},
 		});
 		expect(result).toEqual(expected);
+		expect(db.documents.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.docsCopy.parse(result)).toEqual(expected);
 	});
 
@@ -738,6 +735,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.pages.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.pagesList.parse(result)).toEqual(expected);
 	});
 
@@ -777,6 +777,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.pages.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.pagesGet.parse(result)).toEqual(expected);
 	});
 
@@ -998,22 +1001,12 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.tables.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.tablesList.parse(result)).toEqual(
 			expected,
 		);
-		expect(tables.upsertByEntityId.mock.calls).toEqual([
-			[
-				'grid-pqRst-U',
-				{
-					id: 'grid-pqRst-U',
-					name: 'Tasks',
-					type: 'table',
-					href: 'https://docs.superhuman.com/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U',
-					browserLink:
-						'https://docs.superhuman.com/d/_dAbCDeFGH/#Teams-and-Tasks_tpqRst-U',
-				},
-			],
-		]);
 	});
 
 	it('tables.get sends GET /docs/{docId}/tables/{tableIdOrName}', async () => {
@@ -1068,20 +1061,10 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
-		expect(CodaEndpointOutputSchemas.tablesGet.parse(result)).toEqual(expected);
-		expect(tables.upsertByEntityId.mock.calls).toEqual([
-			[
-				'grid-pqRst-U',
-				{
-					id: 'grid-pqRst-U',
-					name: 'Tasks',
-					type: 'table',
-					href: 'https://docs.superhuman.com/apis/v1/docs/AbCDeFGH/tables/grid-pqRst-U',
-					browserLink:
-						'https://docs.superhuman.com/d/_dAbCDeFGH/#Teams-and-Tasks_tpqRst-U',
-				},
-			],
+		expect(db.tables.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
 		]);
+		expect(CodaEndpointOutputSchemas.tablesGet.parse(result)).toEqual(expected);
 	});
 
 	it('columns.list sends GET /docs/{docId}/tables/{tableIdOrName}/columns', async () => {
@@ -1115,6 +1098,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.columns.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.columnsList.parse(result)).toEqual(
 			expected,
 		);
@@ -1155,6 +1141,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.columns.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.columnsGet.parse(result)).toEqual(
 			expected,
 		);
@@ -1195,6 +1184,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.rows.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.rowsList.parse(result)).toEqual(expected);
 	});
 
@@ -1239,6 +1231,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.rows.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.rowsGet.parse(result)).toEqual(expected);
 	});
 
@@ -1435,6 +1430,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.formulas.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.formulasList.parse(result)).toEqual(
 			expected,
 		);
@@ -1462,6 +1460,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.formulas.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.formulasGet.parse(result)).toEqual(
 			expected,
 		);
@@ -1493,6 +1494,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.controls.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.controlsList.parse(result)).toEqual(
 			expected,
 		);
@@ -1521,6 +1525,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.controls.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.controlsGet.parse(result)).toEqual(
 			expected,
 		);
@@ -1675,6 +1682,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.folders.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.foldersList.parse(result)).toEqual(
 			expected,
 		);
@@ -1705,6 +1715,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.folders.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.foldersGet.parse(result)).toEqual(
 			expected,
 		);
@@ -1739,6 +1752,9 @@ describe('Coda endpoints', () => {
 			},
 		});
 		expect(result).toEqual(expected);
+		expect(db.folders.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.foldersCreate.parse(result)).toEqual(
 			expected,
 		);
@@ -1772,6 +1788,9 @@ describe('Coda endpoints', () => {
 			},
 		});
 		expect(result).toEqual(expected);
+		expect(db.folders.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.foldersUpdate.parse(result)).toEqual(
 			expected,
 		);
@@ -2216,6 +2235,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.packs.upsertByEntityId.mock.calls).toEqual(
+			expected.items.map((item) => [String(item.id), item]),
+		);
 		expect(CodaEndpointOutputSchemas.packsList.parse(result)).toEqual(expected);
 	});
 
@@ -2247,6 +2269,9 @@ describe('Coda endpoints', () => {
 			body: undefined,
 		});
 		expect(result).toEqual(expected);
+		expect(db.packs.upsertByEntityId.mock.calls).toEqual([
+			[String(expected.id), expected],
+		]);
 		expect(CodaEndpointOutputSchemas.packsGet.parse(result)).toEqual(expected);
 	});
 

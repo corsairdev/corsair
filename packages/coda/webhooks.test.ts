@@ -28,8 +28,17 @@ function entityClient() {
 	};
 }
 
-const documents = entityClient();
-const tables = entityClient();
+const db = {
+	documents: entityClient(),
+	pages: entityClient(),
+	tables: entityClient(),
+	columns: entityClient(),
+	rows: entityClient(),
+	folders: entityClient(),
+	formulas: entityClient(),
+	controls: entityClient(),
+	packs: entityClient(),
+};
 
 // Safe: the webhook handlers only read `key` and `db` from the context, and logEventFromContext is mocked.
 // A narrower type is not practical because CodaContext also requires the database adapter, tenant and options wiring of a full Corsair instance.
@@ -46,7 +55,7 @@ const ctx = {
 		set_webhook_signature: jest.fn(),
 	},
 	endpoints: {},
-	db: { documents, tables },
+	db,
 } as CodaContext;
 
 const base = {
@@ -168,7 +177,7 @@ describe('Coda webhooks', () => {
 
 		expect(response.success).toBe(true);
 		expect(eventIds(response.data)).toEqual(['ev-1']);
-		expect(documents.upsertByEntityId.mock.calls).toEqual([
+		expect(db.documents.upsertByEntityId.mock.calls).toEqual([
 			[
 				'AbCDeFGH',
 				{
@@ -177,6 +186,9 @@ describe('Coda webhooks', () => {
 					type: 'doc',
 					href: 'https://coda.io/apis/v1/docs/AbCDeFGH',
 					browserLink: 'https://coda.io/d/_dAbCDeFGH',
+					docType: 'doc',
+					workspaceId: 'ws-1Ab234',
+					folderId: 'fl-1Ab234',
 				},
 			],
 		]);
@@ -191,7 +203,7 @@ describe('Coda webhooks', () => {
 		const response = await DocWebhooks.deleted.handler(ctx, delivery());
 
 		expect(eventIds(response.data)).toEqual(['ev-2']);
-		expect(documents.deleteByEntityId.mock.calls).toEqual([['AbCDeFGH']]);
+		expect(db.documents.deleteByEntityId.mock.calls).toEqual([['AbCDeFGH']]);
 	});
 
 	it('pages.created and pages.updated return their page events', async () => {
@@ -214,6 +226,6 @@ describe('Coda webhooks', () => {
 			statusCode: 401,
 			error: 'Signature mismatch',
 		});
-		expect(documents.upsertByEntityId).not.toHaveBeenCalled();
+		expect(db.documents.upsertByEntityId).not.toHaveBeenCalled();
 	});
 });

@@ -8,7 +8,7 @@ Use **Coda** through Corsair: one client, typed API calls, local DB sync, and in
 **What you get:**
 
 - 110 typed API operations
-- 2 synced entities (`documents`, `tables`) for fast `.search()` / `.list()`
+- 9 synced entities (`columns`, `controls`, `documents`, `folders`, `formulas`, `packs`, and 3 more) for fast `.search()` / `.list()`
 - 4 incoming webhook event types
 
 ## Setup
@@ -126,7 +126,7 @@ const rows = await tenant.coda.db.documents.search({
 });
 ```
 
-Synced entities: `documents`, `tables`. See [Database](/plugins/coda/database) for filters and operators.
+Synced entities: `columns`, `controls`, `documents`, `folders`, `formulas`, `packs`, `pages`, `rows`, `tables`. See [Database](/plugins/coda/database) for filters and operators.
 
 ## Webhooks
 

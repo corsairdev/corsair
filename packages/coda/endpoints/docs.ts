@@ -33,6 +33,7 @@ const create: CodaEndpoints['docsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: input },
 	);
+	await saveDocs(ctx, [response]);
 	await logEventFromContext(ctx, 'coda.docs.create', { ...input }, 'completed');
 	return response;
 };
@@ -43,6 +44,7 @@ const copy: CodaEndpoints['docsCopy'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: input },
 	);
+	await saveDocs(ctx, [response]);
 	await logEventFromContext(ctx, 'coda.docs.copy', { ...input }, 'completed');
 	return response;
 };

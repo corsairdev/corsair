@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodaEndpoints } from '..';
 import { makeCodaRequest } from '../client';
+import { saveControls } from './persist';
 import type { CodaEndpointOutputs } from './types';
 
 const list: CodaEndpoints['controlsList'] = async (ctx, input) => {
@@ -10,6 +11,7 @@ const list: CodaEndpoints['controlsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
+	await saveControls(ctx, response.items);
 	await logEventFromContext(
 		ctx,
 		'coda.controls.list',
@@ -26,6 +28,7 @@ const get: CodaEndpoints['controlsGet'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET' },
 	);
+	await saveControls(ctx, [response]);
 	await logEventFromContext(
 		ctx,
 		'coda.controls.get',

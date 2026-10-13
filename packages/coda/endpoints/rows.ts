@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodaEndpoints } from '..';
 import { makeCodaRequest } from '../client';
+import { saveRows } from './persist';
 import type { CodaEndpointOutputs } from './types';
 
 const list: CodaEndpoints['rowsList'] = async (ctx, input) => {
@@ -10,6 +11,7 @@ const list: CodaEndpoints['rowsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
+	await saveRows(ctx, response.items);
 	await logEventFromContext(ctx, 'coda.rows.list', { ...input }, 'completed');
 	return response;
 };
@@ -21,6 +23,7 @@ const get: CodaEndpoints['rowsGet'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
+	await saveRows(ctx, [response]);
 	await logEventFromContext(ctx, 'coda.rows.get', { ...input }, 'completed');
 	return response;
 };

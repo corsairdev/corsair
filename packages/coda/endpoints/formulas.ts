@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodaEndpoints } from '..';
 import { makeCodaRequest } from '../client';
+import { saveFormulas } from './persist';
 import type { CodaEndpointOutputs } from './types';
 
 const list: CodaEndpoints['formulasList'] = async (ctx, input) => {
@@ -10,6 +11,7 @@ const list: CodaEndpoints['formulasList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
+	await saveFormulas(ctx, response.items);
 	await logEventFromContext(
 		ctx,
 		'coda.formulas.list',
@@ -26,6 +28,7 @@ const get: CodaEndpoints['formulasGet'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET' },
 	);
+	await saveFormulas(ctx, [response]);
 	await logEventFromContext(
 		ctx,
 		'coda.formulas.get',
