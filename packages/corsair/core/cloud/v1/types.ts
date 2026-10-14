@@ -122,7 +122,6 @@ export type CloudLink = {
 	object: 'link';
 	id: string;
 	recipient: string | null;
-	email: string | null;
 	instances: Array<{
 		instance: string;
 		tenant: string;

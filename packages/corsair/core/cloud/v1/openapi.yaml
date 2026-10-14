@@ -1410,7 +1410,6 @@ components:
         object: { type: string, enum: [link] }
         id: { type: string, description: "Also the token in the link's URL." }
         recipient: { type: [string, "null"] }
-        email: { type: [string, "null"] }
         instances:
           type: array
           items:
@@ -1433,7 +1432,6 @@ components:
       minProperties: 1
       properties:
         recipient: { type: [string, "null"] }
-        email: { type: [string, "null"], format: email }
         instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Replaces the whole set. Omit to leave the lines alone." }
     MintToken:
       type: object
