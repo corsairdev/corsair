@@ -338,6 +338,23 @@ describe('error mapping', () => {
 		expect(err).toMatchObject({ retryable: true });
 	});
 
+	it('an empty key leaves a pre-response POST non-repeatable — none was sent', async () => {
+		const transport: V1Transport = {
+			baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
+			apiKey: 'ck',
+			fetch: (async () => {
+				throw new Error('connection refused');
+			}) as unknown as typeof fetch,
+		};
+		const err = await buildProjectPlane(transport)
+			.mcp.tokens.mint(
+				{ instance: 'app', tenant: 'acme' },
+				{ idempotencyKey: '' },
+			)
+			.catch((e: unknown) => e);
+		expect(err).toMatchObject({ retryable: false });
+	});
+
 	it('does not send the request when the caller signal is already aborted', async () => {
 		const fetchMock = jest.fn();
 		const controller = new AbortController();

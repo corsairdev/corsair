@@ -487,6 +487,44 @@ describe('corsairCloud', () => {
 		).not.toHaveLength(0);
 	});
 
+	it('shares one refresh across concurrent calls for a missing key', async () => {
+		// Each caller finds the same stale map, so each would otherwise start its
+		// own refresh and a burst would fetch once per caller.
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) => {
+				if (String(url) === 'https://vm/p/instances') {
+					return instanceResolve('users', 'https://vm/users');
+				}
+				return new Response(JSON.stringify({ data: {} }), { status: 200 });
+			});
+
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await corsair
+			.withInstance('users')
+			.withTenant('a')
+			.notion.api.pages.searchPage({});
+		const resolves = () =>
+			fetchMock.mock.calls.filter(
+				([url]) => String(url) === 'https://vm/p/instances',
+			).length;
+		const before = resolves();
+
+		await Promise.all(
+			Array.from({ length: 5 }, () =>
+				corsair
+					.withInstance('billing')
+					.withTenant('a')
+					.notion.api.pages.searchPage({})
+					.catch(() => undefined),
+			),
+		);
+		expect(resolves() - before).toBe(1);
+	});
+
 	it('scopes connectionStatus to the instance (routed to the instance URL)', async () => {
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
 			if (String(url) === 'https://vm/p/instances') {
