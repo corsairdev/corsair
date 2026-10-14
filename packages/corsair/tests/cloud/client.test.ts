@@ -1,4 +1,5 @@
 import { buildCloudClient } from '../../core/cloud/client';
+import { runReadonly } from '../../core/permissions';
 
 describe('buildCloudClient', () => {
 	it('routes a nested op to the invoke path', async () => {
@@ -118,6 +119,33 @@ describe('buildCloudClient', () => {
 				},
 			],
 		});
+	});
+
+	it('refuses a db write inside a readonly scope, and allows a read', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: 7 }), { status: 200 }),
+			);
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {
+				baseUrl: 'https://vm/p/api/corsair',
+				apiKey: 'ck',
+				fetch: fetchMock as any,
+			},
+			tenantId: 'acme',
+		});
+
+		for (const method of ['upsertByEntityId', 'deleteByEntityId']) {
+			await expect(
+				runReadonly(() => (client as any).slack.db.channels[method]('C1')),
+			).rejects.toThrow(/readonly|read-only/i);
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		await expect(
+			runReadonly(() => (client as any).slack.db.channels.count()),
+		).resolves.toBe(7);
 	});
 
 	it('does not expose a method outside the entity-client surface', () => {

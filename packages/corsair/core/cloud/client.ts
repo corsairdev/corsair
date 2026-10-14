@@ -1,5 +1,6 @@
 import type { CorsairClient } from '../client';
 import { DB_METHOD_RISK, decodeDbArgs, encodeDbArgs } from '../management/db';
+import { assertReadonlyAllowed } from '../permissions';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
@@ -77,13 +78,20 @@ function buildDbProxy(
 					{},
 					{
 						get(_entityTarget, method) {
-							if (
-								typeof method !== 'string' ||
-								!Object.hasOwn(DB_METHOD_RISK, method)
-							) {
-								return undefined;
-							}
+							if (typeof method !== 'string') return undefined;
+							// hasOwn, not a plain lookup: `constructor` and friends come off
+							// Object.prototype and would read as real methods.
+							const risk = Object.hasOwn(DB_METHOD_RISK, method)
+								? DB_METHOD_RISK[method]
+								: undefined;
+							if (!risk) return undefined;
 							return async (...args: unknown[]) => {
+								// The server re-checks, but its scope is AsyncLocalStorage
+								// and does not cross the request.
+								assertReadonlyAllowed(
+									`${pluginId}.db.${entityType}.${method}`,
+									risk,
+								);
 								const transport = await resolveTransport(transportSource);
 								const res = await cloudRequest<{ data: unknown }>(
 									transport,
