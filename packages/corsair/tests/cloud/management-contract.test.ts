@@ -33,16 +33,19 @@ function templatize(path: string): string {
 
 function recorder() {
 	const seen = new Set<string>();
+	const bodies = new Map<string, string>();
 	const transport: V1Transport = {
 		baseUrl: 'https://api.corsair.cloud/v1/projects/acme',
 		apiKey: 'ck_cloud_acme.secret',
 		fetch: (async (url: string, init: RequestInit) => {
 			const path = new URL(url).pathname.replace('/v1/projects/acme', '');
-			seen.add(`${String(init.method).toLowerCase()} ${templatize(path)}`);
+			const call = `${String(init.method).toLowerCase()} ${templatize(path)}`;
+			seen.add(call);
+			if (init.body) bodies.set(call, String(init.body));
 			return new Response('{}', { status: 200 });
 		}) as unknown as typeof fetch,
 	};
-	return { seen, transport };
+	return { seen, bodies, transport };
 }
 
 async function callEveryMethod(transport: V1Transport): Promise<void> {
@@ -57,9 +60,17 @@ async function callEveryMethod(transport: V1Transport): Promise<void> {
 	await manage.instances.delete(INSTANCE);
 	await manage.integrations.catalog();
 	await manage.mcp.links.list();
-	await manage.mcp.links.mint({ instances: [] });
+	await manage.mcp.links.mint({
+		admin: { instance: INSTANCE, tenant: TENANT },
+		context: [{ instance: INSTANCE, tenant: TENANT }],
+		mode: 'strict',
+		can_mint_links: true,
+		can_add_plugins: false,
+	});
 	await manage.mcp.links.get(ID);
-	await manage.mcp.links.update(ID, {});
+	// Policy alone, no lines: ticking a capability in the console sends exactly
+	// this, and the request type has to admit it.
+	await manage.mcp.links.update(ID, { can_add_plugins: true });
 	await manage.mcp.links.delete(ID);
 	await manage.mcp.links.rotate(ID);
 	await manage.mcp.tokens.mint({ instance: INSTANCE, tenant: TENANT });
@@ -118,11 +129,21 @@ function specOperations(): Set<string> {
 
 describe('management contract', () => {
 	let called: Set<string>;
+	let sent: Map<string, string>;
 
 	beforeAll(async () => {
-		const { seen, transport } = recorder();
+		const { seen, bodies, transport } = recorder();
 		await callEveryMethod(transport);
 		called = seen;
+		sent = bodies;
+	});
+
+	// Parsed, not string-compared: what matters is that the policy reaches the
+	// wire, not the order the keys serialize in.
+	it('sends a policy-only link update as the body', () => {
+		expect(JSON.parse(sent.get('patch /mcp/links/{id}') ?? 'null')).toEqual({
+			can_add_plugins: true,
+		});
 	});
 
 	it('documents every operation the client calls', () => {

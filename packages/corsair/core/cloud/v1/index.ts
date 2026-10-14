@@ -21,6 +21,7 @@ export type {
 	CloudProjectPlane,
 	CreateInstanceInput,
 	LinkLine,
+	LinkPolicy,
 	MintLinkInput,
 	MintTokenInput,
 	UpdateInstanceInput,
