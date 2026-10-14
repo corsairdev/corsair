@@ -118,17 +118,30 @@ export type CloudDelivery = {
 	delivered: string | null;
 };
 
+/** A tenant on an instance, as the link reaches it. */
+export type CloudLinkLine = {
+	instance: string;
+	tenant: string;
+	/** This line's access has since been revoked, so it reaches nothing. */
+	lost_access: boolean;
+};
+
 export type CloudLink = {
 	object: 'link';
 	id: string;
 	recipient: string | null;
-	instances: Array<{
-		instance: string;
-		tenant: string;
-		permission: Permission;
-		/** This line's access has since been revoked, so it reaches nothing. */
-		lost_access: boolean;
-	}>;
+	/** The ceiling every call through this link is judged by, applied per call.
+	 *  It bounds `admin` too: a readonly link writes nothing. */
+	mode: PermissionMode;
+	/** Whether a failed call hands the agent a connect URL. */
+	can_mint_links: boolean;
+	/** Whether the link may add an integration to the instance it administers. */
+	can_add_plugins: boolean;
+	/** The one line the link may write on. Null for a link whose stored lines
+	 *  never parsed; such a link reaches nothing. */
+	admin: CloudLinkLine | null;
+	/** Everything else the link can see, read-only. */
+	context: CloudLinkLine[];
 	url: string;
 	created: string;
 };

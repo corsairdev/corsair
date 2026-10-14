@@ -1098,7 +1098,7 @@ components:
     Permission:
       type: string
       enum: [readonly, readwrite, admin]
-      description: How far a tenant may go through MCP.
+      description: A tenant's access on one instance. A link's own ceiling is its `mode`.
     AuthType:
       type: string
       enum: [managed, oauth_2, api_key, bot_token]
@@ -1398,41 +1398,58 @@ components:
 
     LinkLine:
       type: object
-      required: [instance, tenant, permission]
+      required: [instance, tenant]
       properties:
         instance: { type: string }
         tenant: { type: string }
-        permission: { $ref: "#/components/schemas/Permission" }
+    LinkRef:
+      allOf:
+        - { $ref: "#/components/schemas/LinkLine" }
+        - type: object
+          required: [lost_access]
+          properties:
+            lost_access: { type: boolean, description: "This line's access has since been revoked, so it reaches nothing." }
     Link:
       type: object
-      required: [object, id, instances, url, created]
+      required: [object, id, mode, can_mint_links, can_add_plugins, admin, context, url, created]
       properties:
         object: { type: string, enum: [link] }
         id: { type: string, description: "Also the token in the link's URL." }
         recipient: { type: [string, "null"] }
-        instances:
+        mode: { $ref: "#/components/schemas/PermissionMode" }
+        can_mint_links: { type: boolean, description: "Whether a failed call hands the agent a connect URL." }
+        can_add_plugins: { type: boolean, description: "Whether the link may add an integration to the instance it administers." }
+        admin:
+          oneOf:
+            - { $ref: "#/components/schemas/LinkRef" }
+            - { type: "null" }
+          description: Null for a link whose stored lines never parsed.
+        context:
           type: array
-          items:
-            allOf:
-              - { $ref: "#/components/schemas/LinkLine" }
-              - type: object
-                required: [lost_access]
-                properties:
-                  lost_access: { type: boolean, description: "This line's access has since been revoked, so it reaches nothing." }
+          items: { $ref: "#/components/schemas/LinkRef" }
+          description: "Everything else the link can see, read-only."
         url: { type: string, format: uri }
         created: { type: string, format: date-time }
     MintLink:
       type: object
-      required: [instances]
+      required: [admin]
       properties:
         recipient: { type: [string, "null"], description: "Who the link is for. A label, not an address." }
-        instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Every line must name access you already hold." }
+        mode: { $ref: "#/components/schemas/PermissionMode", default: cautious }
+        can_mint_links: { type: boolean, default: false }
+        can_add_plugins: { type: boolean, default: false }
+        admin: { $ref: "#/components/schemas/LinkLine", description: "The only line the link may write on. Must name access you already hold." }
+        context: { type: array, items: { $ref: "#/components/schemas/LinkLine" }, description: "Read-only context. Each line must name access you already hold." }
     UpdateLink:
       type: object
       minProperties: 1
       properties:
         recipient: { type: [string, "null"] }
-        instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Replaces the whole set. Omit to leave the lines alone." }
+        mode: { $ref: "#/components/schemas/PermissionMode" }
+        can_mint_links: { type: boolean }
+        can_add_plugins: { type: boolean }
+        admin: { $ref: "#/components/schemas/LinkLine" }
+        context: { type: array, items: { $ref: "#/components/schemas/LinkLine" }, description: "Replaces the whole set. Omit to leave it alone." }
     MintToken:
       type: object
       required: [instance, tenant]

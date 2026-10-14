@@ -10,7 +10,7 @@ import type {
 	CloudMcpToken,
 	CloudProject,
 	CredentialSource,
-	Permission,
+	PermissionMode,
 } from './types';
 
 export type CreateInstanceInput = {
@@ -30,24 +30,35 @@ export type UpdateInstanceInput = {
 	credential_source?: CredentialSource;
 };
 
-/** One line of reach: a tenant on an instance, at a permission. */
+/** One line of reach: a tenant on an instance. */
 export type LinkLine = {
 	instance: string;
 	tenant: string;
-	permission: Permission;
 };
 
-export type MintLinkInput = {
+/** What the link may do on the instance it administers. */
+export type LinkPolicy = {
+	mode?: PermissionMode;
+	/** Whether a failed call hands the agent a connect URL. */
+	can_mint_links?: boolean;
+	/** Whether the link may add an integration to the instance it administers. */
+	can_add_plugins?: boolean;
+};
+
+export type MintLinkInput = LinkPolicy & {
 	/** Who the link is for. Shown in the console; not an address. */
 	recipient?: string | null;
-	/** Every line must name access you already hold. */
-	instances: LinkLine[];
+	/** The only line the link may write on. Must name access you already hold. */
+	admin: LinkLine;
+	/** Read-only context. Each line must name access you already hold. */
+	context?: LinkLine[];
 };
 
-export type UpdateLinkInput = {
+export type UpdateLinkInput = LinkPolicy & {
 	recipient?: string | null;
-	/** Replaces the whole set. Omit to leave the lines alone. */
-	instances?: LinkLine[];
+	admin?: LinkLine;
+	/** Replaces the whole set. Omit to leave it alone. */
+	context?: LinkLine[];
 };
 
 export type MintTokenInput = {
