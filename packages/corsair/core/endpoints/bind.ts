@@ -9,10 +9,14 @@ import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
+	activeMode,
 	assertReadonlyAllowed,
 	enforcePermission,
+	evaluatePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
+	stricterMode,
+	stricterPolicy,
 } from '../permissions';
 import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
@@ -79,7 +83,7 @@ export function bindEndpointsRecursively({
 	errorHandlers: CorsairErrorHandler;
 	currentPath: string[];
 	keyBuilder?: CorsairKeyBuilderBase;
-	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
+	/** Permission mode + per-endpoint overrides from plugin options. Composed with the caller's mode, if any. */
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
@@ -124,8 +128,30 @@ export function bindEndpointsRecursively({
 
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
-				if (permissionsConfig) {
+				// A mode only tightens, so a caller naming one cannot relax what the
+				// server configured.
+				const callerMode = activeMode();
+				const configMode = permissionsConfig?.mode;
+				const mode = stricterMode(callerMode, configMode);
+				if (mode) {
 					const meta = endpointMetaEntry;
+					const riskLevel = meta?.riskLevel ?? 'write';
+					const configured = permissionsConfig?.overrides?.[operationPath];
+					// An override is the plugin's exception to its own mode, so a
+					// caller that tightens past that mode overrules it. A caller that
+					// does not leaves it standing: judging it against `mode` instead
+					// would count the plugin's own mode twice and drop an exception
+					// nobody asked to withdraw.
+					const tightened =
+						callerMode !== undefined &&
+						callerMode !== configMode &&
+						mode === callerMode;
+					const override = tightened
+						? stricterPolicy(
+								configured,
+								evaluatePermission(riskLevel, callerMode),
+							)
+						: configured;
 					const {
 						result: permResult,
 						reason: permReason,
@@ -137,10 +163,9 @@ export function bindEndpointsRecursively({
 						pluginId,
 						endpointPath: operationPath,
 						args,
-						mode: permissionsConfig.mode,
-						override: permissionsConfig.overrides?.[operationPath],
-						// Default to 'write' when no meta declared — conservative fallback
-						riskLevel: meta?.riskLevel ?? 'write',
+						mode,
+						override,
+						riskLevel,
 						meta,
 						db: database,
 						timeoutMs: permissionsOptions
@@ -154,7 +179,10 @@ export function bindEndpointsRecursively({
 						if (permReason === 'denied') {
 							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
 						} else if (permReason === 'policy') {
-							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+							// A scope has no config behind it to send the caller to.
+							msg = callerMode
+								? `Action '${operationPath}' is blocked by permission mode '${callerMode}'.`
+								: `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {

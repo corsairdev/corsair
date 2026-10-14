@@ -28,6 +28,7 @@ export {
 	ReconnectRequiredError,
 	resolveConnectLink,
 	runReadonly,
+	runWithMode,
 } from './core';
 export type * from './core/cloud/v1';
 export type {
