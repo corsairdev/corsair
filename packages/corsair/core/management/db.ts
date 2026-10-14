@@ -1,4 +1,4 @@
-import { assertReadonlyAllowed } from '../permissions';
+import { assertModeAllows } from '../permissions';
 import type { EndpointRiskLevel } from '../plugins';
 import { badRequest, ManagementApiError } from './errors';
 
@@ -110,10 +110,8 @@ export async function callPluginDb(
 			`Unknown db method "${route.method}" — expected one of ${Object.keys(DB_METHOD_RISK).join(', ')}`,
 		);
 	}
-	// The same guard the endpoint binding layer applies, so a runReadonly()
-	// scope binds the entity store too. Entity clients carry no permission
-	// wrapper of their own.
-	assertReadonlyAllowed(
+	// Entity clients carry no permission wrapper, so the mode is checked here.
+	assertModeAllows(
 		`${route.plugin}.db.${route.entityType}.${route.method}`,
 		risk,
 	);

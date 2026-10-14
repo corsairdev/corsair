@@ -415,11 +415,14 @@ export type {
 	EnforcePermissionResult,
 } from './permissions';
 export {
+	activeMode,
+	assertModeAllows,
 	assertReadonlyAllowed,
 	isReadonlyScopeActive,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	runReadonly,
+	runWithMode,
 } from './permissions';
 // Plugin types
 export type {

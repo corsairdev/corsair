@@ -1,6 +1,6 @@
 import type { CorsairClient } from '../client';
 import { DB_METHOD_RISK, decodeDbArgs, encodeDbArgs } from '../management/db';
-import { assertReadonlyAllowed } from '../permissions';
+import { assertModeAllows } from '../permissions';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
@@ -88,7 +88,7 @@ function buildDbProxy(
 							return async (...args: unknown[]) => {
 								// The server re-checks, but its scope is AsyncLocalStorage
 								// and does not cross the request.
-								assertReadonlyAllowed(
+								assertModeAllows(
 									`${pluginId}.db.${entityType}.${method}`,
 									risk,
 								);

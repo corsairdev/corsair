@@ -1,5 +1,6 @@
 import { buildCloudClient } from '../../core/cloud/client';
-import { runReadonly } from '../../core/permissions';
+import { runReadonly, runWithMode } from '../../core/permissions';
+import type { CorsairPlugin } from '../../core/plugins';
 
 describe('buildCloudClient', () => {
 	it('routes a nested op to the invoke path', async () => {
@@ -189,5 +190,69 @@ describe('buildCloudClient', () => {
 		});
 		expect((client as any).then).toBeUndefined();
 		await client;
+	});
+});
+
+type Probe = {
+	slack: {
+		api: { messages: { post(args: object): Promise<null> } };
+		db: {
+			channels: {
+				list(): Promise<null>;
+				deleteById(id: string): Promise<null>;
+			};
+		};
+	};
+};
+
+describe('the caller mode over the wire', () => {
+	function harness() {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: null }), { status: 200 }),
+			);
+		const client = buildCloudClient([{ id: 'slack' } as CorsairPlugin], {
+			transport: {
+				baseUrl: 'https://vm/proj/api/corsair',
+				apiKey: 'ck_cloud_x',
+				fetch: fetchMock,
+			},
+			tenantId: 'acme',
+		});
+		// CorsairClient's op tree is keyed off the plugin tuple's types, which a
+		// bare `{ id }` does not carry, so the paths are named here instead.
+		return { client: client as unknown as Probe, fetchMock };
+	}
+
+	const sentMode = (fetchMock: jest.Mock): string | undefined =>
+		fetchMock.mock.calls[0][1].headers['x-corsair-mode'];
+
+	it('sends nothing with no scope open', async () => {
+		const { client, fetchMock } = harness();
+		await client.slack.api.messages.post({});
+		expect(sentMode(fetchMock)).toBeUndefined();
+	});
+
+	// The scope is process-local, so an op the server judges by risk can only
+	// honour the caller's mode if it travels.
+	it('sends the mode on an operation call', async () => {
+		const { client, fetchMock } = harness();
+		await runWithMode('cautious', () => client.slack.api.messages.post({}));
+		expect(sentMode(fetchMock)).toBe('cautious');
+	});
+
+	it('sends the mode on an entity read', async () => {
+		const { client, fetchMock } = harness();
+		await runWithMode('strict', () => client.slack.db.channels.list());
+		expect(sentMode(fetchMock)).toBe('strict');
+	});
+
+	it('refuses an entity delete before it reaches the wire', async () => {
+		const { client, fetchMock } = harness();
+		await expect(
+			runWithMode('strict', () => client.slack.db.channels.deleteById('c1')),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

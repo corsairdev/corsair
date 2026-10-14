@@ -4,6 +4,8 @@ import {
 	clearConnectRequest,
 	readConnectRequest,
 } from '../connect-request/store';
+import { runWithMode } from '../permissions';
+import type { PermissionMode } from '../plugins';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import type { CappedReadOptions } from './body-limit';
 import {
@@ -346,6 +348,7 @@ const ROUTES: Route[] = [
 		handler: async ({
 			corsair,
 			internal,
+			req,
 			params,
 			body,
 			scopedTenant,
@@ -369,14 +372,16 @@ const ROUTES: Route[] = [
 				internal,
 				{ plugin: params.plugin!, tenant },
 				(client) =>
-					callPluginDb(
-						client,
-						{
-							plugin: params.plugin!,
-							entityType: params.entityType!,
-							method: params.method!,
-						},
-						args,
+					withRequestMode(req, () =>
+						callPluginDb(
+							client,
+							{
+								plugin: params.plugin!,
+								entityType: params.entityType!,
+								method: params.method!,
+							},
+							args,
+						),
 					),
 			);
 			// Encoded on the way out too: a Date read back as a string and fed to
@@ -390,6 +395,7 @@ const ROUTES: Route[] = [
 		handler: async ({
 			corsair,
 			internal,
+			req,
 			params,
 			body,
 			scopedTenant,
@@ -401,12 +407,14 @@ const ROUTES: Route[] = [
 			// the resolver's value is authoritative (and null → 401), same as every
 			// other tenant-taking route. No resolver → the URL value is trusted.
 			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
-			const data = await resolveCall(corsair, internal, {
-				plugin: params.plugin!,
-				op: params.op!,
-				tenant,
-				args: input.args,
-			});
+			const data = await withRequestMode(req, () =>
+				resolveCall(corsair, internal, {
+					plugin: params.plugin!,
+					op: params.op!,
+					tenant,
+					args: input.args,
+				}),
+			);
 			return json(200, { data });
 		},
 	},
@@ -487,6 +495,31 @@ async function parseBody(
 }
 
 const DEFAULT_BASE_PATH = '/api/corsair';
+
+const REQUEST_MODES = new Set<PermissionMode>([
+	'open',
+	'cautious',
+	'strict',
+	'readonly',
+]);
+
+/**
+ * The mode a caller asked this request to run under. The binding layer
+ * composes it with the plugin's own, so it can only tighten.
+ *
+ * A misspelled value is refused: the caller meant to restrict the call, and
+ * running it unrestricted is the one outcome they did not ask for.
+ */
+function withRequestMode<T>(req: Request, fn: () => T): T {
+	const raw = req.headers.get('x-corsair-mode');
+	if (raw === null) return fn();
+	if (!REQUEST_MODES.has(raw as PermissionMode)) {
+		throw badRequest(
+			`Unknown permission mode "${raw}" — expected one of ${[...REQUEST_MODES].join(', ')}`,
+		);
+	}
+	return runWithMode(raw as PermissionMode, fn);
+}
 
 export function managementHandler(
 	// `corsair: unknown` is intentional: the handler accepts both
