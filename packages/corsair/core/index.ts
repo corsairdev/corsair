@@ -345,10 +345,15 @@ export type {
 export type {
 	CorsairCloudConfig,
 	CorsairCloudInstance,
+	CorsairCloudInstanceHandle,
+	CorsairCloudManage,
 	CorsairCloudRegistry,
 } from './cloud';
 // Cloud surface (corsairCloud)
 export { corsairCloud } from './cloud';
+export type * from './cloud/v1';
+// Corsair Cloud management API: error type and wire shapes
+export { CloudApiError } from './cloud/v1';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';
@@ -394,6 +399,16 @@ export type {
 	PluginDocsIntrospection,
 } from './inspect';
 export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
+// The readonly check lives in callPluginDb, not on the entity clients.
+export {
+	callPluginDb,
+	DB_METHOD_RISK,
+	decodeDbArgs,
+	encodeDbArgs,
+} from './management/db';
+// The runtime plane throws this one, so a caller needs it to tell a provider
+// failure from a transport failure. CloudApiError extends it.
+export { ManagementApiError } from './management/errors';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

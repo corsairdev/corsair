@@ -1,0 +1,1499 @@
+# The Corsair Cloud management API.
+#
+# One document per project: every path is relative to
+# https://api.corsair.cloud/v1/projects/{project}. The runtime's own per-op
+# surface is a separate document (../contract.openapi.yaml) on the same host —
+# the front door splits /v1 off to the management API and leaves the rest to
+# the runtime fleet.
+#
+# Pinned by tests/cloud/openapi.test.ts: every path the SDK's management client
+# calls appears here, and every path here is called by it.
+openapi: 3.1.0
+info:
+  title: Corsair Cloud management API
+  version: "2026-10-04"
+  description: >
+    Manage a Corsair Cloud project: its instances, the tenants and access lines
+    inside each one, their connections and integrations, inbound webhooks, and
+    the MCP links and tokens that let an agent reach them.
+servers:
+  - url: "https://api.corsair.cloud/v1/projects/{project}"
+    variables:
+      project:
+        default: PROJECT
+        description: The project slug, which is also the slug inside the project key.
+security:
+  - projectKey: []
+tags:
+  - { name: project, description: The project as a whole. }
+  - { name: keys, description: The project key. }
+  - { name: instances, description: Instance rows and their deployment. }
+  - { name: integrations, description: Which plugins an instance hosts, and how they authenticate. }
+  - { name: tenants, description: Who an instance serves. }
+  - { name: connections, description: Stored provider credentials. }
+  - { name: connect, description: Authorizing a tenant with a provider. }
+  - { name: access, description: What a tenant may reach through MCP. }
+  - { name: mcp, description: MCP links and tokens. }
+  - { name: webhooks, description: Inbound provider webhooks and their delivery log. }
+
+paths:
+  /project:
+    get:
+      operationId: getProject
+      tags: [project]
+      summary: The project, with a first page of each of its collections embedded.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Project" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /keys:
+    get:
+      operationId: getKey
+      tags: [keys]
+      summary: The project key.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Key" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /keys/rotate:
+    post:
+      operationId: rotateKey
+      tags: [keys]
+      summary: Mint a new project key and redeploy every instance with it.
+      description: >
+        A hard cutover: the old key is dead when this returns. `failed` names instances still serving it; reconcile each one.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/KeyRotation" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /instances:
+    get:
+      operationId: listInstances
+      tags: [instances]
+      summary: List the project's instances.
+      parameters:
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Instance" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createInstance
+      tags: [instances]
+      summary: Create an instance.
+      description: >
+        Idempotent by `instance_key`: a repeat answers 200 with the existing row.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/CreateInstance" } }
+      responses:
+        "200":
+          description: The instance already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Instance" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "201":
+          description: Created.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Instance" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    get:
+      operationId: getInstance
+      tags: [instances]
+      summary: An instance.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Instance" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: updateInstance
+      tags: [instances]
+      summary: Update an instance.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/UpdateInstance" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Instance" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteInstance
+      tags: [instances]
+      summary: Delete an instance.
+      description: >
+        Permanent. Destroys the instance's data and its tenants' stored credentials.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/signing-secret:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    get:
+      operationId: getSigningSecret
+      tags: [instances]
+      summary: The secret hub signs its deliveries to this instance with.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/SigningSecret" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/reconcile:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: reconcileInstance
+      tags: [instances]
+      summary: Push the stored config, plugins, keys and memberships into the runtime again.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceReconcile" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/apply:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: applyInstance
+      tags: [instances]
+      summary: Push the instance's stored configuration into the runtime.
+      description: >
+        The same call performs a first apply and a re-apply. 201 the first time, 200 after. Refuses an instance holding no integrations, which is 409.
+      responses:
+        "200":
+          description: Re-applied.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceApply" } }
+        "201":
+          description: Applied for the first time.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceApply" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/remove:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: removeInstanceFromRuntime
+      tags: [instances]
+      summary: Drop the instance's runtime record and keep its configuration.
+      description: >
+        One apply rebuilds it. DELETE /instances/{key} destroys the instance instead. The tenants' stored credentials go with the tables, so they reconnect.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/InstanceRemoval" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
+  /instances/{key}/signing-secret/rotate:
+    parameters:
+      - { name: key, in: path, required: true, schema: { type: string }, description: 'The instance key.' }
+    post:
+      operationId: rotateSigningSecret
+      tags: [instances]
+      summary: Mint a new signing secret for this instance.
+      description: >
+        A hard cutover. Connect and permission sessions signed with the old secret die; `invalidated` counts them.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/SigningSecretRotation" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /integrations:
+    get:
+      operationId: listIntegrations
+      tags: [integrations]
+      summary: List configured integrations.
+      parameters:
+        - { name: instance, in: query, schema: { type: string }, description: "Only this instance's integrations." }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Integration" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+
+  /integrations/catalog:
+    get:
+      operationId: listCatalog
+      tags: [integrations]
+      summary: Every plugin the runtime can host, with its auth types.
+      parameters:
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/CatalogIntegration" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+
+  /integrations/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: getIntegration
+      tags: [integrations]
+      summary: An integration.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Integration" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    put:
+      operationId: putIntegration
+      tags: [integrations]
+      summary: Add the integration, or reconfigure it in place.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/PutIntegration" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Integration" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteIntegration
+      tags: [integrations]
+      summary: Remove the integration from the instance.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /integrations/{ref}/operations:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: listIntegrationOperations
+      tags: [integrations]
+      summary: The operations this integration exposes.
+      description: >
+        Each carries the risk level a permission mode judges it by. `permissions.overrides` is keyed by operation id, so this is what a caller names in one.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/IntegrationOperations" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /integrations/{ref}/oauth-app:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: getOauthApp
+      tags: [integrations]
+      summary: Whether your own OAuth app is configured for this integration.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/OauthApp" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    put:
+      operationId: putOauthApp
+      tags: [integrations]
+      summary: Store your own OAuth app for this integration, in place of Corsair's.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/PutOauthApp" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/OauthApp" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteOauthApp
+      tags: [integrations]
+      summary: Drop your own OAuth app, leaving the integration configured.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /tenants:
+    get:
+      operationId: listTenants
+      tags: [tenants]
+      summary: List tenants.
+      parameters:
+        - { name: instance, in: query, schema: { type: string }, description: "Only this instance's tenants." }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Tenant" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createTenant
+      tags: [tenants]
+      summary: Create a tenant on an instance.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/CreateTenant" } }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Tenant" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+
+  /tenants/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<tenant>`.' }
+    get:
+      operationId: getTenant
+      tags: [tenants]
+      summary: A tenant.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Tenant" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: updateTenant
+      tags: [tenants]
+      summary: Update a tenant.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/UpdateTenant" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Tenant" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteTenant
+      tags: [tenants]
+      summary: Delete a tenant and its stored credentials.
+      description: >
+        `synced: false` means the deployed runtime has not caught up; reconcile the instance.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/DeletedSynced" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /connections:
+    get:
+      operationId: listConnections
+      tags: [connections]
+      summary: List connections.
+      parameters:
+        - { name: instance, in: query, schema: { type: string }, description: "Only this instance's connections." }
+        - { name: tenant, in: query, schema: { type: string }, description: "Only this tenant's connections." }
+        - { name: integration, in: query, schema: { type: string }, description: "Only this integration's connections." }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Connection" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+
+  /connections/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>:<tenant>`.' }
+    get:
+      operationId: getConnection
+      tags: [connections]
+      summary: A connection.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Connection" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteConnection
+      tags: [connections]
+      summary: Drop the stored credential for a connection.
+      description: >
+        The grant at the provider stands; revoke it there too if you need it gone.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/DeletedConnection" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /connect/sessions:
+    post:
+      operationId: createConnectSession
+      tags: [connect]
+      summary: Mint a one-time URL a tenant opens to authorize integrations.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/CreateConnectSession" } }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/ConnectSession" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /access:
+    get:
+      operationId: listAccess
+      tags: [access]
+      summary: List access lines.
+      parameters:
+        - { name: instance, in: query, schema: { type: string }, description: "Only this instance's lines." }
+        - { name: tenant, in: query, schema: { type: string }, description: "Only this tenant's lines." }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Access" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+
+  /access/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<tenant>`.' }
+    get:
+      operationId: getAccess
+      tags: [access]
+      summary: An access line.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Access" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    put:
+      operationId: putAccess
+      tags: [access]
+      summary: Grant or change an access line.
+      description: >
+        201 when the line is new, 200 when it already existed. Lowering a permission narrows reach, so check `synced` before treating the narrowing as in force.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/PutAccess" } }
+      responses:
+        "200":
+          description: The line already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/AccessSynced" } }
+        "201":
+          description: The line is new.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/AccessSynced" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteAccess
+      tags: [access]
+      summary: Revoke an access line.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/DeletedSynced" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /mcp/links:
+    get:
+      operationId: listLinks
+      tags: [mcp]
+      summary: List minted MCP links.
+      parameters:
+        - { name: tenant, in: query, schema: { type: string }, description: 'Only links that reach this tenant.' }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Link" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: mintLink
+      tags: [mcp]
+      summary: Mint an MCP link with its own URL.
+      description: >
+        Every line must name access you already hold.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/MintLink" } }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Link" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /mcp/links/{id}:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string }, description: 'The link id, which is also the token in its URL.' }
+    get:
+      operationId: getLink
+      tags: [mcp]
+      summary: A minted MCP link.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Link" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    patch:
+      operationId: updateLink
+      tags: [mcp]
+      summary: Rename a link, or replace its lines.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/UpdateLink" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Link" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteLink
+      tags: [mcp]
+      summary: Revoke a link. Its URL stops working immediately.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Deleted" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /mcp/links/{id}/rotate:
+    parameters:
+      - { name: id, in: path, required: true, schema: { type: string }, description: 'The link id, which is also the token in its URL.' }
+    post:
+      operationId: rotateLink
+      tags: [mcp]
+      summary: Mint a new URL for the same lines and revoke the old one.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Link" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /mcp/tokens:
+    post:
+      operationId: mintToken
+      tags: [mcp]
+      summary: Mint a bearer token for the project's shared MCP URL.
+      description: >
+        Stateless, so it cannot be revoked, only waited out. Pass an `Idempotency-Key` to keep a retry from minting a second one.
+      parameters:
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/MintToken" } }
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/McpToken" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      tags: [webhooks]
+      summary: List webhook endpoints.
+      parameters:
+        - { name: instance, in: query, schema: { type: string }, description: "Only this instance's endpoints." }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Webhook" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createWebhook
+      tags: [webhooks]
+      summary: Create a webhook endpoint for an integration.
+      description: >
+        Idempotent by integration: a repeat answers 200 with the existing endpoint, and writes `signing_secret` if one is supplied.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/CreateWebhook" } }
+      responses:
+        "200":
+          description: The endpoint already existed.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "201":
+          description: Created.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
+          headers: { Idempotent-Replay: { $ref: "#/components/headers/IdempotentReplay" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /webhooks/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: getWebhook
+      tags: [webhooks]
+      summary: A webhook endpoint.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteWebhook
+      tags: [webhooks]
+      summary: Remove a webhook endpoint.
+      description: >
+        The provider keeps posting until you unsubscribe it there as well.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/DeletedWebhook" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /webhooks/{ref}/rotate-secret:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: "A composite ref; see the resource's own description." }
+    post:
+      operationId: rotateWebhookSecret
+      tags: [webhooks]
+      summary: Replace the provider signing secret held for this endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json: { schema: { $ref: "#/components/schemas/RotateWebhookSecret" } }
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Webhook" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /webhooks/{ref}/deliveries:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+    get:
+      operationId: listDeliveries
+      tags: [webhooks]
+      summary: What this endpoint received, newest first.
+      parameters:
+        - { name: tenant, in: query, schema: { type: string }, description: 'Only deliveries for this tenant.' }
+        - { name: limit, in: query, schema: { type: integer }, description: '1-100. Defaults to 100.' }
+        - { name: starting_after, in: query, schema: { type: string }, description: 'The `id` of the last item on the previous page.' }
+      responses:
+        "200":
+          description: A page of results.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: "#/components/schemas/List" }
+                  - type: object
+                    properties:
+                      data: { type: array, items: { $ref: "#/components/schemas/Delivery" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /webhooks/{ref}/deliveries/{id}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+      - { name: id, in: path, required: true, schema: { type: string }, description: 'The delivery id.' }
+    get:
+      operationId: getDelivery
+      tags: [webhooks]
+      summary: One delivery.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/Delivery" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /webhooks/{ref}/deliveries/{id}/retry:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string }, description: 'A composite ref, `<instance>:<integration>`.' }
+      - { name: id, in: path, required: true, schema: { type: string }, description: 'The delivery id.' }
+    post:
+      operationId: retryDelivery
+      tags: [webhooks]
+      summary: Re-post a stored event to the instance's current delivery target.
+      description: >
+        Answers 502 when that POST itself fails: the delivery is still lost.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json: { schema: { $ref: "#/components/schemas/DeliveryRetry" } }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "502": { $ref: "#/components/responses/Error" }
+
+components:
+  securitySchemes:
+    projectKey:
+      type: http
+      scheme: bearer
+      description: >
+        The project key, `ck_cloud_<slug>.<secret>`. The slug in the key must
+        match the `{project}` in the path; a mismatch answers 404, not 403, so a
+        key holder cannot discover other projects by probing slugs.
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: { type: string, maxLength: 255 }
+      description: >
+        Dedupes a retried mint for 24 hours, scoped to the project. Replaying
+        the key with a different body answers 409 `idempotency_key_reuse`; while
+        the first request is still in flight, 409 `idempotency_in_flight`, which
+        is the one 4xx marked retryable. A stored response is not replayed once
+        its own `expires_at` has passed.
+
+  headers:
+    IdempotentReplay:
+      schema: { type: string, enum: ["true"] }
+      description: Present when this response was replayed from an earlier request with the same `Idempotency-Key`.
+    CorsairVersion:
+      schema: { type: string }
+      description: The contract version this response was rendered against. Echoed from the request's `Corsair-Version` when one was sent.
+    RequestId:
+      schema: { type: string }
+      description: Echoed from `X-Corsair-Request-Id`, or generated. Quote it when reporting a failure.
+
+  responses:
+    Error:
+      description: An error envelope.
+      headers:
+        Corsair-Version: { $ref: "#/components/headers/CorsairVersion" }
+        Request-Id: { $ref: "#/components/headers/RequestId" }
+        Retry-After:
+          schema: { type: integer }
+          description: "On 429 only: seconds until the rate-limit window resets."
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/Error" } }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [type, code, message, retryable, doc_url, request_id]
+          properties:
+            type:
+              type: string
+              enum: [authentication_error, permission_error, invalid_request_error, not_found, conflict, rate_limit_error, api_error]
+              description: The error family. Branch on `code` for the specific cause.
+            code: { $ref: "#/components/schemas/ErrorCode" }
+            message: { type: string, description: "A sentence naming the cause. Not a stable identifier." }
+            retryable:
+              type: boolean
+              description: >
+                Safe to send the same request again. True for 5xx and 429, and for
+                409 `idempotency_in_flight`; false otherwise.
+            param: { type: string, description: "The request field at fault, when one field was." }
+            doc_url: { type: string, format: uri }
+            request_id: { type: string }
+    ErrorCode:
+      type: string
+      description: |
+        The full catalogue. `doc_url` on every error points at the matching
+        anchor.
+
+        - `unauthorized` (401) — the `Authorization: Bearer` header is missing, malformed, or the key does not verify.
+        - `resource_missing` (404) — no such resource, or no such project for this key.
+        - `invalid_request` (400) — a field is missing, the wrong type, or outside its allowed range. `param` names it.
+        - `method_not_allowed` (405) — the path exists, the verb does not.
+        - `resource_conflict` (409) — the resource already exists, or the write contradicts one that does.
+        - `idempotency_key_reuse` (409) — the same `Idempotency-Key` with a different method, path, or body. Not retryable; use a new key.
+        - `idempotency_in_flight` (409) — an earlier request with this key has not committed yet. Retryable.
+        - `rate_limit_exceeded` (429) — see `Retry-After`. Reads 1000/min, writes 120/min, mints 60/min, per project.
+        - `project_mismatch` (403) — the key may not act on this resource.
+        - `delivery_failed` (502) — the request was understood; the downstream delivery it triggered failed.
+        - `database_unavailable` (503) — the control plane could not reach its database. Retryable.
+        - `internal_error` (500) — unexpected. Retryable; quote `request_id`.
+      enum:
+        - unauthorized
+        - resource_missing
+        - invalid_request
+        - method_not_allowed
+        - resource_conflict
+        - idempotency_key_reuse
+        - idempotency_in_flight
+        - rate_limit_exceeded
+        - project_mismatch
+        - delivery_failed
+        - database_unavailable
+        - internal_error
+
+    List:
+      type: object
+      required: [object, data, has_more, next_cursor]
+      properties:
+        object: { type: string, enum: [list] }
+        data: { type: array, items: {} }
+        has_more: { type: boolean, description: "More pages follow. Fetch the next with `starting_after=<next_cursor>`." }
+        next_cursor: { type: [string, "null"] }
+    EmbeddedList:
+      type: object
+      description: A first page embedded in another object. Capped at 100 and never paged; when `has_more` is true, list the collection itself.
+      required: [object, data, has_more, next_cursor]
+      properties:
+        object: { type: string, enum: [list] }
+        data: { type: array, items: {} }
+        has_more: { type: boolean }
+        next_cursor: { type: "null" }
+
+    Deleted:
+      type: object
+      required: [object, id, deleted]
+      properties:
+        object: { type: string }
+        id: { type: string }
+        deleted: { type: boolean, enum: [true] }
+    DeletedSynced:
+      allOf:
+        - { $ref: "#/components/schemas/Deleted" }
+        - type: object
+          required: [synced]
+          properties:
+            synced: { type: boolean, description: "False when the deployed runtime has not caught up. Reconcile the instance." }
+    DeletedConnection:
+      allOf:
+        - { $ref: "#/components/schemas/Deleted" }
+        - type: object
+          required: [revoked_upstream]
+          properties:
+            revoked_upstream: { type: boolean, enum: [false], description: "Always false. Deleting the stored credential never revokes the grant at the provider." }
+    DeletedWebhook:
+      allOf:
+        - { $ref: "#/components/schemas/Deleted" }
+        - type: object
+          required: [provider_still_sending]
+          properties:
+            provider_still_sending: { type: boolean, enum: [true], description: "Always true. Unsubscribe at the provider as well." }
+
+    Permission:
+      type: string
+      enum: [readonly, readwrite, admin]
+      description: How far a tenant may go through MCP.
+    AuthType:
+      type: string
+      enum: [managed, oauth_2, api_key, bot_token]
+      description: "`managed` uses Corsair's own OAuth app; the rest are yours."
+    CredentialSource:
+      type: string
+      enum: [app_owned, user_owned]
+      description: Who owns the provider credentials an instance stores.
+    PermissionMode:
+      type: string
+      enum: [open, cautious, strict, readonly]
+      description: The default decision for an operation, before per-operation overrides.
+    PermissionDecision:
+      type: string
+      enum: [allow, deny, require_approval]
+
+    Permissions:
+      type: object
+      required: [mode]
+      properties:
+        mode: { $ref: "#/components/schemas/PermissionMode" }
+        overrides:
+          type: object
+          additionalProperties: { $ref: "#/components/schemas/PermissionDecision" }
+          description: Keyed by operation id. Overrides `mode` for that one operation.
+
+    Project:
+      type: object
+      required: [object, id, status, instance_count, managed_integrations, created]
+      properties:
+        object: { type: string, enum: [project] }
+        id: { type: [string, "null"], description: "The project slug." }
+        status:
+          type: string
+          enum: [error, applying, pending, stopped, running]
+          description: The worst status across the project's instances. `pending` with no instances.
+        instance_count: { type: integer }
+        managed_integrations:
+          type: object
+          required: [limit, used]
+          properties:
+            limit: { type: [integer, "null"], description: "`null` is unlimited." }
+            used: { type: integer, description: "Distinct managed-auth plugins across every instance." }
+        mcp_oauth_url: { type: [string, "null"], description: "The project's OAuth-authenticated MCP endpoint." }
+        created: { type: string, format: date-time }
+        instances: { allOf: [{ $ref: "#/components/schemas/EmbeddedList" }, { type: object, properties: { data: { type: array, items: { $ref: "#/components/schemas/Instance" } } } }] }
+        tenants: { allOf: [{ $ref: "#/components/schemas/EmbeddedList" }, { type: object, properties: { data: { type: array, items: { $ref: "#/components/schemas/Tenant" } } } }] }
+        access: { allOf: [{ $ref: "#/components/schemas/EmbeddedList" }, { type: object, properties: { data: { type: array, items: { $ref: "#/components/schemas/Access" } } } }] }
+        connections: { allOf: [{ $ref: "#/components/schemas/EmbeddedList" }, { type: object, properties: { data: { type: array, items: { $ref: "#/components/schemas/Connection" } } } }] }
+        links: { allOf: [{ $ref: "#/components/schemas/EmbeddedList" }, { type: object, properties: { data: { type: array, items: { $ref: "#/components/schemas/Link" } } } }] }
+
+    Key:
+      type: object
+      required: [object, project_key]
+      properties:
+        object: { type: string, enum: [key] }
+        project_key: { type: string, description: "`ck_cloud_<slug>.<secret>`. Store it; do not log it." }
+    KeyRotation:
+      allOf:
+        - { $ref: "#/components/schemas/Key" }
+        - type: object
+          required: [previous_key_revoked, instances, reapplied, failed]
+          properties:
+            previous_key_revoked: { type: boolean, enum: [true] }
+            instances: { type: integer, description: "Instances the project has." }
+            reapplied: { type: integer, description: "Instances redeployed with the new key." }
+            failed: { type: array, items: { type: string }, description: "Instance keys still serving the revoked key. Reconcile each one." }
+
+    Instance:
+      type: object
+      required: [object, id, instance_key, writable, credential_source]
+      properties:
+        object: { type: string, enum: [instance] }
+        id: { type: string, description: "Same as `instance_key`." }
+        instance_key: { type: string, pattern: "^[a-z][a-z0-9-]*$", maxLength: 32 }
+        description: { type: [string, "null"] }
+        writable: { type: boolean, description: "Write and destructive operations are allowed on this instance." }
+        credential_source: { $ref: "#/components/schemas/CredentialSource" }
+        quota_limit: { type: [integer, "null"] }
+        quota_window: { type: [string, "null"] }
+        url: { type: [string, "null"], description: "Where this instance's operation calls execute. Null until deployed." }
+    CreateInstance:
+      type: object
+      required: [instance_key]
+      properties:
+        instance_key: { type: string, pattern: "^[a-z][a-z0-9-]*$", maxLength: 32, description: "Fixed for the instance's life." }
+        credential_source: { $ref: "#/components/schemas/CredentialSource" }
+    UpdateInstance:
+      type: object
+      minProperties: 1
+      properties:
+        description: { type: [string, "null"], maxLength: 400, description: "`null` clears it." }
+        writable: { type: boolean }
+        credential_source: { $ref: "#/components/schemas/CredentialSource" }
+    InstanceReconcile:
+      type: object
+      required: [object, id, instance]
+      properties:
+        object: { type: string, enum: [instance_reconcile] }
+        id: { type: string }
+        instance: { type: string }
+    InstanceApply:
+      type: object
+      required: [object, id, instance, first_apply, url]
+      properties:
+        object: { type: string, enum: [instance_apply] }
+        id: { type: string }
+        instance: { type: string }
+        first_apply: { type: boolean, description: 'False when the instance was already serving and this re-pushed it.' }
+        url: { type: [string, 'null'], description: 'Where the instance answers, once it is serving.' }
+    InstanceRemoval:
+      type: object
+      required: [object, id, instance, removed, config_retained]
+      properties:
+        object: { type: string, enum: [instance_removal] }
+        id: { type: string }
+        instance: { type: string }
+        removed: { type: boolean, enum: [true] }
+        config_retained: { type: boolean, enum: [true], description: 'The configuration survives, so one apply rebuilds it.' }
+    Operation:
+      type: object
+      required: [object, id, description, risk_level]
+      properties:
+        object: { type: string, enum: [operation] }
+        id: { type: string, description: 'The dotted path, as `overrides` keys it.' }
+        description: { type: [string, 'null'] }
+        risk_level: { type: string, enum: [read, write, destructive], description: 'What a permission mode judges it by.' }
+    IntegrationOperations:
+      type: object
+      required: [object, id, instance, integration, mode, overrides, data]
+      properties:
+        object: { type: string, enum: [integration_operations] }
+        id: { type: string }
+        instance: { type: string }
+        integration: { type: string }
+        mode: { oneOf: [{ $ref: "#/components/schemas/PermissionMode" }, { type: 'null' }] }
+        overrides: { type: object, additionalProperties: { $ref: "#/components/schemas/PermissionDecision" } }
+        data: { type: array, items: { $ref: "#/components/schemas/Operation" } }
+    SigningSecret:
+      type: object
+      required: [object, id, instance, signing_secret]
+      properties:
+        object: { type: string, enum: [signing_secret] }
+        id: { type: string }
+        instance: { type: string }
+        signing_secret: { type: string, description: "The HMAC key hub signs its deliveries to this instance with, as `x-corsair-signature`. The hosted runtime verifies them itself." }
+    SigningSecretRotation:
+      allOf:
+        - { $ref: "#/components/schemas/SigningSecret" }
+        - type: object
+          required: [previous_secret_revoked, applied, invalidated]
+          properties:
+            previous_secret_revoked: { type: boolean, enum: [true] }
+            applied: { type: boolean, description: "False when the redeploy failed: the new secret is stored, but the deployed runtime still signs with the old one." }
+            invalidated:
+              type: object
+              required: [connect_sessions, permission_sessions]
+              properties:
+                connect_sessions: { type: integer }
+                permission_sessions: { type: integer }
+
+    Integration:
+      type: object
+      required: [object, id, instance, integration, has_credentials]
+      properties:
+        object: { type: string, enum: [integration] }
+        id: { type: string, description: "`<instance>:<integration>`" }
+        instance: { type: string }
+        integration: { type: string }
+        auth_type: { oneOf: [{ $ref: "#/components/schemas/AuthType" }, { type: "null" }] }
+        has_credentials: { type: boolean, description: "Credentials are stored. They are never read back." }
+        permissions: { oneOf: [{ $ref: "#/components/schemas/Permissions" }, { type: "null" }] }
+    PutIntegration:
+      type: object
+      properties:
+        auth_type: { $ref: "#/components/schemas/AuthType" }
+        permissions: { $ref: "#/components/schemas/Permissions" }
+        credentials:
+          type: object
+          additionalProperties: { type: string }
+          description: Write-only. Omit to leave the stored credentials in place.
+    CatalogIntegration:
+      type: object
+      required: [object, id, name, auth_types, managed_available]
+      properties:
+        object: { type: string, enum: [catalog_integration] }
+        id: { type: string, description: "The plugin id." }
+        name: { type: string }
+        auth_types: { type: array, items: { type: string } }
+        managed_available: { type: boolean, description: "Corsair hosts an OAuth app for this plugin, so no client id is needed. Separate from your plan's managed-integration quota." }
+    OauthApp:
+      type: object
+      required: [object, id, configured]
+      properties:
+        object: { type: string, enum: [oauth_app] }
+        id: { type: string }
+        configured: { type: boolean }
+        scopes: { type: [string, "null"] }
+        app_install_slug: { type: [string, "null"] }
+    PutOauthApp:
+      type: object
+      required: [client_id, client_secret]
+      properties:
+        client_id: { type: string, minLength: 1 }
+        client_secret: { type: string, minLength: 1, description: "Write-only. Never read back." }
+        scopes: { type: string, description: "Space-separated scopes to request." }
+        app_install_slug: { type: string }
+
+    Tenant:
+      type: object
+      required: [object, id, instance, tenant, created]
+      properties:
+        object: { type: string, enum: [tenant] }
+        id: { type: string, description: "`<instance>:<tenant>`" }
+        instance: { type: string }
+        tenant: { type: string }
+        email: { type: [string, "null"] }
+        label: { type: [string, "null"] }
+        created: { type: string, format: date-time }
+    CreateTenant:
+      type: object
+      required: [instance, tenant_id]
+      properties:
+        instance: { type: string, pattern: "^[a-z][a-z0-9-]*$" }
+        tenant_id: { type: string, pattern: "^[A-Za-z0-9._:~@+-]{1,128}$", description: "No `/`: the id travels in a URL ref." }
+        email: { type: string, format: email }
+        label: { type: string, description: "A display name for the console." }
+    UpdateTenant:
+      type: object
+      minProperties: 1
+      properties:
+        email: { type: string, format: email }
+        label: { type: string }
+
+    Access:
+      type: object
+      required: [object, id, instance, tenant, permission, connected, expired]
+      properties:
+        object: { type: string, enum: [access] }
+        id: { type: string, description: "`<instance>:<tenant>`" }
+        instance: { type: string }
+        tenant: { type: string }
+        label: { type: [string, "null"] }
+        permission: { $ref: "#/components/schemas/Permission" }
+        connected: { type: boolean, description: "The tenant has at least one live connection on this instance." }
+        expired: { type: boolean, description: "A credential behind this line has expired and needs reconnecting." }
+    AccessSynced:
+      allOf:
+        - { $ref: "#/components/schemas/Access" }
+        - type: object
+          required: [synced]
+          properties:
+            synced: { type: boolean, description: "False when the deployed runtime has not caught up. Reconcile the instance." }
+    PutAccess:
+      type: object
+      required: [permission]
+      properties:
+        permission: { $ref: "#/components/schemas/Permission" }
+        quota:
+          type: object
+          required: [limit, window]
+          description: Omitted leaves a stored quota alone; `null` on either half clears it.
+          properties:
+            limit: { type: [integer, "null"] }
+            window: { type: [string, "null"] }
+        label: { type: string }
+        email: { type: string, format: email, description: "Stored on the tenant, so it changes every line that tenant holds." }
+
+    Connection:
+      type: object
+      required: [object, id, instance, tenant, integration, status]
+      properties:
+        object: { type: string, enum: [connection] }
+        id: { type: string, description: "`<instance>:<integration>:<tenant>`" }
+        instance: { type: string }
+        tenant: { type: string }
+        integration: { type: string }
+        status: { type: string }
+    CreateConnectSession:
+      type: object
+      required: [instance, tenant]
+      properties:
+        instance: { type: string }
+        tenant: { type: string }
+        integrations: { type: array, items: { type: string }, description: "Which integrations to authorize. Omit for all of the instance's." }
+        delivery_url: { type: string, format: uri, description: "Where to send the tenant once they finish." }
+    ConnectSession:
+      type: object
+      required: [object, url, expires_at, instance, tenant, integrations]
+      properties:
+        object: { type: string, enum: [connect_session] }
+        url: { type: string, format: uri, description: "One-time. Hand it to the tenant, not to an agent." }
+        expires_at: { type: string, format: date-time }
+        instance: { type: string }
+        tenant: { type: string }
+        integrations: { type: array, items: { type: string } }
+
+    LinkLine:
+      type: object
+      required: [instance, tenant, permission]
+      properties:
+        instance: { type: string }
+        tenant: { type: string }
+        permission: { $ref: "#/components/schemas/Permission" }
+    Link:
+      type: object
+      required: [object, id, instances, url, created]
+      properties:
+        object: { type: string, enum: [link] }
+        id: { type: string, description: "Also the token in the link's URL." }
+        recipient: { type: [string, "null"] }
+        instances:
+          type: array
+          items:
+            allOf:
+              - { $ref: "#/components/schemas/LinkLine" }
+              - type: object
+                required: [lost_access]
+                properties:
+                  lost_access: { type: boolean, description: "This line's access has since been revoked, so it reaches nothing." }
+        url: { type: string, format: uri }
+        created: { type: string, format: date-time }
+    MintLink:
+      type: object
+      required: [instances]
+      properties:
+        recipient: { type: [string, "null"], description: "Who the link is for. A label, not an address." }
+        instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Every line must name access you already hold." }
+    UpdateLink:
+      type: object
+      minProperties: 1
+      properties:
+        recipient: { type: [string, "null"] }
+        instances: { type: array, minItems: 1, items: { $ref: "#/components/schemas/LinkLine" }, description: "Replaces the whole set. Omit to leave the lines alone." }
+    MintToken:
+      type: object
+      required: [instance, tenant]
+      properties:
+        instance: { type: string }
+        tenant: { type: string, description: "Needs an existing access line for `<instance>:<tenant>`." }
+        ttl_days: { type: integer, minimum: 1, maximum: 365, default: 30 }
+    McpToken:
+      type: object
+      required: [object, url, token, instance, tenant, expires_at]
+      properties:
+        object: { type: string, enum: [mcp_token] }
+        url: { type: string, format: uri, description: "The project's shared MCP URL. The bearer says who is calling." }
+        token: { type: string }
+        instance: { type: string }
+        tenant: { type: string }
+        expires_at: { type: string, format: date-time }
+
+    Webhook:
+      type: object
+      required: [object, id, instance, integration, url, has_secret, created]
+      properties:
+        object: { type: string, enum: [webhook] }
+        id: { type: string, description: "`<instance>:<integration>`" }
+        instance: { type: string }
+        integration: { type: string }
+        url: { type: string, format: uri, description: "Register this with the provider as the delivery target." }
+        has_secret: { type: boolean }
+        created: { type: string, format: date-time }
+    CreateWebhook:
+      type: object
+      required: [instance, integration]
+      properties:
+        instance: { type: string }
+        integration: { type: string, pattern: "^[a-z][a-z0-9-]*$" }
+        signing_secret: { type: string, minLength: 1, description: "The provider's own signing secret, so inbound deliveries can be verified. Write-only. Unrelated to the instance signing secret." }
+    RotateWebhookSecret:
+      type: object
+      required: [signing_secret]
+      properties:
+        signing_secret: { type: string, minLength: 1 }
+    Delivery:
+      type: object
+      required: [object, id, integration, status, attempts, received]
+      properties:
+        object: { type: string, enum: [delivery] }
+        id: { type: string }
+        integration: { type: string }
+        tenant: { type: [string, "null"] }
+        status: { type: string }
+        event_type: { type: [string, "null"] }
+        latency_ms: { type: [integer, "null"] }
+        attempts: { type: integer }
+        error: { type: [string, "null"] }
+        received: { type: string, format: date-time }
+        delivered: { type: [string, "null"], format: date-time }
+    DeliveryRetry:
+      type: object
+      required: [object, id, delivered, error]
+      properties:
+        object: { type: string, enum: [delivery_retry] }
+        id: { type: string }
+        delivered: { type: boolean, enum: [true] }
+        error: { type: "null" }
