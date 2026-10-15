@@ -3,14 +3,17 @@ import {
 	encryptDEK,
 	generateDEK,
 } from '../core/auth/encryption';
-import { createAccountKeyManager } from '../core/auth/key-manager';
+import {
+	createAccountKeyManager,
+	createIntegrationKeyManager,
+} from '../core/auth/key-manager';
 import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
 async function seedOutlookAccount(
 	database: ReturnType<typeof createTestDatabase>['database'],
-) {
+): Promise<string> {
 	const now = new Date();
 	const dek = generateDEK();
 	const encryptedDek = await encryptDEK(dek, KEK);
@@ -44,6 +47,8 @@ async function seedOutlookAccount(
 			dek: encryptedDek,
 		})
 		.execute();
+
+	return dek;
 }
 
 describe('account key manager concurrent field writes', () => {
@@ -103,6 +108,148 @@ describe('account key manager concurrent field writes', () => {
 
 			// The original manager must observe the new token, not its snapshot.
 			expect(await reader.get_access_token()).toBe('tok-new');
+		} finally {
+			cleanup();
+		}
+	});
+});
+
+describe('key manager decryption failures', () => {
+	it('does not overwrite integration config when it cannot be decrypted', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const dek = await seedOutlookAccount(database);
+			const corruptedConfig = {
+				client_id: encryptConfig({ value: 'client-id' }, dek).value,
+				client_secret: 'corrupted-value',
+			};
+			await database.db
+				.updateTable('corsair_integrations')
+				.set({ config: corruptedConfig })
+				.where('name', '=', 'outlook')
+				.execute();
+			const storedConfigBeforeUpdate = await database.db
+				.selectFrom('corsair_integrations')
+				.select('config')
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+
+			const km = createIntegrationKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				kek: KEK,
+				database,
+			});
+
+			await expect(km.set_client_id('replacement-client-id')).rejects.toThrow();
+
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.select('config')
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+			expect(integration.config).toEqual(storedConfigBeforeUpdate.config);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('can explicitly discard an undecryptable integration config for recovery', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const dek = await seedOutlookAccount(database);
+			await database.db
+				.updateTable('corsair_integrations')
+				.set({
+					config: {
+						client_id: encryptConfig({ value: 'client-id' }, dek).value,
+						client_secret: 'corrupted-value',
+					},
+				})
+				.where('name', '=', 'outlook')
+				.execute();
+
+			const km = createIntegrationKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				kek: KEK,
+				database,
+			});
+
+			await km.issue_new_dek({ discardConfig: true });
+			await km.set_client_id('replacement-client-id');
+
+			expect(await km.get_client_id()).toBe('replacement-client-id');
+			expect(await km.get_client_secret()).toBeNull();
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('does not discard valid integration credentials with a wrong KEK', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedOutlookAccount(database);
+			const storedBeforeRecovery = await database.db
+				.selectFrom('corsair_integrations')
+				.select(['config', 'dek'])
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+			const km = createIntegrationKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				kek: 'incorrect-kek-with-at-least-32-characters',
+				database,
+			});
+
+			await expect(km.issue_new_dek({ discardConfig: true })).rejects.toThrow();
+
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.select(['config', 'dek'])
+				.where('name', '=', 'outlook')
+				.executeTakeFirstOrThrow();
+			expect(integration).toEqual(storedBeforeRecovery);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('does not overwrite account config when it cannot be decrypted', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedOutlookAccount(database);
+			const corruptedConfig = {
+				access_token: 'corrupted-value',
+				refresh_token: 'also-corrupted-value',
+			};
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({ config: corruptedConfig })
+				.where('id', '=', 'account-default')
+				.execute();
+			const storedConfigBeforeUpdate = await database.db
+				.selectFrom('corsair_accounts')
+				.select('config')
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+
+			const km = createAccountKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				tenantId: 'default',
+				kek: KEK,
+				database,
+			});
+
+			await expect(km.set_access_token('replacement-token')).rejects.toThrow();
+
+			const account = await database.db
+				.selectFrom('corsair_accounts')
+				.select('config')
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+			expect(account.config).toEqual(storedConfigBeforeUpdate.config);
 		} finally {
 			cleanup();
 		}
