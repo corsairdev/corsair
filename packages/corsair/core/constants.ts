@@ -272,6 +272,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'reducto',
+	'remoet',
 	'replicate',
 	'removebg',
 	'replyio',
@@ -621,6 +622,7 @@ export const ProviderDisplayNames = {
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
+	remoet: 'Remoet',
 	replicate: 'Replicate',
 	removebg: 'remove.bg',
 	replyio: 'Reply.io',
@@ -977,6 +979,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'reducto'
+	| 'remoet'
 	| 'replicate'
 	| 'removebg'
 	| 'replyio'
