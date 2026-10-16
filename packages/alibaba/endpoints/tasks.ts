@@ -18,6 +18,21 @@ const STATUS_RANK: Record<string, number> = {
 	CANCELED: 2,
 };
 
+// The entity store has no conditional update, so each task's read, compare and
+// write run one after another: overlapping polls can't both read the old status.
+const pendingWrites = new Map<string, Promise<void>>();
+
+function serializeByTask(taskId: string, write: () => Promise<void>) {
+	// A failed earlier write must not block this one.
+	const previous =
+		pendingWrites.get(taskId)?.catch(() => {}) ?? Promise.resolve();
+	const next = previous.then(write);
+	pendingWrites.set(taskId, next);
+	return next.finally(() => {
+		if (pendingWrites.get(taskId) === next) pendingWrites.delete(taskId);
+	});
+}
+
 export const get: AlibabaEndpoints['tasksGet'] = async (ctx, input) => {
 	const { task_id } = AlibabaEndpointInputSchemas.tasksGet.parse(input);
 	const task = AlibabaEndpointOutputSchemas.tasksGet.parse(
@@ -27,27 +42,30 @@ export const get: AlibabaEndpoints['tasksGet'] = async (ctx, input) => {
 		}),
 	);
 
-	if (ctx.db.videoTasks) {
+	const videoTasks = ctx.db.videoTasks;
+	if (videoTasks) {
 		try {
-			const cached = await ctx.db.videoTasks.findByEntityId(task_id);
-			const stored = cached?.data.status;
-			// A slower poll can return after a newer one; don't move the task back.
-			const stale =
-				stored !== undefined &&
-				(STATUS_RANK[task.output.task_status] ?? -1) <
-					(STATUS_RANK[stored] ?? -1);
-			if (!stale)
-				await ctx.db.videoTasks.upsertByEntityId(task_id, {
-					...cached?.data,
-					taskId: task_id,
-					status: task.output.task_status,
-					videoUrl: task.output.video_url ?? undefined,
-					submitTime: task.output.submit_time ?? undefined,
-					endTime: task.output.end_time ?? undefined,
-					durationSeconds: task.usage?.output_video_duration ?? undefined,
-					errorCode: task.output.code ?? undefined,
-					updatedAt: new Date(),
-				});
+			await serializeByTask(task_id, async () => {
+				const cached = await videoTasks.findByEntityId(task_id);
+				const stored = cached?.data.status;
+				// A slower poll can return after a newer one; don't move the task back.
+				const stale =
+					stored !== undefined &&
+					(STATUS_RANK[task.output.task_status] ?? -1) <
+						(STATUS_RANK[stored] ?? -1);
+				if (!stale)
+					await videoTasks.upsertByEntityId(task_id, {
+						...cached?.data,
+						taskId: task_id,
+						status: task.output.task_status,
+						videoUrl: task.output.video_url ?? undefined,
+						submitTime: task.output.submit_time ?? undefined,
+						endTime: task.output.end_time ?? undefined,
+						durationSeconds: task.usage?.output_video_duration ?? undefined,
+						errorCode: task.output.code ?? undefined,
+						updatedAt: new Date(),
+					});
+			});
 		} catch (error) {
 			console.warn('Failed to save Model Studio task to database:', error);
 		}

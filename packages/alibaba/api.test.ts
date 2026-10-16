@@ -443,6 +443,74 @@ describe('tasks.get', () => {
 		expect(ctx.db.videoTasks.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
+	it('keeps SUCCEEDED when a slower RUNNING poll overlaps it', async () => {
+		const store = new Map<string, Record<string, unknown>>();
+		// The RUNNING poll's read is slow, so both polls read before either writes.
+		let reads = 0;
+		const db = {
+			findByEntityId: jest.fn(async (id: string) => {
+				const snapshot = store.get(id);
+				const delay = reads++ === 0 ? 30 : 0;
+				await new Promise((resolve) => setTimeout(resolve, delay));
+				return snapshot ? { data: snapshot } : null;
+			}),
+			upsertByEntityId: jest.fn(
+				async (id: string, data: Record<string, unknown>) => {
+					store.set(id, data);
+				},
+			),
+		};
+		const ctx = { ...createContext(), db: { videoTasks: db } };
+		const answers = [
+			{ request_id: 'a', output: { task_id: 't3', task_status: 'RUNNING' } },
+			{
+				request_id: 'b',
+				output: {
+					task_id: 't3',
+					task_status: 'SUCCEEDED',
+					video_url: 'https://x.io/done.mp4',
+				},
+			},
+		];
+		fetchMock.mockImplementation(
+			async () =>
+				new Response(JSON.stringify(answers.shift()), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+		);
+
+		await Promise.all([
+			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't3' }),
+			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't3' }),
+		]);
+
+		expect(store.get('t3')).toMatchObject({
+			status: 'SUCCEEDED',
+			videoUrl: 'https://x.io/done.mp4',
+		});
+	});
+
+	it('still saves a poll after an earlier write for the task failed', async () => {
+		const ctx = createContext();
+		ctx.db.videoTasks.upsertByEntityId
+			.mockRejectedValueOnce(new Error('db down'))
+			.mockResolvedValueOnce(undefined);
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		respond(200, {
+			request_id: 'c',
+			output: { task_id: 't4', task_status: 'RUNNING' },
+		});
+
+		await Promise.all([
+			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't4' }),
+			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't4' }),
+		]);
+
+		expect(ctx.db.videoTasks.upsertByEntityId).toHaveBeenCalledTimes(2);
+		warn.mockRestore();
+	});
+
 	it('parses a failed task with its error code', async () => {
 		respond(200, {
 			request_id: 'r1',
