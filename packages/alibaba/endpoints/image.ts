@@ -19,7 +19,7 @@ export const generate: AlibabaEndpoints['imageGenerate'] = async (
 
 	// Single-turn messages: input images in order, then the one text prompt.
 	const response = AlibabaEndpointOutputSchemas.imageGenerate.parse(
-		await makeDashScopeRequest<unknown>(
+		await makeDashScopeRequest(
 			'api/v1/services/aigc/multimodal-generation/generation',
 			ctx.key,
 			{

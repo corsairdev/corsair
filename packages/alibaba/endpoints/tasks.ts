@@ -10,7 +10,7 @@ import {
 export const get: AlibabaEndpoints['tasksGet'] = async (ctx, input) => {
 	const { task_id } = AlibabaEndpointInputSchemas.tasksGet.parse(input);
 	const task = AlibabaEndpointOutputSchemas.tasksGet.parse(
-		await makeDashScopeRequest<unknown>('api/v1/tasks/{task_id}', ctx.key, {
+		await makeDashScopeRequest('api/v1/tasks/{task_id}', ctx.key, {
 			path: { task_id },
 			baseUrl: ctx.options.baseUrl,
 		}),

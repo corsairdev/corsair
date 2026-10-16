@@ -19,6 +19,7 @@ async function submit<K extends VideoOperation>(
 	ctx: AlibabaContext,
 	operation: K,
 	event: string,
+	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 ): Promise<VideoTaskCreated> {
 	const parsed = AlibabaEndpointInputSchemas[operation].parse(
@@ -27,7 +28,7 @@ async function submit<K extends VideoOperation>(
 	const { model, parameters, ...fields } = parsed;
 
 	const created = AlibabaEndpointOutputSchemas[operation].parse(
-		await makeDashScopeRequest<unknown>(SYNTHESIS, ctx.key, {
+		await makeDashScopeRequest(SYNTHESIS, ctx.key, {
 			method: 'POST',
 			body: { model, input: fields, ...(parameters ? { parameters } : {}) },
 			async: true,

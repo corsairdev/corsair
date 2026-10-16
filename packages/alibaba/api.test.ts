@@ -88,6 +88,7 @@ const imageResponse = {
 };
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -475,21 +476,18 @@ describe('errors', () => {
 		expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(true);
 	});
 
-	it('retries throttling with backoff', async () => {
+	it('hands throttling to the handler after one request', async () => {
 		respond(429, {
 			request_id: 'r4',
 			code: 'Throttling.RateQuota',
 			message: 'Requests rate limit exceeded',
 		});
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Tasks.get as AnyEndpoint)(createContext(), {
+		const error = (await (Tasks.get as AnyEndpoint)(createContext(), {
 			task_id: 't',
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as AlibabaAPIError;
-		jest.useRealTimers();
+		}).catch((e: Error) => e)) as AlibabaAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.code).toBe('Throttling.RateQuota');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({

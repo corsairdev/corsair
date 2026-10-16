@@ -1,9 +1,23 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 // The shared international domain. Model Studio recommends a workspace domain,
 // https://{WorkspaceId}.{region}.maas.aliyuncs.com, set with the baseUrl option.
 export const DASHSCOPE_API_BASE = 'https://dashscope-intl.aliyuncs.com';
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const DASHSCOPE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export class AlibabaAPIError extends Error {
 	readonly status?: number;
@@ -43,7 +57,8 @@ export function normalizeBaseUrl(baseUrl: string | undefined): string {
 		.replace(/\/api\/v1$/, '');
 }
 
-export async function makeDashScopeRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeDashScopeRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -54,7 +69,7 @@ export async function makeDashScopeRequest<T>(
 		async?: boolean;
 		baseUrl?: string;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body } = options;
 
 	const config: OpenAPIConfig = {
@@ -78,7 +93,9 @@ export async function makeDashScopeRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: DASHSCOPE_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const code = readString(error.body, 'code');
