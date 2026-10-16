@@ -48,7 +48,9 @@ export function asArray<T>(value: T[] | null | undefined): T[] {
 }
 
 export async function persistUsers(
-	users: TwittrApiUser[] | null | undefined | unknown,
+	// Accepted loosely: endpoint pages are typed arrays, but a malformed
+	// provider body must degrade to a no-op instead of failing the request.
+	users: unknown,
 	db: PluginDb,
 ): Promise<void> {
 	// Guarded: persistence is best-effort and must never fail the request.

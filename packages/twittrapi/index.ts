@@ -654,6 +654,8 @@ export function twittrapi<const T extends TwittrApiPluginOptions>(
 			const headers = request.headers;
 			if ('x-twittrapi-signature' in headers) return true;
 			if ('x-twittrapi-event' in headers) return true;
+			// Raw bodies arrive as string or pre-parsed objects; Record keeps
+			// the matcher generic across transports (parity with core readBodyRecord).
 			const body =
 				typeof request.body === 'string'
 					? (() => {
@@ -691,7 +693,10 @@ export function twittrapi<const T extends TwittrApiPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('twittrapi', 'api_key');
+				}
+				return res;
 			}
 
 			throw new AuthMissingError('twittrapi', 'api_key');

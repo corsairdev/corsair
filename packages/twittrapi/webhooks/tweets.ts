@@ -22,6 +22,8 @@ export async function alreadyDelivered(
 
 export async function recordDelivery(
 	db: TwittrApiContext['db'],
+	// Unknown: deliveries arrive as raw provider JSON of varying shapes
+	// (full tweet events or minimal test events); safeParse validates below.
 	event: unknown,
 ): Promise<void> {
 	// Test events carry only {event, id}; fall back to empty strings so the
