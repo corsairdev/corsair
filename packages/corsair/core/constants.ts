@@ -33,6 +33,7 @@ export const BaseProviders = [
 	'aimlapi',
 	'airtable',
 	'aivoov',
+	'akta',
 	'alchemy',
 	'algolia',
 	'allimagesai',
@@ -382,6 +383,7 @@ export const ProviderDisplayNames = {
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	aivoov: 'AiVOOV',
+	akta: 'Akta',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
 	allimagesai: 'All Images AI',
@@ -738,6 +740,7 @@ export type AllProviders =
 	| 'aimlapi'
 	| 'airtable'
 	| 'aivoov'
+	| 'akta'
 	| 'alchemy'
 	| 'algolia'
 	| 'allimagesai'
