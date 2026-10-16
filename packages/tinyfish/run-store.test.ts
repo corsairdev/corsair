@@ -84,6 +84,35 @@ describe('tinyfish run store', () => {
 		expect(client.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
+	it('runs a queued save after an earlier save fails', async () => {
+		const { rows, client } = createStore();
+		const ctx = createContext(client, {});
+		client.upsertByEntityId.mockRejectedValueOnce(
+			new Error('transient write failure'),
+		);
+		jest.spyOn(console, 'error').mockImplementation(() => {});
+
+		const poll = persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'RUNNING',
+			goal: 'Get the title',
+		});
+		const completion = persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+			finished_at: '2026-01-02T00:00:09.000Z',
+		});
+
+		await expect(poll).rejects.toThrow('transient write failure');
+		await expect(completion).resolves.toBeUndefined();
+
+		expect(client.upsertByEntityId).toHaveBeenCalledTimes(2);
+		expect(rows.get('run-1')).toMatchObject({
+			status: 'COMPLETED',
+			finishedAt: new Date('2026-01-02T00:00:09.000Z'),
+		});
+	});
+
 	it('keeps the terminal status when a stale poll races the completion save', async () => {
 		const { rows, client } = createStore();
 		const ctx = createContext(client, {});

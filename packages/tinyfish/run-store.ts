@@ -35,7 +35,17 @@ export async function persistRun(
 
 	const runId: string = run.run_id;
 	const previous = persistChains.get(runId) ?? Promise.resolve();
-	const current = previous.then(() => persistNow(runs, runId, run));
+	// The catch is load-bearing: without it one rejected save poisons every
+	// save queued behind it. Each link still rejects to its own caller.
+	const current = previous
+		.catch((error: unknown) => {
+			console.error(
+				`[TINYFISH:persistRun] queued save failed for run ${runId}: ${
+					error instanceof Error ? error.message : String(error)
+				}`,
+			);
+		})
+		.then(() => persistNow(runs, runId, run));
 	persistChains.set(runId, current);
 	try {
 		await current;
