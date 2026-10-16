@@ -148,9 +148,12 @@ so the delivery body only ever names the event and the run. A delivery
 that disagrees, arrives when the API cannot confirm it, or lands with no
 key configured is dropped and logged, never trusted.
 
-`webhookHooks` run through the corsair binder: `after` fires only when the
-handler returned success, which for this plugin means confirmed and
-persisted, and a dropped delivery fires no hook at all.
+`webhookHooks` run through the corsair binder. `before` fires for every
+delivery, including ones the handler later rejects. `after` fires only
+when the handler returned success, which for this plugin means the run
+was confirmed against the API. With no database configured the run is
+not persisted: handling still returns success or rejection, with
+nothing stored.
 
 The plugin serializes saves per run id inside one process, so a `getRun`
 poll and a webhook delivery cannot interleave a stale status over a
