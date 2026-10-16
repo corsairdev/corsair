@@ -26,7 +26,7 @@ export const run: ClayEndpoints['routinesRun'] = async (ctx, input) => {
 	const { routine_id, ...body } =
 		ClayEndpointInputSchemas.routinesRun.parse(input);
 	const result = ClayEndpointOutputSchemas.routinesRun.parse(
-		await makeClayRequest<unknown>('routines/{routine_id}/run', ctx.key, {
+		await makeClayRequest('routines/{routine_id}/run', ctx.key, {
 			method: 'POST',
 			path: { routine_id },
 			body,
@@ -57,11 +57,10 @@ export const getResults: ClayEndpoints['routinesGetResults'] = async (
 		ClayEndpointInputSchemas.routinesGetResults.parse(input);
 	// 202 while the run is in progress, 200 once it is terminal.
 	const result = ClayEndpointOutputSchemas.routinesGetResults.parse(
-		await makeClayRequest<unknown>(
-			'routines/run/{routine_run_id}/results',
-			ctx.key,
-			{ path: { routine_run_id }, query: { cursor, limit } },
-		),
+		await makeClayRequest('routines/run/{routine_run_id}/results', ctx.key, {
+			path: { routine_run_id },
+			query: { cursor, limit },
+		}),
 	);
 
 	await saveRun(ctx, {

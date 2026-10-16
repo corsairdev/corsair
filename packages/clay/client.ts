@@ -1,7 +1,21 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const CLAY_API_BASE = 'https://api.clay.com/public/v0';
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const CLAY_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export class ClayAPIError extends Error {
 	readonly status?: number;
@@ -29,7 +43,8 @@ function readMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
-export async function makeClayRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeClayRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -38,7 +53,7 @@ export async function makeClayRequest<T>(
 		query?: Record<string, string | number | undefined>;
 		body?: object;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -62,7 +77,9 @@ export async function makeClayRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: CLAY_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const message = readMessage(error.body);

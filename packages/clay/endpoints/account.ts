@@ -6,7 +6,7 @@ import { ClayEndpointInputSchemas, ClayEndpointOutputSchemas } from './types';
 export const me: ClayEndpoints['accountMe'] = async (ctx, input) => {
 	ClayEndpointInputSchemas.accountMe.parse(input ?? {});
 	const result = ClayEndpointOutputSchemas.accountMe.parse(
-		await makeClayRequest<unknown>('me', ctx.key),
+		await makeClayRequest('me', ctx.key),
 	);
 	await logEventFromContext(
 		ctx,
@@ -20,7 +20,7 @@ export const me: ClayEndpoints['accountMe'] = async (ctx, input) => {
 export const credits: ClayEndpoints['accountCredits'] = async (ctx, input) => {
 	ClayEndpointInputSchemas.accountCredits.parse(input ?? {});
 	const result = ClayEndpointOutputSchemas.accountCredits.parse(
-		await makeClayRequest<unknown>('credits/balance', ctx.key),
+		await makeClayRequest('credits/balance', ctx.key),
 	);
 	await logEventFromContext(
 		ctx,

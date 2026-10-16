@@ -8,7 +8,9 @@ async function saveResults(ctx: ClayContext, page: RunSearchResponse) {
 	try {
 		if (page.source_type === 'people' && ctx.db.people) {
 			for (const person of page.data) {
-				const current = person.matched_experiences[0];
+				const current = person.matched_experiences.find(
+					(experience) => experience.end_date === null,
+				);
 				await ctx.db.people.upsertByEntityId(String(person.clay_profile_id), {
 					clayProfileId: person.clay_profile_id,
 					name: person.name,
@@ -48,7 +50,7 @@ export const reference: ClayEndpoints['searchReference'] = async (
 ) => {
 	ClayEndpointInputSchemas.searchReference.parse(input ?? {});
 	const result = ClayEndpointOutputSchemas.searchReference.parse(
-		await makeClayRequest<unknown>('search/query-mode/reference', ctx.key),
+		await makeClayRequest('search/query-mode/reference', ctx.key),
 	);
 	await logEventFromContext(
 		ctx,
@@ -62,7 +64,7 @@ export const reference: ClayEndpoints['searchReference'] = async (
 export const create: ClayEndpoints['searchCreate'] = async (ctx, input) => {
 	const body = ClayEndpointInputSchemas.searchCreate.parse(input);
 	const result = ClayEndpointOutputSchemas.searchCreate.parse(
-		await makeClayRequest<unknown>('search/query-mode', ctx.key, {
+		await makeClayRequest('search/query-mode', ctx.key, {
 			method: 'POST',
 			body,
 		}),
@@ -80,11 +82,11 @@ export const run: ClayEndpoints['searchRun'] = async (ctx, input) => {
 	const { search_id, limit } = ClayEndpointInputSchemas.searchRun.parse(input);
 	// The iterator is stateful: each call returns the next page while has_more.
 	const result = ClayEndpointOutputSchemas.searchRun.parse(
-		await makeClayRequest<unknown>(
-			'search/query-mode/{search_id}/run',
-			ctx.key,
-			{ method: 'POST', path: { search_id }, body: { limit } },
-		),
+		await makeClayRequest('search/query-mode/{search_id}/run', ctx.key, {
+			method: 'POST',
+			path: { search_id },
+			body: { limit },
+		}),
 	);
 
 	await saveResults(ctx, result);

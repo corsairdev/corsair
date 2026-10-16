@@ -65,6 +65,13 @@ const person = {
 	},
 	matched_experiences: [
 		{
+			company: 'Initech',
+			title: 'VP Engineering',
+			location: 'Austin',
+			start_date: '2019-03',
+			end_date: '2022-12',
+		},
+		{
 			company: 'Acme',
 			title: 'CTO',
 			location: 'San Francisco',
@@ -90,6 +97,7 @@ const company = {
 };
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -310,6 +318,36 @@ describe('search', () => {
 		);
 	});
 
+	it('leaves current job empty when every matched role has ended', async () => {
+		respond(200, {
+			source_type: 'people',
+			data: [
+				{
+					...person,
+					matched_experiences: [person.matched_experiences[0]],
+				},
+			],
+			has_more: false,
+			period_quota: {
+				limit: 1000000,
+				used: 4,
+				remaining: 999996,
+				resets_at: '2027-01-01T00:00:00.000Z',
+			},
+		});
+		const ctx = createContext();
+
+		await (Search.run as AnyEndpoint)(ctx, { search_id: 's_1' });
+
+		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
+			'123456',
+			expect.objectContaining({
+				currentTitle: undefined,
+				currentCompany: undefined,
+			}),
+		);
+	});
+
 	it('run pages company results and caches them', async () => {
 		const body = {
 			source_type: 'companies',
@@ -376,17 +414,15 @@ describe('errors', () => {
 		});
 	});
 
-	it('uses Retry-After on 429', async () => {
+	it('hands a 429 to the handler after one request, with Retry-After', async () => {
 		respond(429, { message: 'Too many requests' }, { 'Retry-After': '3' });
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Account.credits as AnyEndpoint)(createContext(), {}).catch(
-			(e: Error) => e,
-		);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as ClayAPIError;
-		jest.useRealTimers();
+		const error = (await (Account.credits as AnyEndpoint)(
+			createContext(),
+			{},
+		).catch((e: Error) => e)) as ClayAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(3000);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({
