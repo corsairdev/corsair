@@ -39,6 +39,7 @@ describe('TwittrAPI plugin integration', () => {
 		});
 		expect(events.length).toBeGreaterThan(0);
 		const lastEvent = events[events.length - 1]!;
+		// Test-only: ORM event payloads are untyped JSON by framework design.
 		const payload =
 			typeof lastEvent.payload === 'string'
 				? (JSON.parse(lastEvent.payload) as Record<string, unknown>)

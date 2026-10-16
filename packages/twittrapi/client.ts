@@ -18,7 +18,9 @@ export async function makeTwittrApiRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Record: endpoint bodies are per-endpoint JSON shapes assembled by callers.
+		// Record<string, unknown>: each endpoint assembles its own JSON body
+		// shape, so no single static type fits; stricter typing is not
+		// feasible without a per-endpoint generic that callers don't need.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

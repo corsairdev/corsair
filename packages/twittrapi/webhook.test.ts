@@ -37,6 +37,8 @@ function requestWith(
 	extraHeaders: Record<string, string> = {},
 ): WebhookRequest<unknown> {
 	return {
+		// Test-only: fixtures exercise the pre-parse verifier path, so the
+		// payload stays untyped (a static event type would defeat the test).
 		payload: JSON.parse(rawBody) as unknown,
 		rawBody,
 		headers: {
@@ -139,13 +141,13 @@ describe('TwittrAPI webhooks', () => {
 				match({
 					headers: { 'x-twittrapi-event': 'tweet' },
 					body: '{}',
-				} as never),
+				}),
 			).toBe(true);
 		});
 
 		it('matches tweet events by body', () => {
 			const match = createTwittrApiMatch('tweet');
-			expect(match({ headers: {}, body: tweetBody } as never)).toBe(true);
+			expect(match({ headers: {}, body: tweetBody })).toBe(true);
 		});
 
 		it('matches test events', () => {
@@ -154,7 +156,7 @@ describe('TwittrAPI webhooks', () => {
 				match({
 					headers: { 'x-twittrapi-event': 'test' },
 					body: JSON.stringify({ event: 'test', id: '1' }),
-				} as never),
+				}),
 			).toBe(true);
 		});
 
@@ -164,13 +166,15 @@ describe('TwittrAPI webhooks', () => {
 				match({
 					headers: { 'x-twittrapi-event': 'test' },
 					body: JSON.stringify({ event: 'test', id: '1' }),
-				} as never),
+				}),
 			).toBe(false);
 		});
 	});
 
 	describe('delivery dedupe', () => {
 		function stubDb() {
+			// Test-only in-memory store: untyped values because recordDelivery
+			// accepts raw provider JSON of varying shapes by design.
 			const store = new Map<string, unknown>();
 			const db = {
 				monitorEvents: {
@@ -194,6 +198,7 @@ describe('TwittrAPI webhooks', () => {
 
 		it('records full tweet events', async () => {
 			const { db, store } = stubDb();
+			// Test-only: raw provider JSON stays untyped by design (see above).
 			await recordDelivery(db, JSON.parse(tweetBody) as unknown);
 			expect(store.has('1849203')).toBe(true);
 		});
@@ -210,6 +215,8 @@ describe('TwittrAPI webhooks', () => {
 		function signedRequest(rawBody: string, event: string) {
 			const t = String(Math.floor(Date.now() / 1000));
 			return {
+				// Test-only: raw provider JSON stays untyped to exercise the
+				// handler's own narrowing, mirroring production transports.
 				payload: JSON.parse(rawBody) as unknown,
 				rawBody,
 				headers: {
@@ -222,6 +229,8 @@ describe('TwittrAPI webhooks', () => {
 
 		it('acks tweet retries without re-processing or re-hooking', async () => {
 			const persistTweet = jest.fn(async () => ({ id: 'x' }));
+			// Test-only: partial stub of the full Corsair context and request;
+			// the duplicate path only touches ctx.db and ctx.key.
 			const ctx = {
 				db: {
 					monitorEvents: {
@@ -244,6 +253,7 @@ describe('TwittrAPI webhooks', () => {
 		});
 
 		it('acks test retries without logging again', async () => {
+			// Test-only partial stub (see above).
 			const ctx = {
 				db: {
 					monitorEvents: {

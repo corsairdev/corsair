@@ -5,6 +5,7 @@ jest.mock('../client', () => ({
 	makeTwittrApiRequest: jest.fn(),
 }));
 
+// Test-only: narrow the mocked transport to jest.Mock for call assertions.
 const mockedRequest = makeTwittrApiRequest as jest.Mock;
 
 function stubCtx() {
@@ -23,6 +24,8 @@ function stubCtx() {
 		key: 'test-key',
 		$getAccountId: async () => 'test-account',
 		database: undefined,
+		// Test-only: partial stub of the full Corsair context; the handler
+		// only touches ctx.db on these paths, so a narrower type is unneeded.
 	} as never;
 	return { ctx, monitoredAccounts };
 }

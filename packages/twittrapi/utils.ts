@@ -1,8 +1,8 @@
 import type { TwittrApiTweet, TwittrApiUser } from './schema/database';
 
-// PluginDb mirrors the subset of the Corsair plugin ORM used here. The entity
-// clients are typed loosely (Promise<unknown>) because the ORM resolves table
-// clients dynamically per entity and no narrower static type is available.
+// PluginDb mirrors the subset of the Corsair plugin ORM used here.
+// Loose typings are intentional: the ORM resolves table clients dynamically
+// per entity, so no narrower static type is feasible for these slots.
 type PluginDb = {
 	tweets?: {
 		upsertByEntityId: (
@@ -12,7 +12,7 @@ type PluginDb = {
 	};
 	users?: {
 		// Promise<unknown>: the ORM resolves table clients dynamically per
-		// entity, so no narrower static return type is available here.
+		// entity, so a narrower static return type is not feasible here.
 		upsertByEntityId: (id: string, data: TwittrApiUser) => Promise<unknown>;
 	};
 };
@@ -50,8 +50,9 @@ export function asArray<T>(value: T[] | null | undefined): T[] {
 }
 
 export async function persistUsers(
-	// Accepted loosely: endpoint pages are typed arrays, but a malformed
-	// provider body must degrade to a no-op instead of failing the request.
+	// unknown: callers pass typed arrays, but a malformed provider body must
+	// degrade to a no-op; the runtime Array.isArray guard below is the check,
+	// so a static array type would be a lie and is not feasible here.
 	users: unknown,
 	db: PluginDb,
 ): Promise<void> {
