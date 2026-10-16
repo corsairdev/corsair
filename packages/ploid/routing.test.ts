@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makePloidRequest } from './client';
 import { Account, Contacts, Person, Search } from './endpoints';
 import { rememberPerson } from './endpoints/cache';
+import type { Person as PersonRow } from './schema/database';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -87,6 +88,7 @@ const personRunResponse = {
 	},
 	meta: { request_id: 'req_3' },
 };
+
 
 describe('Ploid endpoint routing', () => {
 	beforeEach(() => {
@@ -391,5 +393,64 @@ describe('Ploid person cache merge', () => {
 		await expect(
 			rememberPerson(ctx, { providerId: 'per_1', name: 'Example Person' }),
 		).resolves.toBeUndefined();
+	});
+
+	it('serializes concurrent saves for one person so no patch is lost', async () => {
+		const store = new Map<string, { data: PersonRow }>();
+		const ctx = {
+			db: {
+				people: {
+					findByEntityId: async (id: string) => store.get(id) ?? null,
+					upsertByEntityId: async (id: string, data: PersonRow) => {
+						store.set(id, { data });
+					},
+				},
+			},
+		};
+
+		// Two enriches race: one adds the email, the other the phone. Both
+		// reads must not observe the same pre-save row.
+		const emailSave = rememberPerson(ctx, {
+			providerId: 'per_1',
+			workEmail: { value: 'example@acme.com', status: 'found' },
+		});
+		const phoneSave = rememberPerson(ctx, {
+			providerId: 'per_1',
+			phone: { value: '+15550100', status: 'found' },
+		});
+		await Promise.all([emailSave, phoneSave]);
+
+		expect(store.get('per_1')?.data).toMatchObject({
+			personId: 'per_1',
+			workEmail: { value: 'example@acme.com', status: 'found' },
+			phone: { value: '+15550100', status: 'found' },
+		});
+	});
+
+	it('keeps queueing saves after one link fails', async () => {
+		const store = new Map<string, { data: PersonRow }>();
+		let reads = 0;
+		const ctx = {
+			db: {
+				people: {
+					findByEntityId: async (id: string) => {
+						reads += 1;
+						if (reads === 1) throw new Error('db down');
+						return store.get(id) ?? null;
+					},
+					upsertByEntityId: async (id: string, data: PersonRow) => {
+						store.set(id, { data });
+					},
+				},
+			},
+		};
+
+		await rememberPerson(ctx, { providerId: 'per_1', name: 'First' });
+		await rememberPerson(ctx, { providerId: 'per_1', company: 'Acme' });
+
+		expect(store.get('per_1')?.data).toMatchObject({
+			personId: 'per_1',
+			company: 'Acme',
+		});
 	});
 });

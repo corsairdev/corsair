@@ -8,6 +8,8 @@ export type PersonCacheContext = {
 			findByEntityId: (
 				id: string,
 			) => Promise<{ data: Person } | null | undefined>;
+			// unknown: the entity client's save return type varies by database
+			// driver and is never read here.
 			upsertByEntityId: (id: string, data: Person) => Promise<unknown>;
 		};
 	};
@@ -42,7 +44,11 @@ function merge<T>(
 	return incoming;
 }
 
-export async function rememberPerson(
+// Saves for one person id run strictly one at a time, so a second enrich
+// reads the row the first one wrote instead of a shared stale snapshot.
+const saveChains = new Map<string, Promise<void>>();
+
+async function writePerson(
 	ctx: PersonCacheContext,
 	patch: PersonPatch,
 ): Promise<void> {
@@ -79,7 +85,26 @@ export async function rememberPerson(
 		await ctx.db.people.upsertByEntityId(patch.providerId, data);
 	} catch (error) {
 		// A failed cache write must not fail the endpoint: the caller already
-		// paid ACU for the response.
+		// paid ACU for the response. Swallowing here also keeps a rejected
+		// link from poisoning the queued saves behind it.
 		console.warn(`[ploid] Failed to cache person ${patch.providerId}:`, error);
 	}
+}
+
+export function rememberPerson(
+	ctx: PersonCacheContext,
+	patch: PersonPatch,
+): Promise<void> {
+	// Serialize per person id: two concurrent enriches for one person must
+	// not both read the pre-save row and drop each other's contact fields.
+	const previous = saveChains.get(patch.providerId) ?? Promise.resolve();
+	const next = previous.catch(() => {}).then(() => writePerson(ctx, patch));
+	saveChains.set(patch.providerId, next);
+	// Drop the tail entry once it settles so the map does not grow unbounded.
+	void next.finally(() => {
+		if (saveChains.get(patch.providerId) === next) {
+			saveChains.delete(patch.providerId);
+		}
+	});
+	return next;
 }
