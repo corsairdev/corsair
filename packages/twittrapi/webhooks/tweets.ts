@@ -8,7 +8,7 @@ import { createTwittrApiMatch, verifyTwittrApiWebhookSignature } from './types';
 // id) until the endpoint answers 2xx. Guard on the monitorEvents store so a
 // retry returns success without persisting or logging twice. Best-effort: if
 // the store is unavailable the event is processed normally.
-async function alreadyDelivered(
+export async function alreadyDelivered(
 	db: TwittrApiContext['db'],
 	eventId: string,
 ): Promise<boolean> {
@@ -20,12 +20,26 @@ async function alreadyDelivered(
 	}
 }
 
-async function recordDelivery(
+export async function recordDelivery(
 	db: TwittrApiContext['db'],
 	event: unknown,
 ): Promise<void> {
-	const parsed = TwittrApiMonitorEvent.safeParse(event);
-	if (!parsed.success) return;
+	// Test events carry only {event, id}; fall back to empty strings so the
+	// delivery id is still recorded and retries dedupe instead of re-logging.
+	const shape =
+		typeof event === 'object' && event !== null
+			? (event as Record<string, unknown>)
+			: {};
+	const parsed = TwittrApiMonitorEvent.safeParse({
+		event: 'tweet',
+		id: '',
+		monitoredUserId: '',
+		tweetId: '',
+		tweetCreatedAt: '',
+		detectedAt: '',
+		...shape,
+	});
+	if (!parsed.success || !parsed.data.id) return;
 	try {
 		await db.monitorEvents?.upsertByEntityId(parsed.data.id, parsed.data);
 	} catch {

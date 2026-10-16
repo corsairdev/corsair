@@ -4,6 +4,7 @@ import {
 	TwittrApiEndpointInputSchemas,
 	TwittrApiEndpointOutputSchemas,
 } from './endpoints/types';
+import { asArray, persistUsers } from './utils';
 
 const TEST_API_KEY = process.env.TWITTRAPI_API_KEY!;
 const TEST_USERNAME = process.env.TEST_TWITTER_USERNAME || 'XDevelopers';
@@ -378,6 +379,15 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 		expect(
 			TwittrApiEndpointOutputSchemas.monitorsDeleteWebhook.parse({}),
 		).toBeDefined();
+	});
+
+	it('treats non-array persistence payloads as empty', async () => {
+		// Narrow test-only cast to exercise the non-array guard.
+		expect(asArray('nope' as unknown as string[])).toEqual([]);
+		expect(asArray(null)).toEqual([]);
+		await expect(
+			persistUsers('nope' as unknown as never, {}),
+		).resolves.toBeUndefined();
 	});
 
 	it('accepts partial monitor filter updates', () => {

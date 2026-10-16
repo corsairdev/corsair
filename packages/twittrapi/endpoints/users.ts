@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTwittrApiRequest } from '../client';
 import type { TwittrApiEndpoints } from '../index';
-import { persistTweetWithAuthor, persistUsers } from '../utils';
+import { asArray, persistTweetWithAuthor, persistUsers } from '../utils';
 import type { TwittrApiEndpointOutputs } from './types';
 
 async function persistTweetPage(
 	tweets: TwittrApiEndpointOutputs['usersGetTweets']['data'],
 	db: Parameters<typeof persistTweetWithAuthor>[1],
 ) {
-	for (const tweet of tweets ?? []) {
+	for (const tweet of asArray(tweets)) {
 		if (!('unavailable' in tweet)) {
 			try {
 				await persistTweetWithAuthor(tweet, db);

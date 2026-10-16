@@ -42,11 +42,17 @@ export async function persistTweetWithAuthor(
 	return undefined;
 }
 
+/** Iterate a page payload safely: non-array bodies are treated as empty. */
+export function asArray<T>(value: T[] | null | undefined): T[] {
+	return Array.isArray(value) ? value : [];
+}
+
 export async function persistUsers(
-	users: TwittrApiUser[],
+	users: TwittrApiUser[] | null | undefined | unknown,
 	db: PluginDb,
 ): Promise<void> {
-	if (!db.users) return;
+	// Guarded: persistence is best-effort and must never fail the request.
+	if (!db.users || !Array.isArray(users)) return;
 	for (const user of users) {
 		try {
 			await db.users.upsertByEntityId(user.id, user);

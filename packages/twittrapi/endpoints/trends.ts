@@ -15,15 +15,18 @@ export const getByLocation: TwittrApiEndpoints['trendsGetByLocation'] = async (
 	});
 
 	if (response.data && ctx.db.trends) {
-		for (const trend of response.data) {
-			try {
-				// Composite key: the same topic name trends in many locations.
-				await ctx.db.trends.upsertByEntityId(
-					`${input.locationId}:${trend.name}`,
-					trend,
-				);
-			} catch {
-				// best-effort
+		// Guarded: persistence is best-effort and must never fail the request.
+		if (Array.isArray(response.data)) {
+			for (const trend of response.data) {
+				try {
+					// Composite key: the same topic name trends in many locations.
+					await ctx.db.trends.upsertByEntityId(
+						`${input.locationId}:${trend.name}`,
+						trend,
+					);
+				} catch {
+					// best-effort
+				}
 			}
 		}
 	}
@@ -49,14 +52,16 @@ export const getLocations: TwittrApiEndpoints['trendsGetLocations'] = async (
 	});
 
 	if (response.data && ctx.db.trendLocations) {
-		for (const location of response.data) {
-			try {
-				await ctx.db.trendLocations.upsertByEntityId(
-					String(location.woeid),
-					location,
-				);
-			} catch {
-				// best-effort
+		if (Array.isArray(response.data)) {
+			for (const location of response.data) {
+				try {
+					await ctx.db.trendLocations.upsertByEntityId(
+						String(location.woeid),
+						location,
+					);
+				} catch {
+					// best-effort
+				}
 			}
 		}
 	}

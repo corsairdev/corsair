@@ -1,5 +1,6 @@
 import type { WebhookRequest } from 'corsair/core';
 import { createHmac } from 'crypto';
+import { alreadyDelivered, recordDelivery } from './webhooks/tweets';
 import {
 	createTwittrApiMatch,
 	TwittrApiTestEventSchema,
@@ -160,6 +161,43 @@ describe('TwittrAPI webhooks', () => {
 					body: JSON.stringify({ event: 'test', id: '1' }),
 				} as never),
 			).toBe(false);
+		});
+	});
+
+	describe('delivery dedupe', () => {
+		function stubDb() {
+			const store = new Map<string, unknown>();
+			const db = {
+				monitorEvents: {
+					findByEntityId: async (id: string) =>
+						store.has(id) ? { id, data: store.get(id) } : null,
+					upsertByEntityId: async (id: string, data: unknown) => {
+						store.set(id, data);
+						return { id };
+					},
+				},
+			} as never;
+			return { db, store };
+		}
+
+		it('records minimal test events and detects replays', async () => {
+			const { db } = stubDb();
+			expect(await alreadyDelivered(db, 'evt-1')).toBe(false);
+			await recordDelivery(db, { event: 'test', id: 'evt-1' });
+			expect(await alreadyDelivered(db, 'evt-1')).toBe(true);
+		});
+
+		it('records full tweet events', async () => {
+			const { db, store } = stubDb();
+			await recordDelivery(db, JSON.parse(tweetBody) as unknown);
+			expect(store.has('1849203')).toBe(true);
+		});
+
+		it('ignores payloads without a delivery id', async () => {
+			const { db, store } = stubDb();
+			await recordDelivery(db, null);
+			await recordDelivery(db, { event: 'test' });
+			expect(store.size).toBe(0);
 		});
 	});
 

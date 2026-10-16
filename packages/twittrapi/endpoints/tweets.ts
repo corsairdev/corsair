@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTwittrApiRequest } from '../client';
 import type { TwittrApiEndpoints } from '../index';
-import { persistTweetWithAuthor, persistUsers } from '../utils';
+import { asArray, persistTweetWithAuthor, persistUsers } from '../utils';
 import type { TwittrApiEndpointOutputs } from './types';
 
 export const search: TwittrApiEndpoints['tweetsSearch'] = async (
@@ -21,7 +21,7 @@ export const search: TwittrApiEndpoints['tweetsSearch'] = async (
 		},
 	});
 
-	for (const tweet of response.data ?? []) {
+	for (const tweet of asArray(response.data)) {
 		if (!('unavailable' in tweet)) {
 			try {
 				await persistTweetWithAuthor(tweet, ctx.db);
@@ -84,7 +84,7 @@ export const getReplies: TwittrApiEndpoints['tweetsGetReplies'] = async (
 		},
 	});
 
-	for (const tweet of response.data ?? []) {
+	for (const tweet of asArray(response.data)) {
 		if (!('unavailable' in tweet)) {
 			try {
 				await persistTweetWithAuthor(tweet, ctx.db);
@@ -114,7 +114,7 @@ export const getQuotes: TwittrApiEndpoints['tweetsGetQuotes'] = async (
 		query: { count: input.count, cursor: input.cursor, format: 'simple' },
 	});
 
-	for (const tweet of response.data ?? []) {
+	for (const tweet of asArray(response.data)) {
 		if (!('unavailable' in tweet)) {
 			try {
 				await persistTweetWithAuthor(tweet, ctx.db);

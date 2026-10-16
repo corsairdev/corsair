@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTwittrApiRequest } from '../client';
 import type { TwittrApiEndpoints } from '../index';
 import type { TwittrApiMonitorWebhook } from '../schema/database';
+import { asArray } from '../utils';
 import type { TwittrApiEndpointOutputs } from './types';
 
 // The webhook secret signs X-TwittrAPI-Signature and must never land in the
@@ -34,7 +35,7 @@ export const listAccounts: TwittrApiEndpoints['monitorsListAccounts'] = async (
 	>('/monitors/accounts', ctx.key, { method: 'GET' });
 
 	if (response.data && ctx.db.monitoredAccounts) {
-		for (const account of response.data) {
+		for (const account of asArray(response.data)) {
 			try {
 				await ctx.db.monitoredAccounts.upsertByEntityId(
 					account.userId,
@@ -114,6 +115,18 @@ export const removeAccount: TwittrApiEndpoints['monitorsRemoveAccount'] =
 
 		if (ctx.db.monitoredAccounts) {
 			try {
+				// Entities are keyed by numeric userId, but callers may pass a
+				// username — resolve it first so the local row is actually removed.
+				const matches = await ctx.db.monitoredAccounts.search({
+					data: { username: input.usernameOrId },
+				});
+				for (const match of matches ?? []) {
+					try {
+						await ctx.db.monitoredAccounts.deleteById(match.id);
+					} catch {
+						// best-effort
+					}
+				}
 				await ctx.db.monitoredAccounts.deleteByEntityId(input.usernameOrId);
 			} catch {
 				// best-effort: listAccounts re-syncs on the next read
@@ -138,7 +151,7 @@ export const listWebhooks: TwittrApiEndpoints['monitorsListWebhooks'] = async (
 	>('/monitors/webhooks', ctx.key, { method: 'GET' });
 
 	if (response.webhooks && ctx.db.monitorWebhooks) {
-		for (const webhook of response.webhooks) {
+		for (const webhook of asArray(response.webhooks)) {
 			try {
 				await ctx.db.monitorWebhooks.upsertByEntityId(
 					String(webhook.id),
@@ -314,7 +327,7 @@ export const getEvents: TwittrApiEndpoints['monitorsGetEvents'] = async (
 	});
 
 	if (response.data && ctx.db.monitorEvents) {
-		for (const event of response.data) {
+		for (const event of asArray(response.data)) {
 			try {
 				await ctx.db.monitorEvents.upsertByEntityId(event.id, event);
 			} catch {
