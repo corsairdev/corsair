@@ -34,9 +34,13 @@ function createContext() {
 		options: {},
 		db: {
 			organizations: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 			},
-			people: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+			people: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
 			newsArticles: {
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 			},
@@ -131,6 +135,7 @@ const cases: [
 ];
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -270,6 +275,19 @@ describe('caching', () => {
 		);
 	});
 
+	it('keeps the contact phone numbers from people.enrich', async () => {
+		respond(200, samples.peopleEnrich);
+
+		const result = (await (People.enrich as AnyEndpoint)(createContext(), {
+			email: 'jane@example.com',
+		})) as typeof samples.peopleEnrich;
+
+		expect(result.person.contact.phone_numbers).toEqual(
+			samples.peopleEnrich.person.contact.phone_numbers,
+		);
+		expect(result).toEqual(samples.peopleEnrich);
+	});
+
 	it('saves an enriched person and their organization', async () => {
 		respond(200, samples.peopleEnrich);
 		const ctx = createContext();
@@ -290,6 +308,42 @@ describe('caching', () => {
 			samples.newsSearch.news_articles[0]!.id,
 			expect.objectContaining({ organizationIds: [orgId] }),
 		);
+	});
+
+	it('keeps enriched organization fields that a search leaves null', async () => {
+		const ctx = createContext();
+		const saved = {
+			id: orgId,
+			name: 'Stripe',
+			primaryDomain: 'stripe.com',
+			industry: 'financial services',
+			estimatedNumEmployees: 8000,
+			country: 'United States',
+			updatedAt: new Date('2026-10-01'),
+		};
+		ctx.db.organizations.findByEntityId.mockResolvedValue({ data: saved });
+		respond(200, {
+			...samples.organizationsSearch,
+			organizations: [
+				{
+					id: orgId,
+					name: 'Stripe',
+					primary_domain: 'stripe.com',
+					industry: null,
+					estimated_num_employees: null,
+					country: null,
+				},
+			],
+		});
+
+		await (Organizations.search as AnyEndpoint)(ctx, {
+			q_organization_name: 'Stripe',
+		});
+
+		expect(ctx.db.organizations.upsertByEntityId).toHaveBeenCalledWith(orgId, {
+			...saved,
+			updatedAt: expect.any(Date),
+		});
 	});
 
 	it('does not cache an enrichment without a match', async () => {
@@ -349,17 +403,15 @@ describe('errors', () => {
 		expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(true);
 	});
 
-	it('uses Retry-After on 429', async () => {
+	it('hands a 429 to the handler after one request, with Retry-After', async () => {
 		respond(429, { error: 'Rate limit exceeded' }, { 'Retry-After': '60' });
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Organizations.enrich as AnyEndpoint)(createContext(), {
-			domain: 'stripe.com',
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as ApolloAPIError;
-		jest.useRealTimers();
+		const error = (await (Organizations.enrich as AnyEndpoint)(
+			createContext(),
+			{ domain: 'stripe.com' },
+		).catch((e: Error) => e)) as ApolloAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(60000);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({

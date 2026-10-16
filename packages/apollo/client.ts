@@ -1,7 +1,21 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const APOLLO_API_BASE = 'https://api.apollo.io/api/v1';
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const APOLLO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 type QueryValue = string | number | boolean | undefined;
 
@@ -52,7 +66,8 @@ export function toApolloQuery(params: object): ApolloQuery {
 	return query;
 }
 
-export async function makeApolloRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeApolloRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -60,7 +75,7 @@ export async function makeApolloRequest<T>(
 		path?: Record<string, string>;
 		query?: ApolloQuery;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', query } = options;
 
 	const config: OpenAPIConfig = {
@@ -83,7 +98,9 @@ export async function makeApolloRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: APOLLO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const message = readString(error.body, 'error');

@@ -21,6 +21,10 @@ pnpm add @corsair-dev/apollo
 | `people.get` | `apollo.api.people.get` | `read` | Get complete person info by Apollo id |
 | `people.search` | `apollo.api.people.search` | `read` | Search net-new people by title, seniority, location, and employer filters (redacted profiles, no credits) |
 
+Credits, per Apollo's [API pricing](https://docs.apollo.io/docs/api-pricing): `people.enrich` costs 1-9 credits per person, only when it returns data (8 of them for a mobile phone). `organizations.enrich` and the two `get` calls cost 1 credit each. `organizations.search`, `organizations.jobPostings` and `news.search` cost 1 credit per page. `people.search` is free. Legacy plans may bill differently.
+
+Phone numbers: with `reveal_phone_number` or `run_waterfall_phone`, Apollo delivers the phone result later, to your `webhook_url` or through its poll endpoint when `poll_only` is set. The `people.enrich` response doesn't contain it. This plugin doesn't receive that webhook or poll for it. Phone numbers Apollo already has on the person's contact record come back as `person.contact.phone_numbers`.
+
 ## Auth
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.

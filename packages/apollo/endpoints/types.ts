@@ -31,116 +31,171 @@ const Technology = z.object({
 	category: Text,
 });
 
-export const OrganizationSchema = z.object({
-	id: z.string(),
-	name: Text,
-	website_url: Text,
-	blog_url: Text,
-	angellist_url: Text,
-	linkedin_url: Text,
-	linkedin_uid: Text,
-	twitter_url: Text,
-	facebook_url: Text,
-	crunchbase_url: Text,
-	logo_url: Text,
-	primary_domain: Text,
-	phone: Text,
-	sanitized_phone: Text,
-	languages: Strings,
-	alexa_ranking: Num,
-	founded_year: Num,
-	publicly_traded_symbol: Text,
-	publicly_traded_exchange: Text,
-	industry: Text,
-	industries: Strings,
-	secondary_industries: Strings,
-	industry_tag_id: Text,
-	keywords: Strings,
-	sic_codes: Strings,
-	naics_codes: Strings,
-	estimated_num_employees: Num,
-	organization_headcount_six_month_growth: Num,
-	organization_headcount_twelve_month_growth: Num,
-	organization_headcount_twenty_four_month_growth: Num,
-	departmental_head_count: z
-		.record(z.string(), z.number())
-		.nullable()
-		.optional(),
-	annual_revenue: Num,
-	annual_revenue_printed: Text,
-	organization_revenue: Num,
-	organization_revenue_printed: Text,
-	total_funding: Num,
-	total_funding_printed: Text,
-	latest_funding_stage: Text,
-	latest_funding_round_date: Text,
-	funding_events: z.array(FundingEvent).nullable().optional(),
-	technology_names: Strings,
-	current_technologies: z.array(Technology).nullable().optional(),
-	raw_address: Text,
-	street_address: Text,
-	city: Text,
-	state: Text,
-	postal_code: Text,
-	country: Text,
-	short_description: Text,
-	seo_description: Text,
-	owned_by_organization_id: Text,
-	num_suborganizations: Num,
-	retail_location_count: Num,
-	account_id: Text,
-});
+// Person, organization and employment objects are loose: Apollo returns many
+// UI and CRM fields beyond these, and they pass through instead of being dropped.
+export const OrganizationSchema = z
+	.object({
+		id: z.string(),
+		name: Text,
+		website_url: Text,
+		blog_url: Text,
+		angellist_url: Text,
+		linkedin_url: Text,
+		linkedin_uid: Text,
+		twitter_url: Text,
+		facebook_url: Text,
+		crunchbase_url: Text,
+		logo_url: Text,
+		primary_domain: Text,
+		phone: Text,
+		sanitized_phone: Text,
+		languages: Strings,
+		alexa_ranking: Num,
+		founded_year: Num,
+		publicly_traded_symbol: Text,
+		publicly_traded_exchange: Text,
+		industry: Text,
+		industries: Strings,
+		secondary_industries: Strings,
+		industry_tag_id: Text,
+		keywords: Strings,
+		sic_codes: Strings,
+		naics_codes: Strings,
+		estimated_num_employees: Num,
+		organization_headcount_six_month_growth: Num,
+		organization_headcount_twelve_month_growth: Num,
+		organization_headcount_twenty_four_month_growth: Num,
+		departmental_head_count: z
+			.record(z.string(), z.number())
+			.nullable()
+			.optional(),
+		annual_revenue: Num,
+		annual_revenue_printed: Text,
+		organization_revenue: Num,
+		organization_revenue_printed: Text,
+		total_funding: Num,
+		total_funding_printed: Text,
+		latest_funding_stage: Text,
+		latest_funding_round_date: Text,
+		funding_events: z.array(FundingEvent).nullable().optional(),
+		technology_names: Strings,
+		current_technologies: z.array(Technology).nullable().optional(),
+		raw_address: Text,
+		street_address: Text,
+		city: Text,
+		state: Text,
+		postal_code: Text,
+		country: Text,
+		short_description: Text,
+		seo_description: Text,
+		owned_by_organization_id: Text,
+		num_suborganizations: Num,
+		suborganizations: z
+			.array(
+				z
+					.object({
+						id: z.string(),
+						name: Text,
+						website_url: Text,
+						industries: Strings,
+						estimated_num_employees: Num,
+						country: Text,
+					})
+					.loose(),
+			)
+			.nullable()
+			.optional(),
+		retail_location_count: Num,
+		num_retail_locations: Num,
+		num_languages: Num,
+		primary_phone: z
+			.object({ number: Text, sanitized_number: Text, source: Text })
+			.loose()
+			.nullable()
+			.optional(),
+		latest_funding_detected_at: Text,
+		account_id: Text,
+	})
+	.loose();
 
 export type Organization = z.infer<typeof OrganizationSchema>;
 
-const Employment = z.object({
-	id: Text,
-	organization_id: Text,
-	organization_name: Text,
-	title: Text,
-	current: z.boolean().nullable().optional(),
-	start_date: Text,
-	end_date: Text,
-	description: Text,
-});
+const Employment = z
+	.object({
+		id: Text,
+		organization_id: Text,
+		organization_name: Text,
+		title: Text,
+		current: z.boolean().nullable().optional(),
+		start_date: Text,
+		end_date: Text,
+		description: Text,
+	})
+	.loose();
 
-export const PersonSchema = z.object({
-	id: z.string(),
-	first_name: Text,
-	last_name: Text,
-	name: Text,
-	title: Text,
-	headline: Text,
-	linkedin_url: Text,
-	twitter_url: Text,
-	github_url: Text,
-	facebook_url: Text,
-	photo_url: Text,
-	email: Text,
-	email_status: Text,
-	extrapolated_email_confidence: Num,
-	organization_id: Text,
-	organization: OrganizationSchema.nullable().optional(),
-	employment_history: z.array(Employment).nullable().optional(),
-	match_confidence: z
-		.enum(['high', 'medium', 'low', 'none'])
-		.nullable()
-		.optional(),
-	street_address: Text,
-	city: Text,
-	state: Text,
-	country: Text,
-	postal_code: Text,
-	formatted_address: Text,
-	time_zone: Text,
-	seniority: Text,
-	departments: Strings,
-	subdepartments: Strings,
-	functions: Strings,
-	contact_id: Text,
-	revealed_for_current_team: z.boolean().nullable().optional(),
-	is_likely_to_engage: z.boolean().nullable().optional(),
-});
+const PhoneNumber = z
+	.object({
+		raw_number: Text,
+		sanitized_number: Text,
+		type: Text,
+		position: Num,
+		status: Text,
+		dnc_status: Text,
+	})
+	.loose();
+
+// The Apollo contact record linked to this person, with revealed phone numbers.
+const Contact = z
+	.object({
+		id: z.string(),
+		email: Text,
+		email_status: Text,
+		sanitized_phone: Text,
+		direct_dial_status: Text,
+		phone_numbers: z.array(PhoneNumber).nullable().optional(),
+	})
+	.loose();
+
+export const PersonSchema = z
+	.object({
+		id: z.string(),
+		first_name: Text,
+		last_name: Text,
+		name: Text,
+		title: Text,
+		headline: Text,
+		linkedin_url: Text,
+		twitter_url: Text,
+		github_url: Text,
+		facebook_url: Text,
+		photo_url: Text,
+		email: Text,
+		email_status: Text,
+		extrapolated_email_confidence: Num,
+		organization_id: Text,
+		organization: OrganizationSchema.nullable().optional(),
+		employment_history: z.array(Employment).nullable().optional(),
+		match_confidence: z
+			.enum(['high', 'medium', 'low', 'none'])
+			.nullable()
+			.optional(),
+		street_address: Text,
+		city: Text,
+		state: Text,
+		country: Text,
+		postal_code: Text,
+		formatted_address: Text,
+		time_zone: Text,
+		seniority: Text,
+		departments: Strings,
+		subdepartments: Strings,
+		functions: Strings,
+		contact_id: Text,
+		contact: Contact.nullable().optional(),
+		revealed_for_current_team: z.boolean().nullable().optional(),
+		is_likely_to_engage: z.boolean().nullable().optional(),
+	})
+	.loose();
 
 export type Person = z.infer<typeof PersonSchema>;
 

@@ -19,9 +19,12 @@ export async function call<K extends Operation>(
 	event: string,
 	method: 'GET' | 'POST',
 	path: string,
+	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 	pathKeys: readonly string[] = [],
 ): Promise<ApolloEndpointOutputs[K]> {
+	// unknown: each operation's parsed input has its own shape; here it is only
+	// split into path and query parameters.
 	const parsed: Record<string, unknown> = ApolloEndpointInputSchemas[
 		operation
 	].parse(input ?? {});
@@ -32,7 +35,7 @@ export async function call<K extends Operation>(
 		else params[key] = value;
 	}
 
-	const raw = await makeApolloRequest<unknown>(path, ctx.key, {
+	const raw = await makeApolloRequest(path, ctx.key, {
 		method,
 		path: pathParams,
 		query: toApolloQuery(params),
