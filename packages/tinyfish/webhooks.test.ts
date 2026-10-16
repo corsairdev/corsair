@@ -100,9 +100,68 @@ const cancelledPayload = {
 	},
 };
 
+// What GET /v1/runs/{id} answers for each run. The handlers must store and
+// return these values, never the delivery body's, so live goal and result
+// deliberately differ from the payloads above.
+const liveCompletedRun = {
+	run_id: 'run-1',
+	status: 'COMPLETED',
+	goal: 'Live goal from the API',
+	created_at: '2026-01-02T00:00:00.000Z',
+	started_at: '2026-01-02T00:00:01.000Z',
+	finished_at: '2026-01-02T00:00:09.000Z',
+	num_of_steps: 3,
+	result: { title: 'From the API' },
+	error: null,
+	profile_id: null,
+	steps: [
+		{
+			id: 'step-1',
+			timestamp: '2026-01-02T00:00:02.000Z',
+			status: 'COMPLETED',
+			action: 'click',
+			screenshot: null,
+			html: null,
+			duration: '1.2s',
+		},
+	],
+};
+
+const liveFailedRun = {
+	run_id: 'run-1',
+	status: 'FAILED',
+	goal: 'Get the title',
+	created_at: '2026-01-02T00:00:00.000Z',
+	started_at: '2026-01-02T00:00:01.000Z',
+	finished_at: '2026-01-02T00:00:09.000Z',
+	num_of_steps: 2,
+	result: null,
+	error: {
+		code: 'TASK_FAILED',
+		message: 'selector not found',
+		category: 'AGENT_FAILURE',
+	},
+	profile_id: null,
+	steps: [],
+};
+
+const liveCancelledRun = {
+	run_id: 'run-2',
+	status: 'CANCELLED',
+	goal: 'Get the title',
+	created_at: '2026-01-02T00:00:00.000Z',
+	started_at: null,
+	finished_at: '2026-01-02T00:00:05.000Z',
+	num_of_steps: 0,
+	result: null,
+	error: null,
+	profile_id: null,
+	steps: [],
+};
+
 beforeEach(() => {
 	mockLog.mockClear();
-	mockRequest.mockReset().mockResolvedValue({ status: 'COMPLETED' });
+	mockRequest.mockReset().mockResolvedValue(liveCompletedRun);
 });
 
 describe('tinyfish webhook matching', () => {
@@ -142,14 +201,21 @@ describe('tinyfish webhook matching', () => {
 });
 
 describe('tinyfish webhook handlers', () => {
-	it('runCompleted confirms against the live run, persists it and logs it', async () => {
+	it('runCompleted persists and returns the API snapshot, never the delivery body', async () => {
 		const ctx = createContext();
-		mockRequest.mockResolvedValue({ status: 'COMPLETED' });
 		const result = await (
 			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
 		)(ctx as never, request(completedPayload) as never);
 
-		expect(result).toEqual({ success: true, data: completedPayload });
+		expect(result).toEqual({
+			success: true,
+			data: {
+				event: 'run.completed',
+				run_id: 'run-1',
+				status: 'COMPLETED',
+				data: liveCompletedRun,
+			},
+		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'agent',
 			'/v1/runs/run-1',
@@ -160,7 +226,8 @@ describe('tinyfish webhook handlers', () => {
 			'run-1',
 			expect.objectContaining({
 				status: 'COMPLETED',
-				goal: 'Get the title',
+				goal: 'Live goal from the API',
+				result: { title: 'From the API' },
 				numOfSteps: 3,
 				finishedAt: new Date('2026-01-02T00:00:09.000Z'),
 			}),
@@ -175,13 +242,21 @@ describe('tinyfish webhook handlers', () => {
 
 	it('runFailed records the provider error code and message', async () => {
 		const ctx = createContext();
-		mockRequest.mockResolvedValue({ status: 'FAILED' });
+		mockRequest.mockResolvedValue(liveFailedRun);
 		const result = await (TinyFishRunWebhooks.runFailed.handler as AnyHandler)(
 			ctx as never,
 			request(failedPayload) as never,
 		);
 
-		expect(result).toEqual({ success: true, data: failedPayload });
+		expect(result).toEqual({
+			success: true,
+			data: {
+				event: 'run.failed',
+				run_id: 'run-1',
+				status: 'FAILED',
+				data: liveFailedRun,
+			},
+		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'agent',
 			'/v1/runs/run-1',
@@ -209,12 +284,20 @@ describe('tinyfish webhook handlers', () => {
 
 	it('runCancelled stores the cancellation', async () => {
 		const ctx = createContext();
-		mockRequest.mockResolvedValue({ status: 'CANCELLED' });
+		mockRequest.mockResolvedValue(liveCancelledRun);
 		const result = await (
 			TinyFishRunWebhooks.runCancelled.handler as AnyHandler
 		)(ctx as never, request(cancelledPayload) as never);
 
-		expect(result).toEqual({ success: true, data: cancelledPayload });
+		expect(result).toEqual({
+			success: true,
+			data: {
+				event: 'run.cancelled',
+				run_id: 'run-2',
+				status: 'CANCELLED',
+				data: liveCancelledRun,
+			},
+		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'agent',
 			'/v1/runs/run-2',
@@ -229,7 +312,7 @@ describe('tinyfish webhook handlers', () => {
 
 	it('drops a delivery whose live status disagrees with the event', async () => {
 		const ctx = createContext();
-		mockRequest.mockResolvedValue({ status: 'RUNNING' });
+		mockRequest.mockResolvedValue({ ...liveCompletedRun, status: 'RUNNING' });
 		const result = (await (
 			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
 		)(ctx as never, request(completedPayload) as never)) as {
@@ -248,6 +331,21 @@ describe('tinyfish webhook handlers', () => {
 			expect.objectContaining({ runId: 'run-1' }),
 			'failed',
 		);
+	});
+
+	it('drops a delivery when the live run cannot be parsed', async () => {
+		const ctx = createContext();
+		mockRequest.mockResolvedValue({ status: 'COMPLETED' });
+		const result = (await (
+			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
+		)(ctx as never, request(completedPayload) as never)) as {
+			success: boolean;
+			statusCode?: number;
+		};
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(409);
+		expect(ctx.db.agentRuns.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('drops a delivery when the confirm request fails', async () => {

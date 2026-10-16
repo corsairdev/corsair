@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { TinyFishContext, TinyFishWebhooks } from '..';
 import { makeTinyFishRequest } from '../client';
+import { AgentRunSchema } from '../endpoints/types';
 import { persistRun } from '../run-store';
 import {
 	createTinyFishMatch,
@@ -12,25 +13,46 @@ import {
 } from './types';
 
 // Deliveries are unsigned JSON, so the payload alone proves nothing: read the
-// run back from the API and require the live run to exist with the same status.
-const ConfirmedRunSchema = z.object({ status: z.string() });
+// run back from the API and persist only the API's own snapshot. The delivery
+// body may name the event and the run, never supply the stored fields, so a
+// forged body cannot plant results for a run that genuinely finished. Picking
+// from AgentRunSchema reuses the shape `agent.getRun` already validates the
+// same endpoint's response against. Any API error is also a drop: an
+// unreadable run must not be trusted.
+const ConfirmedRunSchema = AgentRunSchema.pick({
+	run_id: true,
+	status: true,
+	goal: true,
+	created_at: true,
+	started_at: true,
+	finished_at: true,
+	num_of_steps: true,
+	result: true,
+	error: true,
+	profile_id: true,
+	steps: true,
+});
 
-/**
- * Returns a drop reason, or null when the delivery was confirmed against the
- * live run. Any TinyFish API error is also a drop: an unreadable run must not
- * be trusted.
- */
+type ConfirmedRun = z.infer<typeof ConfirmedRunSchema>;
+
+type Confirmation =
+	| { ok: true; run: ConfirmedRun }
+	| { ok: false; reason: string };
+
 async function confirmRunDelivery(
 	ctx: TinyFishContext,
 	runId: string,
 	eventStatus: string,
-): Promise<string | null> {
+): Promise<Confirmation> {
 	const key = ctx.options.key || (await ctx.keys.get_api_key()) || '';
 	if (!key) {
-		return 'no TinyFish API key configured; unconfirmed delivery dropped';
+		return {
+			ok: false,
+			reason: 'no TinyFish API key configured; unconfirmed delivery dropped',
+		};
 	}
 
-	let live: { status: string };
+	let live: ConfirmedRun;
 	try {
 		live = ConfirmedRunSchema.parse(
 			await makeTinyFishRequest(
@@ -41,13 +63,21 @@ async function confirmRunDelivery(
 			),
 		);
 	} catch (error) {
-		return `run confirm request failed: ${(error as Error).message}`;
+		return {
+			ok: false,
+			reason: `run confirm request failed: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
+		};
 	}
 
 	if (live.status !== eventStatus) {
-		return `live run status is ${live.status}, not ${eventStatus}`;
+		return {
+			ok: false,
+			reason: `live run status is ${live.status}, not ${eventStatus}`,
+		};
 	}
-	return null;
+	return { ok: true, run: live };
 }
 
 function dropDelivery(reason: string) {
@@ -67,48 +97,55 @@ export const runCompleted: TinyFishWebhooks['runCompleted'] = {
 		}
 
 		const event = verification.event;
-		const dropReason = await confirmRunDelivery(
+		const confirmation = await confirmRunDelivery(
 			ctx,
 			event.run_id,
 			event.status,
 		);
-		if (dropReason) {
+		if (!confirmation.ok) {
 			await logEventFromContext(
 				ctx,
 				'tinyfish.webhook.runCompleted',
-				{ runId: event.run_id, reason: dropReason },
+				{ runId: event.run_id, reason: confirmation.reason },
 				'failed',
 			);
-			return dropDelivery(dropReason);
+			return dropDelivery(confirmation.reason);
 		}
 
+		const live = confirmation.run;
 		await persistRun(ctx, {
-			run_id: event.run_id,
-			status: event.status,
-			goal: event.data?.goal,
-			created_at: event.data?.created_at,
-			started_at: event.data?.started_at,
-			finished_at: event.data?.finished_at,
-			num_of_steps: event.data?.num_of_steps,
-			result: event.data?.result,
-			error: event.data?.error,
+			run_id: live.run_id,
+			status: live.status,
+			goal: live.goal,
+			created_at: live.created_at,
+			started_at: live.started_at,
+			finished_at: live.finished_at,
+			num_of_steps: live.num_of_steps,
+			result: live.result,
+			error: live.error,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'tinyfish.webhook.runCompleted',
 			{
-				runId: event.run_id,
-				goal: event.data?.goal,
-				steps: event.data?.steps?.length ?? 0,
-				resultKeys: event.data?.result
-					? Object.keys(event.data.result).length
-					: 0,
+				runId: live.run_id,
+				goal: live.goal,
+				steps: live.steps.length,
+				resultKeys: live.result ? Object.keys(live.result).length : 0,
 			},
 			'completed',
 		);
 
-		return { success: true, data: event };
+		return {
+			success: true,
+			data: {
+				event: 'run.completed',
+				run_id: live.run_id,
+				status: live.status,
+				data: live,
+			},
+		};
 	},
 };
 
@@ -125,46 +162,55 @@ export const runFailed: TinyFishWebhooks['runFailed'] = {
 		}
 
 		const event = verification.event;
-		const dropReason = await confirmRunDelivery(
+		const confirmation = await confirmRunDelivery(
 			ctx,
 			event.run_id,
 			event.status,
 		);
-		if (dropReason) {
+		if (!confirmation.ok) {
 			await logEventFromContext(
 				ctx,
 				'tinyfish.webhook.runFailed',
-				{ runId: event.run_id, reason: dropReason },
+				{ runId: event.run_id, reason: confirmation.reason },
 				'failed',
 			);
-			return dropDelivery(dropReason);
+			return dropDelivery(confirmation.reason);
 		}
 
+		const live = confirmation.run;
 		await persistRun(ctx, {
-			run_id: event.run_id,
-			status: event.status,
-			goal: event.data?.goal,
-			created_at: event.data?.created_at,
-			started_at: event.data?.started_at,
-			finished_at: event.data?.finished_at,
-			num_of_steps: event.data?.num_of_steps,
-			result: event.data?.result,
-			error: event.data?.error,
+			run_id: live.run_id,
+			status: live.status,
+			goal: live.goal,
+			created_at: live.created_at,
+			started_at: live.started_at,
+			finished_at: live.finished_at,
+			num_of_steps: live.num_of_steps,
+			result: live.result,
+			error: live.error,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'tinyfish.webhook.runFailed',
 			{
-				runId: event.run_id,
-				goal: event.data?.goal,
-				errorCode: event.data?.error?.code,
-				errorMessage: event.data?.error?.message,
+				runId: live.run_id,
+				goal: live.goal,
+				errorCode: live.error?.code,
+				errorMessage: live.error?.message,
 			},
 			'completed',
 		);
 
-		return { success: true, data: event };
+		return {
+			success: true,
+			data: {
+				event: 'run.failed',
+				run_id: live.run_id,
+				status: live.status,
+				data: live,
+			},
+		};
 	},
 };
 
@@ -181,43 +227,52 @@ export const runCancelled: TinyFishWebhooks['runCancelled'] = {
 		}
 
 		const event = verification.event;
-		const dropReason = await confirmRunDelivery(
+		const confirmation = await confirmRunDelivery(
 			ctx,
 			event.run_id,
 			event.status,
 		);
-		if (dropReason) {
+		if (!confirmation.ok) {
 			await logEventFromContext(
 				ctx,
 				'tinyfish.webhook.runCancelled',
-				{ runId: event.run_id, reason: dropReason },
+				{ runId: event.run_id, reason: confirmation.reason },
 				'failed',
 			);
-			return dropDelivery(dropReason);
+			return dropDelivery(confirmation.reason);
 		}
 
+		const live = confirmation.run;
 		await persistRun(ctx, {
-			run_id: event.run_id,
-			status: event.status,
-			goal: event.data?.goal,
-			created_at: event.data?.created_at,
-			started_at: event.data?.started_at,
-			finished_at: event.data?.finished_at,
-			num_of_steps: event.data?.num_of_steps,
-			result: event.data?.result,
-			error: event.data?.error,
+			run_id: live.run_id,
+			status: live.status,
+			goal: live.goal,
+			created_at: live.created_at,
+			started_at: live.started_at,
+			finished_at: live.finished_at,
+			num_of_steps: live.num_of_steps,
+			result: live.result,
+			error: live.error,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'tinyfish.webhook.runCancelled',
 			{
-				runId: event.run_id,
-				goal: event.data?.goal,
+				runId: live.run_id,
+				goal: live.goal,
 			},
 			'completed',
 		);
 
-		return { success: true, data: event };
+		return {
+			success: true,
+			data: {
+				event: 'run.cancelled',
+				run_id: live.run_id,
+				status: live.status,
+				data: live,
+			},
+		};
 	},
 };
