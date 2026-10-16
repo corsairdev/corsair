@@ -157,6 +157,7 @@ export type ExternalAlibabaPlugin<T extends AlibabaPluginOptions> =
 	BaseAlibabaPlugin<T>;
 
 export function alibaba<const T extends AlibabaPluginOptions>(
+	// Every option is optional, so an empty object is a valid default for T.
 	incomingOptions: AlibabaPluginOptions & T = {} as AlibabaPluginOptions & T,
 ): ExternalAlibabaPlugin<T> {
 	const options = {

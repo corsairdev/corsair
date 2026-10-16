@@ -423,6 +423,26 @@ describe('tasks.get', () => {
 		);
 	});
 
+	it('does not move a finished task back when an older poll lands late', async () => {
+		respond(200, {
+			request_id: 'r7',
+			output: { task_id: 't2', task_status: 'RUNNING' },
+		});
+		const ctx = createContext();
+		ctx.db.videoTasks.findByEntityId.mockResolvedValue({
+			data: {
+				taskId: 't2',
+				status: 'SUCCEEDED',
+				videoUrl: 'https://x.io/done.mp4',
+				durationSeconds: 5,
+			},
+		});
+
+		await (Tasks.get as AnyEndpoint)(ctx, { task_id: 't2' });
+
+		expect(ctx.db.videoTasks.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
 	it('parses a failed task with its error code', async () => {
 		respond(200, {
 			request_id: 'r1',

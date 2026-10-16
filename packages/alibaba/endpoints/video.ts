@@ -22,6 +22,8 @@ async function submit<K extends VideoOperation>(
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 ): Promise<VideoTaskCreated> {
+	// Indexing the schema map with a generic K widens parse() to the union of all
+	// video inputs; the schema for K only returns K's input.
 	const parsed = AlibabaEndpointInputSchemas[operation].parse(
 		input,
 	) as AlibabaEndpointInputs[K];
