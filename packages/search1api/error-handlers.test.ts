@@ -13,10 +13,10 @@ function handlerFor(key: string) {
 	return entry;
 }
 
-function context(originalError: Error): ErrorContext {
+function context(originalError: Error, operation = 'web.search'): ErrorContext {
 	return {
 		pluginId: 'search1api',
-		operation: 'search1api.web.search',
+		operation,
 		input: {},
 		originalError,
 	};
@@ -128,6 +128,23 @@ describe('search1api error handlers', () => {
 		expect(
 			handlerFor('SERVER_ERROR').match(clientError, context(clientError)),
 		).toBe(false);
+	});
+
+	it('does not replay a failed feedback report but retries other writes', async () => {
+		const feedbackError = new Search1APIError('Bad gateway', { status: 502 });
+		const feedbackContext = context(feedbackError, 'web.feedback');
+		expect(handlerFor('SERVER_ERROR').match(feedbackError, feedbackContext)).toBe(
+			true,
+		);
+		await expect(
+			handlerFor('SERVER_ERROR').handler(feedbackError, feedbackContext),
+		).resolves.toEqual({ maxRetries: 0 });
+
+		const searchError = new Search1APIError('Bad gateway', { status: 502 });
+		await expect(strategyFor('SERVER_ERROR', searchError)).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 
 	it('honors Retry-After on a server failure', async () => {

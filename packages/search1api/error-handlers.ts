@@ -84,7 +84,9 @@ export const errorHandlers = {
 		// Retry-After wins when sent, but the shared request path extracts it
 		// only on 429; on 5xx only the screenshot raw fetch populates it.
 		handler: async (error: Error, context: ErrorContext) => {
-			if (context.operation === 'search1api.web.feedback') {
+			// corsair passes the bound operation path with no plugin prefix,
+			// unlike the 'search1api.*' label callSearch1API logs.
+			if (context.operation === 'web.feedback') {
 				return { maxRetries: 0 };
 			}
 			const retryAfter =
