@@ -1,7 +1,12 @@
 import type { PdlEndpoints } from '..';
 import { makePDLRequest, pdlQuery, requestPdlEnrichment } from '../client';
 import { callPdl } from './call';
-import { PdlEndpointInputSchemas, PdlEndpointOutputSchemas } from './types';
+import {
+	PdlEndpointInputSchemas,
+	PdlEndpointOutputSchemas,
+	readNumber,
+	readString,
+} from './types';
 
 export const enrich: PdlEndpoints['companyEnrich'] = async (ctx, input) => {
 	const result = await callPdl(
@@ -35,26 +40,19 @@ export const enrich: PdlEndpoints['companyEnrich'] = async (ctx, input) => {
 
 	if (result.found && ctx.db.companies) {
 		try {
-			const company = result.company as {
-				id?: string;
-				website?: string;
-				name?: string;
-				display_name?: string;
-				ticker?: string;
-				industry?: string;
-				employee_count?: number;
-				founded_year?: number;
-			};
-			const entityId = company.id ?? company.website ?? input.website;
+			const company = result.company;
+			const companyId = readString(company.id);
+			const website = readString(company.website);
+			const entityId = companyId ?? website ?? input.website;
 			if (entityId) {
 				await ctx.db.companies.upsertByEntityId(entityId, {
-					companyId: company.id,
-					name: company.name ?? company.display_name,
-					website: company.website ?? input.website,
-					ticker: company.ticker,
-					industry: company.industry,
-					employeeCount: company.employee_count,
-					foundedYear: company.founded_year,
+					companyId,
+					name: readString(company.name) ?? readString(company.display_name),
+					website: website ?? input.website,
+					ticker: readString(company.ticker),
+					industry: readString(company.industry),
+					employeeCount: readNumber(company.employee_count),
+					foundedYear: readNumber(company.founded_year),
 					likelihood: result.likelihood,
 					enrichedAt: new Date(),
 				});

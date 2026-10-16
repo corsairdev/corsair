@@ -62,6 +62,8 @@ function buildConfig(apiKey: string, baseUrl?: string): OpenAPIConfig {
 function errorDetail(body: unknown): string {
 	if (body == null) return '';
 	if (typeof body === 'string') return body;
+	// Failed bodies differ by failure layer, so probe PDL's error envelope
+	// with optional reads and fall back to the raw JSON below.
 	const error = (body as { error?: { type?: string; message?: string } }).error;
 	if (error?.message || error?.type) {
 		return [error.type, error.message].filter(Boolean).join(': ');
@@ -78,15 +80,23 @@ function errorDetail(body: unknown): string {
  * comma-separated strings; the shared client would serialize arrays as
  * repeated keys.
  */
+// Validated enrich inputs carry only strings, numbers, booleans, and string
+// lists; a query param has no wire form beyond those, so anything else drops.
+function queryScalar(value: unknown): string | number | boolean | undefined {
+	return typeof value === 'string' ||
+		typeof value === 'number' ||
+		typeof value === 'boolean'
+		? value
+		: undefined;
+}
+
 export function pdlQuery(
 	input: Record<string, unknown>,
 ): Record<string, string | number | boolean | undefined> {
 	return Object.fromEntries(
 		Object.entries(input).map(([key, value]) => [
 			key,
-			Array.isArray(value)
-				? value.join(',')
-				: (value as string | number | boolean | undefined),
+			Array.isArray(value) ? value.join(',') : queryScalar(value),
 		]),
 	);
 }

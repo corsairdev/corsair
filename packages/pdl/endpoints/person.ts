@@ -1,7 +1,12 @@
 import type { PdlEndpoints } from '..';
 import { makePDLRequest, pdlQuery, requestPdlEnrichment } from '../client';
 import { callPdl } from './call';
-import { PdlEndpointInputSchemas, PdlEndpointOutputSchemas } from './types';
+import {
+	PdlEndpointInputSchemas,
+	PdlEndpointOutputSchemas,
+	readFirstString,
+	readString,
+} from './types';
 
 export const enrich: PdlEndpoints['personEnrich'] = async (ctx, input) => {
 	const result = await callPdl(
@@ -31,31 +36,26 @@ export const enrich: PdlEndpoints['personEnrich'] = async (ctx, input) => {
 		}),
 	);
 
-	if (result.found && result.data?.pdl_id && ctx.db.people) {
+	if (result.found && ctx.db.people && result.data) {
 		try {
-			const data = result.data as {
-				pdl_id: string;
-				full_name?: string;
-				job_title?: string;
-				job_company_name?: string;
-				work_email?: string;
-				personal_emails?: string[];
-				mobile_phone?: string;
-				location_country?: string;
-				location_locality?: string;
-			};
-			await ctx.db.people.upsertByEntityId(data.pdl_id, {
-				pdlId: data.pdl_id,
-				name: data.full_name,
-				jobTitle: data.job_title,
-				jobCompanyName: data.job_company_name,
-				email: data.work_email ?? data.personal_emails?.[0],
-				phone: data.mobile_phone,
-				country: data.location_country,
-				locality: data.location_locality,
-				likelihood: result.likelihood,
-				enrichedAt: new Date(),
-			});
+			const data = result.data;
+			const pdlId = readString(data.pdl_id);
+			if (pdlId) {
+				await ctx.db.people.upsertByEntityId(pdlId, {
+					pdlId,
+					name: readString(data.full_name),
+					jobTitle: readString(data.job_title),
+					jobCompanyName: readString(data.job_company_name),
+					email:
+						readString(data.work_email) ??
+						readFirstString(data.personal_emails),
+					phone: readString(data.mobile_phone),
+					country: readString(data.location_country),
+					locality: readString(data.location_locality),
+					likelihood: result.likelihood,
+					enrichedAt: new Date(),
+				});
+			}
 		} catch (error) {
 			console.warn('Failed to save PDL person to database:', error);
 		}

@@ -3,6 +3,18 @@ import { z } from 'zod';
 // Unmodeled PDL response fields pass through parse with no shape claim.
 const UnknownRecord = z.record(z.string(), z.unknown());
 
+// Reads off an UnknownRecord narrow at the use site instead of casting, so a
+// field holding a null or a wrong type degrades to null rather than leaking
+// into a database row.
+export const readString = (value: unknown): string | null =>
+	typeof value === 'string' ? value : null;
+
+export const readNumber = (value: unknown): number | null =>
+	typeof value === 'number' ? value : null;
+
+export const readFirstString = (value: unknown): string | null =>
+	Array.isArray(value) && typeof value[0] === 'string' ? value[0] : null;
+
 const titlecaseParam = z.boolean().optional();
 const prettyParam = z.boolean().optional();
 
@@ -236,6 +248,8 @@ export const JobSearchInputSchema = z
 	})
 	.strict()
 	.superRefine((input, ctx) => {
+		// Object.keys widens to string[]; the keys come from jobFilterShape,
+		// so the index stays inside input's own keys.
 		const hasFilter = Object.keys(jobFilterShape).some(
 			(key) => input[key as keyof typeof jobFilterShape] !== undefined,
 		);
