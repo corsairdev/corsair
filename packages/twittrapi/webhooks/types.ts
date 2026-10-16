@@ -38,6 +38,8 @@ export type TwittrApiWebhookOutputs = {
 
 // Raw bodies arrive as string or pre-parsed objects; Record keeps the
 // matcher generic across transports (no per-event type is feasible here).
+// unknown is required throughout: JSON.parse returns an untyped value and
+// transports hand over bodies without a static type.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -100,6 +102,8 @@ export function parseTwittrApiSignatureHeader(header: string): {
 }
 
 export function verifyTwittrApiWebhookSignature(
+	// WebhookRequest<unknown>: the verifier runs before payload parsing, so
+	// the payload type is not yet known; verified handlers narrow it after.
 	request: WebhookRequest<unknown>,
 	secret: string,
 	options: { toleranceSeconds?: number; nowSeconds?: number } = {},

@@ -655,7 +655,8 @@ export function twittrapi<const T extends TwittrApiPluginOptions>(
 			if ('x-twittrapi-signature' in headers) return true;
 			if ('x-twittrapi-event' in headers) return true;
 			// Raw bodies arrive as string or pre-parsed objects; Record keeps
-			// the matcher generic across transports (parity with core readBodyRecord).
+			// the matcher generic across transports (parity with core
+			// readBodyRecord), since no single event type fits all bodies.
 			const body =
 				typeof request.body === 'string'
 					? (() => {
@@ -668,7 +669,8 @@ export function twittrapi<const T extends TwittrApiPluginOptions>(
 								return {};
 							}
 						})()
-					: ((request.body as Record<string, unknown> | undefined) ?? {});
+					: // Pre-parsed bodies are untyped by the transport layer.
+						((request.body as Record<string, unknown> | undefined) ?? {});
 			return body?.event === 'tweet' || body?.event === 'test';
 		},
 		pluginTenantWebhookMatcher: matchTwittrApiTenantWebhook,

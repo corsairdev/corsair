@@ -11,6 +11,8 @@ type PluginDb = {
 		) => Promise<{ id?: string } | undefined>;
 	};
 	users?: {
+		// Promise<unknown>: the ORM resolves table clients dynamically per
+		// entity, so no narrower static return type is available here.
 		upsertByEntityId: (id: string, data: TwittrApiUser) => Promise<unknown>;
 	};
 };
