@@ -21,7 +21,7 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 	);
 
 	const postRaw = raw[0].data.children.find((c) => c.kind === 't3'); // t3 = link/post
-	const post = PostDataSchema.parse(postRaw?.data ?? {});
+	const post = postRaw ? PostDataSchema.parse(postRaw.data) : null;
 
 	const comments = extractComments(raw[1]);
 
