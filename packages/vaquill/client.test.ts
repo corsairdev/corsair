@@ -8,10 +8,17 @@ type Captured = {
 };
 
 let captured: Captured | undefined;
+let fetchCount = 0;
 
-function mockFetch(response: { status?: number; body?: unknown }) {
+function mockFetch(response: {
+	status?: number;
+	body?: unknown;
+	headers?: Record<string, string>;
+}) {
 	captured = undefined;
+	fetchCount = 0;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
+		fetchCount++;
 		const headers: Record<string, string> = {};
 		const raw = init?.headers;
 		if (raw instanceof Headers) {
@@ -41,6 +48,7 @@ function mockFetch(response: { status?: number; body?: unknown }) {
 			url: String(url),
 			headers: new Headers({
 				'Content-Type': 'application/json',
+				...response.headers,
 			}),
 			json: async () => payload,
 			text: async () => JSON.stringify(payload),
@@ -111,5 +119,25 @@ describe('makeVaquillRequest', () => {
 				method: 'GET',
 			}),
 		).rejects.toBeInstanceOf(VaquillAPIError);
+	});
+
+	it('makes exactly one attempt on a 429 and still surfaces Retry-After', async () => {
+		mockFetch({
+			status: 429,
+			body: { detail: 'slow down' },
+			headers: { 'retry-after': '7' },
+		});
+
+		await expect(
+			makeVaquillRequest('/us/statutes/search', 'vq_key_test', {
+				method: 'POST',
+				body: { query: 'due process' },
+			}),
+		).rejects.toMatchObject({
+			name: 'VaquillAPIError',
+			status: 429,
+			retryAfter: '7000',
+		});
+		expect(fetchCount).toBe(1);
 	});
 });

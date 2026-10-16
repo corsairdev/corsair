@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class VaquillAPIError extends Error {
@@ -19,6 +23,19 @@ const VAQUILL_API_BASE = 'https://api.vaquill.ai/api/v1';
 // search is seconds, and includeBody pages pull up to 50 full statute texts
 // alongside it. Well above the shared 20s default.
 const VAQUILL_TIMEOUT_MS = 60_000;
+
+// 429 policy belongs to error-handlers.ts, which replays within the
+// endpoint's retry budget, so the transport makes a single attempt.
+// Retry-After is still read into the thrown ApiError for the handlers.
+const NO_RETRY: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 export async function makeVaquillRequest<T>(
 	endpoint: string,
@@ -56,7 +73,9 @@ export async function makeVaquillRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: NO_RETRY,
+		});
 	} catch (error: unknown) {
 		const status = error instanceof ApiError ? error.status : undefined;
 		const retryAfter =
