@@ -543,6 +543,22 @@ describe('output schemas', () => {
 		expect(parsed[1]).toEqual({ status: 400 });
 	});
 
+	it('keeps the error envelope on a failed bulk item', () => {
+		const parsed = outputs.personBulk.parse([
+			{
+				status: 400,
+				error: {
+					type: 'missing_parameter',
+					message: 'profile or email is required',
+				},
+			},
+		]);
+		expect(parsed[0]?.error).toEqual({
+			type: 'missing_parameter',
+			message: 'profile or email is required',
+		});
+	});
+
 	it('parses the ip.enrich composite and its no-match result', () => {
 		const parsed = outputs.ipEnrich.parse({
 			found: true,

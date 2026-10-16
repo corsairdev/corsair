@@ -281,6 +281,13 @@ export const BulkPersonEnrichOutputSchema = z.array(
 		likelihood: z.number().optional(),
 		data: UnknownRecord.nullable().optional(),
 		metadata: UnknownRecord.optional(),
+		// Non-200 items carry the standard PDL error envelope instead of data.
+		error: z
+			.object({
+				type: z.string().optional(),
+				message: z.string().optional(),
+			})
+			.optional(),
 	}),
 );
 
