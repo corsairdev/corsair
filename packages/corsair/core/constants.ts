@@ -160,6 +160,7 @@ export const BaseProviders = [
 	'dadataru',
 	'databricks',
 	'datadog',
+	'dataforseo',
 	'datarobot',
 	'deepseek',
 	'devinmcp',
@@ -509,6 +510,7 @@ export const ProviderDisplayNames = {
 	dadataru: 'Dadataru',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
+	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
@@ -865,6 +867,7 @@ export type AllProviders =
 	| 'dadataru'
 	| 'databricks'
 	| 'datadog'
+	| 'dataforseo'
 	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
