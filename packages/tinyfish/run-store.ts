@@ -17,6 +17,12 @@ export type StoredRun = {
 /** A finished run can only move to another terminal state, never back. */
 const TERMINAL_RUN_STATUSES = new Set(['COMPLETED', 'FAILED', 'CANCELLED']);
 
+// The guard below reads then writes, so concurrent saves of one run could both
+// read the pre-state and last-write-wins past it. Chains per run id make the
+// read-guard-write atomic against other in-process callers; separate processes
+// still serialize only at the database.
+const persistChains = new Map<string, Promise<void>>();
+
 /** A run without an ID is a failed creation and is not stored. */
 export async function persistRun(
 	ctx: TinyFishContext,
@@ -27,7 +33,25 @@ export async function persistRun(
 	if (!ctx.database) return;
 	const runs = ctx.db.agentRuns;
 
-	const stored = (await runs.findByEntityId(run.run_id))?.data;
+	const runId: string = run.run_id;
+	const previous = persistChains.get(runId) ?? Promise.resolve();
+	const current = previous.then(() => persistNow(runs, runId, run));
+	persistChains.set(runId, current);
+	try {
+		await current;
+	} finally {
+		if (persistChains.get(runId) === current) {
+			persistChains.delete(runId);
+		}
+	}
+}
+
+async function persistNow(
+	runs: TinyFishContext['db']['agentRuns'],
+	runId: string,
+	run: StoredRun,
+): Promise<void> {
+	const stored = (await runs.findByEntityId(runId))?.data;
 	// A late poll or a stale acknowledgement must not rewind a finished run.
 	if (
 		stored?.status &&
@@ -39,7 +63,7 @@ export async function persistRun(
 
 	// Upsert replaces the whole row, so each absent patch key falls back to
 	// the stored value instead of erasing it; a real value still overwrites.
-	await runs.upsertByEntityId(run.run_id, {
+	await runs.upsertByEntityId(runId, {
 		status: run.status,
 		goal: run.goal ?? stored?.goal,
 		createdAt: run.created_at ? new Date(run.created_at) : stored?.createdAt,

@@ -83,4 +83,25 @@ describe('tinyfish run store', () => {
 		}
 		expect(client.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
+
+	it('keeps the terminal status when a stale poll races the completion save', async () => {
+		const { rows, client } = createStore();
+		const ctx = createContext(client, {});
+
+		// Both saves read before either writes, which is exactly the
+		// interleaving that let last-write-wins rewind a finished run.
+		const completion = persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+			result: { title: 'Example' },
+		});
+		const stalePoll = persistRun(ctx, { run_id: 'run-1', status: 'RUNNING' });
+		await Promise.all([completion, stalePoll]);
+
+		expect(rows.get('run-1')).toMatchObject({
+			status: 'COMPLETED',
+			result: { title: 'Example' },
+		});
+		expect(client.upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
 });
