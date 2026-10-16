@@ -11,10 +11,15 @@ function contactField(
 	field: WireContactField | undefined,
 ): ContactField | undefined {
 	if (field === undefined) return undefined;
+	// Only a found value is a fact. not_found and unavailable mean the check
+	// came back empty or could not run; writing their null values would wipe
+	// a previously found contact from the cached row.
+	if (field.status !== 'found') return undefined;
 	return {
 		value: field.value,
 		status: field.status,
 		confidence: field.confidence ?? null,
+		source: field.source ?? null,
 		lastSeen: field.last_seen ?? null,
 	};
 }

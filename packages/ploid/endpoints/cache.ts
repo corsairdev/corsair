@@ -79,7 +79,9 @@ async function writePerson(
 		data.personalEmail = merge(data.personalEmail, patch.personalEmail);
 		data.phone = merge(data.phone, patch.phone);
 		if (patch.sources !== undefined && patch.sources.length > 0) {
-			data.sources = [...(data.sources ?? []), ...patch.sources];
+			// Union, not concat: re-resolving the same person must not grow
+			// the row with duplicate URLs.
+			data.sources = [...new Set([...(data.sources ?? []), ...patch.sources])];
 		}
 
 		await ctx.db.people.upsertByEntityId(patch.providerId, data);

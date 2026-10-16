@@ -6,6 +6,7 @@ export const ContactField = z.object({
 	value: z.string().nullable(),
 	status: z.enum(['found', 'not_found', 'unavailable']),
 	confidence: z.enum(['guess', 'strong', 'verified']).nullable().optional(),
+	source: z.string().nullable().optional(),
 	lastSeen: z.string().nullable().optional(),
 });
 
