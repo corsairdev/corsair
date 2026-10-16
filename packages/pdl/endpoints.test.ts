@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { PdlEndpointInputs } from './endpoints/types';
 import {
 	PdlEndpointInputSchemas,
 	PdlEndpointOutputSchemas,
@@ -390,6 +391,14 @@ describe('autocomplete input', () => {
 				pretty: true,
 			}),
 		).toBe(true);
+	});
+
+	it('typechecks an input that omits the defaulted text', () => {
+		const input: PdlEndpointInputs['autocomplete'] = { field: 'job_title' };
+		expect(inputs.autocomplete.parse(input)).toEqual({
+			field: 'job_title',
+			text: '',
+		});
 	});
 
 	it('requires a field and bounds size', () => {

@@ -386,7 +386,8 @@ export const AutocompleteInputSchema = z
 	})
 	.strict();
 
-export type AutocompleteInput = z.infer<typeof AutocompleteInputSchema>;
+// z.input, not z.infer: text defaults on the wire, so callers may omit it.
+export type AutocompleteInput = z.input<typeof AutocompleteInputSchema>;
 
 export const AutocompleteOutputSchema = z.object({
 	fields: z.array(z.string()),
