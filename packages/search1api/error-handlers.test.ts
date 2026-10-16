@@ -133,9 +133,9 @@ describe('search1api error handlers', () => {
 	it('does not replay a failed feedback report but retries other writes', async () => {
 		const feedbackError = new Search1APIError('Bad gateway', { status: 502 });
 		const feedbackContext = context(feedbackError, 'web.feedback');
-		expect(handlerFor('SERVER_ERROR').match(feedbackError, feedbackContext)).toBe(
-			true,
-		);
+		expect(
+			handlerFor('SERVER_ERROR').match(feedbackError, feedbackContext),
+		).toBe(true);
 		await expect(
 			handlerFor('SERVER_ERROR').handler(feedbackError, feedbackContext),
 		).resolves.toEqual({ maxRetries: 0 });

@@ -64,6 +64,7 @@ const crawlResponse = {
 const cases: Array<{
 	name: string;
 	endpoint: AnyEndpoint;
+	// each case feeds a different payload; the endpoint's schema validates it
 	input: unknown;
 	method: string;
 	url: string;

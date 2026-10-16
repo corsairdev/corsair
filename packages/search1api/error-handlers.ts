@@ -5,6 +5,7 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof Search1APIError ? error.status : undefined;
 }
 
+// an error body arrives as a parsed object, raw text, or nothing at all
 function bodyText(body: unknown): string {
 	if (body == null) {
 		return '';

@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class Search1APIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// error handlers needle-match this payload; its shape is provider-owned
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly method?: Search1APIRequestOptions['method'];
@@ -66,6 +67,7 @@ function buildConfig(apiKey: string): OpenAPIConfig {
 	};
 }
 
+// ApiError.body is untyped, so detail rendering must handle every shape
 function errorDetail(body: unknown): string {
 	if (body == null) return '';
 	if (typeof body === 'string') return body;
@@ -134,6 +136,7 @@ function retryAfterMsOf(response: Response): number | undefined {
 	return Number.isFinite(seconds) ? seconds * 1000 : undefined;
 }
 
+// a screenshot failure body may be json or plain text; parse and fall back
 async function readErrorBody(response: Response): Promise<unknown> {
 	const text = await response.text();
 	if (!text) return undefined;

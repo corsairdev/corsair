@@ -254,6 +254,7 @@ export const CrawlResultSchema = z.object({
 	title: z.string(),
 	link: z.string(),
 	content: z.string(),
+	// provider-reported crawl metadata varies by page and engine
 	metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -328,6 +329,7 @@ export const ExtractInputSchema = z
 	.object({
 		url: z.string().url(),
 		prompt: z.string().optional(),
+		// callers pass an open json-schema-like object the provider forwards as-is
 		response_format: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -339,6 +341,7 @@ export const ExtractResponseSchema = z.object({
 	extractParameters: z.object({
 		url: z.string(),
 	}),
+	// extraction output takes the shape the prompt asked for, with no fixed schema
 	results: z.unknown(),
 });
 
