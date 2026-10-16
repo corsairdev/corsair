@@ -15,61 +15,88 @@ const MetaSchema = z
 
 const TermsSchema = z.array(z.string().min(1).max(200)).min(1).max(10);
 
+// The spec marks every filter object minProperties 1: a condition-less
+// object is not a filter and must not reach the wire.
+function withCondition<S extends z.ZodType>(schema: S, field: string): S {
+	return schema.refine(
+		// as: the generic output is only known to be zod-parsable; every
+		// caller passes a strict object, so the record view is exact.
+		(value) =>
+			Object.values(value as Record<string, unknown>).some(
+				(entry) => entry !== undefined,
+			),
+		{ message: `${field} filter needs at least one condition` },
+	);
+}
+
 // One filter value, or { any_of, none_of } with at least one of the two.
 const TextFilterSchema = z.union([
 	z.string().min(1).max(200),
-	z.strictObject({
-		any_of: TermsSchema.optional(),
-		none_of: TermsSchema.optional(),
-	}),
+	withCondition(
+		z.strictObject({
+			any_of: TermsSchema.optional(),
+			none_of: TermsSchema.optional(),
+		}),
+		'text',
+	),
 ]);
 
 const CompanyFilterSchema = z.union([
 	z.string().min(1).max(200),
-	z.strictObject({
-		any_of: TermsSchema.optional(),
-		none_of: TermsSchema.optional(),
-		employee_count: z
-			.strictObject({
-				gte: z.number().int().min(1).optional(),
-				lte: z.number().int().min(1).optional(),
-			})
-			.optional(),
-		funding_stage: z
-			.strictObject({
-				in: z
-					.array(
-						z.enum([
-							'pre_seed',
-							'seed',
-							'series_a',
-							'series_b',
-							'series_c',
-							'series_d_plus',
-							'public',
-							'bootstrapped',
-						]),
-					)
-					.min(1),
-			})
-			.optional(),
-	}),
+	withCondition(
+		z.strictObject({
+			any_of: TermsSchema.optional(),
+			none_of: TermsSchema.optional(),
+			employee_count: withCondition(
+				z.strictObject({
+					gte: z.number().int().min(1).optional(),
+					lte: z.number().int().min(1).optional(),
+				}),
+				'employee_count',
+			).optional(),
+			funding_stage: z
+				.strictObject({
+					in: z
+						.array(
+							z.enum([
+								'pre_seed',
+								'seed',
+								'series_a',
+								'series_b',
+								'series_c',
+								'series_d_plus',
+								'public',
+								'bootstrapped',
+							]),
+						)
+						.min(1),
+				})
+				.optional(),
+		}),
+		'company',
+	),
 ]);
 
 const LocationFilterSchema = z.union([
 	z.string().min(1).max(200),
-	z.strictObject({
-		any_of: TermsSchema.optional(),
-		none_of: TermsSchema.optional(),
-		countries: TermsSchema.optional(),
-		cities: TermsSchema.optional(),
-	}),
+	withCondition(
+		z.strictObject({
+			any_of: TermsSchema.optional(),
+			none_of: TermsSchema.optional(),
+			countries: TermsSchema.optional(),
+			cities: TermsSchema.optional(),
+		}),
+		'location',
+	),
 ]);
 
-const CountFilterSchema = z.strictObject({
-	min: z.number().int().min(1).optional(),
-	max: z.number().int().min(1).optional(),
-});
+const CountFilterSchema = withCondition(
+	z.strictObject({
+		min: z.number().int().min(1).optional(),
+		max: z.number().int().min(1).optional(),
+	}),
+	'company_size',
+);
 
 const SearchFiltersSchema = z.strictObject({
 	title: TextFilterSchema.optional(),
@@ -116,7 +143,7 @@ export const SearchInputSchema = z
 	.refine(
 		(value) =>
 			(value.query !== undefined && value.query.trim() !== '') ||
-			value.filters !== undefined,
+			(value.filters !== undefined && Object.keys(value.filters).length > 0),
 		{ message: 'query or at least one filters field is required' },
 	);
 

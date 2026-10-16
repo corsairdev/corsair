@@ -33,6 +33,35 @@ describe('input bounds and enums', () => {
 		).toThrow();
 	});
 
+	it('rejects condition-less filter objects before the wire', () => {
+		// {} as the whole filters value: no query, no filter.
+		expect(() => SearchInputSchema.parse({ filters: {} })).toThrow();
+		// A filter key whose object carries no condition.
+		expect(() => SearchInputSchema.parse({ filters: { title: {} } })).toThrow();
+		expect(() =>
+			SearchInputSchema.parse({ filters: { location: {} } }),
+		).toThrow();
+		expect(() =>
+			SearchInputSchema.parse({ filters: { company_size: {} } }),
+		).toThrow();
+		expect(() =>
+			SearchInputSchema.parse({
+				filters: { company: { employee_count: {} } },
+			}),
+		).toThrow();
+		// A single real condition is enough.
+		expect(() =>
+			SearchInputSchema.parse({
+				filters: { title: { any_of: ['founder'] } },
+			}),
+		).not.toThrow();
+		expect(() =>
+			SearchInputSchema.parse({
+				filters: { company_size: { min: 10 } },
+			}),
+		).not.toThrow();
+	});
+
 	it('caps criteria at five strings of 500 chars', () => {
 		expect(() =>
 			SearchInputSchema.parse({
