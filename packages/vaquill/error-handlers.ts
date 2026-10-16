@@ -24,7 +24,9 @@ export const errorHandlers = {
 					retryAfterMs = retryAfterVal;
 				}
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// The bind-level replay counts its own first call, so 4 retries
+			// plus that initial execution is the promised 5 attempts max.
+			return { maxRetries: 4, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
