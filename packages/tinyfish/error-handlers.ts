@@ -68,11 +68,10 @@ export const errorHandlers = {
 		},
 	},
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			if (codeOf(error) === 'RATE_LIMIT_EXCEEDED') return true;
-			return messageIncludes(error, ['rate limit', 'too many requests']);
-		},
+		// A retry replays a possibly billed call, so only a confirmed
+		// rate-limit response qualifies; message text can say anything.
+		match: (error: Error) =>
+			statusOf(error) === 429 || codeOf(error) === 'RATE_LIMIT_EXCEEDED',
 		// A per-minute rate limit; the request never ran, so it can be
 		// replayed. Retry-After wins when sent.
 		handler: async (error: Error) => {

@@ -107,14 +107,25 @@ describe('tinyfish error handlers', () => {
 		expect(handlerFor('RATE_LIMIT_ERROR').match(coded, context(coded))).toBe(
 			false,
 		);
+	});
 
-		const textOnly = new TinyFishError('call failed', {
+	it('sends a 500 carrying rate-limit text to the no-retry server handler', async () => {
+		const error = new TinyFishError('call failed', {
 			status: 500,
 			body: { message: 'Too many requests' },
 		});
-		expect(
-			handlerFor('RATE_LIMIT_ERROR').match(textOnly, context(textOnly)),
-		).toBe(true);
+		expect(handlerFor('RATE_LIMIT_ERROR').match(error, context(error))).toBe(
+			false,
+		);
+
+		// Same first-match dispatch the framework runs over the handler keys.
+		const winner = Object.keys(handlers).find((name) =>
+			handlers[name]?.match(error, context(error)),
+		);
+		expect(winner).toBe('SERVER_ERROR');
+		await expect(strategyFor('SERVER_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('retries a profile-setup conflict briefly with backoff', async () => {
