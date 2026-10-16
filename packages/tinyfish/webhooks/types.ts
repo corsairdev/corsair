@@ -40,6 +40,7 @@ const WebhookRunDataSchema = z.looseObject({
 	started_at: z.string().nullable().optional(),
 	finished_at: z.string().nullable().optional(),
 	num_of_steps: z.number().nullable().optional(),
+	// Result shape is goal-dependent; the docs fix keys only by example.
 	result: z.record(z.string(), z.unknown()).nullable().optional(),
 	error: WebhookRunErrorSchema.nullable().optional(),
 	streaming_url: z.string().nullable().optional(),

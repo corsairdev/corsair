@@ -136,7 +136,9 @@ export const RunSummarySchema = z.object({
 	started_at: z.string().nullable(),
 	finished_at: z.string().nullable(),
 	num_of_steps: z.number().int().min(0).nullable(),
+	// Result shape is goal-dependent; the docs fix keys only by example.
 	result: z.record(z.string(), z.unknown()).nullable(),
+	// Echoes the caller's own result contract, so its keys are not fixed.
 	output_schema: z.record(z.string(), z.unknown()).nullable(),
 	profile_attached: z.boolean(),
 	profile_id: z.string().nullable(),
@@ -199,6 +201,7 @@ export const RunRequestSchema = z
 		profile_id: z.string().min(1).optional(),
 		credential_item_ids: z.array(z.string()).min(1).optional(),
 		proxy_config: ProxyConfigSchema.optional(),
+		// An arbitrary JSON Schema the caller owns; only its presence matters.
 		output_schema: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -217,7 +220,9 @@ export const SearchResultSchema = z.object({
 	url: z.string(),
 	thumbnail_url: z.string().nullable().optional(),
 	/** Present only when the `fetch` request parameter was supplied. */
+	// Shape follows the requested format: a string, or an object for json.
 	fetch: z.unknown().nullable().optional(),
+	// Failure detail mirrors whatever the provider returns; shape varies.
 	fetch_error: z.unknown().nullable().optional(),
 	date: z.string().nullable().optional(),
 	publisher: z.string().nullable().optional(),
@@ -335,6 +340,7 @@ export const FetchResultSchema = z.object({
 	links: z.array(z.string()).optional(),
 	image_links: z.array(z.string()).optional(),
 	iframe_links: z.array(z.string()).optional(),
+	// Provider-defined metadata bag; keys vary by page.
 	page_metadata: z.record(z.string(), z.unknown()).optional(),
 	latency_ms: z.number().nullable(),
 	not_modified: z.boolean().optional(),
@@ -510,6 +516,7 @@ export const RunBatchInputSchema = z
 	.object({
 		runs: z.array(RunBatchItemSchema).min(1).max(100),
 		profile_id: z.string().min(1).optional(),
+		// Batch-level result contract the caller owns; presence is the contract.
 		output_schema: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -523,6 +530,7 @@ export const RunResponseSchema = z.object({
 	started_at: z.string().nullable(),
 	finished_at: z.string().nullable(),
 	num_of_steps: z.number().nullable(),
+	// Result shape is goal-dependent; the docs fix keys only by example.
 	result: z.record(z.string(), z.unknown()).nullable(),
 	error: RunErrorSchema.nullable(),
 	profile_hint: ProfileHintSchema.nullable().optional(),
@@ -543,6 +551,7 @@ export const RunBatchResponseSchema = z.object({
 		.object({
 			code: z.string(),
 			message: z.string(),
+			// Provider attaches per-code context here; shape varies by code.
 			details: z.unknown().nullable().optional(),
 		})
 		.nullable(),
@@ -855,6 +864,7 @@ export const ResearchRunSchema = z.object({
 		.object({
 			code: z.enum(TINYFISH_ERROR_CODES),
 			message: z.string(),
+			// Provider attaches per-code context here; shape varies by code.
 			details: z.unknown().nullable().optional(),
 		})
 		.nullable(),
