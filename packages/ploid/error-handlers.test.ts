@@ -104,11 +104,8 @@ describe('Ploid error handlers', () => {
 		);
 
 		// 4 attempts total (1 initial + 3 retries); 3 attempts for 5xx.
-		expect(rateLimit).toMatchObject({
-			maxRetries: 3,
-			headersRetryAfterMs: 2500,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(rateLimit?.maxRetries).toBe(3);
+		expect(rateLimit?.retryStrategy).toBe('exponential_backoff');
 		expect(server).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
@@ -116,5 +113,24 @@ describe('Ploid error handlers', () => {
 		expect(validation).toEqual({ maxRetries: 0 });
 		expect(payment).toEqual({ maxRetries: 0 });
 		expect(timeout).toEqual({ maxRetries: 0 });
+	});
+
+	it('adds jitter on top of Retry-After, never below it', async () => {
+		const waits: number[] = [];
+		for (let i = 0; i < 20; i += 1) {
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				ploidError(429, 'rate_limited', 2500),
+			);
+			waits.push(result?.headersRetryAfterMs ?? -1);
+		}
+
+		// The framework applies headersRetryAfterMs verbatim, so the jitter
+		// lives here: at least the required wait, at most 500 ms on top.
+		for (const wait of waits) {
+			expect(wait).toBeGreaterThanOrEqual(2500);
+			expect(wait).toBeLessThanOrEqual(3000);
+		}
+		// Deterministic waits would all be identical.
+		expect(new Set(waits).size).toBeGreaterThan(1);
 	});
 });

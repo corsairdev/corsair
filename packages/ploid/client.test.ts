@@ -14,6 +14,8 @@ const mockRequest = jest.mocked(request);
 
 function apiError(
 	status: number,
+	// unknown: the fixture deliberately feeds every error body shape the
+	// provider can send (object, string, omitted); a narrower type would not.
 	body: unknown,
 	retryAfterMs?: number,
 ): ApiError {

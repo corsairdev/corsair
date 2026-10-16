@@ -56,13 +56,20 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			getStatus(error) === 429 || getCode(error) === 'rate_limited',
 		// 429s are rejected before processing and never billed. The docs
-		// require honoring Retry-After with jitter; the framework backoff adds
-		// the jitter. 4 attempts total (1 initial + 3 retries).
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asPloidError(error)?.retryAfter,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// require honoring Retry-After WITH jitter; the framework applies
+		// headersRetryAfterMs verbatim, so the jitter is added here (never
+		// below the required wait). 4 attempts total (1 initial + 3 retries).
+		handler: async (error: Error) => {
+			const retryAfter = asPloidError(error)?.retryAfter;
+			return {
+				maxRetries: 3,
+				headersRetryAfterMs:
+					retryAfter === undefined
+						? undefined
+						: Math.ceil(retryAfter + Math.random() * 500),
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) =>

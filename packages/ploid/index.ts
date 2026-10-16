@@ -187,8 +187,10 @@ function mergeErrorHandlers(
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const ploidAuthConfig = {
+	// A Bearer key is the only credential; declaring an account-level field
+	// here would make auth status permanently "partial" for a saved key.
 	api_key: {
-		account: ['one'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

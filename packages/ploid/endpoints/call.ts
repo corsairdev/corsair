@@ -14,6 +14,7 @@ export async function callPloid<TInput, TOutput>(
 	// unknown: endpoint input is raw until inputSchema.parse.
 	input: unknown,
 	build: (validated: TInput) => PloidRequestOptions & { url: string },
+	// unknown: log fields are free-form per endpoint; only the event log reads them.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
 	remember?: (validated: TInput, response: TOutput) => Promise<void>,
 ): Promise<TOutput> {
