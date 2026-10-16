@@ -97,6 +97,8 @@ const FirmographicSection = z.object({
 	operating_status: CodeLabel.optional(),
 	ownership_category: CodeLabel.optional(),
 	headcount_range: z.string().optional(),
+	logo_url: z.string().optional(),
+	akta_rank: z.number().optional(),
 });
 
 const BusinessModelSection = z.object({
@@ -134,7 +136,9 @@ const CompanyAssessmentSection = z.object({
 	strengths: z.array(SourcedDetail).optional(),
 	weakness: z.array(SourcedDetail).optional(),
 	competitive_moat: z
-		.array(z.object({ details: z.string(), type: CodeLabel.optional() }))
+		.array(
+			z.object({ details: z.string().optional(), type: CodeLabel.optional() }),
+		)
 		.optional(),
 	key_risks: z.array(SourcedDetail).optional(),
 	key_highlights: z.array(SourcedDetail).optional(),
@@ -147,6 +151,7 @@ const CompanyAssessmentSection = z.object({
 	peers: z
 		.array(
 			z.object({
+				uuid: z.string().optional(),
 				name: z.string(),
 				description: z.string().optional(),
 				type: CodeLabel.optional(),
@@ -188,6 +193,7 @@ const CompanyHierarchySection = z.object({
 	subsidiaries: z
 		.array(
 			z.object({
+				uuid: z.string().optional(),
 				name: z.string(),
 				business_focus: z.string().optional(),
 				acquired_on: PartialDate.optional(),
@@ -285,6 +291,7 @@ const StrategicSignalSection = z.object({
 	partnership: z
 		.array(
 			SourcedTypedItem.extend({
+				uuid: z.string().optional(),
 				name: z.string().optional(),
 				strategic_tier: z.string().optional(),
 				announced_on: PartialDate.optional(),
@@ -331,6 +338,7 @@ const CustomerProfileSection = z.object({
 	select_customer: z
 		.array(
 			z.object({
+				uuid: z.string().optional(),
 				name: z.string(),
 				industry: z.string().optional(),
 				use_case: z.string().optional(),
@@ -363,7 +371,13 @@ const TechnologySection = z.object({
 		.optional(),
 	integration: z.array(SourcedTypedItem).optional(),
 	ai_capability: z.array(SourcedTypedItem).optional(),
-	ai_maturity: z.object({ label: z.string() }).optional(),
+	ai_maturity: z
+		.object({
+			label: z.string(),
+			scale: z.number().optional(),
+			description: z.string().optional(),
+		})
+		.optional(),
 	app_detail: z
 		.object({
 			has_app: z.boolean().optional(),
@@ -535,6 +549,15 @@ const ProductReviewSchema = z.object({
 	provider: z.string().optional(),
 });
 
+// The OpenAPI schema says strings; the response example returns { text, count }.
+const ProsConsItem = z.union([
+	z.string(),
+	z.object({
+		text: z.string(),
+		count: z.union([z.string(), z.number()]).optional(),
+	}),
+]);
+
 const ProductSchema = z.object({
 	id: z.string(),
 	product_name: z.string(),
@@ -545,8 +568,8 @@ const ProductSchema = z.object({
 	star_distribution: z
 		.record(z.string(), z.record(z.string(), z.number()))
 		.optional(),
-	pros_list: z.array(z.string()).optional(),
-	cons_list: z.array(z.string()).optional(),
+	pros_list: z.array(ProsConsItem).optional(),
+	cons_list: z.array(ProsConsItem).optional(),
 	pricing: z
 		.array(
 			z.object({
@@ -633,7 +656,8 @@ const CompanySearchInputSchema = z.object({
 
 const CompanyEnrichInputSchema = z.object({
 	company: CompanyIdentifier,
-	sections: z.array(EnrichmentSection).min(1).optional(),
+	// The docs mark it optional, but the API answers 422 without it.
+	sections: z.array(EnrichmentSection).min(1),
 });
 
 const CompanyEmployeeReviewsInputSchema = z.object({
@@ -686,6 +710,7 @@ const NewsListInputSchema = z.object({
 
 const CompanySearchResponseSchema = z.object({
 	data: z.array(CompanySearchResultSchema),
+	count: z.number().optional(),
 	credits_consumed: CreditsConsumed,
 });
 

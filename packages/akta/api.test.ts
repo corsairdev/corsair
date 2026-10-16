@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { AktaAPIError } from './client';
 import { Company, Industry, News } from './endpoints';
 import { errorHandlers } from './error-handlers';
+import { enrichmentAllSections } from './test-samples';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -125,6 +126,7 @@ const article = {
 };
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -264,16 +266,57 @@ describe('company.enrich', () => {
 		);
 	});
 
-	it('omits sections when none are requested', async () => {
+	it('parses all 16 sections without dropping fields', async () => {
 		fetchMock.mockImplementation(async () =>
-			jsonResponse(200, { data: { uuid: '0000031' }, credits_consumed: 0 }),
+			jsonResponse(200, enrichmentAllSections),
 		);
 
-		await (Company.enrich as AnyEndpoint)(createContext(), {
-			company: 'https://stripe.com',
+		const result = await (Company.enrich as AnyEndpoint)(createContext(), {
+			company: 'https://canva.com',
+			sections: Object.keys(enrichmentAllSections.data).filter(
+				(key) => key !== 'uuid',
+			),
 		});
 
-		expect(lastCall().url.searchParams.has('sections')).toBe(false);
+		expect(Object.keys(enrichmentAllSections.data)).toHaveLength(17);
+		expect(result).toEqual(enrichmentAllSections);
+	});
+
+	it('requires sections, since the API rejects a request without them', async () => {
+		await expect(
+			(Company.enrich as AnyEndpoint)(createContext(), {
+				company: 'https://stripe.com',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps saved firmographic fields that a later search does not return', async () => {
+		const ctx = createContext();
+		const saved = {
+			uuid: '0000031',
+			name: 'Stripe',
+			website: 'stripe.com',
+			foundedYear: 2010,
+			headcountRange: '5001-10000',
+			descriptionShort: 'Payments infrastructure.',
+		};
+		ctx.db.companies.findByEntityId.mockResolvedValue({ data: saved });
+		fetchMock.mockImplementation(async () =>
+			jsonResponse(200, {
+				data: [{ uuid: '0000031', name: 'Stripe', company_status: 'private' }],
+				credits_consumed: 0,
+			}),
+		);
+
+		await (Company.search as AnyEndpoint)(ctx, { query: 'stripe' });
+
+		expect(ctx.db.companies.upsertByEntityId).toHaveBeenCalledWith('0000031', {
+			...saved,
+			companyStatus: 'private',
+			productCategory: undefined,
+			parentCompanyUuid: undefined,
+		});
 	});
 
 	it('rejects an unknown section', async () => {
@@ -393,11 +436,18 @@ describe('company.productReviews', () => {
 		expect(result).toEqual(body);
 	});
 
-	it('accepts the documented example key `product`', async () => {
+	it('accepts the documented example key `product` with { text, count } pros', async () => {
 		const body = {
 			data: {
 				uuid: '00000l1',
-				product: [{ id: '89224', product_name: 'Canva' }],
+				product: [
+					{
+						id: '89224',
+						product_name: 'Canva',
+						pros_list: [{ text: 'Ease of Use', count: '1564' }],
+						cons_list: [{ text: 'Limited Features', count: '515' }],
+					},
+				],
 			},
 			limit: 0,
 			offset: 0,
@@ -523,25 +573,22 @@ describe('errors', () => {
 		});
 	});
 
-	it('uses retry_after_seconds from a 429 body', async () => {
+	it('hands a 429 to the rate-limit handler after one request, with retry_after_seconds', async () => {
 		fetchMock.mockImplementation(async () =>
-			jsonResponse(429, { error: 'rate_limited', retry_after_seconds: 0 }),
+			jsonResponse(429, { error: 'rate_limited', retry_after_seconds: 30 }),
 		);
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Industry.search as AnyEndpoint)(createContext(), {
+		const error = (await (Industry.search as AnyEndpoint)(createContext(), {
 			query: 'fintech',
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as AktaAPIError;
-		jest.useRealTimers();
+		}).catch((e: Error) => e)) as AktaAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(0);
+		expect(error.retryAfter).toBe(30_000);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({
 			maxRetries: 3,
-			headersRetryAfterMs: 0,
+			headersRetryAfterMs: 30_000,
 		});
 	});
 
@@ -555,15 +602,12 @@ describe('errors', () => {
 				},
 			),
 		);
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Industry.search as AnyEndpoint)(createContext(), {
+		const error = (await (Industry.search as AnyEndpoint)(createContext(), {
 			query: 'fintech',
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as AktaAPIError;
-		jest.useRealTimers();
+		}).catch((e: Error) => e)) as AktaAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.retryAfter).toBe(2000);
 	});
 
