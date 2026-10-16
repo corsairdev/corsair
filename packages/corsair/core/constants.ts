@@ -35,6 +35,7 @@ export const BaseProviders = [
 	'aivoov',
 	'alchemy',
 	'algolia',
+	'alibaba',
 	'allimagesai',
 	'alphavantage',
 	'altoviz',
@@ -384,6 +385,7 @@ export const ProviderDisplayNames = {
 	aivoov: 'AiVOOV',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	alibaba: 'Alibaba Cloud Model Studio',
 	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
@@ -740,6 +742,7 @@ export type AllProviders =
 	| 'aivoov'
 	| 'alchemy'
 	| 'algolia'
+	| 'alibaba'
 	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
