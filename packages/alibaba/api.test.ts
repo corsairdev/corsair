@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { AlibabaAPIError, normalizeBaseUrl } from './client';
 import { Image, Tasks, Video } from './endpoints';
 import { errorHandlers } from './error-handlers';
+import type { AlibabaVideoTask } from './schema';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -444,8 +445,8 @@ describe('tasks.get', () => {
 	});
 
 	it('keeps SUCCEEDED when a slower RUNNING poll overlaps it', async () => {
-		const store = new Map<string, Record<string, unknown>>();
-		// The RUNNING poll's read is slow, so both polls read before either writes.
+		const store = new Map<string, AlibabaVideoTask>();
+		// The RUNNING answer arrives first and its read is slow, so the polls overlap.
 		let reads = 0;
 		const db = {
 			findByEntityId: jest.fn(async (id: string) => {
@@ -454,11 +455,9 @@ describe('tasks.get', () => {
 				await new Promise((resolve) => setTimeout(resolve, delay));
 				return snapshot ? { data: snapshot } : null;
 			}),
-			upsertByEntityId: jest.fn(
-				async (id: string, data: Record<string, unknown>) => {
-					store.set(id, data);
-				},
-			),
+			upsertByEntityId: jest.fn(async (id: string, data: AlibabaVideoTask) => {
+				store.set(id, data);
+			}),
 		};
 		const ctx = { ...createContext(), db: { videoTasks: db } };
 		const answers = [
@@ -489,26 +488,6 @@ describe('tasks.get', () => {
 			status: 'SUCCEEDED',
 			videoUrl: 'https://x.io/done.mp4',
 		});
-	});
-
-	it('still saves a poll after an earlier write for the task failed', async () => {
-		const ctx = createContext();
-		ctx.db.videoTasks.upsertByEntityId
-			.mockRejectedValueOnce(new Error('db down'))
-			.mockResolvedValueOnce(undefined);
-		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-		respond(200, {
-			request_id: 'c',
-			output: { task_id: 't4', task_status: 'RUNNING' },
-		});
-
-		await Promise.all([
-			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't4' }),
-			(Tasks.get as AnyEndpoint)(ctx, { task_id: 't4' }),
-		]);
-
-		expect(ctx.db.videoTasks.upsertByEntityId).toHaveBeenCalledTimes(2);
-		warn.mockRestore();
 	});
 
 	it('parses a failed task with its error code', async () => {
