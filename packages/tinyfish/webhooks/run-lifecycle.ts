@@ -1,5 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TinyFishWebhooks } from '..';
+import { z } from 'zod';
+import type { TinyFishContext, TinyFishWebhooks } from '..';
+import { makeTinyFishRequest } from '../client';
 import { persistRun } from '../run-store';
 import {
 	createTinyFishMatch,
@@ -8,6 +10,49 @@ import {
 	RunCompletedEventSchema,
 	RunFailedEventSchema,
 } from './types';
+
+// Deliveries are unsigned JSON, so the payload alone proves nothing: read the
+// run back from the API and require the live run to exist with the same status.
+const ConfirmedRunSchema = z.object({ status: z.string() });
+
+/**
+ * Returns a drop reason, or null when the delivery was confirmed against the
+ * live run. Any TinyFish API error is also a drop: an unreadable run must not
+ * be trusted.
+ */
+async function confirmRunDelivery(
+	ctx: TinyFishContext,
+	runId: string,
+	eventStatus: string,
+): Promise<string | null> {
+	const key = ctx.options.key || (await ctx.keys.get_api_key()) || '';
+	if (!key) {
+		return 'no TinyFish API key configured; unconfirmed delivery dropped';
+	}
+
+	let live: { status: string };
+	try {
+		live = ConfirmedRunSchema.parse(
+			await makeTinyFishRequest(
+				'agent',
+				`/v1/runs/${encodeURIComponent(runId)}`,
+				key,
+				{ method: 'GET' },
+			),
+		);
+	} catch (error) {
+		return `run confirm request failed: ${(error as Error).message}`;
+	}
+
+	if (live.status !== eventStatus) {
+		return `live run status is ${live.status}, not ${eventStatus}`;
+	}
+	return null;
+}
+
+function dropDelivery(reason: string) {
+	return { success: false as const, statusCode: 409, error: reason };
+}
 
 export const runCompleted: TinyFishWebhooks['runCompleted'] = {
 	match: createTinyFishMatch('run.completed'),
@@ -22,6 +67,21 @@ export const runCompleted: TinyFishWebhooks['runCompleted'] = {
 		}
 
 		const event = verification.event;
+		const dropReason = await confirmRunDelivery(
+			ctx,
+			event.run_id,
+			event.status,
+		);
+		if (dropReason) {
+			await logEventFromContext(
+				ctx,
+				'tinyfish.webhook.runCompleted',
+				{ runId: event.run_id, reason: dropReason },
+				'failed',
+			);
+			return dropDelivery(dropReason);
+		}
+
 		await persistRun(ctx, {
 			run_id: event.run_id,
 			status: event.status,
@@ -65,6 +125,21 @@ export const runFailed: TinyFishWebhooks['runFailed'] = {
 		}
 
 		const event = verification.event;
+		const dropReason = await confirmRunDelivery(
+			ctx,
+			event.run_id,
+			event.status,
+		);
+		if (dropReason) {
+			await logEventFromContext(
+				ctx,
+				'tinyfish.webhook.runFailed',
+				{ runId: event.run_id, reason: dropReason },
+				'failed',
+			);
+			return dropDelivery(dropReason);
+		}
+
 		await persistRun(ctx, {
 			run_id: event.run_id,
 			status: event.status,
@@ -106,6 +181,21 @@ export const runCancelled: TinyFishWebhooks['runCancelled'] = {
 		}
 
 		const event = verification.event;
+		const dropReason = await confirmRunDelivery(
+			ctx,
+			event.run_id,
+			event.status,
+		);
+		if (dropReason) {
+			await logEventFromContext(
+				ctx,
+				'tinyfish.webhook.runCancelled',
+				{ runId: event.run_id, reason: dropReason },
+				'failed',
+			);
+			return dropDelivery(dropReason);
+		}
+
 		await persistRun(ctx, {
 			run_id: event.run_id,
 			status: event.status,

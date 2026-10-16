@@ -447,8 +447,8 @@ export function tinyfish<const T extends TinyFishPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TinyFishKeyBuilderContext, source) => {
-			// TinyFish deliveries are unsigned, so there is no secret to
-			// resolve for webhook sources; handlers validate the payload.
+			// Deliveries are unsigned, so webhook handlers resolve their own key
+			// to confirm the run against the API before persisting it.
 			if (source === 'webhook') {
 				return '';
 			}

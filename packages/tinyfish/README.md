@@ -139,6 +139,13 @@ tinyfish({
 });
 ```
 
+Deliveries are unsigned JSON, so a well-shaped payload proves nothing.
+Before a run delivery is persisted, the handler confirms it against the
+API: it reads `GET /v1/runs/{run_id}` with the configured key and only
+proceeds when the live run exists and its status matches the event. A
+delivery that disagrees, arrives when the API cannot confirm it, or lands
+with no key configured is dropped and logged, never trusted.
+
 ## Quirks & Constraints
 - Auth is the `X-API-Key` header, not Bearer, and one key covers all four
   hosts (agent, search, fetch, browser).

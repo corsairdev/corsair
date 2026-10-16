@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { makeTinyFishRequest } from './client';
 import { TinyFishRunWebhooks } from './webhooks';
 import {
 	createTinyFishMatch,
@@ -9,17 +10,27 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock('./client', () => ({
+	makeTinyFishRequest: jest.fn(),
+}));
+
 const mockLog = jest.mocked(logEventFromContext);
+const mockRequest = jest.mocked(makeTinyFishRequest);
 
 type AnyHandler = (ctx: never, request: never) => Promise<unknown>;
 type AnyMatcher = (request: never) => boolean;
 
-function createContext() {
+function createContext({ key }: { key?: string } = {}) {
 	return {
+		database: {},
 		key: '',
-		options: {},
+		options: key === undefined ? {} : { key },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue('tf-key'),
+		},
 		db: {
 			agentRuns: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 			},
 		},
@@ -91,6 +102,7 @@ const cancelledPayload = {
 
 beforeEach(() => {
 	mockLog.mockClear();
+	mockRequest.mockReset().mockResolvedValue({ status: 'COMPLETED' });
 });
 
 describe('tinyfish webhook matching', () => {
@@ -130,13 +142,20 @@ describe('tinyfish webhook matching', () => {
 });
 
 describe('tinyfish webhook handlers', () => {
-	it('runCompleted persists the finished run and logs it', async () => {
+	it('runCompleted confirms against the live run, persists it and logs it', async () => {
 		const ctx = createContext();
+		mockRequest.mockResolvedValue({ status: 'COMPLETED' });
 		const result = await (
 			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
 		)(ctx as never, request(completedPayload) as never);
 
 		expect(result).toEqual({ success: true, data: completedPayload });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'agent',
+			'/v1/runs/run-1',
+			'tf-key',
+			{ method: 'GET' },
+		);
 		expect(ctx.db.agentRuns.upsertByEntityId).toHaveBeenCalledWith(
 			'run-1',
 			expect.objectContaining({
@@ -156,12 +175,19 @@ describe('tinyfish webhook handlers', () => {
 
 	it('runFailed records the provider error code and message', async () => {
 		const ctx = createContext();
+		mockRequest.mockResolvedValue({ status: 'FAILED' });
 		const result = await (TinyFishRunWebhooks.runFailed.handler as AnyHandler)(
 			ctx as never,
 			request(failedPayload) as never,
 		);
 
 		expect(result).toEqual({ success: true, data: failedPayload });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'agent',
+			'/v1/runs/run-1',
+			'tf-key',
+			{ method: 'GET' },
+		);
 		expect(ctx.db.agentRuns.upsertByEntityId).toHaveBeenCalledWith(
 			'run-1',
 			expect.objectContaining({
@@ -183,15 +209,98 @@ describe('tinyfish webhook handlers', () => {
 
 	it('runCancelled stores the cancellation', async () => {
 		const ctx = createContext();
+		mockRequest.mockResolvedValue({ status: 'CANCELLED' });
 		const result = await (
 			TinyFishRunWebhooks.runCancelled.handler as AnyHandler
 		)(ctx as never, request(cancelledPayload) as never);
 
 		expect(result).toEqual({ success: true, data: cancelledPayload });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'agent',
+			'/v1/runs/run-2',
+			'tf-key',
+			{ method: 'GET' },
+		);
 		expect(ctx.db.agentRuns.upsertByEntityId).toHaveBeenCalledWith(
 			'run-2',
 			expect.objectContaining({ status: 'CANCELLED' }),
 		);
+	});
+
+	it('drops a delivery whose live status disagrees with the event', async () => {
+		const ctx = createContext();
+		mockRequest.mockResolvedValue({ status: 'RUNNING' });
+		const result = (await (
+			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
+		)(ctx as never, request(completedPayload) as never)) as {
+			success: boolean;
+			statusCode?: number;
+			error?: string;
+		};
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(409);
+		expect(result.error).toContain('RUNNING');
+		expect(ctx.db.agentRuns.upsertByEntityId).not.toHaveBeenCalled();
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'tinyfish.webhook.runCompleted',
+			expect.objectContaining({ runId: 'run-1' }),
+			'failed',
+		);
+	});
+
+	it('drops a delivery when the confirm request fails', async () => {
+		const ctx = createContext();
+		mockRequest.mockRejectedValue(new Error('upstream 502'));
+		const result = (await (
+			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
+		)(ctx as never, request(completedPayload) as never)) as {
+			success: boolean;
+			statusCode?: number;
+		};
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(409);
+		expect(ctx.db.agentRuns.upsertByEntityId).not.toHaveBeenCalled();
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'tinyfish.webhook.runCompleted',
+			expect.objectContaining({ runId: 'run-1' }),
+			'failed',
+		);
+	});
+
+	it('drops a delivery when no key is available to confirm it', async () => {
+		const ctx = createContext();
+		ctx.keys.get_api_key.mockResolvedValue('');
+		const result = (await (
+			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
+		)(ctx as never, request(completedPayload) as never)) as {
+			success: boolean;
+			statusCode?: number;
+		};
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(409);
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(ctx.db.agentRuns.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('confirms with the configured key before the stored key', async () => {
+		const ctx = createContext({ key: 'opt-key' });
+		await (TinyFishRunWebhooks.runCompleted.handler as AnyHandler)(
+			ctx as never,
+			request(completedPayload) as never,
+		);
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'agent',
+			'/v1/runs/run-1',
+			'opt-key',
+			{ method: 'GET' },
+		);
+		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
 
 	it('rejects a payload that is not a run event without touching the store', async () => {
@@ -207,6 +316,7 @@ describe('tinyfish webhook handlers', () => {
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(400);
 		expect(result.error).toBeDefined();
+		expect(mockRequest).not.toHaveBeenCalled();
 		expect(ctx.db.agentRuns.upsertByEntityId).not.toHaveBeenCalled();
 		expect(mockLog).not.toHaveBeenCalled();
 	});
