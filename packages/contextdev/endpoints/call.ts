@@ -23,10 +23,11 @@ export async function call<K extends Operation>(
 	event: string,
 	method: 'GET' | 'POST',
 	path: string,
+	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 ): Promise<ContextDevEndpointOutputs[K]> {
 	const parsed = ContextDevEndpointInputSchemas[operation].parse(input ?? {});
-	const raw = await makeContextDevRequest<unknown>(path, ctx.key, {
+	const raw = await makeContextDevRequest(path, ctx.key, {
 		method,
 		...(method === 'GET'
 			? { query: parsed as ContextDevQuery }

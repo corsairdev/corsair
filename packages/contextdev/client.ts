@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const CONTEXTDEV_API_BASE = 'https://api.context.dev/v1';
@@ -6,8 +10,20 @@ export const CONTEXTDEV_API_BASE = 'https://api.context.dev/v1';
 // Crawl, extract and answers accept server deadlines up to 300s.
 const CONTEXTDEV_TIMEOUT_MS = 310_000;
 
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const CONTEXTDEV_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
 export type ContextDevQuery = Record<
 	string,
+	// unknown: nested query objects are serialized as key[sub]=value and each
+	// endpoint's input schema has already typed them.
 	string | number | boolean | string[] | Record<string, unknown> | undefined
 >;
 
@@ -50,7 +66,8 @@ function describe(error: ApiError): string {
 	return error.message;
 }
 
-export async function makeContextDevRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeContextDevRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -58,7 +75,7 @@ export async function makeContextDevRequest<T>(
 		query?: ContextDevQuery;
 		body?: object;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', query, body } = options;
 
 	const config: OpenAPIConfig = {
@@ -80,13 +97,16 @@ export async function makeContextDevRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: CONTEXTDEV_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new ContextDevAPIError(describe(error), error);
 		}
-		if (error instanceof Error) {
-			throw new ContextDevAPIError(error.message, error);
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof Error || (error as Error)?.message !== undefined) {
+			throw new ContextDevAPIError((error as Error).message, error as Error);
 		}
 		throw new ContextDevAPIError('Unknown Context.dev API error');
 	}

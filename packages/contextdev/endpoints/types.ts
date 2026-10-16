@@ -503,12 +503,51 @@ const ScrapeFormats = z
 		markdown: z.boolean().optional(),
 		screenshot: z.boolean().optional(),
 		images: z.boolean().optional(),
+		bytes: z.boolean().optional(),
+		parse: z.boolean().optional(),
 		highlights: z.boolean().optional(),
 		json: z.boolean().optional(),
+		product: z.boolean().optional(),
 	})
 	.refine((formats) => Object.values(formats).some(Boolean), {
 		message: 'Enable at least one format',
 	});
+
+type ParseRules = Record<
+	string,
+	| string
+	| { selector: string; type?: 'item' | 'list'; output?: string | ParseRules }
+>;
+
+// A rule's output can nest more rules (ScrapeParseRules in the spec).
+const ParseRules: z.ZodType<ParseRules> = z.lazy(() =>
+	z
+		.record(
+			z.string().min(1),
+			z.union([
+				z.string().min(1).max(2048),
+				z.object({
+					selector: z.string().min(1).max(2048),
+					type: z.enum(['item', 'list']).optional(),
+					output: z.union([z.string(), ParseRules]).optional(),
+				}),
+			]),
+		)
+		.refine((rules) => Object.keys(rules).length > 0, {
+			message: 'rules needs at least one field',
+		}),
+);
+
+const PrebuiltParser = z.enum([
+	'google-maps',
+	'google-play',
+	'google-play-reviews',
+	'app-store',
+	'app-store-reviews',
+	'emails',
+	'phone-numbers',
+	'links',
+]);
 
 const ScrapeInputSchema = z
 	.object({
@@ -561,6 +600,15 @@ const ScrapeInputSchema = z
 				instructions: z.string().max(2000).optional(),
 			})
 			.optional(),
+		parseParams: z
+			.union([
+				z.object({ type: z.literal('custom').optional(), rules: ParseRules }),
+				z.object({ type: z.literal('prebuilt'), parser: PrebuiltParser }),
+			])
+			.optional(),
+		productParams: z
+			.object({ dedupeImages: z.boolean().optional() })
+			.optional(),
 		sharedParams: z
 			.object({
 				country: CountryCode.optional(),
@@ -583,6 +631,27 @@ const ScrapeInputSchema = z
 				includeSelectors: Selectors.optional(),
 				excludeSelectors: Selectors.optional(),
 				includeFrames: z.boolean().optional(),
+				parsers: z
+					.object({
+						pdf: z
+							.object({
+								startPage: z.number().int().min(1).optional(),
+								endPage: z.number().int().min(1).optional(),
+								ocr: z.enum(['off', 'auto']).optional(),
+							})
+							.optional(),
+					})
+					.optional(),
+				profile: z
+					.discriminatedUnion('type', [
+						z.object({ type: z.literal('existing'), profileId: z.string() }),
+						z.object({
+							type: z.literal('new'),
+							identifier: z.string().min(1).max(1024),
+							password: z.string().min(1).max(4096),
+						}),
+					])
+					.optional(),
 			})
 			.optional(),
 		maxAgeMs: z.number().int().min(0).max(31536000000).optional(),
@@ -602,9 +671,60 @@ const ScrapeInputSchema = z
 	.refine((input) => !input.formats.highlights || input.highlightsParams, {
 		message: 'formats.highlights requires highlightsParams',
 	})
+	.refine((input) => !input.highlightsParams || input.formats.highlights, {
+		message: 'highlightsParams requires formats.highlights',
+	})
 	.refine((input) => !input.formats.json || input.jsonParams, {
 		message: 'formats.json requires jsonParams',
+	})
+	.refine((input) => !input.jsonParams || input.formats.json, {
+		message: 'jsonParams requires formats.json',
+	})
+	.refine((input) => !input.formats.parse || input.parseParams, {
+		message: 'formats.parse requires parseParams',
+	})
+	.refine((input) => !input.parseParams || input.formats.parse, {
+		message: 'parseParams requires formats.parse',
+	})
+	.refine((input) => !input.productParams || input.formats.product, {
+		message: 'productParams requires formats.product',
 	});
+
+const ScrapeProduct = z.object({
+	name: z.string(),
+	description: z.string().nullable(),
+	brand: z.string().nullable(),
+	sku: z.string().nullable(),
+	price: z.number().nullable(),
+	regularPrice: z.number().nullable(),
+	currency: z.string().nullable(),
+	availability: z
+		.enum([
+			'in_stock',
+			'out_of_stock',
+			'limited_availability',
+			'preorder',
+			'backorder',
+			'made_to_order',
+			'discontinued',
+		])
+		.nullable(),
+	category: z.string().nullable(),
+	imageUrl: z.string().nullable(),
+	images: z.array(z.string()),
+	dimensions: z.array(z.string()),
+	features: z.array(z.string()),
+	targetAudience: z.array(z.string()),
+	tags: z.array(z.string()),
+	variants: z.array(
+		z.object({
+			sku: z.string().nullable(),
+			attributes: z.record(z.string(), z.string()),
+			url: z.string().nullable(),
+			images: z.array(z.string()),
+		}),
+	),
+});
 
 function scrapeOutput<T extends z.ZodType>(data: T) {
 	return z.object({
@@ -642,11 +762,22 @@ const ScrapeResponseSchema = z.object({
 	markdown: scrapeOutput(z.string()),
 	screenshot: scrapeOutput(z.string()),
 	images: scrapeOutput(z.array(ScrapeImage)),
+	bytes: scrapeOutput(
+		z.object({ contentType: z.string(), base64: z.string() }),
+	),
+	// unknown: parsed fields follow the caller's rules or the prebuilt parser.
+	parsed: scrapeOutput(z.record(z.string(), z.unknown())).extend({
+		type: PrebuiltParser.or(z.literal('custom')),
+	}),
 	highlights: scrapeOutput(z.array(z.string())),
 	// unknown: the object follows the JSON Schema sent in jsonParams.
 	json: scrapeOutput(z.record(z.string(), z.unknown())).extend({
 		isTruncated: z.literal(true).optional(),
 	}),
+	product: scrapeOutput(
+		z.object({ isProductPage: z.boolean(), product: ScrapeProduct.nullable() }),
+	),
+	profile: z.object({ id: z.string() }).nullable(),
 	isPartial: z.literal(true).optional(),
 	metadata: PageMetadata,
 	cache_metadata: CacheMetadata,
@@ -655,6 +786,7 @@ const ScrapeResponseSchema = z.object({
 
 const UrlsInputSchema = z.object({
 	domain: z.string().min(3),
+	headers: z.record(z.string(), z.string().max(8192)).optional(),
 	includeSubdomains: z.boolean().optional(),
 	maxLinks: z.number().int().min(1).max(100000).optional(),
 	sitemapUrl: z.url().optional(),
@@ -883,6 +1015,8 @@ const AnswersResponseSchema = z.object({
 	json_content: z.record(z.string(), z.unknown()),
 	sources: z.array(z.string()),
 	key_metadata: KeyMetadata.optional(),
+	// Not in the spec, but live responses include it.
+	request_id: z.string().optional(),
 });
 
 // News
@@ -988,11 +1122,11 @@ const PeopleEnrichInputSchema = z
 		social_urls: z.array(z.url()).min(1).max(20).optional(),
 		name: z
 			.object({
-				first: z.string().min(1).max(100).optional(),
-				last: z.string().min(1).max(100).optional(),
+				first: z.string().trim().min(1).max(100).optional(),
+				last: z.string().trim().min(1).max(100).optional(),
 			})
 			.optional(),
-		email: z.string().max(320).optional(),
+		email: z.string().trim().min(1).max(320).optional(),
 		company: NamedEntity.optional(),
 		education: z
 			.array(
@@ -1021,7 +1155,8 @@ const PeopleEnrichInputSchema = z
 		(input) =>
 			input.email !== undefined ||
 			input.social_urls !== undefined ||
-			input.name !== undefined,
+			input.name?.first !== undefined ||
+			input.name?.last !== undefined,
 		{ message: 'Provide an email, social_urls, or a name' },
 	);
 

@@ -367,6 +367,7 @@ const passThrough: [
 ];
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -502,6 +503,10 @@ describe('web.scrape', () => {
 			message: 'No passage matched',
 		},
 		json: notRequested,
+		bytes: notRequested,
+		parsed: { ...notRequested, type: 'custom' },
+		product: notRequested,
+		profile: null,
 		metadata: pageMetadata,
 		...cache,
 		...billing,
@@ -520,6 +525,90 @@ describe('web.scrape', () => {
 		expect(result).toEqual(body);
 	});
 
+	it('sends parse and product formats and parses their output', async () => {
+		const product = {
+			name: 'Trail Runner 2',
+			description: null,
+			brand: 'Acme',
+			sku: 'TR2-BLK',
+			price: 129.99,
+			regularPrice: 149.99,
+			currency: 'USD',
+			availability: 'in_stock',
+			category: 'Running shoes',
+			imageUrl: 'https://shop.example.com/tr2.jpg',
+			images: ['https://shop.example.com/tr2.jpg'],
+			dimensions: [],
+			features: ['Waterproof'],
+			targetAudience: [],
+			tags: ['trail'],
+			variants: [
+				{
+					sku: 'TR2-BLK-42',
+					attributes: { size: '42' },
+					url: null,
+					images: [],
+				},
+			],
+		};
+		const page = {
+			...body,
+			markdown: notRequested,
+			highlights: notRequested,
+			parsed: {
+				requested: true,
+				success: true,
+				type: 'emails',
+				data: { emails: ['help@shop.example.com'] },
+			},
+			product: {
+				requested: true,
+				success: true,
+				data: { isProductPage: true, product },
+			},
+		};
+		respond(200, page);
+
+		const result = await (Web.scrape as AnyEndpoint)(createContext(), {
+			url: 'https://shop.example.com/tr2',
+			formats: { parse: true, product: true },
+			parseParams: { type: 'prebuilt', parser: 'emails' },
+			productParams: { dedupeImages: true },
+		});
+
+		expect(lastCall().body).toEqual({
+			url: 'https://shop.example.com/tr2',
+			formats: { parse: true, product: true },
+			parseParams: { type: 'prebuilt', parser: 'emails' },
+			productParams: { dedupeImages: true },
+		});
+		expect(result).toEqual(page);
+	});
+
+	it('pairs parse and product params with their formats', async () => {
+		await expect(
+			(Web.scrape as AnyEndpoint)(createContext(), {
+				url: 'https://stripe.com',
+				formats: { parse: true },
+			}),
+		).rejects.toThrow('formats.parse requires parseParams');
+		await expect(
+			(Web.scrape as AnyEndpoint)(createContext(), {
+				url: 'https://stripe.com',
+				formats: { markdown: true },
+				parseParams: { rules: { title: 'h1' } },
+			}),
+		).rejects.toThrow('parseParams requires formats.parse');
+		await expect(
+			(Web.scrape as AnyEndpoint)(createContext(), {
+				url: 'https://stripe.com',
+				formats: { markdown: true },
+				productParams: { dedupeImages: true },
+			}),
+		).rejects.toThrow('productParams requires formats.product');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('requires at least one format', async () => {
 		await expect(
 			(Web.scrape as AnyEndpoint)(createContext(), {
@@ -536,6 +625,24 @@ describe('web.scrape', () => {
 				formats: { highlights: true },
 			}),
 		).rejects.toThrow('formats.highlights requires highlightsParams');
+	});
+
+	it('rejects jsonParams or highlightsParams without their format', async () => {
+		await expect(
+			(Web.scrape as AnyEndpoint)(createContext(), {
+				url: 'https://stripe.com',
+				formats: { markdown: true },
+				jsonParams: { schema: {} },
+			}),
+		).rejects.toThrow('jsonParams requires formats.json');
+		await expect(
+			(Web.scrape as AnyEndpoint)(createContext(), {
+				url: 'https://stripe.com',
+				formats: { markdown: true },
+				highlightsParams: { query: 'pricing' },
+			}),
+		).rejects.toThrow('highlightsParams requires formats.highlights');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects markdownParams without formats.markdown', async () => {
@@ -597,6 +704,35 @@ describe('news.search', () => {
 		);
 	});
 
+	it('keeps saving the page when one article fails to save', async () => {
+		respond(200, {
+			data: [article, { ...article, id: 'art_2' }],
+			has_more: false,
+			next_cursor: null,
+			meta: { count: 2 },
+			...billing,
+		});
+		const ctx = createContext();
+		ctx.db.newsArticles.upsertByEntityId
+			.mockRejectedValueOnce(new Error('disk full'))
+			.mockResolvedValueOnce(undefined);
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+		await (News.search as AnyEndpoint)(ctx, {
+			searchBy: {
+				type: 'entity',
+				entity: { type: 'domain', domain: 'stripe.com' },
+			},
+		});
+
+		expect(ctx.db.newsArticles.upsertByEntityId).toHaveBeenCalledTimes(2);
+		expect(ctx.db.newsArticles.upsertByEntityId).toHaveBeenLastCalledWith(
+			'art_2',
+			expect.objectContaining({ id: 'art_2' }),
+		);
+		warn.mockRestore();
+	});
+
 	it('allows only one filter category', async () => {
 		await expect(
 			(News.search as AnyEndpoint)(createContext(), {
@@ -627,6 +763,20 @@ describe('people.enrich', () => {
 				company: { domain: 'stripe.com' },
 			}),
 		).rejects.toThrow('Provide an email, social_urls, or a name');
+	});
+
+	it('rejects blank identity clues', async () => {
+		for (const input of [
+			{ name: {} },
+			{ email: '' },
+			{ email: '   ' },
+			{ name: { first: '  ' } },
+		]) {
+			await expect(
+				(People.enrich as AnyEndpoint)(createContext(), input),
+			).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -664,7 +814,7 @@ describe('errors', () => {
 		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(true);
 	});
 
-	it('uses Retry-After on 429', async () => {
+	it('hands a 429 to the handler after one request, with Retry-After', async () => {
 		respond(
 			429,
 			{
@@ -674,15 +824,13 @@ describe('errors', () => {
 			},
 			{ 'Retry-After': '2' },
 		);
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Account.usage as AnyEndpoint)(createContext(), {}).catch(
-			(e: Error) => e,
-		);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as ContextDevAPIError;
-		jest.useRealTimers();
+		const error = (await (Account.usage as AnyEndpoint)(
+			createContext(),
+			{},
+		).catch((e: Error) => e)) as ContextDevAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.code).toBe('RATE_LIMITED');
 		expect(error.retryAfter).toBe(2000);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({
@@ -706,6 +854,32 @@ describe('errors', () => {
 		expect(await errorHandlers.TIMEOUT_ERROR.handler()).toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('treats a client deadline as a timeout and a 504 as a server error', async () => {
+		fetchMock.mockImplementation(async () => {
+			throw new DOMException(
+				'The operation was aborted due to timeout',
+				'TimeoutError',
+			);
+		});
+		const timeout = (await (Account.usage as AnyEndpoint)(
+			createContext(),
+			{},
+		).catch((e: Error) => e)) as ContextDevAPIError;
+		expect(errorHandlers.TIMEOUT_ERROR.match(timeout)).toBe(true);
+
+		respond(504, {
+			message: 'Upstream timed out',
+			error_code: 'GATEWAY_TIMEOUT',
+			request_id: 'req_9',
+		});
+		const gateway = (await (Account.usage as AnyEndpoint)(
+			createContext(),
+			{},
+		).catch((e: Error) => e)) as ContextDevAPIError;
+		expect(errorHandlers.TIMEOUT_ERROR.match(gateway)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(gateway)).toBe(true);
 	});
 
 	it('retries 5xx with backoff', async () => {

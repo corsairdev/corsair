@@ -5,6 +5,12 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof ContextDevAPIError ? error.status : undefined;
 }
 
+// The client's deadline fires as a TimeoutError, wrapped as the error's cause.
+function timedOut(error: Error): boolean {
+	const name = (error.cause as Error | undefined)?.name ?? error.name;
+	return name === 'TimeoutError' || name === 'AbortError';
+}
+
 // https://docs.context.dev/scrape/timeouts-and-errors
 export const errorHandlers = {
 	VALIDATION_ERROR: {
@@ -39,7 +45,8 @@ export const errorHandlers = {
 	// The request's own deadline passed; repeating it would hit the same limit.
 	TIMEOUT_ERROR: {
 		match: (error: Error) =>
-			statusOf(error) === 408 || /timed out|aborted/i.test(error.message),
+			statusOf(error) === 408 ||
+			(statusOf(error) === undefined && timedOut(error)),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
