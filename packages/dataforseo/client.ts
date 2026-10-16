@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const DATAFORSEO_API_BASE = 'https://api.dataforseo.com';
@@ -12,6 +16,16 @@ const DATAFORSEO_TIMEOUT_MS = 130_000;
 // 20000 ok, 20100 task created. The task also completed for 40102 (no search
 // results; empty result) and 40106 (partial results, unparsed pages not charged).
 const SUCCESS_CODES = new Set([20000, 20100, 40102, 40106]);
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const DATAFORSEO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export class DataForSeoAPIError extends Error {
 	readonly status?: number;
@@ -38,12 +52,15 @@ export function packCredentials(login: string, password: string): string {
 	return `${login}:${password}`;
 }
 
+// unknown: the envelope is checked before the response schema runs, so its
+// codes and messages are narrowed here instead of trusted.
 type Envelope = {
 	status_code?: unknown;
 	status_message?: unknown;
 	tasks?: { status_code?: unknown; status_message?: unknown }[] | null;
 };
 
+// unknown: takes the unchecked envelope fields above.
 function failure(code: unknown, message: unknown): DataForSeoAPIError {
 	const numeric = typeof code === 'number' ? code : undefined;
 	return new DataForSeoAPIError(
@@ -67,7 +84,8 @@ export function assertTasksSucceeded(envelope: Envelope): void {
 	}
 }
 
-export async function makeDataForSeoRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeDataForSeoRequest(
 	path: string,
 	credentials: string,
 	options: {
@@ -77,7 +95,7 @@ export async function makeDataForSeoRequest<T>(
 		task?: object;
 		sandbox?: boolean;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', task } = options;
 
 	const config: OpenAPIConfig = {
@@ -100,9 +118,11 @@ export async function makeDataForSeoRequest<T>(
 		mediaType: task ? 'application/json; charset=utf-8' : undefined,
 	};
 
-	let response: T;
+	let response: unknown;
 	try {
-		response = await request<T>(config, requestOptions);
+		response = await request<unknown>(config, requestOptions, {
+			rateLimitConfig: DATAFORSEO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const body = error.body as Envelope | undefined;

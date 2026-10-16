@@ -29,10 +29,11 @@ export async function call<K extends Operation>(
 	operation: K,
 	event: string,
 	route: Route,
+	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 ): Promise<DataForSeoEndpointOutputs[K]> {
 	const parsed = DataForSeoEndpointInputSchemas[operation].parse(input ?? {});
-	const raw = await makeDataForSeoRequest<unknown>(route.path, ctx.key, {
+	const raw = await makeDataForSeoRequest(route.path, ctx.key, {
 		method: route.method,
 		sandbox: ctx.options.sandbox,
 		...(route.method === 'POST'

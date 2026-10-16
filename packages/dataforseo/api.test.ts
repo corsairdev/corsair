@@ -296,6 +296,7 @@ const cases: [
 ];
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -311,6 +312,7 @@ describe.each(cases)('%s', (name, endpoint, input, method, path, result) => {
 
 		const response = (await endpoint(ctx, input)) as {
 			status_code: number;
+			// unknown: each case's result has its own shape; only the count is checked.
 			tasks: { id: string; result: unknown[] | null }[];
 		};
 
@@ -498,6 +500,7 @@ describe('SERP items', () => {
 				keyword: 'running shoes',
 				...us,
 			},
+			// unknown: only the item types are read below.
 		)) as { tasks: { result: { items: Record<string, unknown>[] }[] }[] };
 
 		const knowledgeGraph = response.tasks[0]!.result[0]!.items.find(
@@ -598,6 +601,33 @@ describe('input rules', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects malformed filter joins and more than 8 conditions', async () => {
+		const condition = ['rank', '>', 1];
+		const malformed = [
+			['and'],
+			[condition, condition],
+			[condition, 'and'],
+			['and', condition],
+			[condition, 'and', [condition, condition]],
+			[
+				condition,
+				'and',
+				[condition, 'or', condition, 'or', condition, 'or', condition],
+				'and',
+				[condition, 'or', condition, 'or', condition, 'or', condition],
+			],
+		];
+		for (const filters of malformed) {
+			await expect(
+				(Backlinks.list as AnyEndpoint)(createContext(), {
+					target: 'stripe.com',
+					filters,
+				}),
+			).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('enforces the Gemini reasoning token minimum', async () => {
 		await expect(
 			(Ai.geminiResponse as AnyEndpoint)(createContext(), {
@@ -685,12 +715,70 @@ describe('caching', () => {
 		});
 
 		expect(ctx.db.amazonProducts.upsertByEntityId).toHaveBeenCalledWith(
-			'B0CHX1W1XY',
+			'B0CHX1W1XY:amazon.com:2840:en_US',
 			expect.objectContaining({
+				asin: 'B0CHX1W1XY',
+				seDomain: 'amazon.com',
+				locationCode: 2840,
+				languageCode: 'en_US',
 				priceFrom: 139.95,
 				rating: 4.6,
 				isAvailable: true,
 			}),
 		);
+	});
+
+	it('keeps the same ASIN in two Amazon markets as separate rows', async () => {
+		const ctx = createContext();
+		respond(
+			200,
+			envelope('/v3/merchant/amazon/asin/live/advanced', [results.amazonAsin]),
+		);
+		await (Amazon.asin as AnyEndpoint)(ctx, {
+			asin: 'B0CHX1W1XY',
+			location_code: 2840,
+			language_code: 'en_US',
+		});
+		respond(
+			200,
+			envelope('/v3/merchant/amazon/asin/live/advanced', [
+				{
+					...results.amazonAsin,
+					se_domain: 'amazon.co.uk',
+					location_code: 2826,
+					language_code: 'en_GB',
+				},
+			]),
+		);
+		await (Amazon.asin as AnyEndpoint)(ctx, {
+			asin: 'B0CHX1W1XY',
+			location_code: 2826,
+			language_code: 'en_GB',
+		});
+
+		const ids = ctx.db.amazonProducts.upsertByEntityId.mock.calls.map(
+			([id]: [string]) => id,
+		);
+		expect(ids).toEqual([
+			'B0CHX1W1XY:amazon.com:2840:en_US',
+			'B0CHX1W1XY:amazon.co.uk:2826:en_GB',
+		]);
+	});
+
+	it('skips keyword rows without a location or language code', async () => {
+		respond(
+			200,
+			envelope('/v3/keywords_data/google_ads/search_volume/live', [
+				{ ...results.keywordsSearchVolume, location_code: null },
+			]),
+		);
+		const ctx = createContext();
+
+		await (Keywords.searchVolume as AnyEndpoint)(ctx, {
+			keywords: ['running shoes'],
+			...us,
+		});
+
+		expect(ctx.db.keywords.upsertByEntityId).not.toHaveBeenCalled();
 	});
 });

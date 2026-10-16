@@ -31,7 +31,12 @@ export type DataForSeoBacklinkTarget = z.infer<typeof DataForSeoBacklinkTarget>;
 
 // Source: AmazonProductInfo in the same specification.
 export const DataForSeoAmazonProduct = z.object({
+	// asin:se_domain:location_code:language_code
+	id: z.string(),
 	asin: z.string(),
+	seDomain: z.string().optional(),
+	locationCode: z.number().optional(),
+	languageCode: z.string().optional(),
 	title: z.string().optional(),
 	priceFrom: z.number().optional(),
 	currency: z.string().optional(),

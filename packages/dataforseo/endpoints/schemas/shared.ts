@@ -148,11 +148,55 @@ export type Filter =
  * nested as needed: `[["rank", ">", 80], "and", ["dofollow", "=", true]]`.
  * The API accepts up to 8 conditions.
  */
-export const Filters: z.ZodType<Filter> = z.lazy(() =>
+const FilterTree: z.ZodType<Filter> = z.lazy(() =>
 	z.union([
 		FilterCondition,
-		z.array(z.union([FilterCondition, z.enum(['and', 'or']), Filters])),
+		z.array(z.union([FilterCondition, z.enum(['and', 'or']), FilterTree])),
 	]),
+);
+
+const MAX_FILTER_CONDITIONS = 8;
+
+// A condition starts with its field name; a group starts with a condition or group.
+function isCondition(
+	filter: Filter,
+): filter is z.infer<typeof FilterCondition> {
+	const [first] = filter;
+	return typeof first === 'string' && first !== 'and' && first !== 'or';
+}
+
+/** Counts conditions, or returns why the filter isn't condition, join, condition, …. */
+function countConditions(filter: Filter): number | string {
+	if (isCondition(filter)) return 1;
+	if (filter.length % 2 === 0) {
+		return 'Join filters as condition, "and" / "or", condition, …';
+	}
+	let count = 0;
+	for (const [index, part] of filter.entries()) {
+		const isJoin = part === 'and' || part === 'or';
+		if (isJoin !== (index % 2 === 1)) {
+			return 'Join filters as condition, "and" / "or", condition, …';
+		}
+		if (isJoin) continue;
+		const nested = countConditions(part as Filter);
+		if (typeof nested === 'string') return nested;
+		count += nested;
+	}
+	return count;
+}
+
+export const Filters: z.ZodType<Filter> = FilterTree.superRefine(
+	(filter, ctx) => {
+		const count = countConditions(filter);
+		if (typeof count === 'string') {
+			ctx.addIssue({ code: 'custom', message: count });
+		} else if (count > MAX_FILTER_CONDITIONS) {
+			ctx.addIssue({
+				code: 'custom',
+				message: `At most ${MAX_FILTER_CONDITIONS} filter conditions`,
+			});
+		}
+	},
 );
 
 /** Sorting rules like "rank,desc"; up to 3. */
