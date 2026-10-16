@@ -268,7 +268,9 @@ export const CrawlResponseSchema = z.object({
 
 export type CrawlResponse = z.infer<typeof CrawlResponseSchema>;
 
-export const CrawlBatchResponseSchema = z.array(CrawlResponseSchema).min(1);
+// Failed urls are omitted from the batch, so an all-fail request is a
+// valid empty response; the input schema still requires at least one url.
+export const CrawlBatchResponseSchema = z.array(CrawlResponseSchema);
 
 export type CrawlBatchResponse = z.infer<typeof CrawlBatchResponseSchema>;
 

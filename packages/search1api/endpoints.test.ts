@@ -545,7 +545,11 @@ describe('outputs', () => {
 			results: { title: 'Example', link: 'https://example.com', content: 'x' },
 		};
 		expect(accepts(outputs.crawlBatch, [page, page])).toBe(true);
-		expect(accepts(outputs.crawlBatch, [])).toBe(false);
+	});
+
+	it('accepts an all-fail crawl batch and still rejects an empty request', () => {
+		expect(accepts(outputs.crawlBatch, [])).toBe(true);
+		expect(accepts(inputs.crawlBatch, [])).toBe(false);
 	});
 
 	it('validates screenshot files', () => {
