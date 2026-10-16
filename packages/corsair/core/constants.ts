@@ -329,6 +329,7 @@ export const BaseProviders = [
 	'uniswapapi',
 	'uploadcare',
 	'vapi',
+	'vaquill',
 	'vercel',
 	'veriphone',
 	'vestaboard',
@@ -678,6 +679,7 @@ export const ProviderDisplayNames = {
 	uniswapapi: 'Uniswap',
 	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
+	vaquill: 'Vaquill',
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
@@ -1034,6 +1036,7 @@ export type AllProviders =
 	| 'uniswapapi'
 	| 'uploadcare'
 	| 'vapi'
+	| 'vaquill'
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
