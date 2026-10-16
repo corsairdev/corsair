@@ -86,6 +86,15 @@ function providerErrorCode(body: unknown): string | undefined {
 	return typeof code === 'string' ? code : undefined;
 }
 
+// For statuses the shared client does not map itself it stringifies
+// body.error into ApiError.message, which renders as "[object Object]";
+// the provider's own error.message is the readable detail.
+function providerErrorMessage(body: unknown): string | undefined {
+	if (!isRecord(body) || !isRecord(body.error)) return undefined;
+	const message = body.error.message;
+	return typeof message === 'string' && message !== '' ? message : undefined;
+}
+
 function buildConfig(baseUrl: string, apiKey: string): OpenAPIConfig {
 	return {
 		BASE: baseUrl,
@@ -125,13 +134,15 @@ export async function makePloidRequest<T>(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const code = providerErrorCode(error.body);
+			const providerMessage = providerErrorMessage(error.body);
 			const detail =
-				typeof error.body === 'string'
+				providerMessage ??
+				(typeof error.body === 'string'
 					? error.body
-					: JSON.stringify(error.body);
+					: JSON.stringify(error.body));
 			const message =
 				code !== undefined
-					? `${code}: ${error.message}`
+					? `${code}: ${detail}`
 					: error.message !== '[object Object]'
 						? `${error.message}: ${detail}`
 						: detail;

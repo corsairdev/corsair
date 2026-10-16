@@ -174,6 +174,37 @@ describe('makePloidRequest', () => {
 		}
 	});
 
+	it('uses the provider error message for unmapped statuses', async () => {
+		// 402 is outside the shared client's status map, so ApiError.message
+		// would stringify body.error into "[object Object]" without this.
+		mockRequest.mockRejectedValue(
+			apiError(402, {
+				error: {
+					code: 'insufficient_acu',
+					message: 'Not enough ACU. Add usage capacity to continue.',
+					request_id: 'req_2',
+				},
+			}),
+		);
+
+		const error = await makePloidRequest('/v1/search', 'test-key', {
+			method: 'POST',
+			body: { query: 'founders' },
+		}).then(
+			() => {
+				throw new Error('expected PloidAPIError');
+			},
+			(caught: Error) => caught,
+		);
+
+		expect(error).toBeInstanceOf(PloidAPIError);
+		if (!(error instanceof PloidAPIError)) return;
+		expect(error.message).toBe(
+			'insufficient_acu: Not enough ACU. Add usage capacity to continue.',
+		);
+		expect(error.message).not.toContain('[object Object]');
+	});
+
 	it('tolerates a non-object error body', async () => {
 		mockRequest.mockRejectedValue(apiError(503, 'upstream unavailable'));
 
