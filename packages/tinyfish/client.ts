@@ -96,6 +96,8 @@ function buildConfig(baseUrl: string, apiKey: string): OpenAPIConfig {
 	};
 }
 
+// Failure bodies are not promised on every upstream path, so each hop is
+// narrowed at runtime and the casts only assert what the guard just proved.
 function errorCodeOf(body: unknown): string | undefined {
 	if (body === null || typeof body !== 'object') return undefined;
 	const error = (body as Record<string, unknown>).error;
@@ -104,6 +106,7 @@ function errorCodeOf(body: unknown): string | undefined {
 	return typeof code === 'string' && code.length > 0 ? code : undefined;
 }
 
+// unknown: error bodies may be JSON objects, plain text, or unserializable.
 function errorDetail(body: unknown): string {
 	if (body == null) return '';
 	if (typeof body === 'string') return body;
@@ -114,6 +117,8 @@ function errorDetail(body: unknown): string {
 	}
 }
 
+// T stays caller-chosen on purpose: each call site parses the response with
+// its own endpoint schema, so no shared generic could know the shape.
 export async function makeTinyFishRequest<T>(
 	base: TinyFishBaseUrl,
 	endpoint: string,

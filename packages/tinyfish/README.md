@@ -142,9 +142,20 @@ tinyfish({
 Deliveries are unsigned JSON, so a well-shaped payload proves nothing.
 Before a run delivery is persisted, the handler confirms it against the
 API: it reads `GET /v1/runs/{run_id}` with the configured key and only
-proceeds when the live run exists and its status matches the event. A
-delivery that disagrees, arrives when the API cannot confirm it, or lands
-with no key configured is dropped and logged, never trusted.
+proceeds when the live run exists and its status matches the event. The
+stored row and the handler's response then carry the API's own snapshot,
+so the delivery body only ever names the event and the run. A delivery
+that disagrees, arrives when the API cannot confirm it, or lands with no
+key configured is dropped and logged, never trusted.
+
+`webhookHooks` run through the corsair binder: `after` fires only when the
+handler returned success, which for this plugin means confirmed and
+persisted, and a dropped delivery fires no hook at all.
+
+The plugin serializes saves per run id inside one process, so a `getRun`
+poll and a webhook delivery cannot interleave a stale status over a
+finished run. Multiple processes sharing one database serialize only at
+the database itself.
 
 ## Quirks & Constraints
 - Auth is the `X-API-Key` header, not Bearer, and one key covers all four

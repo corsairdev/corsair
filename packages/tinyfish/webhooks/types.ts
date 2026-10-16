@@ -80,6 +80,8 @@ export type TinyFishWebhookOutputs = {
 	runCancelled: RunCancelledEvent;
 };
 
+// Matchers run before any schema, so this narrows the raw body just enough to
+// read `event` off it; the casts only claim what the typeof guards proved.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -106,6 +108,8 @@ export const matchTinyFishPluginWebhook: CorsairWebhookMatcher = (
 	const event = body.event;
 	return (
 		typeof event === 'string' &&
+		// includes on a readonly tuple demands its exact element type; the
+		// typeof guard above already proved event is one of those strings.
 		(TINYFISH_RUN_EVENTS as readonly string[]).includes(event)
 	);
 };

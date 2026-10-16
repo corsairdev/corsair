@@ -12,6 +12,7 @@ export const TinyFishAgentRun = z.object({
 	startedAt: z.coerce.date().nullable().optional(),
 	finishedAt: z.coerce.date().nullable().optional(),
 	numOfSteps: z.number().int().nullable().optional(),
+	// Stored straight from the provider run; only the docs examples fix keys.
 	result: z.record(z.string(), z.unknown()).nullable().optional(),
 	errorCode: z.string().nullable().optional(),
 	errorMessage: z.string().nullable().optional(),
