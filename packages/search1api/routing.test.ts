@@ -18,6 +18,8 @@ const mockLog = jest.mocked(logEventFromContext);
 
 // never parameters: any concrete endpoint function is assignable to this
 // (parameters are contravariant), so the table needs no per-entry casts.
+// `ctx as never` at each call is the same trick: a full plugin context
+// needs the plugin runtime, which these tests stub down to the db handle.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 function createContext() {
@@ -345,14 +347,14 @@ describe('search1api endpoint routing', () => {
 
 	it('rejects an invalid input before any request is made', async () => {
 		const ctx = createContext();
-		await expect(
-			Web.search(ctx as never, { query: '' } as never),
-		).rejects.toThrow();
+		await expect(Web.search(ctx as never, { query: '' })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects unknown input keys before any request is made', async () => {
 		const ctx = createContext();
+		// the excess key cannot typecheck, so the literal is cast and the
+		// strict schema rejects it at runtime
 		await expect(
 			Web.search(
 				ctx as never,
@@ -367,7 +369,7 @@ describe('search1api endpoint routing', () => {
 
 	it('rejects an empty batch before any request is made', async () => {
 		const ctx = createContext();
-		await expect(Web.searchBatch(ctx as never, [] as never)).rejects.toThrow();
+		await expect(Web.searchBatch(ctx as never, [])).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
@@ -377,7 +379,7 @@ describe('search1api endpoint routing', () => {
 			usage: 42,
 			credential_type: 'api_key',
 		});
-		await Account.usage(ctx as never, { period: 'month' } as never);
+		await Account.usage(ctx as never, { period: 'month' });
 
 		expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({
 			period: 'month',
@@ -391,7 +393,7 @@ describe('search1api endpoint routing', () => {
 			usage: 42,
 			credential_type: 'api_key',
 		});
-		await Account.usage(ctx as never, {} as never);
+		await Account.usage(ctx as never, {});
 
 		expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({});
 	});
@@ -423,7 +425,7 @@ describe('search1api endpoint routing', () => {
 	it('rejects a malformed vendor response', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValueOnce({ usage: 'lots' });
-		await expect(Account.usage(ctx as never, {} as never)).rejects.toThrow();
+		await expect(Account.usage(ctx as never, {})).rejects.toThrow();
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 });

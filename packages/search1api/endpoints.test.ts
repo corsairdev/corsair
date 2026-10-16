@@ -7,6 +7,7 @@ import {
 const inputs = Search1APIEndpointInputSchemas;
 const outputs = Search1APIEndpointOutputSchemas;
 
+// the harness feeds arbitrary payloads, so both schema and value stay loose
 type AnySchema = z.ZodTypeAny;
 
 function accepts(schema: AnySchema, value: unknown): boolean {

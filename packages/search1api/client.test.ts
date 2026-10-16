@@ -15,7 +15,7 @@ type Captured = {
 let captured: Captured | undefined;
 let fetchCount = 0;
 
-function captureInit(url: unknown, init?: RequestInit): void {
+function captureInit(url: string | URL, init?: RequestInit): void {
 	const headers: Record<string, string> = {};
 	const raw = init?.headers;
 	if (raw instanceof Headers) {
@@ -23,9 +23,7 @@ function captureInit(url: unknown, init?: RequestInit): void {
 			headers[key.toLowerCase()] = value;
 		});
 	} else {
-		for (const [key, value] of Object.entries(
-			(raw ?? {}) as Record<string, string>,
-		)) {
+		for (const [key, value] of Object.entries(raw ?? {})) {
 			headers[key.toLowerCase()] = value;
 		}
 	}
@@ -39,9 +37,10 @@ function captureInit(url: unknown, init?: RequestInit): void {
 	};
 }
 
+// payloads vary per test, so the mock body stays open
 function mockFetch(response: { status?: number; body?: unknown }) {
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	global.fetch = (async (url: string | URL, init?: RequestInit) => {
 		captureInit(url, init);
 
 		const status = response.status ?? 200;
@@ -69,7 +68,7 @@ function mockBinaryFetch(response: {
 	body?: string;
 }) {
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	global.fetch = (async (url: string | URL, init?: RequestInit) => {
 		captureInit(url, init);
 
 		const headers = new Headers();
@@ -163,6 +162,7 @@ describe('makeSearch1APIRequest', () => {
 	});
 
 	it('wraps transport failures in a Search1APIError', async () => {
+		// the stub only rejects; no Response fields are ever read
 		global.fetch = (async () => {
 			throw new TypeError('network down');
 		}) as unknown as typeof global.fetch;

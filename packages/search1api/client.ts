@@ -153,6 +153,8 @@ async function readErrorBody(response: Response): Promise<unknown> {
  * Failures carry the same shape as `makeSearch1APIRequest`.
  */
 export async function requestSearch1APIScreenshot(
+	// a validated endpoint input, as in Search1APIRequestOptions.body; the
+	// screenshot body shape lives in the endpoint schemas, not the client
 	body: object,
 	apiKey: string,
 ): Promise<Search1APIScreenshotFile> {
