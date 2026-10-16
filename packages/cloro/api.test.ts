@@ -13,12 +13,16 @@ type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
 
 const fetchMock = jest.fn<Promise<Response>, [string, RequestInit]>();
 
-function respond(status: number, body: object | unknown[]) {
+function respond(
+	status: number,
+	body: object | unknown[],
+	headers: Record<string, string> = {},
+) {
 	fetchMock.mockImplementation(
 		async () =>
 			new Response(JSON.stringify(body), {
 				status,
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', ...headers },
 			}),
 	);
 }
@@ -70,6 +74,7 @@ const citationPills = [
 ];
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -110,7 +115,7 @@ describe('monitor.chatgpt', () => {
 		});
 		expect(result).toEqual({ success: true, result: answer });
 		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
-			'chatgpt:US:What does Stripe do?',
+			'chatgpt:US:any:What does Stripe do?',
 			expect.objectContaining({
 				engine: 'chatgpt',
 				model: 'gpt-5-3',
@@ -138,7 +143,7 @@ describe('monitor.chatgpt', () => {
 		});
 
 		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
-			'chatgpt:GB:What does Stripe do?\nWho founded it?',
+			'chatgpt:GB:any:What does Stripe do?\nWho founded it?',
 			expect.objectContaining({ text: 'Second answer' }),
 		);
 	});
@@ -165,15 +170,22 @@ describe('monitor.perplexity', () => {
 		};
 		respond(200, { success: true, result });
 
-		const response = await (Monitor.perplexity as AnyEndpoint)(
-			createContext(),
-			{ prompt: 'What does Stripe do?', country: 'US', state: 'CA' },
-		);
+		const ctx = createContext();
+
+		const response = await (Monitor.perplexity as AnyEndpoint)(ctx, {
+			prompt: 'What does Stripe do?',
+			country: 'US',
+			state: 'CA',
+		});
 
 		const { url, body } = lastCall();
 		expect(url.pathname).toBe('/v1/monitor/perplexity');
 		expect(body.state).toBe('CA');
 		expect(response).toEqual({ success: true, result });
+		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
+			'perplexity:US:CA:What does Stripe do?',
+			expect.objectContaining({ country: 'US', area: 'CA' }),
+		);
 	});
 });
 
@@ -249,7 +261,7 @@ describe('monitor.googleAiMode', () => {
 			hl: 'en',
 		});
 		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
-			'aimode:US:best running shoes for flat feet',
+			'aimode:US:any:best running shoes for flat feet',
 			expect.anything(),
 		);
 	});
@@ -332,7 +344,7 @@ describe('monitor.googleSearch', () => {
 		expect(body.pages).toBe(2);
 		expect(response).toEqual({ success: true, result });
 		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
-			'google:US:running shoes',
+			'google:US:any:running shoes',
 			expect.objectContaining({
 				text: 'Running shoes are designed for...',
 				sourceUrls: [
@@ -414,7 +426,7 @@ describe('monitor.googleNews', () => {
 		expect(lastCall().url.pathname).toBe('/v1/monitor/google/news');
 		expect(response).toEqual({ success: true, result });
 		expect(ctx.db.snapshots.upsertByEntityId).toHaveBeenCalledWith(
-			'googleNews:US:Stripe',
+			'googleNews:US:any:Stripe',
 			expect.objectContaining({
 				sourceUrls: ['https://techcrunch.com/stripe'],
 			}),
@@ -502,7 +514,7 @@ describe('errors', () => {
 		});
 	});
 
-	it('retries 429 with backoff', async () => {
+	it('hands a 429 to the rate-limit handler after one request', async () => {
 		respond(429, {
 			success: false,
 			error: {
@@ -511,21 +523,46 @@ describe('errors', () => {
 				details: { limit: 10 },
 			},
 		});
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Monitor.googleNews as AnyEndpoint)(createContext(), {
+		const error = (await (Monitor.googleNews as AnyEndpoint)(createContext(), {
 			query: 'Stripe',
 			country: 'US',
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as CloroAPIError;
-		jest.useRealTimers();
+		}).catch((e: Error) => e)) as CloroAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.status).toBe(429);
 		expect(error.code).toBe('CONCURRENCY_LIMIT_EXCEEDED');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler()).toMatchObject({
 			maxRetries: 3,
+		});
+	});
+
+	it('waits for Retry-After on a 503', async () => {
+		respond(
+			503,
+			{
+				success: false,
+				error: {
+					code: 'SERVICE_UNAVAILABLE',
+					message: 'Service temporarily unavailable',
+				},
+			},
+			{ 'Retry-After': '30' },
+		);
+
+		const error = (await (Utility.credits as AnyEndpoint)(
+			createContext(),
+			{},
+		).catch((e: Error) => e)) as CloroAPIError;
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(error.status).toBe(503);
+		expect(error.retryAfter).toBe(30_000);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.SERVER_ERROR.handler(error)).toMatchObject({
+			maxRetries: 2,
+			headersRetryAfterMs: 30_000,
 		});
 	});
 

@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const CLORO_API_BASE = 'https://api.cloro.dev';
@@ -6,6 +10,17 @@ export const CLORO_API_BASE = 'https://api.cloro.dev';
 // cloro stops starting new attempts after 5 minutes and asks for a client
 // timeout of at least 300s: https://cloro.dev/docs/guides/error-handling
 const CLORO_TIMEOUT_MS = 310_000;
+
+// error-handlers.ts owns retries, so the client makes one attempt. 503 is
+// listed so the client still reads its Retry-After into the error.
+const CLORO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+	isRateLimitError: (status) => status === 503,
+};
 
 export class CloroAPIError extends Error {
 	readonly status?: number;
@@ -48,7 +63,8 @@ function describe(error: ApiError): string {
 	return error.message;
 }
 
-export async function makeCloroRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeCloroRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -56,7 +72,7 @@ export async function makeCloroRequest<T>(
 		body?: object;
 		query?: Record<string, string | undefined>;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -78,7 +94,9 @@ export async function makeCloroRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: CLORO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new CloroAPIError(describe(error), error);

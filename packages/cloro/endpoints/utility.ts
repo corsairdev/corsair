@@ -11,7 +11,7 @@ export const countries: CloroEndpoints['utilityCountries'] = async (
 		input ?? {},
 	);
 	const result = CloroEndpointOutputSchemas.utilityCountries.parse(
-		await makeCloroRequest<unknown>('v1/countries', ctx.key, {
+		await makeCloroRequest('v1/countries', ctx.key, {
 			query: { model },
 		}),
 	);
@@ -27,7 +27,7 @@ export const countries: CloroEndpoints['utilityCountries'] = async (
 export const states: CloroEndpoints['utilityStates'] = async (ctx, input) => {
 	const { country } = CloroEndpointInputSchemas.utilityStates.parse(input);
 	const result = CloroEndpointOutputSchemas.utilityStates.parse(
-		await makeCloroRequest<unknown>('v1/states', ctx.key, {
+		await makeCloroRequest('v1/states', ctx.key, {
 			query: { country },
 		}),
 	);
@@ -43,7 +43,7 @@ export const states: CloroEndpoints['utilityStates'] = async (ctx, input) => {
 export const credits: CloroEndpoints['utilityCredits'] = async (ctx, input) => {
 	CloroEndpointInputSchemas.utilityCredits.parse(input ?? {});
 	const result = CloroEndpointOutputSchemas.utilityCredits.parse(
-		await makeCloroRequest<unknown>('v1/credits', ctx.key),
+		await makeCloroRequest('v1/credits', ctx.key),
 	);
 	await logEventFromContext(
 		ctx,

@@ -19,17 +19,19 @@ async function saveSnapshot(
 	ctx: CloroContext,
 	engine: Engine,
 	prompt: string,
-	country: string | undefined,
+	geo: { country?: string; area?: string },
 	snapshot: Snapshot,
 ) {
 	if (!ctx.db.snapshots) return;
-	const id = [engine, country?.toUpperCase() ?? 'any', prompt].join(':');
+	const country = geo.country?.toUpperCase();
+	const id = [engine, country ?? 'any', geo.area ?? 'any', prompt].join(':');
 	try {
 		await ctx.db.snapshots.upsertByEntityId(id, {
 			id,
 			engine,
 			prompt,
-			country: country?.toUpperCase(),
+			country,
+			area: geo.area,
 			...snapshot,
 			checkedAt: new Date(),
 		});
@@ -50,7 +52,7 @@ async function logRun(ctx: CloroContext, engine: Engine, snapshot: Snapshot) {
 export const chatgpt: CloroEndpoints['monitorChatgpt'] = async (ctx, input) => {
 	const parsed = CloroEndpointInputSchemas.monitorChatgpt.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorChatgpt.parse(
-		await makeCloroRequest<unknown>('v1/monitor/chatgpt', ctx.key, {
+		await makeCloroRequest('v1/monitor/chatgpt', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -74,7 +76,7 @@ export const chatgpt: CloroEndpoints['monitorChatgpt'] = async (ctx, input) => {
 		ctx,
 		'chatgpt',
 		prompts.join('\n'),
-		parsed.country,
+		{ country: parsed.country, area: parsed.state },
 		snapshot,
 	);
 	await logRun(ctx, 'chatgpt', snapshot);
@@ -87,7 +89,7 @@ export const perplexity: CloroEndpoints['monitorPerplexity'] = async (
 ) => {
 	const parsed = CloroEndpointInputSchemas.monitorPerplexity.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorPerplexity.parse(
-		await makeCloroRequest<unknown>('v1/monitor/perplexity', ctx.key, {
+		await makeCloroRequest('v1/monitor/perplexity', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -101,7 +103,7 @@ export const perplexity: CloroEndpoints['monitorPerplexity'] = async (
 		ctx,
 		'perplexity',
 		parsed.prompt,
-		parsed.country,
+		{ country: parsed.country, area: parsed.state },
 		snapshot,
 	);
 	await logRun(ctx, 'perplexity', snapshot);
@@ -111,7 +113,7 @@ export const perplexity: CloroEndpoints['monitorPerplexity'] = async (
 export const gemini: CloroEndpoints['monitorGemini'] = async (ctx, input) => {
 	const parsed = CloroEndpointInputSchemas.monitorGemini.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorGemini.parse(
-		await makeCloroRequest<unknown>('v1/monitor/gemini', ctx.key, {
+		await makeCloroRequest('v1/monitor/gemini', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -121,7 +123,13 @@ export const gemini: CloroEndpoints['monitorGemini'] = async (ctx, input) => {
 		text: response.result.text,
 		sourceUrls: urls(response.result.sources),
 	};
-	await saveSnapshot(ctx, 'gemini', parsed.prompt, parsed.country, snapshot);
+	await saveSnapshot(
+		ctx,
+		'gemini',
+		parsed.prompt,
+		{ country: parsed.country, area: parsed.state },
+		snapshot,
+	);
 	await logRun(ctx, 'gemini', snapshot);
 	return response;
 };
@@ -129,7 +137,7 @@ export const gemini: CloroEndpoints['monitorGemini'] = async (ctx, input) => {
 export const copilot: CloroEndpoints['monitorCopilot'] = async (ctx, input) => {
 	const parsed = CloroEndpointInputSchemas.monitorCopilot.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorCopilot.parse(
-		await makeCloroRequest<unknown>('v1/monitor/copilot', ctx.key, {
+		await makeCloroRequest('v1/monitor/copilot', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -139,7 +147,13 @@ export const copilot: CloroEndpoints['monitorCopilot'] = async (ctx, input) => {
 		text: response.result.text,
 		sourceUrls: urls(response.result.sources),
 	};
-	await saveSnapshot(ctx, 'copilot', parsed.prompt, parsed.country, snapshot);
+	await saveSnapshot(
+		ctx,
+		'copilot',
+		parsed.prompt,
+		{ country: parsed.country, area: parsed.state },
+		snapshot,
+	);
 	await logRun(ctx, 'copilot', snapshot);
 	return response;
 };
@@ -150,7 +164,7 @@ export const googleAiMode: CloroEndpoints['monitorGoogleAiMode'] = async (
 ) => {
 	const parsed = CloroEndpointInputSchemas.monitorGoogleAiMode.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorGoogleAiMode.parse(
-		await makeCloroRequest<unknown>('v1/monitor/aimode', ctx.key, {
+		await makeCloroRequest('v1/monitor/aimode', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -164,7 +178,10 @@ export const googleAiMode: CloroEndpoints['monitorGoogleAiMode'] = async (
 		ctx,
 		'aimode',
 		parsed.prompt,
-		parsed.country ?? parsed.gl,
+		{
+			country: parsed.country ?? parsed.gl,
+			area: parsed.location ?? parsed.uule,
+		},
 		snapshot,
 	);
 	await logRun(ctx, 'aimode', snapshot);
@@ -177,7 +194,7 @@ export const googleSearch: CloroEndpoints['monitorGoogleSearch'] = async (
 ) => {
 	const parsed = CloroEndpointInputSchemas.monitorGoogleSearch.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorGoogleSearch.parse(
-		await makeCloroRequest<unknown>('v1/monitor/google', ctx.key, {
+		await makeCloroRequest('v1/monitor/google', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -191,7 +208,10 @@ export const googleSearch: CloroEndpoints['monitorGoogleSearch'] = async (
 		ctx,
 		'google',
 		parsed.query ?? parsed.url ?? '',
-		parsed.country ?? parsed.gl,
+		{
+			country: parsed.country ?? parsed.gl,
+			area: parsed.location ?? parsed.uule,
+		},
 		snapshot,
 	);
 	await logRun(ctx, 'google', snapshot);
@@ -204,7 +224,7 @@ export const googleNews: CloroEndpoints['monitorGoogleNews'] = async (
 ) => {
 	const parsed = CloroEndpointInputSchemas.monitorGoogleNews.parse(input);
 	const response = CloroEndpointOutputSchemas.monitorGoogleNews.parse(
-		await makeCloroRequest<unknown>('v1/monitor/google/news', ctx.key, {
+		await makeCloroRequest('v1/monitor/google/news', ctx.key, {
 			method: 'POST',
 			body: parsed,
 		}),
@@ -215,7 +235,7 @@ export const googleNews: CloroEndpoints['monitorGoogleNews'] = async (
 		ctx,
 		'googleNews',
 		parsed.query,
-		parsed.country ?? parsed.gl,
+		{ country: parsed.country ?? parsed.gl },
 		snapshot,
 	);
 	await logRun(ctx, 'googleNews', snapshot);
