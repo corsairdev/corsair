@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BytedanceContext, BytedanceEndpoints } from '..';
-import { makeArkRequest } from '../client';
+import { BytedanceAPIError, makeArkRequest } from '../client';
 import type { VideoTask } from './types';
 import {
 	BytedanceEndpointInputSchemas,
@@ -114,24 +114,27 @@ export const remove: BytedanceEndpoints['tasksDelete'] = async (ctx, input) => {
 	});
 	const result = BytedanceEndpointOutputSchemas.tasksDelete.parse(raw ?? {});
 	if (ctx.db.videoTasks) {
+		// The cache can be stale (a queued task may have finished remotely), so
+		// read the task back: a cancelled task is still returned, a deleted one 404s.
 		try {
-			// A queued task becomes cancelled and stays queryable for 24 hours;
-			// a finished task's record is deleted.
-			const cached = await ctx.db.videoTasks.findByEntityId(id);
-			if (cached?.data.status === 'queued') {
-				await ctx.db.videoTasks.upsertByEntityId(id, {
-					...cached.data,
-					status: 'cancelled',
-					updatedAt: new Date(),
+			const after = BytedanceEndpointOutputSchemas.tasksGet.parse(
+				await makeArkRequest(`${TASKS}/{id}`, ctx.key, {
+					path: { id },
+					baseUrl: ctx.options.baseUrl,
+				}),
+			);
+			await saveTask(ctx, after);
+		} catch (error) {
+			if (error instanceof BytedanceAPIError && error.status === 404) {
+				await ctx.db.videoTasks.deleteByEntityId(id).catch((dbError) => {
+					console.warn('Failed to remove ModelArk video task:', dbError);
 				});
 			} else {
-				await ctx.db.videoTasks.deleteByEntityId(id);
+				console.warn(
+					'Failed to refresh ModelArk video task after delete:',
+					error,
+				);
 			}
-		} catch (error) {
-			console.warn(
-				'Failed to remove ModelArk video task from database:',
-				error,
-			);
 		}
 	}
 	await logEventFromContext(

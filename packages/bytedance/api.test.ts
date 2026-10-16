@@ -333,19 +333,30 @@ describe('tasks', () => {
 		).rejects.toThrow();
 	});
 
-	it('delete cancels a queued task in the cache', async () => {
-		respond(200);
+	// DELETE answers with an empty body; the follow-up GET answers as given.
+	function respondToDelete(getStatus: number, getBody: object) {
+		fetchMock.mockImplementation(async (_url, init) =>
+			init.method === 'DELETE'
+				? new Response(null, { status: 200 })
+				: new Response(JSON.stringify(getBody), {
+						status: getStatus,
+						headers: { 'Content-Type': 'application/json' },
+					}),
+		);
+	}
+
+	it('delete caches the cancelled status the server reports', async () => {
+		respondToDelete(200, { ...succeededTask, id: 't4', status: 'cancelled' });
 		const ctx = createContext();
-		ctx.db.videoTasks.findByEntityId.mockResolvedValue({
-			data: { id: 't4', status: 'queued', updatedAt: new Date() },
-		});
 
 		await expect(
 			(Video.remove as AnyEndpoint)(ctx, { id: 't4' }),
 		).resolves.toEqual({});
 
-		expect(lastCall().method).toBe('DELETE');
-		expect(lastCall().url.pathname).toBe(`${TASKS}/t4`);
+		const [deleteCall, getCall] = fetchMock.mock.calls;
+		expect(deleteCall![1].method).toBe('DELETE');
+		expect(new URL(deleteCall![0]).pathname).toBe(`${TASKS}/t4`);
+		expect(getCall![1].method).toBe('GET');
 		expect(ctx.db.videoTasks.upsertByEntityId).toHaveBeenCalledWith(
 			't4',
 			expect.objectContaining({ status: 'cancelled' }),
@@ -353,16 +364,28 @@ describe('tasks', () => {
 		expect(ctx.db.videoTasks.deleteByEntityId).not.toHaveBeenCalled();
 	});
 
-	it('delete removes a finished task from the cache', async () => {
-		respond(200, {});
+	it('delete removes the cached task when the server no longer has it, even if the cache said queued', async () => {
+		respondToDelete(404, {
+			error: { code: 'ResourceNotFound', message: 'not found' },
+		});
 		const ctx = createContext();
 		ctx.db.videoTasks.findByEntityId.mockResolvedValue({
-			data: { id: 't5', status: 'succeeded', updatedAt: new Date() },
+			data: { id: 't5', status: 'queued', updatedAt: new Date() },
 		});
 
 		await (Video.remove as AnyEndpoint)(ctx, { id: 't5' });
 
 		expect(ctx.db.videoTasks.deleteByEntityId).toHaveBeenCalledWith('t5');
+		expect(ctx.db.videoTasks.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('delete skips the follow-up read without a database', async () => {
+		respondToDelete(200, {});
+		const ctx = { ...createContext(), db: {} };
+
+		await (Video.remove as AnyEndpoint)(ctx, { id: 't6' });
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
 
