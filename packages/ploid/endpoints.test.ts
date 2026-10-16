@@ -3,6 +3,7 @@ import {
 	EnrichResponseSchema,
 	PersonInputSchema,
 	PersonOrRunResponseSchema,
+	PloidEndpointInputSchemas,
 	ResolveInputSchema,
 	ResolveResponseSchema,
 	SearchCandidatesInputSchema,
@@ -59,6 +60,30 @@ describe('input bounds and enums', () => {
 			SearchInputSchema.parse({
 				filters: { company_size: { min: 10 } },
 			}),
+		).not.toThrow();
+	});
+
+	it('caps a bare seniority string at 80 chars per the spec', () => {
+		expect(() =>
+			SearchInputSchema.parse({ filters: { seniority: 'a'.repeat(80) } }),
+		).not.toThrow();
+		expect(() =>
+			SearchInputSchema.parse({ filters: { seniority: 'a'.repeat(81) } }),
+		).toThrow();
+		// The object form keeps the shared 200-char term bound.
+		expect(() =>
+			SearchInputSchema.parse({
+				filters: { seniority: { any_of: ['a'.repeat(200)] } },
+			}),
+		).not.toThrow();
+	});
+
+	it('strips extra keys on no-arg account inputs instead of throwing', () => {
+		expect(() =>
+			PloidEndpointInputSchemas.accountCredits.parse({ refresh: true }),
+		).not.toThrow();
+		expect(() =>
+			PloidEndpointInputSchemas.accountUsage.parse({ force: 1 }),
 		).not.toThrow();
 	});
 

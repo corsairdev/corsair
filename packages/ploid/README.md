@@ -46,8 +46,10 @@ Two buckets apply per request, organization plan and API key, and the lower
 one wins: free 10/min, pay-as-you-go 30/min, API plans 300/min, Scale and
 Teams 1000/min. Every 429 carries `Retry-After` (plus
 `error.retry_after_seconds` in the body). This plugin retries 429 four
-attempts total honoring `Retry-After`, retries transient 5xx three attempts
-(billed-failure free per the docs), and fails fast on everything else.
+attempts total honoring `Retry-After` (capped at 60 s, with a small jitter
+added on top so throttled callers do not realign), retries transient 5xx
+three attempts (billed-failure free per the docs), and fails fast on
+everything else.
 
 ## Data notes
 

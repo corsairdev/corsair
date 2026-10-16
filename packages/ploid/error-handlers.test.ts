@@ -133,4 +133,13 @@ describe('Ploid error handlers', () => {
 		// Deterministic waits would all be identical.
 		expect(new Set(waits).size).toBeGreaterThan(1);
 	});
+
+	it('caps a hostile Retry-After at one minute', async () => {
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			ploidError(429, 'rate_limited', 3_600_000),
+		);
+		const wait = result?.headersRetryAfterMs ?? -1;
+		expect(wait).toBeGreaterThanOrEqual(60_000);
+		expect(wait).toBeLessThanOrEqual(60_500);
+	});
 });

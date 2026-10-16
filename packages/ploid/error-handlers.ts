@@ -1,6 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { PloidAPIError } from './client';
 
+// The framework sleeps on headersRetryAfterMs verbatim with no cap; without
+// this bound a Retry-After of an hour would wedge the endpoint call.
+const PLOID_MAX_RETRY_AFTER_MS = 60_000;
+
 function asPloidError(error: Error): PloidAPIError | undefined {
 	return error instanceof PloidAPIError ? error : undefined;
 }
@@ -58,15 +62,21 @@ export const errorHandlers = {
 		// 429s are rejected before processing and never billed. The docs
 		// require honoring Retry-After WITH jitter; the framework applies
 		// headersRetryAfterMs verbatim, so the jitter is added here (never
-		// below the required wait). 4 attempts total (1 initial + 3 retries).
+		// below the required wait) and the wait is capped so a mis-set
+		// Retry-After cannot park the call for hours. 4 attempts total
+		// (1 initial + 3 retries).
 		handler: async (error: Error) => {
 			const retryAfter = asPloidError(error)?.retryAfter;
+			const capped =
+				retryAfter === undefined
+					? undefined
+					: Math.min(retryAfter, PLOID_MAX_RETRY_AFTER_MS);
 			return {
 				maxRetries: 3,
 				headersRetryAfterMs:
-					retryAfter === undefined
+					capped === undefined
 						? undefined
-						: Math.ceil(retryAfter + Math.random() * 500),
+						: Math.ceil(capped + Math.random() * 500),
 				retryStrategy: 'exponential_backoff' as const,
 			};
 		},

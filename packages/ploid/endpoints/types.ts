@@ -98,9 +98,22 @@ const CountFilterSchema = withCondition(
 	'company_size',
 );
 
+// A bare seniority string is capped at 80 chars by the spec; the object
+// form's any_of values keep the shared 200-char term bound.
+const SeniorityFilterSchema = z.union([
+	z.string().min(1).max(80),
+	withCondition(
+		z.strictObject({
+			any_of: TermsSchema.optional(),
+			none_of: TermsSchema.optional(),
+		}),
+		'seniority',
+	),
+]);
+
 const SearchFiltersSchema = z.strictObject({
 	title: TextFilterSchema.optional(),
-	seniority: TextFilterSchema.optional(),
+	seniority: SeniorityFilterSchema.optional(),
 	company: CompanyFilterSchema.optional(),
 	industry: TextFilterSchema.optional(),
 	location: LocationFilterSchema.optional(),
@@ -550,8 +563,10 @@ export const PloidEndpointInputSchemas = {
 	personRun: PersonRunInputSchema,
 	cancelPersonRun: PersonRunInputSchema,
 	enrich: EnrichInputSchema,
-	accountCredits: z.strictObject({}),
-	accountUsage: z.strictObject({}),
+	// z.object, not strictObject: no wire body to protect, and callers (LLM
+	// agents especially) pass harmless extra keys to no-arg endpoints.
+	accountCredits: z.object({}),
+	accountUsage: z.object({}),
 } as const;
 
 export const PloidEndpointOutputSchemas = {
