@@ -7,7 +7,7 @@ export const search: AktaEndpoints['companySearch'] = async (ctx, input) => {
 	const { query } = AktaEndpointInputSchemas.companySearch.parse(input);
 
 	// 204 (no match) has no body.
-	const raw = await makeAktaRequest<unknown>('v1/company/search/', ctx.key, {
+	const raw = await makeAktaRequest('v1/company/search/', ctx.key, {
 		query,
 	});
 	const result = AktaEndpointOutputSchemas.companySearch.parse(
@@ -17,13 +17,17 @@ export const search: AktaEndpoints['companySearch'] = async (ctx, input) => {
 	if (ctx.db.companies) {
 		try {
 			for (const company of result.data) {
+				const existing = await ctx.db.companies.findByEntityId(company.uuid);
 				await ctx.db.companies.upsertByEntityId(company.uuid, {
+					...existing?.data,
 					uuid: company.uuid,
 					name: company.name,
-					website: company.website,
-					productCategory: company.product_category,
-					companyStatus: company.company_status,
-					parentCompanyUuid: company.parent_company?.uuid,
+					website: company.website ?? existing?.data.website,
+					productCategory:
+						company.product_category ?? existing?.data.productCategory,
+					companyStatus: company.company_status ?? existing?.data.companyStatus,
+					parentCompanyUuid:
+						company.parent_company?.uuid ?? existing?.data.parentCompanyUuid,
 				});
 			}
 		} catch (error) {
@@ -43,14 +47,10 @@ export const search: AktaEndpoints['companySearch'] = async (ctx, input) => {
 export const enrich: AktaEndpoints['companyEnrich'] = async (ctx, input) => {
 	const parsed = AktaEndpointInputSchemas.companyEnrich.parse(input);
 
-	const raw = await makeAktaRequest<unknown>(
-		'v1/company/enrichment/',
-		ctx.key,
-		{
-			company: parsed.company,
-			sections: csv(parsed.sections),
-		},
-	);
+	const raw = await makeAktaRequest('v1/company/enrichment/', ctx.key, {
+		company: parsed.company,
+		sections: csv(parsed.sections),
+	});
 	const result = AktaEndpointOutputSchemas.companyEnrich.parse(raw);
 
 	const firmographic = result.data.firmographic;
@@ -62,9 +62,12 @@ export const enrich: AktaEndpoints['companyEnrich'] = async (ctx, input) => {
 				uuid: result.data.uuid,
 				name: firmographic.name ?? existing?.data.name ?? result.data.uuid,
 				website: firmographic.website ?? existing?.data.website,
-				foundedYear: firmographic.founded_year,
-				headcountRange: firmographic.headcount_range,
-				descriptionShort: firmographic.company_description_short,
+				foundedYear: firmographic.founded_year ?? existing?.data.foundedYear,
+				headcountRange:
+					firmographic.headcount_range ?? existing?.data.headcountRange,
+				descriptionShort:
+					firmographic.company_description_short ??
+					existing?.data.descriptionShort,
 			});
 		} catch (error) {
 			console.warn('Failed to save Akta company to database:', error);
@@ -75,7 +78,7 @@ export const enrich: AktaEndpoints['companyEnrich'] = async (ctx, input) => {
 		ctx,
 		'akta.company.enrich',
 		{
-			sections: parsed.sections ?? 'all',
+			sections: parsed.sections,
 			creditsConsumed: result.credits_consumed,
 		},
 		'completed',
@@ -89,11 +92,11 @@ export const employeeReviews: AktaEndpoints['companyEmployeeReviews'] = async (
 ) => {
 	const parsed = AktaEndpointInputSchemas.companyEmployeeReviews.parse(input);
 
-	const raw = await makeAktaRequest<unknown>(
-		'v1/company/employee-reviews/',
-		ctx.key,
-		{ company: parsed.company, limit: parsed.limit, offset: parsed.offset },
-	);
+	const raw = await makeAktaRequest('v1/company/employee-reviews/', ctx.key, {
+		company: parsed.company,
+		limit: parsed.limit,
+		offset: parsed.offset,
+	});
 	const result = AktaEndpointOutputSchemas.companyEmployeeReviews.parse(raw);
 
 	await logEventFromContext(
@@ -115,16 +118,12 @@ export const productReviews: AktaEndpoints['companyProductReviews'] = async (
 ) => {
 	const parsed = AktaEndpointInputSchemas.companyProductReviews.parse(input);
 
-	const raw = await makeAktaRequest<unknown>(
-		'v1/company/product-reviews/',
-		ctx.key,
-		{
-			company: parsed.company,
-			products: csv(parsed.products),
-			limit: parsed.limit,
-			offset: parsed.offset,
-		},
-	);
+	const raw = await makeAktaRequest('v1/company/product-reviews/', ctx.key, {
+		company: parsed.company,
+		products: csv(parsed.products),
+		limit: parsed.limit,
+		offset: parsed.offset,
+	});
 	const result = AktaEndpointOutputSchemas.companyProductReviews.parse(raw);
 
 	await logEventFromContext(

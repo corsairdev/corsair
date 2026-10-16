@@ -1,10 +1,24 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const AKTA_API_BASE = 'https://api.akta.pro/api';
 
 // News p99 is 17s (docs.akta.pro/getting-started/performance), near the 20s default.
 const AKTA_TIMEOUT_MS = 60_000;
+
+// error-handlers.ts owns retries. The client makes one attempt so a 429 is
+// retried once per policy, honoring the header or retry_after_seconds.
+const AKTA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export type AktaQuery = Record<string, string | number | boolean | undefined>;
 
@@ -58,11 +72,12 @@ function describe(error: ApiError): string {
  * Akta answers every route at its trailing-slash form and 307-redirects the
  * bare path, so callers pass paths like `v1/news/`.
  */
-export async function makeAktaRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeAktaRequest(
 	path: string,
 	apiKey: string,
 	query: AktaQuery = {},
-): Promise<T> {
+): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: AKTA_API_BASE,
 		VERSION: '1.0.0',
@@ -82,7 +97,9 @@ export async function makeAktaRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: AKTA_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new AktaAPIError(describe(error), error);

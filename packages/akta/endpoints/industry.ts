@@ -7,7 +7,7 @@ export const search: AktaEndpoints['industrySearch'] = async (ctx, input) => {
 	const parsed = AktaEndpointInputSchemas.industrySearch.parse(input);
 
 	// 204 (no match) has no body.
-	const raw = await makeAktaRequest<unknown>('v1/industry/search/', ctx.key, {
+	const raw = await makeAktaRequest('v1/industry/search/', ctx.key, {
 		query: parsed.query,
 		level: parsed.level,
 	});

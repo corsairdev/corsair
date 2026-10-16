@@ -7,7 +7,7 @@ export const list: AktaEndpoints['newsList'] = async (ctx, input) => {
 	const parsed = AktaEndpointInputSchemas.newsList.parse(input);
 
 	// 204 (no match) has no body.
-	const raw = await makeAktaRequest<unknown>('v1/news/', ctx.key, {
+	const raw = await makeAktaRequest('v1/news/', ctx.key, {
 		company: parsed.company,
 		primary_company: parsed.primary_company,
 		industry: csv(parsed.industry),
