@@ -50,8 +50,14 @@ export const person: PloidEndpoints['person'] = async (ctx, input) => {
 		input,
 		(validated) => ({ method: 'POST', url: '/v1/person', body: validated }),
 		(_validated, response) => ({
+			// Three outcomes, not two: data null is the documented free
+			// "unsure identity" terminal state, not a profile.
 			mode:
-				response.data !== null && 'run_id' in response.data ? 'run' : 'profile',
+				response.data === null
+					? 'unsure'
+					: 'run_id' in response.data
+						? 'run'
+						: 'profile',
 			status:
 				response.data !== null && 'run_id' in response.data
 					? response.data.status
@@ -97,7 +103,11 @@ export const getRun: PloidEndpoints['personRun'] = async (ctx, input) => {
 		}),
 		(_validated, response) => ({
 			mode:
-				response.data !== null && 'run_id' in response.data ? 'run' : 'profile',
+				response.data === null
+					? 'unsure'
+					: 'run_id' in response.data
+						? 'run'
+						: 'profile',
 			status:
 				response.data !== null && 'run_id' in response.data
 					? response.data.status

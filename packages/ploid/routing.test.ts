@@ -89,8 +89,6 @@ const personRunResponse = {
 	meta: { request_id: 'req_3' },
 };
 
-
-
 // A completed research run answers with the reviewed profile.
 const personProfileResponse = {
 	data: {
@@ -358,6 +356,7 @@ describe('Ploid endpoint routing', () => {
 					value: 'example@acme.com',
 					status: 'found',
 					confidence: 'verified',
+					source: 'public_web',
 					lastSeen: null,
 				},
 			}),
@@ -510,5 +509,128 @@ describe('Ploid person cache merge', () => {
 			personId: 'per_1',
 			company: 'Acme',
 		});
+	});
+
+	it('dedupes sources across re-resolves', async () => {
+		const store = new Map<string, { data: PersonRow }>();
+		const ctx = {
+			db: {
+				people: {
+					findByEntityId: async (id: string) => store.get(id) ?? null,
+					upsertByEntityId: async (id: string, data: PersonRow) => {
+						store.set(id, { data });
+					},
+				},
+			},
+		};
+
+		await rememberPerson(ctx, {
+			providerId: 'per_1',
+			sources: ['https://acme.com', 'https://news.com'],
+		});
+		await rememberPerson(ctx, {
+			providerId: 'per_1',
+			sources: ['https://acme.com'],
+		});
+
+		expect(store.get('per_1')?.data?.sources).toEqual([
+			'https://acme.com',
+			'https://news.com',
+		]);
+	});
+});
+
+describe('Ploid contact cache policy', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	function storeContext() {
+		const store = new Map<string, { data: PersonRow }>();
+		const ctx = {
+			key: 'test-key',
+			options: { baseUrl: 'https://api.ploid.com' },
+			db: {
+				people: {
+					findByEntityId: async (id: string) => store.get(id) ?? null,
+					upsertByEntityId: async (id: string, data: PersonRow) => {
+						store.set(id, { data });
+					},
+				},
+			},
+		};
+		return { ctx, store };
+	}
+
+	it('keeps a found phone when a later enrich reports it unavailable', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: {
+				phone: {
+					value: '+15550100',
+					status: 'found',
+					confidence: 'verified',
+					source: 'public_web',
+					last_seen: null,
+				},
+			},
+			meta: {
+				request_id: 'req_8',
+				usage: { acu_used: 10, billed: ['phone'], free: [], not_found: [] },
+				warnings: [],
+			},
+		});
+		mockRequest.mockResolvedValueOnce({
+			data: {
+				phone: {
+					value: null,
+					status: 'unavailable',
+					confidence: null,
+					source: null,
+					last_seen: null,
+				},
+			},
+			meta: {
+				request_id: 'req_9',
+				usage: { acu_used: 0, billed: [], free: ['phone'], not_found: [] },
+				warnings: [],
+			},
+		});
+		const { ctx, store } = storeContext();
+
+		await (Contacts.enrich as AnyEndpoint)(ctx, {
+			identifier: { person_id: 'per_1' },
+			fields: ['phone'],
+		});
+		await (Contacts.enrich as AnyEndpoint)(ctx, {
+			identifier: { person_id: 'per_1' },
+			fields: ['phone'],
+		});
+
+		// The unavailable result must not wipe the found value; the found
+		// write also carries the provenance source.
+		expect(store.get('per_1')?.data?.phone).toMatchObject({
+			value: '+15550100',
+			status: 'found',
+			source: 'public_web',
+		});
+	});
+
+	it('logs the unsure outcome as its own mode', async () => {
+		mockRequest.mockResolvedValue({
+			data: null,
+			meta: { request_id: 'req_10', resolution: 'unsure' },
+		});
+		const { ctx } = storeContext();
+
+		await (Person.get as AnyEndpoint)(ctx, {
+			identifier: { person_id: 'per_1' },
+		});
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'ploid.person.get',
+			expect.objectContaining({ mode: 'unsure' }),
+			'completed',
+		);
 	});
 });
