@@ -436,6 +436,8 @@ export type ExternalVaquillPlugin<T extends VaquillPluginOptions> =
 	BaseVaquillPlugin<T>;
 
 export function vaquill<const T extends VaquillPluginOptions>(
+	// T is fixed by the caller's options type; the default only applies when
+	// every option is omitted, where the empty object is the value.
 	incomingOptions: VaquillPluginOptions & T = {} as VaquillPluginOptions & T,
 ): ExternalVaquillPlugin<T> {
 	const options = {

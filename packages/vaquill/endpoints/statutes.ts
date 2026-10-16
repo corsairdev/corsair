@@ -85,6 +85,8 @@ export const divisions: VaquillEndpoints['divisions'] = async (ctx, input) => {
 		(validated) =>
 			makeVaquillRequest('/us/statutes/divisions', ctx.key, {
 				method: 'GET',
+				// Zod-inferred objects carry no index signature; the query
+				// record type demands one, so this cast bridges the two.
 				query: validated as Record<
 					string,
 					string | number | boolean | undefined
@@ -183,9 +185,10 @@ export const extractCitations: VaquillEndpoints['extractCitations'] = async (
 			}),
 		(_validated, response) => ({
 			textChars: response.textChars,
-			found: response.counts
-				? (response.counts as { found?: number }).found
-				: undefined,
+			found:
+				response.counts && typeof response.counts.found === 'number'
+					? response.counts.found
+					: undefined,
 		}),
 	);
 };

@@ -35,7 +35,7 @@ describeIfApiKey('Vaquill live API', () => {
 		const counted = VaquillEndpointOutputSchemas.count.parse(
 			await makeVaquillRequest('/us/statutes/count', TEST_API_KEY, {
 				method: 'POST',
-				body: input as Record<string, unknown>,
+				body: input,
 			}),
 		);
 		expect(counted.count).toBeGreaterThan(0);

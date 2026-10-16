@@ -16,8 +16,11 @@ const mockLog = jest.mocked(logEventFromContext);
 
 // never parameters: any concrete endpoint function is assignable to this
 // (parameters are contravariant), so the table needs no per-entry casts.
+// The return stays unknown because each endpoint resolves its own shape.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
+// Partial context stub; call sites cast to `never` because it supplies only
+// the key and the db client the endpoints touch.
 function createContext() {
 	return {
 		key: 'vq_key_test',
@@ -39,6 +42,8 @@ beforeEach(() => {
 const cases: Array<{
 	name: string;
 	endpoint: AnyEndpoint;
+	// Each row feeds a different endpoint schema, so these stay unknown and
+	// the schemas own validation at call time.
 	input: unknown;
 	method: string;
 	url: string;
@@ -394,7 +399,8 @@ describe('vaquill endpoint routing', () => {
 	it('a later search keeps the body saved by an earlier section fetch', async () => {
 		const ctx = createContext();
 		// Mimics the entity client: findByEntityId returns the stored row's
-		// data, upsertByEntityId replaces the whole object.
+		// data, upsertByEntityId replaces the whole object. The stored data
+		// is arbitrary JSON per entity, hence the record of unknown values.
 		const rows = new Map<string, Record<string, unknown>>();
 		ctx.db.searchResults.findByEntityId.mockImplementation(
 			async (entityId: string) => {

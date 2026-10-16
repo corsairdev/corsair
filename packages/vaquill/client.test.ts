@@ -12,12 +12,13 @@ let fetchCount = 0;
 
 function mockFetch(response: {
 	status?: number;
+	// JSON payload the stub serves; every test posts a different vendor shape.
 	body?: unknown;
 	headers?: Record<string, string>;
 }) {
 	captured = undefined;
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	global.fetch = (async (url: string, init?: RequestInit) => {
 		fetchCount++;
 		const headers: Record<string, string> = {};
 		const raw = init?.headers;
@@ -26,6 +27,8 @@ function mockFetch(response: {
 				headers[key.toLowerCase()] = value;
 			});
 		} else {
+			// The shared request always sends a Headers instance, so this
+			// branch only satisfies the fetch signature's other HeadersInit forms.
 			for (const [key, value] of Object.entries(
 				(raw ?? {}) as Record<string, string>,
 			)) {
@@ -33,7 +36,7 @@ function mockFetch(response: {
 			}
 		}
 		captured = {
-			url: String(url),
+			url,
 			method: init?.method ?? 'GET',
 			headers,
 			body: typeof init?.body === 'string' ? init.body : undefined,
