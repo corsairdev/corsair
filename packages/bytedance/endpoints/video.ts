@@ -34,7 +34,7 @@ async function saveTask(ctx: BytedanceContext, task: VideoTask) {
 export const create: BytedanceEndpoints['videoCreate'] = async (ctx, input) => {
 	const body = BytedanceEndpointInputSchemas.videoCreate.parse(input);
 	const result = BytedanceEndpointOutputSchemas.videoCreate.parse(
-		await makeArkRequest<unknown>(TASKS, ctx.key, {
+		await makeArkRequest(TASKS, ctx.key, {
 			method: 'POST',
 			body,
 			baseUrl: ctx.options.baseUrl,
@@ -64,7 +64,7 @@ export const create: BytedanceEndpoints['videoCreate'] = async (ctx, input) => {
 export const get: BytedanceEndpoints['tasksGet'] = async (ctx, input) => {
 	const { id } = BytedanceEndpointInputSchemas.tasksGet.parse(input);
 	const task = BytedanceEndpointOutputSchemas.tasksGet.parse(
-		await makeArkRequest<unknown>(`${TASKS}/{id}`, ctx.key, {
+		await makeArkRequest(`${TASKS}/{id}`, ctx.key, {
 			path: { id },
 			baseUrl: ctx.options.baseUrl,
 		}),
@@ -82,7 +82,7 @@ export const get: BytedanceEndpoints['tasksGet'] = async (ctx, input) => {
 export const list: BytedanceEndpoints['tasksList'] = async (ctx, input) => {
 	const filters = BytedanceEndpointInputSchemas.tasksList.parse(input ?? {});
 	const result = BytedanceEndpointOutputSchemas.tasksList.parse(
-		await makeArkRequest<unknown>(TASKS, ctx.key, {
+		await makeArkRequest(TASKS, ctx.key, {
 			query: {
 				page_num: filters.page_num,
 				page_size: filters.page_size,
@@ -107,7 +107,7 @@ export const list: BytedanceEndpoints['tasksList'] = async (ctx, input) => {
 export const remove: BytedanceEndpoints['tasksDelete'] = async (ctx, input) => {
 	const { id } = BytedanceEndpointInputSchemas.tasksDelete.parse(input);
 	// Cancels a queued task, or deletes the record of a finished one.
-	const raw = await makeArkRequest<unknown>(`${TASKS}/{id}`, ctx.key, {
+	const raw = await makeArkRequest(`${TASKS}/{id}`, ctx.key, {
 		method: 'DELETE',
 		path: { id },
 		baseUrl: ctx.options.baseUrl,

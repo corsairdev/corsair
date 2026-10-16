@@ -91,6 +91,7 @@ const textToVideo = {
 };
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -403,7 +404,7 @@ describe('errors', () => {
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
-	it('retries rate limits with Retry-After', async () => {
+	it('hands a rate limit to the handler after one request, with Retry-After', async () => {
 		respond(
 			429,
 			{
@@ -414,15 +415,12 @@ describe('errors', () => {
 			},
 			{ 'Retry-After': '2' },
 		);
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (Video.list as AnyEndpoint)(createContext(), {}).catch(
+		const error = (await (Video.list as AnyEndpoint)(createContext(), {}).catch(
 			(e: Error) => e,
-		);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as BytedanceAPIError;
-		jest.useRealTimers();
+		)) as BytedanceAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.retryAfter).toBe(2000);
 		expect(errorHandlers.QUOTA_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
@@ -432,10 +430,17 @@ describe('errors', () => {
 		});
 	});
 
-	it('does not retry quota exhaustion', async () => {
-		const quota = new BytedanceAPIError('429 QuotaExceeded');
-		Object.assign(quota, { status: 429, code: 'QuotaExceeded' });
+	it('sends quota exhaustion once and does not retry it', async () => {
+		respond(429, {
+			error: { code: 'QuotaExceeded', message: 'Your quota is used up.' },
+		});
 
+		const quota = (await (Video.list as AnyEndpoint)(createContext(), {}).catch(
+			(e: Error) => e,
+		)) as BytedanceAPIError;
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(quota.code).toBe('QuotaExceeded');
 		expect(errorHandlers.QUOTA_ERROR.match(quota)).toBe(true);
 		expect(await errorHandlers.QUOTA_ERROR.handler()).toEqual({
 			maxRetries: 0,

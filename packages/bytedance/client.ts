@@ -1,8 +1,22 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 // ap-southeast-1 (Johor). Override with the `baseUrl` plugin option.
 export const BYTEDANCE_ARK_API_BASE = 'https://ark.ap-southeast.bytepluses.com';
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error. Quota 429s must not be retried at all.
+const ARK_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export type ArkQuery = Record<string, string | number | string[] | undefined>;
 
@@ -40,7 +54,8 @@ function readError(
 	};
 }
 
-export async function makeArkRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeArkRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -50,7 +65,7 @@ export async function makeArkRequest<T>(
 		body?: object;
 		baseUrl?: string;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', query, body } = options;
 
 	const config: OpenAPIConfig = {
@@ -72,7 +87,9 @@ export async function makeArkRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: ARK_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const detail = readError(error.body);
