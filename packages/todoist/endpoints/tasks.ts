@@ -121,11 +121,15 @@ export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
 
 export const move: TodoistEndpoints['tasksMove'] = async (ctx, input) => {
 	const result = await makeTodoistRequest<TodoistEndpointOutputs['tasksMove']>(
-		`tasks/${input.id}`,
+		`tasks/${input.id}/move`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: input,
+			body: {
+				project_id: input.project_id,
+				section_id: input.section_id,
+				parent_id: input.parent_id,
+			},
 		},
 	);
 
