@@ -1,10 +1,24 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const CONTACTOUT_API_BASE = 'https://api.contactout.com';
 
 // Work-email lookups verify addresses in real time and can take tens of seconds.
 const CONTACTOUT_TIMEOUT_MS = 60_000;
+
+// error-handlers.ts owns retries, so the client makes one attempt and only
+// reads Retry-After into the error.
+const CONTACTOUT_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export type ContactOutQuery = Record<
 	string,
@@ -37,7 +51,8 @@ function readMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
-export async function makeContactOutRequest<T>(
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeContactOutRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -45,7 +60,7 @@ export async function makeContactOutRequest<T>(
 		query?: ContactOutQuery;
 		body?: object;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', query, body } = options;
 
 	const config: OpenAPIConfig = {
@@ -69,7 +84,9 @@ export async function makeContactOutRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: CONTACTOUT_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const message = readMessage(error.body);

@@ -32,6 +32,14 @@ pnpm add @corsair-dev/contactout
 
 Auth: API key. Corsair prompts your tenant for credentials on first use.
 
+ContactOut issues one key per email kind. The API key above is the work-email key. Calls with `emailType: 'personal'` (`linkedin.enrich`, `linkedin.contactInfo`, `email.enrich`, `people.enrich`, `people.search`, `people.decisionMakers`) use the personal-email key instead. Pass it as the `personalKey` option, or store it as the account's `personal_api_key`:
+
+```ts
+contactout({ personalKey: process.env.CONTACTOUT_PERSONAL_KEY });
+```
+
+Without a personal key those calls throw `AuthMissingError`. A setup with only a personal key works for personal-email calls.
+
 ## Webhooks
 
 No webhooks.

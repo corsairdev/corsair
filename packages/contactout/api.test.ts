@@ -2,6 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ContactOutAPIError } from './client';
 import { Account, Company, Email, Linkedin, People } from './endpoints';
 import { errorHandlers } from './error-handlers';
+import { contactout } from './index';
 import { samples } from './test-samples';
 
 jest.mock('corsair/core', () => ({
@@ -40,8 +41,14 @@ function createContext(
 			get_personal_api_key: jest.fn().mockResolvedValue(storedPersonalKey),
 		},
 		db: {
-			profiles: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
-			companies: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+			profiles: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			companies: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
 		},
 	};
 }
@@ -158,6 +165,7 @@ const cases: [string, AnyEndpoint, object, 'GET' | 'POST', string, string][] = [
 ];
 
 beforeAll(() => {
+	// unknown: the jest mock lacks fetch's static members, so it needs a two-step cast.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -288,6 +296,13 @@ describe('work and personal keys', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('builds an empty work key without a key store, so personal-only setups work', async () => {
+		const plugin = contactout({ personalKey: 'personal-key' });
+
+		// The key-builder context only matters when a key store is configured.
+		await expect(plugin.keyBuilder!({} as never, 'endpoint')).resolves.toBe('');
+	});
+
 	it('throws AuthMissingError when no work key is configured', async () => {
 		await expect(
 			(Email.verify as AnyEndpoint)(createContext({}, null, ''), {
@@ -338,6 +353,39 @@ describe('caching', () => {
 				hasPhone: true,
 			}),
 		);
+	});
+
+	it('keeps saved fields that a sparse search does not return', async () => {
+		respond(200, {
+			status_code: 200,
+			metadata: { page: 1, page_size: 25, total_results: 1 },
+			profiles: {
+				[linkedin]: { full_name: 'Example Person', headline: 'CTO at Legros' },
+			},
+		});
+		const ctx = createContext();
+		const saved = {
+			linkedinUrl: linkedin,
+			fullName: 'Example Person',
+			headline: 'VP Engineering',
+			companyDomain: 'legros.com',
+			seniority: 'Director',
+			hasWorkEmail: true,
+			hasPhone: true,
+			updatedAt: new Date('2026-10-01'),
+		};
+		ctx.db.profiles.findByEntityId.mockResolvedValue({ data: saved });
+
+		await (People.search as AnyEndpoint)(ctx, {
+			company: ['Legros'],
+			output_fields: ['full_name', 'headline'],
+		});
+
+		expect(ctx.db.profiles.upsertByEntityId).toHaveBeenCalledWith(linkedin, {
+			...saved,
+			headline: 'CTO at Legros',
+			updatedAt: expect.any(Date),
+		});
 	});
 
 	it('handles a search with no results', async () => {
@@ -473,21 +521,18 @@ describe('errors', () => {
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
-	it('uses retry-after on 429', async () => {
+	it('hands a 429 to the handler after one request, with retry-after', async () => {
 		respond(
 			429,
 			{ status_code: 429, message: 'Rate limit reached' },
 			{ 'Retry-After': '4' },
 		);
-		jest.useFakeTimers({ advanceTimers: true });
 
-		const pending = (People.search as AnyEndpoint)(createContext(), {
+		const error = (await (People.search as AnyEndpoint)(createContext(), {
 			company: ['Stripe'],
-		}).catch((e: Error) => e);
-		await jest.runAllTimersAsync();
-		const error = (await pending) as ContactOutAPIError;
-		jest.useRealTimers();
+		}).catch((e: Error) => e)) as ContactOutAPIError;
 
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(4000);
 		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toMatchObject({

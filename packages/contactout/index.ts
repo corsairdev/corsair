@@ -297,10 +297,11 @@ export function contactout<const T extends ContactOutPluginOptions>(
 				throw new AuthMissingError('contactout', 'api_key');
 			}
 			if (options.key) return options.key;
+			// ctx.authType is only set when a key store is configured.
 			if (ctx.authType === 'api_key') {
 				return (await ctx.keys.get_api_key()) ?? '';
 			}
-			throw new AuthMissingError('contactout', 'api_key');
+			return '';
 		},
 	} satisfies InternalContactOutPlugin;
 }

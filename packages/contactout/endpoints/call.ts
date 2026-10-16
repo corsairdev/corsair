@@ -27,8 +27,9 @@ async function resolveKey(
 		if (!ctx.key) throw new AuthMissingError('contactout', 'api_key');
 		return ctx.key;
 	}
+	// ctx.keys is absent when no key store is configured.
 	const personal =
-		ctx.options.personalKey ?? (await ctx.keys.get_personal_api_key());
+		ctx.options.personalKey ?? (await ctx.keys?.get_personal_api_key());
 	if (!personal) {
 		throw new AuthMissingError('contactout', 'personal_api_key');
 	}
@@ -41,6 +42,7 @@ export async function call<K extends Operation>(
 	event: string,
 	method: 'GET' | 'POST',
 	path: string,
+	// unknown: raw caller input, parsed below by the operation's input schema.
 	input: unknown,
 ): Promise<ContactOutEndpointOutputs[K]> {
 	const parsed = ContactOutEndpointInputSchemas[operation].parse(input ?? {});
@@ -49,7 +51,7 @@ export async function call<K extends Operation>(
 	};
 	const key = await resolveKey(ctx, emailType);
 
-	const raw = await makeContactOutRequest<unknown>(path, key, {
+	const raw = await makeContactOutRequest(path, key, {
 		method,
 		...(method === 'GET'
 			? { query: params as ContactOutQuery }
