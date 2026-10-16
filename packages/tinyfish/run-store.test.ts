@@ -39,4 +39,48 @@ describe('tinyfish run store', () => {
 		).resolves.toBeUndefined();
 		expect(client.upsertByEntityId).not.toHaveBeenCalled();
 	});
+
+	it('keeps polled fields that a webhook snapshot omits', async () => {
+		const { rows, client } = createStore();
+		const ctx = createContext(client, {});
+
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'RUNNING',
+			goal: 'Get the title',
+			profile_id: 'p-1',
+		});
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+			finished_at: '2026-01-02T00:00:09.000Z',
+		});
+
+		expect(rows.get('run-1')).toMatchObject({
+			status: 'COMPLETED',
+			goal: 'Get the title',
+			profileId: 'p-1',
+			finishedAt: new Date('2026-01-02T00:00:09.000Z'),
+		});
+	});
+
+	it('never rewinds a terminal run to a non-terminal status', async () => {
+		const { rows, client } = createStore();
+		const ctx = createContext(client, {});
+
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+			result: { title: 'Example' },
+		});
+
+		for (const staleStatus of ['RUNNING', 'PENDING']) {
+			await persistRun(ctx, { run_id: 'run-1', status: staleStatus });
+			expect(rows.get('run-1')).toMatchObject({
+				status: 'COMPLETED',
+				result: { title: 'Example' },
+			});
+		}
+		expect(client.upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
 });
