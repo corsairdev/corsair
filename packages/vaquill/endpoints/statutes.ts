@@ -28,7 +28,13 @@ export const search: VaquillEndpoints['search'] = async (ctx, input) => {
 		try {
 			for (const hit of result.results) {
 				if (!hit.actId) continue;
+				// Upsert replaces the whole row, so carry saved keys like a
+				// section body through hits that omit them.
+				const existing = await ctx.db.searchResults.findByEntityId(
+					hit.actId,
+				);
 				await ctx.db.searchResults.upsertByEntityId(hit.actId, {
+					...existing?.data,
 					...hit,
 					query: input.query,
 					createdAt: new Date(),

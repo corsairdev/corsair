@@ -24,7 +24,13 @@ export const section: VaquillEndpoints['section'] = async (ctx, input) => {
 
 	if (result.section?.actId && ctx.db.searchResults) {
 		try {
+			// Upsert replaces the whole row, so carry saved keys like the
+			// search query through sections that omit them.
+			const existing = await ctx.db.searchResults.findByEntityId(
+				result.section.actId,
+			);
 			await ctx.db.searchResults.upsertByEntityId(result.section.actId, {
+				...existing?.data,
 				...result.section,
 				createdAt: new Date(),
 			});

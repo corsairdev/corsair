@@ -391,6 +391,45 @@ describe('vaquill endpoint routing', () => {
 		);
 	});
 
+	it('a later search keeps the body saved by an earlier section fetch', async () => {
+		const ctx = createContext();
+		// Mimics the entity client: findByEntityId returns the stored row's
+		// data, upsertByEntityId replaces the whole object.
+		const rows = new Map<string, Record<string, unknown>>();
+		ctx.db.searchResults.findByEntityId.mockImplementation(
+			async (entityId: string) => {
+				const data = rows.get(entityId);
+				return data ? { data } : null;
+			},
+		);
+		ctx.db.searchResults.upsertByEntityId.mockImplementation(
+			async (entityId: string, data: Record<string, unknown>) => {
+				rows.set(entityId, data);
+			},
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			section: {
+				actId: 'USC_T42_C21_S1983',
+				body: 'Civil action for deprivation of rights',
+			},
+		});
+		await Statutes.section(ctx as never, { act_id: 'USC_T42_C21_S1983' });
+
+		mockRequest.mockResolvedValueOnce({
+			results: [{ actId: 'USC_T42_C21_S1983', title: 'Civil action' }],
+		});
+		await Statutes.search(ctx as never, { query: 'deprivation' });
+
+		expect(rows.get('USC_T42_C21_S1983')).toEqual({
+			actId: 'USC_T42_C21_S1983',
+			title: 'Civil action',
+			body: 'Civil action for deprivation of rights',
+			query: 'deprivation',
+			createdAt: expect.any(Date),
+		});
+	});
+
 	it('rejects an invalid input before any request is made', async () => {
 		const ctx = createContext();
 		await expect(
