@@ -19,8 +19,9 @@ export async function persistRun(
 	run: StoredRun,
 ): Promise<void> {
 	if (!run.run_id) return;
+	// The db clients exist even without a database, but their writes throw.
+	if (!ctx.database) return;
 	const runs = ctx.db.agentRuns;
-	if (!runs) return;
 
 	await runs.upsertByEntityId(run.run_id, {
 		status: run.status,

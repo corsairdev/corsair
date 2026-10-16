@@ -31,10 +31,12 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 function createContext() {
 	return {
+		database: {},
 		key: 'tf_key_test',
 		options: {},
 		db: {
 			agentRuns: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 			},
 		},
