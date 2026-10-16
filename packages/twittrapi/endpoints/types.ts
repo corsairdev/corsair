@@ -238,7 +238,7 @@ const MonitorsAddAccountsInputSchema = z.object({
 
 const MonitorsUpdateAccountInputSchema = z.object({
 	usernameOrId: z.string().describe('Watched handle or numeric user ID'),
-	filters: TwittrApiMonitorFilters.describe(
+	filters: TwittrApiMonitorFilters.partial().describe(
 		'Reply/retweet/quote filters. Omitted fields keep their value',
 	),
 });

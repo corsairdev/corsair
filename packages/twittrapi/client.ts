@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TwittrApiAPIError extends Error {
 	constructor(
@@ -18,6 +18,7 @@ export async function makeTwittrApiRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Record: endpoint bodies are per-endpoint JSON shapes assembled by callers.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -47,12 +48,17 @@ export async function makeTwittrApiRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// Forwarded for every method: POST /tweet/{id}/favorites needs
+		// ?format=simple just like the GET endpoints do.
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve ApiError (status, retryAfter, body) so the plugin's
+		// status-based error handlers in error-handlers.ts can match.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new TwittrApiAPIError(error.message);
 		}

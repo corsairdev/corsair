@@ -17,7 +17,11 @@ export const getByLocation: TwittrApiEndpoints['trendsGetByLocation'] = async (
 	if (response.data && ctx.db.trends) {
 		for (const trend of response.data) {
 			try {
-				await ctx.db.trends.upsertByEntityId(trend.name, trend);
+				// Composite key: the same topic name trends in many locations.
+				await ctx.db.trends.upsertByEntityId(
+					`${input.locationId}:${trend.name}`,
+					trend,
+				);
 			} catch {
 				// best-effort
 			}

@@ -96,6 +96,27 @@ describe('TwittrAPI plugin integration', () => {
 		testDb.cleanup();
 	});
 
+	it('trends.getByLocation interacts with API and DB', async () => {
+		const setup = await createTwittrApiClient();
+		if (!setup) return;
+
+		const { corsair, testDb } = setup;
+		const input = { locationId: '1' };
+		const result = await corsair.twittrapi.api.trends.getByLocation(input);
+		expect(result).toBeDefined();
+		expect(Array.isArray(result.data)).toBe(true);
+
+		if (result.data.length > 0) {
+			const first = result.data[0]!;
+			const fromDb = await corsair.twittrapi.db.trends.findByEntityId(
+				`1:${first.name}`,
+			);
+			expect(fromDb).not.toBeNull();
+		}
+
+		testDb.cleanup();
+	});
+
 	it('monitors.getEvents reads the event feed', async () => {
 		const setup = await createTwittrApiClient();
 		if (!setup) return;

@@ -1,5 +1,8 @@
 import type { TwittrApiTweet, TwittrApiUser } from './schema/database';
 
+// PluginDb mirrors the subset of the Corsair plugin ORM used here. The entity
+// clients are typed loosely (Promise<unknown>) because the ORM resolves table
+// clients dynamically per entity and no narrower static type is available.
 type PluginDb = {
 	tweets?: {
 		upsertByEntityId: (

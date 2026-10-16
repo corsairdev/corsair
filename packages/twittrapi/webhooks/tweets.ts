@@ -1,7 +1,37 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwittrApiWebhooks } from '../index';
+import type { TwittrApiContext, TwittrApiWebhooks } from '../index';
+import { TwittrApiMonitorEvent } from '../schema/database';
 import { persistTweetWithAuthor } from '../utils';
 import { createTwittrApiMatch, verifyTwittrApiWebhookSignature } from './types';
+
+// TwittrAPI retries a delivery with the same X-TwittrAPI-Delivery id (== event
+// id) until the endpoint answers 2xx. Guard on the monitorEvents store so a
+// retry returns success without persisting or logging twice. Best-effort: if
+// the store is unavailable the event is processed normally.
+async function alreadyDelivered(
+	db: TwittrApiContext['db'],
+	eventId: string,
+): Promise<boolean> {
+	try {
+		const existing = await db.monitorEvents?.findByEntityId(eventId);
+		return existing !== null && existing !== undefined;
+	} catch {
+		return false;
+	}
+}
+
+async function recordDelivery(
+	db: TwittrApiContext['db'],
+	event: unknown,
+): Promise<void> {
+	const parsed = TwittrApiMonitorEvent.safeParse(event);
+	if (!parsed.success) return;
+	try {
+		await db.monitorEvents?.upsertByEntityId(parsed.data.id, parsed.data);
+	} catch {
+		// best-effort
+	}
+}
 
 export const tweet: TwittrApiWebhooks['tweet'] = {
 	match: createTwittrApiMatch('tweet'),
@@ -22,6 +52,10 @@ export const tweet: TwittrApiWebhooks['tweet'] = {
 			return { success: true, data: undefined };
 		}
 
+		if (await alreadyDelivered(ctx.db, event.id)) {
+			return { success: true, data: event };
+		}
+
 		let corsairEntityId = '';
 
 		if (event.tweet && !('unavailable' in event.tweet)) {
@@ -32,6 +66,8 @@ export const tweet: TwittrApiWebhooks['tweet'] = {
 				console.warn('[twittrapi] Failed to save tweet to database:', error);
 			}
 		}
+
+		await recordDelivery(ctx.db, event);
 
 		await logEventFromContext(
 			ctx,
@@ -66,6 +102,12 @@ export const test: TwittrApiWebhooks['test'] = {
 		if (event.event !== 'test') {
 			return { success: true, data: undefined };
 		}
+
+		if (await alreadyDelivered(ctx.db, event.id)) {
+			return { success: true, data: event };
+		}
+
+		await recordDelivery(ctx.db, event);
 
 		await logEventFromContext(
 			ctx,

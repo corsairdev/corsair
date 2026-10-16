@@ -327,6 +327,67 @@ describe('TwittrAPI output schemas (offline fixtures)', () => {
 		).toBeDefined();
 	});
 
+	it('parses every remaining monitor response', () => {
+		const webhook = {
+			id: 7,
+			url: 'https://example.com/hooks',
+			label: 'Production',
+			accounts: null,
+			active: true,
+			failureCount: 0,
+			disabledAt: null,
+			disabledReason: null,
+			lastSuccessAt: null,
+			lastFailureAt: null,
+			createdAt: '2026-10-15T08:00:00Z',
+		};
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsGetPlan.parse({
+				plan: { planId: 'm50-realtime', maxAccounts: 50, status: 'active' },
+				webhooks: [webhook],
+			}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsUpdateAccount.parse({
+				data: {
+					userId: '2244994945',
+					username: 'XDevelopers',
+					state: 'active',
+					filters: { replies: false, retweets: true, quotes: true },
+				},
+			}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsRemoveAccount.parse({}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsListWebhooks.parse({
+				webhooks: [webhook],
+			}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsGetWebhook.parse({
+				webhook,
+			}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsUpdateWebhook.parse({
+				webhook,
+			}),
+		).toBeDefined();
+		expect(
+			TwittrApiEndpointOutputSchemas.monitorsDeleteWebhook.parse({}),
+		).toBeDefined();
+	});
+
+	it('accepts partial monitor filter updates', () => {
+		const parsed = TwittrApiEndpointInputSchemas.monitorsUpdateAccount.parse({
+			usernameOrId: 'XDevelopers',
+			filters: { replies: false },
+		});
+		expect(parsed.filters).toMatchObject({ replies: false });
+	});
+
 	it('rejects invalid tweet IDs at the input layer', () => {
 		expect(() =>
 			TwittrApiEndpointInputSchemas.tweetsGetById.parse({

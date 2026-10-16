@@ -101,6 +101,17 @@ describe('TwittrAPI webhooks', () => {
 			expect(result.error).toMatch('Malformed');
 		});
 
+		it('trusts Hub-verified deliveries without a secret', () => {
+			const req: WebhookRequest<unknown> = {
+				payload: {},
+				rawBody: tweetBody,
+				headers: {},
+				hubVerified: true,
+			};
+			const result = verifyTwittrApiWebhookSignature(req, '');
+			expect(result.valid).toBe(true);
+		});
+
 		it('rejects a missing raw body', () => {
 			const t = String(Math.floor(Date.now() / 1000));
 			const req: WebhookRequest<unknown> = {

@@ -36,6 +36,8 @@ export type TwittrApiWebhookOutputs = {
 
 // ── Matcher helpers ──────────────────────────────────────────────────────────
 
+// Raw bodies arrive as string or pre-parsed objects; Record keeps the
+// matcher generic across transports (no per-event type is feasible here).
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -103,6 +105,10 @@ export function verifyTwittrApiWebhookSignature(
 	options: { toleranceSeconds?: number; nowSeconds?: number } = {},
 ): { valid: boolean; error?: string } {
 	const { toleranceSeconds = 300, nowSeconds } = options;
+
+	// The Hub already verified the provider signature for these deliveries
+	// (core skips keyBuilder then, so ctx.key is empty). Trust its verdict.
+	if (request.hubVerified === true) return { valid: true };
 
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };

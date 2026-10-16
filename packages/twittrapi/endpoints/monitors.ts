@@ -1,7 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTwittrApiRequest } from '../client';
 import type { TwittrApiEndpoints } from '../index';
+import type { TwittrApiMonitorWebhook } from '../schema/database';
 import type { TwittrApiEndpointOutputs } from './types';
+
+// The webhook secret signs X-TwittrAPI-Signature and must never land in the
+// entity store, where any tenant with entity read access could forge events.
+function stripWebhookSecret(
+	webhook: TwittrApiMonitorWebhook,
+): Omit<TwittrApiMonitorWebhook, 'secret'> {
+	const { secret: _secret, ...rest } = webhook;
+	return rest;
+}
 
 export const getPlan: TwittrApiEndpoints['monitorsGetPlan'] = async (
 	ctx,
@@ -74,6 +84,17 @@ export const updateAccount: TwittrApiEndpoints['monitorsUpdateAccount'] =
 			body: { filters: input.filters },
 		});
 
+		if (response.data && ctx.db.monitoredAccounts) {
+			try {
+				await ctx.db.monitoredAccounts.upsertByEntityId(
+					response.data.userId,
+					response.data,
+				);
+			} catch {
+				// best-effort
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'twittrapi.monitors.updateAccount',
@@ -90,6 +111,14 @@ export const removeAccount: TwittrApiEndpoints['monitorsRemoveAccount'] =
 		>(`/monitors/accounts/${encodeURIComponent(input.usernameOrId)}`, ctx.key, {
 			method: 'DELETE',
 		});
+
+		if (ctx.db.monitoredAccounts) {
+			try {
+				await ctx.db.monitoredAccounts.deleteByEntityId(input.usernameOrId);
+			} catch {
+				// best-effort: listAccounts re-syncs on the next read
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -113,7 +142,7 @@ export const listWebhooks: TwittrApiEndpoints['monitorsListWebhooks'] = async (
 			try {
 				await ctx.db.monitorWebhooks.upsertByEntityId(
 					String(webhook.id),
-					webhook,
+					stripWebhookSecret(webhook),
 				);
 			} catch {
 				// best-effort
@@ -143,7 +172,7 @@ export const createWebhook: TwittrApiEndpoints['monitorsCreateWebhook'] =
 			try {
 				await ctx.db.monitorWebhooks.upsertByEntityId(
 					String(response.webhook.id),
-					response.webhook,
+					stripWebhookSecret(response.webhook),
 				);
 			} catch {
 				// best-effort
@@ -173,6 +202,17 @@ export const getWebhook: TwittrApiEndpoints['monitorsGetWebhook'] = async (
 		},
 	);
 
+	if (response.webhook && ctx.db.monitorWebhooks) {
+		try {
+			await ctx.db.monitorWebhooks.upsertByEntityId(
+				String(response.webhook.id),
+				stripWebhookSecret(response.webhook),
+			);
+		} catch {
+			// best-effort
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'twittrapi.monitors.getWebhook',
@@ -191,6 +231,17 @@ export const updateWebhook: TwittrApiEndpoints['monitorsUpdateWebhook'] =
 			method: 'PATCH',
 			body: { ...body },
 		});
+
+		if (response.webhook && ctx.db.monitorWebhooks) {
+			try {
+				await ctx.db.monitorWebhooks.upsertByEntityId(
+					String(response.webhook.id),
+					stripWebhookSecret(response.webhook),
+				);
+			} catch {
+				// best-effort
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -212,6 +263,14 @@ export const deleteWebhook: TwittrApiEndpoints['monitorsDeleteWebhook'] =
 				method: 'DELETE',
 			},
 		);
+
+		if (ctx.db.monitorWebhooks) {
+			try {
+				await ctx.db.monitorWebhooks.deleteByEntityId(String(input.webhookId));
+			} catch {
+				// best-effort: listWebhooks re-syncs on the next read
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
