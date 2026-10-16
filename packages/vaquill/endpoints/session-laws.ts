@@ -45,7 +45,7 @@ export const batch: VaquillEndpoints['sessionLawsBatch'] = async (
 		(validated) =>
 			makeVaquillRequest('/us/session-laws/batch', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated, response) => ({
 			requested: validated.ids.length,
@@ -68,7 +68,7 @@ export const search: VaquillEndpoints['sessionLawsSearch'] = async (
 		(validated) =>
 			makeVaquillRequest('/us/session-laws/search', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated, response) => ({
 			query: validated.query,

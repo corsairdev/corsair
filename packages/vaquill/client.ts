@@ -42,7 +42,9 @@ export async function makeVaquillRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		// Validated endpoint bodies are specific objects; a record type would
+		// force a cast at every call.
+		body?: object;
 		query?: Record<string, string | number | boolean | undefined | string[]>;
 	} = {},
 ): Promise<T> {
@@ -76,6 +78,8 @@ export async function makeVaquillRequest<T>(
 		return await request<T>(config, requestOptions, {
 			rateLimitConfig: NO_RETRY,
 		});
+		// The shared request throws ApiError, aborts, and network failures
+		// alike, so the catch normalizes them below.
 	} catch (error: unknown) {
 		const status = error instanceof ApiError ? error.status : undefined;
 		const retryAfter =

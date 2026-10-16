@@ -234,6 +234,7 @@ export type CountInput = z.infer<typeof CountInputSchema>;
 const CountResponseSchema = z.looseObject({
 	count: z.number(),
 	isExact: z.boolean().optional(),
+	// unknown: scope echo; shape varies by corpus and is not consumed here
 	scope: z.record(z.string(), z.unknown()).optional(),
 	processingTimeMs: z.number().optional(),
 	creditsConsumed: z.number().optional(),
@@ -255,6 +256,7 @@ const CoverageJurisdictionSchema = z.looseObject({
 	kind: z.string().optional(),
 	sectionCount: z.number().optional(),
 	hasData: z.boolean().optional(),
+	// unknown: section counts keyed by status; the key set varies by jurisdiction
 	statusBreakdown: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -328,6 +330,8 @@ const ResolveResultSchema = z.looseObject({
 	resolved: z.boolean(),
 	inputCitation: z.string(),
 	section: StatuteSectionSchema.nullable().optional(),
+	// unknown: nested subsection the vendor returns on deep resolves; shape
+	// varies by statute and is not consumed here
 	subsection: z.unknown().optional(),
 });
 
@@ -361,6 +365,7 @@ export type SectionsInput = z.infer<typeof SectionsInputSchema>;
 const SectionsResponseSchema = z.looseObject({
 	sections: z.array(StatuteSectionSchema),
 	notFound: z.array(z.string()).optional(),
+	// unknown: per-act not-found detail; shape varies by failure reason
 	notFoundDetail: z.array(z.unknown()).optional(),
 	count: z.number().optional(),
 	processingTimeMs: z.number().optional(),
@@ -387,6 +392,8 @@ const SectionBodyResponseSchema = z.looseObject({
 	content: z.string().nullable().optional(),
 	operative: z.string().nullable().optional(),
 	markdown: z.string().nullable().optional(),
+	// unknown: structured body blocks; shapes vary by statute and are not
+	// consumed here
 	subsections: z.array(z.unknown()).optional(),
 	tables: z.array(z.unknown()).optional(),
 	figures: z.array(z.unknown()).optional(),
@@ -394,6 +401,7 @@ const SectionBodyResponseSchema = z.looseObject({
 	source: z.string().nullable().optional(),
 	sourceUrl: z.string().nullable().optional(),
 	available: z.boolean().optional(),
+	// unknown: as-of marker echoed in varying shapes; not consumed here
 	asOf: z.unknown().optional(),
 	processingTimeMs: z.number().optional(),
 	creditsConsumed: z.number().optional(),
@@ -542,9 +550,12 @@ const ResolveCitationResponseSchema = z.looseObject({
 	resolved: z.boolean(),
 	inputCitation: z.string().optional(),
 	section: StatuteSectionSchema.nullable().optional(),
+	// unknown: nested subsection; shape varies by statute and is not consumed
+	// here
 	subsection: z.unknown().optional(),
 	matchLevel: z.string().nullable().optional(),
 	missReason: z.string().nullable().optional(),
+	// unknown: near-match candidates; shape varies by miss reason
 	candidates: z.array(z.unknown()).optional(),
 	creditsConsumed: z.number().optional(),
 	processingTimeMs: z.number().optional(),
@@ -598,6 +609,7 @@ const ExtractedCitationSchema = z.looseObject({
 
 const ExtractCitationsResponseSchema = z.looseObject({
 	citations: z.array(ExtractedCitationSchema),
+	// unknown: citation counts keyed by extractor; only counts.found is read
 	counts: z.record(z.string(), z.unknown()).optional(),
 	truncated: z.boolean().optional(),
 	textChars: z.number().optional(),
@@ -673,6 +685,7 @@ export type SessionLawsBatchInput = z.infer<typeof SessionLawsBatchInputSchema>;
 
 const SessionLawsBatchResponseSchema = z.looseObject({
 	laws: z.array(SessionLawSchema),
+	// unknown: ids the batch could not expand; shape varies by failure
 	resolved: z.array(z.unknown()).optional(),
 	notFound: z.array(z.string()).optional(),
 	count: z.number().optional(),
@@ -702,6 +715,7 @@ export type SessionLawsSearchInput = z.infer<
 
 const SessionLawsSearchResponseSchema = z.looseObject({
 	query: z.string().optional(),
+	// unknown: parsed-query echo; shape varies by parser version
 	parsed: z.unknown().optional(),
 	results: z.array(SessionLawSchema),
 	count: z.number().optional(),
@@ -740,6 +754,7 @@ const SessionLawsListResponseSchema = z.looseObject({
 	count: z.number().optional(),
 	nextCursor: z.string().nullable().optional(),
 	hasMore: z.boolean().optional(),
+	// unknown: corpus coverage summary; the vendor does not document its shape
 	coverage: z.unknown().optional(),
 	creditsConsumed: z.number().optional(),
 	processingTimeMs: z.number().optional(),
@@ -795,6 +810,7 @@ const SessionLawResponseSchema = z.looseObject({
 	title: z.string().nullable().optional(),
 	shortTitle: z.string().nullable().optional(),
 	approvedDate: z.string().nullable().optional(),
+	// unknown: enactment and amendment detail; shapes vary by jurisdiction
 	effectiveDates: z.array(z.unknown()).optional(),
 	codeSectionsAffected: z.array(z.unknown()).optional(),
 	sourceUrl: z.string().nullable().optional(),
@@ -849,6 +865,7 @@ const WatchSchema = z.looseObject({
 	state: z.string().nullable().optional(),
 	channel: z.string().optional(),
 	isActive: z.boolean().optional(),
+	// unknown: scope object; values differ across the four watch forms
 	scope: z.record(z.string(), z.unknown()).nullable().optional(),
 	createdAt: z.string().nullable().optional(),
 });
@@ -861,6 +878,7 @@ const WatchesListResponseSchema = z.looseObject({
 			hasMore: z.boolean().optional(),
 		})
 		.optional(),
+	// unknown: paging and request metadata; keys vary by endpoint
 	meta: z.unknown().optional(),
 });
 export type WatchesListResponse = z.infer<typeof WatchesListResponseSchema>;
@@ -877,6 +895,7 @@ const WatchesCreateInputSchema = z.object({
 	/** Optional narrowing, e.g. `{"title": "21", "part": "314"}` or
 	 *  `{"actId": "..."}`. Four mutually exclusive forms. */
 	scope: z.record(z.string(), z.string()).optional(),
+	// unknown: webhook auth credentials; shape varies by channel setup
 	webhookAuth: z.record(z.string(), z.unknown()).optional(),
 });
 export type WatchesCreateInput = z.infer<typeof WatchesCreateInputSchema>;
@@ -892,6 +911,7 @@ const WatchesTestInputSchema = z.object({
 export type WatchesTestInput = z.infer<typeof WatchesTestInputSchema>;
 
 const WatchesTestResponseSchema = z.looseObject({
+	// unknown: test-delivery result; shape varies by channel
 	data: z.unknown().optional(),
 });
 export type WatchesTestResponse = z.infer<typeof WatchesTestResponseSchema>;
@@ -903,6 +923,7 @@ const WatchesUpdateInputSchema = z.object({
 	webhookSecret: z.string().optional(),
 	scope: z.record(z.string(), z.string()).nullable().optional(),
 	emailAddress: z.string().optional(),
+	// unknown: webhook auth credentials; shape varies by channel setup
 	webhookAuth: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 export type WatchesUpdateInput = z.infer<typeof WatchesUpdateInputSchema>;
@@ -977,6 +998,7 @@ const WatchChangeDiffResponseSchema = z.looseObject({
 		hasBefore: z.boolean().optional(),
 		hasAfter: z.boolean().optional(),
 	}),
+	// unknown: request metadata; keys vary by endpoint
 	meta: z.unknown().optional(),
 });
 export type WatchChangeDiffResponse = z.infer<
@@ -997,6 +1019,7 @@ const WatchDeliverySchema = z.looseObject({
 
 const WatchDeliveriesResponseSchema = z.looseObject({
 	data: z.looseObject({ deliveries: z.array(WatchDeliverySchema) }),
+	// unknown: paging metadata; keys vary by endpoint
 	meta: z.unknown().optional(),
 });
 export type WatchDeliveriesResponse = z.infer<
@@ -1009,6 +1032,7 @@ export type CreditsBalanceInput = z.infer<typeof CreditsBalanceInputSchema>;
 const CreditsBalanceResponseSchema = z.looseObject({
 	creditsRemaining: z.number().optional(),
 	usdRemaining: z.number().nullable().optional(),
+	// unknown: credit totals keyed by source; keys vary by plan
 	bySource: z.unknown().optional(),
 	nextExpiry: z
 		.looseObject({
@@ -1020,6 +1044,7 @@ const CreditsBalanceResponseSchema = z.looseObject({
 	plan: z.string().nullable().optional(),
 	totalPurchased: z.number().optional(),
 	totalConsumed: z.number().optional(),
+	// unknown: rate-limit state; keys vary by plan
 	rateLimit: z.unknown().optional(),
 	asOf: z.string().optional(),
 });
@@ -1036,6 +1061,7 @@ const CreditsPricingResponseSchema = z.looseObject({
 	dollarPerCredit: z.number().optional(),
 	minCredits: z.number().optional(),
 	maxCredits: z.number().optional(),
+	// unknown: per-tier pricing detail; keys vary by region
 	costs: z.unknown().optional(),
 });
 export type CreditsPricingResponse = z.infer<

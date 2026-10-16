@@ -16,7 +16,7 @@ export const search: VaquillEndpoints['search'] = async (ctx, input) => {
 		(validated) =>
 			makeVaquillRequest('/us/statutes/search', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated, response) => ({
 			query: validated.query,
@@ -30,9 +30,7 @@ export const search: VaquillEndpoints['search'] = async (ctx, input) => {
 				if (!hit.actId) continue;
 				// Upsert replaces the whole row, so carry saved keys like a
 				// section body through hits that omit them.
-				const existing = await ctx.db.searchResults.findByEntityId(
-					hit.actId,
-				);
+				const existing = await ctx.db.searchResults.findByEntityId(hit.actId);
 				await ctx.db.searchResults.upsertByEntityId(hit.actId, {
 					...existing?.data,
 					...hit,
@@ -58,7 +56,7 @@ export const count: VaquillEndpoints['count'] = async (ctx, input) => {
 		(validated) =>
 			makeVaquillRequest('/us/statutes/count', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(_validated, response) => ({ count: response.count }),
 	);
@@ -110,7 +108,7 @@ export const resolve: VaquillEndpoints['resolve'] = async (ctx, input) => {
 		(validated) =>
 			makeVaquillRequest('/us/statutes/resolve', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated, response) => ({
 			citations: validated.citations.length,
@@ -181,7 +179,7 @@ export const extractCitations: VaquillEndpoints['extractCitations'] = async (
 		(validated) =>
 			makeVaquillRequest('/us/statutes/extract-citations', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(_validated, response) => ({
 			textChars: response.textChars,

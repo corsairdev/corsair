@@ -62,7 +62,7 @@ export const watchesCreate: VaquillEndpoints['watchesCreate'] = async (
 		(validated) =>
 			makeVaquillRequest('/watches', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated) => ({
 			corpusType: validated.corpusType,
@@ -111,7 +111,7 @@ export const watchesUpdate: VaquillEndpoints['watchesUpdate'] = async (
 				ctx.key,
 				{
 					method: 'PATCH',
-					body: body as Record<string, unknown>,
+					body: body,
 				},
 			);
 		},

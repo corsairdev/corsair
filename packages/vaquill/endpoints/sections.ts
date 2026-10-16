@@ -52,7 +52,7 @@ export const sections: VaquillEndpoints['sections'] = async (ctx, input) => {
 		(validated) =>
 			makeVaquillRequest('/us/statutes/sections', ctx.key, {
 				method: 'POST',
-				body: validated as Record<string, unknown>,
+				body: validated,
 			}),
 		(validated, response) => ({
 			requested: validated.actIds.length,
