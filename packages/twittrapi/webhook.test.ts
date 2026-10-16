@@ -1,6 +1,11 @@
 import type { WebhookRequest } from 'corsair/core';
 import { createHmac } from 'crypto';
-import { alreadyDelivered, recordDelivery } from './webhooks/tweets';
+import {
+	alreadyDelivered,
+	recordDelivery,
+	test as testHandler,
+	tweet as tweetHandler,
+} from './webhooks/tweets';
 import {
 	createTwittrApiMatch,
 	TwittrApiTestEventSchema,
@@ -198,6 +203,63 @@ describe('TwittrAPI webhooks', () => {
 			await recordDelivery(db, null);
 			await recordDelivery(db, { event: 'test' });
 			expect(store.size).toBe(0);
+		});
+	});
+
+	describe('duplicate deliveries', () => {
+		function signedRequest(rawBody: string, event: string) {
+			const t = String(Math.floor(Date.now() / 1000));
+			return {
+				payload: JSON.parse(rawBody) as unknown,
+				rawBody,
+				headers: {
+					'x-twittrapi-signature': sign(t, rawBody),
+					'x-twittrapi-event': event,
+					'x-twittrapi-delivery': '1849203',
+				},
+			};
+		}
+
+		it('acks tweet retries without re-processing or re-hooking', async () => {
+			const persistTweet = jest.fn(async () => ({ id: 'x' }));
+			const ctx = {
+				db: {
+					monitorEvents: {
+						findByEntityId: async () => ({ id: '1849203' }),
+					},
+					tweets: { upsertByEntityId: persistTweet },
+				},
+				key: SECRET,
+			} as never;
+
+			const result = await tweetHandler.handler(
+				ctx,
+				signedRequest(tweetBody, 'tweet') as never,
+			);
+
+			// success:false skips webhookHooks.after; the transport still
+			// answers 2xx (see processWebhook), so the provider stops retrying.
+			expect(result.success).toBe(false);
+			expect(persistTweet).not.toHaveBeenCalled();
+		});
+
+		it('acks test retries without logging again', async () => {
+			const ctx = {
+				db: {
+					monitorEvents: {
+						findByEntityId: async () => ({ id: 'test-1' }),
+					},
+				},
+				key: SECRET,
+			} as never;
+			const body = JSON.stringify({ event: 'test', id: 'test-1' });
+
+			const result = await testHandler.handler(
+				ctx,
+				signedRequest(body, 'test') as never,
+			);
+
+			expect(result.success).toBe(false);
 		});
 	});
 

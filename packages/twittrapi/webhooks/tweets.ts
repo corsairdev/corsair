@@ -62,6 +62,7 @@ export const tweet: TwittrApiWebhooks['tweet'] = {
 			};
 		}
 
+		// Narrowed after match(): the matcher already confirmed event === 'tweet'.
 		const event = request.payload as import('./types').TwittrApiTweetEvent;
 
 		if (event.event !== 'tweet') {
@@ -69,7 +70,10 @@ export const tweet: TwittrApiWebhooks['tweet'] = {
 		}
 
 		if (await alreadyDelivered(ctx.db, event.id)) {
-			return { success: true, data: event };
+			// Already handled: ack without re-running webhookHooks.after.
+			// processWebhook answers 2xx regardless of this flag, so the
+			// provider stops retrying while downstream hooks fire only once.
+			return { success: false, statusCode: 200, data: event };
 		}
 
 		let corsairEntityId = '';
@@ -113,6 +117,7 @@ export const test: TwittrApiWebhooks['test'] = {
 			};
 		}
 
+		// Narrowed after match(): the matcher already confirmed event === 'test'.
 		const event = request.payload as import('./types').TwittrApiTestEvent;
 
 		if (event.event !== 'test') {
@@ -120,7 +125,8 @@ export const test: TwittrApiWebhooks['test'] = {
 		}
 
 		if (await alreadyDelivered(ctx.db, event.id)) {
-			return { success: true, data: event };
+			// Same duplicate-hook protection as the tweet handler above.
+			return { success: false, statusCode: 200, data: event };
 		}
 
 		await recordDelivery(ctx.db, event);

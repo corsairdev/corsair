@@ -115,6 +115,8 @@ export function verifyTwittrApiWebhookSignature(
 	}
 
 	const signatureHeader =
+		// Headers arrive normalized (lowercase) or raw; both spellings are
+		// read because transports differ. Values can be string[] per the type.
 		(request.headers['x-twittrapi-signature'] as string | undefined) ??
 		(request.headers['X-TwittrAPI-Signature'] as string | undefined);
 
