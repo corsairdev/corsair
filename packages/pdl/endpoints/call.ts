@@ -9,8 +9,10 @@ export async function callPdl<TInput, TOutput>(
 	operation: string,
 	inputSchema: Schema<TInput>,
 	outputSchema: Schema<TOutput>,
+	// Untrusted until inputSchema.parse vouches for it below.
 	input: unknown,
 	exec: (validated: TInput) => Promise<unknown>,
+	// Free-form event metadata, not part of the endpoint contract.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
 ): Promise<TOutput> {
 	const validated = inputSchema.parse(input);

@@ -4,6 +4,8 @@ import { ApiError, request } from 'corsair/http';
 export class PdlAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// Raw failed-response body; its shape depends on which failure layer
+	// produced it, so handlers degrade it to text before matching.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly method?: PdlRequestOptions['method'];

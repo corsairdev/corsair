@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// Unmodeled PDL response fields pass through parse with no shape claim.
 const UnknownRecord = z.record(z.string(), z.unknown());
 
 const titlecaseParam = z.boolean().optional();
@@ -144,6 +145,8 @@ export const PersonIdentifyOutputSchema = z.discriminatedUnion('found', [
 
 export type PersonIdentifyOutput = z.infer<typeof PersonIdentifyOutputSchema>;
 
+// The Elasticsearch DSL is validated server-side, so query bodies pass
+// through untouched.
 const esQueryParam = z.record(z.string(), z.unknown()).optional();
 const sizeParam = z.number().int().min(1).max(100).optional();
 const scrollTokenParam = z.string().min(1).optional();
