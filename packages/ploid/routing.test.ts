@@ -90,6 +90,24 @@ const personRunResponse = {
 };
 
 
+
+// A completed research run answers with the reviewed profile.
+const personProfileResponse = {
+	data: {
+		person_id: 'per_1',
+		summary: 'Founder of Acme.',
+		identity: {
+			name: 'Example Person',
+			linkedin_url: 'https://linkedin.com/in/example',
+			headline: 'Founder',
+			company: 'Acme',
+			location: 'Berlin',
+			confidence: 0.93,
+		},
+	},
+	meta: { request_id: 'req_7' },
+};
+
 describe('Ploid endpoint routing', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -240,6 +258,46 @@ describe('Ploid endpoint routing', () => {
 				path: { id: 'run_1' },
 				baseUrl: 'https://api.ploid.com',
 			},
+		);
+	});
+
+	it('person.get returns and caches a populated profile', async () => {
+		mockRequest.mockResolvedValue(personProfileResponse);
+		const ctx = createContext();
+
+		const result = await (Person.get as AnyEndpoint)(ctx, {
+			identifier: { person_id: 'per_1' },
+		});
+
+		expect(result).toMatchObject({
+			data: {
+				person_id: 'per_1',
+				identity: { name: 'Example Person', company: 'Acme' },
+			},
+		});
+		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
+			'per_1',
+			expect.objectContaining({
+				personId: 'per_1',
+				name: 'Example Person',
+				company: 'Acme',
+				linkedinUrl: 'https://linkedin.com/in/example',
+			}),
+		);
+	});
+
+	it('person.getRun returns and caches the profile once the run finishes', async () => {
+		mockRequest.mockResolvedValue(personProfileResponse);
+		const ctx = createContext();
+
+		const result = await (Person.getRun as AnyEndpoint)(ctx, { id: 'run_1' });
+
+		expect(result).toMatchObject({
+			data: { person_id: 'per_1', identity: { name: 'Example Person' } },
+		});
+		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
+			'per_1',
+			expect.objectContaining({ personId: 'per_1', name: 'Example Person' }),
 		);
 	});
 

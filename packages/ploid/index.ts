@@ -147,7 +147,8 @@ const ploidEndpointMeta = {
 	},
 	'person.getRun': {
 		riskLevel: 'read',
-		description: 'Poll a person research run by id; 404 unknown, 410 expired',
+		description:
+			'Poll a person research run by id; returns run state or, once finished, the reviewed profile. 404 unknown, 410 expired',
 	},
 	'person.cancelRun': {
 		riskLevel: 'destructive',

@@ -54,7 +54,8 @@ attempts total honoring `Retry-After`, retries transient 5xx three attempts
 - `person.resolve` treats a no-match as data (`found: false`), not an error.
 - `person.get` returns either a profile (200) or a durable run (202) with a
   `run_id` to poll via `person.getRun`; an uncertain identity completes as
-  `data: null` with `meta.resolution = unsure` and is free.
+  `data: null` with `meta.resolution = unsure` and is free. A finished poll
+  returns the reviewed profile, not a terminal run status.
 - `contacts.enrich` sends the documented flat body with
   `response_format: standard` and reports per-field `found`, `not_found`, or
   `unavailable` statuses; only found fields bill.

@@ -534,7 +534,8 @@ export type PloidEndpointOutputs = {
 	searchCandidates: SearchCandidatesResponse;
 	resolve: ResolveResponse;
 	person: PersonOrRunResponse;
-	personRun: PersonRunResponse;
+	// A finished poll returns the reviewed profile, not a terminal status.
+	personRun: PersonOrRunResponse;
 	cancelPersonRun: PersonRunResponse;
 	enrich: EnrichResponse;
 	accountCredits: AccountCreditsResponse;
@@ -558,7 +559,7 @@ export const PloidEndpointOutputSchemas = {
 	searchCandidates: SearchCandidatesResponseSchema,
 	resolve: ResolveResponseSchema,
 	person: PersonOrRunResponseSchema,
-	personRun: PersonRunSchema,
+	personRun: PersonOrRunResponseSchema,
 	cancelPersonRun: PersonRunSchema,
 	enrich: EnrichResponseSchema,
 	accountCredits: AccountCreditsResponseSchema,
