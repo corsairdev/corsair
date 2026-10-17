@@ -99,11 +99,23 @@ export async function rememberPerson(
 	ctx: PersonCacheContext,
 	patch: PersonPatch,
 ): Promise<void> {
+	// The account lookup is itself a database call and throws when no
+	// database is configured. It must stay guarded: optional storage can
+	// never fail an API response that already succeeded (and was billed).
+	let chainKey: string;
+	try {
+		chainKey = `${await ctx.$getAccountId()}:${patch.providerId}`;
+	} catch (error) {
+		console.warn(
+			`[ploid] Skipping person cache for ${patch.providerId} (no database):`,
+			error,
+		);
+		return;
+	}
 	// Serialize per account and person id: two concurrent enriches for one
 	// person must not both read the pre-save row and drop each other's
 	// contact fields. The account scope keeps unrelated tenants (separate
 	// databases, separate rows) from waiting on each other's saves.
-	const chainKey = `${await ctx.$getAccountId()}:${patch.providerId}`;
 	const previous = saveChains.get(chainKey) ?? Promise.resolve();
 	const next = previous.catch(() => {}).then(() => writePerson(ctx, patch));
 	saveChains.set(chainKey, next);

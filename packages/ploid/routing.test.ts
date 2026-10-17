@@ -639,6 +639,28 @@ describe('Ploid contact cache policy', () => {
 		);
 	});
 
+	it('succeeds without a database by skipping the cache', async () => {
+		const ctx = {
+			$getAccountId: async () => {
+				throw new Error('Database not configured');
+			},
+			db: {
+				people: {
+					findByEntityId: async () => null,
+					upsertByEntityId: async () => {
+						throw new Error('Database not configured');
+					},
+				},
+			},
+		};
+
+		// The API call already succeeded (and may be billed); a missing
+		// database must not turn that into an endpoint failure.
+		await expect(
+			rememberPerson(ctx, { providerId: 'per_1', name: 'Example' }),
+		).resolves.toBeUndefined();
+	});
+
 	it('does not make separate accounts wait on each other', async () => {
 		function accountContext(account: string, releaseGate: () => Promise<void>) {
 			const store = new Map<string, { data: PersonRow }>();
