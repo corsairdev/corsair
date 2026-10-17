@@ -87,6 +87,14 @@ export type SaperlyRequestOptions = {
 	baseUrl?: string;
 };
 
+function retryAfterMs(response: Response): number | undefined {
+	const header = response.headers.get('retry-after');
+	if (!header) return undefined;
+	const seconds = Number.parseInt(header, 10);
+	if (!Number.isFinite(seconds)) return undefined;
+	return seconds * 1000;
+}
+
 // Error bodies are JSON values until _tag is read off them.
 function readTag(body: unknown): string | undefined {
 	if (typeof body !== 'object' || body === null || !('_tag' in body)) {
@@ -232,6 +240,8 @@ export async function makeSaperlyRecordingRequest(
 			body,
 			method: 'GET',
 			status: response.status,
+			// The shared client only reads Retry-After on its own 429 path.
+			retryAfter: response.status === 429 ? retryAfterMs(response) : undefined,
 		});
 	}
 

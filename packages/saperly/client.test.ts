@@ -146,4 +146,21 @@ describe('saperly client', () => {
 		);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('copies a recording 429 Retry-After into milliseconds', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ _tag: 'RateLimited', bucket: 'read' }), {
+				status: 429,
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '30',
+				},
+			}),
+		);
+		await expect(
+			makeSaperlyRecordingRequest('/calls/{id}/recording', 'x_key_test', {
+				path: { id: 'call_1' },
+			}),
+		).rejects.toMatchObject({ status: 429, retryAfter: 30_000 });
+	});
 });

@@ -115,4 +115,81 @@ describe('saperly webhooks', () => {
 		if (!result.success) throw new Error('expected success');
 		expect(result.data?.resource).toMatchObject({ id: 'call_1', costCents: 1 });
 	});
+
+	it('accepts a hub-verified delivery without a local signing secret', async () => {
+		mockRequest.mockResolvedValue(call);
+		const bare = {
+			key: '',
+			options: { key: 'x_key_test' },
+			database: undefined,
+		} as SaperlyContext;
+		const result = await delivery.handler(bare, {
+			payload: {
+				deliveryId: 'del_hub',
+				eventType: 'call.completed',
+				payload: { callId: 'call_1' },
+			},
+			headers: {},
+			rawBody: '{}',
+			hubVerified: true,
+		});
+		expect(result.success).toBe(true);
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/calls/{id}',
+			'x_key_test',
+			expect.objectContaining({ path: { id: 'call_1' } }),
+		);
+	});
+
+	it('does not run after again for a sealed delivery, and retries when after throws', async () => {
+		const after = jest
+			.fn()
+			.mockRejectedValueOnce(new Error('hook failed'))
+			.mockResolvedValueOnce(undefined);
+		// The handler only reads key, options, database, and $getAccountId.
+		const hooked = {
+			key: 'whsec_test',
+			options: {
+				key: 'x_key_test',
+				webhookHooks: { events: { delivery: { after } } },
+			},
+			database: { ready: true },
+			$getAccountId: async () => 'acct_1',
+		} as unknown as SaperlyContext;
+		const now = Math.floor(Date.now() / 1000).toString();
+		const rawBody = JSON.stringify({
+			deliveryId: 'del_hook',
+			eventType: 'call.completed',
+			payload: { callId: 'call_1' },
+		});
+		const request = {
+			payload: JSON.parse(rawBody),
+			headers: {
+				'x-saperly-timestamp': now,
+				'x-saperly-signature': sign(rawBody, 'whsec_test', now),
+			},
+			rawBody,
+		};
+		mockRequest.mockResolvedValue(call);
+
+		await expect(delivery.handler(hooked, request)).rejects.toThrow(
+			'hook failed',
+		);
+		const retried = await delivery.handler(hooked, request);
+		expect(retried.success).toBe(false);
+		expect(retried.statusCode).toBe(200);
+		expect(after).toHaveBeenCalledTimes(2);
+		expect(after.mock.calls[1]?.[1]).toMatchObject({
+			success: true,
+			data: { resource: { id: 'call_1', costCents: 1 } },
+		});
+
+		const sealed = await delivery.handler(hooked, request);
+		expect(sealed).toMatchObject({
+			success: false,
+			statusCode: 200,
+			error: 'duplicate delivery',
+		});
+		expect(after).toHaveBeenCalledTimes(2);
+	});
 });

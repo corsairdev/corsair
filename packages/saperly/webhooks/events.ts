@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeSaperlyRequest, tryGetStoredKey } from '../client';
 import { CallSchema, MessageSchema } from '../endpoints/types';
 import type { SaperlyContext, SaperlyWebhooks } from '../index';
+import type { ConfirmedDelivery } from './types';
 import { DeliveryEnvelopeSchema } from './types';
 import { verifySaperlySignature } from './verify';
 
@@ -34,6 +35,33 @@ async function accountScope(ctx: SaperlyContext): Promise<string> {
 	}
 }
 
+async function finishDelivery(
+	ctx: SaperlyContext,
+	dedupKey: string,
+	data: ConfirmedDelivery,
+	logFields: Record<string, string>,
+) {
+	const response = { success: true as const, data };
+	await logEventFromContext(
+		ctx,
+		'saperly.webhooks.delivery',
+		logFields,
+		'completed',
+	);
+	const after = ctx.options.webhookHooks?.events?.delivery?.after;
+	if (after) {
+		// Run the after hook before sealing. A throw leaves the id unsealed
+		// so a redelivery can retry the hook with the confirmed resource.
+		// Returning success false afterwards stops the framework from running
+		// that same hook a second time.
+		await after(ctx, response);
+		if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
+		return { success: false as const, statusCode: 200, data };
+	}
+	if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
+	return response;
+}
+
 async function apiKey(ctx: SaperlyContext): Promise<string | undefined> {
 	if (ctx.options.key) return ctx.options.key;
 	return tryGetStoredKey(() => ctx.keys.get_api_key());
@@ -45,14 +73,16 @@ export const delivery: SaperlyWebhooks['delivery'] = {
 			(name) => name.toLowerCase() === 'x-saperly-signature',
 		),
 	handler: async (ctx, request) => {
-		const secret = ctx.key || ctx.options.webhookSecret;
-		if (!secret) {
-			console.error(
-				'saperly webhook dropped: signing secret is not configured',
-			);
-			return reject(409, 'Webhook signing secret is not configured');
-		}
+		// Hub-verified deliveries skip keyBuilder, so ctx.key is empty. The
+		// signing secret is required only when this handler checks the signature.
 		if (!request.hubVerified) {
+			const secret = ctx.key || ctx.options.webhookSecret;
+			if (!secret) {
+				console.error(
+					'saperly webhook dropped: signing secret is not configured',
+				);
+				return reject(409, 'Webhook signing secret is not configured');
+			}
 			const verification = verifySaperlySignature(request, secret);
 			if (!verification.valid) {
 				return reject(401, verification.error);
@@ -68,13 +98,12 @@ export const delivery: SaperlyWebhooks['delivery'] = {
 		const dedupKey = scope ? `${scope}:${envelope.deliveryId}` : '';
 		if (dedupKey) expireDeliveries(Date.now());
 		if (dedupKey && seenDeliveries.has(dedupKey)) {
+			// success false keeps after hooks from running again. 200 tells
+			// Saperly the delivery is already accepted.
 			return {
-				success: true,
-				data: {
-					eventType: envelope.eventType,
-					deliveryId: envelope.deliveryId,
-					resource: { duplicate: true },
-				},
+				success: false,
+				statusCode: 200,
+				error: 'duplicate delivery',
 			};
 		}
 
@@ -95,21 +124,15 @@ export const delivery: SaperlyWebhooks['delivery'] = {
 					baseUrl: ctx.options.baseUrl,
 				});
 				const call = CallSchema.parse(raw);
-				if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
-				await logEventFromContext(
-					ctx,
-					'saperly.webhooks.delivery',
-					{ eventType: envelope.eventType, callId: call.id },
-					'completed',
-				);
-				return {
-					success: true,
-					data: {
-						eventType: envelope.eventType,
-						deliveryId: envelope.deliveryId,
-						resource: call,
-					},
+				const data = {
+					eventType: envelope.eventType,
+					deliveryId: envelope.deliveryId,
+					resource: call,
 				};
+				return finishDelivery(ctx, dedupKey, data, {
+					eventType: envelope.eventType,
+					callId: call.id,
+				});
 			}
 
 			if (envelope.eventType === 'message.received') {
@@ -129,21 +152,15 @@ export const delivery: SaperlyWebhooks['delivery'] = {
 				if (!message) {
 					return reject(409, 'Message was not found on the number');
 				}
-				if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
-				await logEventFromContext(
-					ctx,
-					'saperly.webhooks.delivery',
-					{ eventType: envelope.eventType, messageId: message.id },
-					'completed',
-				);
-				return {
-					success: true,
-					data: {
-						eventType: envelope.eventType,
-						deliveryId: envelope.deliveryId,
-						resource: message,
-					},
+				const data = {
+					eventType: envelope.eventType,
+					deliveryId: envelope.deliveryId,
+					resource: message,
 				};
+				return finishDelivery(ctx, dedupKey, data, {
+					eventType: envelope.eventType,
+					messageId: message.id,
+				});
 			}
 
 			return reject(409, `Unsupported Saperly event ${envelope.eventType}`);

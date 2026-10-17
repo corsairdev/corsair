@@ -13,8 +13,10 @@ export async function callSaperly<TInput, TOutput>(
 	operation: string,
 	inputSchema: Schema<TInput>,
 	outputSchema: Schema<TOutput>,
+	// Caller input is untyped until inputSchema.parse. The schema is the boundary.
 	input: unknown,
 	build: (validated: TInput) => BuiltRequest,
+	// Each endpoint logs a different subset, so the field bag stays open.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
 ): Promise<TOutput> {
 	if (!ctx.key) {
@@ -42,8 +44,10 @@ export async function callSaperlyRecording<TInput, TOutput>(
 	operation: string,
 	inputSchema: Schema<TInput>,
 	outputSchema: Schema<TOutput>,
+	// Caller input is untyped until inputSchema.parse. The schema is the boundary.
 	input: unknown,
 	build: (validated: TInput) => { url: string; path: Record<string, string> },
+	// Each endpoint logs a different subset, so the field bag stays open.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
 ): Promise<TOutput> {
 	if (!ctx.key) {
@@ -72,6 +76,7 @@ export function idempotencyHeaders(
 	return { 'Idempotency-Key': key };
 }
 
+// Undefined optional fields are omitted. The shared client accepts an open object.
 export function omitUndefined<T extends Record<string, unknown>>(
 	value: T,
 ): Record<string, unknown> {
