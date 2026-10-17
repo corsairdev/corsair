@@ -8,6 +8,7 @@ import {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
+import { bindFlightStore } from './single-flight';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
@@ -566,6 +567,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				};
 			};
 	}
+
+	// The manager is rebuilt per client, but `database` is the same handle for
+	// every client of one Corsair instance. Bind it so a token refresh started
+	// through one client joins the same single-flight as its siblings.
+	bindFlightStore(manager, database);
 
 	return manager as AccountKeyManagerFor<T>;
 }

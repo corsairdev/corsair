@@ -51,11 +51,37 @@ async function seed(
 		.execute();
 }
 
-function makeKeys(database: ReturnType<typeof createTestDatabase>['database']) {
+async function seedTenant(
+	database: ReturnType<typeof createTestDatabase>['database'],
+	tenantId: string,
+	accountConfig: Record<string, string>,
+) {
+	const now = new Date();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, KEK);
+
+	await database.db
+		.insertInto('corsair_accounts')
+		.values({
+			id: `account-${tenantId}`,
+			created_at: now,
+			updated_at: now,
+			tenant_id: tenantId,
+			integration_id: 'integration-linear',
+			config: encryptConfig(accountConfig, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+}
+
+function makeKeys(
+	database: ReturnType<typeof createTestDatabase>['database'],
+	tenantId = 'default',
+) {
 	return createAccountKeyManager({
 		authType: 'oauth_2',
 		integrationName: 'linear',
-		tenantId: 'default',
+		tenantId,
 		kek: KEK,
 		database,
 	});
@@ -222,6 +248,210 @@ describe('getOAuthAccessToken switchboard', () => {
 			expect(a).toBe('rotated');
 			expect(b).toBe('rotated');
 			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('single-flights concurrent refreshes across tenant clients on one database', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'rot-rt' },
+			);
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				// Stay in flight long enough for both tenant clients to join the same
+				// flight: a second exchange of the same rotating refresh_token fails.
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'rot-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// Two clients of the same instance (as two withTenant() calls would be):
+			// separate key managers, one shared database handle as the flight owner.
+			const keysA = makeKeys(database);
+			const keysB = makeKeys(database);
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			const [a, b] = await Promise.all([
+				getOAuthAccessToken(
+					{ keys: keysA, tenantId: 'default', database },
+					opts,
+				),
+				getOAuthAccessToken(
+					{ keys: keysB, tenantId: 'default', database },
+					opts,
+				),
+			]);
+
+			expect(a).toBe('rotated');
+			expect(b).toBe('rotated');
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('does not share a refresh flight across separate databases', async () => {
+		const first = createTestDatabase();
+		const second = createTestDatabase();
+		try {
+			const config = { client_id: 'cid', client_secret: 'csecret' };
+			const account = {
+				access_token: 'stale',
+				expires_at: '1',
+				refresh_token: 'rot-rt',
+			};
+			await seed(first.database, config, account);
+			await seed(second.database, config, account);
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'rot-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// Two separate instances: each database is its own flight owner, so each
+			// instance must run its own exchange and persist to its own store.
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			await Promise.all([
+				getOAuthAccessToken(
+					{
+						keys: makeKeys(first.database),
+						tenantId: 'default',
+						database: first.database,
+					},
+					opts,
+				),
+				getOAuthAccessToken(
+					{
+						keys: makeKeys(second.database),
+						tenantId: 'default',
+						database: second.database,
+					},
+					opts,
+				),
+			]);
+
+			expect(calls).toBe(2);
+		} finally {
+			first.cleanup();
+			second.cleanup();
+		}
+	});
+
+	it('shares one flight across key managers on one database without an explicit database', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'rot-rt' },
+			);
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'rot-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// Renewal and managed callers build their ctx by hand and may omit the
+			// database. The key manager itself still carries the instance store.
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			const [a, b] = await Promise.all([
+				getOAuthAccessToken(
+					{ keys: makeKeys(database), tenantId: 'default' },
+					opts,
+				),
+				getOAuthAccessToken(
+					{ keys: makeKeys(database), tenantId: 'default' },
+					opts,
+				),
+			]);
+
+			expect(a).toBe('rotated');
+			expect(b).toBe('rotated');
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('does not share a refresh flight across tenants on one database', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{
+					access_token: 'stale',
+					expires_at: '1',
+					refresh_token: 'rot-rt-a',
+				},
+			);
+			await seedTenant(database, 'other', {
+				access_token: 'stale',
+				expires_at: '1',
+				refresh_token: 'rot-rt-b',
+			});
+
+			global.fetch = (async (_url: string, init: RequestInit) => {
+				const refreshToken = new URLSearchParams(String(init.body)).get(
+					'refresh_token',
+				);
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: `rotated-${refreshToken}`,
+					refresh_token: `${refreshToken}-2`,
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// Same store, different inner flight keys: tenant B must never receive
+			// tenant A's minted token.
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			const [a, b] = await Promise.all([
+				getOAuthAccessToken(
+					{ keys: makeKeys(database), tenantId: 'default' },
+					opts,
+				),
+				getOAuthAccessToken(
+					{ keys: makeKeys(database, 'other'), tenantId: 'other' },
+					opts,
+				),
+			]);
+
+			expect(a).toBe('rotated-rot-rt-a');
+			expect(b).toBe('rotated-rot-rt-b');
 		} finally {
 			cleanup();
 		}

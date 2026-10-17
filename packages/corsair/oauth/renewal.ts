@@ -54,7 +54,16 @@ export async function renewAccounts(input: {
 					get_expires_at: { value: async () => '0' },
 				});
 				await keyBuilder(
-					{ authType, keys: primingKeys, hub: internal.hub },
+					{
+						authType,
+						keys: primingKeys,
+						hub: internal.hub,
+						tenantId: row.tenantId,
+						// The key manager is a per-manager wrapper here, so carry the
+						// instance database explicitly: a refresh racing a tenant request
+						// must join that request's flight, not start a second one.
+						database: internal.database,
+					},
 					'endpoint',
 				);
 			}

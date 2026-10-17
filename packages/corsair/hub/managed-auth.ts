@@ -1,6 +1,6 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { cacheRefreshedTokens } from '../core/auth/oauth-token-cache';
-import { singleFlight } from '../core/auth/single-flight';
+import { flightStoreOf, singleFlight } from '../core/auth/single-flight';
 import type { AccountKeyManagerFor } from '../core/auth/types';
 import { hubApiPost } from './client/http';
 import { parseOAuthRefreshResponse } from './contracts/connect-api';
@@ -36,7 +36,7 @@ export async function getManagedAccessToken(
 	// routine ones so a 401 retry racing an expiry refresh can't spend a rotating
 	// refresh_token twice.
 	const flightKey = `managed:${plugin}:${tenantId}`;
-	return singleFlight(keys, flightKey, async () => {
+	return singleFlight(flightStoreOf(keys), flightKey, async () => {
 		const [accessToken, expiresAt, refreshToken] = await Promise.all([
 			keys.get_access_token(),
 			keys.get_expires_at(),

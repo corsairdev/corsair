@@ -43,6 +43,10 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 				expect(ctx.authType).toBe('oauth_2');
 				expect(ctx.keys.get_access_token).toBeDefined();
 				expect(source).toBe('endpoint');
+				// The priming ctx must identify the tenant and the instance database so
+				// a refresh racing a normal request joins that request's flight.
+				expect(ctx.tenantId).toBe('t1');
+				expect(ctx.database).toBe(internalBase.database);
 				// bookkeeping must be expired BEFORE the keyBuilder runs, so its
 				// refresh branch always fires (stored expires_at can drift from
 				// the real token under concurrent-write races)
