@@ -158,6 +158,7 @@ export const BaseProviders = [
 	'customerio',
 	'customgpt',
 	'dadataru',
+	'daffy',
 	'databricks',
 	'datadog',
 	'datarobot',
@@ -507,6 +508,7 @@ export const ProviderDisplayNames = {
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
 	dadataru: 'Dadataru',
+	daffy: 'Daffy',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	datarobot: 'DataRobot',
@@ -863,6 +865,7 @@ export type AllProviders =
 	| 'customerio'
 	| 'customgpt'
 	| 'dadataru'
+	| 'daffy'
 	| 'databricks'
 	| 'datadog'
 	| 'datarobot'
