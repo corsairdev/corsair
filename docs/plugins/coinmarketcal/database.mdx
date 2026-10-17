@@ -1,0 +1,104 @@
+---
+title: Database
+description: "CoinMarketCal local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The CoinMarketCal plugin syncs data locally. Use `corsair.coinmarketcal.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Categories
+
+Path: `coinmarketcal.db.categories.search`
+
+```ts
+const rows = await corsair.coinmarketcal.db.categories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Coins
+
+Path: `coinmarketcal.db.coins.search`
+
+```ts
+const rows = await corsair.coinmarketcal.db.coins.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `rank` | `number` | equals, gt, gte, lt, lte, in |
+| `tracked` | `boolean` | equals |
+| `iconUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `upcomingCount` | `number` | equals, gt, gte, lt, lte, in |
+| `majorCount` | `number` | equals, gt, gte, lt, lte, in |
+| `peakImpact` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Events
+
+Path: `coinmarketcal.db.events.search`
+
+```ts
+const rows = await corsair.coinmarketcal.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateEnd` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateType` | `string` | equals, contains, startsWith, endsWith, in |
+| `isEstimated` | `boolean` | equals |
+| `displayedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `impactSummary` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `snapshotUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastVerifiedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

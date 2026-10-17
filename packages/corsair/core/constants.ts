@@ -144,6 +144,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'cody',
 	'coinbase',
+	'coinmarketcal',
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
@@ -493,6 +494,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
+	coinmarketcal: 'Coinmarketcal',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -849,6 +851,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'cody'
 	| 'coinbase'
+	| 'coinmarketcal'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
