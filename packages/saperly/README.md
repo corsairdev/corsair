@@ -81,7 +81,7 @@ Saperly signs event deliveries with HMAC-SHA256 over `` `${timestamp}.${rawBody}
 
 The handler rejects a missing secret with 409 when it must verify the signature itself. A hub-verified delivery has no local signing key and is accepted without one. A bad signature is 401. `call.*` is confirmed with `GET /calls/{id}` and `message.received` with `GET /messages?numberId=` before success. The API snapshot is what comes back. The delivery body only supplies the event name and the id. Anything else is 409 so Saperly can redeliver it.
 
-`before` hooks run for every delivery, including rejected ones. `after` hooks run for the first confirmed delivery. A repeat of an already accepted delivery returns success false, so `after` does not run again. If `after` throws, the delivery is left unsealed and a redelivery retries it with the confirmed resource. Nothing is written to the Corsair database. Dedup is in-memory for five minutes and only when an account id is available.
+`before` hooks run for every delivery, including rejected ones. `after` hooks run only when the handler returns success, which is the first confirmed delivery. The framework passes the before hook's `passToAfter` value into `after`. A repeat of an accepted delivery returns success false, so `after` does not run again. Nothing is written to the Corsair database. Dedup is in-memory for five minutes and only when an account id is available.
 
 ## Not implemented
 

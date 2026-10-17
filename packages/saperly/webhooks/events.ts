@@ -41,25 +41,17 @@ async function finishDelivery(
 	data: ConfirmedDelivery,
 	logFields: Record<string, string>,
 ) {
-	const response = { success: true as const, data };
 	await logEventFromContext(
 		ctx,
 		'saperly.webhooks.delivery',
 		logFields,
 		'completed',
 	);
-	const after = ctx.options.webhookHooks?.events?.delivery?.after;
-	if (after) {
-		// Run the after hook before sealing. A throw leaves the id unsealed
-		// so a redelivery can retry the hook with the confirmed resource.
-		// Returning success false afterwards stops the framework from running
-		// that same hook a second time.
-		await after(ctx, response);
-		if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
-		return { success: false as const, statusCode: 200, data };
-	}
+	// Do not call after here. bind.ts invokes it with beforeResult.passToAfter,
+	// and only when this response has success true. Sealing first makes a
+	// redelivery return success false, so that hook does not run again.
 	if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
-	return response;
+	return { success: true as const, data };
 }
 
 async function apiKey(ctx: SaperlyContext): Promise<string | undefined> {

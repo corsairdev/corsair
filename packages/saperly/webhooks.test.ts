@@ -141,18 +141,11 @@ describe('saperly webhooks', () => {
 		);
 	});
 
-	it('does not run after again for a sealed delivery, and retries when after throws', async () => {
-		const after = jest
-			.fn()
-			.mockRejectedValueOnce(new Error('hook failed'))
-			.mockResolvedValueOnce(undefined);
+	it('returns success once so the framework can pass passToAfter, then suppresses repeats', async () => {
 		// The handler only reads key, options, database, and $getAccountId.
 		const hooked = {
 			key: 'whsec_test',
-			options: {
-				key: 'x_key_test',
-				webhookHooks: { events: { delivery: { after } } },
-			},
+			options: { key: 'x_key_test' },
 			database: { ready: true },
 			$getAccountId: async () => 'acct_1',
 		} as unknown as SaperlyContext;
@@ -172,24 +165,18 @@ describe('saperly webhooks', () => {
 		};
 		mockRequest.mockResolvedValue(call);
 
-		await expect(delivery.handler(hooked, request)).rejects.toThrow(
-			'hook failed',
-		);
-		const retried = await delivery.handler(hooked, request);
-		expect(retried.success).toBe(false);
-		expect(retried.statusCode).toBe(200);
-		expect(after).toHaveBeenCalledTimes(2);
-		expect(after.mock.calls[1]?.[1]).toMatchObject({
+		const first = await delivery.handler(hooked, request);
+		expect(first).toMatchObject({
 			success: true,
 			data: { resource: { id: 'call_1', costCents: 1 } },
 		});
 
-		const sealed = await delivery.handler(hooked, request);
-		expect(sealed).toMatchObject({
+		const repeat = await delivery.handler(hooked, request);
+		expect(repeat).toMatchObject({
 			success: false,
 			statusCode: 200,
 			error: 'duplicate delivery',
 		});
-		expect(after).toHaveBeenCalledTimes(2);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 });
