@@ -972,6 +972,14 @@
                 ]
               },
               {
+                "group": "BuiltWith",
+                "pages": [
+                  "plugins/builtwith/overview",
+                  "plugins/builtwith/api",
+                  "plugins/builtwith/database"
+                ]
+              },
+              {
                 "group": "Bunnycdn",
                 "pages": [
                   "plugins/bunnycdn/overview",
