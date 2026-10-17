@@ -103,7 +103,7 @@ describe('Kibana API client', () => {
 		);
 	});
 
-	it('sends body only on POST/PUT/PATCH, never on GET/DELETE', async () => {
+	it('sends body on POST/PUT/PATCH/DELETE, never on GET', async () => {
 		await makeKibanaRequest('api/status', BASE, 'k', {
 			method: 'GET',
 			body: { attributes: { title: 'T' } },
@@ -123,6 +123,20 @@ describe('Kibana API client', () => {
 			expect.objectContaining({
 				method: 'PUT',
 				body: { attributes: { title: 'T' } },
+			}),
+		);
+
+		// DELETE bodies must reach the API: fleet delete proxies carry a payload.
+		jest.clearAllMocks();
+		await makeKibanaRequest('api/fleet/proxies/x', BASE, 'k', {
+			method: 'DELETE',
+			body: { name: 'proxy' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				body: { name: 'proxy' },
 			}),
 		);
 	});
