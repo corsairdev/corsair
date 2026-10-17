@@ -1,8 +1,10 @@
 import type { ContactField, Person } from '../schema/database';
 
-// Only the entity client is needed here; a structural type keeps the helper
-// testable with a stub context and accepts the full plugin context.
+// Only the entity client and the account scope are needed here; a structural
+// type keeps the helper testable with a stub context and accepts the full
+// plugin context.
 export type PersonCacheContext = {
+	$getAccountId: () => Promise<string>;
 	db: {
 		people: {
 			findByEntityId: (
@@ -93,19 +95,22 @@ async function writePerson(
 	}
 }
 
-export function rememberPerson(
+export async function rememberPerson(
 	ctx: PersonCacheContext,
 	patch: PersonPatch,
 ): Promise<void> {
-	// Serialize per person id: two concurrent enriches for one person must
-	// not both read the pre-save row and drop each other's contact fields.
-	const previous = saveChains.get(patch.providerId) ?? Promise.resolve();
+	// Serialize per account and person id: two concurrent enriches for one
+	// person must not both read the pre-save row and drop each other's
+	// contact fields. The account scope keeps unrelated tenants (separate
+	// databases, separate rows) from waiting on each other's saves.
+	const chainKey = `${await ctx.$getAccountId()}:${patch.providerId}`;
+	const previous = saveChains.get(chainKey) ?? Promise.resolve();
 	const next = previous.catch(() => {}).then(() => writePerson(ctx, patch));
-	saveChains.set(patch.providerId, next);
+	saveChains.set(chainKey, next);
 	// Drop the tail entry once it settles so the map does not grow unbounded.
 	void next.finally(() => {
-		if (saveChains.get(patch.providerId) === next) {
-			saveChains.delete(patch.providerId);
+		if (saveChains.get(chainKey) === next) {
+			saveChains.delete(chainKey);
 		}
 	});
 	return next;

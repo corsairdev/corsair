@@ -28,6 +28,7 @@ function createContext() {
 	return {
 		key: 'test-key',
 		options: { baseUrl: 'https://api.ploid.com' },
+		$getAccountId: async () => 'account-1',
 		db: {
 			people: {
 				findByEntityId: jest.fn().mockResolvedValue(null),
@@ -455,6 +456,7 @@ describe('Ploid person cache merge', () => {
 	it('serializes concurrent saves for one person so no patch is lost', async () => {
 		const store = new Map<string, { data: PersonRow }>();
 		const ctx = {
+			$getAccountId: async () => 'account-1',
 			db: {
 				people: {
 					findByEntityId: async (id: string) => store.get(id) ?? null,
@@ -488,6 +490,7 @@ describe('Ploid person cache merge', () => {
 		const store = new Map<string, { data: PersonRow }>();
 		let reads = 0;
 		const ctx = {
+			$getAccountId: async () => 'account-1',
 			db: {
 				people: {
 					findByEntityId: async (id: string) => {
@@ -514,6 +517,7 @@ describe('Ploid person cache merge', () => {
 	it('dedupes sources across re-resolves', async () => {
 		const store = new Map<string, { data: PersonRow }>();
 		const ctx = {
+			$getAccountId: async () => 'account-1',
 			db: {
 				people: {
 					findByEntityId: async (id: string) => store.get(id) ?? null,
@@ -550,6 +554,7 @@ describe('Ploid contact cache policy', () => {
 		const ctx = {
 			key: 'test-key',
 			options: { baseUrl: 'https://api.ploid.com' },
+			$getAccountId: async () => 'account-1',
 			db: {
 				people: {
 					findByEntityId: async (id: string) => store.get(id) ?? null,
@@ -632,5 +637,45 @@ describe('Ploid contact cache policy', () => {
 			expect.objectContaining({ mode: 'unsure' }),
 			'completed',
 		);
+	});
+
+	it('does not make separate accounts wait on each other', async () => {
+		function accountContext(account: string, releaseGate: () => Promise<void>) {
+			const store = new Map<string, { data: PersonRow }>();
+			const ctx = {
+				$getAccountId: async () => account,
+				db: {
+					people: {
+						findByEntityId: async (id: string) => store.get(id) ?? null,
+						upsertByEntityId: async (id: string, data: PersonRow) => {
+							await releaseGate();
+							store.set(id, { data });
+						},
+					},
+				},
+			};
+			return { ctx, store };
+		}
+
+		// Account A's save parks inside its own database call.
+		let releaseA: () => void = () => {};
+		const gateA = new Promise<void>((resolve) => {
+			releaseA = resolve;
+		});
+		const a = accountContext('tenant-a', () => gateA);
+		const b = accountContext('tenant-b', async () => {});
+
+		const aSave = rememberPerson(a.ctx, {
+			providerId: 'per_1',
+			name: 'A Person',
+		});
+		// With a shared queue key this save would queue behind A's parked
+		// write and this await would never settle.
+		await rememberPerson(b.ctx, { providerId: 'per_1', name: 'B Person' });
+		expect(b.store.get('per_1')?.data).toMatchObject({ name: 'B Person' });
+
+		releaseA();
+		await aSave;
+		expect(a.store.get('per_1')?.data).toMatchObject({ name: 'A Person' });
 	});
 });
