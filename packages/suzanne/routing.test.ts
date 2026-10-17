@@ -54,6 +54,7 @@ function ctx(): SuzanneContext {
 
 type RequestOptions = {
 	method?: string;
+	// The mock records the request before the endpoint schema parses it.
 	body?: unknown;
 	path?: unknown;
 	headers?: unknown;
@@ -67,10 +68,13 @@ beforeEach(() => {
 describe('suzanne routing', () => {
 	const cases: Array<{
 		name: string;
+		// Each case calls a different endpoint, so there is no single return type.
 		run: () => Promise<unknown>;
+		// The mock body is parsed by that endpoint's own output schema.
 		response: unknown;
 		method: string;
 		url: string;
+		// Expected request pieces stay untyped until the assertion compares them.
 		body?: unknown;
 		path?: unknown;
 		headers?: unknown;

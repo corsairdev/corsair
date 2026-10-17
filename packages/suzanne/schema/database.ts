@@ -52,7 +52,10 @@ export function mergeJob(existing: Job | null, incoming: JobWrite): Job {
 		incomingStatus !== undefined &&
 		!TERMINAL.has(incomingStatus);
 
-	if (incomingStatus !== undefined && !keepStatus) next.status = incomingStatus;
+	// A late queued or running poll must not replace a finished job's links,
+	// timestamps, or errors. Status alone is not enough: outputs: [] is non-null.
+	if (keepStatus) return next;
+	if (incomingStatus !== undefined) next.status = incomingStatus;
 	if (incoming.model != null) next.model = incoming.model;
 	if (incoming.providerCreatedAt != null) {
 		next.providerCreatedAt = incoming.providerCreatedAt;

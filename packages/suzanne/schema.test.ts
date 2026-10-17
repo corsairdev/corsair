@@ -31,6 +31,22 @@ describe('Suzanne job schema', () => {
 		expect(merged.outputs).toEqual(rich.outputs);
 	});
 
+	it('keeps download links when a delayed poll sends an empty list', () => {
+		const finished = {
+			...rich,
+			updatedAt: '2026-06-02T00:00:00.000Z',
+		};
+		const merged = mergeJob(finished, {
+			jobId: 'job_1',
+			status: 'queued',
+			outputs: [],
+			updatedAt: '2026-06-01T00:00:00.000Z',
+		});
+		expect(merged.status).toBe('done');
+		expect(merged.outputs).toEqual(rich.outputs);
+		expect(merged.updatedAt).toBe('2026-06-02T00:00:00.000Z');
+	});
+
 	it('records a real failure over a queued row', () => {
 		const merged = mergeJob(
 			{ jobId: 'job_1', status: 'running', model: 'sculptor' },

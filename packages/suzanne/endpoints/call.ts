@@ -17,6 +17,7 @@ export async function callSuzanne<TInput, TOutput>(
 	// Caller input is untyped until inputSchema.parse. The schema is the boundary.
 	input: unknown,
 	build: (validated: TInput) => BuiltRequest,
+	// Log fields are an open record the framework stores as JSON.
 	logFields: (
 		validated: TInput,
 		response: TOutput,
@@ -48,6 +49,7 @@ export async function callSuzanneDownload<TInput, TOutput>(
 	// Caller input is untyped until inputSchema.parse. The schema is the boundary.
 	input: unknown,
 	build: (validated: TInput) => { jobId: string; format: string },
+	// Log fields are an open record the framework stores as JSON.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
 ): Promise<TOutput> {
 	if (!ctx.key) throw new AuthMissingError('suzanne', 'api_key');
