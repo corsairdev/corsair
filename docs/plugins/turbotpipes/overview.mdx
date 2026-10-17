@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Cloud intelligence and DevOps data platform for managing workspaces, connections, and queries."
+---
+
+Use **Turbot Pipes** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 170 typed API operations
+- 8 synced entities (`actor`, `connection`, `datatank`, `org`, `process`, `query`, and 2 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/turbotpipes
+```
+```bash yarn
+yarn add corsair @corsair-dev/turbotpipes
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/turbotpipes
+```
+```bash bun
+bun add corsair @corsair-dev/turbotpipes
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { turbotpipes } from '@corsair-dev/turbotpipes';
+
+export const corsair = createCorsair({
+	plugins: [
+		turbotpipes(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+turbotpipes()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'turbotpipes',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`actor.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.turbotpipes.api.actor.get({});
+```
+
+
+**`ai.createUserAiKey`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.turbotpipes.api.ai.createUserAiKey({});
+```
+
+
+See the full list on the [API](/plugins/turbotpipes/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.turbotpipes.db.<entity>.search()` and `.list()`: `actor`, `connection`, `datatank`, `org`, `process`, `query`, `user`, `workspace`.
+
+See [Database](/plugins/turbotpipes/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/turbotpipes/api">
+    Every `turbotpipes.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/turbotpipes/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

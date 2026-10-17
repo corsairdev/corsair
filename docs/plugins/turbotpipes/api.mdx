@@ -1,0 +1,6494 @@
+---
+title: API
+description: "API reference for Turbot Pipes: every `turbotpipes.api.*` operation with input and output types."
+---
+
+Every `turbotpipes.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actor
+
+### get
+
+`actor.get`
+
+Get authenticated actor
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.actor.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `display_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### listActivity
+
+`actor.listActivity`
+
+List activity for actor
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.actor.listActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnections
+
+`actor.listConnections`
+
+List connections for actor
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.actor.listConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOrgs
+
+`actor.listOrgs`
+
+List organizations for actor
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.actor.listOrgs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWorkspaces
+
+`actor.listWorkspaces`
+
+List workspaces accessible by actor
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.actor.listWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ai
+
+### createUserAiKey
+
+`ai.createUserAiKey`
+
+Create user AI key
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.ai.createUserAiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOrgWorkspaceConversation
+
+`ai.deleteOrgWorkspaceConversation`
+
+Delete AI conversation in org workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.ai.deleteOrgWorkspaceConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getUserAiKey
+
+`ai.getUserAiKey`
+
+Get user AI key metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.ai.getUserAiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceConversation
+
+`ai.getUserWorkspaceConversation`
+
+Get AI conversation details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.ai.getUserWorkspaceConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserAiKeys
+
+`ai.listUserAiKeys`
+
+List user AI keys
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.ai.listUserAiKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceConversations
+
+`ai.listUserWorkspaceConversations`
+
+List AI conversations
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendUserWorkspaceChatMessage
+
+`ai.sendUserWorkspaceChatMessage`
+
+Send chat message to workspace AI
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.ai.sendUserWorkspaceChatMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `conversation_id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### testUserAiKey
+
+`ai.testUserAiKey`
+
+Test user AI key
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.ai.testUserAiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserAiKey
+
+`ai.updateUserAiKey`
+
+Update user AI key
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.ai.updateUserAiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserWorkspaceConversation
+
+`ai.updateUserWorkspaceConversation`
+
+Update AI conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.ai.updateUserWorkspaceConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `conversation_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Auth
+
+### createLoginTokenEmail
+
+`auth.createLoginTokenEmail`
+
+Send login token to email
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.auth.createLoginTokenEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createSignup
+
+`auth.createSignup`
+
+Create new user signup
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.auth.createSignup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createUserPassword
+
+`auth.createUserPassword`
+
+Create user password
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.auth.createUserPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `password` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteUserToken
+
+`auth.deleteUserToken`
+
+Delete user token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.auth.deleteUserToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getAuthProvider
+
+`auth.getAuthProvider`
+
+Get OAuth provider details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.auth.getAuthProvider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserPassword
+
+`auth.getUserPassword`
+
+Get user password status
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.auth.getUserPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserToken
+
+`auth.getUserToken`
+
+Get user token metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.auth.getUserToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### initiateLogin
+
+`auth.initiateLogin`
+
+Initiate user login
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.auth.initiateLogin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateUserToken
+
+`auth.updateUserToken`
+
+Update user token status
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.auth.updateUserToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Billing
+
+### deleteOrgBillingSubscription
+
+`billing.deleteOrgBillingSubscription`
+
+Delete org billing subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.billing.deleteOrgBillingSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOrgBillingInvoice
+
+`billing.getOrgBillingInvoice`
+
+Get org billing invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.getOrgBillingInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserBillingPlan
+
+`billing.getUserBillingPlan`
+
+Get user billing plan
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.getUserBillingPlan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserBillingUpcomingInvoice
+
+`billing.getUserBillingUpcomingInvoice`
+
+Get user upcoming invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.getUserBillingUpcomingInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserBillingInvoices
+
+`billing.listUserBillingInvoices`
+
+List user billing invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.listUserBillingInvoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserBillingPaymentMethods
+
+`billing.listUserBillingPaymentMethods`
+
+List user payment methods
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.listUserBillingPaymentMethods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserBillingSubscriptions
+
+`billing.listUserBillingSubscriptions`
+
+List user billing subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.billing.listUserBillingSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateOrgBillingSubscription
+
+`billing.updateOrgBillingSubscription`
+
+Update org billing subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.billing.updateOrgBillingSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+| `action` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Connections
+
+### createOrgConnection
+
+`connections.createOrgConnection`
+
+Create org connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.createOrgConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createOrgConnectionFolder
+
+`connections.createOrgConnectionFolder`
+
+Create org connection folder
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.createOrgConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `parent_id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createUserConnection
+
+`connections.createUserConnection`
+
+Create user connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.createUserConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### deleteOrgConnectionPermission
+
+`connections.deleteOrgConnectionPermission`
+
+Delete org connection permission
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.connections.deleteOrgConnectionPermission({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteUserConnectionDeprecated
+
+`connections.deleteUserConnectionDeprecated`
+
+Delete user connection (deprecated)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.connections.deleteUserConnectionDeprecated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getOrgConnectionPermission
+
+`connections.getOrgConnectionPermission`
+
+Get org connection permission
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.connections.getOrgConnectionPermission({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserConnection
+
+`connections.getUserConnection`
+
+Get user connection details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.connections.getUserConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### listUserConnections
+
+`connections.listUserConnections`
+
+List connections for user
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.connections.listUserConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testUserConnection
+
+`connections.testUserConnection`
+
+Test user connection credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.connections.testUserConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | No | — |
+| `plugin` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateOrgConnection
+
+`connections.updateOrgConnection`
+
+Update org connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.updateOrgConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### updateOrgConnectionFolder
+
+`connections.updateOrgConnectionFolder`
+
+Update org connection folder
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.updateOrgConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `folder_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserConnection
+
+`connections.updateUserConnection`
+
+Update user connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.connections.updateUserConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Datatanks
+
+### createUserWorkspaceDatatank
+
+`datatanks.createUserWorkspaceDatatank`
+
+Create user workspace Datatank
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatank({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createUserWorkspaceDatatankTable
+
+`datatanks.createUserWorkspaceDatatankTable`
+
+Create Datatank table
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.datatanks.createUserWorkspaceDatatankTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `datatank_handle` | `string` | Yes | — |
+| `table_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDatatankTable
+
+`datatanks.getDatatankTable`
+
+Get Datatank table details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.getDatatankTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `datatank_handle` | `string` | Yes | — |
+| `table_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceDatatank
+
+`datatanks.getUserWorkspaceDatatank`
+
+Get user workspace Datatank
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceDatatank({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `datatank_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getUserWorkspaceSchema
+
+`datatanks.getUserWorkspaceSchema`
+
+Get user workspace schema
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `schema_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceSchemaTable
+
+`datatanks.getUserWorkspaceSchemaTable`
+
+Get schema table details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.getUserWorkspaceSchemaTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `schema_name` | `string` | Yes | — |
+| `table_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOrgWorkspaceDatatanks
+
+`datatanks.listOrgWorkspaceDatatanks`
+
+List org workspace Datatanks
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceDatatankPartitions
+
+`datatanks.listUserWorkspaceDatatankPartitions`
+
+List Datatank partitions
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `datatank_handle` | `string` | Yes | — |
+| `table_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceDatatanks
+
+`datatanks.listUserWorkspaceDatatanks`
+
+List user workspace Datatanks
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceDatatankTables
+
+`datatanks.listUserWorkspaceDatatankTables`
+
+List Datatank tables
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `datatank_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceSchemas
+
+`datatanks.listUserWorkspaceSchemas`
+
+List user workspace schemas
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceSchemaTables
+
+`datatanks.listUserWorkspaceSchemaTables`
+
+List schema tables
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemaTables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `schema_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Identities
+
+### getIdentity
+
+`identities.getIdentity`
+
+Get identity details by handle
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.identities.getIdentity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIdentityAvatar
+
+`identities.getIdentityAvatar`
+
+Get identity avatar
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.identities.getIdentityAvatar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `avatar_url` | `string` | Yes | — |
+
+
+
+---
+
+### listIdentities
+
+`identities.listIdentities`
+
+List identities
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.identities.listIdentities({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### createUserIntegration
+
+`integrations.createUserIntegration`
+
+Create user integration
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.integrations.createUserIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUserIntegration
+
+`integrations.deleteUserIntegration`
+
+Delete user integration
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.integrations.deleteUserIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOrgIntegration
+
+`integrations.getOrgIntegration`
+
+Get org integration
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.getOrgIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOrgWorkspaceIntegration
+
+`integrations.getOrgWorkspaceIntegration`
+
+Get org workspace integration
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.getOrgWorkspaceIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserIntegration
+
+`integrations.getUserIntegration`
+
+Get user integration details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.getUserIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceIntegration
+
+`integrations.getUserWorkspaceIntegration`
+
+Get user workspace integration
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.getUserWorkspaceIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### installUserSlackIntegration
+
+`integrations.installUserSlackIntegration`
+
+Install Slack integration for user
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.integrations.installUserSlackIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserIntegrations
+
+`integrations.listUserIntegrations`
+
+List integrations for user
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.listUserIntegrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceIntegrations
+
+`integrations.listUserWorkspaceIntegrations`
+
+List user workspace integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testUserIntegration
+
+`integrations.testUserIntegration`
+
+Test user integration
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.integrations.testUserIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserIntegration
+
+`integrations.updateUserIntegration`
+
+Update user integration
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.integrations.updateUserIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
+| `state` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Mods
+
+### createUserWorkspaceModVariableSetting
+
+`mods.createUserWorkspaceModVariableSetting`
+
+Create mod variable setting
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.mods.createUserWorkspaceModVariableSetting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+| `variable_name` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOrgWorkspaceModVariableSetting
+
+`mods.deleteOrgWorkspaceModVariableSetting`
+
+Delete org mod variable setting
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.mods.deleteOrgWorkspaceModVariableSetting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+| `variable_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteUserWorkspaceModVariableSetting
+
+`mods.deleteUserWorkspaceModVariableSetting`
+
+Delete mod variable setting
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.mods.deleteUserWorkspaceModVariableSetting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+| `variable_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOrgWorkspaceModVariableSetting
+
+`mods.getOrgWorkspaceModVariableSetting`
+
+Get org mod variable setting
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.getOrgWorkspaceModVariableSetting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+| `variable_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceMod
+
+`mods.getUserWorkspaceMod`
+
+Get installed mod details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.getUserWorkspaceMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceModVariableSetting
+
+`mods.getUserWorkspaceModVariableSetting`
+
+Get mod variable setting
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.getUserWorkspaceModVariableSetting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+| `variable_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### installUserWorkspaceMod
+
+`mods.installUserWorkspaceMod`
+
+Install mod in user workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.mods.installUserWorkspaceMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOrgWorkspaceMods
+
+`mods.listOrgWorkspaceMods`
+
+List installed mods in org workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceMods
+
+`mods.listUserWorkspaceMods`
+
+List installed mods in workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.listUserWorkspaceMods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceModVariables
+
+`mods.listUserWorkspaceModVariables`
+
+List mod variables
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notifiers
+
+### createUserNotifier
+
+`notifiers.createUserNotifier`
+
+Create user notifier
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.notifiers.createUserNotifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createUserWorkspaceNotifier
+
+`notifiers.createUserWorkspaceNotifier`
+
+Create workspace notifier
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.notifiers.createUserWorkspaceNotifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUserWorkspaceNotifier
+
+`notifiers.deleteUserWorkspaceNotifier`
+
+Delete workspace notifier
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.notifiers.deleteUserWorkspaceNotifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `notifier_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOrgWorkspaceNotifier
+
+`notifiers.getOrgWorkspaceNotifier`
+
+Get org workspace notifier
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.notifiers.getOrgWorkspaceNotifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `notifier_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceNotifier
+
+`notifiers.getUserWorkspaceNotifier`
+
+Get workspace notifier
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.notifiers.getUserWorkspaceNotifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `notifier_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserNotifiers
+
+`notifiers.listUserNotifiers`
+
+List user notifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.notifiers.listUserNotifiers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceNotifiers
+
+`notifiers.listUserWorkspaceNotifiers`
+
+List workspace notifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postUserWorkspaceNotifierCommand
+
+`notifiers.postUserWorkspaceNotifierCommand`
+
+Post command to workspace notifier
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.notifiers.postUserWorkspaceNotifierCommand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `notifier_handle` | `string` | Yes | — |
+| `command` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Orgs
+
+### delete
+
+`orgs.delete`
+
+Delete an organization
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.orgs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteWorkspace
+
+`orgs.deleteWorkspace`
+
+Delete organization workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.orgs.deleteWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`orgs.get`
+
+Get organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `display_name` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `role` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getMember
+
+`orgs.getMember`
+
+Get organization member details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.getMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listProcesses
+
+`orgs.listProcesses`
+
+List organization processes
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.listProcesses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listServiceAccounts
+
+`orgs.listServiceAccounts`
+
+List organization service accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.listServiceAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUsage
+
+`orgs.listUsage`
+
+List organization usage
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.listUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWorkspaces
+
+`orgs.listWorkspaces`
+
+List organization workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.orgs.listWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runWorkspaceCommand
+
+`orgs.runWorkspaceCommand`
+
+Run command on org workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.orgs.runWorkspaceCommand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `command` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### updateMemberRole
+
+`orgs.updateMemberRole`
+
+Update organization member role
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.orgs.updateMemberRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `user_handle` | `string` | Yes | — |
+| `role` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateServiceAccount
+
+`orgs.updateServiceAccount`
+
+Update service account
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.orgs.updateServiceAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `service_account_handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateServiceAccountToken
+
+`orgs.updateServiceAccountToken`
+
+Update service account token
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.orgs.updateServiceAccountToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `service_account_handle` | `string` | Yes | — |
+| `token_id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pipelines
+
+### deleteUserWorkspacePipeline
+
+`pipelines.deleteUserWorkspacePipeline`
+
+Delete pipeline from workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.pipelines.deleteUserWorkspacePipeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOrgWorkspaceFlowpipeTrigger
+
+`pipelines.getOrgWorkspaceFlowpipeTrigger`
+
+Get Flowpipe trigger details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `trigger_name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceFlowpipeMod
+
+`pipelines.getUserWorkspaceFlowpipeMod`
+
+Get Flowpipe mod details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipeMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceFlowpipePipeline
+
+`pipelines.getUserWorkspaceFlowpipePipeline`
+
+Get Flowpipe pipeline details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.getUserWorkspaceFlowpipePipeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspacePipeline
+
+`pipelines.getUserWorkspacePipeline`
+
+Get pipeline details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.getUserWorkspacePipeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### installUserWorkspaceFlowpipeMod
+
+`pipelines.installUserWorkspaceFlowpipeMod`
+
+Install Flowpipe mod
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.pipelines.installUserWorkspaceFlowpipeMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOrgWorkspaceFlowpipeModVariables
+
+`pipelines.listOrgWorkspaceFlowpipeModVariables`
+
+List org Flowpipe mod variables
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOrgWorkspacePipelines
+
+`pipelines.listOrgWorkspacePipelines`
+
+List pipelines in org workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceFlowpipeInputs
+
+`pipelines.listUserWorkspaceFlowpipeInputs`
+
+List Flowpipe inputs
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceFlowpipeModVariables
+
+`pipelines.listUserWorkspaceFlowpipeModVariables`
+
+List user Flowpipe mod variables
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceFlowpipePipelines
+
+`pipelines.listUserWorkspaceFlowpipePipelines`
+
+List Flowpipe pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceFlowpipeTriggers
+
+`pipelines.listUserWorkspaceFlowpipeTriggers`
+
+List Flowpipe triggers
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspacePipelines
+
+`pipelines.listUserWorkspacePipelines`
+
+List pipelines in workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspacePipelineTriggers
+
+`pipelines.listUserWorkspacePipelineTriggers`
+
+List triggers for pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runUserWorkspaceFlowpipePipelineCommand
+
+`pipelines.runUserWorkspaceFlowpipePipelineCommand`
+
+Run Flowpipe pipeline command
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipePipelineCommand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `pipeline_id` | `string` | Yes | — |
+| `command` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### runUserWorkspaceFlowpipeTriggerCommand
+
+`pipelines.runUserWorkspaceFlowpipeTriggerCommand`
+
+Run Flowpipe trigger command
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `trigger_name` | `string` | Yes | — |
+| `command` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### uninstallFlowpipeMod
+
+`pipelines.uninstallFlowpipeMod`
+
+Uninstall Flowpipe mod
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.pipelines.uninstallFlowpipeMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### uninstallOrgWorkspaceFlowpipeMod
+
+`pipelines.uninstallOrgWorkspaceFlowpipeMod`
+
+Uninstall org Flowpipe mod
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.pipelines.uninstallOrgWorkspaceFlowpipeMod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `mod_alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Query
+
+### createOrgWorkspaceQuery
+
+`query.createOrgWorkspaceQuery`
+
+Execute query in org workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.query.createOrgWorkspaceQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createOrgWorkspaceSnapshot
+
+`query.createOrgWorkspaceSnapshot`
+
+Create workspace snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.query.createOrgWorkspaceSnapshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOrgWorkspaceQueryData
+
+`query.getOrgWorkspaceQueryData`
+
+Get query data from org workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.query.getOrgWorkspaceQueryData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceQuery
+
+`query.getUserWorkspaceQuery`
+
+Execute query in user workspace (GET)
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.query.getUserWorkspaceQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceQueryData
+
+`query.getUserWorkspaceQueryData`
+
+Get query data from user workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.query.getUserWorkspaceQueryData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserWorkspaceSnapshots
+
+`query.listUserWorkspaceSnapshots`
+
+List workspace snapshots
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postUserWorkspaceQuery
+
+`query.postUserWorkspaceQuery`
+
+Execute query in user workspace (POST)
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.query.postUserWorkspaceQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runUserWorkspaceQuery
+
+`query.runUserWorkspaceQuery`
+
+Run query in user workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.query.runUserWorkspaceQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `sql` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tenants
+
+### getTenant
+
+`tenants.getTenant`
+
+Get tenant information
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.tenants.getTenant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenant_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTenantAvatar
+
+`tenants.getTenantAvatar`
+
+Get tenant avatar image
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.tenants.getTenantAvatar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tenant_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `avatar_url` | `string` | Yes | — |
+
+
+
+---
+
+### getTenantSettings
+
+`tenants.getTenantSettings`
+
+Get tenant settings
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.tenants.getTenantSettings({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTenants
+
+`tenants.listTenants`
+
+List accessible tenants
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.tenants.listTenants({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### deleteUserAvatar
+
+`users.deleteUserAvatar`
+
+Delete custom user avatar
+
+**Risk:** `destructive`
+
+```ts
+await corsair.turbotpipes.api.users.deleteUserAvatar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get user details by handle
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `display_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getUserEmail
+
+`users.getUserEmail`
+
+Get user email details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.getUserEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `email_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserPreferences
+
+`users.getUserPreferences`
+
+Get user preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.getUserPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserProcess
+
+`users.getUserProcess`
+
+Get user process details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.getUserProcess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `process_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getUserWorkspace
+
+`users.getUserWorkspace`
+
+Get user workspace details
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.getUserWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `instance_type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### listAuditLogs
+
+`users.listAuditLogs`
+
+List user audit logs
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listAuditLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConstraints
+
+`users.listConstraints`
+
+List user constraints
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listConstraints({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProcesses
+
+`users.listProcesses`
+
+List processes for user
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listProcesses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUsage
+
+`users.listUsage`
+
+List user usage metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserEmails
+
+`users.listUserEmails`
+
+List user emails
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listUserEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWorkspaces
+
+`users.listWorkspaces`
+
+List workspaces for user
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.users.listWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runUserWorkspaceCommand
+
+`users.runUserWorkspaceCommand`
+
+Run command on user workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.users.runUserWorkspaceCommand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `command` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update user information
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `display_name` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `display_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### updateUserPreferences
+
+`users.updateUserPreferences`
+
+Update user preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.users.updateUserPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `email_subscriptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="email_subscriptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserWorkspace
+
+`users.updateUserWorkspace`
+
+Update user workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.users.updateUserWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `desired_state` | `string` | No | — |
+| `instance_type` | `string` | No | — |
+| `db_volume_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `state` | `string` | No | — |
+| `instance_type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Workspaces
+
+### createOrgWorkspaceAggregator
+
+`workspaces.createOrgWorkspaceAggregator`
+
+Create org workspace aggregator
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceAggregator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `connections` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createOrgWorkspaceConnection
+
+`workspaces.createOrgWorkspaceConnection`
+
+Create org workspace connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createOrgWorkspaceConnectionFolder
+
+`workspaces.createOrgWorkspaceConnectionFolder`
+
+Create org workspace connection folder
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.workspaces.createOrgWorkspaceConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createUserWorkspaceConnection
+
+`workspaces.createUserWorkspaceConnection`
+
+Create user workspace connection
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createUserWorkspaceConnectionFolder
+
+`workspaces.createUserWorkspaceConnectionFolder`
+
+Create user workspace connection folder
+
+**Risk:** `write`
+
+```ts
+await corsair.turbotpipes.api.workspaces.createUserWorkspaceConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOrgWorkspaceConnection
+
+`workspaces.getOrgWorkspaceConnection`
+
+Get org workspace connection
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getOrgWorkspaceConnectionFolder
+
+`workspaces.getOrgWorkspaceConnectionFolder`
+
+Get org workspace connection folder
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getOrgWorkspaceConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceAggregator
+
+`workspaces.getUserWorkspaceAggregator`
+
+Get user workspace aggregator
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceAggregator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `aggregator_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceConnection
+
+`workspaces.getUserWorkspaceConnection`
+
+Get user workspace connection
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `plugin` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getUserWorkspaceConnectionFolder
+
+`workspaces.getUserWorkspaceConnectionFolder`
+
+Get user workspace connection folder
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceConnectionFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `folder_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaceProcess
+
+`workspaces.getUserWorkspaceProcess`
+
+Get workspace process
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `process_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### getUserWorkspaceProcessLog
+
+`workspaces.getUserWorkspaceProcessLog`
+
+Get workspace process logs
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `process_id` | `string` | Yes | — |
+| `log_file` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOrgWorkspaceProcesses
+
+`workspaces.listOrgWorkspaceProcesses`
+
+List org workspace processes
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceAggregatorConnections
+
+`workspaces.listUserWorkspaceAggregatorConnections`
+
+List user workspace aggregator connections
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `aggregator_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceAggregators
+
+`workspaces.listUserWorkspaceAggregators`
+
+List user workspace aggregators
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceAuditLogs
+
+`workspaces.listUserWorkspaceAuditLogs`
+
+List workspace audit logs
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceConnectionAssociations
+
+`workspaces.listUserWorkspaceConnectionAssociations`
+
+List user workspace connection associations
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceConnectionFolders
+
+`workspaces.listUserWorkspaceConnectionFolders`
+
+List user workspace connection folders
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceConnections
+
+`workspaces.listUserWorkspaceConnections`
+
+List user workspace connections
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceConnectionTree
+
+`workspaces.listUserWorkspaceConnectionTree`
+
+List user workspace connection tree
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionTree({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUserWorkspaceDatabaseLogs
+
+`workspaces.listUserWorkspaceDatabaseLogs`
+
+List workspace database logs
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceProcesses
+
+`workspaces.listUserWorkspaceProcesses`
+
+List workspace processes
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUserWorkspaceUsage
+
+`workspaces.listUserWorkspaceUsage`
+
+List user workspace usage
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testUserWorkspaceConnection
+
+`workspaces.testUserWorkspaceConnection`
+
+Test user workspace connection
+
+**Risk:** `read`
+
+```ts
+await corsair.turbotpipes.api.workspaces.testUserWorkspaceConnection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_handle` | `string` | Yes | — |
+| `workspace_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
