@@ -1,0 +1,154 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeSaperlyRequest, tryGetStoredKey } from '../client';
+import { CallSchema, MessageSchema } from '../endpoints/types';
+import type { SaperlyContext, SaperlyWebhooks } from '../index';
+import { DeliveryEnvelopeSchema } from './types';
+import { verifySaperlySignature } from './verify';
+
+const seenDeliveries = new Map<string, number>();
+const DEDUP_MS = 5 * 60 * 1000;
+
+const CALL_EVENTS = new Set([
+	'call.received',
+	'call.completed',
+	'call.failed',
+	'call.recording.saved',
+]);
+
+function reject(statusCode: number, error: string) {
+	return { success: false as const, statusCode, error };
+}
+
+function expireDeliveries(now: number): void {
+	for (const [seenKey, seenAt] of seenDeliveries) {
+		if (now - seenAt > DEDUP_MS) seenDeliveries.delete(seenKey);
+	}
+}
+
+async function accountScope(ctx: SaperlyContext): Promise<string> {
+	if (!ctx.database) return '';
+	try {
+		return await ctx.$getAccountId();
+	} catch {
+		return '';
+	}
+}
+
+async function apiKey(ctx: SaperlyContext): Promise<string | undefined> {
+	if (ctx.options.key) return ctx.options.key;
+	return tryGetStoredKey(() => ctx.keys.get_api_key());
+}
+
+export const delivery: SaperlyWebhooks['delivery'] = {
+	match: (request) =>
+		Object.keys(request.headers).some(
+			(name) => name.toLowerCase() === 'x-saperly-signature',
+		),
+	handler: async (ctx, request) => {
+		const secret = ctx.key || ctx.options.webhookSecret;
+		if (!secret) {
+			console.error(
+				'saperly webhook dropped: signing secret is not configured',
+			);
+			return reject(409, 'Webhook signing secret is not configured');
+		}
+		if (!request.hubVerified) {
+			const verification = verifySaperlySignature(request, secret);
+			if (!verification.valid) {
+				return reject(401, verification.error);
+			}
+		}
+
+		const parsed = DeliveryEnvelopeSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			return reject(409, 'Webhook envelope did not match the delivery shape');
+		}
+		const envelope = parsed.data;
+		const scope = await accountScope(ctx);
+		const dedupKey = scope ? `${scope}:${envelope.deliveryId}` : '';
+		if (dedupKey) expireDeliveries(Date.now());
+		if (dedupKey && seenDeliveries.has(dedupKey)) {
+			return {
+				success: true,
+				data: {
+					eventType: envelope.eventType,
+					deliveryId: envelope.deliveryId,
+					resource: { duplicate: true },
+				},
+			};
+		}
+
+		const key = await apiKey(ctx);
+		if (!key) {
+			console.error('saperly webhook dropped: API key is not configured');
+			return reject(409, 'API key is not configured');
+		}
+
+		try {
+			if (CALL_EVENTS.has(envelope.eventType)) {
+				const callId = envelope.payload.callId;
+				if (!callId) return reject(409, 'Call event is missing callId');
+				// Confirmed call JSON is untyped until CallSchema.parse.
+				const raw = await makeSaperlyRequest<unknown>('/calls/{id}', key, {
+					method: 'GET',
+					path: { id: callId },
+					baseUrl: ctx.options.baseUrl,
+				});
+				const call = CallSchema.parse(raw);
+				if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
+				await logEventFromContext(
+					ctx,
+					'saperly.webhooks.delivery',
+					{ eventType: envelope.eventType, callId: call.id },
+					'completed',
+				);
+				return {
+					success: true,
+					data: {
+						eventType: envelope.eventType,
+						deliveryId: envelope.deliveryId,
+						resource: call,
+					},
+				};
+			}
+
+			if (envelope.eventType === 'message.received') {
+				const messageId = envelope.payload.messageId;
+				const numberId = envelope.payload.numberId;
+				if (!messageId || !numberId) {
+					return reject(409, 'Message event is missing messageId or numberId');
+				}
+				// Confirmed message list JSON is untyped until MessageSchema parses it.
+				const raw = await makeSaperlyRequest<unknown>('/messages', key, {
+					method: 'GET',
+					query: { numberId },
+					baseUrl: ctx.options.baseUrl,
+				});
+				const messages = MessageSchema.array().parse(raw);
+				const message = messages.find((item) => item.id === messageId);
+				if (!message) {
+					return reject(409, 'Message was not found on the number');
+				}
+				if (dedupKey) seenDeliveries.set(dedupKey, Date.now());
+				await logEventFromContext(
+					ctx,
+					'saperly.webhooks.delivery',
+					{ eventType: envelope.eventType, messageId: message.id },
+					'completed',
+				);
+				return {
+					success: true,
+					data: {
+						eventType: envelope.eventType,
+						deliveryId: envelope.deliveryId,
+						resource: message,
+					},
+				};
+			}
+
+			return reject(409, `Unsupported Saperly event ${envelope.eventType}`);
+		} catch {
+			return reject(409, 'Confirming the delivery against the API failed');
+		}
+	},
+};
