@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GitlabEndpoints } from '..';
 import { makeAuthenticatedGitlabRequest } from '../client';
-import { enc, persistMergeRequest } from '../utils';
+import { deleteByIid, enc, persistMergeRequest } from '../utils';
 import type { GitlabEndpointOutputs } from './types';
 
 export const list: GitlabEndpoints['mergeRequestsList'] = async (
@@ -126,6 +126,17 @@ export const deleteMr: GitlabEndpoints['mergeRequestsDelete'] = async (
 		ctx,
 		{ method: 'DELETE', baseUrl: ctx.options.baseUrl },
 	);
+
+	try {
+		await deleteByIid(
+			ctx.db.mergeRequests,
+			ctx.db.projects,
+			input.project_id,
+			input.merge_request_iid,
+		);
+	} catch (error) {
+		console.warn('Failed to delete merge request from database:', error);
+	}
 
 	await logEventFromContext(
 		ctx,
