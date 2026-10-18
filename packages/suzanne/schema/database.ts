@@ -54,7 +54,16 @@ export function mergeJob(existing: Job | null, incoming: JobWrite): Job {
 
 	// A late queued or running poll must not replace a finished job's links,
 	// timestamps, or errors. Status alone is not enough: outputs: [] is non-null.
-	if (keepStatus) return next;
+	// A replay can still fill a charge the finished poll never stored.
+	if (keepStatus) {
+		if (
+			next.billableAmountCents == null &&
+			incoming.billableAmountCents != null
+		) {
+			next.billableAmountCents = incoming.billableAmountCents;
+		}
+		return next;
+	}
 	if (incomingStatus !== undefined) next.status = incomingStatus;
 	if (incoming.model != null) next.model = incoming.model;
 	if (incoming.providerCreatedAt != null) {

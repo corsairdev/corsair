@@ -47,6 +47,35 @@ describe('Suzanne job schema', () => {
 		expect(merged.updatedAt).toBe('2026-06-02T00:00:00.000Z');
 	});
 
+	it('fills a missing charge from a replay without taking its status', () => {
+		const finished = {
+			...rich,
+			billableAmountCents: null,
+			updatedAt: '2026-06-02T00:00:00.000Z',
+		};
+		const merged = mergeJob(finished, {
+			jobId: 'job_1',
+			status: 'queued',
+			outputs: [],
+			updatedAt: '2026-06-01T00:00:00.000Z',
+			billableAmountCents: 40,
+		});
+		expect(merged.status).toBe('done');
+		expect(merged.outputs).toEqual(rich.outputs);
+		expect(merged.updatedAt).toBe('2026-06-02T00:00:00.000Z');
+		expect(merged.billableAmountCents).toBe(40);
+	});
+
+	it('keeps a stored charge when a delayed poll disagrees', () => {
+		const merged = mergeJob(rich, {
+			jobId: 'job_1',
+			status: 'queued',
+			billableAmountCents: 40,
+		});
+		expect(merged.status).toBe('done');
+		expect(merged.billableAmountCents).toBe(25);
+	});
+
 	it('records a real failure over a queued row', () => {
 		const merged = mergeJob(
 			{ jobId: 'job_1', status: 'running', model: 'sculptor' },

@@ -1,4 +1,5 @@
 import type { SuzanneContext } from '../index';
+import { SuzanneSchema } from '../schema';
 import type { Job, JobWrite } from '../schema/database';
 import { JobStatus, mergeJob } from '../schema/database';
 
@@ -22,38 +23,59 @@ function toStored(data: Job | null | undefined): Job | null {
 	};
 }
 
-function versionOf(row: JobRow): string {
-	if (!row) return '';
-	const clock = row.updated_at.getTime();
-	const data = row.data;
-	return `${clock}:${data?.status ?? ''}:${data?.updatedAt ?? ''}:${JSON.stringify(data?.outputs ?? null)}`;
-}
-
 function matches(data: Job | null, merged: Job): boolean {
 	if (!data) return false;
 	return (
 		data.status === merged.status &&
 		JSON.stringify(data.outputs ?? null) ===
 			JSON.stringify(merged.outputs ?? null) &&
-		(data.updatedAt ?? null) === (merged.updatedAt ?? null)
+		(data.updatedAt ?? null) === (merged.updatedAt ?? null) &&
+		(data.billableAmountCents ?? null) === (merged.billableAmountCents ?? null)
 	);
 }
 
-// upsertByEntityId replaces the row and has no conditional update, so two
-// processes can both read "running" and the later write wins. Re-read until
-// the row is stable, write, then retry when a later read disagrees.
+// upsertByEntityId replaces the row. Two processes can both read "running",
+// and the later write wins. Update only when updated_at is still the value
+// we read. SQLite returns that column as a string, so this must not call
+// Date methods on it. Zero rows means someone else wrote; merge again.
+async function replaceIfUnchanged(
+	ctx: SuzanneContext,
+	row: NonNullable<JobRow>,
+	merged: Job,
+): Promise<boolean> {
+	const database = ctx.database;
+	if (!database) return false;
+	const result = await database.db
+		.updateTable('corsair_entities')
+		.set({
+			version: SuzanneSchema.version,
+			// The entity data column is an open JSON object.
+			data: merged as Record<string, unknown>,
+			updated_at: new Date(),
+		})
+		.where('id', '=', row.id)
+		.where('account_id', '=', row.account_id)
+		.where('entity_type', '=', row.entity_type)
+		.where('entity_id', '=', row.entity_id)
+		.where('updated_at', '=', row.updated_at)
+		.executeTakeFirst();
+	return Number(result.numUpdatedRows ?? 0) > 0;
+}
+
 async function writeJob(
 	ctx: SuzanneContext,
 	incoming: JobWrite,
 ): Promise<void> {
 	for (let attempt = 0; attempt < SAVE_ATTEMPTS; attempt++) {
-		const first = await ctx.db.jobs.findByEntityId(incoming.jobId);
-		const merged = mergeJob(toStored(first?.data), incoming);
-		const second = await ctx.db.jobs.findByEntityId(incoming.jobId);
-		if (versionOf(first) !== versionOf(second)) continue;
-		await ctx.db.jobs.upsertByEntityId(incoming.jobId, merged);
-		const after = await ctx.db.jobs.findByEntityId(incoming.jobId);
-		if (matches(toStored(after?.data), merged)) return;
+		const row = await ctx.db.jobs.findByEntityId(incoming.jobId);
+		const merged = mergeJob(toStored(row?.data), incoming);
+		if (!row) {
+			await ctx.db.jobs.upsertByEntityId(incoming.jobId, merged);
+			const after = await ctx.db.jobs.findByEntityId(incoming.jobId);
+			if (matches(toStored(after?.data), merged)) return;
+			continue;
+		}
+		if (await replaceIfUnchanged(ctx, row, merged)) return;
 	}
 	console.warn('suzanne job save lost a race', incoming.jobId);
 }
