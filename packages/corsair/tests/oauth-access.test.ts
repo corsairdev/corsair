@@ -263,6 +263,8 @@ describe('getOAuthAccessToken switchboard', () => {
 			);
 
 			let calls = 0;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
 			global.fetch = (async () => {
 				calls += 1;
 				// Stay in flight long enough for both tenant clients to join the same
@@ -316,6 +318,8 @@ describe('getOAuthAccessToken switchboard', () => {
 			await seed(second.database, config, account);
 
 			let calls = 0;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
 			global.fetch = (async () => {
 				calls += 1;
 				await new Promise((resolve) => setTimeout(resolve, 20));
@@ -368,6 +372,8 @@ describe('getOAuthAccessToken switchboard', () => {
 			);
 
 			let calls = 0;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
 			global.fetch = (async () => {
 				calls += 1;
 				await new Promise((resolve) => setTimeout(resolve, 20));
@@ -421,6 +427,8 @@ describe('getOAuthAccessToken switchboard', () => {
 				refresh_token: 'rot-rt-b',
 			});
 
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
 			global.fetch = (async (_url: string, init: RequestInit) => {
 				const refreshToken = new URLSearchParams(String(init.body)).get(
 					'refresh_token',

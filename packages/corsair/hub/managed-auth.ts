@@ -34,9 +34,11 @@ export async function getManagedAccessToken(
 	// async read so two callers share a single execution — and, when a refresh is
 	// needed, one stateless Hub mint. Forced (401) refreshes share the same key as
 	// routine ones so a 401 retry racing an expiry refresh can't spend a rotating
-	// refresh_token twice.
-	const flightKey = `managed:${plugin}:${tenantId}`;
-	return singleFlight(flightStoreOf(keys), flightKey, async () => {
+	// refresh_token twice. If the routine flight short-circuits on a token this
+	// caller just saw rejected, the fallback below mints once for the 401.
+	const readAndRefresh = async (
+		force: boolean,
+	): Promise<ManagedAccessTokenResult> => {
 		const [accessToken, expiresAt, refreshToken] = await Promise.all([
 			keys.get_access_token(),
 			keys.get_expires_at(),
@@ -49,7 +51,7 @@ export async function getManagedAccessToken(
 
 		const now = Math.floor(Date.now() / 1000);
 		if (
-			!forceRefresh &&
+			!force &&
 			accessToken &&
 			expiresAt &&
 			Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
@@ -60,7 +62,7 @@ export async function getManagedAccessToken(
 		// Non-expiring tokens may have no refresh token — keep using the access
 		// token while still valid. If expired (or due for refresh), fall through to
 		// the hub, which may still hold a refresh token even when local storage does not.
-		if (!refreshToken && accessToken && !forceRefresh) {
+		if (!refreshToken && accessToken && !force) {
 			const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
 			const tokenStillUsable =
 				expiresAtSeconds === null ||
@@ -94,7 +96,20 @@ export async function getManagedAccessToken(
 			expiresAt: nextExpiresAt,
 			refreshed: true,
 		};
-	});
+	};
+
+	const flightKey = `managed:${plugin}:${tenantId}`;
+	const store = flightStoreOf(keys);
+	const result = await singleFlight(store, flightKey, () =>
+		readAndRefresh(forceRefresh),
+	);
+	if (!forceRefresh || result.refreshed) {
+		return result;
+	}
+	// A routine caller created the flight and short-circuited on a locally fresh
+	// token, but this caller was told that token is revoked (401). Mint once,
+	// behind its own flight key so concurrent 401 retries still share one mint.
+	return singleFlight(store, `${flightKey}:forced`, () => readAndRefresh(true));
 }
 
 function isManagedConnectionMissingOnHub(message: string): boolean {

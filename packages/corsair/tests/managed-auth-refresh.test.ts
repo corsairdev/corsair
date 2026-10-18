@@ -228,6 +228,8 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 			});
 
 			let called = false;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
 			global.fetch = (async () => {
 				called = true;
 				return jsonResponse({ access_token: 'rotated', expires_in: 3600 });
@@ -242,6 +244,66 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 				}),
 			).rejects.toBeInstanceOf(AuthMissingError);
 			expect(called).toBe(false);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('mints for a forced caller that joined a routine flight on a locally fresh token', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const farFuture = String(Math.floor(Date.now() / 1000) + 3600);
+			await seedManagedAccount(database, {
+				access_token: 'revoked-but-unexpired',
+				expires_at: farFuture,
+				refresh_token: 'managed-rt',
+			});
+
+			let calls = 0;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
+			global.fetch = (async () => {
+				calls += 1;
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: 'force-minted',
+					refresh_token: 'managed-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// The routine call opens the flight and short-circuits on the locally
+			// fresh token; the forced 401 caller joins that flight and must not
+			// inherit the token it just saw rejected.
+			const slowKeys = managedKeys(database);
+			const realGetExpiresAt = slowKeys.get_expires_at;
+			slowKeys.get_expires_at = async () => {
+				await new Promise((resolve) => setTimeout(resolve, 50));
+				return realGetExpiresAt();
+			};
+			const routine = getManagedAccessToken({
+				keys: slowKeys,
+				hub,
+				plugin: 'linear',
+				tenantId: 'default',
+			});
+			await new Promise((resolve) => setTimeout(resolve, 10));
+			const forced = await getManagedAccessToken(
+				{
+					keys: managedKeys(database),
+					hub,
+					plugin: 'linear',
+					tenantId: 'default',
+				},
+				{ forceRefresh: true },
+			);
+			const routineResult = await routine;
+
+			expect(routineResult.accessToken).toBe('revoked-but-unexpired');
+			expect(routineResult.refreshed).toBe(false);
+			expect(forced.accessToken).toBe('force-minted');
+			expect(forced.refreshed).toBe(true);
+			expect(calls).toBe(1);
 		} finally {
 			cleanup();
 		}
