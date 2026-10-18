@@ -18,7 +18,11 @@ const options: ApiRequestOptions = {
 	body: { name: 'thing' },
 };
 
+// `body` is `unknown` on purpose: these tests send error bodies of different
+// shapes (nested objects, arrays), and Response.json accepts any value.
 function respondWith(status: number, body: unknown) {
+	// The jest mock only implements the call signature, so it is not assignable
+	// to `typeof fetch` without the assertion. request() only ever calls it.
 	global.fetch = jest.fn(async () =>
 		Response.json(body, { status }),
 	) as typeof fetch;
