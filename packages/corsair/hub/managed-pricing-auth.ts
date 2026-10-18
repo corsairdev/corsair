@@ -18,9 +18,16 @@ export type ManagedPricingAuthContext = {
 };
 
 export type GetManagedPricingApiKeyOptions = {
-	/** Plugin operation id (e.g. scrape.run) — forwarded to Hub for metering. */
-	operation?: string;
+	/** Plugin operation id (e.g. scrape.run) — forwarded to Hub; prices are resolved server-side. */
+	operation: string;
 	forceRefresh?: boolean;
+};
+
+/** Context from keyBuilder when the runtime is executing a metered endpoint. */
+export type ManagedPricingKeyBuilderContext = {
+	hub?: HubConfig;
+	tenantId: string;
+	meteredOperationId?: string;
 };
 
 export type ManagedPricingApiKeyResult = {
@@ -108,17 +115,21 @@ export function requireHubForManagedPricing(
 // only — never persisted to corsair_integrations or corsair_accounts.
 export async function getManagedPricingApiKey(
 	ctx: ManagedPricingAuthContext,
-	options?: GetManagedPricingApiKeyOptions,
+	options: GetManagedPricingApiKeyOptions,
 ): Promise<ManagedPricingApiKeyResult> {
 	requireHubForManagedPricing(ctx.plugin, ctx.hub);
 
-	const forceRefresh = options?.forceRefresh ?? false;
-	const storageKey = cacheKey(
-		ctx.hub,
-		ctx.plugin,
-		ctx.tenantId,
-		options?.operation,
-	);
+	const operation = options.operation.trim();
+	if (!operation) {
+		throw new AuthMissingError(
+			ctx.plugin,
+			'managed_pricing',
+			`[auth-missing:${ctx.plugin}:managed_pricing]: Operation id is required for Hub metering.`,
+		);
+	}
+
+	const forceRefresh = options.forceRefresh ?? false;
+	const storageKey = cacheKey(ctx.hub, ctx.plugin, ctx.tenantId, operation);
 	const flightKind = forceRefresh ? 'force' : 'routine';
 	const flightKey = `managed_pricing:${flightKind}:${storageKey}`;
 
@@ -142,7 +153,7 @@ export async function getManagedPricingApiKey(
 			body: {
 				plugin: ctx.plugin,
 				tenantId: ctx.tenantId,
-				...(options?.operation ? { operation: options.operation } : {}),
+				operation,
 			},
 			notFoundMessage: 'Managed pricing is not configured for this project',
 			parseResponse: parseManagedPricingCredentialsResponse,
@@ -167,4 +178,33 @@ export async function getManagedPricingApiKey(
 /** Shared in-process cache for a Corsair instance / plugin keyBuilder. */
 export function createManagedPricingCredentialCache(): object {
 	return {};
+}
+
+/**
+ * Resolves a provider API key for managed_pricing endpoint auth.
+ * Forwards `meteredOperationId` to Hub; credit cost is configured in Hub only.
+ */
+export async function resolveManagedPricingApiKey(
+	ctx: ManagedPricingKeyBuilderContext,
+	input: { plugin: string; cache: object },
+): Promise<string> {
+	requireHubForManagedPricing(input.plugin, ctx.hub);
+	const operation = ctx.meteredOperationId?.trim();
+	if (!operation) {
+		throw new AuthMissingError(
+			input.plugin,
+			'managed_pricing',
+			`[auth-missing:${input.plugin}:managed_pricing]: Endpoint operation id missing — cannot meter usage.`,
+		);
+	}
+	const result = await getManagedPricingApiKey(
+		{
+			hub: ctx.hub,
+			plugin: input.plugin,
+			tenantId: ctx.tenantId,
+			cache: input.cache,
+		},
+		{ operation },
+	);
+	return result.apiKey;
 }

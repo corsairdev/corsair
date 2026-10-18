@@ -287,7 +287,12 @@ export function bindEndpointsRecursively({
 
 				let key: string | undefined;
 				try {
-					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+					key = keyBuilder
+						? await keyBuilder(
+								{ ...ctx, meteredOperationId: operationPath },
+								'endpoint',
+							)
+						: undefined;
 				} catch (err) {
 					// Hub already minted a scoped connect link and put it on the typed
 					// error — report the connection unverified and rethrow it intact.
