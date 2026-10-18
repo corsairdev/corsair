@@ -57,6 +57,7 @@ describe('suzanne job saves', () => {
 	it('updates a sqlite string timestamp only when that timestamp is unchanged', async () => {
 		const clocks: unknown[] = [];
 		const written: Job[] = [];
+		const statements: string[] = [];
 		let reads = 0;
 		const running = row(
 			{ jobId: 'job_1', status: 'running' },
@@ -70,6 +71,10 @@ describe('suzanne job saves', () => {
 					return row(done, '2026-06-02T00:00:00.000Z');
 				},
 				db: {
+					executeQuery(query: { sql: string }) {
+						statements.push(query.sql);
+						return Promise.resolve({ rows: [] });
+					},
 					updateTable: () => {
 						let data: Job = { jobId: 'job_1' };
 						const builder = {
@@ -92,6 +97,12 @@ describe('suzanne job saves', () => {
 			}),
 			{ jobId: 'job_1', status: 'queued', outputs: [] },
 		);
+		expect(statements).toEqual([
+			'begin immediate',
+			'commit',
+			'begin immediate',
+			'commit',
+		]);
 		expect(clocks[0]).toBe('2026-06-01T00:00:00.000Z');
 		expect(written[0]?.status).toBe('queued');
 		expect(written.at(-1)).toEqual(done);
@@ -103,6 +114,9 @@ describe('suzanne job saves', () => {
 		let reads = 0;
 		let inserts = 0;
 		const chain = {
+			executeQuery() {
+				return Promise.resolve({ rows: [] });
+			},
 			selectNoFrom(build: (eb: Record<string, unknown>) => unknown) {
 				const eb = {
 					val(value: unknown) {
@@ -236,6 +250,7 @@ describe('suzanne job saves', () => {
 	});
 
 	it('warns when the database write fails and still resolves', async () => {
+		const statements: string[] = [];
 		const warn = jest
 			.spyOn(console, 'warn')
 			.mockImplementation(() => undefined);
@@ -244,6 +259,10 @@ describe('suzanne job saves', () => {
 				context({
 					findByEntityId: async () => null,
 					db: {
+						executeQuery(query: { sql: string }) {
+							statements.push(query.sql);
+							return Promise.resolve({ rows: [] });
+						},
 						selectNoFrom() {
 							throw new Error('database down');
 						},
@@ -252,6 +271,7 @@ describe('suzanne job saves', () => {
 				{ jobId: 'job_1', status: 'queued' },
 			),
 		).resolves.toBeUndefined();
+		expect(statements).toEqual(['begin immediate', 'rollback']);
 		expect(warn).toHaveBeenCalledWith(
 			'suzanne job save failed',
 			'job_1',

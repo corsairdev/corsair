@@ -106,6 +106,21 @@ async function insertIfAbsent(
 	return Number(result.numInsertedOrUpdatedRows ?? 0) > 0;
 }
 
+async function runStatement(
+	db: DatabaseExecutor,
+	statement: string,
+): Promise<void> {
+	// One fixed statement and no parameters. This package does not depend on Kysely's raw helper,
+	// so the compiled-query fields Kysely does not read for this statement stay untyped.
+	await db.executeQuery({
+		sql: statement,
+		parameters: [],
+	} as unknown as Parameters<DatabaseExecutor['executeQuery']>[0]);
+}
+
+// SQLite BEGIN is deferred, so two processes can both read "running" before
+// either writes. BEGIN IMMEDIATE takes the write lock first. The other
+// process waits, then sees the committed row.
 async function saveSqlite(
 	ctx: SuzanneContext,
 	accountId: string,
@@ -113,10 +128,20 @@ async function saveSqlite(
 ): Promise<boolean> {
 	const database = ctx.database;
 	if (!database) return false;
-	const row = await ctx.db.jobs.findByEntityId(incoming.jobId);
-	const merged = mergeJob(toStored(row?.data), incoming);
-	if (!row) return insertIfAbsent(database.db, accountId, merged);
-	return replaceIfUnchanged(database.db, row, merged);
+	const db = database.db;
+	await runStatement(db, 'begin immediate');
+	try {
+		const row = await ctx.db.jobs.findByEntityId(incoming.jobId);
+		const merged = mergeJob(toStored(row?.data), incoming);
+		const saved = row
+			? await replaceIfUnchanged(db, row, merged)
+			: await insertIfAbsent(db, accountId, merged);
+		await runStatement(db, 'commit');
+		return saved;
+	} catch (error) {
+		await runStatement(db, 'rollback').catch(() => undefined);
+		throw error;
+	}
 }
 
 // Postgres has no unique key on entity_id, so lock the account row and do the
