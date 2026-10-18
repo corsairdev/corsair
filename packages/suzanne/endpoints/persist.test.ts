@@ -19,28 +19,6 @@ type StoredRow = {
 	updated_at: Date | string;
 };
 
-function context(input: {
-	findByEntityId: (id: string) => Promise<StoredRow | null>;
-	upsertByEntityId?: (id: string, data: Job) => Promise<Job>;
-	updateTable?: () => {
-		set: (values: { data: Job }) => unknown;
-		where: (column: string, op: string, value: unknown) => unknown;
-		executeTakeFirst: () => Promise<{ numUpdatedRows: number }>;
-	};
-}): SuzanneContext {
-	// rememberJob only reads the database client. The rest of the plugin context is unused.
-	return {
-		database: { db: { updateTable: input.updateTable } },
-		$getAccountId: async () => 'acct_1',
-		db: {
-			jobs: {
-				findByEntityId: input.findByEntityId,
-				upsertByEntityId: input.upsertByEntityId ?? (async () => done),
-			},
-		},
-	} as unknown as SuzanneContext;
-}
-
 function row(data: Job, updatedAt: Date | string): StoredRow {
 	return {
 		id: 'row_1',
@@ -50,6 +28,29 @@ function row(data: Job, updatedAt: Date | string): StoredRow {
 		data,
 		updated_at: updatedAt,
 	};
+}
+
+function context(input: {
+	isPg?: boolean;
+	findByEntityId?: (id: string) => Promise<StoredRow | null>;
+	db?: Record<string, unknown>;
+}): SuzanneContext {
+	// rememberJob only reads the database client. The rest of the plugin context is unused.
+	return {
+		database: {
+			isPg: input.isPg ?? false,
+			db: input.db ?? {},
+		},
+		$getAccountId: async () => 'acct_1',
+		db: {
+			jobs: {
+				findByEntityId: input.findByEntityId ?? (async () => null),
+				upsertByEntityId: async () => {
+					throw new Error('upsert must not replace a job row');
+				},
+			},
+		},
+	} as unknown as SuzanneContext;
 }
 
 describe('suzanne job saves', () => {
@@ -68,23 +69,25 @@ describe('suzanne job saves', () => {
 					if (reads === 1) return running;
 					return row(done, '2026-06-02T00:00:00.000Z');
 				},
-				updateTable: () => {
-					let data: Job = { jobId: 'job_1' };
-					const builder = {
-						set(values: { data: Job }) {
-							data = values.data;
-							return builder;
-						},
-						where(column: string, _op: string, value: unknown) {
-							if (column === 'updated_at') clocks.push(value);
-							return builder;
-						},
-						async executeTakeFirst() {
-							written.push(data);
-							return { numUpdatedRows: written.length === 1 ? 0 : 1 };
-						},
-					};
-					return builder;
+				db: {
+					updateTable: () => {
+						let data: Job = { jobId: 'job_1' };
+						const builder = {
+							set(values: { data: Job }) {
+								data = values.data;
+								return builder;
+							},
+							where(column: string, _op: string, value: unknown) {
+								if (column === 'updated_at') clocks.push(value);
+								return builder;
+							},
+							async executeTakeFirst() {
+								written.push(data);
+								return { numUpdatedRows: written.length === 1 ? 0 : 1 };
+							},
+						};
+						return builder;
+					},
 				},
 			}),
 			{ jobId: 'job_1', status: 'queued', outputs: [] },
@@ -92,6 +95,143 @@ describe('suzanne job saves', () => {
 		expect(clocks[0]).toBe('2026-06-01T00:00:00.000Z');
 		expect(written[0]?.status).toBe('queued');
 		expect(written.at(-1)).toEqual(done);
+		expect(pendingJobSaves()).toBe(0);
+	});
+
+	it('does not upsert when another process inserts the first row', async () => {
+		const written: Job[] = [];
+		let reads = 0;
+		let inserts = 0;
+		const chain = {
+			selectNoFrom(build: (eb: Record<string, unknown>) => unknown) {
+				const eb = {
+					val(value: unknown) {
+						return { as: () => value };
+					},
+					not(value: unknown) {
+						return value;
+					},
+					exists(value: unknown) {
+						return value;
+					},
+					selectFrom() {
+						return eb;
+					},
+					select() {
+						return eb;
+					},
+					where() {
+						return eb;
+					},
+				};
+				build(eb);
+				return chain;
+			},
+			where() {
+				return chain;
+			},
+			insertInto() {
+				return chain;
+			},
+			columns() {
+				return chain;
+			},
+			expression() {
+				return chain;
+			},
+			async executeTakeFirst() {
+				inserts += 1;
+				return { numInsertedOrUpdatedRows: 0 };
+			},
+			updateTable() {
+				let data: Job = { jobId: 'job_1' };
+				const builder = {
+					set(values: { data: Job }) {
+						data = values.data;
+						return builder;
+					},
+					where() {
+						return builder;
+					},
+					async executeTakeFirst() {
+						written.push(data);
+						return { numUpdatedRows: 1 };
+					},
+				};
+				return builder;
+			},
+		};
+		await rememberJob(
+			context({
+				findByEntityId: async () => {
+					reads += 1;
+					if (reads === 1) return null;
+					return row(done, '2026-06-02T00:00:00.000Z');
+				},
+				db: chain,
+			}),
+			{ jobId: 'job_1', status: 'queued', outputs: [] },
+		);
+		expect(inserts).toBe(1);
+		expect(written).toEqual([done]);
+		expect(pendingJobSaves()).toBe(0);
+	});
+
+	it('locks the account and inserts when postgres has no job row', async () => {
+		let locked = false;
+		let inserted = false;
+		const trx = {
+			selectFrom(table: string) {
+				const query = {
+					select() {
+						return query;
+					},
+					where() {
+						return query;
+					},
+					forUpdate() {
+						locked = table === 'corsair_accounts';
+						return query;
+					},
+					async executeTakeFirst() {
+						return table === 'corsair_accounts' ? { id: 'acct_1' } : undefined;
+					},
+					selectAll() {
+						return query;
+					},
+				};
+				return query;
+			},
+			insertInto() {
+				inserted = true;
+				const query = {
+					values() {
+						return query;
+					},
+					async execute() {
+						return [];
+					},
+				};
+				return query;
+			},
+			updateTable() {
+				throw new Error('update must wait until a row exists');
+			},
+		};
+		await rememberJob(
+			context({
+				isPg: true,
+				db: {
+					transaction: () => ({
+						execute: (fn: (executor: typeof trx) => Promise<boolean>) =>
+							fn(trx),
+					}),
+				},
+			}),
+			{ jobId: 'job_1', status: 'queued' },
+		);
+		expect(locked).toBe(true);
+		expect(inserted).toBe(true);
 		expect(pendingJobSaves()).toBe(0);
 	});
 
@@ -103,8 +243,10 @@ describe('suzanne job saves', () => {
 			rememberJob(
 				context({
 					findByEntityId: async () => null,
-					upsertByEntityId: async () => {
-						throw new Error('database down');
+					db: {
+						selectNoFrom() {
+							throw new Error('database down');
+						},
 					},
 				}),
 				{ jobId: 'job_1', status: 'queued' },
