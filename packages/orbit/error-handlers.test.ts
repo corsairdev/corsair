@@ -58,6 +58,14 @@ describe('orbit error handlers', () => {
 		expect(result.headersRetryAfterMs).toBeLessThan(60_250);
 	});
 
+	it('uses backoff when a 429 has no Retry-After', async () => {
+		const error = orbitError(429, 'developer_api_key_rate_limited', 'GET');
+		await expect(errorHandlers.RATE_LIMIT.handler(error)).resolves.toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff_jitter',
+		});
+	});
+
 	it('retries a server error only when the call can be replayed', async () => {
 		const bare = orbitError(500, 'internal', 'POST', false);
 		const replay = orbitError(500, 'internal', 'POST', true);
@@ -69,6 +77,7 @@ describe('orbit error handlers', () => {
 			errorHandlers.SERVER_ERROR.handler(replay),
 		).resolves.toMatchObject({
 			maxRetries: 1,
+			retryStrategy: 'exponential_backoff_jitter',
 		});
 		await expect(
 			errorHandlers.SERVER_ERROR.handler(read),

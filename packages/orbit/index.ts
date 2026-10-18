@@ -36,6 +36,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OrbitSchema } from './schema';
 import { OrbitWebhooks } from './webhooks';
+import { completeOrbitDelivery, releaseOrbitDelivery } from './webhooks/events';
 
 const DeliverySchema = z.looseObject({
 	id: z.string().optional(),
@@ -326,13 +327,41 @@ export function orbit<const T extends OrbitPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const userDelivery = options.webhookHooks?.events?.delivery;
 	return {
 		id: 'orbit',
 		authConfig: orbitAuthConfig,
 		schema: OrbitSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: {
+			...options.webhookHooks,
+			events: {
+				...options.webhookHooks?.events,
+				delivery: {
+					...userDelivery,
+					after: async (hookCtx, result, passToAfter) => {
+						const eventId =
+							result &&
+							typeof result === 'object' &&
+							'data' in result &&
+							result.data &&
+							typeof result.data === 'object' &&
+							'eventId' in result.data &&
+							typeof result.data.eventId === 'string'
+								? result.data.eventId
+								: '';
+						try {
+							await userDelivery?.after?.(hookCtx, result, passToAfter);
+							completeOrbitDelivery(hookCtx.key, eventId);
+						} catch (error) {
+							releaseOrbitDelivery(hookCtx.key, eventId);
+							throw error;
+						}
+					},
+				},
+			},
+		},
 		endpoints: orbitEndpointsNested,
 		webhooks: orbitWebhooksNested,
 		endpointMeta: orbitEndpointMeta,

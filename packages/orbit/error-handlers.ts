@@ -36,7 +36,10 @@ export const errorHandlers = {
 			if (retryAfter !== undefined) {
 				return { maxRetries: 2, headersRetryAfterMs: retryAfter };
 			}
-			return { maxRetries: 2, strategy: 'exponential_backoff_jitter' as const };
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff_jitter' as const,
+			};
 		},
 	},
 	CLIENT_ERROR: {
@@ -54,7 +57,7 @@ export const errorHandlers = {
 			if (error instanceof OrbitAPIError && canReplay(error)) {
 				return {
 					maxRetries: 1,
-					strategy: 'exponential_backoff_jitter' as const,
+					retryStrategy: 'exponential_backoff_jitter' as const,
 				};
 			}
 			return { maxRetries: 0 };

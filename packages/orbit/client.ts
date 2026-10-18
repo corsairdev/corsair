@@ -33,9 +33,12 @@ export type OrbitRequestOptions = {
 type ErrorFields = { code?: string; message?: string };
 
 function errorFields(body: unknown): ErrorFields {
-	// Orbit puts { code, message } on body.error. The shared client stringifies that object.
+	// The shared client leaves the body untyped. Orbit puts { code, message } on body.error.
 	if (!body || typeof body !== 'object') return {};
-	const envelope = body as { error?: { code?: unknown; message?: unknown } };
+	// code and message are untyped until the string checks below.
+	const envelope = body as {
+		error?: { code?: unknown; message?: unknown };
+	};
 	const error = envelope.error;
 	if (!error || typeof error !== 'object') return {};
 	return {

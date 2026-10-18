@@ -1,6 +1,8 @@
 import type { OrbitContext } from '../index';
+import { readBilling } from '../schema/database';
 import { callOrbit, omitUndefined } from './call';
 import { rememberOperation } from './persist';
+import type { OrbitEndpointInputs } from './types';
 import {
 	BatchEnrichInput,
 	BatchEnrichSnapshot,
@@ -17,17 +19,20 @@ async function rememberEnrich(
 		request_id: string;
 		profile_id?: string;
 		status: 'running' | 'completed' | 'failed';
+		// Snapshot billing is an open object until readBilling keeps the credit fields.
+		billing?: unknown;
 	},
 ) {
 	await rememberOperation(ctx, 'enrichments', {
 		requestId: response.request_id,
 		profileId: response.profile_id,
 		status: response.status,
+		billing: readBilling(response.billing),
 	});
 }
 
 export const Enrich = {
-	read: (ctx: OrbitContext, input: unknown) =>
+	read: (ctx: OrbitContext, input: OrbitEndpointInputs['readProfile']) =>
 		callOrbit(
 			ctx,
 			'enrich.read',
@@ -43,7 +48,10 @@ export const Enrich = {
 			}),
 			(validated) => ({ profileId: validated.profile_id }),
 		),
-	start: async (ctx: OrbitContext, input: unknown) => {
+	start: async (
+		ctx: OrbitContext,
+		input: OrbitEndpointInputs['enrichProfile'],
+	) => {
 		const response = await callOrbit(
 			ctx,
 			'enrich.start',
@@ -69,7 +77,10 @@ export const Enrich = {
 		await rememberEnrich(ctx, response);
 		return response;
 	},
-	get: async (ctx: OrbitContext, input: unknown) => {
+	get: async (
+		ctx: OrbitContext,
+		input: OrbitEndpointInputs['getEnrichment'],
+	) => {
 		const response = await callOrbit(
 			ctx,
 			'enrich.get',
@@ -86,7 +97,7 @@ export const Enrich = {
 		await rememberEnrich(ctx, response);
 		return response;
 	},
-	batch: (ctx: OrbitContext, input: unknown) =>
+	batch: (ctx: OrbitContext, input: OrbitEndpointInputs['batchEnrich']) =>
 		callOrbit(
 			ctx,
 			'enrich.batch',

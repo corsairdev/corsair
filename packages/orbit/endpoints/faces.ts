@@ -1,5 +1,6 @@
 import type { OrbitContext } from '../index';
 import { callOrbit } from './call';
+import type { OrbitEndpointInputs } from './types';
 import {
 	DetectFacesInput,
 	FaceDetection,
@@ -8,7 +9,7 @@ import {
 } from './types';
 
 export const Faces = {
-	detect: (ctx: OrbitContext, input: unknown) =>
+	detect: (ctx: OrbitContext, input: OrbitEndpointInputs['detectFaces']) =>
 		callOrbit(
 			ctx,
 			'faces.detect',
@@ -28,7 +29,7 @@ export const Faces = {
 			},
 			() => ({ upload: 'image' }),
 		),
-	index: (ctx: OrbitContext, input: unknown) =>
+	index: (ctx: OrbitContext, input: OrbitEndpointInputs['searchFaceIndex']) =>
 		callOrbit(
 			ctx,
 			'faces.index',

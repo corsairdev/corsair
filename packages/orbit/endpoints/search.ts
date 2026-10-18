@@ -1,6 +1,8 @@
 import type { OrbitContext } from '../index';
+import { readBilling } from '../schema/database';
 import { callOrbit, omitUndefined } from './call';
 import { rememberOperation } from './persist';
+import type { OrbitEndpointInputs } from './types';
 import {
 	GetSearchInput,
 	PopulationQuote,
@@ -17,6 +19,8 @@ async function rememberSearch(
 		status: 'running' | 'completed' | 'completed_with_errors' | 'failed';
 		request_id?: string;
 		updated_at?: string;
+		// Snapshot billing is an open object until readBilling keeps the credit fields.
+		billing?: unknown;
 	},
 ) {
 	await rememberOperation(ctx, 'searches', {
@@ -24,11 +28,15 @@ async function rememberSearch(
 		status: response.status,
 		requestId: response.request_id,
 		updatedAt: response.updated_at,
+		billing: readBilling(response.billing),
 	});
 }
 
 export const Search = {
-	start: async (ctx: OrbitContext, input: unknown) => {
+	start: async (
+		ctx: OrbitContext,
+		input: OrbitEndpointInputs['startSearch'],
+	) => {
 		const response = await callOrbit(
 			ctx,
 			'search.start',
@@ -46,7 +54,7 @@ export const Search = {
 		await rememberSearch(ctx, response);
 		return response;
 	},
-	get: async (ctx: OrbitContext, input: unknown) => {
+	get: async (ctx: OrbitContext, input: OrbitEndpointInputs['getSearch']) => {
 		const response = await callOrbit(
 			ctx,
 			'search.get',
@@ -65,7 +73,10 @@ export const Search = {
 		await rememberSearch(ctx, response);
 		return response;
 	},
-	quotePopulation: (ctx: OrbitContext, input: unknown) =>
+	quotePopulation: (
+		ctx: OrbitContext,
+		input: OrbitEndpointInputs['quotePopulation'],
+	) =>
 		callOrbit(
 			ctx,
 			'search.quotePopulation',
@@ -79,7 +90,10 @@ export const Search = {
 			}),
 			(validated) => ({ kind: validated.population.kind }),
 		),
-	startPopulation: async (ctx: OrbitContext, input: unknown) => {
+	startPopulation: async (
+		ctx: OrbitContext,
+		input: OrbitEndpointInputs['startPopulation'],
+	) => {
 		const response = await callOrbit(
 			ctx,
 			'search.startPopulation',

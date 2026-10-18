@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { OrbitContext } from '../index';
 import { callOrbit, omitUndefined } from './call';
+import type { OrbitEndpointInputs } from './types';
 import {
 	CreateWatcherInput,
 	DeleteResult,
@@ -13,7 +14,7 @@ import {
 } from './types';
 
 export const Watchers = {
-	create: (ctx: OrbitContext, input: unknown) =>
+	create: (ctx: OrbitContext, input: OrbitEndpointInputs['createWatcher']) =>
 		callOrbit(
 			ctx,
 			'watchers.create',
@@ -27,7 +28,7 @@ export const Watchers = {
 			}),
 			(validated) => ({ orbitId: validated.orbit_id }),
 		),
-	list: (ctx: OrbitContext, input: unknown) =>
+	list: (ctx: OrbitContext, input: OrbitEndpointInputs['listWatchers']) =>
 		callOrbit(
 			ctx,
 			'watchers.list',
@@ -37,7 +38,7 @@ export const Watchers = {
 			() => ({ method: 'GET', url: '/v3/watchers' }),
 			() => ({ list: 'watchers' }),
 		),
-	get: (ctx: OrbitContext, input: unknown) =>
+	get: (ctx: OrbitContext, input: OrbitEndpointInputs['getWatcher']) =>
 		callOrbit(
 			ctx,
 			'watchers.get',
@@ -51,7 +52,7 @@ export const Watchers = {
 			}),
 			(validated) => ({ watcherId: validated.watcher_id }),
 		),
-	update: (ctx: OrbitContext, input: unknown) =>
+	update: (ctx: OrbitContext, input: OrbitEndpointInputs['updateWatcher']) =>
 		callOrbit(
 			ctx,
 			'watchers.update',
@@ -70,7 +71,7 @@ export const Watchers = {
 			}),
 			(validated) => ({ watcherId: validated.watcher_id }),
 		),
-	delete: (ctx: OrbitContext, input: unknown) =>
+	delete: (ctx: OrbitContext, input: OrbitEndpointInputs['deleteWatcher']) =>
 		callOrbit(
 			ctx,
 			'watchers.delete',
@@ -84,7 +85,7 @@ export const Watchers = {
 			}),
 			(validated) => ({ watcherId: validated.watcher_id }),
 		),
-	runs: (ctx: OrbitContext, input: unknown) =>
+	runs: (ctx: OrbitContext, input: OrbitEndpointInputs['listWatcherRuns']) =>
 		callOrbit(
 			ctx,
 			'watchers.runs',

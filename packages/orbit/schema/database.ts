@@ -13,6 +13,33 @@ export const Billing = z
 
 export type Billing = z.infer<typeof Billing>;
 
+const BillingFields = z.object({
+	id: z.string().optional(),
+	status: z.enum(['open', 'settled']).optional(),
+	reservedCredits: z.number().optional(),
+	consumedCredits: z.number().optional(),
+	releasedCredits: z.number().optional(),
+	heldCredits: z.number().optional(),
+});
+
+export function readBilling(value: unknown): Billing {
+	// Response billing is an open object. Only the stored credit fields are kept.
+	const parsed = BillingFields.safeParse(value);
+	if (!parsed.success) return undefined;
+	const fields = parsed.data;
+	if (
+		fields.id === undefined &&
+		fields.status === undefined &&
+		fields.reservedCredits === undefined &&
+		fields.consumedCredits === undefined &&
+		fields.releasedCredits === undefined &&
+		fields.heldCredits === undefined
+	) {
+		return undefined;
+	}
+	return fields;
+}
+
 const SearchStatus = z.enum([
 	'running',
 	'completed',

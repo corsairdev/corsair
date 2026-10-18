@@ -1,4 +1,9 @@
-import { mergeBulk, mergeEnrich, mergeSearch } from './schema/database';
+import {
+	mergeBulk,
+	mergeEnrich,
+	mergeSearch,
+	readBilling,
+} from './schema/database';
 
 describe('orbit job merge', () => {
 	it('keeps a finished search when a late poll is still running', () => {
@@ -30,6 +35,21 @@ describe('orbit job merge', () => {
 		);
 		expect(merged.status).toBe('completed');
 		expect(merged.billing?.consumedCredits).toBe(2);
+	});
+
+	it('keeps credit fields from an open billing object', () => {
+		expect(
+			readBilling({
+				id: 'bill_1',
+				status: 'open',
+				consumedCredits: 4,
+				extra: true,
+			}),
+		).toEqual({
+			id: 'bill_1',
+			status: 'open',
+			consumedCredits: 4,
+		});
 	});
 
 	it('does not rewind a canceled bulk job', () => {

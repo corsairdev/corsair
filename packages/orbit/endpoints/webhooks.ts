@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { OrbitContext } from '../index';
 import { callOrbit, omitUndefined } from './call';
+import type { OrbitEndpointInputs } from './types';
 import {
 	CreateWebhookInput,
 	DeleteResult,
@@ -12,7 +13,7 @@ import {
 } from './types';
 
 export const WebhooksApi = {
-	create: (ctx: OrbitContext, input: unknown) =>
+	create: (ctx: OrbitContext, input: OrbitEndpointInputs['createWebhook']) =>
 		callOrbit(
 			ctx,
 			'webhooks.create',
@@ -26,7 +27,7 @@ export const WebhooksApi = {
 			}),
 			() => ({ created: 'webhook' }),
 		),
-	list: (ctx: OrbitContext, input: unknown) =>
+	list: (ctx: OrbitContext, input: OrbitEndpointInputs['listWebhooks']) =>
 		callOrbit(
 			ctx,
 			'webhooks.list',
@@ -36,7 +37,7 @@ export const WebhooksApi = {
 			() => ({ method: 'GET', url: '/v3/webhooks' }),
 			() => ({ list: 'webhooks' }),
 		),
-	delete: (ctx: OrbitContext, input: unknown) =>
+	delete: (ctx: OrbitContext, input: OrbitEndpointInputs['deleteWebhook']) =>
 		callOrbit(
 			ctx,
 			'webhooks.delete',
@@ -50,7 +51,7 @@ export const WebhooksApi = {
 			}),
 			(validated) => ({ webhookId: validated.webhook_id }),
 		),
-	test: (ctx: OrbitContext, input: unknown) =>
+	test: (ctx: OrbitContext, input: OrbitEndpointInputs['testWebhook']) =>
 		callOrbit(
 			ctx,
 			'webhooks.test',

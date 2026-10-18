@@ -25,6 +25,7 @@ export function pendingOrbitSaves(): number {
 }
 
 function parseStored(entity: EntityName, data: unknown): Stored | null {
+	// SQLite returns the JSON column as text. Postgres returns the object.
 	let value = data;
 	if (typeof value === 'string') {
 		try {
@@ -77,6 +78,7 @@ async function runStatement(
 	await db.executeQuery({
 		sql: statement,
 		parameters: [],
+		// CompiledQuery also requires a query node this statement does not use.
 	} as unknown as Parameters<
 		NonNullable<OrbitContext['database']>['db']['executeQuery']
 	>[0]);
@@ -91,7 +93,7 @@ async function replaceIfUnchanged(
 		.updateTable('corsair_entities')
 		.set({
 			version: OrbitSchema.version,
-			// The entity column stores the record as JSON.
+			// The entity column is an open JSON object, not the record type.
 			data: data as unknown as Record<string, unknown>,
 			updated_at: new Date(),
 		})
@@ -106,6 +108,7 @@ async function saveOn(
 	accountId: string,
 	entity: EntityName,
 	incoming: Stored,
+	// The row's data column is untyped JSON until parseStored reads it.
 	existing: { id: string; updated_at: Date; data: unknown } | undefined,
 ): Promise<boolean> {
 	const merged = merge(entity, parseStored(entity, existing?.data), incoming);
@@ -122,6 +125,7 @@ async function saveOn(
 				entity_id: id,
 				entity_type: entity,
 				version: OrbitSchema.version,
+				// The entity column is an open JSON object, not the record type.
 				data: merged as unknown as Record<string, unknown>,
 			})
 			.executeTakeFirst();
@@ -212,6 +216,7 @@ export async function rememberOperation(
 				entityId(entity, incoming),
 			);
 		});
+	// A database rejection is untyped. Log it and leave the endpoint successful.
 	const settled = run.catch((error: unknown) => {
 		console.warn(
 			'orbit save failed',
