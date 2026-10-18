@@ -30,12 +30,11 @@ function row(data: Job, updatedAt: Date | string): StoredRow {
 	};
 }
 
-function sqliteDb(executor: Record<string, unknown>) {
+function sqliteDb<T extends object>(executor: T) {
 	return {
 		connection() {
 			return {
-				execute: (fn: (db: typeof executor) => Promise<unknown>) =>
-					fn(executor),
+				execute: (fn: (db: T) => Promise<boolean>) => fn(executor),
 			};
 		},
 	};
@@ -288,7 +287,7 @@ describe('suzanne job saves', () => {
 			connection() {
 				return {
 					execute(
-						fn: (executor: ReturnType<typeof reserved>) => Promise<unknown>,
+						fn: (executor: ReturnType<typeof reserved>) => Promise<boolean>,
 					) {
 						const run = tail.then(() => fn(reserved()));
 						tail = run.then(
