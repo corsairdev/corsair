@@ -100,16 +100,17 @@ export async function getManagedAccessToken(
 
 	const flightKey = `managed:${plugin}:${tenantId}`;
 	const store = flightStoreOf(keys);
-	const result = await singleFlight(store, flightKey, () =>
+	let result = await singleFlight(store, flightKey, () =>
 		readAndRefresh(forceRefresh),
 	);
-	if (!forceRefresh || result.refreshed) {
-		return result;
+	// A routine caller can create the flight and short-circuit on a locally fresh
+	// token, while this caller was told that token is revoked (401). Retry on the
+	// same key until a forced execution actually mints: a separate key would let a
+	// new routine flight race this one and spend the same refresh_token twice.
+	while (forceRefresh && !result.refreshed) {
+		result = await singleFlight(store, flightKey, () => readAndRefresh(true));
 	}
-	// A routine caller created the flight and short-circuited on a locally fresh
-	// token, but this caller was told that token is revoked (401). Mint once,
-	// behind its own flight key so concurrent 401 retries still share one mint.
-	return singleFlight(store, `${flightKey}:forced`, () => readAndRefresh(true));
+	return result;
 }
 
 function isManagedConnectionMissingOnHub(message: string): boolean {

@@ -308,4 +308,78 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 			cleanup();
 		}
 	});
+
+	it('keeps a forced retry on the shared flight when a new routine caller races it', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const farFuture = String(Math.floor(Date.now() / 1000) + 3600);
+			await seedManagedAccount(database, {
+				access_token: 'revoked-but-unexpired',
+				expires_at: farFuture,
+				refresh_token: 'managed-rt',
+			});
+
+			let calls = 0;
+			// The refresh path only reads ok/status/headers/text; stubbing the
+			// full Response surface would add noise without tightening the test.
+			global.fetch = (async () => {
+				calls += 1;
+				await new Promise((resolve) => setTimeout(resolve, 20));
+				return jsonResponse({
+					access_token: 'force-minted',
+					refresh_token: 'managed-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			// Routine A opens the first flight and keeps it open while it reads the
+			// locally fresh token.
+			const slowFresh = managedKeys(database);
+			const realGetExpiresAt = slowFresh.get_expires_at;
+			slowFresh.get_expires_at = async () => {
+				await new Promise((resolve) => setTimeout(resolve, 50));
+				return realGetExpiresAt();
+			};
+			const routineA = getManagedAccessToken({
+				keys: slowFresh,
+				hub,
+				plugin: 'linear',
+				tenantId: 'default',
+			});
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			// The forced caller joins A, gets refreshed false, and retries.
+			const forced = getManagedAccessToken(
+				{
+					keys: managedKeys(database),
+					hub,
+					plugin: 'linear',
+					tenantId: 'default',
+				},
+				{ forceRefresh: true },
+			);
+
+			// Routine B sees a stale token and starts or joins a refresh at the same
+			// time, so a separate forced key would mint twice.
+			await new Promise((resolve) => setTimeout(resolve, 45));
+			const staleKeys = managedKeys(database);
+			staleKeys.get_expires_at = async () => '1';
+			const routineB = getManagedAccessToken({
+				keys: staleKeys,
+				hub,
+				plugin: 'linear',
+				tenantId: 'default',
+			});
+
+			const [a, f, b] = await Promise.all([routineA, forced, routineB]);
+
+			expect(a.accessToken).toBe('revoked-but-unexpired');
+			expect(a.refreshed).toBe(false);
+			expect(f.refreshed).toBe(true);
+			expect(b.refreshed).toBe(true);
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
 });
