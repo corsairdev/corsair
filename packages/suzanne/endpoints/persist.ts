@@ -27,8 +27,16 @@ function toStored(data: Job | null | undefined): Job | null {
 }
 
 function jobFromColumn(data: unknown): Job | null {
-	// The entity data column is untyped JSON until the job schema reads it.
-	const parsed = Job.safeParse(data);
+	// SQLite stores this column as text and returns that string. Postgres returns the object.
+	let value = data;
+	if (typeof value === 'string') {
+		try {
+			value = JSON.parse(value);
+		} catch {
+			return null;
+		}
+	}
+	const parsed = Job.safeParse(value);
 	return parsed.success ? toStored(parsed.data) : null;
 }
 
@@ -118,9 +126,10 @@ async function runStatement(
 	} as unknown as Parameters<DatabaseExecutor['executeQuery']>[0]);
 }
 
-// SQLite BEGIN is deferred, so two processes can both read "running" before
-// either writes. BEGIN IMMEDIATE takes the write lock first. The other
-// process waits, then sees the committed row.
+// The SQLite driver has one connection. begin on the shared client releases
+// it before commit, so a second job's begin is nested and the save is dropped.
+// connection() keeps that connection until the callback returns. Reads go
+// through it too, or they wait on the same connection and deadlock.
 async function saveSqlite(
 	ctx: SuzanneContext,
 	accountId: string,
@@ -128,20 +137,27 @@ async function saveSqlite(
 ): Promise<boolean> {
 	const database = ctx.database;
 	if (!database) return false;
-	const db = database.db;
-	await runStatement(db, 'begin immediate');
-	try {
-		const row = await ctx.db.jobs.findByEntityId(incoming.jobId);
-		const merged = mergeJob(toStored(row?.data), incoming);
-		const saved = row
-			? await replaceIfUnchanged(db, row, merged)
-			: await insertIfAbsent(db, accountId, merged);
-		await runStatement(db, 'commit');
-		return saved;
-	} catch (error) {
-		await runStatement(db, 'rollback').catch(() => undefined);
-		throw error;
-	}
+	return database.db.connection().execute(async (reserved) => {
+		await runStatement(reserved, 'begin immediate');
+		try {
+			const existing = await reserved
+				.selectFrom('corsair_entities')
+				.selectAll()
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', JOB_ENTITY)
+				.where('entity_id', '=', incoming.jobId)
+				.executeTakeFirst();
+			const merged = mergeJob(jobFromColumn(existing?.data), incoming);
+			const saved = existing
+				? await replaceIfUnchanged(reserved, existing, merged)
+				: await insertIfAbsent(reserved, accountId, merged);
+			await runStatement(reserved, 'commit');
+			return saved;
+		} catch (error) {
+			await runStatement(reserved, 'rollback').catch(() => undefined);
+			throw error;
+		}
+	});
 }
 
 // Postgres has no unique key on entity_id, so lock the account row and do the

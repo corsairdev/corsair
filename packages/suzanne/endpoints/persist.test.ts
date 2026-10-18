@@ -30,6 +30,17 @@ function row(data: Job, updatedAt: Date | string): StoredRow {
 	};
 }
 
+function sqliteDb(executor: Record<string, unknown>) {
+	return {
+		connection() {
+			return {
+				execute: (fn: (db: typeof executor) => Promise<unknown>) =>
+					fn(executor),
+			};
+		},
+	};
+}
+
 function context(input: {
 	isPg?: boolean;
 	findByEntityId?: (id: string) => Promise<StoredRow | null>;
@@ -63,37 +74,54 @@ describe('suzanne job saves', () => {
 			{ jobId: 'job_1', status: 'running' },
 			'2026-06-01T00:00:00.000Z',
 		);
+		const reserved = {
+			executeQuery(query: { sql: string }) {
+				statements.push(query.sql);
+				return Promise.resolve({ rows: [] });
+			},
+			selectFrom() {
+				const query = {
+					selectAll() {
+						return query;
+					},
+					where() {
+						return query;
+					},
+					async executeTakeFirst() {
+						reads += 1;
+						if (reads === 1) {
+							return { ...running, data: JSON.stringify(running.data) };
+						}
+						return row(done, '2026-06-02T00:00:00.000Z');
+					},
+				};
+				return query;
+			},
+			updateTable() {
+				let data: Job = { jobId: 'job_1' };
+				const builder = {
+					set(values: { data: Job }) {
+						data = values.data;
+						return builder;
+					},
+					where(column: string, _op: string, value: unknown) {
+						if (column === 'updated_at') clocks.push(value);
+						return builder;
+					},
+					async executeTakeFirst() {
+						written.push(data);
+						return { numUpdatedRows: written.length === 1 ? 0 : 1 };
+					},
+				};
+				return builder;
+			},
+		};
 		await rememberJob(
 			context({
 				findByEntityId: async () => {
-					reads += 1;
-					if (reads === 1) return running;
-					return row(done, '2026-06-02T00:00:00.000Z');
+					throw new Error('sqlite reads must use the reserved connection');
 				},
-				db: {
-					executeQuery(query: { sql: string }) {
-						statements.push(query.sql);
-						return Promise.resolve({ rows: [] });
-					},
-					updateTable: () => {
-						let data: Job = { jobId: 'job_1' };
-						const builder = {
-							set(values: { data: Job }) {
-								data = values.data;
-								return builder;
-							},
-							where(column: string, _op: string, value: unknown) {
-								if (column === 'updated_at') clocks.push(value);
-								return builder;
-							},
-							async executeTakeFirst() {
-								written.push(data);
-								return { numUpdatedRows: written.length === 1 ? 0 : 1 };
-							},
-						};
-						return builder;
-					},
-				},
+				db: sqliteDb(reserved),
 			}),
 			{ jobId: 'job_1', status: 'queued', outputs: [] },
 		);
@@ -157,6 +185,22 @@ describe('suzanne job saves', () => {
 				inserts += 1;
 				return { numInsertedOrUpdatedRows: 0 };
 			},
+			selectFrom() {
+				const query = {
+					selectAll() {
+						return query;
+					},
+					where() {
+						return query;
+					},
+					async executeTakeFirst() {
+						reads += 1;
+						if (reads === 1) return undefined;
+						return row(done, '2026-06-02T00:00:00.000Z');
+					},
+				};
+				return query;
+			},
 			updateTable() {
 				let data: Job = { jobId: 'job_1' };
 				const builder = {
@@ -178,17 +222,99 @@ describe('suzanne job saves', () => {
 		await rememberJob(
 			context({
 				findByEntityId: async () => {
-					reads += 1;
-					if (reads === 1) return null;
-					return row(done, '2026-06-02T00:00:00.000Z');
+					throw new Error('sqlite reads must use the reserved connection');
 				},
-				db: chain,
+				db: sqliteDb(chain),
 			}),
 			{ jobId: 'job_1', status: 'queued', outputs: [] },
 		);
 		expect(inserts).toBe(1);
 		expect(written).toEqual([done]);
 		expect(pendingJobSaves()).toBe(0);
+	});
+
+	it('does not open a second sqlite transaction while one job is saving', async () => {
+		let open = false;
+		let nested = false;
+		let tail = Promise.resolve();
+		const saved: string[] = [];
+		function reserved() {
+			return {
+				async executeQuery(query: { sql: string }) {
+					if (query.sql === 'begin immediate') {
+						if (open) nested = true;
+						open = true;
+					}
+					if (query.sql === 'commit' || query.sql === 'rollback') open = false;
+					return { rows: [] };
+				},
+				selectFrom() {
+					const query = {
+						selectAll() {
+							return query;
+						},
+						where() {
+							return query;
+						},
+						async executeTakeFirst() {
+							return row(
+								{ jobId: 'job_1', status: 'running' },
+								'2026-06-01T00:00:00.000Z',
+							);
+						},
+					};
+					return query;
+				},
+				updateTable() {
+					let jobId = '';
+					const builder = {
+						set(values: { data: Job }) {
+							jobId = values.data.jobId;
+							return builder;
+						},
+						where() {
+							return builder;
+						},
+						async executeTakeFirst() {
+							saved.push(jobId);
+							return { numUpdatedRows: 1 };
+						},
+					};
+					return builder;
+				},
+			};
+		}
+		const db = {
+			connection() {
+				return {
+					execute(
+						fn: (executor: ReturnType<typeof reserved>) => Promise<unknown>,
+					) {
+						const run = tail.then(() => fn(reserved()));
+						tail = run.then(
+							() => undefined,
+							() => undefined,
+						);
+						return run;
+					},
+				};
+			},
+		};
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		await Promise.all([
+			rememberJob(context({ db }), {
+				jobId: 'job_1',
+				status: 'done',
+				outputs: done.outputs,
+			}),
+			rememberJob(context({ db }), { jobId: 'job_2', status: 'running' }),
+		]);
+		expect(nested).toBe(false);
+		expect(saved).toEqual(['job_1', 'job_2']);
+		expect(warn).not.toHaveBeenCalled();
+		warn.mockRestore();
 	});
 
 	it('locks the account and inserts when postgres has no job row', async () => {
@@ -254,19 +380,19 @@ describe('suzanne job saves', () => {
 		const warn = jest
 			.spyOn(console, 'warn')
 			.mockImplementation(() => undefined);
+		const reserved = {
+			executeQuery(query: { sql: string }) {
+				statements.push(query.sql);
+				return Promise.resolve({ rows: [] });
+			},
+			selectFrom() {
+				throw new Error('database down');
+			},
+		};
 		await expect(
 			rememberJob(
 				context({
-					findByEntityId: async () => null,
-					db: {
-						executeQuery(query: { sql: string }) {
-							statements.push(query.sql);
-							return Promise.resolve({ rows: [] });
-						},
-						selectNoFrom() {
-							throw new Error('database down');
-						},
-					},
+					db: sqliteDb(reserved),
 				}),
 				{ jobId: 'job_1', status: 'queued' },
 			),
