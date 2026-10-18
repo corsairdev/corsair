@@ -255,6 +255,7 @@ export const BaseProviders = [
 	'openai',
 	'openrouter',
 	'openweathermap',
+	'orbit',
 	'oura',
 	'outlook',
 	'pagerduty',
@@ -604,6 +605,7 @@ export const ProviderDisplayNames = {
 	openai: 'OpenAI',
 	openrouter: 'OpenRouter',
 	openweathermap: 'OpenWeatherMap',
+	orbit: 'Orbit',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
@@ -960,6 +962,7 @@ export type AllProviders =
 	| 'openai'
 	| 'openrouter'
 	| 'openweathermap'
+	| 'orbit'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
