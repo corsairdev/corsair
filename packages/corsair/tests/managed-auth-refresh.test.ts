@@ -320,11 +320,20 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 			});
 
 			let calls = 0;
+			let releaseFetch: () => void = () => {};
+			const fetchGate = new Promise<void>((resolve) => {
+				releaseFetch = resolve;
+			});
+			let markFetchStarted: () => void = () => {};
+			const firstFetch = new Promise<void>((resolve) => {
+				markFetchStarted = resolve;
+			});
 			// The refresh path only reads ok/status/headers/text; stubbing the
 			// full Response surface would add noise without tightening the test.
 			global.fetch = (async () => {
 				calls += 1;
-				await new Promise((resolve) => setTimeout(resolve, 20));
+				markFetchStarted();
+				await fetchGate;
 				return jsonResponse({
 					access_token: 'force-minted',
 					refresh_token: 'managed-rt-2',
@@ -348,7 +357,8 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 			});
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			// The forced caller joins A, gets refreshed false, and retries.
+			// The forced caller joins A, gets refreshed false, and retries on the
+			// shared key; its Hub mint is now in flight.
 			const forced = getManagedAccessToken(
 				{
 					keys: managedKeys(database),
@@ -358,10 +368,11 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 				},
 				{ forceRefresh: true },
 			);
+			await firstFetch;
 
-			// Routine B sees a stale token and starts or joins a refresh at the same
-			// time, so a separate forced key would mint twice.
-			await new Promise((resolve) => setTimeout(resolve, 45));
+			// Routine B sees a stale token while the forced mint is still open. On
+			// the shared key it joins that flight; a separate forced key would let it
+			// start a second mint.
 			const staleKeys = managedKeys(database);
 			staleKeys.get_expires_at = async () => '1';
 			const routineB = getManagedAccessToken({
@@ -370,6 +381,7 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 				plugin: 'linear',
 				tenantId: 'default',
 			});
+			releaseFetch();
 
 			const [a, f, b] = await Promise.all([routineA, forced, routineB]);
 
