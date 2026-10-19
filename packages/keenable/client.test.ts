@@ -4,6 +4,7 @@ import {
 	KEENABLE_API_BASE,
 	KeenableAPIError,
 	makeKeenableRequest,
+	tryGetStoredKey,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -125,5 +126,48 @@ describe('makeKeenableRequest', () => {
 		await expect(
 			makeKeenableRequest('/v1/search', 'keen_test_123', { method: 'POST' }),
 		).rejects.toThrow(KeenableAPIError);
+	});
+
+	it('configures request with zero transport retries so Corsair errorHandlers control retries', async () => {
+		mockRequest.mockResolvedValue({ results: [] });
+
+		await makeKeenableRequest('/v1/search', 'keen_test_123', {
+			method: 'POST',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(mockRequest.mock.calls[0]?.[2]?.rateLimitConfig?.maxRetries).toBe(0);
+	});
+});
+
+describe('tryGetStoredKey', () => {
+	it('returns the stored value when present', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.resolve('keen_stored')),
+		).resolves.toBe('keen_stored');
+	});
+
+	it('maps a null value to undefined', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.resolve(null)),
+		).resolves.toBeUndefined();
+	});
+
+	it('treats a missing DEK as no stored key', async () => {
+		await expect(
+			tryGetStoredKey(() =>
+				Promise.reject(
+					new Error(
+						'No DEK found for account (tenant: "t", integration: "keenable")',
+					),
+				),
+			),
+		).resolves.toBeUndefined();
+	});
+
+	it('propagates unrelated key-manager failures', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.reject(new Error('decryption failed'))),
+		).rejects.toThrow('decryption failed');
 	});
 });

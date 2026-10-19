@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class KeenableAPIError extends Error {
@@ -12,7 +16,53 @@ export class KeenableAPIError extends Error {
 	}
 }
 
+// Matches only corsair's "no DEK on this account" error
+// (packages/corsair/core/auth/key-manager.ts: `No DEK found for account
+// (tenant: "...", integration: "...")`). No dedicated error class exists for
+// this state, so message matching is the only handle available; kept narrow on
+// purpose so it can't accidentally swallow an unrelated failure.
+const NO_DEK_ERROR_PATTERN = /no dek found/i;
+
+/**
+ * Safely reads the stored API key from the account key manager.
+ *
+ * `ctx.keys.get_api_key()` throws (rather than returning null) when the
+ * account has no DEK at all — a fully valid state for accounts that only ever
+ * configure the key via plugin options and never touch the key manager, and
+ * must resolve to "no stored key" rather than abort the call. Anything else
+ * thrown (decryption failure, database error, ...) is a real operational
+ * problem, not an absent key, and must propagate.
+ */
+export async function tryGetStoredKey(
+	getter: () => Promise<string | null | undefined>,
+): Promise<string | undefined> {
+	try {
+		const value = await getter();
+		return value ?? undefined;
+	} catch (error) {
+		if (error instanceof Error && NO_DEK_ERROR_PATTERN.test(error.message)) {
+			return undefined;
+		}
+		throw error;
+	}
+}
+
 export const KEENABLE_API_BASE = 'https://api.keenable.ai';
+
+// Transport retries are disabled so that rate-limit retries are handled solely
+// by Corsair's plugin-level errorHandlers (avoiding stacked retries multiplying requests).
+const KEENABLE_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
 
 export async function makeKeenableRequest<T>(
 	endpoint: string,
@@ -66,7 +116,9 @@ export async function makeKeenableRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: KEENABLE_NO_TRANSPORT_RETRIES,
+		});
 	} catch (error) {
 		// ApiError carries status/retryAfter for the error handlers, so it is
 		// rethrown untouched; only non-Error throwables get wrapped.

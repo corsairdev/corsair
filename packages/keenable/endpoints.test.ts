@@ -1,7 +1,11 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { Fetch, Search } from './endpoints';
-import type { KeenableContext } from './index';
+import type {
+	KeenableContext,
+	KeenableKeyBuilderContext,
+	KeenablePluginOptions,
+} from './index';
 import { keenable, keenableEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -36,6 +40,25 @@ function buildCtx(): Ctx {
 		db: {},
 	};
 	return ctx;
+}
+
+function buildKeyCtx(
+	apiKey: string | null = null,
+	getApiKey?: () => Promise<string | null>,
+): KeenableKeyBuilderContext {
+	return {
+		authType: 'api_key',
+		options: {},
+		tenantId: 'test-tenant',
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: getApiKey ?? (() => Promise.resolve(apiKey)),
+			set_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		},
+	};
 }
 
 const ctx = buildCtx();
@@ -196,5 +219,72 @@ describe('keenable plugin shape', () => {
 		expect(keenableEndpointSchemas['search.post']?.output).toBeDefined();
 		expect(keenableEndpointSchemas['fetch.get']?.input).toBeDefined();
 		expect(keenableEndpointSchemas['fetch.get']?.output).toBeDefined();
+	});
+
+	it('throws AuthMissingError when keyBuilder is called without a configured key', async () => {
+		const plugin = keenable<KeenablePluginOptions>({ authType: 'api_key' });
+		const keyCtx = buildKeyCtx(null);
+
+		await expect(plugin.keyBuilder?.(keyCtx, 'endpoint')).rejects.toThrow(
+			AuthMissingError,
+		);
+	});
+
+	it('returns configured options key or stored key from keyBuilder', async () => {
+		const pluginWithOptions = keenable<KeenablePluginOptions>({
+			authType: 'api_key',
+			key: 'opts-key',
+		});
+		const emptyKeyCtx = buildKeyCtx(null);
+
+		await expect(
+			pluginWithOptions.keyBuilder?.(emptyKeyCtx, 'endpoint'),
+		).resolves.toBe('opts-key');
+
+		const pluginWithStored = keenable<KeenablePluginOptions>({
+			authType: 'api_key',
+		});
+		const storedKeyCtx = buildKeyCtx('stored-secret-key');
+
+		await expect(
+			pluginWithStored.keyBuilder?.(storedKeyCtx, 'endpoint'),
+		).resolves.toBe('stored-secret-key');
+	});
+
+	it('treats a missing DEK as no key and throws AuthMissingError', async () => {
+		// key-manager.get_api_key() throws when the account has no DEK; that
+		// state must still reach the connect-link path, not abort with the raw
+		// key-manager error.
+		const plugin = keenable<KeenablePluginOptions>({ authType: 'api_key' });
+		const keyCtx = buildKeyCtx(null, () =>
+			Promise.reject(
+				new Error(
+					'No DEK found for account (tenant: "t", integration: "keenable")',
+				),
+			),
+		);
+
+		await expect(
+			plugin.keyBuilder?.(keyCtx, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('propagates unrelated key-manager failures from keyBuilder', async () => {
+		const plugin = keenable<KeenablePluginOptions>({ authType: 'api_key' });
+		const keyCtx = buildKeyCtx(null, () =>
+			Promise.reject(new Error('decryption failed')),
+		);
+
+		await expect(plugin.keyBuilder?.(keyCtx, 'endpoint')).rejects.toThrow(
+			'decryption failed',
+		);
+	});
+
+	it('returns an empty string for non-endpoint sources', async () => {
+		const plugin = keenable<KeenablePluginOptions>({ authType: 'api_key' });
+
+		await expect(
+			plugin.keyBuilder?.(buildKeyCtx(null), 'webhook'),
+		).resolves.toBe('');
 	});
 });

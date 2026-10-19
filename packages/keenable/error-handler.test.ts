@@ -115,4 +115,12 @@ describe('Keenable errorHandlers', () => {
 		expect(errorHandlers.BAD_REQUEST_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
 	});
+
+	it('does not route a non-429 ApiError whose message mentions 429 to RATE_LIMIT_ERROR', () => {
+		const error = apiError(
+			500,
+			'Upstream gateway returned 429 too many requests',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
 });

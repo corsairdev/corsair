@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import { Fetch, Search } from './endpoints';
 import type {
 	KeenableEndpointInputs,
@@ -135,16 +137,21 @@ export function keenable<const T extends KeenablePluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		// A missing stored key resolves to '' so the client raises
-		// AuthMissingError before any request goes out; both documented
-		// endpoints require the key. Same pattern as the merged tpscheck plugin.
+		// When no key is configured, throw AuthMissingError so Corsair's
+		// connect-link layer can generate an onboarding connect link for the
+		// tenant. The missing-DEK case resolves to "no stored key" via
+		// tryGetStoredKey; other key-manager failures still propagate.
 		keyBuilder: async (ctx: KeenableKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('keenable', 'api_key');
+				}
+				return storedKey;
 			}
 
 			return '';
