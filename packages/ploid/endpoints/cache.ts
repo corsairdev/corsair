@@ -8,7 +8,7 @@ import { Person } from '../schema/database';
 // update, so the save talks to the reserved connection directly.
 export type PersonCacheContext = {
 	$getAccountId: () => Promise<string>;
-	database?: Pick<CorsairDatabase, 'db' | 'isPg' | 'tableNames'>;
+	database?: Pick<CorsairDatabase, 'db' | 'isPg'>;
 };
 
 // Partial identity facts about one person. Every field is optional except the
@@ -100,18 +100,11 @@ function mergePerson(current: Person | undefined, patch: PersonPatch): Person {
 	return data;
 }
 
-function physicalTable(
-	database: Pick<CorsairDatabase, 'tableNames'>,
-	logical: 'corsair_entities' | 'corsair_accounts',
-): string {
-	const name = database.tableNames?.[logical] ?? logical;
-	// Table names are identifiers, not bound parameters. Reject anything
-	// that is not a plain name before it is interpolated.
-	if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
-		throw new Error(`Unsupported table name for ${logical}`);
-	}
-	return name;
-}
+// Logical names. The Kysely table plugin maps dbTables overrides, including
+// hyphenated names, and the dialect quotes them. Checking the physical name
+// here rejects configurations Corsair already accepts.
+const ENTITIES_TABLE = 'corsair_entities';
+const ACCOUNTS_TABLE = 'corsair_accounts';
 
 function usesPostgres(database: Pick<CorsairDatabase, 'isPg'>): boolean {
 	// CorsairDatabase.isPg is false only for better-sqlite3. Omitting it
@@ -152,7 +145,6 @@ async function rollback(conn: SqlConn): Promise<void> {
 
 async function insertIfAbsent(
 	conn: SqlConn,
-	entities: string,
 	accountId: string,
 	entityId: string,
 	payload: string,
@@ -164,12 +156,12 @@ async function insertIfAbsent(
 	// WHERE NOT EXISTS, not an upsert: a replacing upsert would clobber a
 	// row a sibling inserted after this attempt saw an empty read.
 	const inserted = await sql`
-		INSERT INTO ${sql.table(entities)} (
+		INSERT INTO ${sql.table(ENTITIES_TABLE)} (
 			id, created_at, updated_at, account_id, entity_id, entity_type, version, data
 		)
 		SELECT ${id}, ${now}, ${now}, ${accountId}, ${entityId}, ${PERSON_ENTITY}, ${PERSON_VERSION}, ${data}
 		WHERE NOT EXISTS (
-			SELECT 1 FROM ${sql.table(entities)}
+			SELECT 1 FROM ${sql.table(ENTITIES_TABLE)}
 			WHERE account_id = ${accountId}
 				AND entity_type = ${PERSON_ENTITY}
 				AND entity_id = ${entityId}
@@ -180,7 +172,6 @@ async function insertIfAbsent(
 
 async function updateIfMatch(
 	conn: SqlConn,
-	entities: string,
 	accountId: string,
 	entityId: string,
 	// unknown: SQLite returns the ISO text; Postgres may return a Date.
@@ -193,7 +184,7 @@ async function updateIfMatch(
 	// rawUpdatedAt is the value just read. On SQLite that is the ISO text
 	// the driver returned; calling getTime() on it would never match.
 	const updated = await sql`
-		UPDATE ${sql.table(entities)}
+		UPDATE ${sql.table(ENTITIES_TABLE)}
 		SET version = ${PERSON_VERSION},
 			data = ${data},
 			updated_at = ${now}
@@ -211,8 +202,6 @@ async function commitOnce(
 	patch: PersonPatch,
 ): Promise<bigint> {
 	const postgres = usesPostgres(database);
-	const entities = physicalTable(database, 'corsair_entities');
-	const accounts = physicalTable(database, 'corsair_accounts');
 	return database.db.connection().execute(async (conn) => {
 		// One BEGIN for the whole read and write. A second BEGIN (including
 		// Kysely's transaction helper, which emits its own) nests and fails.
@@ -226,7 +215,7 @@ async function commitOnce(
 				// Lock the account row so two processes cannot both decide
 				// the person is missing and insert over each other.
 				await sql`
-					SELECT id FROM ${sql.table(accounts)}
+					SELECT id FROM ${sql.table(ACCOUNTS_TABLE)}
 					WHERE id = ${accountId}
 					FOR UPDATE
 				`.execute(conn);
@@ -235,7 +224,7 @@ async function commitOnce(
 			// client waits on the SQLite mutex this callback already holds.
 			const read = await sql<{ data: unknown; updated_at: unknown }>`
 				SELECT data, updated_at
-				FROM ${sql.table(entities)}
+				FROM ${sql.table(ENTITIES_TABLE)}
 				WHERE account_id = ${accountId}
 					AND entity_type = ${PERSON_ENTITY}
 					AND entity_id = ${patch.providerId}
@@ -248,7 +237,6 @@ async function commitOnce(
 			const changed = row
 				? await updateIfMatch(
 						conn,
-						entities,
 						accountId,
 						patch.providerId,
 						row.updated_at,
@@ -258,7 +246,6 @@ async function commitOnce(
 					)
 				: await insertIfAbsent(
 						conn,
-						entities,
 						accountId,
 						patch.providerId,
 						payload,

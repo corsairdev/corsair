@@ -598,6 +598,39 @@ describe('Ploid person cache merge', () => {
 		jest.clearAllMocks();
 	});
 
+	it('saves into a hyphenated custom entities table', async () => {
+		const Database = loadBetterSqlite3();
+		const sqlite = new Database(':memory:');
+		sqlite.exec(`
+			CREATE TABLE "ploid-people" (
+				id TEXT PRIMARY KEY,
+				created_at TEXT NOT NULL,
+				updated_at TEXT NOT NULL,
+				account_id TEXT NOT NULL,
+				entity_id TEXT NOT NULL,
+				entity_type TEXT NOT NULL,
+				version TEXT NOT NULL,
+				data TEXT NOT NULL
+			);
+		`);
+		const database = createCorsairDatabase(
+			sqlite as unknown as Parameters<typeof createCorsairDatabase>[0],
+			{ dbTables: { corsair_entities: 'ploid-people' } },
+		);
+		try {
+			await rememberPerson(createContext(database), {
+				providerId: 'per_1',
+				name: 'Example Person',
+			});
+			await expect(storedPerson(database)).resolves.toMatchObject({
+				personId: 'per_1',
+				name: 'Example Person',
+			});
+		} finally {
+			await database.db.destroy();
+		}
+	});
+
 	it('keeps identity fields when a sparse enrich patches the row', async () => {
 		const handle = peopleDb();
 		const ctx = createContext(handle.database);
