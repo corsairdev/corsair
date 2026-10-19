@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { z } from 'zod';
 import * as client from './client';
 import {
 	Account,
@@ -439,7 +440,10 @@ describe('hunterio plugin shape', () => {
 	});
 });
 
-function getMockResponse(key: string, outputSchema: any): unknown {
+// Returns wire-JSON mock responses matching each endpoint's output schema.
+// Stricter typing for the return value is not feasible because the 160 endpoints
+// return distinct schema shapes (data envelopes, collections, primitive statuses, or undefined).
+function getMockResponse(key: string, outputSchema: z.ZodType): unknown {
 	if (outputSchema.safeParse(undefined).success) {
 		return undefined;
 	}
@@ -510,7 +514,11 @@ function getMockResponse(key: string, outputSchema: any): unknown {
 	return { data: {} };
 }
 
+// Sample input parameters covering all endpoint input requirements.
+// Stricter typing for property values is not feasible because input fields across 160 endpoints
+// accept heterogeneous primitive, array, and nested object types.
 function getSampleInput(key: string): Record<string, unknown> {
+	// Stricter typing for common input values is not feasible because parameters span strings, numbers, arrays, and objects.
 	const common: Record<string, unknown> = {
 		id: 1,
 		email: 'test@example.com',
@@ -574,11 +582,26 @@ function getSampleInput(key: string): Record<string, unknown> {
 	return common;
 }
 
+// Generic endpoint handler signature for dynamically executing operations.
+// Stricter typing for input and return types is not feasible because each endpoint
+// handler accepts a different Zod input shape and returns a distinct output schema.
+type GenericEndpointHandler = (
+	ctx: Ctx,
+	input: unknown,
+) => Promise<unknown>;
+
+interface EndpointSchemaEntry {
+	input: z.ZodType;
+	output: z.ZodType;
+}
+
 describe('comprehensive operations coverage', () => {
 	const plugin = hunterio({ key: 'test-api-key' });
-	const endpointTree = plugin.endpoints as Record<
+	// Type assertion for iterating nested resource groups dynamically across 160 operations.
+	// Stricter static typing is not feasible because operations span 38 heterogeneous resource groups.
+	const endpointTree = plugin.endpoints as unknown as Record<
 		string,
-		Record<string, (c: any, i: any) => Promise<any>>
+		Record<string, GenericEndpointHandler>
 	>;
 
 	const allOps: Array<{ key: string; group: string; action: string }> = [];
@@ -602,8 +625,15 @@ describe('comprehensive operations coverage', () => {
 			expect(typeof fn).toBe('function');
 			if (!fn) throw new Error(`Missing endpoint ${op.key}`);
 
-			const schema = (hunterioEndpointSchemas as any)[op.key];
+			// Type assertion for looking up schema entries by dynamic string key.
+			// Stricter static typing is not feasible because operations are enumerated dynamically across 160 endpoints.
+			const schemas = hunterioEndpointSchemas as unknown as Record<
+				string,
+				EndpointSchemaEntry
+			>;
+			const schema = schemas[op.key];
 			expect(schema).toBeDefined();
+			if (!schema) throw new Error(`Missing schema for ${op.key}`);
 
 			const sampleInput = getSampleInput(op.key);
 			const parsedInput = schema.input.parse(sampleInput);

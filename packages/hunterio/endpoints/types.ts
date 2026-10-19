@@ -18,6 +18,7 @@ export const MetaSchema = z
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 		results: z.number().optional(),
+		// Stricter typing is not feasible because request parameters echoed in meta differ dynamically across endpoints (strings, numbers, arrays, nulls).
 		params: z.unknown().optional(),
 	})
 	.passthrough();
@@ -40,6 +41,7 @@ const envelope = <T extends z.ZodType>(data: T) =>
 export const GenericResourceResponseSchema = z
 	.object({
 		status: z.string().optional(),
+		// Stricter typing is not feasible because the Hunter API OpenAPI spec and documentation provide no field list for generic resource responses, requiring arbitrary JSON data to parse.
 		data: z.unknown().optional(),
 		meta: MetaSchema.optional(),
 	})
@@ -174,7 +176,7 @@ export const UsageHistoryEntrySchema = z
 				url: z.string().optional(),
 				ip: z.string().nullable().optional(),
 				user_agent: z.string().nullable().optional(),
-				// Arbitrary query filter parameters captured from historical requests across heterogeneous endpoints.
+				// Stricter typing is not feasible because query filter parameters are captured from historical requests across heterogeneous endpoints with arbitrary schemas.
 				filters: z.unknown().optional(),
 				bulk_search_id: z.number().nullable().optional(),
 				bulk_finder_id: z.number().nullable().optional(),
@@ -559,6 +561,7 @@ export const DiscoverCompanySchema = z
 // resolved server-side) and `meta.permalink` links to the search in the app;
 // their inner shapes differ per query, so they stay wire-JSON.
 const discoverMetaFields = {
+	// Stricter typing is not feasible because meta.filters echoes dynamic filter state resolved server-side from natural-language search queries whose shape depends on the query criteria.
 	filters: z.unknown().optional(),
 	permalink: z.string().optional(),
 };
@@ -636,8 +639,7 @@ export const DiscoverViewSchema = z
 	.object({
 		id: z.number().optional(),
 		name: z.string().optional(),
-		// Saved filter set: object of filter name -> selected options (docs
-		// example), so values stay wire-JSON.
+		// Stricter typing is not feasible because saved filter sets accept arbitrary query filter criteria specific to the selected discover search view.
 		filters: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
@@ -658,7 +660,7 @@ export type DiscoverViewsListOutput = z.infer<
 
 export const DiscoverViewsCreateInputSchema = z.object({
 	name: z.string(),
-	// Saved filter set accepts arbitrary filter criteria specific to the Discover search view.
+	// Stricter typing is not feasible because saved filter sets accept arbitrary filter criteria specific to the Discover search view.
 	filters: z.record(z.string(), z.unknown()).optional(),
 });
 export type DiscoverViewsCreateInput = z.infer<
@@ -837,8 +839,7 @@ const domainSearchOutput = z
 		data: DomainSearchDataSchema,
 		meta: MetaSchema.extend({
 			results_approximate: z.boolean().optional(),
-			// Breakdown map (personal/generic/departments/decision_makers)
-			// varies by plan and query, so it stays wire-JSON.
+			// Stricter typing is not feasible because the breakdown aggregations map (personal/generic/departments/decision_makers) varies dynamically by account plan and query.
 			aggregations: z.unknown().optional(),
 		}).optional(),
 	})
@@ -1237,9 +1238,9 @@ export const EnrichmentPersonSchema = z
 			.object({
 				handle: z.string().nullable().optional(),
 				avatar: z.string().nullable().optional(),
-				// Gravatar profile avatar metadata objects with open-ended provider structures.
+				// Stricter typing is not feasible because Gravatar profile avatar metadata objects contain arbitrary third-party provider properties not specified by the Hunter API.
 				avatars: z.array(z.unknown()).optional(),
-				// Gravatar profile URL links with open-ended provider structures.
+				// Stricter typing is not feasible because Gravatar profile URL links contain arbitrary third-party provider properties not specified by the Hunter API.
 				urls: z.array(z.unknown()).optional(),
 			})
 			.passthrough()
@@ -1291,7 +1292,7 @@ export const EnrichmentCompanySchema = z
 		location: z.string().nullable().optional(),
 		timeZone: z.string().nullable().optional(),
 		utcOffset: z.number().nullable().optional(),
-		// Geographic location attributes and coordinates returned in open-ended provider geo structures.
+		// Stricter typing is not feasible because company geographic location attributes vary across third-party enrichment providers and contain open-ended metadata.
 		geo: z.record(z.string(), z.unknown()).nullable().optional(),
 		logo: z.string().nullable().optional(),
 		facebook: z
@@ -1511,8 +1512,7 @@ export const LeadSchema = z
 		verification: LeadVerificationSchema.nullable().optional(),
 		leads_list: LeadListRefSchema.nullable().optional(),
 		leads_lists: z.array(LeadListRefSchema).optional(),
-		// Custom attribute values are keyed by slug (open set) and values are
-		// string-valued per the docs, so this stays wire-JSON.
+		// Stricter typing is not feasible because custom attribute values are user-defined key-value pairs whose types vary based on the user's workspace schema.
 		custom_attributes: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.string().nullable().optional(),
 		created_by: z.number().nullable().optional(),
@@ -1776,7 +1776,7 @@ export const LeadsBulkUpsertRowSchema = z
 		email: z.string().nullable().optional(),
 		status: z.string().optional(),
 		lead: LeadSchema.nullable().optional(),
-		// Provider validation error payloads for failed row entries; structures vary by failure reason and are not strictly specified by Hunter.
+		// Stricter typing is not feasible because provider validation error payloads for failed row entries vary across failure types and are not strictly specified by Hunter.
 		errors: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -2461,7 +2461,7 @@ export const CompanyListSchema = z
 		companies_count: z.number().optional(),
 		company_list_folder_id: z.number().nullable().optional(),
 		created_at: z.string().optional(),
-		// Saved filter set for dynamic lists (open shape, resolved by Hunter).
+		// Stricter typing is not feasible because dynamic company list filters accept arbitrary criteria objects resolved server-side by Hunter.
 		filters: z.unknown().optional(),
 	})
 	.passthrough();
@@ -2498,7 +2498,7 @@ export const CompanyListsCreateInputSchema = z
 	.object({
 		name: z.string(),
 		type: z.enum(['static', 'dynamic']).optional(),
-		// Dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
+		// Stricter typing is not feasible because dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
 		filters: z.unknown().optional(),
 		company_list_folder_id: IdSchema.nullable().optional(),
 	})
@@ -2518,7 +2518,7 @@ export const CompanyListsUpdateInputSchema = z.object({
 	id: IdSchema,
 	name: z.string().optional(),
 	type: z.enum(['static', 'dynamic']).optional(),
-	// Dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
+	// Stricter typing is not feasible because dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
 	filters: z.unknown().optional(),
 	company_list_folder_id: IdSchema.nullable().optional(),
 });

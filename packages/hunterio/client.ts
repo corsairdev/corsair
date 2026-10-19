@@ -41,9 +41,9 @@ export async function makeHunterioRequest<T>(
 	apiKey?: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// Bodies are endpoint-specific JSON (already validated by the zod
-		// input schemas before send), so the shared transport stays generic
-		// over a JSON record instead of a closed per-endpoint union.
+		// Bodies and query parameters are endpoint-specific JSON (already validated by the zod
+		// input schemas before send). Stricter typing is not feasible because makeHunterioRequest is a
+		// shared transport called by 160 different endpoints with heterogeneous request shapes.
 		body?: Record<string, unknown>;
 		query?: Record<string, unknown>;
 	} = {},

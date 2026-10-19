@@ -2,12 +2,14 @@
 // PHP bracket notation (`location[country][include][]=US`, `size[]=10-50`,
 // `custom_attributes[last_product]=x`). The shared transport encodes arrays
 // as repeated bare keys and objects as one-level brackets, so filter objects
-// are flattened here into pre-bracketed keys first.
+// are flattened here into pre-bracketed keys first. Stricter typing for input values is not
+// feasible because query parameters across 160 endpoints accept heterogeneous scalar, array, and nested object filter values.
 export const toBracketQuery = (
 	value: Record<string, unknown>,
 ): Record<string, unknown> => {
 	const result: Record<string, unknown> = {};
 
+	// Stricter typing for item is not feasible because query parameter values can be any JSON scalar, array, or nested object.
 	const walk = (path: string, item: unknown): void => {
 		if (item === undefined) return;
 		if (Array.isArray(item)) {
