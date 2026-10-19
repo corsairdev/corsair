@@ -221,8 +221,8 @@ export const BaseProviders = [
 	'htmltoimage',
 	'hubspot',
 	'huggingface',
-	'imagior',
 	'humanitix',
+	'imagior',
 	'imejisio',
 	'imgbb',
 	'insightoai',
@@ -235,6 +235,7 @@ export const BaseProviders = [
 	'leexi',
 	'linear',
 	'linkedin',
+	'litescrape',
 	'loyverse',
 	'mailboxlayer',
 	'mailcheck',
@@ -272,8 +273,8 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'reducto',
-	'replicate',
 	'removebg',
+	'replicate',
 	'replyio',
 	'resend',
 	'retailed',
@@ -290,8 +291,8 @@ export const BaseProviders = [
 	'serpapi',
 	'sharepoint',
 	'slack',
-	'snapchat',
 	'slackbot',
+	'snapchat',
 	'sourcegraph',
 	'spoki',
 	'spotify',
@@ -338,8 +339,8 @@ export const BaseProviders = [
 	'webscrapingai',
 	'webvizio',
 	'whatsapp',
-	'whoisfreaks',
 	'whautomate',
+	'whoisfreaks',
 	'winstonai',
 	'witai',
 	'wix',
@@ -347,8 +348,8 @@ export const BaseProviders = [
 	'workday',
 	'workiom',
 	'worldnewsapi',
-	'xero',
 	'writer',
+	'xero',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -570,8 +571,8 @@ export const ProviderDisplayNames = {
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
-	imagior: 'Imagior',
 	humanitix: 'Humanitix',
+	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
@@ -584,6 +585,7 @@ export const ProviderDisplayNames = {
 	leexi: 'Leexi',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	litescrape: 'Litescrape',
 	loyverse: 'Loyverse',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
@@ -621,8 +623,8 @@ export const ProviderDisplayNames = {
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
-	replicate: 'Replicate',
 	removebg: 'remove.bg',
+	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
@@ -639,8 +641,8 @@ export const ProviderDisplayNames = {
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
-	snapchat: 'Snapchat',
 	slackbot: 'Slackbot',
+	snapchat: 'Snapchat',
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
@@ -687,8 +689,8 @@ export const ProviderDisplayNames = {
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
-	whoisfreaks: 'Whoisfreaks',
 	whautomate: 'Whautomate',
+	whoisfreaks: 'Whoisfreaks',
 	winstonai: 'Winston AI',
 	witai: 'WitAi',
 	wix: 'Wix',
@@ -696,8 +698,8 @@ export const ProviderDisplayNames = {
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
-	xero: 'Xero',
 	writer: 'Writer',
+	xero: 'Xero',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -926,8 +928,8 @@ export type AllProviders =
 	| 'htmltoimage'
 	| 'hubspot'
 	| 'huggingface'
-	| 'imagior'
 	| 'humanitix'
+	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
 	| 'insightoai'
@@ -940,6 +942,7 @@ export type AllProviders =
 	| 'leexi'
 	| 'linear'
 	| 'linkedin'
+	| 'litescrape'
 	| 'loyverse'
 	| 'mailboxlayer'
 	| 'mailcheck'
@@ -977,8 +980,8 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'reducto'
-	| 'replicate'
 	| 'removebg'
+	| 'replicate'
 	| 'replyio'
 	| 'resend'
 	| 'retailed'
@@ -995,8 +998,8 @@ export type AllProviders =
 	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
-	| 'snapchat'
 	| 'slackbot'
+	| 'snapchat'
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
@@ -1043,8 +1046,8 @@ export type AllProviders =
 	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'
-	| 'whoisfreaks'
 	| 'whautomate'
+	| 'whoisfreaks'
 	| 'winstonai'
 	| 'witai'
 	| 'wix'
@@ -1052,8 +1055,8 @@ export type AllProviders =
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
-	| 'xero'
 	| 'writer'
+	| 'xero'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
