@@ -150,6 +150,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
+	'contactout',
 	'contentfulgraphql',
 	'contextdev',
 	'contextsevenmcp',
@@ -503,6 +504,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
+	contactout: 'ContactOut',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
@@ -863,6 +865,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
+	| 'contactout'
 	| 'contentfulgraphql'
 	| 'contextdev'
 	| 'contextsevenmcp'
