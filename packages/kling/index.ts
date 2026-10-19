@@ -453,10 +453,18 @@ export function kling<const T extends KlingPluginOptions>(
 		webhooks: {},
 		endpointMeta: klingEndpointMeta,
 		endpointSchemas: klingEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// Core selects the first handler whose matcher accepts the error
+			// (`Object.keys(...).find`), and DEFAULT matches everything, so
+			// DEFAULT must be evaluated last - otherwise it shadows any custom
+			// handler a caller contributes through options.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: KlingKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
