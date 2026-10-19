@@ -229,21 +229,23 @@ describe('Coassemble endpoints', () => {
 			await expect(getTrackings(ctx, { id: 1.5 })).rejects.toThrow();
 		});
 
-		it('rejects provider responses missing required entity fields', async () => {
+		it('rejects provider responses missing required entity fields without logging completed', async () => {
 			// Courses require a numeric id
 			mockMakeRequest.mockImplementationOnce(async () => [
 				{ title: 'Course without id' },
 			]);
 
 			await expect(getCourses(ctx, {})).rejects.toThrow();
+			expect(mockLogEvent).not.toHaveBeenCalled();
 		});
 
-		it('rejects provider responses that are not arrays', async () => {
+		it('rejects provider responses that are not arrays without logging completed', async () => {
 			mockMakeRequest.mockImplementationOnce(async () => ({
 				error: 'malformed response',
 			}));
 
 			await expect(getClients(ctx, {})).rejects.toThrow();
+			expect(mockLogEvent).not.toHaveBeenCalled();
 		});
 	});
 });

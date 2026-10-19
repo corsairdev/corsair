@@ -16,6 +16,8 @@ export const get: CoassembleEndpoints['getClients'] = async (ctx, rawInput) => {
 		query: input,
 	});
 
+	const parsed = GetClientsResponseSchema.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'coassemble.clients.get',
@@ -23,5 +25,5 @@ export const get: CoassembleEndpoints['getClients'] = async (ctx, rawInput) => {
 		'completed',
 	);
 
-	return GetClientsResponseSchema.parse(response);
+	return parsed;
 };

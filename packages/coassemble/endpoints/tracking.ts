@@ -19,6 +19,8 @@ export const get: CoassembleEndpoints['getTrackings'] = async (
 		query: input,
 	});
 
+	const parsed = GetTrackingsResponseSchema.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'coassemble.trackings.get',
@@ -26,5 +28,5 @@ export const get: CoassembleEndpoints['getTrackings'] = async (
 		'completed',
 	);
 
-	return GetTrackingsResponseSchema.parse(response);
+	return parsed;
 };

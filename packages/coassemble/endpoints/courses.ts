@@ -16,6 +16,8 @@ export const get: CoassembleEndpoints['getCourses'] = async (ctx, rawInput) => {
 		query: input,
 	});
 
+	const parsed = GetCoursesResponseSchema.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'coassemble.courses.get',
@@ -23,5 +25,5 @@ export const get: CoassembleEndpoints['getCourses'] = async (ctx, rawInput) => {
 		'completed',
 	);
 
-	return GetCoursesResponseSchema.parse(response);
+	return parsed;
 };
