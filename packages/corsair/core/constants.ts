@@ -151,6 +151,7 @@ export const BaseProviders = [
 	'confluence',
 	'connecteam',
 	'contentfulgraphql',
+	'contextdev',
 	'contextsevenmcp',
 	'convoloai',
 	'cosmic',
@@ -503,6 +504,7 @@ export const ProviderDisplayNames = {
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
@@ -862,6 +864,7 @@ export type AllProviders =
 	| 'confluence'
 	| 'connecteam'
 	| 'contentfulgraphql'
+	| 'contextdev'
 	| 'contextsevenmcp'
 	| 'convoloai'
 	| 'cosmic'
