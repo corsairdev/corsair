@@ -845,7 +845,7 @@ describe('kling keyBuilder', () => {
 });
 
 describe('kling custom error handlers', () => {
-	it('evaluates caller-provided handlers before the catch-all DEFAULT', () => {
+	it('orders caller-provided handlers before the catch-all DEFAULT', () => {
 		const plugin = kling<KlingPluginOptions>({
 			authType: 'api_key',
 			errorHandlers: {
@@ -856,29 +856,39 @@ describe('kling custom error handlers', () => {
 			},
 		});
 
-		const names = Object.keys(plugin.errorHandlers ?? {});
+		const merged = plugin.errorHandlers ?? {};
+		const names = Object.keys(merged);
 		expect(names).toContain('CUSTOM_ERROR');
-		// Core selects the first handler whose matcher accepts the error and
-		// DEFAULT matches everything, so a custom handler is only reachable
-		// when DEFAULT is evaluated last.
+		// Core selects the first matching handler, and DEFAULT matches
+		// everything, so a custom handler is only reachable when DEFAULT is
+		// evaluated last.
 		expect(names[names.length - 1]).toBe('DEFAULT');
-		expect(names.indexOf('CUSTOM_ERROR')).toBeLessThan(
-			names.indexOf('DEFAULT'),
-		);
 	});
 
-	it('keeps a caller override of DEFAULT in the last position', () => {
-		const override = {
+	it('keeps a caller-supplied DEFAULT last even when it is declared first', () => {
+		const callerDefault = {
 			match: () => true,
 			handler: async () => ({ maxRetries: 7 }),
 		};
 		const plugin = kling<KlingPluginOptions>({
 			authType: 'api_key',
-			errorHandlers: { DEFAULT: override },
+			errorHandlers: {
+				// Declared first on purpose: spreading this object as-is would
+				// insert DEFAULT ahead of CUSTOM_ERROR and shadow it.
+				DEFAULT: callerDefault,
+				CUSTOM_ERROR: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
 		});
 
-		expect(plugin.errorHandlers?.DEFAULT).toBe(override);
-		const names = Object.keys(plugin.errorHandlers ?? {});
+		const merged = plugin.errorHandlers ?? {};
+		const names = Object.keys(merged);
 		expect(names[names.length - 1]).toBe('DEFAULT');
+		expect(names.indexOf('CUSTOM_ERROR')).toBeLessThan(
+			names.indexOf('DEFAULT'),
+		);
+		expect(plugin.errorHandlers?.DEFAULT).toBe(callerDefault);
 	});
 });
