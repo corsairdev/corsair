@@ -116,6 +116,7 @@ export const BaseProviders = [
 	'bugsnag',
 	'buildkite',
 	'bunnycdn',
+	'bytedance',
 	'byteforms',
 	'cal',
 	'calendly',
@@ -472,6 +473,7 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	bunnycdn: 'Bunnycdn',
+	bytedance: 'ByteDance',
 	byteforms: 'ByteForms',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -835,6 +837,7 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'buildkite'
 	| 'bunnycdn'
+	| 'bytedance'
 	| 'byteforms'
 	| 'cal'
 	| 'calendly'
