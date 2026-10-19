@@ -1,0 +1,2104 @@
+---
+title: API
+description: "API reference for Qdrant: every `qdrant.api.*` operation with input and output types."
+---
+
+Every `qdrant.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Aliases
+
+### list
+
+`aliases.list`
+
+List every collection alias in the cluster
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.aliases.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aliases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="aliases full type">
+
+```ts
+{
+  alias_name: string,
+  collection_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForCollection
+
+`aliases.listForCollection`
+
+List the aliases that point to one collection
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.aliases.listForCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `aliases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="aliases full type">
+
+```ts
+{
+  alias_name: string,
+  collection_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`aliases.update`
+
+Atomically create, delete or rename aliases, e.g. to switch traffic to a rebuilt collection
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.aliases.update({
+	actions: [{
+		delete_alias: { alias_name: 'docs_live' },
+	}, {
+		create_alias: { collection_name: 'docs_v2', alias_name: 'docs_live' },
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object[]` | Yes | Applied atomically |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+(
+  {
+    create_alias: {
+      collection_name: string,
+      alias_name: string
+    }
+  } | {
+    delete_alias: {
+      alias_name: string
+    }
+  } | {
+    rename_alias: {
+      old_alias_name: string,
+      new_alias_name: string
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `boolean`
+
+
+---
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a collection with dense, sparse or named vector configs, sharding and index settings
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.collections.create({
+	collectionName: 'docs',
+	vectors: {
+		dense: { size: 384, distance: 'Cosine' },
+	},
+	sparse_vectors: {
+		bm25: { modifier: 'idf' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `vectors` | `object` | No | — |
+| `sparse_vectors` | `object` | No | — |
+| `shard_number` | `number` | No | — |
+| `sharding_method` | `auto \| custom` | No | — |
+| `replication_factor` | `number` | No | — |
+| `write_consistency_factor` | `number` | No | — |
+| `on_disk_payload` | `boolean` | No | — |
+| `hnsw_config` | `object` | No | — |
+| `wal_config` | `object` | No | — |
+| `optimizers_config` | `object` | No | — |
+| `quantization_config` | `object` | No | — |
+| `strict_mode_config` | `object` | No | — |
+| `id_tracker` | `object` | No | — |
+| `payload` | `object` | No | Payload storage configuration |
+| `metadata` | `object` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="vectors full type">
+
+```ts
+{
+  size: number,
+  distance: Cosine | Euclid | Dot | Manhattan,
+  datatype?: float32 | float16 | uint8 | turbo4,
+  on_disk?: boolean,
+  multivector_config?: {
+    comparator: max_sim
+  }
+} | {
+}
+```
+</Accordion>
+
+<Accordion title="sparse_vectors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="hnsw_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="wal_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="optimizers_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="quantization_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="strict_mode_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="id_tracker full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### delete
+
+`collections.delete`
+
+Delete a collection and every point stored in it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.collections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### exists
+
+`collections.exists`
+
+Check whether a collection with the given name exists
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.collections.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`collections.get`
+
+Get a collection’s status, point counts, vector configuration and payload indexes
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.collections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `green \| yellow \| grey \| red` | Yes | — |
+| `optimizer_status` | `object` | Yes | — |
+| `points_count` | `number` | No | — |
+| `indexed_vectors_count` | `number` | No | — |
+| `segments_count` | `number` | Yes | — |
+| `config` | `object` | Yes | — |
+| `payload_schema` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="optimizer_status full type">
+
+```ts
+ok | {
+  error: string
+}
+```
+</Accordion>
+
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="payload_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List the names of all collections in the cluster
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.collections.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`collections.update`
+
+Update a collection’s vector, HNSW, optimizer, quantization or strict-mode parameters
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.collections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `vectors` | `object` | No | — |
+| `sparse_vectors` | `object` | No | — |
+| `params` | `object` | No | — |
+| `hnsw_config` | `object` | No | — |
+| `optimizers_config` | `object` | No | — |
+| `quantization_config` | `object` | No | — |
+| `strict_mode_config` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="vectors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sparse_vectors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="hnsw_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="optimizers_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="quantization_config full type">
+
+```ts
+{
+} | Disabled
+```
+</Accordion>
+
+<Accordion title="strict_mode_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `boolean`
+
+
+---
+
+## Payload Indexes
+
+### create
+
+`payloadIndexes.create`
+
+Index a payload field (keyword, integer, float, geo, text, bool, datetime, uuid) for filtering
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.payloadIndexes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `field_name` | `string` | Yes | Payload key, with dots for nested fields |
+| `field_schema` | `object` | Yes | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="field_schema full type">
+
+```ts
+keyword | integer | float | geo | text | bool | datetime | uuid | {
+  type: keyword | integer | float | geo | text | bool | datetime | uuid
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### delete
+
+`payloadIndexes.delete`
+
+Remove the index on a payload field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.payloadIndexes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+## Points
+
+### clearPayload
+
+`points.clearPayload`
+
+Remove every payload key from points selected by ID list or filter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.points.clearPayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### count
+
+`points.count`
+
+Count the points that match a filter, exactly or approximately
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.points.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `filter` | `object` | No | — |
+| `exact` | `boolean` | No | — |
+| `shard_key` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`points.delete`
+
+Delete points selected by ID list or by filter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.points.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### deletePayload
+
+`points.deletePayload`
+
+Remove specific payload keys from points selected by ID list or filter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.points.deletePayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `keys` | `string[]` | Yes | — |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### deleteVectors
+
+`points.deleteVectors`
+
+Remove named vectors from points selected by ID list or filter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.points.deleteVectors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `vector` | `string[]` | Yes | Names of the vectors |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### get
+
+`points.get`
+
+Retrieve points by ID, optionally with their payloads and vectors
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.points.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `ids` | `(number \| string)[]` | Yes | — |
+| `with_payload` | `object` | No | — |
+| `with_vector` | `boolean \| string[]` | No | — |
+| `shard_key` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="with_payload full type">
+
+```ts
+boolean | string[] | {
+  include: string[]
+} | {
+  exclude: string[]
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  payload?: {
+  } | null,
+  vector?: number[] | number[][] | {
+  } | null,
+  shard_key?: string | number | null,
+  order_value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### overwritePayload
+
+`points.overwritePayload`
+
+Replace the whole payload of points selected by ID list or filter
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.points.overwritePayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `key` | `string` | No | Not supported. Use setPayload instead |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### scroll
+
+`points.scroll`
+
+Page through points matching a filter. Pass next_page_offset back as offset to get the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.points.scroll({
+	collectionName: 'docs',
+	filter: {
+		must: [{
+			key: 'lang',
+			match: { value: 'en' },
+		}],
+	},
+	limit: 100,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `filter` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number \| string` | No | `next_page_offset` of the previous page |
+| `order_by` | `object` | No | — |
+| `with_payload` | `object` | No | — |
+| `with_vector` | `boolean \| string[]` | No | — |
+| `shard_key` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="order_by full type">
+
+```ts
+string | {
+  key: string,
+  direction?: asc | desc,
+  start_from?: number | string
+}
+```
+</Accordion>
+
+<Accordion title="with_payload full type">
+
+```ts
+boolean | string[] | {
+  include: string[]
+} | {
+  exclude: string[]
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `points` | `object[]` | Yes | — |
+| `next_page_offset` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="points full type">
+
+```ts
+{
+  id: number | string,
+  payload?: {
+  } | null,
+  vector?: number[] | number[][] | {
+  } | null,
+  shard_key?: string | number | null,
+  order_value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setPayload
+
+`points.setPayload`
+
+Merge payload keys into points selected by ID list or filter, optionally under a nested key
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.points.setPayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+| `key` | `string` | No | Nested path to set the payload under |
+| `points` | `(number \| string)[]` | No | — |
+| `filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### updateVectors
+
+`points.updateVectors`
+
+Replace specific named vectors on existing points, keeping the others
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.points.updateVectors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `points` | `object[]` | Yes | — |
+| `update_filter` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="points full type">
+
+```ts
+{
+  id: number | string,
+  vector: number[] | number[][] | {
+    model: string
+  } | {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="update_filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+### upsert
+
+`points.upsert`
+
+Insert or replace points with their vectors and payloads, waiting for the write by default
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.points.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `points` | `object[]` | Yes | — |
+| `update_filter` | `object` | No | Only overwrite existing points that match this filter |
+| `update_mode` | `upsert \| insert_only \| update_only` | No | — |
+| `shard_key` | `object` | No | — |
+| `wait` | `boolean` | Yes | Wait until the change is applied (Qdrant defaults to false) |
+| `ordering` | `weak \| medium \| strong` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="points full type">
+
+```ts
+{
+  id: number | string,
+  vector: number[] | number[][] | {
+    model: string
+  } | {
+  },
+  payload?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="update_filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operation_id` | `number` | No | — |
+| `status` | `string` | Yes | acknowledged \| completed \| wait_timeout |
+
+
+
+---
+
+## Query
+
+### batch
+
+`query.batch`
+
+Run several universal queries against one collection in a single request
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.query.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `searches` | `object[]` | Yes | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="searches full type">
+
+```ts
+{
+  prefetch?: lazy | lazy[],
+  query?: number[] | number[][] | number | string | {
+  },
+  using?: string,
+  filter?: {
+    must?: {
+    } | {
+    }[],
+    should?: {
+    } | {
+    }[],
+    must_not?: {
+    } | {
+    }[],
+    min_should?: {
+      conditions: {
+      }[],
+      min_count: number
+    }
+  },
+  params?: {
+  },
+  score_threshold?: number,
+  limit?: number,
+  offset?: number,
+  with_payload?: boolean | string[] | {
+    include: string[]
+  } | {
+    exclude: string[]
+  },
+  with_vector?: boolean | string[],
+  lookup_from?: {
+    collection: string,
+    vector?: string,
+    shard_key?: string | number | (
+      string | number
+    )[] | {
+    }
+  },
+  shard_key?: string | number | (
+    string | number
+  )[] | {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  points: {
+    id: number | string,
+    payload?: {
+    } | null,
+    vector?: number[] | number[][] | {
+    } | null,
+    shard_key?: string | number | null,
+    order_value?: number | null,
+    version: number,
+    score: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### facet
+
+`query.facet`
+
+Count points per distinct value of an indexed payload field
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.query.facet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `key` | `string` | Yes | Indexed payload field |
+| `limit` | `number` | No | — |
+| `filter` | `object` | No | — |
+| `exact` | `boolean` | No | — |
+| `shard_key` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  value: string | number | boolean,
+  count: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### groups
+
+`query.groups`
+
+Run a universal query and group hits by a payload field, e.g. one result per document
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.query.groups({
+	collectionName: 'docs',
+	query: [0.12, 0.08, 0.91, 0.33],
+	group_by: 'document_id',
+	group_size: 1,
+	limit: 10,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `prefetch` | `lazy \| lazy[]` | No | — |
+| `query` | `object` | No | — |
+| `using` | `string` | No | Named vector to search |
+| `filter` | `object` | No | — |
+| `params` | `object` | No | Search params, e.g. { hnsw_ef, exact } |
+| `score_threshold` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `with_payload` | `object` | No | — |
+| `with_vector` | `boolean \| string[]` | No | — |
+| `lookup_from` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `group_by` | `string` | Yes | — |
+| `group_size` | `number` | No | — |
+| `with_lookup` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+number[] | number[][] | number | string | {
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="with_payload full type">
+
+```ts
+boolean | string[] | {
+  include: string[]
+} | {
+  exclude: string[]
+}
+```
+</Accordion>
+
+<Accordion title="lookup_from full type">
+
+```ts
+{
+  collection: string,
+  vector?: string,
+  shard_key?: string | number | (
+    string | number
+  )[] | {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+
+<Accordion title="with_lookup full type">
+
+```ts
+string | {
+  collection: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string | number,
+  hits: {
+    id: number | string,
+    payload?: {
+    } | null,
+    vector?: number[] | number[][] | {
+    } | null,
+    shard_key?: string | number | null,
+    order_value?: number | null,
+    version: number,
+    score: number
+  }[],
+  lookup?: {
+    id: number | string,
+    payload?: {
+    } | null,
+    vector?: number[] | number[][] | {
+    } | null,
+    shard_key?: string | number | null,
+    order_value?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### points
+
+`query.points`
+
+Universal query: nearest-neighbour, hybrid fusion with prefetch, recommend, discover, or order-by
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.query.points({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `prefetch` | `lazy \| lazy[]` | No | — |
+| `query` | `object` | No | — |
+| `using` | `string` | No | Named vector to search |
+| `filter` | `object` | No | — |
+| `params` | `object` | No | Search params, e.g. { hnsw_ef, exact } |
+| `score_threshold` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `with_payload` | `object` | No | — |
+| `with_vector` | `boolean \| string[]` | No | — |
+| `lookup_from` | `object` | No | — |
+| `shard_key` | `object` | No | — |
+| `consistency` | `number \| majority \| quorum \| all` | No | — |
+| `timeout` | `number` | No | Request timeout in seconds |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+number[] | number[][] | number | string | {
+}
+```
+</Accordion>
+
+<Accordion title="filter full type">
+
+```ts
+{
+  must?: {
+  } | {
+  }[],
+  should?: {
+  } | {
+  }[],
+  must_not?: {
+  } | {
+  }[],
+  min_should?: {
+    conditions: {
+    }[],
+    min_count: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="with_payload full type">
+
+```ts
+boolean | string[] | {
+  include: string[]
+} | {
+  exclude: string[]
+}
+```
+</Accordion>
+
+<Accordion title="lookup_from full type">
+
+```ts
+{
+  collection: string,
+  vector?: string,
+  shard_key?: string | number | (
+    string | number
+  )[] | {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="shard_key full type">
+
+```ts
+string | number | (
+  string | number
+)[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `points` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="points full type">
+
+```ts
+{
+  id: number | string,
+  payload?: {
+  } | null,
+  vector?: number[] | number[][] | {
+  } | null,
+  shard_key?: string | number | null,
+  order_value?: number | null,
+  version: number,
+  score: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Snapshots
+
+### create
+
+`snapshots.create`
+
+Create a snapshot of a collection on the node and wait for it to finish
+
+**Risk:** `write`
+
+```ts
+await corsair.qdrant.api.snapshots.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `creation_time` | `string` | No | — |
+| `size` | `number` | Yes | — |
+| `checksum` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`snapshots.delete`
+
+Delete a collection snapshot from the node
+
+**Risk:** `destructive`
+
+```ts
+await corsair.qdrant.api.snapshots.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+| `snapshotName` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### list
+
+`snapshots.list`
+
+List the snapshots stored for a collection
+
+**Risk:** `read`
+
+```ts
+await corsair.qdrant.api.snapshots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionName` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  creation_time?: string | null,
+  size: number,
+  checksum?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
