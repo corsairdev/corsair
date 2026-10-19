@@ -56,6 +56,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apipie',
 	'apisports',
+	'apollo',
 	'appointo',
 	'aryn',
 	'asana',
@@ -410,6 +411,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
+	apollo: 'Apollo',
 	appointo: 'Appointo',
 	aryn: 'Aryn',
 	asana: 'Asana',
@@ -771,6 +773,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apipie'
 	| 'apisports'
+	| 'apollo'
 	| 'appointo'
 	| 'aryn'
 	| 'asana'
