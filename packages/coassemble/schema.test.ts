@@ -156,7 +156,9 @@ describe('CoassembleSchema & Endpoints Schemas', () => {
 			});
 			expect(input.id).toBe(12);
 
-			expect(() => GetTrackingsInputSchema.parse({ identifier: 'u1' })).toThrow();
+			expect(() =>
+				GetTrackingsInputSchema.parse({ identifier: 'u1' }),
+			).toThrow();
 
 			const output = GetTrackingsResponseSchema.parse([
 				{ id: 100, passed: true },

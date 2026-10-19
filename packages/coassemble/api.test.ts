@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { makeCoassembleRequest } from './client';
 import type {
 	GetClientsResponse,
@@ -197,8 +196,7 @@ describe('Coassemble API Contract & Schema Parsing Tests', () => {
 			},
 		];
 
-		const parsed =
-			CoassembleEndpointOutputSchemas.getUsers.parse(rawResponse);
+		const parsed = CoassembleEndpointOutputSchemas.getUsers.parse(rawResponse);
 		expect(parsed.length).toBe(1);
 		expect(parsed[0]?.identifier).toBe('user_999');
 		expect(parsed[0]?.name).toBe('Jane Doe');

@@ -1,6 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { COASSEMBLE_API_BASE, makeCoassembleRequest } from './client';
+import {
+	COASSEMBLE_API_BASE,
+	makeCoassembleRequest,
+	requireWorkspaceId,
+	resolveWorkspaceId,
+} from './client';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -17,6 +21,58 @@ function lastCall(): Parameters<typeof request> {
 
 beforeEach(() => {
 	mockRequest.mockReset();
+});
+
+describe('requireWorkspaceId', () => {
+	it('returns the workspace ID when present', () => {
+		expect(requireWorkspaceId('ws-123')).toBe('ws-123');
+	});
+
+	it('throws error when workspace ID is undefined, null, or empty', () => {
+		expect(() => requireWorkspaceId(undefined)).toThrow(
+			'Coassemble workspace ID is missing',
+		);
+		expect(() => requireWorkspaceId(null)).toThrow(
+			'Coassemble workspace ID is missing',
+		);
+		expect(() => requireWorkspaceId('')).toThrow(
+			'Coassemble workspace ID is missing',
+		);
+	});
+});
+
+describe('resolveWorkspaceId', () => {
+	it('skips account storage and returns options.workspaceId when options.key is set', async () => {
+		const getWorkspaceIdMock = jest.fn();
+		const result = await resolveWorkspaceId({
+			options: { key: 'custom-key', workspaceId: 'custom-ws' },
+			keys: { get_workspace_id: getWorkspaceIdMock },
+		});
+
+		expect(result).toBe('custom-ws');
+		expect(getWorkspaceIdMock).not.toHaveBeenCalled();
+	});
+
+	it('awaits keys.get_workspace_id when options.key is not set', async () => {
+		const getWorkspaceIdMock = jest.fn().mockResolvedValue('stored-ws');
+		const result = await resolveWorkspaceId({
+			options: {},
+			keys: { get_workspace_id: getWorkspaceIdMock },
+		});
+
+		expect(result).toBe('stored-ws');
+		expect(getWorkspaceIdMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('throws when neither options.workspaceId nor stored workspace ID is present', async () => {
+		const getWorkspaceIdMock = jest.fn().mockResolvedValue(undefined);
+		await expect(
+			resolveWorkspaceId({
+				options: {},
+				keys: { get_workspace_id: getWorkspaceIdMock },
+			}),
+		).rejects.toThrow('Coassemble workspace ID is missing');
+	});
 });
 
 describe('makeCoassembleRequest', () => {

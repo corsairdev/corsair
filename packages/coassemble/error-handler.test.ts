@@ -3,7 +3,10 @@ import { errorHandlers } from './error-handlers';
 
 function makeApiError(status: number, retryAfter?: number): ApiError {
 	return new ApiError(
-		{ method: 'GET', url: 'https://api.coassemble.com/api/v1/headless/clients' },
+		{
+			method: 'GET',
+			url: 'https://api.coassemble.com/api/v1/headless/clients',
+		},
 		{
 			url: 'https://api.coassemble.com/api/v1/headless/clients',
 			ok: false,

@@ -1,11 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCoassembleRequest } from './client';
-import {
-	getClients,
-	getCourses,
-	getTrackings,
-	getUsers,
-} from './endpoints';
+import { getClients, getCourses, getTrackings, getUsers } from './endpoints';
 import type { CoassembleContext } from './index';
 
 jest.mock('./client', () => ({
@@ -222,5 +217,33 @@ describe('Coassemble endpoints', () => {
 		);
 
 		expect(mockMakeRequest).not.toHaveBeenCalled();
+	});
+
+	describe('runtime schema enforcement', () => {
+		it('rejects input with invalid pagination parameters', async () => {
+			await expect(getClients(ctx, { length: 0 })).rejects.toThrow();
+			await expect(getCourses(ctx, { length: -5 })).rejects.toThrow();
+		});
+
+		it('rejects input with non-integer course ID for trackings', async () => {
+			await expect(getTrackings(ctx, { id: 1.5 })).rejects.toThrow();
+		});
+
+		it('rejects provider responses missing required entity fields', async () => {
+			// Courses require a numeric id
+			mockMakeRequest.mockImplementationOnce(async () => [
+				{ title: 'Course without id' },
+			]);
+
+			await expect(getCourses(ctx, {})).rejects.toThrow();
+		});
+
+		it('rejects provider responses that are not arrays', async () => {
+			mockMakeRequest.mockImplementationOnce(async () => ({
+				error: 'malformed response',
+			}));
+
+			await expect(getClients(ctx, {})).rejects.toThrow();
+		});
 	});
 });

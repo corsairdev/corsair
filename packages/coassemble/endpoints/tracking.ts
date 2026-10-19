@@ -3,8 +3,13 @@ import { logEventFromContext } from 'corsair/core';
 import { makeCoassembleRequest, resolveWorkspaceId } from '../client';
 import type { CoassembleEndpoints } from '../index';
 import type { CoassembleEndpointOutputs } from './types';
+import { GetTrackingsInputSchema, GetTrackingsResponseSchema } from './types';
 
-export const get: CoassembleEndpoints['getTrackings'] = async (ctx, input) => {
+export const get: CoassembleEndpoints['getTrackings'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = GetTrackingsInputSchema.parse(rawInput);
 	const workspaceId = await resolveWorkspaceId(ctx);
 
 	const response = await makeCoassembleRequest<
@@ -21,5 +26,5 @@ export const get: CoassembleEndpoints['getTrackings'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return response;
+	return GetTrackingsResponseSchema.parse(response);
 };
