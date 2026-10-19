@@ -1,5 +1,9 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from '../../hub/managed-pricing-auth';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
@@ -28,6 +32,17 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+
+const managedPricingCacheByPlugin = new Map<string, object>();
+
+function managedPricingCacheFor(pluginId: string): object {
+	let cache = managedPricingCacheByPlugin.get(pluginId);
+	if (!cache) {
+		cache = createManagedPricingCredentialCache();
+		managedPricingCacheByPlugin.set(pluginId, cache);
+	}
+	return cache;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -286,13 +301,24 @@ export function bindEndpointsRecursively({
 				};
 
 				let key: string | undefined;
+				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
+				const authType = (ctx as { authType?: string }).authType;
 				try {
-					key = keyBuilder
-						? await keyBuilder(
-								{ ...ctx, meteredOperationId: operationPath },
-								'endpoint',
-							)
-						: undefined;
+					if (authType === 'managed_pricing' && hubConfig) {
+						key = await resolveManagedPricingApiKey(
+							{
+								hub: hubConfig,
+								tenantId,
+								meteredOperationId: operationPath,
+							},
+							{
+								plugin: pluginId,
+								cache: managedPricingCacheFor(pluginId),
+							},
+						);
+					} else if (keyBuilder) {
+						key = await keyBuilder(endpointCtx, 'endpoint');
+					}
 				} catch (err) {
 					// Hub already minted a scoped connect link and put it on the typed
 					// error — report the connection unverified and rethrow it intact.

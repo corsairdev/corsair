@@ -121,6 +121,7 @@ export async function hubApiPost<T>(input: {
 	body: unknown;
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
+	extraHeaders?: Record<string, string>;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
@@ -130,6 +131,7 @@ export async function hubApiPost<T>(input: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
 			...instanceKeyHeader(input.hub),
+			...input.extraHeaders,
 		},
 		body: JSON.stringify(input.body),
 	});

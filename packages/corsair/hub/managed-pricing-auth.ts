@@ -155,6 +155,9 @@ export async function getManagedPricingApiKey(
 				tenantId: ctx.tenantId,
 				operation,
 			},
+			extraHeaders: {
+				'x-corsair-metered-operation': operation,
+			},
 			notFoundMessage: 'Managed pricing is not configured for this project',
 			parseResponse: parseManagedPricingCredentialsResponse,
 		});
