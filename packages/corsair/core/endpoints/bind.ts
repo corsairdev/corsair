@@ -32,6 +32,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { getPluginAuthType } from '../utils/plugin-auth';
 
 const managedPricingCacheByPlugin = new Map<string, object>();
 
@@ -302,12 +303,11 @@ export function bindEndpointsRecursively({
 
 				let key: string | undefined;
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
-				const authType =
-					typeof ctx.authType === 'string' ? ctx.authType : undefined;
 				const ctxTenantId =
 					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
+				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
 				try {
-					if (authType === 'managed_pricing' && hubConfig) {
+					if (pluginAuthType === 'managed_pricing' && hubConfig) {
 						key = await resolveManagedPricingApiKey(
 							{
 								hub: hubConfig,
@@ -317,6 +317,7 @@ export function bindEndpointsRecursively({
 							{
 								plugin: pluginId,
 								cache: managedPricingCacheFor(pluginId),
+								operation: operationPath,
 							},
 						);
 					} else if (keyBuilder) {

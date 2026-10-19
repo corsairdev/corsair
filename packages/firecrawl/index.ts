@@ -372,6 +372,7 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				return resolveManagedPricingApiKey(ctx, {
 					plugin: 'firecrawl',
 					cache: firecrawlManagedPricingCache,
+					operation: ctx.meteredOperationId,
 				});
 			}
 

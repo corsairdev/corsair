@@ -189,7 +189,7 @@ export function createManagedPricingCredentialCache(): object {
  */
 export async function resolveManagedPricingApiKey(
 	ctx: ManagedPricingKeyBuilderContext,
-	input: { plugin: string; cache: object },
+	input: { plugin: string; cache: object; operation?: string },
 ): Promise<string> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
 	const tenantId = ctx.tenantId?.trim();
@@ -200,7 +200,7 @@ export async function resolveManagedPricingApiKey(
 			`[auth-missing:${input.plugin}:managed_pricing]: tenantId is required for metered credentials.`,
 		);
 	}
-	const operation = ctx.meteredOperationId?.trim();
+	const operation = (input.operation ?? ctx.meteredOperationId)?.trim();
 	if (!operation) {
 		throw new AuthMissingError(
 			input.plugin,

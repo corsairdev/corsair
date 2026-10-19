@@ -3,6 +3,7 @@ import {
 	createManagedPricingCredentialCache,
 	getManagedPricingApiKey,
 	requireHubForManagedPricing,
+	resolveManagedPricingApiKey,
 } from '../hub/managed-pricing-auth';
 import type { HubConfig } from '../hub/types';
 
@@ -18,6 +19,43 @@ describe('requireHubForManagedPricing', () => {
 	it('throws AuthMissingError when hub is missing', () => {
 		expect(() => requireHubForManagedPricing('firecrawl', undefined)).toThrow(
 			AuthMissingError,
+		);
+	});
+});
+
+describe('resolveManagedPricingApiKey', () => {
+	const cache = createManagedPricingCredentialCache();
+	const originalFetch = global.fetch;
+
+	afterEach(() => {
+		global.fetch = originalFetch;
+		jest.restoreAllMocks();
+	});
+
+	it('forwards operation from input when ctx has no meteredOperationId', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			headers: { get: () => 'application/json' },
+			text: async () =>
+				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+		})) as typeof fetch;
+
+		const apiKey = await resolveManagedPricingApiKey(
+			{ hub, tenantId: 'tenant_a' },
+			{ plugin: 'firecrawl', cache, operation: TEST_OPERATION },
+		);
+
+		expect(apiKey).toBe('fc-test-key');
+		expect(global.fetch).toHaveBeenCalledWith(
+			'https://hub.test/managed-pricing/credentials',
+			expect.objectContaining({
+				body: JSON.stringify({
+					plugin: 'firecrawl',
+					tenantId: 'tenant_a',
+					operation: TEST_OPERATION,
+				}),
+			}),
 		);
 	});
 });
