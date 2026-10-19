@@ -142,6 +142,21 @@ describe('tasks.move', () => {
 		});
 	});
 
+	it('accepts order and leaves it out of the move body', async () => {
+		mockFetch(movedTask);
+		const { ctx } = makeCtx();
+
+		await Tasks.move(ctx, {
+			id: 'task-1',
+			project_id: 'project-2',
+			order: 4,
+		});
+
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+			project_id: 'project-2',
+		});
+	});
+
 	it('does not call Todoist without exactly one destination', async () => {
 		mockFetch(movedTask);
 		const { ctx } = makeCtx();
@@ -159,13 +174,10 @@ describe('tasks.move', () => {
 				section_id: 'section-3',
 			}),
 		).rejects.toThrow(ZodError);
-		await expect(
-			move(ctx, { id: 'task-1', project_id: 'project-2', order: 4 }),
-		).rejects.toThrow(ZodError);
 		expect(captured).toBeUndefined();
 	});
 
-	it('rejects those inputs on the published schema', () => {
+	it('rejects an empty or mixed destination and still accepts order', () => {
 		expect(
 			TodoistEndpointInputSchemas.tasksMove.safeParse({ id: 'task-1' }).success,
 		).toBe(false);
@@ -182,6 +194,6 @@ describe('tasks.move', () => {
 				section_id: 'section-3',
 				order: 4,
 			}).success,
-		).toBe(false);
+		).toBe(true);
 	});
 });

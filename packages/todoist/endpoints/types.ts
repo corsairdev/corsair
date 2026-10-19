@@ -113,19 +113,22 @@ const TasksGetManyInputSchema = z.object({
 	ids: z.array(z.string()).optional(),
 });
 
-// item_move takes exactly one destination. order is an update field, not a move field.
+// item_move takes exactly one destination. order stays optional so existing callers still compile, and the handler leaves it off the body.
 const TasksMoveInputSchema = z.union([
 	z.strictObject({
 		id: z.string(),
 		project_id: z.string(),
+		order: z.number().optional(),
 	}),
 	z.strictObject({
 		id: z.string(),
 		section_id: z.string(),
+		order: z.number().optional(),
 	}),
 	z.strictObject({
 		id: z.string(),
 		parent_id: z.string(),
+		order: z.number().optional(),
 	}),
 ]);
 
