@@ -294,10 +294,18 @@ export function mrscraper<const T extends MrscraperPluginOptions>(
 		webhooks: {},
 		endpointMeta: mrscraperEndpointMeta,
 		endpointSchemas: mrscraperEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// Core selects the first handler whose matcher accepts the error
+			// (`Object.keys(...).find`), and DEFAULT matches everything, so
+			// DEFAULT must be evaluated last - otherwise it shadows any custom
+			// handler a caller contributes through options.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		// A missing stored key throws AuthMissingError from the key builder so
 		// Corsair creates the account-connect link; the request client keeps its
 		// fast-fail guard for keys that resolve empty by any other route.

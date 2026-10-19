@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { MRSCRAPER_API_BASE } from './client';
 import { Account, Analytics, Results, Scrape, Scrapers } from './endpoints';
-import type { MrscraperContext } from './index';
+import type { MrscraperContext, MrscraperPluginOptions } from './index';
 import { mrscraper, mrscraperEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -597,5 +597,44 @@ describe('mrscraper plugin shape', () => {
 			expect(entry.output).toBeDefined();
 		}
 		expect(Object.keys(mrscraperEndpointSchemas)).toHaveLength(19);
+	});
+});
+
+describe('mrscraper custom error handlers', () => {
+	it('evaluates caller-provided handlers before the catch-all DEFAULT', () => {
+		const plugin = mrscraper<MrscraperPluginOptions>({
+			authType: 'api_key',
+			errorHandlers: {
+				CUSTOM_ERROR: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names).toContain('CUSTOM_ERROR');
+		// Core selects the first handler whose matcher accepts the error and
+		// DEFAULT matches everything, so a custom handler is only reachable
+		// when DEFAULT is evaluated last.
+		expect(names[names.length - 1]).toBe('DEFAULT');
+		expect(names.indexOf('CUSTOM_ERROR')).toBeLessThan(
+			names.indexOf('DEFAULT'),
+		);
+	});
+
+	it('keeps a caller override of DEFAULT in the last position', () => {
+		const override = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 7 }),
+		};
+		const plugin = mrscraper<MrscraperPluginOptions>({
+			authType: 'api_key',
+			errorHandlers: { DEFAULT: override },
+		});
+
+		expect(plugin.errorHandlers?.DEFAULT).toBe(override);
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names[names.length - 1]).toBe('DEFAULT');
 	});
 });
