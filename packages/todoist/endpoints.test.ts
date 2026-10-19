@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
+import { ZodError } from 'zod';
 import * as Tasks from './endpoints/tasks';
-import { TodoistEndpointOutputSchemas } from './endpoints/types';
+import {
+	TodoistEndpointInputSchemas,
+	TodoistEndpointOutputSchemas,
+} from './endpoints/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -24,6 +28,7 @@ function makeCtx() {
 	};
 }
 
+const originalFetch = global.fetch;
 let captured: { url: string; method: string; body?: string } | undefined;
 
 function mockFetch(payload: object) {
@@ -87,51 +92,12 @@ const movedTask = {
 };
 
 describe('tasks.move', () => {
-	it('accepts the documented move response as its output', () => {
-		const parsed = TodoistEndpointOutputSchemas.tasksMove.safeParse(movedTask);
-
-		expect(parsed.success).toBe(true);
-		expect(parsed.data).toMatchObject({
-			id: 'task-1',
-			project_id: 'project-2',
-			section_id: null,
-			parent_id: null,
-		});
+	afterEach(() => {
+		global.fetch = originalFetch;
+		captured = undefined;
 	});
 
-	it('posts to the move route with only the move fields', async () => {
-		mockFetch(movedTask);
-		const { ctx } = makeCtx();
-
-		await Tasks.move(ctx, { id: 'task-1', project_id: 'project-2' });
-
-		expect(captured?.method).toBe('POST');
-		expect(captured?.url).toBe(
-			'https://api.todoist.com/api/v1/tasks/task-1/move',
-		);
-		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
-			project_id: 'project-2',
-		});
-	});
-
-	it('sends section_id and parent_id without the task id or order', async () => {
-		mockFetch(movedTask);
-		const { ctx } = makeCtx();
-
-		await Tasks.move(ctx, {
-			id: 'task-1',
-			section_id: 'section-3',
-			parent_id: 'task-9',
-			order: 4,
-		});
-
-		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
-			section_id: 'section-3',
-			parent_id: 'task-9',
-		});
-	});
-
-	it('stores the moved task returned by Todoist', async () => {
+	it('posts project_id to the move route and stores the returned task', async () => {
 		mockFetch(movedTask);
 		const { ctx, db } = makeCtx();
 
@@ -140,7 +106,82 @@ describe('tasks.move', () => {
 			project_id: 'project-2',
 		});
 
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe(
+			'https://api.todoist.com/api/v1/tasks/task-1/move',
+		);
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+			project_id: 'project-2',
+		});
 		expect(result).toEqual(movedTask);
+		expect(
+			TodoistEndpointOutputSchemas.tasksMove.safeParse(result).success,
+		).toBe(true);
 		expect(db.tasks.upsertByEntityId).toHaveBeenCalledWith('task-1', movedTask);
+	});
+
+	it('posts section_id alone', async () => {
+		mockFetch(movedTask);
+		const { ctx } = makeCtx();
+
+		await Tasks.move(ctx, { id: 'task-1', section_id: 'section-3' });
+
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+			section_id: 'section-3',
+		});
+	});
+
+	it('posts parent_id alone', async () => {
+		mockFetch(movedTask);
+		const { ctx } = makeCtx();
+
+		await Tasks.move(ctx, { id: 'task-1', parent_id: 'task-9' });
+
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+			parent_id: 'task-9',
+		});
+	});
+
+	it('does not call Todoist without exactly one destination', async () => {
+		mockFetch(movedTask);
+		const { ctx } = makeCtx();
+		// The move input union forbids these shapes. The cast reaches the runtime parse.
+		const move = Tasks.move as (
+			ctx: Parameters<typeof Tasks.move>[0],
+			input: unknown,
+		) => ReturnType<typeof Tasks.move>;
+
+		await expect(move(ctx, { id: 'task-1' })).rejects.toThrow(ZodError);
+		await expect(
+			move(ctx, {
+				id: 'task-1',
+				project_id: 'project-2',
+				section_id: 'section-3',
+			}),
+		).rejects.toThrow(ZodError);
+		await expect(
+			move(ctx, { id: 'task-1', project_id: 'project-2', order: 4 }),
+		).rejects.toThrow(ZodError);
+		expect(captured).toBeUndefined();
+	});
+
+	it('rejects those inputs on the published schema', () => {
+		expect(
+			TodoistEndpointInputSchemas.tasksMove.safeParse({ id: 'task-1' }).success,
+		).toBe(false);
+		expect(
+			TodoistEndpointInputSchemas.tasksMove.safeParse({
+				id: 'task-1',
+				project_id: 'project-2',
+				parent_id: 'task-9',
+			}).success,
+		).toBe(false);
+		expect(
+			TodoistEndpointInputSchemas.tasksMove.safeParse({
+				id: 'task-1',
+				section_id: 'section-3',
+				order: 4,
+			}).success,
+		).toBe(false);
 	});
 });

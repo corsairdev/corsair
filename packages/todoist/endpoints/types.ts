@@ -113,13 +113,21 @@ const TasksGetManyInputSchema = z.object({
 	ids: z.array(z.string()).optional(),
 });
 
-const TasksMoveInputSchema = z.object({
-	id: z.string(),
-	project_id: z.string().optional(),
-	section_id: z.string().optional(),
-	parent_id: z.string().optional(),
-	order: z.number().optional(),
-});
+// item_move takes exactly one destination. order is an update field, not a move field.
+const TasksMoveInputSchema = z.union([
+	z.strictObject({
+		id: z.string(),
+		project_id: z.string(),
+	}),
+	z.strictObject({
+		id: z.string(),
+		section_id: z.string(),
+	}),
+	z.strictObject({
+		id: z.string(),
+		parent_id: z.string(),
+	}),
+]);
 
 const TasksQuickAddInputSchema = z.object({
 	text: z.string(),
