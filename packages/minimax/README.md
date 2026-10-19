@@ -15,17 +15,17 @@ pnpm add @corsair-dev/minimax
 | `chat.completion` | `minimax.chat.completion` | `read` | Create a chat completion with a MiniMax text model |
 | `chat.createResponse` | `minimax.chat.createResponse` | `read` | Create a model response via the Responses API |
 | `chat.estimateInputTokens` | `minimax.chat.estimateInputTokens` | `read` | Estimate the input token count of a request |
-| `speech.t2a` | `minimax.speech.t2a` | `read` | Synthesize speech from text (synchronous T2A) |
+| `speech.t2a` | `minimax.speech.t2a` | `write` | Synthesize speech from text (synchronous T2A) |
 | `speech.createAsyncTask` | `minimax.speech.createAsyncTask` | `write` | Create an asynchronous long-text speech synthesis task |
 | `speech.queryAsyncTask` | `minimax.speech.queryAsyncTask` | `read` | Query the status of an asynchronous speech synthesis task |
 | `voice.list` | `minimax.voice.list` | `read` | List system, cloned and generated voices |
 | `voice.clone` | `minimax.voice.clone` | `write` | Clone a voice from uploaded audio |
 | `voice.design` | `minimax.voice.design` | `write` | Design a custom voice from a description |
 | `voice.delete` | `minimax.voice.delete` | `destructive` | Delete a generated voice permanently |
-| `music.generate` | `minimax.music.generate` | `read` | Generate a song from a prompt and lyrics |
-| `music.coverPreprocess` | `minimax.music.coverPreprocess` | `read` | Preprocess reference audio for two-step music cover generation |
-| `music.generateLyrics` | `minimax.music.generateLyrics` | `read` | Generate or edit song lyrics |
-| `image.generate` | `minimax.image.generate` | `read` | Generate images from a prompt, optionally with a subject reference |
+| `music.generate` | `minimax.music.generate` | `write` | Generate a song from a prompt and lyrics |
+| `music.coverPreprocess` | `minimax.music.coverPreprocess` | `write` | Preprocess reference audio for two-step music cover generation |
+| `music.generateLyrics` | `minimax.music.generateLyrics` | `write` | Generate or edit song lyrics |
+| `image.generate` | `minimax.image.generate` | `write` | Generate images from a prompt, optionally with a subject reference |
 | `video.generate` | `minimax.video.generate` | `write` | Create a Hailuo video generation task |
 | `video.query` | `minimax.video.query` | `read` | Query a Hailuo video generation task |
 | `video.generateV2` | `minimax.video.generateV2` | `write` | Create an H3 multimodal video generation task |

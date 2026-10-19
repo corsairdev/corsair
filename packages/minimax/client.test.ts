@@ -60,6 +60,9 @@ describe('makeMinimaxRequest', () => {
 				query: { trace: 'on' },
 			}),
 		);
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
+		});
 	});
 
 	it('defaults to GET and omits Authorization when no key is supplied', async () => {

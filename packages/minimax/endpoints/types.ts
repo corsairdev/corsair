@@ -169,6 +169,10 @@ export const ChatCompletionInputSchema = z
 			.passthrough()
 			.optional(),
 		mask_sensitive_info: z.boolean().optional(),
+		// Streaming is out of scope: the transport returns the `text/event-stream`
+		// body as a string and the object output schema would then fail *after*
+		// the generation was billed. Reject it locally instead.
+		stream: z.literal(false).optional(),
 	})
 	.passthrough();
 
@@ -251,6 +255,9 @@ export const CreateResponseInputSchema = z
 			.object({ effort: z.string().optional() })
 			.passthrough()
 			.optional(),
+		// See ChatCompletionInputSchema: streaming cannot be represented by the
+		// object output schema, so reject it before the request is billed.
+		stream: z.literal(false).optional(),
 	})
 	.passthrough();
 
@@ -297,6 +304,8 @@ export const EstimateInputTokensInputSchema = z
 			.object({ effort: z.string().optional() })
 			.passthrough()
 			.optional(),
+		// See ChatCompletionInputSchema: reject streaming before any billed call.
+		stream: z.literal(false).optional(),
 	})
 	.passthrough();
 
@@ -430,8 +439,9 @@ export const SpeechCreateAsyncTaskInputSchema = z
 	})
 	.passthrough()
 	.refine(
-		(value) => value.text !== undefined || value.text_file_id !== undefined,
-		{ message: 'Provide either text or text_file_id' },
+		(value) =>
+			(value.text !== undefined) !== (value.text_file_id !== undefined),
+		{ message: 'Provide exactly one of text or text_file_id' },
 	);
 
 export type SpeechCreateAsyncTaskInput = z.infer<
@@ -465,7 +475,19 @@ export type SpeechQueryAsyncTaskInput = z.infer<
 export const SpeechQueryAsyncTaskOutputSchema = z
 	.object({
 		task_id: z.union([z.string(), z.number()]).optional(),
-		status: z.enum(['success', 'failed', 'expired', 'processing']),
+		// The docs capitalise these in examples ("Processing", "Success", ...)
+		// while other parts of the same page use the lowercase forms; accept
+		// both so a real response never throws.
+		status: z.enum([
+			'success',
+			'failed',
+			'expired',
+			'processing',
+			'Success',
+			'Failed',
+			'Expired',
+			'Processing',
+		]),
 		file_id: z.number().int().optional(),
 		base_resp: BaseRespSchema.optional(),
 	})
@@ -1005,8 +1027,8 @@ export const VideoRegenerateInputSchema = z
 	.passthrough()
 	.refine(
 		(value) =>
-			value.source_task_id !== undefined || value.content !== undefined,
-		{ message: 'Provide either source_task_id or content' },
+			(value.source_task_id !== undefined) !== (value.content !== undefined),
+		{ message: 'Provide exactly one of source_task_id or content' },
 	);
 
 export type VideoRegenerateInput = z.infer<typeof VideoRegenerateInputSchema>;

@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import {
 	Chat,
 	Files,
@@ -262,7 +264,7 @@ const minimaxEndpointMeta = {
 		description: 'Estimate the input token count of a request',
 	},
 	'speech.t2a': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Synthesize speech from text (synchronous T2A)',
 	},
 	'speech.createAsyncTask': {
@@ -292,20 +294,20 @@ const minimaxEndpointMeta = {
 			'Delete a generated voice permanently [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'music.generate': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Generate a song from a prompt and lyrics',
 	},
 	'music.coverPreprocess': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Preprocess reference audio for two-step music cover generation',
 	},
 	'music.generateLyrics': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Generate or edit song lyrics',
 	},
 	'image.generate': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Generate images from a prompt, optionally with a subject reference',
 	},
@@ -428,15 +430,20 @@ export function minimax<const T extends MinimaxPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		// A missing stored key resolves to an empty string; the request client
-		// turns that into AuthMissingError before any network call.
+		// When no key is configured the keyBuilder throws AuthMissingError so
+		// Core can surface its account-connect prompt instead of letting the
+		// request fail at the provider.
 		keyBuilder: async (ctx: MinimaxKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('minimax', 'api_key');
+				}
+				return storedKey;
 			}
 
 			return '';

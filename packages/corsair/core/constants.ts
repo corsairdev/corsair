@@ -592,7 +592,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
-	minimax: 'Minimax',
+	minimax: 'MiniMax',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',

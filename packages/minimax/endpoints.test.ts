@@ -106,6 +106,34 @@ describe('chat.completion', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 		expect(mockedLogEvent).not.toHaveBeenCalled();
 	});
+
+	it('rejects stream: true before calling the API', async () => {
+		await expect(
+			invokeWith(Chat.completion, {
+				model: 'MiniMax-M2',
+				messages: [{ role: 'user', content: 'hi' }],
+				stream: true,
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts stream: false and an omitted stream', async () => {
+		mockedRequest.mockResolvedValue({ id: 'chat-1' });
+
+		await Chat.completion(ctx, {
+			model: 'MiniMax-M2',
+			messages: [{ role: 'user', content: 'hi' }],
+			stream: false,
+		});
+		await Chat.completion(ctx, {
+			model: 'MiniMax-M2',
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+	});
 });
 
 describe('chat.createResponse', () => {
@@ -143,6 +171,31 @@ describe('chat.createResponse', () => {
 
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
+
+	it('rejects stream: true before calling the API', async () => {
+		await expect(
+			invokeWith(Chat.createResponse, {
+				model: 'MiniMax-M2',
+				input: 'hi',
+				stream: true,
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts stream: false and an omitted stream', async () => {
+		mockedRequest.mockResolvedValue({ id: 'resp-1', status: 'completed' });
+
+		await Chat.createResponse(ctx, {
+			model: 'MiniMax-M2',
+			input: 'hi',
+			stream: false,
+		});
+		await Chat.createResponse(ctx, { model: 'MiniMax-M2', input: 'hi' });
+
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+	});
 });
 
 describe('chat.estimateInputTokens', () => {
@@ -176,6 +229,34 @@ describe('chat.estimateInputTokens', () => {
 		).rejects.toThrow();
 
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects stream: true before calling the API', async () => {
+		await expect(
+			invokeWith(Chat.estimateInputTokens, {
+				model: 'MiniMax-M2',
+				input: 'hi',
+				stream: true,
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts stream: false and an omitted stream', async () => {
+		mockedRequest.mockResolvedValue({
+			object: 'response.input_tokens',
+			input_tokens: 5,
+		});
+
+		await Chat.estimateInputTokens(ctx, {
+			model: 'MiniMax-M2',
+			input: 'hi',
+			stream: false,
+		});
+		await Chat.estimateInputTokens(ctx, { model: 'MiniMax-M2', input: 'hi' });
+
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
 	});
 });
 
@@ -248,6 +329,32 @@ describe('speech.createAsyncTask', () => {
 
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
+
+	it('rejects input with both text and text_file_id', async () => {
+		await expect(
+			invokeWith(Speech.createAsyncTask, {
+				model: 'speech-2.6-hd',
+				text: 'a long passage',
+				text_file_id: 1,
+				voice_setting: { voice_id: 'v1' },
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts the text_file_id input mode', async () => {
+		const input: MinimaxEndpointInputs['speechCreateAsyncTask'] = {
+			model: 'speech-2.6-hd',
+			text_file_id: 1,
+			voice_setting: { voice_id: 'v1' },
+		};
+		mockedRequest.mockResolvedValue({ task_id: 'task-2' });
+
+		const result = await Speech.createAsyncTask(ctx, input);
+
+		expect(result).toEqual({ task_id: 'task-2' });
+	});
 });
 
 describe('speech.queryAsyncTask', () => {
@@ -280,6 +387,24 @@ describe('speech.queryAsyncTask', () => {
 		).rejects.toThrow();
 
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts the capitalised status documented by MiniMax', async () => {
+		const input: MinimaxEndpointInputs['speechQueryAsyncTask'] = {
+			task_id: 'task-1',
+		};
+		const response = { task_id: 'task-1', status: 'Processing' };
+		mockedRequest.mockResolvedValue(response);
+
+		const result = await Speech.queryAsyncTask(ctx, input);
+
+		expect(result).toEqual(response);
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'minimax.speech.queryAsyncTask',
+			{ status: 'Processing' },
+			'completed',
+		);
 	});
 });
 
@@ -847,6 +972,32 @@ describe('video.regenerate', () => {
 		).rejects.toThrow();
 
 		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects input with both source_task_id and content', async () => {
+		await expect(
+			invokeWith(Video.regenerate, {
+				model: 'MiniMax-H3',
+				resolution: '2K',
+				source_task_id: 'task-1',
+				content: [{ type: 'text', text: 'a red fox' }],
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts the content input mode', async () => {
+		const input: MinimaxEndpointInputs['videoRegenerate'] = {
+			model: 'MiniMax-H3',
+			resolution: '2K',
+			content: [{ type: 'text', text: 'a red fox' }],
+		};
+		mockedRequest.mockResolvedValue({ task_id: 'task-3' });
+
+		const result = await Video.regenerate(ctx, input);
+
+		expect(result).toEqual({ task_id: 'task-3' });
 	});
 });
 
