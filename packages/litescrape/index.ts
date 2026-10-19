@@ -546,10 +546,18 @@ export function litescrape<const T extends LitescrapePluginOptions>(
 		webhooks: litescrapeWebhooksNested,
 		endpointMeta: litescrapeEndpointMeta,
 		endpointSchemas: litescrapeEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// Core selects the first handler whose matcher accepts the error
+			// (`Object.keys(...).find`), and DEFAULT matches everything, so
+			// DEFAULT must be evaluated last - otherwise it shadows any custom
+			// handler a caller contributes through options.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		// Returns the stored LiteScrape key (or the explicit option). When no
 		// key is configured this throws AuthMissingError so core creates the
 		// account-connect prompt for the tenant.
