@@ -275,6 +275,7 @@ export const BaseProviders = [
 	'phantombuster',
 	'pinecone',
 	'plain',
+	'ploid',
 	'posthog',
 	'postman',
 	'prisma',
@@ -637,6 +638,7 @@ export const ProviderDisplayNames = {
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
 	plain: 'Plain',
+	ploid: 'Ploid',
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
@@ -1006,6 +1008,7 @@ export type AllProviders =
 	| 'phantombuster'
 	| 'pinecone'
 	| 'plain'
+	| 'ploid'
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
