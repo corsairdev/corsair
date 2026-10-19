@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { COASSEMBLE_API_BASE, makeCoassembleRequest } from './client';
 
 jest.mock('corsair/http', () => {
@@ -7,12 +7,12 @@ jest.mock('corsair/http', () => {
 	return { ...actual, request: jest.fn() };
 });
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockRequest = jest.mocked(request);
 
-function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
+function lastCall(): Parameters<typeof request> {
 	const call = mockRequest.mock.calls.at(-1);
 	if (!call) throw new Error('request() was never called');
-	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
+	return call;
 }
 
 beforeEach(() => {
@@ -113,10 +113,18 @@ describe('makeCoassembleRequest', () => {
 	});
 
 	it('rethrows request errors unchanged so error handlers can read status/retryAfter', async () => {
-		const error = Object.assign(new Error('Too Many Requests'), {
-			status: 429,
-			retryAfter: 2000,
-		});
+		const error = new ApiError(
+			{ method: 'GET', url: '/v1/headless/users' },
+			{
+				url: '/v1/headless/users',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'Too Many Requests',
+			{ retryAfter: 2000 },
+		);
 		mockRequest.mockRejectedValue(error);
 
 		await expect(

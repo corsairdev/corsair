@@ -4,7 +4,9 @@ import type { CoassembleContext } from './index';
 
 export const COASSEMBLE_API_BASE = 'https://api.coassemble.com/api';
 
-export function requireWorkspaceId(workspaceId: string | undefined): string {
+export function requireWorkspaceId(
+	workspaceId: string | null | undefined,
+): string {
 	if (!workspaceId) {
 		throw new Error('Coassemble workspace ID is missing');
 	}
@@ -15,7 +17,9 @@ export async function resolveWorkspaceId(
 	ctx: Pick<CoassembleContext, 'options' | 'keys'>,
 ): Promise<string> {
 	const stored = await ctx.keys?.get_workspace_id();
-	return requireWorkspaceId(stored || ctx.options.workspaceId);
+	return requireWorkspaceId(
+		ctx.options.key ? ctx.options.workspaceId : stored,
+	);
 }
 
 export async function makeCoassembleRequest<T>(
@@ -24,6 +28,7 @@ export async function makeCoassembleRequest<T>(
 	workspaceId: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Justification for unknown: HTTP request body payload may carry arbitrary JSON values for mutations.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

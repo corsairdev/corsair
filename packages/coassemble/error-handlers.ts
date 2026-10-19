@@ -22,10 +22,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error?: Error) => true,
+		handler: async (_error?: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

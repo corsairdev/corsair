@@ -14,7 +14,8 @@ const TimestampOrFlagSchema = z
 export const ClientSchema = z.looseObject({
 	clientIdentifier: z.string(),
 	userCount: z.number().nullish(),
-	metadata: z.unknown().optional(),
+	// Justification for unknown: Coassemble client metadata stores arbitrary custom key-value pairs defined by the client organization.
+	metadata: z.record(z.string(), z.unknown()).optional(),
 	created: TimestampSchema,
 	updated: TimestampSchema,
 });
@@ -22,7 +23,8 @@ export const ClientSchema = z.looseObject({
 export const UserSchema = z.looseObject({
 	identifier: z.string().nullish(),
 	clientIdentifier: z.string().nullish(),
-	metadata: z.unknown().optional(),
+	// Justification for unknown: Coassemble user metadata stores arbitrary custom key-value pairs defined by the application.
+	metadata: z.record(z.string(), z.unknown()).optional(),
 	name: z.string().nullish(),
 	avatar: z.string().nullish(),
 	testMode: z.boolean().nullish(),
@@ -40,10 +42,13 @@ export const CourseSchema = z.looseObject({
 	thumbnail: z.string().nullish(),
 	thumbnailRevision: z.string().nullish(),
 	thumbnailOutdated: z.boolean().nullish(),
-	start: z.unknown().optional(),
+	// Justification for unknown: Coassemble course start configuration holds dynamic screen block data with arbitrary layout properties.
+	start: z.record(z.string(), z.unknown()).nullish(),
 	timeEstimateMinutes: z.number().nullish(),
-	finish: z.unknown().optional(),
-	theme: z.unknown().optional(),
+	// Justification for unknown: Coassemble course finish configuration holds dynamic completion block data with arbitrary layout properties.
+	finish: z.record(z.string(), z.unknown()).nullish(),
+	// Justification for unknown: Coassemble course theme configuration holds arbitrary workspace branding and styling settings.
+	theme: z.record(z.string(), z.unknown()).nullish(),
 	clientId: z.number().nullish(),
 	active: z.boolean().nullish(),
 	identified: z.boolean().nullish(),

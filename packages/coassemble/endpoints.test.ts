@@ -1,14 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
+import { makeCoassembleRequest } from './client';
+import {
+	getClients,
+	getCourses,
+	getTrackings,
+	getUsers,
+} from './endpoints';
+import type { CoassembleContext } from './index';
 
-import { makeCoassembleRequest } from '../client';
-import type { CoassembleContext } from '../index';
-import { get as getClients } from './clients';
-import { get as getCourses } from './courses';
-import { get as getTrackings } from './tracking';
-import { get as getUsers } from './user';
-
-jest.mock('../client', () => ({
-	...jest.requireActual('../client'),
+jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
 	makeCoassembleRequest: jest.fn(),
 }));
 
@@ -20,13 +21,8 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-const mockMakeRequest = makeCoassembleRequest as jest.MockedFunction<
-	typeof makeCoassembleRequest
->;
-
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+const mockMakeRequest = jest.mocked(makeCoassembleRequest);
+const mockLogEvent = jest.mocked(logEventFromContext);
 
 // The endpoints only read `key`, `options` and `keys`, so the tests supply just those.
 type TestContextFields = Pick<CoassembleContext, 'key' | 'options'> & {
@@ -39,10 +35,14 @@ function makeCtx(
 ): CoassembleContext {
 	const fields: TestContextFields = {
 		key: 'test-api-key',
-		options: { workspaceId },
+		options: {
+			workspaceId,
+			...(storedWorkspaceId ? {} : { key: 'test-api-key' }),
+		},
 		keys: { get_workspace_id: async () => storedWorkspaceId },
 	};
-	return fields as CoassembleContext;
+	// Justification for unknown: Unit test fixture only mocks the key, options, and keys manager fields accessed by endpoint handlers, casting through unknown to satisfy the full CorsairPluginContext interface.
+	return fields as unknown as CoassembleContext;
 }
 
 const ctx = makeCtx('workspace-123');
@@ -165,13 +165,36 @@ describe('Coassemble endpoints', () => {
 		);
 	});
 
-	it('prefers the per-account workspace ID over the plugin option', async () => {
+	it('prefers the per-account workspace ID when using account-level authentication', async () => {
 		await getClients(makeCtx('workspace-123', 'tenant-ws'), {});
 
 		expect(mockMakeRequest).toHaveBeenCalledWith(
 			'v1/headless/clients',
 			'test-api-key',
 			'tenant-ws',
+			{
+				method: 'GET',
+				query: {},
+			},
+		);
+	});
+
+	it('uses options.workspaceId when options.key is explicitly provided', async () => {
+		// When options.key is set, credentials come from options, not account storage
+		const contextFields: TestContextFields = {
+			key: 'options-api-key',
+			options: { workspaceId: 'options-ws', key: 'options-api-key' },
+			keys: { get_workspace_id: async () => 'stored-ws' },
+		};
+		// Justification for unknown: Unit test fixture casting through unknown to satisfy CoassembleContext interface.
+		const customCtx = contextFields as unknown as CoassembleContext;
+
+		await getClients(customCtx, {});
+
+		expect(mockMakeRequest).toHaveBeenCalledWith(
+			'v1/headless/clients',
+			'options-api-key',
+			'options-ws',
 			{
 				method: 'GET',
 				query: {},
