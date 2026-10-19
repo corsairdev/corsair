@@ -133,10 +133,18 @@ export function keenable<const T extends KeenablePluginOptions>(
 		webhooks: {},
 		endpointMeta: keenableEndpointMeta,
 		endpointSchemas: keenableEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// Core selects the first handler whose matcher accepts the error
+			// (`Object.keys(...).find`), and DEFAULT matches everything, so
+			// DEFAULT must be evaluated last - otherwise it shadows any custom
+			// handler a caller contributes through options.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		// When no key is configured, throw AuthMissingError so Corsair's
 		// connect-link layer can generate an onboarding connect link for the
 		// tenant. The missing-DEK case resolves to "no stored key" via
