@@ -585,10 +585,7 @@ function getSampleInput(key: string): Record<string, unknown> {
 // Generic endpoint handler signature for dynamically executing operations.
 // Stricter typing for input and return types is not feasible because each endpoint
 // handler accepts a different Zod input shape and returns a distinct output schema.
-type GenericEndpointHandler = (
-	ctx: Ctx,
-	input: unknown,
-) => Promise<unknown>;
+type GenericEndpointHandler = (ctx: Ctx, input: unknown) => Promise<unknown>;
 
 interface EndpointSchemaEntry {
 	input: z.ZodType;
