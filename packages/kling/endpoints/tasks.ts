@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { ZodType } from 'zod';
 import type { KlingContext } from '..';
 import { makeKlingRequest } from '../client';
 import type {
@@ -16,7 +17,6 @@ import {
 	KlingCursorTaskListResponseSchema,
 	KlingTaskDetailResponseSchema,
 	KlingTaskGetInputSchema,
-	KlingTaskListInputSchema,
 	KlingTaskListResponseSchema,
 	KlingTaskPageListInputSchema,
 } from './types';
@@ -119,16 +119,21 @@ export async function getV1TaskById(
 	return parsedResponse;
 }
 
-// Cursor list (`POST <path>`) used by `/tasks` and `/solutions`.
-export async function listTasksByCursor(
+// Cursor list (`POST <path>`) used by `/tasks` and `/solutions`. The caller
+// passes the schema for its own path: the `/tasks` schema also allows
+// `product_type` filtering, while `/solutions` documents only `status`, so
+// sharing one parser would let an invalid `/solutions` filter reach the
+// provider and fail with a 400 instead of being rejected locally.
+export async function listTasksByCursor<
+	T extends KlingTaskListInput | KlingSolutionListInput,
+>(
 	ctx: KlingContext,
 	event: string,
 	path: string,
-	input: KlingTaskListInput | KlingSolutionListInput,
+	input: T,
+	schema: ZodType<T>,
 ): Promise<KlingCursorTaskListOutput> {
-	// The `/tasks` schema is a superset of the `/solutions` schema (it also
-	// allows `product_type` filtering), so it validates both request bodies.
-	const parsed = KlingTaskListInputSchema.parse(input);
+	const parsed = schema.parse(input);
 
 	const response = await makeKlingRequest<KlingCursorTaskListOutput>(
 		path,

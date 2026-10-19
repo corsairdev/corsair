@@ -1,6 +1,9 @@
 import type { KlingEndpoints } from '..';
 import { createTask, getTaskById, listTasksByCursor } from './tasks';
-import { ImageToVideoCreateInputSchema } from './types';
+import {
+	ImageToVideoCreateInputSchema,
+	KlingTaskListInputSchema,
+} from './types';
 
 // Image to video. One endpoint per model version:
 // POST /image-to-video/{model}
@@ -33,4 +36,11 @@ export const imageToVideoGet: KlingEndpoints['imageToVideo']['get'] = (
 export const imageToVideoList: KlingEndpoints['imageToVideo']['list'] = (
 	ctx,
 	input,
-) => listTasksByCursor(ctx, 'kling.imageToVideo.list', '/tasks', input);
+) =>
+	listTasksByCursor(
+		ctx,
+		'kling.imageToVideo.list',
+		'/tasks',
+		input,
+		KlingTaskListInputSchema,
+	);

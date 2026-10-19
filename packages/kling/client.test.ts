@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { KLING_API_BASE, makeKlingRequest } from './client';
+import { KLING_API_BASE, makeKlingRequest, tryGetStoredKey } from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -53,6 +53,14 @@ describe('makeKlingRequest', () => {
 				query: { task_ids: '1,2' },
 			}),
 		);
+		// The plugin's error handlers own retries, so the transport's own loop
+		// must be disabled (otherwise a sustained 429 stacks retries).
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: expect.objectContaining({
+				enabled: true,
+				maxRetries: 0,
+			}),
+		});
 	});
 
 	it('sends a JSON body for POST requests and omits query', async () => {
@@ -109,5 +117,37 @@ describe('makeKlingRequest', () => {
 			maxRetries: 5,
 			headersRetryAfterMs: 3000,
 		});
+	});
+});
+
+describe('tryGetStoredKey', () => {
+	it('returns the stored value when present', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.resolve('stored')),
+		).resolves.toBe('stored');
+	});
+
+	it('resolves to undefined for nullish values', async () => {
+		await expect(tryGetStoredKey(() => Promise.resolve(null))).resolves.toBe(
+			undefined,
+		);
+		await expect(
+			tryGetStoredKey(() => Promise.resolve(undefined)),
+		).resolves.toBe(undefined);
+	});
+
+	it('resolves to undefined for a missing DEK instead of throwing', async () => {
+		await expect(
+			tryGetStoredKey(() =>
+				Promise.reject(new Error('No DEK found for account (tenant: "t")')),
+			),
+		).resolves.toBe(undefined);
+	});
+
+	it('propagates any other error', async () => {
+		const failure = new Error('decryption failed');
+		await expect(tryGetStoredKey(() => Promise.reject(failure))).rejects.toBe(
+			failure,
+		);
 	});
 });

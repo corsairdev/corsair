@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import {
 	ImageGeneration,
 	ImageToVideo,
@@ -460,8 +462,12 @@ export function kling<const T extends KlingPluginOptions>(
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('kling', 'api_key');
+				}
+				return storedKey;
 			}
 
 			return '';

@@ -1,5 +1,5 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	ImageGeneration,
@@ -14,7 +14,7 @@ import {
 	VideoEffects,
 	VirtualTryOn,
 } from './endpoints';
-import type { KlingContext } from './index';
+import type { KlingContext, KlingKeyBuilderContext } from './index';
 import { kling, klingEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -669,6 +669,44 @@ describe('Kling endpoints', () => {
 		},
 	);
 
+	it('validates each list operation against its own path schema', async () => {
+		// `/solutions` documents only a `status` filter, while the `/tasks`
+		// schema also accepts `product_type`. Sharing one parser would send the
+		// invalid `/solutions` filter to the provider (a 400) instead of
+		// rejecting it locally.
+		const productTypeFilters = [
+			{ key: 'product_type', values: ['virtual_try_on'] },
+		];
+
+		// The widened endpoint type from the shared tables is the only way to
+		// call `VirtualTryOn.list` with input its own schema rejects; this test
+		// is precisely about runtime validation of such a caller.
+		const solutionsList: CorsairEndpoint<
+			Ctx,
+			Record<string, unknown>,
+			Record<string, unknown>
+		> = VirtualTryOn.list;
+		const tasksList: CorsairEndpoint<
+			Ctx,
+			Record<string, unknown>,
+			Record<string, unknown>
+		> = TextToVideo.list;
+
+		await expect(
+			solutionsList(ctx, { filters: productTypeFilters }),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+
+		mockedRequest.mockResolvedValue(cursorEmpty);
+		await expect(
+			tasksList(ctx, { filters: productTypeFilters }),
+		).resolves.toEqual(cursorEmpty);
+		expect(mockedRequest).toHaveBeenCalledWith('/tasks', 'test-api-key', {
+			method: 'POST',
+			body: { filters: productTypeFilters },
+		});
+	});
+
 	it('covers every implemented endpoint in both tables', () => {
 		expect(happyRows).toHaveLength(34);
 		expect(invalidRows).toHaveLength(34);
@@ -709,5 +747,95 @@ describe('kling plugin shape', () => {
 			expect(schema.input).toBeDefined();
 			expect(schema.output).toBeDefined();
 		}
+	});
+});
+
+// `ctx.keys.get_api_key` resolves to null when the account has a DEK but the
+// field was never set, and throws when there is no DEK at all; both must read
+// as "no stored key".
+function keyBuilderCtx(
+	getApiKey: () => Promise<string | null>,
+): KlingKeyBuilderContext {
+	return {
+		authType: 'api_key',
+		options: {},
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: getApiKey,
+			set_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		},
+		tenantId: 'test-tenant',
+	};
+}
+
+function keyBuilderOf(plugin: ReturnType<typeof kling>) {
+	const builder = plugin.keyBuilder;
+	if (!builder) {
+		throw new Error('kling plugin is missing its keyBuilder');
+	}
+	return builder;
+}
+
+describe('kling keyBuilder', () => {
+	it('returns the explicitly configured option key', async () => {
+		const plugin = kling({ key: 'inline-key' });
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyBuilderCtx(() => Promise.resolve('stored-key')),
+				'endpoint',
+			),
+		).resolves.toBe('inline-key');
+	});
+
+	it('returns the stored key when no option key is set', async () => {
+		const plugin = kling({});
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyBuilderCtx(() => Promise.resolve('stored-key')),
+				'endpoint',
+			),
+		).resolves.toBe('stored-key');
+	});
+
+	// Failing open would let the client throw its own 401 instead of giving
+	// Corsair the AuthMissingError it needs to start the connect flow.
+	it('throws AuthMissingError when no stored key exists', async () => {
+		const plugin = kling({});
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyBuilderCtx(() => Promise.resolve(null)),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when the account has no DEK', async () => {
+		const plugin = kling({});
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyBuilderCtx(() =>
+					Promise.reject(new Error('No DEK found for account (tenant: "t")')),
+				),
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('returns an empty string for a webhook source', async () => {
+		const plugin = kling({});
+
+		await expect(
+			keyBuilderOf(plugin)(
+				keyBuilderCtx(() => Promise.resolve('stored-key')),
+				'webhook',
+			),
+		).resolves.toBe('');
 	});
 });

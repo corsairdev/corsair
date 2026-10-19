@@ -45,8 +45,7 @@ export const errorHandlers = {
 				msg.includes('too many requests') ||
 				msg.includes('rate limit') ||
 				msg.includes('rate_limited') ||
-				msg.includes('parallel task') ||
-				msg.includes('429')
+				msg.includes('parallel task')
 			);
 		},
 		handler: async (error: Error) => {

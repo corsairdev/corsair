@@ -1,6 +1,9 @@
 import type { KlingEndpoints } from '..';
 import { createTask, getTaskById, listTasksByCursor } from './tasks';
-import { MotionControlCreateInputSchema } from './types';
+import {
+	KlingTaskListInputSchema,
+	MotionControlCreateInputSchema,
+} from './types';
 
 // Motion control (transfer a motion reference video onto a subject). One
 // endpoint per model:
@@ -33,4 +36,11 @@ export const motionControlGet: KlingEndpoints['motionControl']['get'] = (
 export const motionControlList: KlingEndpoints['motionControl']['list'] = (
 	ctx,
 	input,
-) => listTasksByCursor(ctx, 'kling.motionControl.list', '/tasks', input);
+) =>
+	listTasksByCursor(
+		ctx,
+		'kling.motionControl.list',
+		'/tasks',
+		input,
+		KlingTaskListInputSchema,
+	);

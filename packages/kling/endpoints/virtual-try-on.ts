@@ -1,6 +1,9 @@
 import type { KlingEndpoints } from '..';
 import { createTask, getTaskById, listTasksByCursor } from './tasks';
-import { VirtualTryOnCreateInputSchema } from './types';
+import {
+	KlingSolutionListInputSchema,
+	VirtualTryOnCreateInputSchema,
+} from './types';
 
 // Virtual try-on (Solution API). Create uses a dedicated path; querying uses
 // the platform-wide solution query endpoints:
@@ -33,4 +36,11 @@ export const virtualTryOnGet: KlingEndpoints['virtualTryOn']['get'] = (
 export const virtualTryOnList: KlingEndpoints['virtualTryOn']['list'] = (
 	ctx,
 	input,
-) => listTasksByCursor(ctx, 'kling.virtualTryOn.list', QUERY_PATH, input);
+) =>
+	listTasksByCursor(
+		ctx,
+		'kling.virtualTryOn.list',
+		QUERY_PATH,
+		input,
+		KlingSolutionListInputSchema,
+	);

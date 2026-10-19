@@ -61,6 +61,26 @@ describe('Kling errorHandlers', () => {
 		});
 	});
 
+	it('does not treat a message merely containing 429 as a rate limit', async () => {
+		// Regression: the bare `msg.includes('429')` fallback used to match any
+		// message containing those digits (an ID, URL or count), misrouting a
+		// non-retryable failure into the retrying RATE_LIMIT_ERROR handler and
+		// queueing duplicate work.
+		const error = apiError(500, 'task 429 was aborted');
+
+		expect(route(error)).not.toBe('RATE_LIMIT_ERROR');
+		expect(route(error)).toBe('DEFAULT');
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
+	it('still routes a real ApiError with status 429 to RATE_LIMIT_ERROR', () => {
+		// The numeric status guard, not the message, must keep driving this
+		// decision.
+		expect(route(apiError(429, 'Slow down'))).toBe('RATE_LIMIT_ERROR');
+	});
+
 	it('routes text-only account and rate-limit messages', () => {
 		expect(route(new Error('account is in arrears'))).toBe('ACCOUNT_ERROR');
 		expect(route(new Error('too many requests, retry later'))).toBe(

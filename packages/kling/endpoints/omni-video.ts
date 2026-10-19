@@ -1,6 +1,6 @@
 import type { KlingEndpoints } from '..';
 import { createTask, getTaskById, listTasksByCursor } from './tasks';
-import { OmniVideoCreateInputSchema } from './types';
+import { KlingTaskListInputSchema, OmniVideoCreateInputSchema } from './types';
 
 // Omni video generation. One endpoint per model:
 // POST /omni-video/kling-3.0-omni
@@ -34,4 +34,11 @@ export const omniVideoGet: KlingEndpoints['omniVideo']['get'] = (ctx, input) =>
 export const omniVideoList: KlingEndpoints['omniVideo']['list'] = (
 	ctx,
 	input,
-) => listTasksByCursor(ctx, 'kling.omniVideo.list', '/tasks', input);
+) =>
+	listTasksByCursor(
+		ctx,
+		'kling.omniVideo.list',
+		'/tasks',
+		input,
+		KlingTaskListInputSchema,
+	);

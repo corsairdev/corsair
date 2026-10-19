@@ -1,6 +1,9 @@
 import type { KlingEndpoints } from '..';
 import { createTask, getTaskById, listTasksByCursor } from './tasks';
-import { TextToVideoCreateInputSchema } from './types';
+import {
+	KlingTaskListInputSchema,
+	TextToVideoCreateInputSchema,
+} from './types';
 
 // Text to video. One endpoint per model version, so the model is a path
 // segment and is exposed as an enum on a single create operation:
@@ -35,4 +38,11 @@ export const textToVideoGet: KlingEndpoints['textToVideo']['get'] = (
 export const textToVideoList: KlingEndpoints['textToVideo']['list'] = (
 	ctx,
 	input,
-) => listTasksByCursor(ctx, 'kling.textToVideo.list', '/tasks', input);
+) =>
+	listTasksByCursor(
+		ctx,
+		'kling.textToVideo.list',
+		'/tasks',
+		input,
+		KlingTaskListInputSchema,
+	);
