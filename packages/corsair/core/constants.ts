@@ -296,6 +296,7 @@ export const BaseProviders = [
 	'sapsuccessfactors',
 	'scaleai',
 	'scrapegraphai',
+	'search1api',
 	'securitytrails',
 	'semanticscholar',
 	'sendgrid',
@@ -661,6 +662,7 @@ export const ProviderDisplayNames = {
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
+	search1api: 'Search1API',
 	securitytrails: 'SecurityTrails',
 	semanticscholar: 'Semantic Scholar',
 	sendgrid: 'SendGrid',
@@ -1033,6 +1035,7 @@ export type AllProviders =
 	| 'sapsuccessfactors'
 	| 'scaleai'
 	| 'scrapegraphai'
+	| 'search1api'
 	| 'securitytrails'
 	| 'semanticscholar'
 	| 'sendgrid'
