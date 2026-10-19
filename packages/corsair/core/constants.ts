@@ -301,6 +301,7 @@ export const BaseProviders = [
 	'studiobyai21labs',
 	'supabase',
 	'supadata',
+	'surf',
 	'synthflowai',
 	'tally',
 	'tavily',
@@ -650,6 +651,7 @@ export const ProviderDisplayNames = {
 	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
+	surf: 'Surf',
 	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
@@ -1006,6 +1008,7 @@ export type AllProviders =
 	| 'studiobyai21labs'
 	| 'supabase'
 	| 'supadata'
+	| 'surf'
 	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
