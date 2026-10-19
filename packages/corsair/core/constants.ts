@@ -290,6 +290,7 @@ export const BaseProviders = [
 	'rootly',
 	'runpod',
 	'salesforce',
+	'saperly',
 	'sapsuccessfactors',
 	'scaleai',
 	'scrapegraphai',
@@ -651,6 +652,7 @@ export const ProviderDisplayNames = {
 	rootly: 'Rootly',
 	runpod: 'RunPod',
 	salesforce: 'Salesforce',
+	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
@@ -1019,6 +1021,7 @@ export type AllProviders =
 	| 'rootly'
 	| 'runpod'
 	| 'salesforce'
+	| 'saperly'
 	| 'sapsuccessfactors'
 	| 'scaleai'
 	| 'scrapegraphai'
