@@ -139,6 +139,7 @@ export const BaseProviders = [
 	'clickmeeting',
 	'clientary',
 	'clockify',
+	'cloro',
 	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
@@ -489,6 +490,7 @@ export const ProviderDisplayNames = {
 	clickmeeting: 'ClickMeeting',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloro: 'cloro',
 	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
@@ -846,6 +848,7 @@ export type AllProviders =
 	| 'clickmeeting'
 	| 'clientary'
 	| 'clockify'
+	| 'cloro'
 	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
