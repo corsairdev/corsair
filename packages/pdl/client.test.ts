@@ -20,12 +20,13 @@ let fetchCount = 0;
 
 function mockFetch(response: {
 	status?: number;
+	// Each case supplies a different JSON fixture for the client to parse.
 	body?: unknown;
 	headers?: Record<string, string>;
 	fail?: Error;
 }) {
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	const impl = async (url: string | URL | Request, init?: RequestInit) => {
 		if (response.fail) {
 			throw response.fail;
 		}
@@ -35,11 +36,17 @@ function mockFetch(response: {
 			raw.forEach((value, key) => {
 				headers[key.toLowerCase()] = value;
 			});
-		} else {
-			for (const [key, value] of Object.entries(
-				(raw ?? {}) as Record<string, string>,
-			)) {
-				headers[key.toLowerCase()] = value;
+		} else if (Array.isArray(raw)) {
+			for (const [key, value] of raw) {
+				if (typeof value === 'string') {
+					headers[key.toLowerCase()] = value;
+				}
+			}
+		} else if (raw) {
+			for (const [key, value] of Object.entries(raw)) {
+				if (typeof value === 'string') {
+					headers[key.toLowerCase()] = value;
+				}
 			}
 		}
 		fetchCount += 1;
@@ -64,9 +71,10 @@ function mockFetch(response: {
 			}),
 			json: async () => payload,
 			text: async () => JSON.stringify(payload),
-			// Partial `Response` stub; only what the shared request helper reads.
 		};
-	}) as unknown as typeof global.fetch;
+	};
+	// The stub implements only the Response fields the shared client reads.
+	global.fetch = impl as unknown as typeof global.fetch;
 }
 
 afterEach(() => {

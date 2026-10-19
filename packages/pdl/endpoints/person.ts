@@ -19,6 +19,8 @@ export const enrich: PdlEndpoints['personEnrich'] = async (ctx, input) => {
 			const response = await requestPdlEnrichment<{
 				status: number;
 				likelihood: number;
+				// Person profiles are an open field set; the output schema
+				// accepts them as UnknownRecord after this read.
 				data: Record<string, unknown> | null;
 				matched?: string[];
 			}>('/v5/person/enrich', ctx.key, {
@@ -100,6 +102,7 @@ export const identify: PdlEndpoints['personIdentify'] = async (ctx, input) => {
 				status: number;
 				matches: Array<{
 					match_score: number;
+					// Identify embeds the same open person profile as enrich.
 					data: Record<string, unknown>[];
 					matched_on?: string[];
 				}>;

@@ -11,6 +11,7 @@ export async function callPdl<TInput, TOutput>(
 	outputSchema: Schema<TOutput>,
 	// Untrusted until inputSchema.parse vouches for it below.
 	input: unknown,
+	// HTTP JSON is not TOutput until outputSchema.parse runs below.
 	exec: (validated: TInput) => Promise<unknown>,
 	// Free-form event metadata, not part of the endpoint contract.
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,

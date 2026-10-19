@@ -9,6 +9,7 @@ import {
 	Person,
 	School,
 } from './endpoints';
+import type { PdlContext } from './index';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -27,8 +28,8 @@ const mockRequest = jest.mocked(makePDLRequest);
 const mockEnrichment = jest.mocked(requestPdlEnrichment);
 const mockLog = jest.mocked(logEventFromContext);
 
-// never parameters: any concrete endpoint function is assignable to this
-// (parameters are contravariant), so the table needs no per-entry casts.
+// never parameters: every endpoint assigns (parameters are contravariant).
+// The promise stays unknown because each endpoint returns a different type.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 function createContext() {
@@ -44,6 +45,23 @@ function createContext() {
 			},
 		},
 	};
+}
+
+function asCtx(ctx: ReturnType<typeof createContext>): PdlContext {
+	// The mock only has key, options, and db. The rest of PdlContext is
+	// unused here, and the shapes do not overlap enough to assign directly.
+	return ctx as never;
+}
+
+function runCase(
+	endpoint: AnyEndpoint,
+	ctx: ReturnType<typeof createContext>,
+	// Row fixtures are not one input type; the endpoint schema checks them.
+	input: unknown,
+	// Responses differ per endpoint, so the table cannot name one.
+): Promise<unknown> {
+	// never erases context and input so every endpoint fits this table.
+	return endpoint(ctx as never, input as never);
 }
 
 beforeEach(() => {
@@ -81,12 +99,17 @@ const ipResponse = {
 const cases: Array<{
 	name: string;
 	endpoint: AnyEndpoint;
+	// Fixtures differ per endpoint and are checked by that output schema.
 	input: unknown;
 	method: string;
 	url: string;
+	// Vendor body for requestPdlEnrichment; shape differs per endpoint.
 	enrichment?: unknown;
+	// Vendor body for makePDLRequest; shape differs per endpoint.
 	response?: unknown;
+	// Query bags differ per endpoint, so they stay an open record.
 	query?: Record<string, unknown>;
+	// POST bodies differ per endpoint; the output schema checks them.
 	body?: unknown;
 }> = [
 	{
@@ -195,7 +218,7 @@ const cases: Array<{
 		input: {
 			ip: '174.110.144.98',
 			return_if_unmatched: false,
-			min_confidence: 'high' as const,
+			min_confidence: 'high',
 		},
 		method: 'GET',
 		url: '/v5/ip/enrich',
@@ -268,7 +291,7 @@ describe('pdl endpoint routing', () => {
 			} else if (response !== undefined) {
 				mockRequest.mockResolvedValueOnce(response);
 			}
-			await endpoint(ctx as never, input as never);
+			await runCase(endpoint, ctx, input);
 
 			if (enrichment !== undefined) {
 				expect(mockEnrichment).toHaveBeenCalledTimes(1);
@@ -302,14 +325,11 @@ describe('pdl endpoint routing', () => {
 			total: 0,
 			scroll_token: 'abc123',
 		});
-		await Person.search(
-			createContext() as never,
-			{
-				query: { exists: { field: 'phone_numbers' } },
-				scroll_token: 'abc123',
-				dataset: 'phone,-resume',
-			} as never,
-		);
+		await Person.search(asCtx(createContext()), {
+			query: { exists: { field: 'phone_numbers' } },
+			scroll_token: 'abc123',
+			dataset: 'phone,-resume',
+		});
 
 		expect(mockRequest.mock.calls[0]?.[2]?.body).toEqual({
 			query: { exists: { field: 'phone_numbers' } },
@@ -321,12 +341,9 @@ describe('pdl endpoint routing', () => {
 	it('person.enrich translates the 404 no-match outcome to found:false', async () => {
 		mockEnrichment.mockResolvedValueOnce(null);
 		const ctx = createContext();
-		const result = await Person.enrich(
-			ctx as never,
-			{
-				profile: 'linkedin.com/in/nobody',
-			} as never,
-		);
+		const result = await Person.enrich(asCtx(ctx), {
+			profile: 'linkedin.com/in/nobody',
+		});
 
 		expect(result).toEqual({ found: false });
 		expect(ctx.db.people.upsertByEntityId).not.toHaveBeenCalled();
@@ -335,13 +352,10 @@ describe('pdl endpoint routing', () => {
 	it('person.identify translates the 404 no-match outcome to found:false', async () => {
 		mockEnrichment.mockResolvedValueOnce(null);
 		const ctx = createContext();
-		const result = await Person.identify(
-			ctx as never,
-			{
-				name: 'nobody',
-				company: 'nowhere',
-			} as never,
-		);
+		const result = await Person.identify(asCtx(ctx), {
+			name: 'nobody',
+			company: 'nowhere',
+		});
 
 		expect(result).toEqual({ found: false });
 	});
@@ -349,10 +363,7 @@ describe('pdl endpoint routing', () => {
 	it('ip.enrich translates the 404 no-match outcome to found:false', async () => {
 		mockEnrichment.mockResolvedValueOnce(null);
 		const ctx = createContext();
-		const result = await Ip.enrich(
-			ctx as never,
-			{ ip: '174.110.144.98' } as never,
-		);
+		const result = await Ip.enrich(asCtx(ctx), { ip: '174.110.144.98' });
 
 		expect(result).toEqual({ found: false });
 		expect(mockEnrichment).toHaveBeenCalledTimes(1);
@@ -379,12 +390,9 @@ describe('pdl endpoint routing', () => {
 			website: 'peopledatalabs.com',
 		});
 		const ctx = createContext();
-		const result = await Company.enrich(
-			ctx as never,
-			{
-				website: 'peopledatalabs.com',
-			} as never,
-		);
+		const result = await Company.enrich(asCtx(ctx), {
+			website: 'peopledatalabs.com',
+		});
 
 		expect(result).toEqual({
 			found: true,
@@ -405,12 +413,9 @@ describe('pdl endpoint routing', () => {
 	it('person.enrich stores the matched person by pdl_id', async () => {
 		mockEnrichment.mockResolvedValueOnce(personEnrichResponse);
 		const ctx = createContext();
-		await Person.enrich(
-			ctx as never,
-			{
-				profile: 'linkedin.com/in/gracehopper',
-			} as never,
-		);
+		await Person.enrich(asCtx(ctx), {
+			profile: 'linkedin.com/in/gracehopper',
+		});
 
 		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledTimes(1);
 		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
@@ -429,12 +434,9 @@ describe('pdl endpoint routing', () => {
 		ctx.db.people.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
 		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const result = await Person.enrich(
-			ctx as never,
-			{
-				profile: 'linkedin.com/in/gracehopper',
-			} as never,
-		);
+		const result = await Person.enrich(asCtx(ctx), {
+			profile: 'linkedin.com/in/gracehopper',
+		});
 
 		expect(result).toEqual({
 			found: true,
@@ -452,7 +454,7 @@ describe('pdl endpoint routing', () => {
 			name: 'san francisco, california, united states',
 		});
 		const ctx = createContext();
-		await Location.clean(ctx as never, { location: 'san fransisco' } as never);
+		await Location.clean(asCtx(ctx), { location: 'san fransisco' });
 
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
@@ -468,16 +470,13 @@ describe('pdl endpoint routing', () => {
 	it('person.bulk surfaces per-item failures without failing the call', async () => {
 		mockRequest.mockResolvedValueOnce(bulkResponse);
 		const ctx = createContext();
-		const result = await Person.bulk(
-			ctx as never,
-			{
-				requests: [
-					{ params: { profile: 'linkedin.com/in/a' } },
-					{ params: { email: 'b@example.com' } },
-					{ params: { lid: 'c' } },
-				],
-			} as never,
-		);
+		const result = await Person.bulk(asCtx(ctx), {
+			requests: [
+				{ params: { profile: 'linkedin.com/in/a' } },
+				{ params: { email: 'b@example.com' } },
+				{ params: { lid: 'c' } },
+			],
+		});
 
 		expect(result).toEqual(bulkResponse);
 		expect(result[1]).toMatchObject({ status: 400 });
@@ -493,18 +492,15 @@ describe('pdl endpoint routing', () => {
 	it('rejects enrichment inputs below the documented minimum before the wire', async () => {
 		const ctx = createContext();
 		await expect(
-			Person.enrich(ctx as never, { name: 'grace hopper' } as never),
+			Person.enrich(asCtx(ctx), { name: 'grace hopper' }),
 		).rejects.toThrow(/minimum|needs/);
 		expect(mockEnrichment).not.toHaveBeenCalled();
 
 		await expect(
-			Person.enrich(
-				ctx as never,
-				{
-					first_name: 'grace',
-					last_name: 'hopper',
-				} as never,
-			),
+			Person.enrich(asCtx(ctx), {
+				first_name: 'grace',
+				last_name: 'hopper',
+			}),
 		).rejects.toThrow();
 		expect(mockEnrichment).not.toHaveBeenCalled();
 	});
@@ -512,7 +508,7 @@ describe('pdl endpoint routing', () => {
 	it('rejects company.enrich without name, ticker, website, or profile', async () => {
 		const ctx = createContext();
 		await expect(
-			Company.enrich(ctx as never, { country: 'us' } as never),
+			Company.enrich(asCtx(ctx), { country: 'us' }),
 		).rejects.toThrow();
 		expect(mockEnrichment).not.toHaveBeenCalled();
 	});
@@ -520,13 +516,10 @@ describe('pdl endpoint routing', () => {
 	it('rejects a search with both query and sql before the wire', async () => {
 		const ctx = createContext();
 		await expect(
-			Person.search(
-				ctx as never,
-				{
-					query: { match_all: {} },
-					sql: 'SELECT * FROM person',
-				} as never,
-			),
+			Person.search(asCtx(ctx), {
+				query: { match_all: {} },
+				sql: 'SELECT * FROM person',
+			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
@@ -535,7 +528,7 @@ describe('pdl endpoint routing', () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValueOnce({ status: 200, nope: true });
 		await expect(
-			Company.search(ctx as never, { query: { match_all: {} } } as never),
+			Company.search(asCtx(ctx), { query: { match_all: {} } }),
 		).rejects.toThrow();
 		expect(mockLog).not.toHaveBeenCalled();
 	});

@@ -8,9 +8,8 @@ import {
 const inputs = PdlEndpointInputSchemas;
 const outputs = PdlEndpointOutputSchemas;
 
-type AnySchema = z.ZodTypeAny;
-
-function accepts(schema: AnySchema, value: unknown): boolean {
+// Candidates include shapes the schema must reject, so this stays unchecked.
+function accepts(schema: z.ZodType, value: unknown): boolean {
 	return schema.safeParse(value).success;
 }
 

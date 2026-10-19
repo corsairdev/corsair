@@ -133,9 +133,9 @@ results.forEach((item, index) => {
 - **Billing**: enrichment and bulk bill per match; identify bills per
   call even when nothing matches; cleaners are free. Calls that return
   an error consume no credits.
-- **No-match is a 404**: for `person.enrich`, `company.enrich`, and
-  `person.identify` the plugin translates a 404 into a typed
-  `{found: false}` result instead of an error.
+- **No-match is a 404**: for `person.enrich`, `person.identify`,
+  `company.enrich`, and `ip.enrich` the plugin translates a 404 into a
+  typed `{found: false}` result instead of an error.
 - **company.enrich is flat**: PDL returns company fields beside
   `status` and `likelihood` (no `data` wrapper). The plugin keeps the
   fields together under `company` so both enrich endpoints share the

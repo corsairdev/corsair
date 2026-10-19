@@ -3,15 +3,16 @@ import { z } from 'zod';
 // Unmodeled PDL response fields pass through parse with no shape claim.
 const UnknownRecord = z.record(z.string(), z.unknown());
 
-// Reads off an UnknownRecord narrow at the use site instead of casting, so a
-// field holding a null or a wrong type degrades to null rather than leaking
-// into a database row.
+// UnknownRecord fields have no declared type, so a wrong value becomes null
+// instead of being cast into a database row.
 export const readString = (value: unknown): string | null =>
 	typeof value === 'string' ? value : null;
 
+// Same open field as readString; a non-number must not become a row value.
 export const readNumber = (value: unknown): number | null =>
 	typeof value === 'number' ? value : null;
 
+// Same open field as readString, for the first string in a list.
 export const readFirstString = (value: unknown): string | null =>
 	Array.isArray(value) && typeof value[0] === 'string' ? value[0] : null;
 
@@ -23,6 +24,7 @@ function issue(ctx: z.RefinementCtx, message: string): void {
 }
 
 function atLeastOneOf(keys: string[]) {
+	// Reused across object shapes, so the callback cannot name one input.
 	return (input: Record<string, unknown>, ctx: z.RefinementCtx): void => {
 		if (!keys.some((key) => input[key] !== undefined)) {
 			issue(ctx, `must include at least one of: ${keys.join(', ')}`);
@@ -31,6 +33,7 @@ function atLeastOneOf(keys: string[]) {
 }
 
 function exactlyOneOf(keys: string[]) {
+	// Reused across object shapes, so the callback cannot name one input.
 	return (input: Record<string, unknown>, ctx: z.RefinementCtx): void => {
 		const present = keys.filter((key) => input[key] !== undefined);
 		if (present.length !== 1) {
@@ -66,6 +69,7 @@ const personIdentityShape = {
 
 // PDL 400s without its documented minimum, so the gate runs before the wire.
 function hasEnrichmentMinimumInputs(
+	// Checked by field name across an all-optional identity object.
 	input: Record<string, unknown>,
 	ctx: z.RefinementCtx,
 ): void {
@@ -248,10 +252,9 @@ export const JobSearchInputSchema = z
 	})
 	.strict()
 	.superRefine((input, ctx) => {
-		// Object.keys widens to string[]; the keys come from jobFilterShape,
-		// so the index stays inside input's own keys.
-		const hasFilter = Object.keys(jobFilterShape).some(
-			(key) => input[key as keyof typeof jobFilterShape] !== undefined,
+		const hasFilter = Object.entries(input).some(
+			([key, value]) =>
+				value !== undefined && Object.hasOwn(jobFilterShape, key),
 		);
 		const hasQuery = input.query !== undefined;
 		if (hasFilter === hasQuery) {

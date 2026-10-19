@@ -228,6 +228,8 @@ export type InternalPdlPlugin = BasePdlPlugin<PdlPluginOptions>;
 export type ExternalPdlPlugin<T extends PdlPluginOptions> = BasePdlPlugin<T>;
 
 export function pdl<const T extends PdlPluginOptions>(
+	// T is chosen by the caller, so the empty default has no value of
+	// type PdlPluginOptions & T without this assertion.
 	incomingOptions: PdlPluginOptions & T = {} as PdlPluginOptions & T,
 ): ExternalPdlPlugin<T> {
 	const options = {

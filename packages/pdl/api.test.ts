@@ -34,7 +34,8 @@ describeIfApiKey('PDL live API', () => {
 			}),
 		);
 		expect(cleaned.status).toBe(200);
-		const cleanedName = cleaned.name as string | undefined;
+		const cleanedName =
+			typeof cleaned.name === 'string' ? cleaned.name : undefined;
 		expect(cleanedName?.toLowerCase()).toContain('people data labs');
 	});
 });

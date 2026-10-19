@@ -17,6 +17,8 @@ export const enrich: PdlEndpoints['companyEnrich'] = async (ctx, input) => {
 		input,
 		async (validated) => {
 			const response = await requestPdlEnrichment<
+				// Company enrich is a flat open record beside status and
+				// likelihood; the endpoint lifts the rest under `company`.
 				Record<string, unknown> & {
 					status: number;
 					likelihood: number;

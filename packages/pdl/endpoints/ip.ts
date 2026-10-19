@@ -15,7 +15,9 @@ export const enrich: PdlEndpoints['ipEnrich'] = async (ctx, input) => {
 				status: number;
 				data: {
 					ip: { address: string };
+					// Same open company record as company.enrich.
 					company?: Record<string, unknown>;
+					// Same open person profile as person.enrich.
 					person?: Record<string, unknown>;
 				};
 				dataset_version?: string | number;

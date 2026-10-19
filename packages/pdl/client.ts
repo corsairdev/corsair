@@ -14,6 +14,7 @@ export class PdlAPIError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
+			// Same untyped failure body as the field above.
 			body?: unknown;
 			method?: PdlRequestOptions['method'];
 			status?: number;
@@ -59,14 +60,20 @@ function buildConfig(apiKey: string, baseUrl?: string): OpenAPIConfig {
 	};
 }
 
+// ApiError.body is untyped: PDL envelopes, strings, and transport junk.
 function errorDetail(body: unknown): string {
 	if (body == null) return '';
 	if (typeof body === 'string') return body;
-	// Failed bodies differ by failure layer, so probe PDL's error envelope
-	// with optional reads and fall back to the raw JSON below.
-	const error = (body as { error?: { type?: string; message?: string } }).error;
-	if (error?.message || error?.type) {
-		return [error.type, error.message].filter(Boolean).join(': ');
+	if (typeof body === 'object' && 'error' in body) {
+		const error = body.error;
+		if (typeof error === 'object' && error !== null) {
+			const type = 'type' in error ? error.type : undefined;
+			const message = 'message' in error ? error.message : undefined;
+			const parts = [type, message].filter(
+				(part): part is string => typeof part === 'string' && part.length > 0,
+			);
+			if (parts.length > 0) return parts.join(': ');
+		}
 	}
 	try {
 		return JSON.stringify(body);
@@ -91,6 +98,7 @@ function queryScalar(value: unknown): string | number | boolean | undefined {
 }
 
 export function pdlQuery(
+	// Callers pass different validated objects, so this reads an open record.
 	input: Record<string, unknown>,
 ): Record<string, string | number | boolean | undefined> {
 	return Object.fromEntries(
