@@ -302,13 +302,16 @@ export function bindEndpointsRecursively({
 
 				let key: string | undefined;
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
-				const authType = (ctx as { authType?: string }).authType;
+				const authType =
+					typeof ctx.authType === 'string' ? ctx.authType : undefined;
+				const ctxTenantId =
+					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
 				try {
 					if (authType === 'managed_pricing' && hubConfig) {
 						key = await resolveManagedPricingApiKey(
 							{
 								hub: hubConfig,
-								tenantId,
+								tenantId: ctxTenantId ?? tenantId,
 								meteredOperationId: operationPath,
 							},
 							{

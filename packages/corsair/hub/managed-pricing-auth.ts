@@ -26,7 +26,7 @@ export type GetManagedPricingApiKeyOptions = {
 /** Context from keyBuilder when the runtime is executing a metered endpoint. */
 export type ManagedPricingKeyBuilderContext = {
 	hub?: HubConfig;
-	tenantId: string;
+	tenantId?: string;
 	meteredOperationId?: string;
 };
 
@@ -192,6 +192,14 @@ export async function resolveManagedPricingApiKey(
 	input: { plugin: string; cache: object },
 ): Promise<string> {
 	requireHubForManagedPricing(input.plugin, ctx.hub);
+	const tenantId = ctx.tenantId?.trim();
+	if (!tenantId) {
+		throw new AuthMissingError(
+			input.plugin,
+			'managed_pricing',
+			`[auth-missing:${input.plugin}:managed_pricing]: tenantId is required for metered credentials.`,
+		);
+	}
 	const operation = ctx.meteredOperationId?.trim();
 	if (!operation) {
 		throw new AuthMissingError(
@@ -204,7 +212,7 @@ export async function resolveManagedPricingApiKey(
 		{
 			hub: ctx.hub,
 			plugin: input.plugin,
-			tenantId: ctx.tenantId,
+			tenantId,
 			cache: input.cache,
 		},
 		{ operation },
