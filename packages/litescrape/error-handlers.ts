@@ -24,7 +24,10 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			// An HTTP status is authoritative: a 400/403 that merely mentions
+			// "concurrency" is permanent, so only a real 429 is retried. The
+			// text fallback below is for wrapped errors that lost their status.
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = code(error);
 			return (
 				msg.includes('too many requests') ||

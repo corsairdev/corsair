@@ -62,6 +62,15 @@ describe('Litescrape errorHandlers', () => {
 		expect(route(apiError(429, 'Slow down'))).toBe('RATE_LIMIT_ERROR');
 	});
 
+	it('does not retry a permanent 4xx whose message mentions concurrency', () => {
+		// A 400/403 saying "concurrency limit" is a permanent plan/permission
+		// failure, so classifying an ApiError by status keeps it out of the
+		// retrying RATE_LIMIT_ERROR handler.
+		const error = apiError(403, 'concurrency limit reached for this plan');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		expect(route(error)).toBe('AUTH_ERROR');
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');
