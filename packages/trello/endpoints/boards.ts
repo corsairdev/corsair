@@ -148,7 +148,10 @@ export const del: TrelloEndpoints['boardsDelete'] = async (ctx, input) => {
 		try {
 			await ctx.db.boards.deleteByEntityId(input.boardId);
 		} catch (error) {
-			console.warn('Failed to delete board from database after deletion:', error);
+			console.warn(
+				'Failed to delete board from database after deletion:',
+				error,
+			);
 		}
 	}
 
