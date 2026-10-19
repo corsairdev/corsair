@@ -114,6 +114,15 @@ describe('makeMrscraperRequest', () => {
 		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
 			rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
 		});
+		// There is no 5xx handler in this plugin, so a 503 must not be treated
+		// as a rate limit: retrying a scrape POST could start another billed
+		// scrape.
+		const retryConfig = mockRequest.mock.calls[0]?.[2]?.rateLimitConfig;
+		expect(retryConfig?.isRateLimitError?.(429, {})).toBe(true);
+		expect(retryConfig?.isRateLimitError?.(503, {})).toBe(false);
+		// The provider allows a per-request timeout of about 2000s, so the
+		// transport deadline must not cut a supported long scrape off early.
+		expect(mockRequest.mock.calls[0]?.[0]?.TIMEOUT).toBeGreaterThan(2_000_000);
 	});
 
 	it('throws AuthMissingError for an empty key without sending a request', async () => {

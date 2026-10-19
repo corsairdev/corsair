@@ -6,7 +6,11 @@ export const errorHandlers = {
 	// so retry a few times and honour the server's delay when present.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			// The HTTP status is authoritative: only a real 429 is retried. The
+			// text fallback is for wrapped errors that lost their status, so a
+			// 500 body or a ZodError quoting "rate limit" is not retried (each
+			// scrape.* retry can start another billed scrape).
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('too many requests') || msg.includes('rate limit');
 		},

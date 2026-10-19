@@ -16,6 +16,9 @@ const describeLive = LIVE.length > 0 ? describe : describe.skip;
 
 describeLive('mrscraper live API (env-gated)', () => {
 	it('GET /subscription-accounts returns the account', async () => {
+		// The raw envelope stays `unknown` on purpose: the response schema below
+		// is the single source of truth, and its parse() is the assertion — a
+		// hand-written duplicate type could drift from the schema.
 		const res = await makeMrscraperRequest<unknown>(
 			'/subscription-accounts',
 			LIVE,
@@ -27,6 +30,8 @@ describeLive('mrscraper live API (env-gated)', () => {
 	});
 
 	it('GET /results returns a paginated page', async () => {
+		// Same reason as above: ResultsListResponseSchema owns the shape and
+		// parsing it is what this test verifies.
 		const res = await makeMrscraperRequest<unknown>('/results', LIVE, {
 			method: 'GET',
 			query: { page: 1, pageSize: 5 },

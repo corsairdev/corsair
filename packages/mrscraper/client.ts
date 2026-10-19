@@ -55,17 +55,18 @@ export const MRSCRAPER_PLATFORM_API_BASE =
 	'https://api.app.mrscraper.com/api/v1';
 
 // Scrapes and reruns run for minutes, and the docs allow a per-request
-// `timeout` up to ~2000s, so the transport deadline sits well above that.
-const MRSCRAPER_REQUEST_TIMEOUT_MS = 1_800_000;
+// `timeout` up to ~2000s, so the transport deadline sits well above that
+// (2100s) instead of cutting a supported request off locally.
+const MRSCRAPER_REQUEST_TIMEOUT_MS = 2_100_000;
 
 /**
  * The transport's own retry loop is disabled (`maxRetries: 0`) so the plugin's
  * error handlers are the single owner of retries (core drives them in
  * `core/endpoints/bind.ts`); this keeps a sustained 429 to one request per
  * handler attempt instead of stacking the transport's default retries on top.
- * `isRateLimitError` also treats 503 as retryable so the transport still
- * attaches `Retry-After` to the `ApiError` for service-unavailable responses,
- * which the 503 handler needs.
+ * Only 429 is treated as a rate limit: there is no 5xx retry handler, and
+ * retrying a 503 would re-send non-idempotent scrape requests that may
+ * already have started and been billed.
  */
 const TRANSPORT_RETRY_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -75,7 +76,7 @@ const TRANSPORT_RETRY_CONFIG: RateLimitConfig = {
 	headerNames: {
 		retryAfter: 'retry-after',
 	},
-	isRateLimitError: (status) => status === 429 || status === 503,
+	isRateLimitError: (status) => status === 429,
 };
 
 export type MrscraperRequestOptions = {

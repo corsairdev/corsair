@@ -52,6 +52,14 @@ describe('Mrscraper errorHandlers', () => {
 		expect(route(apiError(429, 'Slow down'))).toBe('RATE_LIMIT_ERROR');
 	});
 
+	it('does not retry a non-429 ApiError whose message mentions rate limit', () => {
+		// A 500 body quoting "rate limit" must not make scrape.* POSTs retry:
+		// each retry can start another billed scrape.
+		const error = apiError(500, 'upstream rate limit tripped');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		expect(route(error)).toBe('DEFAULT');
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR with no retries', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');
