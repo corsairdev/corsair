@@ -285,13 +285,17 @@ export function octen<const T extends OctenPluginOptions>(
 		errorHandlers: (() => {
 			// Core selects the first handler whose matcher accepts the error
 			// (`Object.keys(...).find`), and DEFAULT matches everything, so
-			// DEFAULT must be evaluated last - otherwise it shadows any custom
-			// handler a caller contributes through options.
-			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			// DEFAULT must always be evaluated last - otherwise it shadows any
+			// custom handler a caller contributes through options. The caller's
+			// DEFAULT is destructured out as well: spreading it in place would
+			// keep its original key position, ahead of their other handlers.
+			const { DEFAULT: builtInDefault, ...specificDefaults } = errorHandlers;
+			const { DEFAULT: callerDefault, ...callerHandlers } =
+				options.errorHandlers || {};
 			return {
 				...specificDefaults,
-				...(options.errorHandlers || {}),
-				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+				...callerHandlers,
+				DEFAULT: callerDefault || builtInDefault,
 			};
 		})(),
 		keyBuilder: async (ctx: OctenKeyBuilderContext, source) => {
