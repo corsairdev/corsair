@@ -49,6 +49,15 @@ describe('makeOctenRequest', () => {
 				body: { query: 'openai' },
 			}),
 		);
+
+		// The transport's own retry loop is disabled so the plugin's error
+		// handlers are the single owner of retries.
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: expect.objectContaining({
+				maxRetries: 0,
+				isRateLimitError: expect.any(Function),
+			}),
+		});
 	});
 
 	it('returns the raw body for non-enveloped endpoints', async () => {
@@ -91,14 +100,16 @@ describe('makeOctenRequest', () => {
 			request_id: 'req_3',
 		});
 
-		let caught: unknown;
+		let caught: Error | undefined;
 		try {
 			await makeOctenRequest('/search', 'bad-key', {
 				method: 'POST',
 				body: { query: 'openai' },
 			});
 		} catch (error) {
-			caught = error;
+			// Failures from the client are `ApiError`s; narrow to `Error` here
+			// rather than storing the catch binding's `unknown`.
+			if (error instanceof Error) caught = error;
 		}
 
 		expect(caught).toBeInstanceOf(ApiError);
@@ -115,14 +126,16 @@ describe('makeOctenRequest', () => {
 			request_id: 'req_4',
 		});
 
-		let caught: unknown;
+		let caught: Error | undefined;
 		try {
 			await makeOctenRequest('/search', 'test-key', {
 				method: 'POST',
 				body: { query: 'openai' },
 			});
 		} catch (error) {
-			caught = error;
+			// Failures from the client are `ApiError`s; narrow to `Error` here
+			// rather than storing the catch binding's `unknown`.
+			if (error instanceof Error) caught = error;
 		}
 
 		expect(caught).toBeInstanceOf(ApiError);

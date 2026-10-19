@@ -31,7 +31,7 @@ throws `AuthMissingError` before any network call.
 | `newsSearch.post` | POST | `/news-search` | read | Search news articles, optionally grouped into events |
 | `businessSearch.post` | POST | `/business-search` | read | Search business pages, returning company/people cards |
 | `imageSearch.post` | POST | `/image-search` | read | Search images by text query or reference image |
-| `videoSearch.post` | POST | `/video-search` | read | Search videos by a text query |
+| `videoSearch.post` | POST | `/video-search` | read | Search videos by a text query (invite-only beta; access must be requested from Octen) |
 | `extract.post` | POST | `/extract` | read | Extract page content from up to 20 URLs |
 | `embedding.create` | POST | `/embedding` | read | Create text embeddings |
 | `vlEmbedding.create` | POST | `/vl-embedding` | read | Create multimodal (text/image/video) embeddings |

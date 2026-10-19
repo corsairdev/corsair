@@ -12,8 +12,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('too many requests') ||
 				msg.includes('rate limit') ||
-				msg.includes('rate_limited') ||
-				msg.includes('429')
+				msg.includes('rate_limited')
 			);
 		},
 		handler: async (error: Error) => {
@@ -39,8 +38,7 @@ export const errorHandlers = {
 				msg.includes('unauthorized') ||
 				msg.includes('forbidden') ||
 				msg.includes('invalid api key') ||
-				msg.includes('insufficient balance') ||
-				msg.includes('insufficient')
+				msg.includes('insufficient balance')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),

@@ -41,6 +41,20 @@ describe('Octen errorHandlers', () => {
 		expect(route(new Error('rate limit exceeded'))).toBe('RATE_LIMIT_ERROR');
 	});
 
+	it('does not treat a message that merely contains 429 as a rate limit', () => {
+		// An id, URL or task number can contain the digits "429"; matching on
+		// them used to send unrelated, non-throttled failures down the retrying
+		// path. Only a real 429 status or a genuine throttle phrase may.
+		expect(route(apiError(500, 'task 429 was aborted'))).toBe('DEFAULT');
+		expect(route(new Error('batch 429 finished'))).toBe('DEFAULT');
+	});
+
+	it('still matches a real ApiError carrying status 429', () => {
+		// Envelope errors copy a non-zero `code` into `status`, so this is the
+		// path that must keep routing throttling to RATE_LIMIT_ERROR.
+		expect(route(apiError(429, 'request rejected'))).toBe('RATE_LIMIT_ERROR');
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR with no retries', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		// Octen documents 403 as an exhausted account balance; it is still
@@ -55,6 +69,12 @@ describe('Octen errorHandlers', () => {
 
 	it('routes an insufficient-balance message to AUTH_ERROR', () => {
 		expect(route(new Error('insufficient balance'))).toBe('AUTH_ERROR');
+	});
+
+	it('does not treat a message that merely contains insufficient as auth', () => {
+		// Only the documented "insufficient balance" phrase is terminal auth; a
+		// bare "insufficient" can appear in unrelated, non-auth messages.
+		expect(route(new Error('insufficient quota for export'))).toBe('DEFAULT');
 	});
 
 	it('routes 400 and 422 to BAD_REQUEST_ERROR with no retries', async () => {

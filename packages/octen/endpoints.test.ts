@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import * as client from './client';
 import {
@@ -15,7 +15,11 @@ import {
 	VideoSearch,
 	VlEmbedding,
 } from './endpoints';
-import type { OctenContext } from './index';
+import type {
+	OctenContext,
+	OctenKeyBuilderContext,
+	OctenPluginOptions,
+} from './index';
 import { octen, octenEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -754,5 +758,76 @@ describe('octen plugin shape', () => {
 			expect(octenEndpointSchemas[path].input).toBeDefined();
 			expect(octenEndpointSchemas[path].output).toBeDefined();
 		}
+	});
+});
+
+describe('octen keyBuilder', () => {
+	function keyBuilderContext(
+		getApiKey: () => Promise<string | null>,
+	): OctenKeyBuilderContext {
+		return {
+			authType: 'api_key',
+			options: {},
+			keys: {
+				get_dek: () => Promise.resolve('test-dek'),
+				issue_new_dek: () => Promise.resolve('test-dek'),
+				get_api_key: getApiKey,
+				set_api_key: () => Promise.resolve(),
+				get_webhook_signature: () => Promise.resolve(null),
+				set_webhook_signature: () => Promise.resolve(),
+			},
+			tenantId: 'test-tenant',
+		};
+	}
+
+	it('prefers an explicitly configured key over the stored one', async () => {
+		const plugin = octen<OctenPluginOptions>({ key: 'option-key' });
+
+		const key = await plugin.keyBuilder?.(
+			keyBuilderContext(() => Promise.resolve('stored-key')),
+			'endpoint',
+		);
+
+		expect(key).toBe('option-key');
+	});
+
+	it('returns the stored key when no option key is set', async () => {
+		const plugin = octen<OctenPluginOptions>({});
+
+		const key = await plugin.keyBuilder?.(
+			keyBuilderContext(() => Promise.resolve('stored-key')),
+			'endpoint',
+		);
+
+		expect(key).toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when no key is stored', async () => {
+		const plugin = octen<OctenPluginOptions>({});
+
+		await expect(
+			plugin.keyBuilder?.(
+				keyBuilderContext(() =>
+					Promise.reject(
+						new Error(
+							'No DEK found for account (tenant: "test-tenant", integration: "octen"). Initialize the account first.',
+						),
+					),
+				),
+				'endpoint',
+			),
+		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('propagates an unexpected key manager failure', async () => {
+		const plugin = octen<OctenPluginOptions>({});
+		const failure = new Error('decryption failed');
+
+		await expect(
+			plugin.keyBuilder?.(
+				keyBuilderContext(() => Promise.reject(failure)),
+				'endpoint',
+			),
+		).rejects.toBe(failure);
 	});
 });
