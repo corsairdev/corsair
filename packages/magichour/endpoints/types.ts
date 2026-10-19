@@ -56,7 +56,7 @@ const ProjectStatusSchema = z.enum([
 
 // Shared input for the three "get project details" and three "delete project"
 // operations, all of which take only the project id in the path.
-const IdInputSchema = z.object({ id: z.string() }).catchall(z.unknown());
+const IdInputSchema = z.object({ id: z.string().min(1) }).catchall(z.unknown());
 
 export type IdInput = z.infer<typeof IdInputSchema>;
 

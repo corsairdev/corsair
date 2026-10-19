@@ -73,6 +73,21 @@ describe('Magic Hour errorHandlers', () => {
 		});
 	});
 
+	it('still matches a real 429 ApiError', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(apiError(429, 'Too Many Requests')),
+		).toBe(true);
+	});
+
+	it('does not treat a message merely containing the digits 429 as rate limiting', async () => {
+		const error = apiError(500, 'task 429 was aborted');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		expect(route(error)).toBe('DEFAULT');
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');

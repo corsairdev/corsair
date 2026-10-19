@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import {
 	Account,
 	Audio,
@@ -558,8 +560,12 @@ export function magichour<const T extends MagicHourPluginOptions>(
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('magichour', 'api_key');
+				}
+				return storedKey;
 			}
 
 			return '';

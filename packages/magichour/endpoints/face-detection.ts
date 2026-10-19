@@ -43,7 +43,9 @@ export const getDetails: MagicHourEndpoints['faceDetectionGetDetails'] = async (
 
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['faceDetectionGetDetails']
-	>(`/v1/face-detection/${parsedInput.id}`, ctx.key, { method: 'GET' });
+	>(`/v1/face-detection/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const parsed =
 		MagicHourEndpointOutputSchemas.faceDetectionGetDetails.parse(response);

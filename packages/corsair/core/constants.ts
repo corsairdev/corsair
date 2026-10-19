@@ -586,7 +586,7 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
-	magichour: 'MagicHour',
+	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',

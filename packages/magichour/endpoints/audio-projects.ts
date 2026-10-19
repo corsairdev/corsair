@@ -16,7 +16,9 @@ export const getDetails: MagicHourEndpoints['audioProjectsGetDetails'] = async (
 
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['audioProjectsGetDetails']
-	>(`/v1/audio-projects/${parsedInput.id}`, ctx.key, { method: 'GET' });
+	>(`/v1/audio-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const parsed =
 		MagicHourEndpointOutputSchemas.audioProjectsGetDetails.parse(response);
@@ -41,7 +43,9 @@ export const deleteAudio: MagicHourEndpoints['audioProjectsDelete'] = async (
 	// DELETE returns 204 No Content; the output schema is z.void().
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['audioProjectsDelete']
-	>(`/v1/audio-projects/${parsedInput.id}`, ctx.key, { method: 'DELETE' });
+	>(`/v1/audio-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	MagicHourEndpointOutputSchemas.audioProjectsDelete.parse(response);
 

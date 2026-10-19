@@ -43,6 +43,14 @@ describe('makeMagicHourRequest', () => {
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
+		// The transport's own retry loop is disabled so the plugin's error
+		// handlers stay the single owner of retries.
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: expect.objectContaining({
+				enabled: true,
+				maxRetries: 0,
+			}),
+		});
 		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: MAGIC_HOUR_API_BASE,
 			HEADERS: {

@@ -16,7 +16,9 @@ export const getDetails: MagicHourEndpoints['videoProjectsGetDetails'] = async (
 
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['videoProjectsGetDetails']
-	>(`/v1/video-projects/${parsedInput.id}`, ctx.key, { method: 'GET' });
+	>(`/v1/video-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const parsed =
 		MagicHourEndpointOutputSchemas.videoProjectsGetDetails.parse(response);
@@ -41,7 +43,9 @@ export const deleteVideo: MagicHourEndpoints['videoProjectsDelete'] = async (
 	// DELETE returns 204 No Content; the output schema is z.void().
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['videoProjectsDelete']
-	>(`/v1/video-projects/${parsedInput.id}`, ctx.key, { method: 'DELETE' });
+	>(`/v1/video-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	MagicHourEndpointOutputSchemas.videoProjectsDelete.parse(response);
 

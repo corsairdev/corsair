@@ -16,7 +16,9 @@ export const getDetails: MagicHourEndpoints['imageProjectsGetDetails'] = async (
 
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['imageProjectsGetDetails']
-	>(`/v1/image-projects/${parsedInput.id}`, ctx.key, { method: 'GET' });
+	>(`/v1/image-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const parsed =
 		MagicHourEndpointOutputSchemas.imageProjectsGetDetails.parse(response);
@@ -41,7 +43,9 @@ export const deleteImage: MagicHourEndpoints['imageProjectsDelete'] = async (
 	// DELETE returns 204 No Content; the output schema is z.void().
 	const response = await makeMagicHourRequest<
 		MagicHourEndpointOutputs['imageProjectsDelete']
-	>(`/v1/image-projects/${parsedInput.id}`, ctx.key, { method: 'DELETE' });
+	>(`/v1/image-projects/${encodeURIComponent(parsedInput.id)}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	MagicHourEndpointOutputSchemas.imageProjectsDelete.parse(response);
 
