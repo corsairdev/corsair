@@ -282,6 +282,12 @@ export const getStepHtml: TinyFishEndpoints['getStepHtml'] = async (
 				ctx.key,
 				'text/html',
 			);
+			if (!contentType.startsWith('text/html')) {
+				throw new TinyFishError(
+					`Step HTML returned a non-HTML response (${contentType || 'no content type'})`,
+					{ method: 'GET' },
+				);
+			}
 			return { contentType, html: bytes.toString('utf8') };
 		},
 		(validated) => ({

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 /** Search, Fetch and Research accept the same three result domains. */
+// Const assertion keeps the domain tuple. A string[] would be wider, not
+// stricter.
 export const TINYFISH_DOMAIN_TYPES = ['web', 'news', 'research_paper'] as const;
 const DomainTypeSchema = z.enum(TINYFISH_DOMAIN_TYPES);
 
@@ -10,6 +12,7 @@ export const TINYFISH_RUN_STATUSES = [
 	'COMPLETED',
 	'FAILED',
 	'CANCELLED',
+	// Const assertion keeps this tuple literal. A wider array type would not be stricter.
 ] as const;
 const RunStatusSchema = z.enum(TINYFISH_RUN_STATUSES);
 
@@ -22,6 +25,7 @@ export const TINYFISH_RESEARCH_RUN_STATUSES = [
 	'CANCELLED',
 	'TIMED_OUT',
 	'QUEUED',
+	// Const assertion keeps this tuple literal. A wider array type would not be stricter.
 ] as const;
 const ResearchRunStatusSchema = z.enum(TINYFISH_RESEARCH_RUN_STATUSES);
 
@@ -48,6 +52,7 @@ export const TINYFISH_ERROR_CODES = [
 	'SITE_BLOCKED',
 	'TASK_FAILED',
 	'CANCELLED',
+	// Const assertion keeps this tuple literal. A wider array type would not be stricter.
 ] as const;
 
 export const TINYFISH_RUN_PROXY_COUNTRY_CODES = [
@@ -58,6 +63,7 @@ export const TINYFISH_RUN_PROXY_COUNTRY_CODES = [
 	'FR',
 	'JP',
 	'AU',
+	// Const assertion keeps this tuple literal. A wider array type would not be stricter.
 ] as const;
 
 export const TINYFISH_PROFILE_PROXY_COUNTRY_CODES = [
@@ -74,6 +80,7 @@ export const TINYFISH_PROFILE_PROXY_COUNTRY_CODES = [
 	'SG',
 	'BR',
 	'IN',
+	// Const assertion keeps this tuple literal. A wider array type would not be stricter.
 ] as const;
 const ProfileProxyCountryCodeSchema = z
 	.enum(TINYFISH_PROFILE_PROXY_COUNTRY_CODES)
@@ -136,9 +143,11 @@ export const RunSummarySchema = z.object({
 	started_at: z.string().nullable(),
 	finished_at: z.string().nullable(),
 	num_of_steps: z.number().int().min(0).nullable(),
-	// Result shape is goal-dependent; the docs fix keys only by example.
+	// Result shape is goal-dependent. The docs fix keys only by example, so a
+	// stricter type is not practical.
 	result: z.record(z.string(), z.unknown()).nullable(),
-	// Echoes the caller's own result contract, so its keys are not fixed.
+	// Echoes the caller's own JSON Schema, whose keys are not fixed, so a
+	// stricter type is not practical.
 	output_schema: z.record(z.string(), z.unknown()).nullable(),
 	profile_attached: z.boolean(),
 	profile_id: z.string().nullable(),
@@ -201,7 +210,8 @@ export const RunRequestSchema = z
 		profile_id: z.string().min(1).optional(),
 		credential_item_ids: z.array(z.string()).min(1).optional(),
 		proxy_config: ProxyConfigSchema.optional(),
-		// An arbitrary JSON Schema the caller owns; only its presence matters.
+		// Caller-owned JSON Schema. Only its presence matters, so a stricter type
+		// is not practical.
 		output_schema: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -220,9 +230,11 @@ export const SearchResultSchema = z.object({
 	url: z.string(),
 	thumbnail_url: z.string().nullable().optional(),
 	/** Present only when the `fetch` request parameter was supplied. */
-	// Shape follows the requested format: a string, or an object for json.
+	// String, or an object when the format is json. The two shapes share no
+	// fields, so a stricter type is not practical.
 	fetch: z.unknown().nullable().optional(),
-	// Failure detail mirrors whatever the provider returns; shape varies.
+	// Failure detail mirrors whatever the provider returns. The shape varies,
+	// so a stricter type is not practical.
 	fetch_error: z.unknown().nullable().optional(),
 	date: z.string().nullable().optional(),
 	publisher: z.string().nullable().optional(),
@@ -334,13 +346,16 @@ export const FetchResultSchema = z.object({
 	language: z.string().nullable(),
 	format: z.enum(['markdown', 'html', 'json']),
 	/** String for markdown/html, object for json. Null if extraction failed. */
+	// JSON extraction keys follow the page, so a stricter object type is not
+	// practical.
 	text: z.union([z.string(), z.record(z.string(), z.unknown())]).nullable(),
 	author: z.string().nullable(),
 	published_date: z.string().nullable(),
 	links: z.array(z.string()).optional(),
 	image_links: z.array(z.string()).optional(),
 	iframe_links: z.array(z.string()).optional(),
-	// Provider-defined metadata bag; keys vary by page.
+	// Provider-defined metadata bag. Keys vary by page, so a stricter type is
+	// not practical.
 	page_metadata: z.record(z.string(), z.unknown()).optional(),
 	latency_ms: z.number().nullable(),
 	not_modified: z.boolean().optional(),
@@ -516,7 +531,8 @@ export const RunBatchInputSchema = z
 	.object({
 		runs: z.array(RunBatchItemSchema).min(1).max(100),
 		profile_id: z.string().min(1).optional(),
-		// Batch-level result contract the caller owns; presence is the contract.
+		// Batch-level result contract the caller owns. Keys are not fixed, so a
+		// stricter type is not practical.
 		output_schema: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
@@ -530,7 +546,8 @@ export const RunResponseSchema = z.object({
 	started_at: z.string().nullable(),
 	finished_at: z.string().nullable(),
 	num_of_steps: z.number().nullable(),
-	// Result shape is goal-dependent; the docs fix keys only by example.
+	// Result shape is goal-dependent. The docs fix keys only by example, so a
+	// stricter type is not practical.
 	result: z.record(z.string(), z.unknown()).nullable(),
 	error: RunErrorSchema.nullable(),
 	profile_hint: ProfileHintSchema.nullable().optional(),
@@ -551,7 +568,8 @@ export const RunBatchResponseSchema = z.object({
 		.object({
 			code: z.string(),
 			message: z.string(),
-			// Provider attaches per-code context here; shape varies by code.
+			// Provider attaches per-code context here. The shape varies by code, so
+			// a stricter type is not practical.
 			details: z.unknown().nullable().optional(),
 		})
 		.nullable(),
@@ -862,9 +880,12 @@ export const ResearchRunSchema = z.object({
 	completed_at: z.string().nullable(),
 	error: z
 		.object({
-			code: z.enum(TINYFISH_ERROR_CODES),
+			// Codes outside TINYFISH_ERROR_CODES must still parse, or one new
+			// provider code rejects getResearchRun and the whole list page.
+			code: z.string(),
 			message: z.string(),
-			// Provider attaches per-code context here; shape varies by code.
+			// Provider attaches per-code context here; the shape varies by
+			// code, so a stricter type is not practical.
 			details: z.unknown().nullable().optional(),
 		})
 		.nullable(),
@@ -1031,6 +1052,7 @@ export const WalletSchema = z.object({
 	currency: z.literal('USD'),
 	as_of: z.string(),
 	/** Union of several auto-reload states; shape varies while unconfigured. */
+	// The states do not share fields, so a stricter type is not practical.
 	auto_reload: z.unknown().nullable(),
 	pending_top_up: z
 		.object({
@@ -1179,6 +1201,7 @@ export const TinyFishEndpointInputSchemas = {
 	deleteProfile: DeleteProfileInputSchema,
 	getWallet: GetWalletInputSchema,
 	listVaultItems: ListVaultItemsInputSchema,
+	// Const assertion keeps this schema map literal. A wider index signature would not be stricter.
 } as const;
 
 export const TinyFishEndpointOutputSchemas = {
@@ -1210,4 +1233,5 @@ export const TinyFishEndpointOutputSchemas = {
 	deleteProfile: DeleteProfileResponseSchema,
 	getWallet: WalletSchema,
 	listVaultItems: ListVaultItemsResponseSchema,
+	// Const assertion keeps this schema map literal. A wider index signature would not be stricter.
 } as const;

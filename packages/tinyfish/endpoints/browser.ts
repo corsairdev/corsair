@@ -46,7 +46,7 @@ export const terminateSession: TinyFishEndpoints['terminateBrowserSession'] =
 					ctx.key,
 					{ method: 'DELETE' },
 				);
-				return { terminated: true as const, session_id: validated.sessionId };
+				return { terminated: true, session_id: validated.sessionId };
 			},
 			(validated) => ({
 				sessionId: validated.sessionId,

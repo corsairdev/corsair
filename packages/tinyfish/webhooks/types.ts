@@ -11,9 +11,13 @@ export const TINYFISH_RUN_EVENTS = [
 	'run.completed',
 	'run.failed',
 	'run.cancelled',
+	// Const assertion keeps the event tuple. A string[] would be wider, not
+	// stricter.
 ] as const;
 
 export type TinyFishRunEvent = (typeof TINYFISH_RUN_EVENTS)[number];
+
+const TINYFISH_RUN_EVENT_SET = new Set<string>(TINYFISH_RUN_EVENTS);
 
 const WebhookRunErrorSchema = z.looseObject({
 	code: z.string().nullable().optional(),
@@ -40,7 +44,8 @@ const WebhookRunDataSchema = z.looseObject({
 	started_at: z.string().nullable().optional(),
 	finished_at: z.string().nullable().optional(),
 	num_of_steps: z.number().nullable().optional(),
-	// Result shape is goal-dependent; the docs fix keys only by example.
+	// Result shape is goal-dependent. The docs fix keys only by example, so a
+	// stricter type is not practical.
 	result: z.record(z.string(), z.unknown()).nullable().optional(),
 	error: WebhookRunErrorSchema.nullable().optional(),
 	streaming_url: z.string().nullable().optional(),
@@ -80,23 +85,33 @@ export type TinyFishWebhookOutputs = {
 	runCancelled: RunCancelledEvent;
 };
 
+// JSON objects have open keys. The caller already rejected null and arrays,
+// so a stricter record is not practical.
+function unknownRecord(value: object): Record<string, unknown> {
+	// Guarded object with open payload keys, so a stricter record is not
+	// practical.
+	return value as Record<string, unknown>;
+}
+
 // Matchers run before any schema, so this narrows the raw body just enough to
-// read `event` off it; the casts only claim what the typeof guards proved.
+// read `event`. A stricter body type is not practical before that check.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
+			// JSON.parse is untyped text. unknown is the boundary before the
+			// object guard, and a stricter parse type is not practical.
 			const parsed: unknown = JSON.parse(body);
 			return parsed !== null &&
 				typeof parsed === 'object' &&
 				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
+				? unknownRecord(parsed)
 				: null;
 		} catch {
 			return null;
 		}
 	}
 	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
+		? unknownRecord(body)
 		: null;
 }
 
@@ -106,12 +121,7 @@ export const matchTinyFishPluginWebhook: CorsairWebhookMatcher = (
 	const body = parseBody(request.body);
 	if (!body) return false;
 	const event = body.event;
-	return (
-		typeof event === 'string' &&
-		// includes on a readonly tuple demands its exact element type; the
-		// typeof guard above already proved event is one of those strings.
-		(TINYFISH_RUN_EVENTS as readonly string[]).includes(event)
-	);
+	return typeof event === 'string' && TINYFISH_RUN_EVENT_SET.has(event);
 };
 
 export const createTinyFishMatch =
@@ -124,6 +134,8 @@ export const createTinyFishMatch =
 /** There is no provider signature to verify, so the payload is the check. */
 export function parseTinyFishRunEvent<T>(
 	schema: z.ZodType<T>,
+	// Deliveries are unsigned JSON. unknown is the boundary the schema
+	// parses, so a stricter payload type is not practical.
 	payload: unknown,
 ): { valid: true; event: T } | { valid: false; error: string } {
 	const result = schema.safeParse(payload);

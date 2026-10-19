@@ -131,6 +131,8 @@ const tinyFishEndpointsNested = {
 	profiles: Profiles,
 	wallet: Wallet,
 	vault: Vault,
+	// Const assertion keeps the endpoint tree literal. A wider index signature
+	// would not be stricter.
 } as const;
 
 const tinyFishWebhooksNested = {
@@ -139,6 +141,8 @@ const tinyFishWebhooksNested = {
 		failed: TinyFishRunWebhooks.runFailed,
 		cancelled: TinyFishRunWebhooks.runCancelled,
 	},
+	// Const assertion keeps the webhook tree literal. A wider index signature
+	// would not be stricter.
 } as const;
 
 export const tinyfishEndpointSchemas = {
@@ -254,6 +258,8 @@ export const tinyfishEndpointSchemas = {
 		input: TinyFishEndpointInputSchemas.listVaultItems,
 		output: TinyFishEndpointOutputSchemas.listVaultItems,
 	},
+	// Const assertion keeps the schema keys literal for the satisfies check.
+	// A wider index signature would not be stricter.
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof tinyFishEndpointsNested
 >;
@@ -274,10 +280,13 @@ const tinyFishWebhookSchemas = {
 		payload: RunCancelledEventSchema,
 		response: RunCancelledEventSchema,
 	},
+	// Const assertion keeps the webhook schema keys literal. A wider index
+	// signature would not be stricter.
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof tinyFishWebhooksNested
 >;
 
+// Const assertion keeps the auth literal. A plain string would be wider.
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const tinyFishEndpointMeta = {
@@ -402,10 +411,14 @@ const tinyFishEndpointMeta = {
 		description:
 			'List vault items and the credential IDs a run body can reference',
 	},
+	// Const assertion keeps the metadata keys literal. A wider index signature
+	// would not be stricter.
 } as const satisfies RequiredPluginEndpointMeta<typeof tinyFishEndpointsNested>;
 
 export const tinyFishAuthConfig = {
 	api_key: {},
+	// Const assertion keeps the auth config literal. A wider index signature
+	// would not be stricter.
 } as const satisfies PluginAuthConfig;
 
 export type BaseTinyFishPlugin<T extends TinyFishPluginOptions> = CorsairPlugin<
@@ -422,7 +435,24 @@ export type InternalTinyFishPlugin = BaseTinyFishPlugin<TinyFishPluginOptions>;
 export type ExternalTinyFishPlugin<T extends TinyFishPluginOptions> =
 	BaseTinyFishPlugin<T>;
 
+function mergeErrorHandlers(
+	builtin: CorsairErrorHandler,
+	user: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	if (!user) return builtin;
+	// Object key order is first-match. DEFAULT matches everything, so it has
+	// to stay after any handler the caller added or overrode.
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const { DEFAULT: userDefault, ...userRest } = user;
+	const fallback = userDefault ?? builtinDefault;
+	return fallback
+		? { ...builtinRest, ...userRest, DEFAULT: fallback }
+		: { ...builtinRest, ...userRest };
+}
+
 export function tinyfish<const T extends TinyFishPluginOptions>(
+	// The const generic T is caller-chosen. An empty object is the only
+	// default, so a stricter empty type is not practical.
 	incomingOptions: TinyFishPluginOptions & T = {} as TinyFishPluginOptions & T,
 ): ExternalTinyFishPlugin<T> {
 	const options = {
@@ -442,10 +472,7 @@ export function tinyfish<const T extends TinyFishPluginOptions>(
 		endpointSchemas: tinyfishEndpointSchemas,
 		webhookSchemas: tinyFishWebhookSchemas,
 		pluginWebhookMatcher: matchTinyFishPluginWebhook,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: TinyFishKeyBuilderContext, source) => {
 			// Deliveries are unsigned, so webhook handlers resolve their own key
 			// to confirm the run against the API before persisting it.

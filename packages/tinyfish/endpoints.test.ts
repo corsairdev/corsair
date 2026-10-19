@@ -7,9 +7,16 @@ import {
 const inputs = TinyFishEndpointInputSchemas;
 const outputs = TinyFishEndpointOutputSchemas;
 
+// ZodTypeAny is the schema base. Fixtures include values the schema must
+// reject, so a stricter input than unknown is not practical.
 type AnySchema = z.ZodTypeAny;
 
-function accepts(schema: AnySchema, value: unknown): boolean {
+function accepts(
+	schema: AnySchema,
+	// Fixtures include values the schema must reject, so a stricter input is
+	// not practical.
+	value: unknown,
+): boolean {
 	return schema.safeParse(value).success;
 }
 
@@ -965,6 +972,23 @@ describe('outputs', () => {
 				pagination,
 			}),
 		).toBe(false);
+		expect(
+			accepts(outputs.getResearchRun, {
+				...researchRun,
+				error: { code: 'BRAND_NEW_PROVIDER_CODE', message: 'later' },
+			}),
+		).toBe(true);
+		expect(
+			accepts(outputs.listResearchRuns, {
+				data: [
+					{
+						...researchRun,
+						error: { code: 'BRAND_NEW_PROVIDER_CODE', message: 'later' },
+					},
+				],
+				pagination,
+			}),
+		).toBe(true);
 
 		expect(
 			accepts(outputs.getResearchRun, {

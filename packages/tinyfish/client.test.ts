@@ -15,18 +15,16 @@ type Captured = {
 let captured: Captured | undefined;
 let fetchCount = 0;
 
-function captureInit(url: unknown, init?: RequestInit): void {
+function captureInit(url: string | URL | Request, init?: RequestInit): void {
 	const headers: Record<string, string> = {};
 	const raw = init?.headers;
 	if (raw instanceof Headers) {
 		raw.forEach((value, key) => {
 			headers[key.toLowerCase()] = value;
 		});
-	} else {
-		for (const [key, value] of Object.entries(
-			(raw ?? {}) as Record<string, string>,
-		)) {
-			headers[key.toLowerCase()] = value;
+	} else if (raw && !Array.isArray(raw)) {
+		for (const [key, value] of Object.entries(raw)) {
+			if (typeof value === 'string') headers[key.toLowerCase()] = value;
 		}
 	}
 	fetchCount += 1;
@@ -39,13 +37,23 @@ function captureInit(url: unknown, init?: RequestInit): void {
 	};
 }
 
+function installFetch(
+	impl: (url: string | URL | Request, init?: RequestInit) => Promise<object>,
+) {
+	// The stub only implements the Response fields these tests read, so a
+	// full Response is not practical.
+	global.fetch = impl as unknown as typeof global.fetch;
+}
+
 function mockFetch(response: {
 	status?: number;
+	// Success and error fixtures are different JSON values, so a stricter
+	// body type is not practical.
 	body?: unknown;
 	retryAfter?: string;
 }) {
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	installFetch(async (url, init) => {
 		captureInit(url, init);
 
 		const status = response.status ?? 200;
@@ -62,9 +70,8 @@ function mockFetch(response: {
 			headers,
 			json: async () => payload,
 			text: async () => JSON.stringify(payload),
-			// Partial `Response` stub; only what the shared request helper reads.
 		};
-	}) as unknown as typeof global.fetch;
+	});
 }
 
 function mockRawFetch(response: {
@@ -72,11 +79,13 @@ function mockRawFetch(response: {
 	statusText?: string;
 	contentType?: string;
 	bytes?: Buffer;
+	// Error fixtures are JSON objects; success paths use bytes instead, so a
+	// stricter body type is not practical.
 	body?: unknown;
 	retryAfter?: string;
 }) {
 	fetchCount = 0;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	installFetch(async (url, init) => {
 		captureInit(url, init);
 
 		const status = response.status ?? 200;
@@ -95,9 +104,8 @@ function mockRawFetch(response: {
 				new Uint8Array(response.bytes ?? Buffer.alloc(0)),
 			text: async () => JSON.stringify(response.body ?? {}),
 			json: async () => response.body ?? {},
-			// Partial `Response` stub; only what the raw request helper reads.
 		};
-	}) as unknown as typeof global.fetch;
+	});
 }
 
 describe('makeTinyFishRequest', () => {
@@ -122,17 +130,14 @@ describe('makeTinyFishRequest', () => {
 			search: 'https://api.search.tinyfish.ai/',
 			fetch: 'https://api.fetch.tinyfish.ai/',
 			browser: 'https://api.browser.tinyfish.ai/',
-		} as const;
+		};
 
-		for (const [base, host] of Object.entries(hosts)) {
+		// Const assertion keeps the tuple of host keys. A string[] would be
+		// wider, not stricter.
+		for (const base of ['search', 'fetch', 'browser'] as const) {
 			mockFetch({ body: {} });
-			await makeTinyFishRequest(
-				base as keyof typeof hosts,
-				'/',
-				'tf_key_test',
-				{ method: 'GET' },
-			);
-			expect(captured?.url).toBe(host);
+			await makeTinyFishRequest(base, '/', 'tf_key_test', { method: 'GET' });
+			expect(captured?.url).toBe(hosts[base]);
 		}
 	});
 
@@ -238,9 +243,9 @@ describe('makeTinyFishRequest', () => {
 	});
 
 	it('wraps transport failures in a TinyFishError', async () => {
-		global.fetch = (async () => {
+		installFetch(async () => {
 			throw new TypeError('network down');
-		}) as unknown as typeof global.fetch;
+		});
 
 		await expect(
 			makeTinyFishRequest('agent', '/v1/runs', 'tf_key_test', {
@@ -302,9 +307,9 @@ describe('makeTinyFishRawRequest', () => {
 	});
 
 	it('wraps transport failures in a TinyFishError', async () => {
-		global.fetch = (async () => {
+		installFetch(async () => {
 			throw new TypeError('network down');
-		}) as unknown as typeof global.fetch;
+		});
 
 		await expect(
 			makeTinyFishRawRequest(

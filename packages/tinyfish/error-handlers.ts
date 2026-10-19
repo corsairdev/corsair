@@ -9,7 +9,8 @@ function codeOf(error: Error): string | undefined {
 	return error instanceof TinyFishError ? error.code : undefined;
 }
 
-// unknown: error bodies are JSON objects, strings, or omitted.
+// Error bodies are JSON objects, strings, or omitted, so a stricter
+// parameter type is not practical.
 function bodyText(body: unknown): string {
 	if (body == null) {
 		return '';
@@ -31,14 +32,22 @@ function messageIncludes(error: Error, needles: string[]): boolean {
 	return needles.some((needle) => haystack.includes(needle));
 }
 
-// unknown: only the daily-allowance body carries error.details.resets_at.
+// Only the daily-allowance body carries error.details.resets_at. The guard
+// already rejected null and non-objects; the rest of the body is open, so a
+// stricter record is not practical.
+function unknownRecord(value: object): Record<string, unknown> {
+	// Guarded object with open provider keys, so a stricter record is not
+	// practical.
+	return value as Record<string, unknown>;
+}
+
 function resetsAtOf(error: TinyFishError): string | undefined {
 	if (error.body === null || typeof error.body !== 'object') return undefined;
-	const envelope = (error.body as Record<string, unknown>).error;
+	const envelope = unknownRecord(error.body).error;
 	if (envelope === null || typeof envelope !== 'object') return undefined;
-	const details = (envelope as Record<string, unknown>).details;
+	const details = unknownRecord(envelope).details;
 	if (details === null || typeof details !== 'object') return undefined;
-	const resetsAt = (details as Record<string, unknown>).resets_at;
+	const resetsAt = unknownRecord(details).resets_at;
 	return typeof resetsAt === 'string' && resetsAt.length > 0
 		? resetsAt
 		: undefined;
@@ -80,7 +89,7 @@ export const errorHandlers = {
 			return {
 				maxRetries: 3,
 				headersRetryAfterMs: retryAfter,
-				retryStrategy: 'exponential_backoff' as const,
+				retryStrategy: 'exponential_backoff',
 			};
 		},
 	},
@@ -92,7 +101,7 @@ export const errorHandlers = {
 			statusOf(error) === 409 || codeOf(error) === 'RETRY_REQUIRED',
 		handler: async () => ({
 			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
+			retryStrategy: 'exponential_backoff',
 		}),
 	},
 	AUTH_ERROR: {

@@ -5,4 +5,6 @@ export const TinyFishSchema = {
 	entities: {
 		agentRuns: TinyFishAgentRun,
 	},
+	// Const assertion keeps the schema map literal. A wider index signature
+	// would not be stricter.
 } as const;

@@ -3,6 +3,7 @@ import type { z } from 'zod';
 import type { TinyFishContext, TinyFishWebhooks } from '..';
 import { makeTinyFishRequest } from '../client';
 import { AgentRunSchema } from '../endpoints/types';
+import type { StoredRun } from '../run-store';
 import { persistRun } from '../run-store';
 import {
 	createTinyFishMatch,
@@ -80,8 +81,23 @@ async function confirmRunDelivery(
 	return { ok: true, run: live };
 }
 
+function confirmedSnapshot(live: ConfirmedRun): StoredRun {
+	return {
+		run_id: live.run_id,
+		status: live.status,
+		goal: live.goal,
+		created_at: live.created_at,
+		started_at: live.started_at,
+		finished_at: live.finished_at,
+		num_of_steps: live.num_of_steps,
+		result: live.result,
+		error: live.error,
+		profile_id: live.profile_id,
+	};
+}
+
 function dropDelivery(reason: string) {
-	return { success: false as const, statusCode: 409, error: reason };
+	return { success: false, statusCode: 409, error: reason };
 }
 
 export const runCompleted: TinyFishWebhooks['runCompleted'] = {
@@ -113,17 +129,7 @@ export const runCompleted: TinyFishWebhooks['runCompleted'] = {
 		}
 
 		const live = confirmation.run;
-		await persistRun(ctx, {
-			run_id: live.run_id,
-			status: live.status,
-			goal: live.goal,
-			created_at: live.created_at,
-			started_at: live.started_at,
-			finished_at: live.finished_at,
-			num_of_steps: live.num_of_steps,
-			result: live.result,
-			error: live.error,
-		});
+		await persistRun(ctx, confirmedSnapshot(live));
 
 		await logEventFromContext(
 			ctx,
@@ -178,17 +184,7 @@ export const runFailed: TinyFishWebhooks['runFailed'] = {
 		}
 
 		const live = confirmation.run;
-		await persistRun(ctx, {
-			run_id: live.run_id,
-			status: live.status,
-			goal: live.goal,
-			created_at: live.created_at,
-			started_at: live.started_at,
-			finished_at: live.finished_at,
-			num_of_steps: live.num_of_steps,
-			result: live.result,
-			error: live.error,
-		});
+		await persistRun(ctx, confirmedSnapshot(live));
 
 		await logEventFromContext(
 			ctx,
@@ -243,17 +239,7 @@ export const runCancelled: TinyFishWebhooks['runCancelled'] = {
 		}
 
 		const live = confirmation.run;
-		await persistRun(ctx, {
-			run_id: live.run_id,
-			status: live.status,
-			goal: live.goal,
-			created_at: live.created_at,
-			started_at: live.started_at,
-			finished_at: live.finished_at,
-			num_of_steps: live.num_of_steps,
-			result: live.result,
-			error: live.error,
-		});
+		await persistRun(ctx, confirmedSnapshot(live));
 
 		await logEventFromContext(
 			ctx,

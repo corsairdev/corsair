@@ -8,8 +8,9 @@ import { ApiError, request } from 'corsair/http';
 export class TinyFishError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
-	// unknown: failure bodies carry { error: { code, message } } on the
-	// documented paths, but the shape is not promised for every upstream case.
+	// Failure bodies carry { error: { code, message } } on the documented
+	// paths, but the shape is not promised for every upstream case, so a
+	// stricter type is not practical.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly method?: TinyFishRequestOptions['method'];
@@ -19,6 +20,8 @@ export class TinyFishError extends Error {
 		message: string,
 		options: {
 			cause?: Error;
+			// Same open failure body as the field above. A stricter type is
+			// not practical.
 			body?: unknown;
 			method?: TinyFishRequestOptions['method'];
 			status?: number;
@@ -51,6 +54,8 @@ export const TINYFISH_BASE_URLS = {
 	search: 'https://api.search.tinyfish.ai',
 	fetch: 'https://api.fetch.tinyfish.ai',
 	browser: 'https://api.browser.tinyfish.ai',
+	// Const assertion keeps the host map literal. A string index would be
+	// wider, not stricter.
 } as const;
 
 export type TinyFishBaseUrl = keyof typeof TINYFISH_BASE_URLS;
@@ -96,17 +101,27 @@ function buildConfig(baseUrl: string, apiKey: string): OpenAPIConfig {
 	};
 }
 
-// Failure bodies are not promised on every upstream path, so each hop is
-// narrowed at runtime and the casts only assert what the guard just proved.
+// Failure bodies are not promised on every upstream path. The guard already
+// rejected null and non-objects; provider keys stay open, so a stricter
+// record is not practical.
+function unknownRecord(value: object): Record<string, unknown> {
+	// Guarded object with open provider keys, so a stricter record is not
+	// practical.
+	return value as Record<string, unknown>;
+}
+
+// Failure bodies stay untyped until the guards below run, so a stricter
+// parameter is not practical.
 function errorCodeOf(body: unknown): string | undefined {
 	if (body === null || typeof body !== 'object') return undefined;
-	const error = (body as Record<string, unknown>).error;
+	const error = unknownRecord(body).error;
 	if (error === null || typeof error !== 'object') return undefined;
-	const code = (error as Record<string, unknown>).code;
+	const code = unknownRecord(error).code;
 	return typeof code === 'string' && code.length > 0 ? code : undefined;
 }
 
-// unknown: error bodies may be JSON objects, plain text, or unserializable.
+// Error bodies may be JSON objects, plain text, or unserializable, so a
+// stricter parameter type is not practical.
 function errorDetail(body: unknown): string {
 	if (body == null) return '';
 	if (typeof body === 'string') return body;
@@ -117,8 +132,8 @@ function errorDetail(body: unknown): string {
 	}
 }
 
-// T stays caller-chosen on purpose: each call site parses the response with
-// its own endpoint schema, so no shared generic could know the shape.
+// T stays caller-chosen. Each call site parses the response with its own
+// endpoint schema, so a stricter shared generic is not practical.
 export async function makeTinyFishRequest<T>(
 	base: TinyFishBaseUrl,
 	endpoint: string,
@@ -203,6 +218,8 @@ export async function makeTinyFishRawRequest(
 
 	if (!response.ok) {
 		const text = await response.text();
+		// Error bodies are usually JSON but not promised, so unknown is the
+		// boundary until JSON.parse succeeds. A stricter type is not practical.
 		let body: unknown = text;
 		try {
 			body = JSON.parse(text);

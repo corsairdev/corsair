@@ -25,9 +25,24 @@ const mockRequest = jest.mocked(makeTinyFishRequest);
 const mockRawRequest = jest.mocked(makeTinyFishRawRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-// never parameters: any concrete endpoint function is assignable to this
-// (parameters are contravariant), so the table needs no per-entry casts.
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant. Promise<unknown> is the shared return; each
+// endpoint's output differs, so a stricter shared type is not practical.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+
+type TestContext = ReturnType<typeof createContext>;
+
+function invoke(
+	endpoint: AnyEndpoint,
+	ctx: TestContext,
+	// Negative tests pass values no schema accepts, so a stricter input is
+	// not practical.
+	input: unknown,
+) {
+	// The fake context is not TinyFishContext. A stricter argument type is
+	// not practical at this boundary.
+	return endpoint(ctx as never, input as never);
+}
 
 function createContext() {
 	return {
@@ -144,17 +159,22 @@ const wallet = {
 const cases: Array<{
 	name: string;
 	endpoint: AnyEndpoint;
+	// Each row is a different endpoint input, including ones the schema must
+	// reject, so a stricter input type is not practical.
 	input: unknown;
 	base: string;
 	path: string;
 	method: string;
-	// Minimal body that passes the endpoint's output schema.
+	// Minimal body that passes the endpoint's output schema. Outputs differ
+	// per row, so a stricter type is not practical.
 	response?: unknown;
 	// Raw-fetch endpoints bypass the JSON client; the table carries the
 	// mocked transport payload and the endpoint's literal output instead.
 	raw?: {
 		accept: string;
 		response: { contentType: string; bytes: Buffer };
+		// Expected endpoint output. Shapes differ, so a stricter type is not
+		// practical.
 		result: unknown;
 	};
 }> = [
@@ -447,13 +467,15 @@ describe('tinyfish endpoint routing', () => {
 		'$name calls $method $base:$path',
 		async ({ endpoint, input, base, path, method, response, raw }) => {
 			const ctx = createContext();
+			// Raw endpoints return different envelopes, so a stricter result
+			// type is not practical.
 			let result: unknown;
 			if (raw) {
 				mockRawRequest.mockResolvedValueOnce(raw.response);
-				result = await endpoint(ctx as never, input as never);
+				result = await invoke(endpoint, ctx, input);
 			} else {
 				mockRequest.mockResolvedValueOnce(response ?? {});
-				await endpoint(ctx as never, input as never);
+				await invoke(endpoint, ctx, input);
 			}
 
 			if (raw) {
@@ -483,7 +505,7 @@ describe('tinyfish endpoint routing', () => {
 	it('search sends the filters as query parameters', async () => {
 		mockRequest.mockResolvedValueOnce(searchResponse);
 		const ctx = createContext();
-		await Search.search(ctx as never, {
+		await invoke(Search.search, ctx, {
 			query: 'due process',
 			purpose: 'case research',
 			domain_type: 'news',
@@ -514,7 +536,7 @@ describe('tinyfish endpoint routing', () => {
 	it('getRun encodes the run id and forwards artifact switches', async () => {
 		mockRequest.mockResolvedValueOnce(agentRun);
 		const ctx = createContext();
-		await Agent.getRun(ctx as never, {
+		await invoke(Agent.getRun, ctx, {
 			runId: 'run/1',
 			screenshots: 'base64',
 			html: 'none',
@@ -534,21 +556,56 @@ describe('tinyfish endpoint routing', () => {
 		});
 		const ctx = createContext();
 		await expect(
-			Agent.getStepScreenshot(
-				ctx as never,
-				{
-					runId: 'run-1',
-					stepId: 'evt_1',
-				} as never,
-			),
+			invoke(Agent.getStepScreenshot, ctx, {
+				runId: 'run-1',
+				stepId: 'evt_1',
+			}),
 		).rejects.toThrow('non-image response');
 		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('getStepHtml rejects a non-html body instead of returning it', async () => {
+		mockRawRequest.mockResolvedValueOnce({
+			contentType: 'application/json',
+			bytes: Buffer.from('{"error":{}}'),
+		});
+		const ctx = createContext();
+		await expect(
+			invoke(Agent.getStepHtml, ctx, {
+				runId: 'run-1',
+				stepId: 'evt_1',
+			}),
+		).rejects.toThrow('non-HTML response');
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('returns the provider run when saving it fails', async () => {
+		mockRequest.mockResolvedValueOnce(syncRun);
+		const ctx = createContext();
+		ctx.db.agentRuns.upsertByEntityId.mockRejectedValueOnce(
+			new Error('db down'),
+		);
+		jest.spyOn(console, 'error').mockImplementation(() => {});
+
+		await expect(
+			invoke(Agent.run, ctx, {
+				url: 'https://example.com',
+				goal: 'Get the title',
+			}),
+		).resolves.toEqual(syncRun);
+		expect(console.error).toHaveBeenCalled();
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'tinyfish.agent.run',
+			expect.objectContaining({ runId: 'run-1', status: 'COMPLETED' }),
+			'completed',
+		);
 	});
 
 	it('run stores the finished run with its goal', async () => {
 		mockRequest.mockResolvedValueOnce(syncRun);
 		const ctx = createContext();
-		await Agent.run(ctx as never, {
+		await invoke(Agent.run, ctx, {
 			url: 'https://example.com',
 			goal: 'Get the title',
 		});
@@ -558,6 +615,8 @@ describe('tinyfish endpoint routing', () => {
 			expect.objectContaining({
 				status: 'COMPLETED',
 				goal: 'Get the title',
+				// Jest's asymmetric matcher. This is not a TypeScript any; a
+				// stricter expected Date is not practical for a fresh timestamp.
 				updatedAt: expect.any(Date),
 			}),
 		);
@@ -566,7 +625,7 @@ describe('tinyfish endpoint routing', () => {
 	it('runAsync stores the queued run as PENDING', async () => {
 		mockRequest.mockResolvedValueOnce(runAccepted);
 		const ctx = createContext();
-		await Agent.runAsync(ctx as never, {
+		await invoke(Agent.runAsync, ctx, {
 			url: 'https://example.com',
 			goal: 'Get the title',
 		});
@@ -580,7 +639,7 @@ describe('tinyfish endpoint routing', () => {
 	it('getRun refreshes the stored row', async () => {
 		mockRequest.mockResolvedValueOnce(agentRun);
 		const ctx = createContext();
-		await Agent.getRun(ctx as never, { runId: 'run-1' });
+		await invoke(Agent.getRun, ctx, { runId: 'run-1' });
 
 		expect(ctx.db.agentRuns.upsertByEntityId).toHaveBeenCalledWith(
 			'run-1',
@@ -597,7 +656,7 @@ describe('tinyfish endpoint routing', () => {
 			error: { code: 'SITE_BLOCKED', message: 'Blocked' },
 		});
 		const ctx = createContext();
-		await Agent.runAsync(ctx as never, {
+		await invoke(Agent.runAsync, ctx, {
 			url: 'https://example.com',
 			goal: 'x',
 		});
@@ -607,7 +666,7 @@ describe('tinyfish endpoint routing', () => {
 
 	it('terminateSession turns the 204 into a local confirmation', async () => {
 		const ctx = createContext();
-		const result = await Browser.terminateSession(ctx as never, {
+		const result = await invoke(Browser.terminateSession, ctx, {
 			sessionId: 'sess-1',
 		});
 
@@ -630,7 +689,7 @@ describe('tinyfish endpoint routing', () => {
 			total_results: 1,
 		});
 		const ctx = createContext();
-		await Search.search(ctx as never, { query: 'corsair' });
+		await invoke(Search.search, ctx, { query: 'corsair' });
 
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
@@ -642,32 +701,28 @@ describe('tinyfish endpoint routing', () => {
 
 	it('rejects an invalid input before any request is made', async () => {
 		const ctx = createContext();
-		await expect(
-			Search.search(ctx as never, { query: '' } as never),
-		).rejects.toThrow();
+		await expect(invoke(Search.search, ctx, { query: '' })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects unknown input keys before any request is made', async () => {
 		const ctx = createContext();
 		await expect(
-			Search.search(ctx as never, { query: 'x', oiseau: true } as never),
+			invoke(Search.search, ctx, { query: 'x', oiseau: true }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects an empty batch before any request is made', async () => {
 		const ctx = createContext();
-		await expect(
-			Agent.runBatch(ctx as never, { runs: [] } as never),
-		).rejects.toThrow();
+		await expect(invoke(Agent.runBatch, ctx, { runs: [] })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects a malformed vendor response', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValueOnce({ items: 'lots' });
-		await expect(Search.usage(ctx as never, {} as never)).rejects.toThrow();
+		await expect(invoke(Search.usage, ctx, {})).rejects.toThrow();
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 });

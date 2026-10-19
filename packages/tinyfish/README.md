@@ -164,8 +164,9 @@ the database itself.
 - Auth is the `X-API-Key` header, not Bearer, and one key covers all four
   hosts (agent, search, fetch, browser).
 - Runs are billed per step, so server errors and timeouts are **not**
-  replayed. Only rate limits (429) retry, using the server's
-  `Retry-After`; those calls are never billed.
+  replayed. Only per-minute rate limits (429) and profile-setup
+  conflicts (409 `RETRY_REQUIRED`) retry; 429s use the server's
+  `Retry-After`. Neither request ran, so neither is billed.
 - Search has a free tier of 12,000 requests/day and fetch 1,000 URLs/day;
   agent, research and browser usage draws from the wallet.
 - `include_thumbnail` on search is the wire string `'true'`/`'false'`,
@@ -175,8 +176,8 @@ the database itself.
 - `profiles.delete` is destructive and irreversible: it removes the
   saved cookies and storage for every domain on the profile.
 - Not wrapped yet: streamed run events (SSE), monitors, vault
-  connections, profile setup-sessions and per-domain deletes, per-step
-  artifact endpoints, and wallet top-up.
+  connections, profile setup-sessions and per-domain deletes, and
+  wallet top-up.
 - Completed runs, queued acknowledgements, `getRun` polls and webhook
   deliveries are stamped into the `agentRuns` entity by run id when a
   database is configured, so one run never duplicates rows.

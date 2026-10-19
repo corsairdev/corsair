@@ -1,3 +1,4 @@
+import type { CorsairWebhookMatcher } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { makeTinyFishRequest } from './client';
 import { TinyFishRunWebhooks } from './webhooks';
@@ -17,8 +18,26 @@ jest.mock('./client', () => ({
 const mockLog = jest.mocked(logEventFromContext);
 const mockRequest = jest.mocked(makeTinyFishRequest);
 
+// Handler parameters are the full Corsair context. never makes every concrete
+// handler assignable. The return is unknown because success and failure
+// payloads differ, so a stricter shared type is not practical.
 type AnyHandler = (ctx: never, request: never) => Promise<unknown>;
-type AnyMatcher = (request: never) => boolean;
+
+type DeliveryResult = {
+	success: boolean;
+	statusCode?: number;
+	error?: string;
+	data?: {
+		event: string;
+		run_id: string;
+		status: string;
+		// Confirmed run snapshots differ by event, so a stricter data bag is
+		// not practical.
+		data: Record<string, unknown>;
+	};
+};
+
+type TestContext = ReturnType<typeof createContext>;
 
 function createContext({ key }: { key?: string } = {}) {
 	return {
@@ -37,9 +56,36 @@ function createContext({ key }: { key?: string } = {}) {
 	};
 }
 
-// never so the matcher/handler casts accept it without per-call casts.
-function request(body: unknown): never {
+function request(
+	// Delivery bodies in these tests are raw JSON, valid or not, so a
+	// stricter body type is not practical.
+	body: unknown,
+): never {
+	// Partial stand-in for RawWebhookRequest. A full request type is not
+	// practical in this fixture.
 	return { body, payload: body, headers: {} } as never;
+}
+
+function matches(
+	matcher: CorsairWebhookMatcher,
+	// Matching tests pass objects, JSON strings, and junk, so a stricter body
+	// type is not practical.
+	body: unknown,
+): boolean {
+	return matcher(request(body));
+}
+
+async function invoke(
+	handler: AnyHandler,
+	ctx: TestContext,
+	// Handler fixtures are raw JSON, valid or not, so a stricter body type is
+	// not practical.
+	body: unknown,
+): Promise<DeliveryResult> {
+	// The fake context is not TinyFishContext, and the handler return is a
+	// success-or-failure object the Corsair type leaves generic. A stricter
+	// boundary type is not practical.
+	return (await handler(ctx as never, request(body))) as DeliveryResult;
 }
 
 const completedPayload = {
@@ -113,7 +159,7 @@ const liveCompletedRun = {
 	num_of_steps: 3,
 	result: { title: 'From the API' },
 	error: null,
-	profile_id: null,
+	profile_id: 'p-live',
 	steps: [
 		{
 			id: 'step-1',
@@ -166,46 +212,38 @@ beforeEach(() => {
 
 describe('tinyfish webhook matching', () => {
 	it('claims run.* deliveries from object and string bodies', () => {
+		expect(matches(matchTinyFishPluginWebhook, completedPayload)).toBe(true);
 		expect(
-			(matchTinyFishPluginWebhook as AnyMatcher)(request(completedPayload)),
-		).toBe(true);
-		expect(
-			(matchTinyFishPluginWebhook as AnyMatcher)(
-				request(JSON.stringify(failedPayload)),
-			),
+			matches(matchTinyFishPluginWebhook, JSON.stringify(failedPayload)),
 		).toBe(true);
 	});
 
 	it('ignores other events and unparseable bodies', () => {
 		expect(
-			(matchTinyFishPluginWebhook as AnyMatcher)(
-				request({ event: 'monitor.triggered' }),
-			),
+			matches(matchTinyFishPluginWebhook, { event: 'monitor.triggered' }),
 		).toBe(false);
-		expect((matchTinyFishPluginWebhook as AnyMatcher)(request(null))).toBe(
-			false,
-		);
-		expect(
-			(matchTinyFishPluginWebhook as AnyMatcher)(request('not json')),
-		).toBe(false);
+		expect(matches(matchTinyFishPluginWebhook, null)).toBe(false);
+		expect(matches(matchTinyFishPluginWebhook, 'not json')).toBe(false);
 	});
 
 	it('routes each event matcher to its own event only', () => {
-		const completed = createTinyFishMatch('run.completed') as AnyMatcher;
-		const failed = createTinyFishMatch('run.failed') as AnyMatcher;
+		const completed = createTinyFishMatch('run.completed');
+		const failed = createTinyFishMatch('run.failed');
 
-		expect(completed(request(completedPayload))).toBe(true);
-		expect(completed(request(failedPayload))).toBe(false);
-		expect(failed(request(failedPayload))).toBe(true);
+		expect(matches(completed, completedPayload)).toBe(true);
+		expect(matches(completed, failedPayload)).toBe(false);
+		expect(matches(failed, failedPayload)).toBe(true);
 	});
 });
 
 describe('tinyfish webhook handlers', () => {
 	it('runCompleted persists and returns the API snapshot, never the delivery body', async () => {
 		const ctx = createContext();
-		const result = await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request(completedPayload) as never);
+		const result = await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
+		);
 
 		expect(result).toEqual({
 			success: true,
@@ -230,6 +268,7 @@ describe('tinyfish webhook handlers', () => {
 				result: { title: 'From the API' },
 				numOfSteps: 3,
 				finishedAt: new Date('2026-01-02T00:00:09.000Z'),
+				profileId: 'p-live',
 			}),
 		);
 		expect(mockLog).toHaveBeenCalledWith(
@@ -243,9 +282,10 @@ describe('tinyfish webhook handlers', () => {
 	it('runFailed records the provider error code and message', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValue(liveFailedRun);
-		const result = await (TinyFishRunWebhooks.runFailed.handler as AnyHandler)(
-			ctx as never,
-			request(failedPayload) as never,
+		const result = await invoke(
+			TinyFishRunWebhooks.runFailed.handler,
+			ctx,
+			failedPayload,
 		);
 
 		expect(result).toEqual({
@@ -285,9 +325,11 @@ describe('tinyfish webhook handlers', () => {
 	it('runCancelled stores the cancellation', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValue(liveCancelledRun);
-		const result = await (
-			TinyFishRunWebhooks.runCancelled.handler as AnyHandler
-		)(ctx as never, request(cancelledPayload) as never);
+		const result = await invoke(
+			TinyFishRunWebhooks.runCancelled.handler,
+			ctx,
+			cancelledPayload,
+		);
 
 		expect(result).toEqual({
 			success: true,
@@ -313,13 +355,11 @@ describe('tinyfish webhook handlers', () => {
 	it('drops a delivery whose live status disagrees with the event', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValue({ ...liveCompletedRun, status: 'RUNNING' });
-		const result = (await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request(completedPayload) as never)) as {
-			success: boolean;
-			statusCode?: number;
-			error?: string;
-		};
+		const result = await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
+		);
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(409);
@@ -336,12 +376,11 @@ describe('tinyfish webhook handlers', () => {
 	it('drops a delivery when the live run cannot be parsed', async () => {
 		const ctx = createContext();
 		mockRequest.mockResolvedValue({ status: 'COMPLETED' });
-		const result = (await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request(completedPayload) as never)) as {
-			success: boolean;
-			statusCode?: number;
-		};
+		const result = await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
+		);
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(409);
@@ -351,12 +390,11 @@ describe('tinyfish webhook handlers', () => {
 	it('drops a delivery when the confirm request fails', async () => {
 		const ctx = createContext();
 		mockRequest.mockRejectedValue(new Error('upstream 502'));
-		const result = (await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request(completedPayload) as never)) as {
-			success: boolean;
-			statusCode?: number;
-		};
+		const result = await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
+		);
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(409);
@@ -372,12 +410,11 @@ describe('tinyfish webhook handlers', () => {
 	it('drops a delivery when no key is available to confirm it', async () => {
 		const ctx = createContext();
 		ctx.keys.get_api_key.mockResolvedValue('');
-		const result = (await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request(completedPayload) as never)) as {
-			success: boolean;
-			statusCode?: number;
-		};
+		const result = await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
+		);
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(409);
@@ -387,9 +424,10 @@ describe('tinyfish webhook handlers', () => {
 
 	it('confirms with the configured key before the stored key', async () => {
 		const ctx = createContext({ key: 'opt-key' });
-		await (TinyFishRunWebhooks.runCompleted.handler as AnyHandler)(
-			ctx as never,
-			request(completedPayload) as never,
+		await invoke(
+			TinyFishRunWebhooks.runCompleted.handler,
+			ctx,
+			completedPayload,
 		);
 
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -403,13 +441,9 @@ describe('tinyfish webhook handlers', () => {
 
 	it('rejects a payload that is not a run event without touching the store', async () => {
 		const ctx = createContext();
-		const result = (await (
-			TinyFishRunWebhooks.runCompleted.handler as AnyHandler
-		)(ctx as never, request({ event: 'run.completed' }) as never)) as {
-			success: boolean;
-			statusCode?: number;
-			error?: string;
-		};
+		const result = await invoke(TinyFishRunWebhooks.runCompleted.handler, ctx, {
+			event: 'run.completed',
+		});
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(400);

@@ -1,27 +1,42 @@
+import type { TinyFishContext } from './index';
 import { persistRun } from './run-store';
+
+// The fake stores the raw upsert blob: dates, strings, and provider JSON.
+// Those values do not share a field type, so a stricter row is not practical.
+type RunRow = Record<string, unknown>;
+
+type RunClient = {
+	findByEntityId: jest.Mock<Promise<{ data: RunRow } | null>, [string]>;
+	upsertByEntityId: jest.Mock<Promise<{ data: RunRow }>, [string, RunRow]>;
+};
 
 // The real entity client replaces the whole data blob on upsert, so the
 // fake does too; a merging fake would hide lost-field regressions.
 function createStore() {
-	const rows = new Map<string, Record<string, unknown>>();
-	return {
-		rows,
-		client: {
-			findByEntityId: jest.fn(async (entityId: string) =>
-				rows.has(entityId) ? { data: rows.get(entityId) } : null,
-			),
-			upsertByEntityId: jest.fn(
-				async (entityId: string, data: Record<string, unknown>) => {
-					rows.set(entityId, { ...data });
-					return { data };
-				},
-			),
-		},
+	const rows = new Map<string, RunRow>();
+	const client: RunClient = {
+		findByEntityId: jest.fn(async (entityId: string) => {
+			const data = rows.get(entityId);
+			return data ? { data } : null;
+		}),
+		upsertByEntityId: jest.fn(async (entityId: string, data: RunRow) => {
+			rows.set(entityId, { ...data });
+			return { data };
+		}),
 	};
+	return { rows, client };
 }
 
-function createContext(client: unknown, database: unknown): never {
-	return { database, db: { agentRuns: client } } as never;
+function createContext(
+	client: RunClient,
+	database: object | undefined,
+): TinyFishContext {
+	return {
+		database,
+		db: { agentRuns: client },
+		// Only database and agentRuns are read. The partial object does not
+		// overlap TinyFishContext, so this double cast is the practical boundary.
+	} as unknown as TinyFishContext;
 }
 
 describe('tinyfish run store', () => {
@@ -61,6 +76,59 @@ describe('tinyfish run store', () => {
 			goal: 'Get the title',
 			profileId: 'p-1',
 			finishedAt: new Date('2026-01-02T00:00:09.000Z'),
+		});
+	});
+
+	it('clears a stored field when the patch supplies null', async () => {
+		const { rows, client } = createStore();
+		const ctx = createContext(client, {});
+
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'RUNNING',
+			goal: 'Get the title',
+			profile_id: 'p-1',
+			result: { title: 'Example' },
+			error: { code: 'TASK_FAILED', message: 'nope' },
+		});
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+			profile_id: null,
+			result: null,
+			error: null,
+		});
+
+		expect(rows.get('run-1')).toMatchObject({
+			status: 'COMPLETED',
+			goal: 'Get the title',
+			profileId: null,
+			result: null,
+			errorCode: null,
+			errorMessage: null,
+		});
+	});
+
+	it('keeps stored keys the patch does not mention', async () => {
+		const { rows, client } = createStore();
+		rows.set('run-1', {
+			status: 'RUNNING',
+			goal: 'Get the title',
+			profileId: 'p-1',
+			note: 'kept',
+		});
+		const ctx = createContext(client, {});
+
+		await persistRun(ctx, {
+			run_id: 'run-1',
+			status: 'COMPLETED',
+		});
+
+		expect(rows.get('run-1')).toMatchObject({
+			status: 'COMPLETED',
+			goal: 'Get the title',
+			profileId: 'p-1',
+			note: 'kept',
 		});
 	});
 
