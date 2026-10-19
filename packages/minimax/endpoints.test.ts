@@ -11,7 +11,7 @@ import {
 	Voice,
 } from './endpoints';
 import type { MinimaxEndpointInputs } from './endpoints/types';
-import type { MinimaxContext } from './index';
+import type { MinimaxContext, MinimaxPluginOptions } from './index';
 import { minimax, minimaxEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -1382,5 +1382,44 @@ describe('minimax plugin shape', () => {
 		for (const operationId of operationIds) {
 			expect(minimaxEndpointSchemas[operationId]).toBeDefined();
 		}
+	});
+});
+
+describe('minimax custom error handlers', () => {
+	it('evaluates caller-provided handlers before the catch-all DEFAULT', () => {
+		const plugin = minimax<MinimaxPluginOptions>({
+			authType: 'api_key',
+			errorHandlers: {
+				CUSTOM_ERROR: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names).toContain('CUSTOM_ERROR');
+		// Core selects the first handler whose matcher accepts the error and
+		// DEFAULT matches everything, so a custom handler is only reachable
+		// when DEFAULT is evaluated last.
+		expect(names[names.length - 1]).toBe('DEFAULT');
+		expect(names.indexOf('CUSTOM_ERROR')).toBeLessThan(
+			names.indexOf('DEFAULT'),
+		);
+	});
+
+	it('keeps a caller override of DEFAULT in the last position', () => {
+		const override = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 7 }),
+		};
+		const plugin = minimax<MinimaxPluginOptions>({
+			authType: 'api_key',
+			errorHandlers: { DEFAULT: override },
+		});
+
+		expect(plugin.errorHandlers?.DEFAULT).toBe(override);
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names[names.length - 1]).toBe('DEFAULT');
 	});
 });

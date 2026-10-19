@@ -426,10 +426,18 @@ export function minimax<const T extends MinimaxPluginOptions>(
 		webhooks: {},
 		endpointMeta: minimaxEndpointMeta,
 		endpointSchemas: minimaxEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// Core selects the first handler whose matcher accepts the error
+			// (`Object.keys(...).find`), and DEFAULT matches everything, so
+			// DEFAULT must be evaluated last - otherwise it shadows any custom
+			// handler a caller contributes through options.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		// When no key is configured the keyBuilder throws AuthMissingError so
 		// Core can surface its account-connect prompt instead of letting the
 		// request fail at the provider.
