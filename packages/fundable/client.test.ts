@@ -1,6 +1,10 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { FUNDABLE_API_BASE, makeFundableRequest } from './client';
+import {
+	FUNDABLE_API_BASE,
+	makeFundableRequest,
+	tryGetStoredKey,
+} from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -51,6 +55,13 @@ describe('makeFundableRequest', () => {
 				method: 'GET',
 				url: '/company',
 				query: { domain: 'example.com' },
+			}),
+		);
+		// The transport's own retry loop is disabled so the plugin's error
+		// handlers are the only owner of retries (no stacked retries on 429).
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual(
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
 			}),
 		);
 	});
@@ -132,5 +143,37 @@ describe('makeFundableRequest', () => {
 		await expect(
 			makeFundableRequest('/company', 'test-key', { method: 'GET' }),
 		).rejects.toThrow('Unknown error');
+	});
+});
+
+describe('tryGetStoredKey', () => {
+	it('returns the stored value when present', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.resolve('stored-key')),
+		).resolves.toBe('stored-key');
+	});
+
+	it('maps a null value to undefined', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.resolve(null)),
+		).resolves.toBeUndefined();
+	});
+
+	it('treats a missing DEK as no stored key', async () => {
+		await expect(
+			tryGetStoredKey(() =>
+				Promise.reject(
+					new Error(
+						'No DEK found for account (tenant: "t", integration: "fundable")',
+					),
+				),
+			),
+		).resolves.toBeUndefined();
+	});
+
+	it('propagates unrelated key-manager failures', async () => {
+		await expect(
+			tryGetStoredKey(() => Promise.reject(new Error('decryption failed'))),
+		).rejects.toThrow('decryption failed');
 	});
 });

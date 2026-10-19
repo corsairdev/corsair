@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import {
 	Alerts,
 	Companies,
@@ -221,7 +223,7 @@ export const fundableEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const fundableEndpointMeta = {
+export const fundableEndpointMeta = {
 	'companies.post': {
 		riskLevel: 'read',
 		description:
@@ -279,12 +281,15 @@ const fundableEndpointMeta = {
 		description:
 			'Full person detail including employment and education by identifier',
 	},
+	// Spending credits to unlock saved PII: despite using GET, these release
+	// contact details the account has paid to reveal and consume credits
+	// (`credits_used: 5`), so they are writes, not reads.
 	'people.email': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: "Unlock a person's verified email address",
 	},
 	'people.phone': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: "Unlock a person's verified phone number",
 	},
 	'people.deals': {
@@ -332,6 +337,20 @@ export type InternalFundablePlugin = BaseFundablePlugin<FundablePluginOptions>;
 export type ExternalFundablePlugin<T extends FundablePluginOptions> =
 	BaseFundablePlugin<T>;
 
+function mergeErrorHandlers(
+	builtIn: CorsairErrorHandler,
+	overrides?: CorsairErrorHandler,
+): CorsairErrorHandler {
+	const { DEFAULT: builtInDefault, ...builtInRest } = builtIn;
+	const { DEFAULT: overrideDefault, ...overrideRest } = overrides ?? {};
+
+	return {
+		...builtInRest,
+		...overrideRest,
+		DEFAULT: overrideDefault ?? builtInDefault,
+	};
+}
+
 export function fundable<const T extends FundablePluginOptions>(
 	incomingOptions: FundablePluginOptions & T = {} as FundablePluginOptions & T,
 ): ExternalFundablePlugin<T> {
@@ -352,21 +371,23 @@ export function fundable<const T extends FundablePluginOptions>(
 		webhooks: {},
 		endpointMeta: fundableEndpointMeta,
 		endpointSchemas: fundableEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		// Mirrors the tpscheck buildkite-style pattern: an explicitly passed
-		// key wins, otherwise the stored api_key credential is used. A
-		// missing key resolves to an empty string so the provider's own 401
-		// (mapped to AUTH_ERROR) is surfaced instead of a client-side throw.
+		// key wins, otherwise the stored api_key credential is used. A missing
+		// stored key throws AuthMissingError from keyBuilder (the only throw
+		// core turns into the account-connect link), so an unconnected tenant
+		// gets a connection prompt instead of a bare provider 401.
 		keyBuilder: async (ctx: FundableKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('fundable', 'api_key');
+				}
+				return storedKey;
 			}
 
 			return '';

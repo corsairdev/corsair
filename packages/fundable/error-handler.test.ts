@@ -70,6 +70,18 @@ describe('Fundable errorHandlers', () => {
 		expect(route(new Error('rate limit exceeded'))).toBe('RATE_LIMIT_ERROR');
 	});
 
+	it('does not retry merely because a message contains "429"', () => {
+		// "429" appears in the bare status string of unrelated errors; matching
+		// it retried non-idempotent requests that were not rate limited.
+		expect(route(new Error('company id 4291 was not found'))).toBe('DEFAULT');
+	});
+
+	it('does not route non-429 ApiErrors to RATE_LIMIT_ERROR even if message mentions rate limit', () => {
+		expect(route(apiError(400, 'upstream rate limit hit'))).toBe(
+			'BAD_REQUEST_ERROR',
+		);
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');

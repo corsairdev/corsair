@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	Alerts,
@@ -8,8 +8,12 @@ import {
 	Investors,
 	People,
 } from './endpoints';
-import type { FundableContext } from './index';
-import { fundable, fundableEndpointSchemas } from './index';
+import type { FundableContext, FundableKeyBuilderContext } from './index';
+import {
+	fundable,
+	fundableEndpointMeta,
+	fundableEndpointSchemas,
+} from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -848,5 +852,83 @@ describe('fundable plugin shape', () => {
 			expect(fundableEndpointSchemas[key]?.input).toBeDefined();
 			expect(fundableEndpointSchemas[key]?.output).toBeDefined();
 		}
+	});
+
+	it('marks the credit-spending contact unlocks as writes', () => {
+		// people.email / people.phone unlock saved PII and spend credits, so a
+		// read-only caller must not be able to reach them.
+		expect(fundableEndpointMeta['people.email'].riskLevel).toBe('write');
+		expect(fundableEndpointMeta['people.phone'].riskLevel).toBe('write');
+	});
+});
+
+describe('fundable keyBuilder', () => {
+	function keyCtx(apiKey: string | null): FundableKeyBuilderContext {
+		return {
+			authType: 'api_key',
+			options: {},
+			tenantId: 'test-tenant',
+			keys: {
+				get_dek: () => Promise.resolve('test-dek'),
+				issue_new_dek: () => Promise.resolve('test-dek'),
+				get_api_key: () => Promise.resolve(apiKey),
+				set_api_key: () => Promise.resolve(),
+				get_webhook_signature: () => Promise.resolve(null),
+				set_webhook_signature: () => Promise.resolve(),
+			},
+		};
+	}
+
+	function requireKeyBuilder(plugin: ReturnType<typeof fundable>) {
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('plugin keyBuilder is missing');
+		return keyBuilder;
+	}
+
+	it('prefers an explicitly configured key over the stored one', async () => {
+		const keyBuilder = requireKeyBuilder(fundable({ key: 'option-key' }));
+
+		await expect(keyBuilder(keyCtx('stored-key'), 'endpoint')).resolves.toBe(
+			'option-key',
+		);
+	});
+
+	it('returns the stored key when no option key is set', async () => {
+		const keyBuilder = requireKeyBuilder(fundable({}));
+
+		await expect(keyBuilder(keyCtx('stored-key'), 'endpoint')).resolves.toBe(
+			'stored-key',
+		);
+	});
+
+	it('throws AuthMissingError when no key is stored', async () => {
+		const keyBuilder = requireKeyBuilder(fundable({}));
+
+		await expect(keyBuilder(keyCtx(null), 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+	});
+
+	it('returns an empty string for non-endpoint sources', async () => {
+		const keyBuilder = requireKeyBuilder(fundable({}));
+
+		await expect(keyBuilder(keyCtx('stored-key'), 'webhook')).resolves.toBe('');
+	});
+
+	it('places caller-provided error handlers before DEFAULT', () => {
+		const custom = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 0 }),
+		};
+		const plugin = fundable({
+			errorHandlers: {
+				CUSTOM_ERROR: custom,
+			},
+		});
+		const order = Object.keys(plugin.errorHandlers ?? {});
+		expect(order.indexOf('CUSTOM_ERROR')).toBeLessThan(
+			order.indexOf('DEFAULT'),
+		);
+		expect(order[order.length - 1]).toBe('DEFAULT');
 	});
 });

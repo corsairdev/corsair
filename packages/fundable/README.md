@@ -28,9 +28,9 @@ pnpm add @corsair-dev/fundable
 | `investors.post` | `fundable.api.investors.post` | `read` | Discover investor firms by attributes and investments |
 | `investors.search` | `fundable.api.investors.search` | `read` | Fuzzy investor lookup by name, domain, LinkedIn, or Crunchbase |
 | `people.deals` | `fundable.api.people.deals` | `read` | Deals a person participated in as an investor |
-| `people.email` | `fundable.api.people.email` | `read` | Unlock a person's verified email address |
+| `people.email` | `fundable.api.people.email` | `write` | Unlock a person's verified email address |
 | `people.get` | `fundable.api.people.get` | `read` | Full person detail including employment and education by identifier |
-| `people.phone` | `fundable.api.people.phone` | `read` | Unlock a person's verified phone number |
+| `people.phone` | `fundable.api.people.phone` | `write` | Unlock a person's verified phone number |
 | `people.post` | `fundable.api.people.post` | `read` | Discover founders, employees, angels, and lead investors |
 | `people.search` | `fundable.api.people.search` | `read` | Fuzzy person lookup by name or identifier |
 

@@ -19,13 +19,12 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||
 				msg.includes('rate_limited') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
+				msg.includes('rate limit')
 			);
 		},
 		handler: async (error: Error) => {
