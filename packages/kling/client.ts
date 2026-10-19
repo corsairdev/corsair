@@ -52,9 +52,9 @@ export async function tryGetStoredKey(
  * error handlers are the single owner of retries (core drives them in
  * `core/endpoints/bind.ts`); this keeps a sustained 429 to one request per
  * handler attempt instead of stacking the transport's default retries on top.
- * `isRateLimitError` also treats 503 as retryable so the transport still
- * attaches `Retry-After` to the `ApiError` for service-unavailable responses,
- * which the 503 handler needs.
+ * Only 429 is treated as a rate limit: there is no 5xx retry handler, and
+ * retrying a 503 would re-send non-idempotent generation requests that may
+ * already have been accepted and billed.
  */
 const TRANSPORT_RETRY_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -64,7 +64,7 @@ const TRANSPORT_RETRY_CONFIG: RateLimitConfig = {
 	headerNames: {
 		retryAfter: 'retry-after',
 	},
-	isRateLimitError: (status) => status === 429 || status === 503,
+	isRateLimitError: (status) => status === 429,
 };
 
 // Kling AI open platform (international / non-China) host. The docs moved the
