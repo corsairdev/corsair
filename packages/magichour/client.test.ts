@@ -51,6 +51,12 @@ describe('makeMagicHourRequest', () => {
 				maxRetries: 0,
 			}),
 		});
+		// There is no 5xx handler in this plugin, so a 503 must not be treated
+		// as a rate limit: retrying a generation POST could duplicate a
+		// billable task.
+		const retryConfig = mockRequest.mock.calls[0]?.[2]?.rateLimitConfig;
+		expect(retryConfig?.isRateLimitError?.(429, {})).toBe(true);
+		expect(retryConfig?.isRateLimitError?.(503, {})).toBe(false);
 		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: MAGIC_HOUR_API_BASE,
 			HEADERS: {
