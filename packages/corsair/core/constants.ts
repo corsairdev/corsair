@@ -585,7 +585,7 @@ export const ProviderDisplayNames = {
 	leexi: 'Leexi',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
-	litescrape: 'Litescrape',
+	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',

@@ -227,7 +227,7 @@ export const GoogleSearchInputSchema = z
 		...googleAdvancedQuery,
 	})
 	.refine(
-		(value) => Boolean(value.q ?? value.ludocid ?? value.kgmid),
+		(value) => Boolean(value.q || value.ludocid || value.kgmid),
 		requireGoogleQuery,
 	);
 
@@ -265,7 +265,7 @@ export const GoogleAiOverviewInputSchema = z
 		...googleAdvancedQuery,
 	})
 	.refine(
-		(value) => Boolean(value.q ?? value.ludocid ?? value.kgmid),
+		(value) => Boolean(value.q || value.ludocid || value.kgmid),
 		requireGoogleQuery,
 	);
 
@@ -492,7 +492,7 @@ export const GoogleMapsInputSchema = z
 	})
 	.refine(
 		(value) =>
-			Boolean(value.q ?? value.place_id ?? value.data_cid ?? value.data),
+			Boolean(value.q || value.place_id || value.data_cid || value.data),
 		{ message: 'Provide q, place_id, data_cid or data for this request' },
 	);
 
@@ -702,7 +702,7 @@ export const BingMapsInputSchema = z
 		first: z.number().int().min(0).max(10000).optional(),
 		count: z.number().int().min(1).max(30).optional(),
 	})
-	.refine((value) => Boolean(value.q ?? value.place_id), {
+	.refine((value) => Boolean(value.q || value.place_id), {
 		message: 'Provide q or place_id for this request',
 	});
 

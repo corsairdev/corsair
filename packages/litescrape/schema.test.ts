@@ -1,5 +1,7 @@
 import {
+	BingMapsInputSchema,
 	BingSearchInputSchema,
+	GoogleMapsInputSchema,
 	GoogleSearchInputSchema,
 	KeysStatusInputSchema,
 	KeysStatusResponseSchema,
@@ -55,12 +57,31 @@ describe('Litescrape request schemas', () => {
 		expect(GoogleSearchInputSchema.safeParse({ ludocid: '123' }).success).toBe(
 			true,
 		);
+		// An empty `q` must not mask a valid alternate locator (`??` would
+		// reject this because '' is not nullish).
+		expect(
+			GoogleSearchInputSchema.safeParse({ q: '', ludocid: '123' }).success,
+		).toBe(true);
 		expect(GoogleSearchInputSchema.safeParse({}).success).toBe(false);
+	});
+
+	it('requires one Google Maps locator', () => {
+		expect(
+			GoogleMapsInputSchema.safeParse({ q: '', place_id: 'abc' }).success,
+		).toBe(true);
+		expect(GoogleMapsInputSchema.safeParse({}).success).toBe(false);
 	});
 
 	it('requires a Bing query', () => {
 		expect(BingSearchInputSchema.safeParse({ q: 'coffee' }).success).toBe(true);
 		expect(BingSearchInputSchema.safeParse({}).success).toBe(false);
+	});
+
+	it('accepts an alternate Bing Maps place id when q is empty', () => {
+		expect(
+			BingMapsInputSchema.safeParse({ q: '', place_id: '123' }).success,
+		).toBe(true);
+		expect(BingMapsInputSchema.safeParse({}).success).toBe(false);
 	});
 
 	it('requires a positive Tripadvisor place id', () => {

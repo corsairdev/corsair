@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	AppleAppStore,
@@ -1173,5 +1173,78 @@ describe('litescrape plugin shape', () => {
 			expect(entry.input).toBeDefined();
 			expect(entry.output).toBeDefined();
 		}
+	});
+});
+
+function keyManager(getApiKey: () => Promise<string | null>) {
+	return {
+		get_dek: () => Promise.resolve('test-dek'),
+		issue_new_dek: () => Promise.resolve('test-dek'),
+		get_api_key: getApiKey,
+		set_api_key: () => Promise.resolve(),
+		get_webhook_signature: () => Promise.resolve(null),
+		set_webhook_signature: () => Promise.resolve(),
+	};
+}
+
+describe('litescrape keyBuilder', () => {
+	const plugin = litescrape({ authType: 'api_key' });
+	type KeyCtx = Parameters<NonNullable<typeof plugin.keyBuilder>>[0];
+
+	function keyCtx(getApiKey: () => Promise<string | null>): KeyCtx {
+		return {
+			authType: 'api_key',
+			tenantId: 'default',
+			options: { authType: 'api_key' },
+			keys: keyManager(getApiKey),
+		};
+	}
+
+	it('returns the stored key from the key manager', async () => {
+		const result = plugin.keyBuilder?.(
+			keyCtx(() => Promise.resolve('ls_live_stored')),
+			'endpoint',
+		);
+
+		await expect(Promise.resolve(result)).resolves.toBe('ls_live_stored');
+	});
+
+	it('throws AuthMissingError when no key is stored', async () => {
+		const result = plugin.keyBuilder?.(
+			keyCtx(() => Promise.resolve(null)),
+			'endpoint',
+		);
+
+		await expect(Promise.resolve(result)).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+	});
+
+	it('prefers the configured option key over the key manager', async () => {
+		const withOptionKey = litescrape({
+			authType: 'api_key',
+			key: 'ls_live_option',
+		});
+		const ctx2: Parameters<NonNullable<typeof withOptionKey.keyBuilder>>[0] = {
+			authType: 'api_key',
+			tenantId: 'default',
+			options: { authType: 'api_key', key: 'ls_live_option' },
+			keys: keyManager(() => Promise.resolve('ls_live_stored')),
+		};
+
+		const result = withOptionKey.keyBuilder?.(ctx2, 'endpoint');
+
+		await expect(Promise.resolve(result)).resolves.toBe('ls_live_option');
+	});
+
+	it('throws AuthMissingError for an empty stored key instead of returning it', async () => {
+		const result = plugin.keyBuilder?.(
+			keyCtx(() => Promise.resolve('')),
+			'endpoint',
+		);
+
+		await expect(Promise.resolve(result)).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });

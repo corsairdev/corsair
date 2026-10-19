@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import {
 	AppleAppStore,
 	AppleMaps,
@@ -549,12 +551,22 @@ export function litescrape<const T extends LitescrapePluginOptions>(
 			...options.errorHandlers,
 		},
 		// Returns the stored LiteScrape key (or the explicit option). When no
-		// key is configured this resolves to '' and the client raises
-		// AuthMissingError before any request leaves the process.
-		keyBuilder: async (ctx: LitescrapeKeyBuilderContext) => {
-			if (options.key) return options.key;
-			const res = await ctx.keys.get_api_key();
-			return res ?? '';
+		// key is configured this throws AuthMissingError so core creates the
+		// account-connect prompt for the tenant.
+		keyBuilder: async (ctx: LitescrapeKeyBuilderContext, source) => {
+			if (source === 'endpoint' && options.key) {
+				return options.key;
+			}
+
+			if (source === 'endpoint') {
+				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (!storedKey) {
+					throw new AuthMissingError('litescrape', 'api_key');
+				}
+				return storedKey;
+			}
+
+			return '';
 		},
 	} satisfies InternalLitescrapePlugin;
 }

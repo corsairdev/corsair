@@ -29,8 +29,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('too many requests') ||
 				msg.includes('rate limit') ||
-				msg.includes('concurrency') ||
-				msg.includes('429')
+				msg.includes('concurrency')
 			);
 		},
 		handler: async (error: Error) => {

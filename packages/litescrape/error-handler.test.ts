@@ -44,6 +44,24 @@ describe('Litescrape errorHandlers', () => {
 		});
 	});
 
+	it('does not treat a message merely containing 429 as a rate limit', async () => {
+		// Regression: the bare `msg.includes('429')` fallback used to match any
+		// message containing those digits (an ID, URL or count), misrouting a
+		// non-retryable failure into the retrying RATE_LIMIT_ERROR handler and
+		// queueing duplicate work.
+		const error = apiError(500, 'task 429 was aborted');
+		expect(route(error)).not.toBe('RATE_LIMIT_ERROR');
+		expect(route(error)).toBe('DEFAULT');
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
+	it('still routes a real ApiError with status 429 to RATE_LIMIT_ERROR', () => {
+		// The numeric guard, not the message, must keep driving this decision.
+		expect(route(apiError(429, 'Slow down'))).toBe('RATE_LIMIT_ERROR');
+	});
+
 	it('routes 401 and 403 to AUTH_ERROR', async () => {
 		expect(route(apiError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
 		expect(route(apiError(403, 'Forbidden'))).toBe('AUTH_ERROR');
