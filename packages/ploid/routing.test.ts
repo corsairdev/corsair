@@ -1,8 +1,13 @@
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import { logEventFromContext } from 'corsair/core';
+import type { CorsairDatabase } from 'corsair/db';
+import { createCorsairDatabase } from 'corsair/db';
 import { makePloidRequest } from './client';
 import { Account, Contacts, Person, Search } from './endpoints';
 import { rememberPerson } from './endpoints/cache';
-import type { Person as PersonRow } from './schema/database';
+import { Person as PersonSchema } from './schema/database';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
@@ -24,11 +29,132 @@ const mockLog = jest.mocked(logEventFromContext);
 // unknown: tests call endpoints with a stub context, not the full plugin context.
 type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
 
-function createContext() {
+const ENTITY_DDL = `
+	CREATE TABLE IF NOT EXISTS corsair_entities (
+		id TEXT PRIMARY KEY,
+		created_at TEXT NOT NULL,
+		updated_at TEXT NOT NULL,
+		account_id TEXT NOT NULL,
+		entity_id TEXT NOT NULL,
+		entity_type TEXT NOT NULL,
+		version TEXT NOT NULL,
+		data TEXT NOT NULL
+	);
+`;
+
+type SqliteStatement = {
+	reader: boolean;
+	// unknown: bound SQL parameters are whatever the statement received.
+	run: (...params: unknown[]) => { changes: number };
+};
+
+type SqliteDatabase = {
+	exec: (sql: string) => void;
+	prepare: (source: string) => SqliteStatement;
+	close: () => void;
+};
+
+type PeopleDb = {
+	database: CorsairDatabase;
+	close: () => Promise<void>;
+	updates: () => number;
+	armConflict: (write: () => void) => void;
+	exec: (source: string, ...params: unknown[]) => void;
+};
+
+function loadBetterSqlite3(): new (filename: string) => SqliteDatabase {
+	const require = createRequire(path.join(process.cwd(), 'package.json'));
+	const candidates = [
+		path.resolve(process.cwd(), '../corsair/node_modules/better-sqlite3'),
+		path.resolve(process.cwd(), 'packages/corsair/node_modules/better-sqlite3'),
+	];
+	const hit = candidates.find((candidate) =>
+		fs.existsSync(path.join(candidate, 'package.json')),
+	);
+	if (hit === undefined) {
+		throw new Error('better-sqlite3 is required for the person-cache tests');
+	}
+	// The package is installed on corsair, not this plugin. The constructor
+	// is the slice Kysely and these tests call.
+	return require(hit) as new (
+		filename: string,
+	) => SqliteDatabase;
+}
+
+function openPeopleDb(): PeopleDb {
+	const Database = loadBetterSqlite3();
+	const sqlite = new Database(':memory:');
+	sqlite.exec(ENTITY_DDL);
+	const nativePrepare = sqlite.prepare.bind(sqlite);
+	let conflict: (() => void) | undefined;
+	let updates = 0;
+	sqlite.prepare = (source: string) => {
+		const stmt = nativePrepare(source);
+		if (!/^\s*update\b/i.test(source)) return stmt;
+		updates += 1;
+		const run = stmt.run.bind(stmt);
+		stmt.run = (...params: unknown[]) => {
+			const pending = conflict;
+			conflict = undefined;
+			pending?.();
+			return run(...params);
+		};
+		return stmt;
+	};
+	// createCorsairDatabase expects the driver's own database type. This
+	// object is that better-sqlite3 handle; the local type only names the
+	// methods the test wrapper uses, so the cast goes through unknown.
+	const database = createCorsairDatabase(
+		sqlite as unknown as Parameters<typeof createCorsairDatabase>[0],
+	);
+	let closed = false;
+	return {
+		database,
+		updates: () => updates,
+		armConflict: (write) => {
+			conflict = write;
+		},
+		exec: (source, ...params) => {
+			nativePrepare(source).run(...params);
+		},
+		close: async () => {
+			if (closed) return;
+			closed = true;
+			await database.db.destroy();
+		},
+	};
+}
+
+const openDbs: PeopleDb[] = [];
+
+function peopleDb(): PeopleDb {
+	const handle = openPeopleDb();
+	openDbs.push(handle);
+	return handle;
+}
+
+function decodeEntityData(value: unknown): unknown {
+	if (typeof value !== 'string') return value;
+	// JSON.parse is typed as any. The person schema checks the decoded value.
+	return JSON.parse(value) as unknown;
+}
+
+async function storedPerson(database: CorsairDatabase, entityId = 'per_1') {
+	const row = await database.db
+		.selectFrom('corsair_entities')
+		.select(['data'])
+		.where('entity_id', '=', entityId)
+		.executeTakeFirst();
+	if (!row) return undefined;
+	return PersonSchema.parse(decodeEntityData(row.data));
+}
+
+function createContext(database?: CorsairDatabase) {
 	return {
 		key: 'test-key',
 		options: { baseUrl: 'https://api.ploid.com' },
 		$getAccountId: async () => 'account-1',
+		...(database === undefined ? {} : { database }),
 		db: {
 			people: {
 				findByEntityId: jest.fn().mockResolvedValue(null),
@@ -38,6 +164,12 @@ function createContext() {
 		},
 	};
 }
+
+afterEach(async () => {
+	while (openDbs.length > 0) {
+		await openDbs.pop()?.close();
+	}
+});
 
 const searchResponse = {
 	data: {
@@ -196,7 +328,8 @@ describe('Ploid endpoint routing', () => {
 
 	it('person.resolve posts name plus clue to /v1/resolve and caches the person', async () => {
 		mockRequest.mockResolvedValue(resolveResponse);
-		const ctx = createContext();
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		await (Person.resolve as AnyEndpoint)(ctx, {
 			name: 'Example Person',
@@ -208,15 +341,12 @@ describe('Ploid endpoint routing', () => {
 			body: { name: 'Example Person', company: 'Acme' },
 			baseUrl: 'https://api.ploid.com',
 		});
-		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
-			'per_1',
-			expect.objectContaining({
-				personId: 'per_1',
-				name: 'Example Person',
-				company: 'Acme',
-				linkedinUrl: 'https://linkedin.com/in/example',
-			}),
-		);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			personId: 'per_1',
+			name: 'Example Person',
+			company: 'Acme',
+			linkedinUrl: 'https://linkedin.com/in/example',
+		});
 	});
 
 	it('person.resolve rejects a name with no clue', async () => {
@@ -262,7 +392,8 @@ describe('Ploid endpoint routing', () => {
 
 	it('person.get returns and caches a populated profile', async () => {
 		mockRequest.mockResolvedValue(personProfileResponse);
-		const ctx = createContext();
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		const result = await (Person.get as AnyEndpoint)(ctx, {
 			identifier: { person_id: 'per_1' },
@@ -274,30 +405,28 @@ describe('Ploid endpoint routing', () => {
 				identity: { name: 'Example Person', company: 'Acme' },
 			},
 		});
-		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
-			'per_1',
-			expect.objectContaining({
-				personId: 'per_1',
-				name: 'Example Person',
-				company: 'Acme',
-				linkedinUrl: 'https://linkedin.com/in/example',
-			}),
-		);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			personId: 'per_1',
+			name: 'Example Person',
+			company: 'Acme',
+			linkedinUrl: 'https://linkedin.com/in/example',
+		});
 	});
 
 	it('person.getRun returns and caches the profile once the run finishes', async () => {
 		mockRequest.mockResolvedValue(personProfileResponse);
-		const ctx = createContext();
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		const result = await (Person.getRun as AnyEndpoint)(ctx, { id: 'run_1' });
 
 		expect(result).toMatchObject({
 			data: { person_id: 'per_1', identity: { name: 'Example Person' } },
 		});
-		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
-			'per_1',
-			expect.objectContaining({ personId: 'per_1', name: 'Example Person' }),
-		);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			personId: 'per_1',
+			name: 'Example Person',
+		});
 	});
 
 	it('person.cancelRun deletes the run path', async () => {
@@ -334,7 +463,8 @@ describe('Ploid endpoint routing', () => {
 				warnings: [],
 			},
 		});
-		const ctx = createContext();
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		await (Contacts.enrich as AnyEndpoint)(ctx, {
 			identifier: { person_id: 'per_1' },
@@ -350,18 +480,15 @@ describe('Ploid endpoint routing', () => {
 			},
 			baseUrl: 'https://api.ploid.com',
 		});
-		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
-			'per_1',
-			expect.objectContaining({
-				workEmail: {
-					value: 'example@acme.com',
-					status: 'found',
-					confidence: 'verified',
-					source: 'public_web',
-					lastSeen: null,
-				},
-			}),
-		);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			workEmail: {
+				value: 'example@acme.com',
+				status: 'found',
+				confidence: 'verified',
+				source: 'public_web',
+				lastSeen: null,
+			},
+		});
 	});
 
 	it('contacts.enrich rejects an empty fields array', async () => {
@@ -410,76 +537,157 @@ describe('Ploid endpoint routing', () => {
 	});
 });
 
+function failNextConnection(database: CorsairDatabase): CorsairDatabase {
+	let remaining = 1;
+	const db = database.db;
+	return {
+		...database,
+		// Proxy is not a Kysely instance to the type checker. It forwards
+		// every property and throws on the first connection() only.
+		db: new Proxy(db, {
+			get(target, prop, receiver) {
+				if (prop !== 'connection') {
+					const value = Reflect.get(target, prop, receiver);
+					return typeof value === 'function' ? value.bind(target) : value;
+				}
+				return () => {
+					if (remaining > 0) {
+						remaining -= 1;
+						return {
+							execute: async () => {
+								throw new Error('db down');
+							},
+						};
+					}
+					return target.connection();
+				};
+			},
+		}) as CorsairDatabase['db'],
+	};
+}
+
+function delayConnection(
+	database: CorsairDatabase,
+	gate: () => Promise<void>,
+): CorsairDatabase {
+	const db = database.db;
+	return {
+		...database,
+		// Proxy is not a Kysely instance to the type checker. It forwards
+		// every property and waits before taking the real connection.
+		db: new Proxy(db, {
+			get(target, prop, receiver) {
+				if (prop !== 'connection') {
+					const value = Reflect.get(target, prop, receiver);
+					return typeof value === 'function' ? value.bind(target) : value;
+				}
+				return () => {
+					const builder = target.connection();
+					return {
+						execute: (callback: Parameters<typeof builder.execute>[0]) =>
+							gate().then(() => builder.execute(callback)),
+					};
+				};
+			},
+		}) as CorsairDatabase['db'],
+	};
+}
+
 describe('Ploid person cache merge', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
 
 	it('keeps identity fields when a sparse enrich patches the row', async () => {
-		const ctx = createContext();
-		ctx.db.people.findByEntityId.mockResolvedValue({
-			data: {
-				personId: 'per_1',
-				name: 'Example Person',
-				company: 'Acme',
-				linkedinUrl: 'https://linkedin.com/in/example',
-				identityVerified: false,
-			},
-		});
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
+		await rememberPerson(ctx, {
+			providerId: 'per_1',
+			name: 'Example Person',
+			company: 'Acme',
+			linkedinUrl: 'https://linkedin.com/in/example',
+			identityVerified: false,
+		});
 		await rememberPerson(ctx, {
 			providerId: 'per_1',
 			phone: { value: '+15550100', status: 'found', confidence: 'guess' },
 		});
 
-		expect(ctx.db.people.upsertByEntityId).toHaveBeenCalledWith(
-			'per_1',
-			expect.objectContaining({
-				personId: 'per_1',
-				name: 'Example Person',
-				company: 'Acme',
-				linkedinUrl: 'https://linkedin.com/in/example',
-				phone: { value: '+15550100', status: 'found', confidence: 'guess' },
-			}),
-		);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			personId: 'per_1',
+			name: 'Example Person',
+			company: 'Acme',
+			linkedinUrl: 'https://linkedin.com/in/example',
+			phone: { value: '+15550100', status: 'found', confidence: 'guess' },
+		});
 	});
 
 	it('lets a failed save surface as a warning, not an endpoint failure', async () => {
-		const ctx = createContext();
-		ctx.db.people.findByEntityId.mockRejectedValue(new Error('db down'));
+		const handle = peopleDb();
+		const ctx = createContext(failNextConnection(handle.database));
 
 		await expect(
 			rememberPerson(ctx, { providerId: 'per_1', name: 'Example Person' }),
 		).resolves.toBeUndefined();
+		await expect(storedPerson(handle.database)).resolves.toBeUndefined();
 	});
 
-	it('serializes concurrent saves for one person so no patch is lost', async () => {
-		const store = new Map<string, { data: PersonRow }>();
-		const ctx = {
-			$getAccountId: async () => 'account-1',
-			db: {
-				people: {
-					findByEntityId: async (id: string) => store.get(id) ?? null,
-					upsertByEntityId: async (id: string, data: PersonRow) => {
-						store.set(id, { data });
-					},
-				},
-			},
-		};
+	it('keeps both contact fields when two merges race, including a lost compare-and-set', async () => {
+		const concurrent = peopleDb();
+		const ctx = createContext(concurrent.database);
+		await Promise.all([
+			rememberPerson(ctx, {
+				providerId: 'per_1',
+				workEmail: { value: 'example@acme.com', status: 'found' },
+			}),
+			rememberPerson(ctx, {
+				providerId: 'per_1',
+				phone: { value: '+15550100', status: 'found' },
+			}),
+		]);
+		await expect(storedPerson(concurrent.database)).resolves.toMatchObject({
+			personId: 'per_1',
+			workEmail: { value: 'example@acme.com', status: 'found' },
+			phone: { value: '+15550100', status: 'found' },
+		});
 
-		// Two enriches race: one adds the email, the other the phone. Both
-		// reads must not observe the same pre-save row.
-		const emailSave = rememberPerson(ctx, {
+		// The in-process chain cannot see a writer in another process. This
+		// update changes the row after the read and reports zero rows, and
+		// the next read already has the phone. Last-write-wins would keep
+		// only the email.
+		const conflicted = peopleDb();
+		conflicted.exec(
+			`INSERT INTO corsair_entities (
+				id, created_at, updated_at, account_id, entity_id, entity_type, version, data
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			'row-1',
+			'2020-01-01T00:00:00.000Z',
+			'2020-01-01T00:00:00.000Z',
+			'account-1',
+			'per_1',
+			'people',
+			'1.0.0',
+			JSON.stringify({ personId: 'per_1' }),
+		);
+		conflicted.armConflict(() => {
+			conflicted.exec(
+				`UPDATE corsair_entities SET data = ?, updated_at = ? WHERE entity_id = ?`,
+				JSON.stringify({
+					personId: 'per_1',
+					phone: { value: '+15550100', status: 'found' },
+				}),
+				'2099-01-01T00:00:00.000Z',
+				'per_1',
+			);
+		});
+		await rememberPerson(createContext(conflicted.database), {
 			providerId: 'per_1',
 			workEmail: { value: 'example@acme.com', status: 'found' },
 		});
-		const phoneSave = rememberPerson(ctx, {
-			providerId: 'per_1',
-			phone: { value: '+15550100', status: 'found' },
-		});
-		await Promise.all([emailSave, phoneSave]);
 
-		expect(store.get('per_1')?.data).toMatchObject({
+		expect(conflicted.updates()).toBeGreaterThanOrEqual(2);
+		await expect(storedPerson(conflicted.database)).resolves.toMatchObject({
 			personId: 'per_1',
 			workEmail: { value: 'example@acme.com', status: 'found' },
 			phone: { value: '+15550100', status: 'found' },
@@ -487,46 +695,21 @@ describe('Ploid person cache merge', () => {
 	});
 
 	it('keeps queueing saves after one link fails', async () => {
-		const store = new Map<string, { data: PersonRow }>();
-		let reads = 0;
-		const ctx = {
-			$getAccountId: async () => 'account-1',
-			db: {
-				people: {
-					findByEntityId: async (id: string) => {
-						reads += 1;
-						if (reads === 1) throw new Error('db down');
-						return store.get(id) ?? null;
-					},
-					upsertByEntityId: async (id: string, data: PersonRow) => {
-						store.set(id, { data });
-					},
-				},
-			},
-		};
+		const handle = peopleDb();
+		const ctx = createContext(failNextConnection(handle.database));
 
 		await rememberPerson(ctx, { providerId: 'per_1', name: 'First' });
 		await rememberPerson(ctx, { providerId: 'per_1', company: 'Acme' });
 
-		expect(store.get('per_1')?.data).toMatchObject({
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
 			personId: 'per_1',
 			company: 'Acme',
 		});
 	});
 
 	it('dedupes sources across re-resolves', async () => {
-		const store = new Map<string, { data: PersonRow }>();
-		const ctx = {
-			$getAccountId: async () => 'account-1',
-			db: {
-				people: {
-					findByEntityId: async (id: string) => store.get(id) ?? null,
-					upsertByEntityId: async (id: string, data: PersonRow) => {
-						store.set(id, { data });
-					},
-				},
-			},
-		};
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		await rememberPerson(ctx, {
 			providerId: 'per_1',
@@ -537,10 +720,9 @@ describe('Ploid person cache merge', () => {
 			sources: ['https://acme.com'],
 		});
 
-		expect(store.get('per_1')?.data?.sources).toEqual([
-			'https://acme.com',
-			'https://news.com',
-		]);
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			sources: ['https://acme.com', 'https://news.com'],
+		});
 	});
 });
 
@@ -548,24 +730,6 @@ describe('Ploid contact cache policy', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
-
-	function storeContext() {
-		const store = new Map<string, { data: PersonRow }>();
-		const ctx = {
-			key: 'test-key',
-			options: { baseUrl: 'https://api.ploid.com' },
-			$getAccountId: async () => 'account-1',
-			db: {
-				people: {
-					findByEntityId: async (id: string) => store.get(id) ?? null,
-					upsertByEntityId: async (id: string, data: PersonRow) => {
-						store.set(id, { data });
-					},
-				},
-			},
-		};
-		return { ctx, store };
-	}
 
 	it('keeps a found phone when a later enrich reports it unavailable', async () => {
 		mockRequest.mockResolvedValueOnce({
@@ -600,7 +764,8 @@ describe('Ploid contact cache policy', () => {
 				warnings: [],
 			},
 		});
-		const { ctx, store } = storeContext();
+		const handle = peopleDb();
+		const ctx = createContext(handle.database);
 
 		await (Contacts.enrich as AnyEndpoint)(ctx, {
 			identifier: { person_id: 'per_1' },
@@ -613,10 +778,47 @@ describe('Ploid contact cache policy', () => {
 
 		// The unavailable result must not wipe the found value; the found
 		// write also carries the provenance source.
-		expect(store.get('per_1')?.data?.phone).toMatchObject({
-			value: '+15550100',
-			status: 'found',
-			source: 'public_web',
+		await expect(storedPerson(handle.database)).resolves.toMatchObject({
+			phone: {
+				value: '+15550100',
+				status: 'found',
+				source: 'public_web',
+			},
+		});
+	});
+
+	it('returns the enrich result when no database is configured', async () => {
+		mockRequest.mockResolvedValue({
+			data: {
+				work_email: {
+					value: 'example@acme.com',
+					status: 'found',
+					confidence: 'verified',
+					source: 'public_web',
+					last_seen: null,
+				},
+			},
+			meta: {
+				request_id: 'req_nodb',
+				usage: { acu_used: 1, billed: ['work_email'], free: [], not_found: [] },
+				warnings: [],
+			},
+		});
+		const ctx = {
+			key: 'test-key',
+			options: { baseUrl: 'https://api.ploid.com' },
+			$getAccountId: async () => {
+				throw new Error('Database not configured');
+			},
+		};
+
+		const result = await (Contacts.enrich as AnyEndpoint)(ctx, {
+			identifier: { person_id: 'per_1' },
+			fields: ['work_email'],
+		});
+
+		expect(result).toMatchObject({
+			data: { work_email: { value: 'example@acme.com', status: 'found' } },
 		});
 	});
 
@@ -625,7 +827,7 @@ describe('Ploid contact cache policy', () => {
 			data: null,
 			meta: { request_id: 'req_10', resolution: 'unsure' },
 		});
-		const { ctx } = storeContext();
+		const ctx = createContext();
 
 		await (Person.get as AnyEndpoint)(ctx, {
 			identifier: { person_id: 'per_1' },
@@ -662,42 +864,37 @@ describe('Ploid contact cache policy', () => {
 	});
 
 	it('does not make separate accounts wait on each other', async () => {
-		function accountContext(account: string, releaseGate: () => Promise<void>) {
-			const store = new Map<string, { data: PersonRow }>();
-			const ctx = {
-				$getAccountId: async () => account,
-				db: {
-					people: {
-						findByEntityId: async (id: string) => store.get(id) ?? null,
-						upsertByEntityId: async (id: string, data: PersonRow) => {
-							await releaseGate();
-							store.set(id, { data });
-						},
-					},
-				},
-			};
-			return { ctx, store };
-		}
-
-		// Account A's save parks inside its own database call.
+		// Account A's save parks before it takes a connection.
 		let releaseA: () => void = () => {};
 		const gateA = new Promise<void>((resolve) => {
 			releaseA = resolve;
 		});
-		const a = accountContext('tenant-a', () => gateA);
-		const b = accountContext('tenant-b', async () => {});
+		const a = peopleDb();
+		const b = peopleDb();
+		const aCtx = {
+			$getAccountId: async () => 'tenant-a',
+			database: delayConnection(a.database, () => gateA),
+		};
+		const bCtx = {
+			$getAccountId: async () => 'tenant-b',
+			database: b.database,
+		};
 
-		const aSave = rememberPerson(a.ctx, {
+		const aSave = rememberPerson(aCtx, {
 			providerId: 'per_1',
 			name: 'A Person',
 		});
 		// With a shared queue key this save would queue behind A's parked
 		// write and this await would never settle.
-		await rememberPerson(b.ctx, { providerId: 'per_1', name: 'B Person' });
-		expect(b.store.get('per_1')?.data).toMatchObject({ name: 'B Person' });
+		await rememberPerson(bCtx, { providerId: 'per_1', name: 'B Person' });
+		await expect(storedPerson(b.database)).resolves.toMatchObject({
+			name: 'B Person',
+		});
 
 		releaseA();
 		await aSave;
-		expect(a.store.get('per_1')?.data).toMatchObject({ name: 'A Person' });
+		await expect(storedPerson(a.database)).resolves.toMatchObject({
+			name: 'A Person',
+		});
 	});
 });

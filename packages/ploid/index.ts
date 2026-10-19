@@ -83,6 +83,7 @@ const ploidEndpointsNested = {
 		credits: Account.credits,
 		usage: Account.usage,
 	},
+	// as const: endpoint paths have to stay literal for the plugin meta types.
 } as const;
 
 export const ploidEndpointSchemas = {
@@ -128,7 +129,7 @@ const ploidEndpointMeta = {
 	'search.search': {
 		riskLevel: 'write',
 		description:
-			'Search people by semantic query and hard filters; up to 150 results inline, larger or async searches hand off to a People Set (202)',
+			'Search people by semantic query and hard filters; synchronous, at most 150 results',
 	},
 	'search.candidates': {
 		riskLevel: 'write',
@@ -184,14 +185,16 @@ function mergeErrorHandlers(
 	};
 }
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key';
 
 export const ploidAuthConfig = {
 	// A Bearer key is the only credential; declaring an account-level field
 	// here would make auth status permanently "partial" for a saved key.
 	api_key: {
+		// as const: a readonly empty tuple, not a widened array with a missing field.
 		account: [] as const,
 	},
+	// as const: the auth config has to stay the literal empty account list.
 } as const satisfies PluginAuthConfig;
 
 export type BasePloidPlugin<T extends PloidPluginOptions> = CorsairPlugin<

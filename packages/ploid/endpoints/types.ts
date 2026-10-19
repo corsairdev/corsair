@@ -135,7 +135,8 @@ export const SearchInputSchema = z
 		query: z.string().max(4000).optional(),
 		type: z.enum(['instant', 'fast', 'auto', 'deep']).optional(),
 		category: z.literal('people').optional(),
-		num_results: z.number().int().min(1).max(5000).optional(),
+		// POST /v1/search is synchronous and refuses more than 150 results.
+		num_results: z.number().int().min(1).max(150).optional(),
 		criteria: z.array(z.string().min(1).max(500)).max(5).optional(),
 		async: z.boolean().optional(),
 		webhook_url: z.string().optional(),
@@ -185,7 +186,8 @@ const SearchResultSchema = z
 	})
 	.loose();
 
-// 200: inline results. 202: the search became a background People Set.
+// 200: inline results, at most 150. A 202 body is still accepted so an
+// unexpected async answer is not dropped; this plugin does not page the set.
 export const SearchResponseSchema = z.union([
 	z
 		.object({
@@ -567,6 +569,7 @@ export const PloidEndpointInputSchemas = {
 	// agents especially) pass harmless extra keys to no-arg endpoints.
 	accountCredits: z.object({}),
 	accountUsage: z.object({}),
+	// as const: schema keys have to match the endpoint path literals.
 } as const;
 
 export const PloidEndpointOutputSchemas = {
@@ -579,4 +582,5 @@ export const PloidEndpointOutputSchemas = {
 	enrich: EnrichResponseSchema,
 	accountCredits: AccountCreditsResponseSchema,
 	accountUsage: AccountUsageResponseSchema,
+	// as const: schema keys have to match the endpoint path literals.
 } as const;

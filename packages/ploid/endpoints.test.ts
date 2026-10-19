@@ -13,12 +13,12 @@ import {
 } from './endpoints/types';
 
 describe('input bounds and enums', () => {
-	it('accepts search num_results at 5000 and rejects 5001', () => {
+	it('accepts search num_results at 150 and rejects 151', () => {
 		expect(() =>
-			SearchInputSchema.parse({ query: 'founders', num_results: 5000 }),
+			SearchInputSchema.parse({ query: 'founders', num_results: 150 }),
 		).not.toThrow();
 		expect(() =>
-			SearchInputSchema.parse({ query: 'founders', num_results: 5001 }),
+			SearchInputSchema.parse({ query: 'founders', num_results: 151 }),
 		).toThrow();
 	});
 

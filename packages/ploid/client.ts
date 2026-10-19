@@ -19,6 +19,7 @@ export class PloidAPIError extends Error {
 		message: string,
 		options?: {
 			cause?: Error;
+			// unknown: same untyped error envelope as the field above.
 			body?: unknown;
 			code?: string;
 			method?: PloidRequestOptions['method'];
@@ -75,6 +76,7 @@ export type PloidRequestOptions = {
 	baseUrl?: string;
 };
 
+// unknown: the guard narrows JSON and client values that start untyped.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }

@@ -17,6 +17,7 @@ jest.setTimeout(180_000);
 
 describeIfApiKey('Ploid live API', () => {
 	it('reads the ACU balance', async () => {
+		// unknown: the live body is unchecked until the response schema parses it.
 		const raw = await makePloidRequest<unknown>(
 			'/v1/account/credits',
 			TEST_API_KEY,
@@ -27,6 +28,7 @@ describeIfApiKey('Ploid live API', () => {
 	});
 
 	it('reads the account usage', async () => {
+		// unknown: the live body is unchecked until the response schema parses it.
 		const raw = await makePloidRequest<unknown>(
 			'/v1/account/usage',
 			TEST_API_KEY,
@@ -41,6 +43,7 @@ describeIfApiKey('Ploid live API', () => {
 			name: 'Zzyqh Vvorrland',
 			company: 'NoSuchCompanyXYZQ',
 		});
+		// unknown: the live body is unchecked until the response schema parses it.
 		const raw = await makePloidRequest<unknown>('/v1/resolve', TEST_API_KEY, {
 			method: 'POST',
 			body: input,

@@ -77,6 +77,7 @@ export const errorHandlers = {
 					capped === undefined
 						? undefined
 						: Math.ceil(capped + Math.random() * 500),
+				// as const: retryStrategy only accepts this literal, not string.
 				retryStrategy: 'exponential_backoff' as const,
 			};
 		},
@@ -102,6 +103,7 @@ export const errorHandlers = {
 		// does not extract Retry-After on 5xx, so none is promised here.
 		handler: async (_error: Error) => ({
 			maxRetries: 2,
+			// as const: retryStrategy only accepts this literal, not string.
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

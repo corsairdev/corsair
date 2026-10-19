@@ -14,7 +14,7 @@ pnpm add @corsair-dev/ploid
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `search.search` | `ploid.api.search.search` | `write` | Search people by semantic query and hard filters; up to 150 results inline, larger or async searches hand off to a People Set (202) |
+| `search.search` | `ploid.api.search.search` | `write` | Search people by semantic query and hard filters; synchronous, at most 150 results |
 | `search.candidates` | `ploid.api.search.candidates` | `write` | Find candidate identities in the people index for 1 ACU, including zero matches |
 | `person.resolve` | `ploid.api.person.resolve` | `write` | Identify one person from a name plus a clue and return the permanent person_id; 2 ACU when found, free when not |
 | `person.get` | `ploid.api.person.get` | `write` | Fetch a reviewed deep person profile (25 ACU first profile) or start a durable research run (202) |
