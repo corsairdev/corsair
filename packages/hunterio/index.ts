@@ -1193,7 +1193,7 @@ const hunterioEndpointMeta = {
 	},
 	'leads.bulkUpsert': {
 		riskLevel: 'write',
-		description: 'Create or update up to 1000 leads in a single call',
+		description: 'Create or update up to 100 leads in a single call',
 	},
 	'leads.bulkMove': {
 		riskLevel: 'write',
@@ -1699,10 +1699,15 @@ export function hunterio<const T extends HunterioPluginOptions>(
 		webhooks: {},
 		endpointMeta: hunterioEndpointMeta,
 		endpointSchemas: hunterioEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			const { DEFAULT, ...builtIn } = errorHandlers;
+			const { DEFAULT: customDefault, ...custom } = options.errorHandlers ?? {};
+			return {
+				...builtIn,
+				...custom,
+				DEFAULT: customDefault ?? DEFAULT,
+			};
+		})(),
 		// A missing stored key resolves to an empty string; the request client
 		// turns that into AuthMissingError before any network call.
 		keyBuilder: async (ctx: HunterioKeyBuilderContext, source) => {

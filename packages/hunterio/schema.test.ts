@@ -7,6 +7,7 @@ import {
 	SequencesCreateInputSchema,
 	SequencesDeleteOutputSchema,
 	WebhooksCreateInputSchema,
+	WebhooksUpdateInputSchema,
 } from './endpoints/types';
 import { HunterioSchema } from './schema';
 import { hunterioEntities } from './schema/database';
@@ -128,6 +129,12 @@ describe('Hunterio endpoint schemas', () => {
 		).toBe(true);
 		expect(
 			WebhooksCreateInputSchema.safeParse({
+				target_url: 'not-a-valid-url',
+				event: 'lead.created',
+			}).success,
+		).toBe(false);
+		expect(
+			WebhooksCreateInputSchema.safeParse({
 				target_url: 'short',
 				event: 'lead.created',
 			}).success,
@@ -136,6 +143,21 @@ describe('Hunterio endpoint schemas', () => {
 			WebhooksCreateInputSchema.safeParse({
 				target_url: 'https://example.com/hooks/hunter',
 				event: 'not.an.event',
+			}).success,
+		).toBe(false);
+	});
+
+	it('validates webhook updates with url constraints', () => {
+		expect(
+			WebhooksUpdateInputSchema.safeParse({
+				id: 1,
+				target_url: 'https://example.com/hooks/hunter',
+			}).success,
+		).toBe(true);
+		expect(
+			WebhooksUpdateInputSchema.safeParse({
+				id: 1,
+				target_url: 'not-a-valid-url',
 			}).success,
 		).toBe(false);
 	});

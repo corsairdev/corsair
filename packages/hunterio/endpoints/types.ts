@@ -174,6 +174,7 @@ export const UsageHistoryEntrySchema = z
 				url: z.string().optional(),
 				ip: z.string().nullable().optional(),
 				user_agent: z.string().nullable().optional(),
+				// Arbitrary query filter parameters captured from historical requests across heterogeneous endpoints.
 				filters: z.unknown().optional(),
 				bulk_search_id: z.number().nullable().optional(),
 				bulk_finder_id: z.number().nullable().optional(),
@@ -657,6 +658,7 @@ export type DiscoverViewsListOutput = z.infer<
 
 export const DiscoverViewsCreateInputSchema = z.object({
 	name: z.string(),
+	// Saved filter set accepts arbitrary filter criteria specific to the Discover search view.
 	filters: z.record(z.string(), z.unknown()).optional(),
 });
 export type DiscoverViewsCreateInput = z.infer<
@@ -1235,7 +1237,9 @@ export const EnrichmentPersonSchema = z
 			.object({
 				handle: z.string().nullable().optional(),
 				avatar: z.string().nullable().optional(),
+				// Gravatar profile avatar metadata objects with open-ended provider structures.
 				avatars: z.array(z.unknown()).optional(),
+				// Gravatar profile URL links with open-ended provider structures.
 				urls: z.array(z.unknown()).optional(),
 			})
 			.passthrough()
@@ -1287,6 +1291,7 @@ export const EnrichmentCompanySchema = z
 		location: z.string().nullable().optional(),
 		timeZone: z.string().nullable().optional(),
 		utcOffset: z.number().nullable().optional(),
+		// Geographic location attributes and coordinates returned in open-ended provider geo structures.
 		geo: z.record(z.string(), z.unknown()).nullable().optional(),
 		logo: z.string().nullable().optional(),
 		facebook: z
@@ -1771,6 +1776,7 @@ export const LeadsBulkUpsertRowSchema = z
 		email: z.string().nullable().optional(),
 		status: z.string().optional(),
 		lead: LeadSchema.nullable().optional(),
+		// Provider validation error payloads for failed row entries; structures vary by failure reason and are not strictly specified by Hunter.
 		errors: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -2492,6 +2498,7 @@ export const CompanyListsCreateInputSchema = z
 	.object({
 		name: z.string(),
 		type: z.enum(['static', 'dynamic']).optional(),
+		// Dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
 		filters: z.unknown().optional(),
 		company_list_folder_id: IdSchema.nullable().optional(),
 	})
@@ -2511,6 +2518,7 @@ export const CompanyListsUpdateInputSchema = z.object({
 	id: IdSchema,
 	name: z.string().optional(),
 	type: z.enum(['static', 'dynamic']).optional(),
+	// Dynamic list filters accept an arbitrary filter criteria object whose structure depends on the selected filter types.
 	filters: z.unknown().optional(),
 	company_list_folder_id: IdSchema.nullable().optional(),
 });
@@ -3740,7 +3748,7 @@ export const WebhooksListOutputSchema = envelope(z.array(WebhookSchema));
 export type WebhooksListOutput = z.infer<typeof WebhooksListOutputSchema>;
 
 export const WebhooksCreateInputSchema = z.object({
-	target_url: z.string().min(12).max(500),
+	target_url: z.string().url().max(500),
 	event: z.enum(WebhookEventValues),
 	// Restrict to a single resource by global ID (for example a campaign).
 	filter_on: IdSchema.optional(),
@@ -3758,7 +3766,7 @@ export type WebhooksGetOutput = z.infer<typeof WebhooksGetOutputSchema>;
 
 export const WebhooksUpdateInputSchema = z.object({
 	id: IdSchema,
-	target_url: z.string().min(12).max(500).optional(),
+	target_url: z.string().url().max(500).optional(),
 	event: z.enum(WebhookEventValues).optional(),
 	filter_on: IdSchema.optional(),
 });

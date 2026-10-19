@@ -96,7 +96,7 @@ pnpm add @corsair-dev/hunterio
 | `leads.bulkDelete` | `hunterio.api.leads.bulkDelete` | `destructive` | Delete leads in bulk permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `leads.bulkExist` | `hunterio.api.leads.bulkExist` | `read` | Check which of the given emails exist as leads |
 | `leads.bulkMove` | `hunterio.api.leads.bulkMove` | `write` | Move leads to another leads list |
-| `leads.bulkUpsert` | `hunterio.api.leads.bulkUpsert` | `write` | Create or update up to 1000 leads in a single call |
+| `leads.bulkUpsert` | `hunterio.api.leads.bulkUpsert` | `write` | Create or update up to 100 leads in a single call |
 | `leads.create` | `hunterio.api.leads.create` | `write` | Create a lead |
 | `leads.delete` | `hunterio.api.leads.delete` | `destructive` | Delete a lead permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `leads.enrich` | `hunterio.api.leads.enrich` | `write` | Enrich a lead with data found by Hunter |

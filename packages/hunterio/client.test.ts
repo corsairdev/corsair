@@ -18,7 +18,7 @@ beforeEach(() => {
 });
 
 describe('makeHunterioRequest', () => {
-	it('sends the key via X-API-KEY header and api_key query parameter', async () => {
+	it('sends the key via X-API-KEY header and never in the query parameter', async () => {
 		mockedRequest.mockResolvedValue({ data: {} });
 
 		await makeHunterioRequest('/leads', 'test-key-123', {
@@ -37,8 +37,9 @@ describe('makeHunterioRequest', () => {
 		expect(requestOptions).toMatchObject({
 			method: 'GET',
 			url: '/leads',
-			query: { limit: 10, api_key: 'test-key-123' },
+			query: { limit: 10 },
 		});
+		expect(requestOptions?.query).not.toHaveProperty('api_key');
 	});
 
 	it('passes the rate limit config to the shared transport', async () => {

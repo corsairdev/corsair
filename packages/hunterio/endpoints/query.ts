@@ -11,6 +11,15 @@ export const toBracketQuery = (
 	const walk = (path: string, item: unknown): void => {
 		if (item === undefined) return;
 		if (Array.isArray(item)) {
+			const hasObjects = item.some(
+				(element) => element !== null && typeof element === 'object',
+			);
+			if (hasObjects) {
+				item.forEach((element, index) => {
+					walk(`${path}[${index}]`, element);
+				});
+				return;
+			}
 			result[`${path}[]`] = item;
 			return;
 		}

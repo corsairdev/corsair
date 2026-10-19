@@ -75,16 +75,13 @@ export async function makeHunterioRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		// Hunter accepts the key as the api_key query parameter; the same
-		// key travels in the X-API-KEY header. Bodies are sent for every
-		// method because DELETE /sequences/{id}/recipients documents a JSON
-		// body.
+		// The key travels only in the X-API-KEY header so it never appears
+		// in request URLs (and therefore in proxy/access logs). Bodies are
+		// sent for every method because DELETE /sequences/{id}/recipients
+		// documents a JSON body.
 		body: body !== undefined ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: {
-			...(query ?? {}),
-			...(apiKey ? { api_key: apiKey } : {}),
-		},
+		query: query ?? {},
 	};
 
 	try {

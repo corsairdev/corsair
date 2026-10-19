@@ -1,5 +1,6 @@
 import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
+import { hunterio } from './index';
 
 function apiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
@@ -89,5 +90,22 @@ describe('Hunterio errorHandlers', () => {
 		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('preserves custom handlers ahead of DEFAULT in plugin configuration', () => {
+		const plugin = hunterio({
+			key: 'test',
+			errorHandlers: {
+				CUSTOM_ERROR: {
+					match: (err) =>
+						err instanceof Error && err.message.includes('custom'),
+					handler: async () => ({ maxRetries: 1 }),
+				},
+			},
+		});
+
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys.indexOf('CUSTOM_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 });

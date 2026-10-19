@@ -6,7 +6,7 @@ import {
 } from './endpoints/types';
 
 // Live smoke tests run against the real API only when a key is provided:
-// HUNTERIO_API_KEY=<key> npx jest --testPathPattern=api
+// HUNTERIO_API_KEY=<key> pnpm test:live
 // Only the free account and usage endpoints are exercised so the suite never
 // spends search or verification credits.
 const LIVE_KEY = process.env.HUNTERIO_API_KEY ?? '';
