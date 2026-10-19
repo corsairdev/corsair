@@ -1,0 +1,147 @@
+---
+title: Overview
+description: "Vector search engine for semantic, hybrid and filtered search over embeddings, self-hosted or on Qdrant Cloud."
+---
+
+Use **Qdrant** through Corsair: one client, typed API calls.
+
+Works with self-hosted Qdrant and [Qdrant Cloud](https://cloud.qdrant.io). Each account stores its cluster URL as `base_url` next to its API key. The URL is never taken from endpoint input.
+
+**What you get:**
+
+- 29 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/qdrant
+```
+```bash yarn
+yarn add corsair @corsair-dev/qdrant
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/qdrant
+```
+```bash bun
+bun add corsair @corsair-dev/qdrant
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { qdrant } from '@corsair-dev/qdrant';
+
+export const corsair = createCorsair({
+	plugins: [
+		qdrant({
+			baseUrl: 'https://xyz-example.eu-central.aws.cloud.qdrant.io:6333',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Pass `baseUrl` to pin one cluster for every account, or leave it out and store `base_url` per account.
+
+```ts
+qdrant({
+	baseUrl: 'https://xyz-example.eu-central.aws.cloud.qdrant.io:6333',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'qdrant',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find the nearest neighbours of a vector**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.qdrant.api.query.points({
+	collectionName: 'docs',
+	query: [0.12, 0.08, 0.91, 0.33],
+	filter: {
+		must: [{
+			key: 'lang',
+			match: { value: 'en' },
+		}],
+	},
+	limit: 5,
+	with_payload: true,
+});
+```
+
+
+**Store embeddings with their payload**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.qdrant.api.points.upsert({
+	collectionName: 'docs',
+	points: [{
+		id: 1,
+		vector: [0.12, 0.08, 0.91, 0.33],
+		payload: { url: 'https://example.com/guide', lang: 'en' },
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/qdrant/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/qdrant/api">
+    Every `qdrant.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,66 @@
+displayName: Qdrant
+description: Vector search engine for semantic, hybrid and filtered search over embeddings, self-hosted or on Qdrant Cloud.
+domain: qdrant.tech
+overviewNote: |
+  Works with self-hosted Qdrant and [Qdrant Cloud](https://cloud.qdrant.io). Each account stores its cluster URL as `base_url` next to its API key. The URL is never taken from endpoint input.
+recommendedAuth: api_key
+factory:
+  note: Pass `baseUrl` to pin one cluster for every account, or leave it out and store `base_url` per account.
+  options:
+    baseUrl: https://xyz-example.eu-central.aws.cloud.qdrant.io:6333
+examples:
+  read:
+    path: query.points
+    title: Find the nearest neighbours of a vector
+    args:
+      collectionName: docs
+      query: [0.12, 0.08, 0.91, 0.33]
+      filter:
+        must:
+          - key: lang
+            match:
+              value: en
+      limit: 5
+      with_payload: true
+  write:
+    path: points.upsert
+    title: Store embeddings with their payload
+    args:
+      collectionName: docs
+      points:
+        - id: 1
+          vector: [0.12, 0.08, 0.91, 0.33]
+          payload:
+            url: https://example.com/guide
+            lang: en
+apiExamples:
+  collections.create:
+    collectionName: docs
+    vectors:
+      dense:
+        size: 384
+        distance: Cosine
+    sparse_vectors:
+      bm25:
+        modifier: idf
+  points.scroll:
+    collectionName: docs
+    filter:
+      must:
+        - key: lang
+          match:
+            value: en
+    limit: 100
+  query.groups:
+    collectionName: docs
+    query: [0.12, 0.08, 0.91, 0.33]
+    group_by: document_id
+    group_size: 1
+    limit: 10
+  aliases.update:
+    actions:
+      - delete_alias:
+          alias_name: docs_live
+      - create_alias:
+          collection_name: docs_v2
+          alias_name: docs_live

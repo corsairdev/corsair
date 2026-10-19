@@ -2292,6 +2292,14 @@
                 ]
               },
               {
+                "group": "Qdrant",
+                "pages": [
+                  "plugins/qdrant/overview",
+                  "plugins/qdrant/api",
+                  "plugins/qdrant/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",
