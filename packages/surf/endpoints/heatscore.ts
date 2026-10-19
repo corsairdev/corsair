@@ -3,10 +3,13 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	HeatscoreDetailInput,
+	HeatscoreDetailOutput,
 	HeatscoreProjectsInput,
+	HeatscoreProjectsOutput,
 	HeatscoreTokenOfTheDayInput,
+	HeatscoreTokenOfTheDayOutput,
 	HeatscoreTokenOfWeekInput,
-	SurfResponse,
+	HeatscoreTokenOfWeekOutput,
 } from './types';
 
 export const Heatscore = {
@@ -15,7 +18,7 @@ export const Heatscore = {
 			ctx,
 			'heatscore.detail',
 			HeatscoreDetailInput,
-			SurfResponse,
+			HeatscoreDetailOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -36,7 +39,7 @@ export const Heatscore = {
 			ctx,
 			'heatscore.projects',
 			HeatscoreProjectsInput,
-			SurfResponse,
+			HeatscoreProjectsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -57,7 +60,7 @@ export const Heatscore = {
 			ctx,
 			'heatscore.tokenOfTheDay',
 			HeatscoreTokenOfTheDayInput,
-			SurfResponse,
+			HeatscoreTokenOfTheDayOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -74,7 +77,7 @@ export const Heatscore = {
 			ctx,
 			'heatscore.tokenOfWeek',
 			HeatscoreTokenOfWeekInput,
-			SurfResponse,
+			HeatscoreTokenOfWeekOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

@@ -3,19 +3,31 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	GetOnchainSqlJobsJobIdInput,
+	GetOnchainSqlJobsJobIdOutput,
 	OnchainBridgeRankingInput,
+	OnchainBridgeRankingOutput,
 	OnchainDexActivityInput,
+	OnchainDexActivityOutput,
 	OnchainGasPriceInput,
+	OnchainGasPriceOutput,
 	OnchainQueryInput,
+	OnchainQueryOutput,
 	OnchainSchemaInput,
+	OnchainSchemaOutput,
 	OnchainSqlInput,
 	OnchainSqlJobsInput,
 	OnchainSqlJobsJobIdInput,
+	OnchainSqlJobsJobIdOutput,
 	OnchainSqlJobsJobIdResultsInput,
+	OnchainSqlJobsJobIdResultsOutput,
+	OnchainSqlJobsOutput,
+	OnchainSqlOutput,
 	OnchainSqlPreflightInput,
+	OnchainSqlPreflightOutput,
 	OnchainTxInput,
+	OnchainTxOutput,
 	OnchainYieldRankingInput,
-	SurfResponse,
+	OnchainYieldRankingOutput,
 } from './types';
 
 export const Onchain = {
@@ -27,7 +39,7 @@ export const Onchain = {
 			ctx,
 			'onchain.bridgeRanking',
 			OnchainBridgeRankingInput,
-			SurfResponse,
+			OnchainBridgeRankingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -48,7 +60,7 @@ export const Onchain = {
 			ctx,
 			'onchain.dexActivity',
 			OnchainDexActivityInput,
-			SurfResponse,
+			OnchainDexActivityOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -70,7 +82,7 @@ export const Onchain = {
 			ctx,
 			'onchain.gasPrice',
 			OnchainGasPriceInput,
-			SurfResponse,
+			OnchainGasPriceOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -84,7 +96,7 @@ export const Onchain = {
 			ctx,
 			'onchain.query',
 			OnchainQueryInput,
-			SurfResponse,
+			OnchainQueryOutput,
 			input,
 			(validated) => ({
 				method: 'POST',
@@ -105,7 +117,7 @@ export const Onchain = {
 			ctx,
 			'onchain.schema',
 			OnchainSchemaInput,
-			SurfResponse,
+			OnchainSchemaOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -119,7 +131,7 @@ export const Onchain = {
 			ctx,
 			'onchain.sql',
 			OnchainSqlInput,
-			SurfResponse,
+			OnchainSqlOutput,
 			input,
 			(validated) => ({
 				method: 'POST',
@@ -133,7 +145,7 @@ export const Onchain = {
 			ctx,
 			'onchain.sqlJobs',
 			OnchainSqlJobsInput,
-			SurfResponse,
+			OnchainSqlJobsOutput,
 			input,
 			(validated) => ({
 				method: 'POST',
@@ -150,7 +162,7 @@ export const Onchain = {
 			ctx,
 			'onchain.sqlJobsJobId',
 			OnchainSqlJobsJobIdInput,
-			SurfResponse,
+			OnchainSqlJobsJobIdOutput,
 			input,
 			(validated) => ({
 				method: 'DELETE',
@@ -167,7 +179,7 @@ export const Onchain = {
 			ctx,
 			'onchain.getSqlJobsJobId',
 			GetOnchainSqlJobsJobIdInput,
-			SurfResponse,
+			GetOnchainSqlJobsJobIdOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -184,7 +196,7 @@ export const Onchain = {
 			ctx,
 			'onchain.sqlJobsJobIdResults',
 			OnchainSqlJobsJobIdResultsInput,
-			SurfResponse,
+			OnchainSqlJobsJobIdResultsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -202,7 +214,7 @@ export const Onchain = {
 			ctx,
 			'onchain.sqlPreflight',
 			OnchainSqlPreflightInput,
-			SurfResponse,
+			OnchainSqlPreflightOutput,
 			input,
 			(validated) => ({
 				method: 'POST',
@@ -216,7 +228,7 @@ export const Onchain = {
 			ctx,
 			'onchain.tx',
 			OnchainTxInput,
-			SurfResponse,
+			OnchainTxOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -237,7 +249,7 @@ export const Onchain = {
 			ctx,
 			'onchain.yieldRanking',
 			OnchainYieldRankingInput,
-			SurfResponse,
+			OnchainYieldRankingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

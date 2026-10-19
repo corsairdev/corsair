@@ -3,9 +3,11 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	FundDetailInput,
+	FundDetailOutput,
 	FundPortfolioInput,
+	FundPortfolioOutput,
 	FundRankingInput,
-	SurfResponse,
+	FundRankingOutput,
 } from './types';
 
 export const Fund = {
@@ -14,7 +16,7 @@ export const Fund = {
 			ctx,
 			'fund.detail',
 			FundDetailInput,
-			SurfResponse,
+			FundDetailOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -28,7 +30,7 @@ export const Fund = {
 			ctx,
 			'fund.portfolio',
 			FundPortfolioInput,
-			SurfResponse,
+			FundPortfolioOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -52,7 +54,7 @@ export const Fund = {
 			ctx,
 			'fund.ranking',
 			FundRankingInput,
-			SurfResponse,
+			FundRankingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

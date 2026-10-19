@@ -1,7 +1,8 @@
 import {
 	EquityBalanceSheetInput,
 	MarketPriceInput,
-	SurfResponse,
+	MarketPriceOutput,
+	OnchainSqlJobsJobIdResultsOutput,
 } from './endpoints/types';
 
 describe('surf input bounds', () => {
@@ -31,11 +32,35 @@ describe('surf input bounds', () => {
 
 	it('parses an empty price series', () => {
 		expect(
-			SurfResponse.parse({
+			MarketPriceOutput.parse({
 				data: [],
-				meta: { credits_used: 1 },
+				summary: {
+					change_abs: 0,
+					change_pct: 0,
+					first: 0,
+					high: 0,
+					last: 0,
+					latest_dt: 0,
+					low: 0,
+					n_points: 0,
+				},
+				meta: { cached: false, credits_used: 1 },
 				symbol: 'BTC',
 			}).symbol,
 		).toBe('BTC');
+	});
+
+	it('parses sql results as json rows or csv text', () => {
+		const csv = OnchainSqlJobsJobIdResultsOutput.parse('block,value\n1,2');
+		expect(csv).toBe('block,value\n1,2');
+		const json = OnchainSqlJobsJobIdResultsOutput.parse({
+			data: [{ block: 1 }],
+			meta: { cached: false, credits_used: 1, limit: 20, offset: 0 },
+		});
+		expect(json).toMatchObject({ data: [{ block: 1 }] });
+	});
+
+	it('rejects an empty success body when the route requires data', () => {
+		expect(() => MarketPriceOutput.parse({})).toThrow();
 	});
 });

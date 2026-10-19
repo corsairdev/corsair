@@ -3,16 +3,25 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	HyperliquidAccountInput,
+	HyperliquidAccountOutput,
 	HyperliquidCandlesInput,
+	HyperliquidCandlesOutput,
 	HyperliquidFillsInput,
+	HyperliquidFillsOutput,
 	HyperliquidLeaderboardInput,
+	HyperliquidLeaderboardOutput,
 	HyperliquidOrdersInput,
+	HyperliquidOrdersOutput,
 	HyperliquidPerformanceInput,
+	HyperliquidPerformanceOutput,
 	HyperliquidPositionsInput,
+	HyperliquidPositionsOutput,
 	HyperliquidTradesAggregateInput,
+	HyperliquidTradesAggregateOutput,
 	HyperliquidTradesContextInput,
+	HyperliquidTradesContextOutput,
 	HyperliquidTradesInput,
-	SurfResponse,
+	HyperliquidTradesOutput,
 } from './types';
 
 export const Hyperliquid = {
@@ -24,7 +33,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.account',
 			HyperliquidAccountInput,
-			SurfResponse,
+			HyperliquidAccountOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -41,7 +50,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.candles',
 			HyperliquidCandlesInput,
-			SurfResponse,
+			HyperliquidCandlesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -60,7 +69,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.fills',
 			HyperliquidFillsInput,
-			SurfResponse,
+			HyperliquidFillsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -87,7 +96,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.leaderboard',
 			HyperliquidLeaderboardInput,
-			SurfResponse,
+			HyperliquidLeaderboardOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -111,7 +120,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.orders',
 			HyperliquidOrdersInput,
-			SurfResponse,
+			HyperliquidOrdersOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -132,7 +141,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.performance',
 			HyperliquidPerformanceInput,
-			SurfResponse,
+			HyperliquidPerformanceOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -149,7 +158,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.positions',
 			HyperliquidPositionsInput,
-			SurfResponse,
+			HyperliquidPositionsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -163,7 +172,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.trades',
 			HyperliquidTradesInput,
-			SurfResponse,
+			HyperliquidTradesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -189,7 +198,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.tradesAggregate',
 			HyperliquidTradesAggregateInput,
-			SurfResponse,
+			HyperliquidTradesAggregateOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -213,7 +222,7 @@ export const Hyperliquid = {
 			ctx,
 			'hyperliquid.tradesContext',
 			HyperliquidTradesContextInput,
-			SurfResponse,
+			HyperliquidTradesContextOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

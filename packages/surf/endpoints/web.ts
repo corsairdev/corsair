@@ -1,7 +1,7 @@
 import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
-import { SurfResponse, WebFetchInput } from './types';
+import { WebFetchInput, WebFetchOutput } from './types';
 
 export const Web = {
 	fetch: (ctx: SurfContext, input: SurfEndpointInputs['webFetch']) =>
@@ -9,7 +9,7 @@ export const Web = {
 			ctx,
 			'web.fetch',
 			WebFetchInput,
-			SurfResponse,
+			WebFetchOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

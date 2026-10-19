@@ -1,7 +1,12 @@
 import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
-import { NewsDetailInput, NewsFeedInput, SurfResponse } from './types';
+import {
+	NewsDetailInput,
+	NewsDetailOutput,
+	NewsFeedInput,
+	NewsFeedOutput,
+} from './types';
 
 export const News = {
 	detail: (ctx: SurfContext, input: SurfEndpointInputs['newsDetail']) =>
@@ -9,7 +14,7 @@ export const News = {
 			ctx,
 			'news.detail',
 			NewsDetailInput,
-			SurfResponse,
+			NewsDetailOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -23,7 +28,7 @@ export const News = {
 			ctx,
 			'news.feed',
 			NewsFeedInput,
-			SurfResponse,
+			NewsFeedOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

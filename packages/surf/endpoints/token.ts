@@ -2,13 +2,18 @@ import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
-	SurfResponse,
 	TokenDexTradesInput,
+	TokenDexTradesOutput,
 	TokenHoldersInput,
+	TokenHoldersOutput,
 	TokenTokenomicsInput,
+	TokenTokenomicsOutput,
 	TokenTransferCounterpartiesInput,
+	TokenTransferCounterpartiesOutput,
 	TokenTransferStatsInput,
+	TokenTransferStatsOutput,
 	TokenTransfersInput,
+	TokenTransfersOutput,
 } from './types';
 
 export const Token = {
@@ -17,7 +22,7 @@ export const Token = {
 			ctx,
 			'token.dexTrades',
 			TokenDexTradesInput,
-			SurfResponse,
+			TokenDexTradesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -37,7 +42,7 @@ export const Token = {
 			ctx,
 			'token.holders',
 			TokenHoldersInput,
-			SurfResponse,
+			TokenHoldersOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -60,7 +65,7 @@ export const Token = {
 			ctx,
 			'token.tokenomics',
 			TokenTokenomicsInput,
-			SurfResponse,
+			TokenTokenomicsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -82,7 +87,7 @@ export const Token = {
 			ctx,
 			'token.transferCounterparties',
 			TokenTransferCounterpartiesInput,
-			SurfResponse,
+			TokenTransferCounterpartiesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -109,7 +114,7 @@ export const Token = {
 			ctx,
 			'token.transferStats',
 			TokenTransferStatsInput,
-			SurfResponse,
+			TokenTransferStatsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -128,7 +133,7 @@ export const Token = {
 			ctx,
 			'token.transfers',
 			TokenTransfersInput,
-			SurfResponse,
+			TokenTransfersOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

@@ -94,6 +94,10 @@ export function surf<const T extends SurfPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// DEFAULT matches every error. It has to stay last, or a user handler
+	// whose key is inserted after it never runs.
+	const { DEFAULT, ...builtIns } = errorHandlers;
+	const { DEFAULT: userDefault, ...userHandlers } = options.errorHandlers ?? {};
 	return {
 		id: 'surf',
 		authConfig: surfAuthConfig,
@@ -103,7 +107,11 @@ export function surf<const T extends SurfPluginOptions>(
 		endpoints: surfEndpointsNested,
 		endpointMeta: surfEndpointMetaChecked,
 		endpointSchemas: surfEndpointSchemasChecked,
-		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		errorHandlers: {
+			...builtIns,
+			...userHandlers,
+			DEFAULT: userDefault ?? DEFAULT,
+		},
 		keyBuilder: async (ctx: SurfKeyBuilderContext) => {
 			if (options.key) return options.key;
 			const stored = await ctx.keys.get_api_key();

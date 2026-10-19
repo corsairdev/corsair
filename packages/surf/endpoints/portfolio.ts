@@ -1,7 +1,7 @@
 import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
-import { PortfolioWalletsInput, SurfResponse } from './types';
+import { PortfolioWalletsInput, PortfolioWalletsOutput } from './types';
 
 export const Portfolio = {
 	wallets: (ctx: SurfContext, input: SurfEndpointInputs['portfolioWallets']) =>
@@ -9,7 +9,7 @@ export const Portfolio = {
 			ctx,
 			'portfolio.wallets',
 			PortfolioWalletsInput,
-			SurfResponse,
+			PortfolioWalletsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

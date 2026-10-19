@@ -3,15 +3,23 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	ExchangeCandlesInput,
+	ExchangeCandlesOutput,
 	ExchangeCoverageInput,
+	ExchangeCoverageOutput,
 	ExchangeDepthInput,
+	ExchangeDepthOutput,
 	ExchangeFundingHistoryInput,
+	ExchangeFundingHistoryOutput,
 	ExchangeKlinesInput,
+	ExchangeKlinesOutput,
 	ExchangeLongShortRatioInput,
+	ExchangeLongShortRatioOutput,
 	ExchangeMarketsInput,
+	ExchangeMarketsOutput,
 	ExchangePerpInput,
+	ExchangePerpOutput,
 	ExchangePriceInput,
-	SurfResponse,
+	ExchangePriceOutput,
 } from './types';
 
 export const Exchange = {
@@ -20,7 +28,7 @@ export const Exchange = {
 			ctx,
 			'exchange.candles',
 			ExchangeCandlesInput,
-			SurfResponse,
+			ExchangeCandlesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -43,7 +51,7 @@ export const Exchange = {
 			ctx,
 			'exchange.coverage',
 			ExchangeCoverageInput,
-			SurfResponse,
+			ExchangeCoverageOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -68,7 +76,7 @@ export const Exchange = {
 			ctx,
 			'exchange.depth',
 			ExchangeDepthInput,
-			SurfResponse,
+			ExchangeDepthOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -90,7 +98,7 @@ export const Exchange = {
 			ctx,
 			'exchange.fundingHistory',
 			ExchangeFundingHistoryInput,
-			SurfResponse,
+			ExchangeFundingHistoryOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -109,7 +117,7 @@ export const Exchange = {
 			ctx,
 			'exchange.klines',
 			ExchangeKlinesInput,
-			SurfResponse,
+			ExchangeKlinesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -133,7 +141,7 @@ export const Exchange = {
 			ctx,
 			'exchange.longShortRatio',
 			ExchangeLongShortRatioInput,
-			SurfResponse,
+			ExchangeLongShortRatioOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -153,7 +161,7 @@ export const Exchange = {
 			ctx,
 			'exchange.markets',
 			ExchangeMarketsInput,
-			SurfResponse,
+			ExchangeMarketsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -174,7 +182,7 @@ export const Exchange = {
 			ctx,
 			'exchange.perp',
 			ExchangePerpInput,
-			SurfResponse,
+			ExchangePerpOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -192,7 +200,7 @@ export const Exchange = {
 			ctx,
 			'exchange.price',
 			ExchangePriceInput,
-			SurfResponse,
+			ExchangePriceOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

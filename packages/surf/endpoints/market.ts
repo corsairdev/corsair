@@ -3,21 +3,35 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	MarketEtfInput,
+	MarketEtfOutput,
 	MarketExchangeFlowExchangesInput,
+	MarketExchangeFlowExchangesOutput,
 	MarketFearGreedInput,
+	MarketFearGreedOutput,
 	MarketFuturesInput,
+	MarketFuturesOutput,
 	MarketLiquidationChartInput,
+	MarketLiquidationChartOutput,
 	MarketLiquidationExchangeListInput,
+	MarketLiquidationExchangeListOutput,
 	MarketLiquidationOrderInput,
+	MarketLiquidationOrderOutput,
 	MarketListingInput,
+	MarketListingOutput,
 	MarketOnchainIndicatorInput,
+	MarketOnchainIndicatorOutput,
 	MarketOptionsInput,
+	MarketOptionsOutput,
 	MarketPriceIndicatorInput,
+	MarketPriceIndicatorOutput,
 	MarketPriceInput,
+	MarketPriceOutput,
 	MarketPublicSaleInput,
+	MarketPublicSaleOutput,
 	MarketRankingInput,
+	MarketRankingOutput,
 	MarketTgeInput,
-	SurfResponse,
+	MarketTgeOutput,
 } from './types';
 
 export const Market = {
@@ -26,7 +40,7 @@ export const Market = {
 			ctx,
 			'market.etf',
 			MarketEtfInput,
-			SurfResponse,
+			MarketEtfOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -49,7 +63,7 @@ export const Market = {
 			ctx,
 			'market.exchangeFlowExchanges',
 			MarketExchangeFlowExchangesInput,
-			SurfResponse,
+			MarketExchangeFlowExchangesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -67,7 +81,7 @@ export const Market = {
 			ctx,
 			'market.fearGreed',
 			MarketFearGreedInput,
-			SurfResponse,
+			MarketFearGreedOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -81,7 +95,7 @@ export const Market = {
 			ctx,
 			'market.futures',
 			MarketFuturesInput,
-			SurfResponse,
+			MarketFuturesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -101,7 +115,7 @@ export const Market = {
 			ctx,
 			'market.liquidationChart',
 			MarketLiquidationChartInput,
-			SurfResponse,
+			MarketLiquidationChartOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -125,7 +139,7 @@ export const Market = {
 			ctx,
 			'market.liquidationExchangeList',
 			MarketLiquidationExchangeListInput,
-			SurfResponse,
+			MarketLiquidationExchangeListOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -147,7 +161,7 @@ export const Market = {
 			ctx,
 			'market.liquidationOrder',
 			MarketLiquidationOrderInput,
-			SurfResponse,
+			MarketLiquidationOrderOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -172,7 +186,7 @@ export const Market = {
 			ctx,
 			'market.listing',
 			MarketListingInput,
-			SurfResponse,
+			MarketListingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -198,7 +212,7 @@ export const Market = {
 			ctx,
 			'market.onchainIndicator',
 			MarketOnchainIndicatorInput,
-			SurfResponse,
+			MarketOnchainIndicatorOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -219,7 +233,7 @@ export const Market = {
 			ctx,
 			'market.options',
 			MarketOptionsInput,
-			SurfResponse,
+			MarketOptionsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -237,7 +251,7 @@ export const Market = {
 			ctx,
 			'market.price',
 			MarketPriceInput,
-			SurfResponse,
+			MarketPriceOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -260,7 +274,7 @@ export const Market = {
 			ctx,
 			'market.priceIndicator',
 			MarketPriceIndicatorInput,
-			SurfResponse,
+			MarketPriceIndicatorOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -285,7 +299,7 @@ export const Market = {
 			ctx,
 			'market.publicSale',
 			MarketPublicSaleInput,
-			SurfResponse,
+			MarketPublicSaleOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -299,7 +313,7 @@ export const Market = {
 			ctx,
 			'market.ranking',
 			MarketRankingInput,
-			SurfResponse,
+			MarketRankingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -319,7 +333,7 @@ export const Market = {
 			ctx,
 			'market.tge',
 			MarketTgeInput,
-			SurfResponse,
+			MarketTgeOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

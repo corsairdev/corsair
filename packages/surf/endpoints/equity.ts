@@ -3,20 +3,33 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	EquityBalanceSheetInput,
+	EquityBalanceSheetOutput,
 	EquityCandlesInput,
+	EquityCandlesOutput,
 	EquityCashFlowInput,
+	EquityCashFlowOutput,
 	EquityEtfHoldingsInput,
+	EquityEtfHoldingsOutput,
 	EquityFilingsInput,
+	EquityFilingsOutput,
 	EquityIncomeStatementInput,
+	EquityIncomeStatementOutput,
 	EquityLatestFilingsInput,
+	EquityLatestFilingsOutput,
 	EquityLatestFinancialsInput,
+	EquityLatestFinancialsOutput,
 	EquityListingsInput,
+	EquityListingsOutput,
 	EquityMetaInput,
+	EquityMetaOutput,
 	EquityMetricsInput,
+	EquityMetricsOutput,
 	EquityOverviewInput,
+	EquityOverviewOutput,
 	EquityProfileInput,
+	EquityProfileOutput,
 	EquitySegmentsInput,
-	SurfResponse,
+	EquitySegmentsOutput,
 } from './types';
 
 export const Equity = {
@@ -28,7 +41,7 @@ export const Equity = {
 			ctx,
 			'equity.balanceSheet',
 			EquityBalanceSheetInput,
-			SurfResponse,
+			EquityBalanceSheetOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -47,7 +60,7 @@ export const Equity = {
 			ctx,
 			'equity.candles',
 			EquityCandlesInput,
-			SurfResponse,
+			EquityCandlesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -67,7 +80,7 @@ export const Equity = {
 			ctx,
 			'equity.cashFlow',
 			EquityCashFlowInput,
-			SurfResponse,
+			EquityCashFlowOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -89,7 +102,7 @@ export const Equity = {
 			ctx,
 			'equity.etfHoldings',
 			EquityEtfHoldingsInput,
-			SurfResponse,
+			EquityEtfHoldingsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -109,7 +122,7 @@ export const Equity = {
 			ctx,
 			'equity.filings',
 			EquityFilingsInput,
-			SurfResponse,
+			EquityFilingsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -130,7 +143,7 @@ export const Equity = {
 			ctx,
 			'equity.incomeStatement',
 			EquityIncomeStatementInput,
-			SurfResponse,
+			EquityIncomeStatementOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -152,7 +165,7 @@ export const Equity = {
 			ctx,
 			'equity.latestFilings',
 			EquityLatestFilingsInput,
-			SurfResponse,
+			EquityLatestFilingsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -169,7 +182,7 @@ export const Equity = {
 			ctx,
 			'equity.latestFinancials',
 			EquityLatestFinancialsInput,
-			SurfResponse,
+			EquityLatestFinancialsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -186,7 +199,7 @@ export const Equity = {
 			ctx,
 			'equity.listings',
 			EquityListingsInput,
-			SurfResponse,
+			EquityListingsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -204,7 +217,7 @@ export const Equity = {
 			ctx,
 			'equity.meta',
 			EquityMetaInput,
-			SurfResponse,
+			EquityMetaOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -221,7 +234,7 @@ export const Equity = {
 			ctx,
 			'equity.metrics',
 			EquityMetricsInput,
-			SurfResponse,
+			EquityMetricsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -240,7 +253,7 @@ export const Equity = {
 			ctx,
 			'equity.overview',
 			EquityOverviewInput,
-			SurfResponse,
+			EquityOverviewOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -259,7 +272,7 @@ export const Equity = {
 			ctx,
 			'equity.profile',
 			EquityProfileInput,
-			SurfResponse,
+			EquityProfileOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -273,7 +286,7 @@ export const Equity = {
 			ctx,
 			'equity.segments',
 			EquitySegmentsInput,
-			SurfResponse,
+			EquitySegmentsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

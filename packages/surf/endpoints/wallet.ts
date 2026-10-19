@@ -2,13 +2,18 @@ import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
-	SurfResponse,
 	WalletDetailInput,
+	WalletDetailOutput,
 	WalletHistoryInput,
+	WalletHistoryOutput,
 	WalletLabelsBatchInput,
+	WalletLabelsBatchOutput,
 	WalletNetWorthInput,
+	WalletNetWorthOutput,
 	WalletProtocolsInput,
+	WalletProtocolsOutput,
 	WalletTransfersInput,
+	WalletTransfersOutput,
 } from './types';
 
 export const Wallet = {
@@ -17,7 +22,7 @@ export const Wallet = {
 			ctx,
 			'wallet.detail',
 			WalletDetailInput,
-			SurfResponse,
+			WalletDetailOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -35,7 +40,7 @@ export const Wallet = {
 			ctx,
 			'wallet.history',
 			WalletHistoryInput,
-			SurfResponse,
+			WalletHistoryOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -61,7 +66,7 @@ export const Wallet = {
 			ctx,
 			'wallet.labelsBatch',
 			WalletLabelsBatchInput,
-			SurfResponse,
+			WalletLabelsBatchOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -75,7 +80,7 @@ export const Wallet = {
 			ctx,
 			'wallet.netWorth',
 			WalletNetWorthInput,
-			SurfResponse,
+			WalletNetWorthOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -89,7 +94,7 @@ export const Wallet = {
 			ctx,
 			'wallet.protocols',
 			WalletProtocolsInput,
-			SurfResponse,
+			WalletProtocolsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -107,7 +112,7 @@ export const Wallet = {
 			ctx,
 			'wallet.transfers',
 			WalletTransfersInput,
-			SurfResponse,
+			WalletTransfersOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

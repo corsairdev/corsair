@@ -1,5 +1,6 @@
 import { SurfAPIError } from './client';
 import { errorHandlers } from './error-handlers';
+import { surf } from './index';
 
 function surfError(
 	status: number,
@@ -68,5 +69,20 @@ describe('surf error handlers', () => {
 		const error = surfError(500, 'INTERNAL_ERROR');
 		error.message = 'rate limit exceeded';
 		expect(errorHandlers.RATE_LIMIT.match(error)).toBe(false);
+	});
+
+	it('keeps a user handler ahead of the catch-all default', () => {
+		const plugin = surf({
+			errorHandlers: {
+				zzzUser: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names.indexOf('zzzUser')).toBeGreaterThan(-1);
+		expect(names.indexOf('zzzUser')).toBeLessThan(names.indexOf('DEFAULT'));
+		expect(names.at(-1)).toBe('DEFAULT');
 	});
 });

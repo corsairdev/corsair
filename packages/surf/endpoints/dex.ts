@@ -1,7 +1,7 @@
 import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
-import { DexTokenPriceInput, SurfResponse } from './types';
+import { DexTokenPriceInput, DexTokenPriceOutput } from './types';
 
 export const Dex = {
 	tokenPrice: (ctx: SurfContext, input: SurfEndpointInputs['dexTokenPrice']) =>
@@ -9,7 +9,7 @@ export const Dex = {
 			ctx,
 			'dex.tokenPrice',
 			DexTokenPriceInput,
-			SurfResponse,
+			DexTokenPriceOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

@@ -3,29 +3,51 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	PredictionMarketAnalyticsInput,
+	PredictionMarketAnalyticsOutput,
 	PredictionMarketCorrelationsInput,
+	PredictionMarketCorrelationsOutput,
 	PredictionMarketKalshiEventsInput,
+	PredictionMarketKalshiEventsOutput,
 	PredictionMarketKalshiMarketsInput,
+	PredictionMarketKalshiMarketsOutput,
 	PredictionMarketKalshiOpenInterestInput,
+	PredictionMarketKalshiOpenInterestOutput,
 	PredictionMarketKalshiOrderbooksInput,
+	PredictionMarketKalshiOrderbooksOutput,
 	PredictionMarketKalshiPricesInput,
+	PredictionMarketKalshiPricesOutput,
 	PredictionMarketKalshiTradesInput,
+	PredictionMarketKalshiTradesOutput,
 	PredictionMarketKalshiVolumesInput,
+	PredictionMarketKalshiVolumesOutput,
 	PredictionMarketMatchingDailyInput,
+	PredictionMarketMatchingDailyOutput,
 	PredictionMarketMatchingPairsInput,
+	PredictionMarketMatchingPairsOutput,
 	PredictionMarketPolymarketEventsInput,
+	PredictionMarketPolymarketEventsOutput,
 	PredictionMarketPolymarketLeaderboardInput,
+	PredictionMarketPolymarketLeaderboardOutput,
 	PredictionMarketPolymarketMarketsInput,
+	PredictionMarketPolymarketMarketsOutput,
 	PredictionMarketPolymarketOpenInterestInput,
+	PredictionMarketPolymarketOpenInterestOutput,
 	PredictionMarketPolymarketOrderbooksInput,
+	PredictionMarketPolymarketOrderbooksOutput,
 	PredictionMarketPolymarketPositionsInput,
+	PredictionMarketPolymarketPositionsOutput,
 	PredictionMarketPolymarketPriceOhlcvConditionIdInput,
+	PredictionMarketPolymarketPriceOhlcvConditionIdOutput,
 	PredictionMarketPolymarketPricesInput,
+	PredictionMarketPolymarketPricesOutput,
 	PredictionMarketPolymarketSmartMoneyInput,
+	PredictionMarketPolymarketSmartMoneyOutput,
 	PredictionMarketPolymarketTradesInput,
+	PredictionMarketPolymarketTradesOutput,
 	PredictionMarketPolymarketVolumeSplitConditionIdInput,
+	PredictionMarketPolymarketVolumeSplitConditionIdOutput,
 	PredictionMarketPolymarketVolumesInput,
-	SurfResponse,
+	PredictionMarketPolymarketVolumesOutput,
 } from './types';
 
 export const PredictionMarket = {
@@ -37,7 +59,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.analytics',
 			PredictionMarketAnalyticsInput,
-			SurfResponse,
+			PredictionMarketAnalyticsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -63,7 +85,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.correlations',
 			PredictionMarketCorrelationsInput,
-			SurfResponse,
+			PredictionMarketCorrelationsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -86,7 +108,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiEvents',
 			PredictionMarketKalshiEventsInput,
-			SurfResponse,
+			PredictionMarketKalshiEventsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -107,7 +129,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiMarkets',
 			PredictionMarketKalshiMarketsInput,
-			SurfResponse,
+			PredictionMarketKalshiMarketsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -128,7 +150,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiOpenInterest',
 			PredictionMarketKalshiOpenInterestInput,
-			SurfResponse,
+			PredictionMarketKalshiOpenInterestOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -148,7 +170,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiOrderbooks',
 			PredictionMarketKalshiOrderbooksInput,
-			SurfResponse,
+			PredictionMarketKalshiOrderbooksOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -171,7 +193,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiPrices',
 			PredictionMarketKalshiPricesInput,
-			SurfResponse,
+			PredictionMarketKalshiPricesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -192,7 +214,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiTrades',
 			PredictionMarketKalshiTradesInput,
-			SurfResponse,
+			PredictionMarketKalshiTradesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -219,7 +241,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.kalshiVolumes',
 			PredictionMarketKalshiVolumesInput,
-			SurfResponse,
+			PredictionMarketKalshiVolumesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -239,7 +261,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.matchingDaily',
 			PredictionMarketMatchingDailyInput,
-			SurfResponse,
+			PredictionMarketMatchingDailyOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -266,7 +288,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.matchingPairs',
 			PredictionMarketMatchingPairsInput,
-			SurfResponse,
+			PredictionMarketMatchingPairsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -294,7 +316,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketEvents',
 			PredictionMarketPolymarketEventsInput,
-			SurfResponse,
+			PredictionMarketPolymarketEventsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -315,7 +337,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketLeaderboard',
 			PredictionMarketPolymarketLeaderboardInput,
-			SurfResponse,
+			PredictionMarketPolymarketLeaderboardOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -337,7 +359,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketMarkets',
 			PredictionMarketPolymarketMarketsInput,
-			SurfResponse,
+			PredictionMarketPolymarketMarketsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -358,7 +380,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketOpenInterest',
 			PredictionMarketPolymarketOpenInterestInput,
-			SurfResponse,
+			PredictionMarketPolymarketOpenInterestOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -378,7 +400,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketOrderbooks',
 			PredictionMarketPolymarketOrderbooksInput,
-			SurfResponse,
+			PredictionMarketPolymarketOrderbooksOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -401,7 +423,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketPositions',
 			PredictionMarketPolymarketPositionsInput,
-			SurfResponse,
+			PredictionMarketPolymarketPositionsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -422,7 +444,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketPriceOhlcvConditionId',
 			PredictionMarketPolymarketPriceOhlcvConditionIdInput,
-			SurfResponse,
+			PredictionMarketPolymarketPriceOhlcvConditionIdOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -444,7 +466,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketPrices',
 			PredictionMarketPolymarketPricesInput,
-			SurfResponse,
+			PredictionMarketPolymarketPricesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -465,7 +487,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketSmartMoney',
 			PredictionMarketPolymarketSmartMoneyInput,
-			SurfResponse,
+			PredictionMarketPolymarketSmartMoneyOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -494,7 +516,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketTrades',
 			PredictionMarketPolymarketTradesInput,
-			SurfResponse,
+			PredictionMarketPolymarketTradesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -522,7 +544,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketVolumeSplitConditionId',
 			PredictionMarketPolymarketVolumeSplitConditionIdInput,
-			SurfResponse,
+			PredictionMarketPolymarketVolumeSplitConditionIdOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -544,7 +566,7 @@ export const PredictionMarket = {
 			ctx,
 			'predictionMarket.polymarketVolumes',
 			PredictionMarketPolymarketVolumesInput,
-			SurfResponse,
+			PredictionMarketPolymarketVolumesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

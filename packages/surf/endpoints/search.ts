@@ -3,17 +3,27 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	SearchAirdropActivitiesInput,
+	SearchAirdropActivitiesOutput,
 	SearchAirdropInput,
+	SearchAirdropOutput,
 	SearchEventsInput,
+	SearchEventsOutput,
 	SearchFundInput,
+	SearchFundOutput,
 	SearchFundraisingInput,
+	SearchFundraisingOutput,
 	SearchNewsInput,
+	SearchNewsOutput,
 	SearchPredictionMarketInput,
+	SearchPredictionMarketOutput,
 	SearchProjectInput,
+	SearchProjectOutput,
 	SearchTokenInput,
+	SearchTokenOutput,
 	SearchWalletInput,
+	SearchWalletOutput,
 	SearchWebInput,
-	SurfResponse,
+	SearchWebOutput,
 } from './types';
 
 export const Search = {
@@ -22,7 +32,7 @@ export const Search = {
 			ctx,
 			'search.airdrop',
 			SearchAirdropInput,
-			SurfResponse,
+			SearchAirdropOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -50,7 +60,7 @@ export const Search = {
 			ctx,
 			'search.airdropActivities',
 			SearchAirdropActivitiesInput,
-			SurfResponse,
+			SearchAirdropActivitiesOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -64,7 +74,7 @@ export const Search = {
 			ctx,
 			'search.events',
 			SearchEventsInput,
-			SurfResponse,
+			SearchEventsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -84,7 +94,7 @@ export const Search = {
 			ctx,
 			'search.fund',
 			SearchFundInput,
-			SurfResponse,
+			SearchFundOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -105,7 +115,7 @@ export const Search = {
 			ctx,
 			'search.fundraising',
 			SearchFundraisingInput,
-			SurfResponse,
+			SearchFundraisingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -130,7 +140,7 @@ export const Search = {
 			ctx,
 			'search.news',
 			SearchNewsInput,
-			SurfResponse,
+			SearchNewsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -151,7 +161,7 @@ export const Search = {
 			ctx,
 			'search.predictionMarket',
 			SearchPredictionMarketInput,
-			SurfResponse,
+			SearchPredictionMarketOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -177,7 +187,7 @@ export const Search = {
 			ctx,
 			'search.project',
 			SearchProjectInput,
-			SurfResponse,
+			SearchProjectOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -195,7 +205,7 @@ export const Search = {
 			ctx,
 			'search.token',
 			SearchTokenInput,
-			SurfResponse,
+			SearchTokenOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -214,7 +224,7 @@ export const Search = {
 			ctx,
 			'search.wallet',
 			SearchWalletInput,
-			SurfResponse,
+			SearchWalletOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -232,7 +242,7 @@ export const Search = {
 			ctx,
 			'search.web',
 			SearchWebInput,
-			SurfResponse,
+			SearchWebOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

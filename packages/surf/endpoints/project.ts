@@ -3,10 +3,13 @@ import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
 import {
 	ProjectAiNewsInput,
+	ProjectAiNewsOutput,
 	ProjectDefiMetricsInput,
+	ProjectDefiMetricsOutput,
 	ProjectDefiRankingInput,
+	ProjectDefiRankingOutput,
 	ProjectDetailInput,
-	SurfResponse,
+	ProjectDetailOutput,
 } from './types';
 
 export const Project = {
@@ -15,7 +18,7 @@ export const Project = {
 			ctx,
 			'project.aiNews',
 			ProjectAiNewsInput,
-			SurfResponse,
+			ProjectAiNewsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -38,7 +41,7 @@ export const Project = {
 			ctx,
 			'project.defiMetrics',
 			ProjectDefiMetricsInput,
-			SurfResponse,
+			ProjectDefiMetricsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -64,7 +67,7 @@ export const Project = {
 			ctx,
 			'project.defiRanking',
 			ProjectDefiRankingInput,
-			SurfResponse,
+			ProjectDefiRankingOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
@@ -82,7 +85,7 @@ export const Project = {
 			ctx,
 			'project.detail',
 			ProjectDetailInput,
-			SurfResponse,
+			ProjectDetailOutput,
 			input,
 			(validated) => ({
 				method: 'GET',

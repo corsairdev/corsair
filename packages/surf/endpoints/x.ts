@@ -1,7 +1,7 @@
 import type { SurfContext } from '../index';
 import { callSurf } from './call';
 import type { SurfEndpointInputs } from './types';
-import { SurfResponse, XTweetsInput } from './types';
+import { XTweetsInput, XTweetsOutput } from './types';
 
 export const X = {
 	tweets: (ctx: SurfContext, input: SurfEndpointInputs['xTweets']) =>
@@ -9,7 +9,7 @@ export const X = {
 			ctx,
 			'x.tweets',
 			XTweetsInput,
-			SurfResponse,
+			XTweetsOutput,
 			input,
 			(validated) => ({
 				method: 'GET',
