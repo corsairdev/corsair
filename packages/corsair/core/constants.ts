@@ -33,8 +33,10 @@ export const BaseProviders = [
 	'aimlapi',
 	'airtable',
 	'aivoov',
+	'akta',
 	'alchemy',
 	'algolia',
+	'alibaba',
 	'allimagesai',
 	'alphavantage',
 	'altoviz',
@@ -55,6 +57,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apipie',
 	'apisports',
+	'apollo',
 	'appointo',
 	'aryn',
 	'asana',
@@ -114,6 +117,7 @@ export const BaseProviders = [
 	'bugsnag',
 	'buildkite',
 	'bunnycdn',
+	'bytedance',
 	'byteforms',
 	'cal',
 	'calendly',
@@ -134,10 +138,12 @@ export const BaseProviders = [
 	'cincopa',
 	'circleci',
 	'classmarker',
+	'clay',
 	'clickhouse',
 	'clickmeeting',
 	'clientary',
 	'clockify',
+	'cloro',
 	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
@@ -147,7 +153,9 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
+	'contactout',
 	'contentfulgraphql',
+	'contextdev',
 	'contextsevenmcp',
 	'convoloai',
 	'cosmic',
@@ -160,6 +168,7 @@ export const BaseProviders = [
 	'dadataru',
 	'databricks',
 	'datadog',
+	'dataforseo',
 	'datarobot',
 	'deepseek',
 	'devinmcp',
@@ -255,6 +264,7 @@ export const BaseProviders = [
 	'openai',
 	'openrouter',
 	'openweathermap',
+	'orbit',
 	'oura',
 	'outlook',
 	'pagerduty',
@@ -302,6 +312,7 @@ export const BaseProviders = [
 	'supabase',
 	'supadata',
 	'suzanne',
+	'surf',
 	'synthflowai',
 	'tally',
 	'tavily',
@@ -383,8 +394,10 @@ export const ProviderDisplayNames = {
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	aivoov: 'AiVOOV',
+	akta: 'Akta',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	alibaba: 'Alibaba Cloud Model Studio',
 	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
@@ -405,6 +418,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
+	apollo: 'Apollo',
 	appointo: 'Appointo',
 	aryn: 'Aryn',
 	asana: 'Asana',
@@ -464,6 +478,7 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	bunnycdn: 'Bunnycdn',
+	bytedance: 'ByteDance',
 	byteforms: 'ByteForms',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -484,10 +499,12 @@ export const ProviderDisplayNames = {
 	cincopa: 'Cincopa',
 	circleci: 'CircleCI',
 	classmarker: 'ClassMarker',
+	clay: 'Clay',
 	clickhouse: 'Clickhouse',
 	clickmeeting: 'ClickMeeting',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloro: 'cloro',
 	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
@@ -497,7 +514,9 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
+	contactout: 'ContactOut',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
@@ -510,6 +529,7 @@ export const ProviderDisplayNames = {
 	dadataru: 'Dadataru',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
+	dataforseo: 'DataForSEO',
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
@@ -605,6 +625,7 @@ export const ProviderDisplayNames = {
 	openai: 'OpenAI',
 	openrouter: 'OpenRouter',
 	openweathermap: 'OpenWeatherMap',
+	orbit: 'Orbit',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
@@ -652,6 +673,7 @@ export const ProviderDisplayNames = {
 	supabase: 'Supabase',
 	supadata: 'Supadata',
 	suzanne: 'Suzanne',
+	surf: 'Surf',
 	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
@@ -740,8 +762,10 @@ export type AllProviders =
 	| 'aimlapi'
 	| 'airtable'
 	| 'aivoov'
+	| 'akta'
 	| 'alchemy'
 	| 'algolia'
+	| 'alibaba'
 	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
@@ -762,6 +786,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apipie'
 	| 'apisports'
+	| 'apollo'
 	| 'appointo'
 	| 'aryn'
 	| 'asana'
@@ -821,6 +846,7 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'buildkite'
 	| 'bunnycdn'
+	| 'bytedance'
 	| 'byteforms'
 	| 'cal'
 	| 'calendly'
@@ -841,10 +867,12 @@ export type AllProviders =
 	| 'cincopa'
 	| 'circleci'
 	| 'classmarker'
+	| 'clay'
 	| 'clickhouse'
 	| 'clickmeeting'
 	| 'clientary'
 	| 'clockify'
+	| 'cloro'
 	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
@@ -854,7 +882,9 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
+	| 'contactout'
 	| 'contentfulgraphql'
+	| 'contextdev'
 	| 'contextsevenmcp'
 	| 'convoloai'
 	| 'cosmic'
@@ -867,6 +897,7 @@ export type AllProviders =
 	| 'dadataru'
 	| 'databricks'
 	| 'datadog'
+	| 'dataforseo'
 	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
@@ -962,6 +993,7 @@ export type AllProviders =
 	| 'openai'
 	| 'openrouter'
 	| 'openweathermap'
+	| 'orbit'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
@@ -1009,6 +1041,7 @@ export type AllProviders =
 	| 'supabase'
 	| 'supadata'
 	| 'suzanne'
+	| 'surf'
 	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
