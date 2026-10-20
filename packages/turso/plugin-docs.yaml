@@ -1,5 +1,6 @@
 displayName: Turso
 description: Serverless SQLite databases on libSQL with global replication.
+domain: turso.tech
 recommendedAuth: api_key
 examples:
   read:

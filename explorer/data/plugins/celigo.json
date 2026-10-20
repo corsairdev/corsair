@@ -1,0 +1,5909 @@
+{
+  "id": "celigo",
+  "displayName": "Celigo",
+  "description": "Integration platform for building, running and monitoring flows, connections, exports and imports.",
+  "npmPackageName": "@corsair-dev/celigo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 118,
+    "webhooks": 0,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "celigo.api.account.getTokenInfo",
+      "shortPath": "account.getTokenInfo",
+      "description": "Get the user id behind the current API token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.account.listLicenses",
+      "shortPath": "account.listLicenses",
+      "description": "List the account licenses and subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "io"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type?: string, tier?: string, expires?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.audit.list",
+      "shortPath": "audit.list",
+      "description": "List account audit log entries, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resourceType",
+            "optional": true,
+            "type": "string",
+            "description": "Singular resource type, e.g. flow, export, connection"
+          },
+          {
+            "key": "_resourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldPath",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete a connection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.evaluateVirtualImportMap",
+      "shortPath": "connections.evaluateVirtualImportMap",
+      "description": "Run only the mapping step of an unsaved import and return the mapped records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "import",
+            "optional": false,
+            "type": "{}",
+            "description": "Import definition to run without saving it"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]",
+            "description": "Records to send through the import"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any[] | {}"
+      }
+    },
+    {
+      "path": "celigo.api.connections.executeVirtualExport",
+      "shortPath": "connections.executeVirtualExport",
+      "description": "Run an unsaved export definition through a connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "export",
+            "optional": false,
+            "type": "{}",
+            "description": "Export definition to run without saving it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "dataURIs",
+            "optional": true,
+            "type": "string | null[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.executeVirtualExportPaged",
+      "shortPath": "connections.executeVirtualExportPaged",
+      "description": "Run an unsaved export one page at a time. Pass back pagedExportState for the next page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "export",
+            "optional": false,
+            "type": "{}",
+            "description": "Export definition to run without saving it"
+          },
+          {
+            "key": "pagedExportState",
+            "optional": true,
+            "type": "{}",
+            "description": "pagedExportState from the previous page; omit for the first page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "dataURIs",
+            "optional": true,
+            "type": "string | null[]"
+          },
+          {
+            "key": "pagedExportState",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.executeVirtualImport",
+      "shortPath": "connections.executeVirtualImport",
+      "description": "Send records through an unsaved import definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "import",
+            "optional": false,
+            "type": "{}",
+            "description": "Import definition to run without saving it"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]",
+            "description": "Records to send through the import"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ statusCode?: number, id?: string, _json?: {}, ignored?: boolean, stage?: string, errors?: {}[] }[]"
+      }
+    },
+    {
+      "path": "celigo.api.connections.get",
+      "shortPath": "connections.get",
+      "description": "Get a connection by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.getAudit",
+      "shortPath": "connections.getAudit",
+      "description": "List audit log entries for a connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.connections.getDebugLogs",
+      "shortPath": "connections.getDebugLogs",
+      "description": "Get the debug log text recorded for a connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.getDependencies",
+      "shortPath": "connections.getDependencies",
+      "description": "List resources that depend on a connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "celigo.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List connections in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          },
+          {
+            "key": "fetchQueueSize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.connections.patch",
+      "shortPath": "connections.patch",
+      "description": "Apply JSON Patch operations to a connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.connections.ping",
+      "shortPath": "connections.ping",
+      "description": "Test that a saved connection can reach its application",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code: number } | { errors: {}[] }"
+      }
+    },
+    {
+      "path": "celigo.api.connections.testVirtual",
+      "shortPath": "connections.testVirtual",
+      "description": "Test an unsaved connection document without storing it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code: number } | { errors: {}[] }"
+      }
+    },
+    {
+      "path": "celigo.api.connections.update",
+      "shortPath": "connections.update",
+      "description": "Replace a connection document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Connection type, e.g. http, netsuite, salesforce, ftp, s3, rdbms, mongodb, wrapper"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.ediProfiles.list",
+      "shortPath": "ediProfiles.list",
+      "description": "List EDI trading partner profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.errors.assign",
+      "shortPath": "errors.assign",
+      "description": "Assign flow step errors to a user by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "errorIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorsToReturn",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.deleteResolved",
+      "shortPath": "errors.deleteResolved",
+      "description": "Purge resolved errors from a flow step",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[]",
+            "description": "errorIds to act on"
+          },
+          {
+            "key": "selectAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lastErrorAt",
+            "optional": true,
+            "type": "string",
+            "description": "With selectAll, only errors at or before this timestamp"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.list",
+      "shortPath": "errors.list",
+      "description": "List open errors for one export or import step of a flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "_flowJobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "occurredAt_gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "occurredAt_lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextPageURL",
+            "optional": true,
+            "type": "string",
+            "description": "nextPageURL from the previous response; when set, it replaces the filters"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ errorId: string, occurredAt?: string, source?: string, code?: string, message?: string, _flowJobId?: string, traceKey?: string, retryDataKey?: string }[]"
+          },
+          {
+            "key": "nextPageURL",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.listResolved",
+      "shortPath": "errors.listResolved",
+      "description": "List resolved errors for one step of a flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "_flowJobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "occurredAt_gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "occurredAt_lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextPageURL",
+            "optional": true,
+            "type": "string",
+            "description": "nextPageURL from the previous response; when set, it replaces the filters"
+          },
+          {
+            "key": "resolvedAt_gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolvedAt_lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolvedBy",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resolved",
+            "optional": false,
+            "type": "{ errorId: string, occurredAt?: string, source?: string, code?: string, message?: string, _flowJobId?: string, traceKey?: string, retryDataKey?: string }[]"
+          },
+          {
+            "key": "nextPageURL",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.resolve",
+      "shortPath": "errors.resolve",
+      "description": "Mark errors on a flow step as resolved",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[]",
+            "description": "errorIds to act on"
+          },
+          {
+            "key": "selectAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lastErrorAt",
+            "optional": true,
+            "type": "string",
+            "description": "With selectAll, only errors at or before this timestamp"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.retry",
+      "shortPath": "errors.retry",
+      "description": "Retry failed records on a flow step",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "retryDataKeys",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "selectAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lastErrorAt",
+            "optional": true,
+            "type": "string",
+            "description": "With selectAll, only errors at or before this timestamp"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "retryErrorCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.errors.updateTags",
+      "shortPath": "errors.updateTags",
+      "description": "Set tags on flow step errors",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export or import step in the flow"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ id?: string, rdk?: string }[]"
+          },
+          {
+            "key": "tagIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errorsToReturn",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.exports.clone",
+      "shortPath": "exports.clone",
+      "description": "Clone a export, optionally remapping connections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionMap",
+            "optional": true,
+            "type": "{}",
+            "description": "Maps source connection _id to target connection _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string } | { model: string, _id: string, name?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.exports.create",
+      "shortPath": "exports.create",
+      "description": "Create a export",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.exports.delete",
+      "shortPath": "exports.delete",
+      "description": "Delete a export",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.exports.get",
+      "shortPath": "exports.get",
+      "description": "Get a export by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.exports.getAudit",
+      "shortPath": "exports.getAudit",
+      "description": "List audit log entries for a export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.exports.list",
+      "shortPath": "exports.list",
+      "description": "List exports in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.exports.patch",
+      "shortPath": "exports.patch",
+      "description": "Apply JSON Patch operations to a export",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.exports.update",
+      "shortPath": "exports.update",
+      "description": "Replace a export document. Send the full document; omitted fields are cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.fileDefinitions.create",
+      "shortPath": "fileDefinitions.create",
+      "description": "Create a file definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.fileDefinitions.get",
+      "shortPath": "fileDefinitions.get",
+      "description": "Get a file definition by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.fileDefinitions.list",
+      "shortPath": "fileDefinitions.list",
+      "description": "List EDI and fixed-width file definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.flows.clone",
+      "shortPath": "flows.clone",
+      "description": "Clone a flow, optionally remapping connections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionMap",
+            "optional": true,
+            "type": "{}",
+            "description": "Maps source connection _id to target connection _id"
+          },
+          {
+            "key": "_integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string } | { model: string, _id: string, name?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.flows.create",
+      "shortPath": "flows.create",
+      "description": "Create a flow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.delete",
+      "shortPath": "flows.delete",
+      "description": "Delete a flow",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.get",
+      "shortPath": "flows.get",
+      "description": "Get a flow by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "mergeInstance",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.getAudit",
+      "shortPath": "flows.getAudit",
+      "description": "List audit log entries for a flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.flows.getDependencies",
+      "shortPath": "flows.getDependencies",
+      "description": "List resources that depend on a flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "celigo.api.flows.getDescendants",
+      "shortPath": "flows.getDescendants",
+      "description": "List the exports, imports and tools a flow uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exports",
+            "optional": true,
+            "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+          },
+          {
+            "key": "imports",
+            "optional": true,
+            "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.getLastExportDateTime",
+      "shortPath": "flows.getLastExportDateTime",
+      "description": "Get when a flow last exported data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lastExportDateTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.getLatestJobs",
+      "shortPath": "flows.getLatestJobs",
+      "description": "Get the most recent jobs for a flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type?: string, status?: string, _flowId?: string, numError?: number, numSuccess?: number, startedAt?: string, endedAt?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.flows.getTemplate",
+      "shortPath": "flows.getTemplate",
+      "description": "Get a signed URL to download a flow as a template zip",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signedURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.list",
+      "shortPath": "flows.list",
+      "description": "List flows in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_abstractFlowId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_integrationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "lastExecutedAt"
+          },
+          {
+            "key": "includeInstances",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.flows.patch",
+      "shortPath": "flows.patch",
+      "description": "Apply JSON Patch operations to a flow",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.flows.update",
+      "shortPath": "flows.update",
+      "description": "Replace a flow document. Send the full document; omitted fields are cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.iClients.create",
+      "shortPath": "iClients.create",
+      "description": "Create an iClient",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.iClients.delete",
+      "shortPath": "iClients.delete",
+      "description": "Delete an iClient",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.iClients.get",
+      "shortPath": "iClients.get",
+      "description": "Get an iClient by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.iClients.list",
+      "shortPath": "iClients.list",
+      "description": "List iClients (stored OAuth app credentials)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.iClients.patch",
+      "shortPath": "iClients.patch",
+      "description": "Patch an iClient. Celigo only allows replacing /oauth2/failPath",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: /oauth2/failPath, value?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.iClients.update",
+      "shortPath": "iClients.update",
+      "description": "Replace an iClient document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.imports.clone",
+      "shortPath": "imports.clone",
+      "description": "Clone a import, optionally remapping connections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionMap",
+            "optional": true,
+            "type": "{}",
+            "description": "Maps source connection _id to target connection _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string } | { model: string, _id: string, name?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.imports.create",
+      "shortPath": "imports.create",
+      "description": "Create a import",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.imports.delete",
+      "shortPath": "imports.delete",
+      "description": "Delete a import",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.imports.get",
+      "shortPath": "imports.get",
+      "description": "Get a import by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.imports.getAudit",
+      "shortPath": "imports.getAudit",
+      "description": "List audit log entries for a import",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.imports.getDependencies",
+      "shortPath": "imports.getDependencies",
+      "description": "List resources that depend on a import",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "celigo.api.imports.invoke",
+      "shortPath": "imports.invoke",
+      "description": "Run a saved import against the given records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ statusCode?: number, id?: string, _json?: {}, ignored?: boolean, stage?: string, errors?: {}[] }[]"
+      }
+    },
+    {
+      "path": "celigo.api.imports.list",
+      "shortPath": "imports.list",
+      "description": "List imports in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.imports.patch",
+      "shortPath": "imports.patch",
+      "description": "Apply JSON Patch operations to a import",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.imports.update",
+      "shortPath": "imports.update",
+      "description": "Replace a import document. Send the full document; omitted fields are cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.clone",
+      "shortPath": "integrations.clone",
+      "description": "Clone a integration, optionally remapping connections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "envId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionMap",
+            "optional": false,
+            "type": "{}",
+            "description": "Maps source connection _id to target connection _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string } | { model: string, _id: string, name?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.create",
+      "shortPath": "integrations.create",
+      "description": "Create a integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.createRevision",
+      "shortPath": "integrations.createRevision",
+      "description": "Snapshot an integration as a new revision",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_integrationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.delete",
+      "shortPath": "integrations.delete",
+      "description": "Delete a integration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.get",
+      "shortPath": "integrations.get",
+      "description": "Get a integration by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.getAudit",
+      "shortPath": "integrations.getAudit",
+      "description": "List audit log entries for a integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp lower bound"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO timestamp upper bound"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "create | update | delete | view | restore | purge | signin | signout | purgelogs"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "ui | api | system | connector | script | stack | sso | cli | mcp | ora"
+          },
+          {
+            "key": "_byUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, resourceType?: string, _resourceId?: string, source?: string, action?: string, time?: string, byUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.getDependencies",
+      "shortPath": "integrations.getDependencies",
+      "description": "List resources that depend on a integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.getTemplate",
+      "shortPath": "integrations.getTemplate",
+      "description": "Get a signed URL to download an integration as a template zip",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signedURL",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List integrations in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to return"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to omit"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listConnections",
+      "shortPath": "integrations.listConnections",
+      "description": "List the connections registered to an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listErrors",
+      "shortPath": "integrations.listErrors",
+      "description": "Get open error counts per flow in an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _flowId: string, numError?: number, lastErrorAt?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listExports",
+      "shortPath": "integrations.listExports",
+      "description": "List the exports in an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listFlows",
+      "shortPath": "integrations.listFlows",
+      "description": "List the flows in an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "includeInstances",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listImports",
+      "shortPath": "integrations.listImports",
+      "description": "List the imports in an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.listUsers",
+      "shortPath": "integrations.listUsers",
+      "description": "List the users shared on an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string, createdAt?: string, lastModified?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.integrations.patch",
+      "shortPath": "integrations.patch",
+      "description": "Apply JSON Patch operations to a integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: replace | add | remove, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.registerConnection",
+      "shortPath": "integrations.registerConnection",
+      "description": "Register a connection to an integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.registerConnections",
+      "shortPath": "integrations.registerConnections",
+      "description": "Register connections to an integration, one per request body (_connectionId)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "_connectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.unregisterConnection",
+      "shortPath": "integrations.unregisterConnection",
+      "description": "Unregister a connection from an integration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.integrations.update",
+      "shortPath": "integrations.update",
+      "description": "Replace a integration document. Send the full document; omitted fields are cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.jobs.getErrors",
+      "shortPath": "jobs.getErrors",
+      "description": "Get the errors of a job (up to 1000)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code?: string, message?: string, source?: string, createdAt?: string, _jobId?: string, _retryId?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs filtered by flow, integration, status, type or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_integrationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_exportId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_importId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_flowId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_flowJobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_flowId_in",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated flow ids"
+          },
+          {
+            "key": "status_in",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated statuses"
+          },
+          {
+            "key": "createdAt_lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt_gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | running | completed | failed | canceled | canceling | retrying"
+          },
+          {
+            "key": "numSuccess_lte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numSuccess_gte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numIgnore_lte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numIgnore_gte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numError_gte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numError_lte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "flow | export | import | retry | bulk_retry"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, type?: string, status?: string, _flowId?: string, numError?: number, numSuccess?: number, startedAt?: string, endedAt?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.processors.generateStructuredFile",
+      "shortPath": "processors.generateStructuredFile",
+      "description": "Render JSON records as delimited or fixed-width text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "rules",
+            "optional": false,
+            "type": "{ name: string, version: 1 | 2, format: delimited | delimited/x12 | delimited/edifact | fixed, rules: {}[] }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.processors.parseCsv",
+      "shortPath": "processors.parseCsv",
+      "description": "Parse CSV text into JSON records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}",
+            "description": "columnDelimiter, rowDelimiter, hasHeaderRow, rowsToSkip, keyColumns, ..."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includeEmptyValues?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.processors.parseStructuredFile",
+      "shortPath": "processors.parseStructuredFile",
+      "description": "Parse EDI or fixed-width text into JSON using a file definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": false,
+            "type": "{}",
+            "description": "fileDefinition or _fileDefinitionId, resourcePath"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.processors.parseXml",
+      "shortPath": "processors.parseXml",
+      "description": "Parse XML text into JSON records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}",
+            "description": "resourcePath, groupByFields, sortByFields, doc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.scripts.create",
+      "shortPath": "scripts.create",
+      "description": "Create a JavaScript hook script",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "JavaScript source"
+          },
+          {
+            "key": "postResponseHookToProcessOnChildRecord",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.scripts.delete",
+      "shortPath": "scripts.delete",
+      "description": "Delete a script",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.scripts.get",
+      "shortPath": "scripts.get",
+      "description": "Get a script by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.scripts.getLogs",
+      "shortPath": "scripts.getLogs",
+      "description": "Get execution logs written by a script",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "time_lte",
+            "optional": true,
+            "type": "number",
+            "description": "Epoch milliseconds"
+          },
+          {
+            "key": "time_gt",
+            "optional": true,
+            "type": "number",
+            "description": "Epoch milliseconds"
+          },
+          {
+            "key": "_flowId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "_resourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "functionType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageURL",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.scripts.update",
+      "shortPath": "scripts.update",
+      "description": "Replace a script",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "JavaScript source"
+          },
+          {
+            "key": "postResponseHookToProcessOnChildRecord",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.delete",
+      "shortPath": "state.delete",
+      "description": "Delete a global state key",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.deleteAll",
+      "shortPath": "state.deleteAll",
+      "description": "Delete every global state key",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.deleteAllForResource",
+      "shortPath": "state.deleteAllForResource",
+      "description": "Delete every state key on an export, import or integration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceType",
+            "optional": false,
+            "type": "exports | imports | integrations"
+          },
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export, import or integration"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.deleteForResource",
+      "shortPath": "state.deleteForResource",
+      "description": "Delete a state key on an export, import or integration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceType",
+            "optional": false,
+            "type": "exports | imports | integrations"
+          },
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export, import or integration"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.get",
+      "shortPath": "state.get",
+      "description": "Get the value stored under a global state key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "celigo.api.state.getForResource",
+      "shortPath": "state.getForResource",
+      "description": "Get a state value stored on an export, import or integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceType",
+            "optional": false,
+            "type": "exports | imports | integrations"
+          },
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export, import or integration"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "celigo.api.state.list",
+      "shortPath": "state.list",
+      "description": "List global state keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.listForResource",
+      "shortPath": "state.listForResource",
+      "description": "List state keys stored on an export, import or integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceType",
+            "optional": false,
+            "type": "exports | imports | integrations"
+          },
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export, import or integration"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.set",
+      "shortPath": "state.set",
+      "description": "Create or replace the value under a global state key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string",
+            "description": "OK when replaced, Created when new"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.state.setForResource",
+      "shortPath": "state.setForResource",
+      "description": "Create or replace a state value on an export, import or integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceType",
+            "optional": false,
+            "type": "exports | imports | integrations"
+          },
+          {
+            "key": "resourceId",
+            "optional": false,
+            "type": "string",
+            "description": "_id of the export, import or integration"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "State key"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string",
+            "description": "OK when replaced, Created when new"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create an error tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete an error tag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get an error tag by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List error tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results per page"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Return results after this _id (cursor from the Link header)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, tag?: string, tagId?: string }[]"
+      }
+    },
+    {
+      "path": "celigo.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename an error tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Remove a user from the account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user share by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accepted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sharedWithUser",
+            "optional": true,
+            "type": "{ _id?: string, email?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.users.invite",
+      "shortPath": "users.invite",
+      "description": "Invite one user by email with account or integration access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessLevel",
+            "optional": true,
+            "type": "monitor | manage | administrator | none",
+            "description": "Account-wide access level"
+          },
+          {
+            "key": "integrationAccessLevel",
+            "optional": true,
+            "type": "{ _integrationId: string, accessLevel: monitor | manage | administrator | none }[]"
+          },
+          {
+            "key": "accountSSORequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accountMFARequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAccessToAPIM",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowToEditRetryData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowIntegrationWorkspaceCreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accessLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accepted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sharedWithUser",
+            "optional": true,
+            "type": "{ _id?: string, email?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "celigo.api.users.inviteMultiple",
+      "shortPath": "users.inviteMultiple",
+      "description": "Invite several users by email with the same access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "accessLevel",
+            "optional": true,
+            "type": "monitor | manage | administrator | none",
+            "description": "Account-wide access level"
+          },
+          {
+            "key": "integrationAccessLevel",
+            "optional": true,
+            "type": "{ _integrationId: string, accessLevel: monitor | manage | administrator | none }[]"
+          },
+          {
+            "key": "accountSSORequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accountMFARequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAccessToAPIM",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowToEditRetryData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowIntegrationWorkspaceCreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ statusCode?: number, doc?: { _id: string, accessLevel?: string, accepted?: boolean, disabled?: boolean, sharedWithUser?: { _id?: string, email?: string, name?: string } } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users the account is shared with",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userType",
+            "optional": true,
+            "type": "workspace | end-user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, accessLevel?: string, accepted?: boolean, disabled?: boolean, sharedWithUser?: { _id?: string, email?: string, name?: string } }[]"
+      }
+    },
+    {
+      "path": "celigo.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user share access level",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Celigo resource _id"
+          },
+          {
+            "key": "accessLevel",
+            "optional": true,
+            "type": "monitor | manage | administrator | none",
+            "description": "Account-wide access level"
+          },
+          {
+            "key": "integrationAccessLevel",
+            "optional": true,
+            "type": "{ _integrationId: string, accessLevel: monitor | manage | administrator | none }[]"
+          },
+          {
+            "key": "accountSSORequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accountMFARequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAccessToAPIM",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowToEditRetryData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowIntegrationWorkspaceCreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "celigo.db.connections.search",
+      "entityName": "connections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assistant",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "borrowConcurrencyFromConnectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentConnectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mcpOwnerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectionRole",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "offline",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isHTTP",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "autoRecoverRateLimitErrors",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enableMicroBatchForOneToMany",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enableCsvObjectParsing",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "debugDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "debugUntil",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "parentSyncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.exports.search",
+      "entityName": "exports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "adaptorType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageSize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dataURITemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "traceKeyTemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "skipRetries",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "oneToMany",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pathToMany",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isLookup",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ediProfileId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postParseListenerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assistant",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "apiIdentifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asynchronous",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.flows.search",
+      "entityName": "flows",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "schedule",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "exportId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wizardState",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "runPageGeneratorsInParallel",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "autoResolveMatchingTraceKeys",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isAbstract",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "abstractFlowId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flowGroupingId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keepDeltaBehindFlowId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keepDeltaBehindExportId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "draft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "draftExpiresAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "hidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "numInstances",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "free",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lastExecutedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "resolvedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.iclients.search",
+      "entityName": "iclients",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "published",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enableJWT",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enableIClientReferences",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "formType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "httpConnectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "httpConnectorApiId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.imports.search",
+      "entityName": "imports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "adaptorType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distributed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "maxAttempts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ignoreExisting",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ignoreMissing",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "idLockTemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dataURITemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "traceKeyTemplate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oneToMany",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pathToMany",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blobKeyPath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blob",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "assistant",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleteAfterImport",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ediProfileId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inputContext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "apiIdentifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "draft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "draftExpiresAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "debugUntil",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.integrations.search",
+      "entityName": "integrations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "readme",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updateInProgress",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "celigoAgentAutoRunMode",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "sampleIntegration",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "syncs",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "childDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "integrationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flowId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exportId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expOrImpId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "retryOfJobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flowJobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentJobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bulkJobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "triggeredBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "canceledBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flowExecutionGroupId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numError",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numOpenError",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numResolved",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numResolvedByAdaptor",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numSuccess",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numIgnore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numExport",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numPagesGenerated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numPagesProcessed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "doneExporting",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "retriable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "logMode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "endedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "resolvedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastExecutedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "purgeAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.scripts.search",
+      "entityName": "scripts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postResponseHookToProcessOnChildRecord",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "debugUntil",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "sourceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tagId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "celigo.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sharedWithUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accessLevel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accepted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dismissed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "accountSSORequired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "accountMFARequired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allowAccessToAPIM",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allowToEditRetryData",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "allowIntegrationWorkspaceCreation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isProductionAdmin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ssoSetupPending",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdVia",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provisionedBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scimSsoClientId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastSignIn",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastModified",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "deletedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1101 @@
+{
+  "id": "builtwith",
+  "displayName": "BuiltWith",
+  "description": "Web technology profiling for domains, technology adoption lists, trends, redirects, and company financials.",
+  "npmPackageName": "@corsair-dev/builtwith",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 11
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "builtwith.api.createDomainListFile",
+      "shortPath": "createDomainListFile",
+      "description": "Build a deduplicated TXT or ZIP domain list file locally for bulk lookups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "txt | zip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "txt | zip"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "encoding",
+            "optional": false,
+            "type": "utf8 | base64"
+          },
+          {
+            "key": "domainCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.datasets.lookup",
+      "shortPath": "datasets.lookup",
+      "description": "Look up technology usage totals from the Trends API, optionally at a historical date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tech",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Tech",
+            "optional": true,
+            "type": "{ name: string, description?: string, link?: string, icon?: string, is_premium?: string, tag?: string, categories?: string[], trends_link?: string, coverage?: { ten_k?: number, hundred_k?: number, milly?: number, live?: number, expired?: number } }"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.domain.lookup",
+      "shortPath": "domain.lookup",
+      "description": "Look up current and historical technologies for up to 16 root domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hidedl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hidetext",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liveonly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nometa",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nopii",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noattr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trust",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fdrange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ldrange",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Results",
+            "optional": true,
+            "type": "{ Lookup?: string, Result?: { IsDB?: string, Spend?: number, SalesRevenue?: number, Paths?: { Domain?: string, Url?: string, SubDomain?: string, FirstIndexed?: string | number, LastIndexed?: string | number, Technologies?: { Name: string, Id?: number, Parent?: string, Description?: string, Link?: string, confidence?: number, IsPremium?: string, Tag?: string, Categories?: string[], FirstDetected?: string | number, LastDetected?: string | number }[] }[] }, Meta?: { ARank?: number | null, QRank?: number | null, Majestic?: number | null, Umbrella?: number | null, CompanyName?: string | null, City?: string | null, Postcode?: string | null, State?: string | null, Country?: string | null, Vertical?: string | null, PrimaryBusiness?: string | null, Telephones?: string[] | null, Emails?: string[] | null, Social?: string[] | null, company_reg?: { type: string, number: string }[] | null }, Attributes?: {}, FirstIndexed?: string | number, LastIndexed?: string | number }[]"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.financial.lookup",
+      "shortPath": "financial.lookup",
+      "description": "Look up financial information for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "edgar",
+            "optional": true,
+            "type": "{ companyName?: string, cik?: string | number, sic?: string | number, exchanges?: string[], tickers?: string[], financials?: { periodStartDate?: string, periodEndDate?: string, revenue?: number, operatingIncome?: number, netIncome?: number, assets?: number, liabilities?: number, cash?: number, equity?: number }[] }"
+          },
+          {
+            "key": "companyhouse",
+            "optional": true,
+            "type": "{ companyName?: string, regNo?: string | number, accountingType?: string, sic?: string | number, financials?: { balanceSheetDate?: string, debtors?: number, fixedAssets?: number, currentAssets?: number, creditors?: number }[] }"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.free.lookup",
+      "shortPath": "free.lookup",
+      "description": "Get technology group and category counts with last-updated dates for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null, categories?: { name: string, live?: number | null, dead?: number | null, latest?: number | null, oldest?: number | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.lists.getList",
+      "shortPath": "lists.getList",
+      "description": "List websites using a technology, paginated with the NextOffset token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tech",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "otherTechs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "NextOffset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Results",
+            "optional": true,
+            "type": "{ D: string, LOS?: string[], FD?: number, LD?: number, S?: number, SKU?: number, R?: number, F?: number, E?: number, A?: number, Q?: number, M?: number, U?: number, META?: { CompanyName?: string | null, City?: string | null, Postcode?: string | null, State?: string | null, Country?: string | null, Vertical?: string | null, PrimaryBusiness?: string | null, Telephones?: string[] | null, Emails?: string[] | null, Social?: string[] | null, Titles?: string[] | null } }[]"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.mcp.lookup",
+      "shortPath": "mcp.lookup",
+      "description": "Search the BuiltWith registry of remote MCP servers by keyword or category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ Domain?: string, Category?: string, Description?: string, Endpoints?: { Endpoint: string, AuthRequired?: boolean, Tools?: { Name: string, Description?: string }[] }[] }[]"
+      }
+    },
+    {
+      "path": "builtwith.api.product.lookup",
+      "shortPath": "product.lookup",
+      "description": "Find eCommerce shops selling a product, or list a shop's products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shop_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used_this_query",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shops",
+            "optional": true,
+            "type": "{ Domain: string, Products?: { Title: string, Url?: string, Indexed?: string, FirstIndexed?: string, Price?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.recommendations.lookup",
+      "shortPath": "recommendations.lookup",
+      "description": "Get technology recommendations for up to 16 domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Recommendations",
+            "optional": true,
+            "type": "{ Domain: string, Compiled?: string, Recommendations?: { name: string, link?: string, tag?: string, categories?: string[], stars?: number, match?: number }[] }[]"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.redirects.lookup",
+      "shortPath": "redirects.lookup",
+      "description": "Get live and historical inbound and outbound redirects for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Lookup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Inbound",
+            "optional": true,
+            "type": "{ Domain: string, FirstDetected?: string, LastDetected?: string }[]"
+          },
+          {
+            "key": "Outbound",
+            "optional": true,
+            "type": "{ Domain: string, FirstDetected?: string, LastDetected?: string }[]"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "builtwith.api.social.lookup",
+      "shortPath": "social.lookup",
+      "description": "Find root domains linked to social media profile URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Socials",
+            "optional": true,
+            "type": "{ Name?: string, Results?: { SocialUrl: string, Domains?: { Root: string, BuiltWithRank?: number }[] }[] }[]"
+          },
+          {
+            "key": "Errors",
+            "optional": true,
+            "type": "{ Message: string, Code: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "builtwith.db.companyFinancials.search",
+      "entityName": "companyFinancials",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "followers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "products",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "spend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.domainCoverage.search",
+      "entityName": "domainCoverage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lookup",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "salesRevenue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.domainTechnologies.search",
+      "entityName": "domainTechnologies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "technologyId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confidence",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isPremium",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.listSites.search",
+      "entityName": "listSites",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tech",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstDetected",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastDetected",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "monthlySpend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "skuCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "salesRevenue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "socialFollowers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "employees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pageRank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trancoRank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "majesticRank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "umbrellaRank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.mcpServers.search",
+      "entityName": "mcpServers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.products.search",
+      "entityName": "products",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shop",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "indexed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstIndexed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.recommendations.search",
+      "entityName": "recommendations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "compiled",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stars",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "match",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.redirects.search",
+      "entityName": "redirects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lookup",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstDetected",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastDetected",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.socialLinks.search",
+      "entityName": "socialLinks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "socialUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "root",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "builtWithRank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "builtwith.db.technologies.search",
+      "entityName": "technologies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPremium",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trendsLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

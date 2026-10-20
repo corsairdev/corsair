@@ -2,10 +2,6 @@ displayName: Suzanne
 description: Turn a text prompt or photos into a downloadable 3D mesh.
 apiExamples:
   generations.textTo3d:
-    input:
-      model: sculptor
-      prompt: a low-poly fox
-      idempotencyKey: 3f1d6c5e-2b7a-4f0e-9c2d-8a1b6e4f0c11
+    call: "{ model: 'sculptor', prompt: 'a low-poly fox', idempotencyKey: '3f1d6c5e-2b7a-4f0e-9c2d-8a1b6e4f0c11' }"
   jobs.get:
-    input:
-      job_id: job_01H
+    job_id: job_01H

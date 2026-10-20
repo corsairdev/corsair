@@ -1,0 +1,1029 @@
+{
+  "id": "docmosis",
+  "displayName": "Docmosis",
+  "description": "Generate documents from templates with Docmosis Cloud, including template/image management and environment diagnostics.",
+  "npmPackageName": "@corsair-dev/docmosis",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "docmosis.api.admin.environmentReady",
+      "shortPath": "admin.environmentReady",
+      "description": "Check whether the environment is active and ready to render",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.admin.environmentSummary",
+      "shortPath": "admin.environmentSummary",
+      "description": "Get environment status, plan details, and quota usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accountEnvironmentSummary",
+            "optional": true,
+            "type": "{ ready?: boolean | string, accountEnvDetails?: { name?: string, description?: string, isActivated?: boolean | string, isDisabled?: boolean | string, isDeleted?: boolean | string, auditInfo?: { lastUpdatedByUser?: string, lastUpdatedTime?: number } }, pageQuota?: { used?: number | string, quota?: number | string, pctUsed?: number | string, pctUsedStr?: string, isHardLimited?: boolean | string }, plan?: { name?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.admin.getBatchUploadStatus",
+      "shortPath": "admin.getBatchUploadStatus",
+      "description": "Check status for a template batch upload job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userJobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobStatus",
+            "optional": true,
+            "type": "{ userJobId?: string, isEnded?: boolean, status?: string, type?: string, processingMsg?: string, startedTime?: number, finishedTime?: number, duration?: number, pctComplete?: number, jobResult?: { errorsDetected?: boolean, uploadedIntoFolder?: string, devMode?: boolean, uploadedTotalCount?: number, processedWithErrorsCount?: number, processedWithoutErrorsCount?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.admin.getRenderQueue",
+      "shortPath": "admin.getRenderQueue",
+      "description": "Get current render queue utilization and delay",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queue",
+            "optional": true,
+            "type": "{ rejected?: boolean, availablePct?: number, delaySeconds?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.admin.getRenderTags",
+      "shortPath": "admin.getRenderTags",
+      "description": "Get monthly render statistics grouped by custom tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "nMonths",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "padBlanks",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "renderTags",
+            "optional": true,
+            "type": "{ year?: number | string, month?: number | string, tags?: { name?: string, countPages?: number | string, countDocuments?: number | string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.admin.ping",
+      "shortPath": "admin.ping",
+      "description": "Check basic connectivity to the Docmosis API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "docmosis.api.admin.pingService",
+      "shortPath": "admin.pingService",
+      "description": "Verify that Docmosis service listeners are online",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "docmosis.api.auth.getApiKey",
+      "shortPath": "auth.getApiKey",
+      "description": "Confirm a Docmosis access key is configured and return a masked preview of it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configured",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether a Docmosis access key is configured"
+          },
+          {
+            "key": "keyPreview",
+            "optional": false,
+            "type": "string",
+            "description": "Last 4 characters of the configured access key"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Delete one or more stored images",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.images.get",
+      "shortPath": "images.get",
+      "description": "Download one or more uploaded images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.images.list",
+      "shortPath": "images.list",
+      "description": "List available stored images, optionally by folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeSubFolders",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageListStale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "imageList",
+            "optional": true,
+            "type": "{ name?: string, lastModifiedMillisSinceEpoch?: number, lastModifiedISO8601?: string, sizeBytes?: number, md5?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete one or more templates from the environment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Download one or more template files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.getDetails",
+      "shortPath": "templates.getDetails",
+      "description": "Get metadata details for a specific template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stringify",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateDetails",
+            "optional": true,
+            "type": "{ name?: string, lastModifiedMillisSinceEpoch?: number, lastModifiedISO8601?: string, sizeBytes?: number, md5?: string, templatePlainTextFieldPrefix?: string, templatePlainTextFieldSuffix?: string, templateHasErrors?: boolean, templateDevMode?: boolean, templateDescription?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.getSampleData",
+      "shortPath": "templates.getSampleData",
+      "description": "Generate sample JSON or XML data from a template structure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stringify",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateSampleData",
+            "optional": true,
+            "type": "{} | string"
+          },
+          {
+            "key": "templateDetails",
+            "optional": true,
+            "type": "{ templateHasErrors?: boolean, templateFirstError?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.getStructure",
+      "shortPath": "templates.getStructure",
+      "description": "Get parsed field and structure metadata for a template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stringify",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateHasErrors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "templateErrorMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateStructure",
+            "optional": true,
+            "type": "{ type?: string, text?: string, dataRefs?: string[], fieldIdx?: number, repeatIdx?: number, conditionIdx?: number, contains?: lazy }[] | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates with optional folder and paging filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeDetail",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeSubFolders",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "succeeded",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "shortMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longMsg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateListStale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "templateList",
+            "optional": true,
+            "type": "{ name?: string, lastModifiedMillisSinceEpoch?: number, lastModifiedISO8601?: string, sizeBytes?: number, md5?: string, templatePlainTextFieldPrefix?: string, templatePlainTextFieldSuffix?: string, templateHasErrors?: boolean, templateDevMode?: boolean, templateDescription?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docmosis.api.templates.render",
+      "shortPath": "templates.render",
+      "description": "Generate a document from a template and JSON/XML data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string | {}"
+          },
+          {
+            "key": "outputName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devMode",
+            "optional": true,
+            "type": "boolean | y | yes | true | n | no | false"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "docmosis.db.batchUploadJobs.search",
+      "entityName": "batchUploadJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isEnded",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processingMsg",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startedTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "finishedTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pctComplete",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docmosis.db.environments.search",
+      "entityName": "environments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "planName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docmosis.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedMillisSinceEpoch",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastModifiedISO8601",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sizeBytes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "md5",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "docmosis.db.renders.search",
+      "entityName": "renders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "outputName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "outputFormat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "byteLength",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "devMode",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "tags",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "docmosis.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedMillisSinceEpoch",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastModifiedISO8601",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sizeBytes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "templatePlainTextFieldPrefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templatePlainTextFieldSuffix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateDevMode",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "templateHasErrors",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "templateDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "md5",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -7,8 +7,8 @@ Use **Close** through Corsair: one client, typed API calls, local DB sync, and i
 
 **What you get:**
 
-- 28 typed API operations
-- 9 synced entities (`activityCall`, `activityEmail`, `activityNote`, `contact`, `customField`, `lead`, and 3 more) for fast `.search()` / `.list()`
+- 31 typed API operations
+- 10 synced entities (`activityCall`, `activityEmail`, `activityNote`, `activitySms`, `contact`, `customField`, and 4 more) for fast `.search()` / `.list()`
 - 6 incoming webhook event types
 
 ## Setup
@@ -24,7 +24,7 @@ npm install corsair @corsair-dev/close
 yarn add corsair @corsair-dev/close
 ```
 ```bash pnpm
-pnpm add corsair @corsair-dev/close
+pnpm install corsair @corsair-dev/close
 ```
 ```bash bun
 bun add corsair @corsair-dev/close
@@ -111,11 +111,11 @@ await tenant.close.api.activities.listCalls({});
 ```
 
 
-**`activities.createNote`**
+**`activities.createCall`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.close.api.activities.createNote({ lead_id: 'lead_123', note: 'Example note' });
+await tenant.close.api.activities.createCall({});
 ```
 
 
@@ -123,7 +123,7 @@ See the full list on the [API](/plugins/close/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.close.db.<entity>.search()` and `.list()`: `activityCall`, `activityEmail`, `activityNote`, `contact`, `customField`, `lead`, `opportunity`, `task`, `user`.
+Synced entities support `tenant.close.db.<entity>.search()` and `.list()`: `activityCall`, `activityEmail`, `activityNote`, `activitySms`, `contact`, `customField`, `lead`, `opportunity`, `task`, `user`.
 
 See [Database](/plugins/close/database) for filters and operators.
 

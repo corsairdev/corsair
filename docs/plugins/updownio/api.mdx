@@ -55,7 +55,8 @@ await corsair.updownio.api.checks.list({});
   created_at?: string | null,
   mute_until?: string | null,
   favicon_url?: string | null,
-  custom_headers?: Record<string, string> | null,
+  custom_headers?: {
+  } | null,
   http_verb?: string | null,
   http_body?: string | null,
   ssl?: {
@@ -105,21 +106,14 @@ await corsair.updownio.api.nodes.list({});
 **Input:** _empty object_
 
 
-**Output:** `Record<string, UpdownIONode>`
+**Output:** `object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-Record<string, {
-  ip?: string | null,
-  ip6?: string | null,
-  city?: string | null,
-  country?: string | null,
-  country_code?: string | null,
-  lat?: number | null,
-  lng?: number | null
-}>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -142,7 +136,7 @@ await corsair.updownio.api.nodes.listIps({});
 **Input:** _empty object_
 
 
-**Output:** `string[]`
+**Output:** `(string \| string)[]`
 
 
 ---

@@ -3,7 +3,7 @@ title: Database
 description: "Blackbaud local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The Blackbaud plugin syncs data locally. Use `corsair.blackbaud.db.<entity>.search({ entity_id?, data, limit?, offset? })` with the filters listed per entity.
+The Blackbaud plugin syncs data locally. Use `corsair.blackbaud.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -15,7 +15,6 @@ Path: `blackbaud.db.batchGifts.search`
 
 ```ts
 const rows = await corsair.blackbaud.db.batchGifts.search({
-    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -24,10 +23,9 @@ const rows = await corsair.blackbaud.db.batchGifts.search({
 
 ### Searchable filters
 
-`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
-
 | Field | Type | Operators |
 |-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `batch_number` | `string` | equals, contains, startsWith, endsWith, in |
@@ -58,7 +56,6 @@ Path: `blackbaud.db.gifts.search`
 
 ```ts
 const rows = await corsair.blackbaud.db.gifts.search({
-    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,10 +64,9 @@ const rows = await corsair.blackbaud.db.gifts.search({
 
 ### Searchable filters
 
-`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
-
 | Field | Type | Operators |
 |-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `batch_number` | `string` | equals, contains, startsWith, endsWith, in |
@@ -99,7 +95,6 @@ Path: `blackbaud.db.memberships.search`
 
 ```ts
 const rows = await corsair.blackbaud.db.memberships.search({
-    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -108,10 +103,9 @@ const rows = await corsair.blackbaud.db.memberships.search({
 
 ### Searchable filters
 
-`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
-
 | Field | Type | Operators |
 |-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `dues` | `number` | equals, gt, gte, lt, lte, in |
 | `category_name` | `string` | equals, contains, startsWith, endsWith, in |
 | `program_name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -137,7 +131,6 @@ Path: `blackbaud.db.oneRosterKeys.search`
 
 ```ts
 const rows = await corsair.blackbaud.db.oneRosterKeys.search({
-    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -146,10 +139,9 @@ const rows = await corsair.blackbaud.db.oneRosterKeys.search({
 
 ### Searchable filters
 
-`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
-
 | Field | Type | Operators |
 |-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `kty` | `string` | equals, contains, startsWith, endsWith, in |
 | `alg` | `string` | equals, contains, startsWith, endsWith, in |
 | `use` | `string` | equals, contains, startsWith, endsWith, in |
@@ -169,7 +161,6 @@ Path: `blackbaud.db.paymentTransactions.search`
 
 ```ts
 const rows = await corsair.blackbaud.db.paymentTransactions.search({
-    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -178,10 +169,9 @@ const rows = await corsair.blackbaud.db.paymentTransactions.search({
 
 ### Searchable filters
 
-`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
-
 | Field | Type | Operators |
 |-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `amount` | `number` | equals, gt, gte, lt, lte, in |
 | `net_amount` | `number` | equals, gt, gte, lt, lte, in |

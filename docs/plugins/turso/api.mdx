@@ -20,11 +20,7 @@ Listen to committed insert/update/delete events for a table in a Turso database
 **Risk:** `read`
 
 ```ts
-await corsair.turso.api.changes.listen({
-  databaseUrl: 'https://mydb-myorg.turso.io',
-  table: 'users',
-  action: 'insert',
-});
+await corsair.turso.api.changes.listen({});
 ```
 
 **Input**
@@ -34,8 +30,8 @@ await corsair.turso.api.changes.listen({
 | `databaseUrl` | `string` | Yes | Database-specific URL, e.g. https://mydb-myorg.turso.io — NOT the platform API host |
 | `table` | `string` | Yes | Table to watch for committed changes |
 | `action` | `insert \| update \| delete` | Yes | Which committed action to stream: insert, update or delete |
-| `maxEvents` | `number` | No | Stop after this many events have been received |
-| `timeoutMs` | `number` | No | Stop listening after this many milliseconds |
+| `maxEvents` | `number` | Yes | Stop after this many events have been received |
+| `timeoutMs` | `number` | Yes | Stop listening after this many milliseconds |
 
 
 
@@ -53,7 +49,8 @@ await corsair.turso.api.changes.listen({
     table: string,
     action: insert | update | delete,
     receivedAt: string,
-    data?: Record<string, JSON value> | null
+    data?: {
+    }
   }[],
   stoppedBy: max_events | timeout | stream_closed
 } | {

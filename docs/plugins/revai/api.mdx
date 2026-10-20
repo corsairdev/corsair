@@ -20,7 +20,7 @@ Get an async job
 **Risk:** `read`
 
 ```ts
-await corsair.revai.api.jobs.getJob({ id: "Umx5c6F7pH7r" });
+await corsair.revai.api.jobs.getJob({});
 ```
 
 **Input**
@@ -74,7 +74,7 @@ Get transcript of a job
 **Risk:** `read`
 
 ```ts
-await corsair.revai.api.jobs.getTranscript({ id: "Umx5c6F7pH7r" });
+await corsair.revai.api.jobs.getTranscript({});
 ```
 
 **Input**
@@ -82,7 +82,7 @@ await corsair.revai.api.jobs.getTranscript({ id: "Umx5c6F7pH7r" });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | No | — |
+| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | Yes | — |
 
 
 
@@ -120,7 +120,7 @@ Submit an async job
 **Risk:** `write`
 
 ```ts
-await corsair.revai.api.jobs.submitJob({ media_url: "https://www.rev.ai/FTC_Sample_1.mp3" });
+await corsair.revai.api.jobs.submitJob({});
 ```
 
 **Input**

@@ -1,0 +1,871 @@
+{
+  "id": "apollo",
+  "displayName": "Apollo",
+  "description": "Apollo plugin for Corsair",
+  "npmPackageName": "@corsair-dev/apollo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "apollo.api.news.search",
+      "shortPath": "news.search",
+      "description": "Search news articles about companies by Apollo organization id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "published_at",
+            "optional": true,
+            "type": "{ min?: string, max?: string }"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, per_page: number, total_entries: number, total_pages: number }"
+          },
+          {
+            "key": "news_articles",
+            "optional": false,
+            "type": "{ id: string, url?: string | null, domain?: string | null, title?: string | null, snippet?: string | null, organization_ids?: string[] | null, published_at?: string | null, event_categories?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.organizations.enrich",
+      "shortPath": "organizations.enrich",
+      "description": "Enrich a company by domain, LinkedIn URL, or website",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get complete organization info by Apollo id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.organizations.jobPostings",
+      "shortPath": "organizations.jobPostings",
+      "description": "List a company's current job postings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_job_postings",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, url?: string | null, city?: string | null, state?: string | null, country?: string | null, posted_at?: string | null, last_seen_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, per_page: number, total_entries: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.organizations.search",
+      "shortPath": "organizations.search",
+      "description": "Search companies by name, location, size, industry, funding, technology, and hiring filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q_organization_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q_organization_keyword_tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_not_organization_keyword_tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "latest_funding_amount_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "total_funding_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "latest_funding_date_range",
+            "optional": true,
+            "type": "{ min?: string, max?: string }"
+          },
+          {
+            "key": "organization_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_not_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_industry_tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_not_industry_tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_industries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_naics_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_naics_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_sic_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_sic_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_num_employees_ranges",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "revenue_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "currently_using_any_of_technology_uids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_organization_job_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_job_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_num_jobs_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "organization_job_posted_at_range",
+            "optional": true,
+            "type": "{ min?: string, max?: string }"
+          },
+          {
+            "key": "organization_headcount_growth_past_n_months",
+            "optional": true,
+            "type": "6 | 12 | 24"
+          },
+          {
+            "key": "organization_headcount_growth_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "lookalike_organization_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_websites_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_organization_domains_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, per_page: number, total_entries: number, total_pages: number }"
+          },
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null }[]"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null }[]"
+          },
+          {
+            "key": "breadcrumbs",
+            "optional": true,
+            "type": "{ label: string, signal_field_name: string, value: string | number, display_name: string }[]"
+          },
+          {
+            "key": "partial_results_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "partial_results_limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.people.enrich",
+      "shortPath": "people.enrich",
+      "description": "Enrich a person by name, email, LinkedIn URL, or Apollo id; optionally reveal personal emails and phones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashed_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reveal_personal_emails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reveal_phone_number",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "run_waterfall_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "run_waterfall_phone",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "poll_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, name?: string | null, title?: string | null, headline?: string | null, linkedin_url?: string | null, twitter_url?: string | null, github_url?: string | null, facebook_url?: string | null, photo_url?: string | null, email?: string | null, email_status?: string | null, extrapolated_email_confidence?: number | null, organization_id?: string | null, organization?: { id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null } | null, employment_history?: { id?: string | null, organization_id?: string | null, organization_name?: string | null, title?: string | null, current?: boolean | null, start_date?: string | null, end_date?: string | null, description?: string | null }[] | null, match_confidence?: high | medium | low | none | null, street_address?: string | null, city?: string | null, state?: string | null, country?: string | null, postal_code?: string | null, formatted_address?: string | null, time_zone?: string | null, seniority?: string | null, departments?: string[] | null, subdepartments?: string[] | null, functions?: string[] | null, contact_id?: string | null, contact?: { id: string, email?: string | null, email_status?: string | null, sanitized_phone?: string | null, direct_dial_status?: string | null, phone_numbers?: { raw_number?: string | null, sanitized_number?: string | null, type?: string | null, position?: number | null, status?: string | null, dnc_status?: string | null }[] | null } | null, revealed_for_current_team?: boolean | null, is_likely_to_engage?: boolean | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waterfall",
+            "optional": true,
+            "type": "{ status: string, message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.people.get",
+      "shortPath": "people.get",
+      "description": "Get complete person info by Apollo id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person",
+            "optional": false,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, name?: string | null, title?: string | null, headline?: string | null, linkedin_url?: string | null, twitter_url?: string | null, github_url?: string | null, facebook_url?: string | null, photo_url?: string | null, email?: string | null, email_status?: string | null, extrapolated_email_confidence?: number | null, organization_id?: string | null, organization?: { id: string, name?: string | null, website_url?: string | null, blog_url?: string | null, angellist_url?: string | null, linkedin_url?: string | null, linkedin_uid?: string | null, twitter_url?: string | null, facebook_url?: string | null, crunchbase_url?: string | null, logo_url?: string | null, primary_domain?: string | null, phone?: string | null, sanitized_phone?: string | null, languages?: string[] | null, alexa_ranking?: number | null, founded_year?: number | null, publicly_traded_symbol?: string | null, publicly_traded_exchange?: string | null, industry?: string | null, industries?: string[] | null, secondary_industries?: string[] | null, industry_tag_id?: string | null, keywords?: string[] | null, sic_codes?: string[] | null, naics_codes?: string[] | null, estimated_num_employees?: number | null, organization_headcount_six_month_growth?: number | null, organization_headcount_twelve_month_growth?: number | null, organization_headcount_twenty_four_month_growth?: number | null, departmental_head_count?: {} | null, annual_revenue?: number | null, annual_revenue_printed?: string | null, organization_revenue?: number | null, organization_revenue_printed?: string | null, total_funding?: number | null, total_funding_printed?: string | null, latest_funding_stage?: string | null, latest_funding_round_date?: string | null, funding_events?: { id: string, date?: string | null, detected_at?: string | null, news_url?: string | null, type?: string | null, investors?: string | null, amount?: string | null, currency?: string | null }[] | null, technology_names?: string[] | null, current_technologies?: { uid: string, name: string, category?: string | null }[] | null, raw_address?: string | null, street_address?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, short_description?: string | null, seo_description?: string | null, owned_by_organization_id?: string | null, num_suborganizations?: number | null, suborganizations?: { id: string, name?: string | null, website_url?: string | null, industries?: string[] | null, estimated_num_employees?: number | null, country?: string | null }[] | null, retail_location_count?: number | null, num_retail_locations?: number | null, num_languages?: number | null, primary_phone?: { number?: string | null, sanitized_number?: string | null, source?: string | null } | null, latest_funding_detected_at?: string | null, account_id?: string | null } | null, employment_history?: { id?: string | null, organization_id?: string | null, organization_name?: string | null, title?: string | null, current?: boolean | null, start_date?: string | null, end_date?: string | null, description?: string | null }[] | null, match_confidence?: high | medium | low | none | null, street_address?: string | null, city?: string | null, state?: string | null, country?: string | null, postal_code?: string | null, formatted_address?: string | null, time_zone?: string | null, seniority?: string | null, departments?: string[] | null, subdepartments?: string[] | null, functions?: string[] | null, contact_id?: string | null, contact?: { id: string, email?: string | null, email_status?: string | null, sanitized_phone?: string | null, direct_dial_status?: string | null, phone_numbers?: { raw_number?: string | null, sanitized_number?: string | null, type?: string | null, position?: number | null, status?: string | null, dnc_status?: string | null }[] | null } | null, revealed_for_current_team?: boolean | null, is_likely_to_engage?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apollo.api.people.search",
+      "shortPath": "people.search",
+      "description": "Search net-new people by title, seniority, location, and employer filters (redacted profiles, no credits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_similar_titles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "person_not_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "person_not_past_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_keywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q_person_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "person_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "person_not_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "person_seniorities",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "contact_email_status",
+            "optional": true,
+            "type": "verified | unverified | likely to engage | unavailable[]"
+          },
+          {
+            "key": "currently_using_all_of_technology_uids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "currently_not_using_any_of_technology_uids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_not_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_industry_tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_not_industry_tag_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_industries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_naics_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_naics_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_sic_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_sic_codes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_num_employees_ranges",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "revenue_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "currently_using_any_of_technology_uids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_organization_job_titles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_job_locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "organization_num_jobs_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "organization_job_posted_at_range",
+            "optional": true,
+            "type": "{ min?: string, max?: string }"
+          },
+          {
+            "key": "organization_headcount_growth_past_n_months",
+            "optional": true,
+            "type": "6 | 12 | 24"
+          },
+          {
+            "key": "organization_headcount_growth_range",
+            "optional": true,
+            "type": "{ min?: number, max?: number }"
+          },
+          {
+            "key": "lookalike_organization_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "not_organization_websites_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "q_organization_domains_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "people",
+            "optional": false,
+            "type": "{ id: string, first_name?: string | null, last_name_obfuscated?: string | null, title?: string | null, last_refreshed_at?: string | null, has_email?: boolean | null, has_city?: boolean | null, has_state?: boolean | null, has_country?: boolean | null, has_direct_phone?: string | boolean | null, organization?: { name?: string | null, has_industry?: boolean | null, has_phone?: boolean | null, has_city?: boolean | null, has_state?: boolean | null, has_country?: boolean | null, has_zip_code?: boolean | null, has_revenue?: boolean | null, has_employee_count?: boolean | null } | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "apollo.db.newsArticles.search",
+      "entityName": "newsArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apollo.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "websiteUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "estimatedNumEmployees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "foundedYear",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "apollo.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedinUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organizationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seniority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

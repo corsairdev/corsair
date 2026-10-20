@@ -1,0 +1,1323 @@
+---
+title: API
+description: "API reference for ContactOut: every `contactout.api.*` operation with input and output types."
+---
+
+Every `contactout.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### stats
+
+`account.stats`
+
+Get email, phone, and search credit usage for a month
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.account.stats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `period` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `period` | `object` | Yes | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="period full type">
+
+```ts
+{
+  start: string,
+  end: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  count: number,
+  quota: number,
+  remaining?: number | null,
+  over_quota?: number | null,
+  phone_count: number,
+  phone_quota: number,
+  phone_remaining?: number | null,
+  phone_over_quota?: number | null,
+  search_count: number,
+  search_quota: number,
+  search_remaining?: number | null,
+  search_over_quota?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### enrichDomains
+
+`company.enrichDomains`
+
+Get company details for up to 30 domains
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.company.enrichDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `companies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`company.search`
+
+Search companies by name, domain, size, location, industry, technology, revenue, or founding year
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.company.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string[]` | No | — |
+| `name` | `string[]` | No | — |
+| `domain` | `string[]` | No | — |
+| `size` | `string[]` | No | — |
+| `hq_only` | `boolean` | No | — |
+| `location` | `string[]` | No | — |
+| `industries` | `string[]` | No | — |
+| `technologies` | `string[]` | No | — |
+| `min_revenue` | `number` | No | — |
+| `max_revenue` | `number` | No | — |
+| `year_founded_from` | `number` | No | — |
+| `year_founded_to` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `companies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  page: number,
+  page_size: number,
+  total_results: number
+}
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null,
+  li_vanity?: string | null,
+  linkedin_company_id?: number | null,
+  domain?: string | null,
+  email_domain?: string | null,
+  overview?: string | null,
+  description?: string | null,
+  type?: string | null,
+  size?: number | null,
+  country?: string | null,
+  revenue?: number | string | null,
+  founded_at?: number | null,
+  industry?: string | null,
+  headquarter?: string | null,
+  website?: string | null,
+  location?: string | null,
+  logo_url?: string | null,
+  specialties?: string[],
+  technologies?: string[],
+  locations?: (
+    string | {
+      city?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postalCode?: string | null,
+      description?: string | null,
+      isPrimary?: boolean
+    }
+  )[],
+  employees?: number | null,
+  followers?: number | null,
+  funding?: {
+    total_funding_usd?: number | null,
+    rounds?: {
+      funding_type?: string | null,
+      announced_date?: string | null,
+      investor_names?: string[],
+      lead_investors?: string[],
+      money_raised_usd?: number | null,
+      number_of_investors?: number | null
+    }[],
+    funding_status?: string | null,
+    latest_date?: string | null,
+    number_of_funding_rounds?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### enrich
+
+`email.enrich`
+
+Get the profile behind an email address
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.email.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `include` | `work_email` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  email?: string | null,
+  workEmail?: string | null,
+  workEmailStatus?: string | null,
+  fullName?: string | null,
+  headline?: string | null,
+  industry?: string | null,
+  linkedinUrl?: string | null,
+  profilePictureUrl?: string | null,
+  confidenceLevel?: string | null,
+  altMatches?: string[],
+  phone?: string | null,
+  twitter?: string | null,
+  github?: string | null,
+  experience?: {
+    title?: string | null,
+    summary?: string | null,
+    locality?: string | null,
+    company_name?: string | null,
+    linkedin_url?: string | null,
+    domain?: string | null,
+    logo_url?: string | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    is_current?: boolean | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  education?: {
+    school_name?: string | null,
+    degree?: string | null,
+    field_of_study?: string | null,
+    description?: string | null,
+    url?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  volunteeringExperiences?: {
+    role?: string | null,
+    company_name?: string | null,
+    company_url?: string | null,
+    cause?: string | null,
+    company_id?: number | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  jobFunction?: string | null,
+  workStatus?: string | null,
+  updatedAt?: string | null,
+  company?: {
+    name?: string | null,
+    url?: string | null,
+    li_vanity?: string | null,
+    linkedin_company_id?: number | null,
+    domain?: string | null,
+    email_domain?: string | null,
+    overview?: string | null,
+    description?: string | null,
+    type?: string | null,
+    size?: number | null,
+    country?: string | null,
+    revenue?: number | string | null,
+    founded_at?: number | null,
+    industry?: string | null,
+    headquarter?: string | null,
+    website?: string | null,
+    location?: string | null,
+    logo_url?: string | null,
+    specialties?: string[],
+    technologies?: string[],
+    locations?: (
+      string | {
+        city?: string | null,
+        line1?: string | null,
+        line2?: string | null,
+        state?: string | null,
+        country?: string | null,
+        postalCode?: string | null,
+        description?: string | null,
+        isPrimary?: boolean
+      }
+    )[],
+    employees?: number | null,
+    followers?: number | null,
+    funding?: {
+      total_funding_usd?: number | null,
+      rounds?: {
+        funding_type?: string | null,
+        announced_date?: string | null,
+        investor_names?: string[],
+        lead_investors?: string[],
+        money_raised_usd?: number | null,
+        number_of_investors?: number | null
+      }[],
+      funding_status?: string | null,
+      latest_date?: string | null,
+      number_of_funding_rounds?: number | null
+    } | null
+  } | null,
+  location?: string | null,
+  languages?: {
+    name?: string | null,
+    proficiency?: string | null
+  }[],
+  summary?: string | null,
+  skills?: string[],
+  certifications?: {
+    name?: string | null,
+    title?: string | null,
+    authority?: string | null,
+    license?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  publications?: {
+    url?: string | null,
+    title?: string | null,
+    description?: string | null,
+    publisher?: string | null,
+    authors?: string[],
+    published_on_year?: number | null,
+    published_on_month?: number | null,
+    published_on_day?: number | null
+  }[],
+  projects?: {
+    title?: string | null,
+    description?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  followers?: number | null,
+  seniority?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### toLinkedin
+
+`email.toLinkedin`
+
+Get the LinkedIn profile URL for an email address
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.email.toLinkedin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  email?: string | null,
+  linkedin?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`email.verify`
+
+Verify whether an email address is deliverable
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.email.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: valid | invalid | accept_all | disposable | unknown
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Linkedin
+
+### contactInfo
+
+`linkedin.contactInfo`
+
+Get only the emails and phones for a LinkedIn profile
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.linkedin.contactInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `string` | Yes | — |
+| `include_phone` | `boolean` | No | — |
+| `email_type` | `personal \| work \| personal,work \| none` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  url?: string | null,
+  email?: string[],
+  work_email?: string[],
+  work_email_status?: {
+  },
+  personal_email?: string[],
+  phone?: string[],
+  github?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrich
+
+`linkedin.enrich`
+
+Get a full LinkedIn profile with emails and phones; emailType picks the work or personal key
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.linkedin.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `string` | Yes | — |
+| `profile_only` | `boolean` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  url?: string | null,
+  email?: string[],
+  work_email?: string[],
+  personal_email?: string[],
+  phone?: string[],
+  github?: string[],
+  twitter?: string[],
+  full_name?: string | null,
+  headline?: string | null,
+  industry?: string | null,
+  country?: string | null,
+  experience?: {
+    title?: string | null,
+    summary?: string | null,
+    locality?: string | null,
+    company_name?: string | null,
+    linkedin_url?: string | null,
+    domain?: string | null,
+    logo_url?: string | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    is_current?: boolean | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  education?: {
+    school_name?: string | null,
+    degree?: string | null,
+    field_of_study?: string | null,
+    description?: string | null,
+    url?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  volunteering_experiences?: {
+    role?: string | null,
+    company_name?: string | null,
+    company_url?: string | null,
+    cause?: string | null,
+    company_id?: number | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  job_function?: string | null,
+  work_status?: string | null,
+  profile_picture_url?: string | null,
+  updated_at?: string | null,
+  company?: {
+    name?: string | null,
+    url?: string | null,
+    li_vanity?: string | null,
+    linkedin_company_id?: number | null,
+    domain?: string | null,
+    email_domain?: string | null,
+    overview?: string | null,
+    description?: string | null,
+    type?: string | null,
+    size?: number | null,
+    country?: string | null,
+    revenue?: number | string | null,
+    founded_at?: number | null,
+    industry?: string | null,
+    headquarter?: string | null,
+    website?: string | null,
+    location?: string | null,
+    logo_url?: string | null,
+    specialties?: string[],
+    technologies?: string[],
+    locations?: (
+      string | {
+        city?: string | null,
+        line1?: string | null,
+        line2?: string | null,
+        state?: string | null,
+        country?: string | null,
+        postalCode?: string | null,
+        description?: string | null,
+        isPrimary?: boolean
+      }
+    )[],
+    employees?: number | null,
+    followers?: number | null,
+    funding?: {
+      total_funding_usd?: number | null,
+      rounds?: {
+        funding_type?: string | null,
+        announced_date?: string | null,
+        investor_names?: string[],
+        lead_investors?: string[],
+        money_raised_usd?: number | null,
+        number_of_investors?: number | null
+      }[],
+      funding_status?: string | null,
+      latest_date?: string | null,
+      number_of_funding_rounds?: number | null
+    } | null
+  } | null,
+  location?: string | null,
+  languages?: {
+    name?: string | null,
+    proficiency?: string | null
+  }[],
+  summary?: string | null,
+  skills?: string[],
+  certifications?: {
+    name?: string | null,
+    title?: string | null,
+    authority?: string | null,
+    license?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  publications?: {
+    url?: string | null,
+    title?: string | null,
+    description?: string | null,
+    publisher?: string | null,
+    authors?: string[],
+    published_on_year?: number | null,
+    published_on_month?: number | null,
+    published_on_day?: number | null
+  }[],
+  projects?: {
+    title?: string | null,
+    description?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  followers?: number | null,
+  seniority?: string | null
+} | tuple
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### personalEmailStatus
+
+`linkedin.personalEmailStatus`
+
+Check whether a LinkedIn profile has a personal email (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.linkedin.personalEmailStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  email: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### phoneStatus
+
+`linkedin.phoneStatus`
+
+Check whether a LinkedIn profile has a phone number (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.linkedin.phoneStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  phone: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### workEmailStatus
+
+`linkedin.workEmailStatus`
+
+Check whether a LinkedIn profile has a work email (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.linkedin.workEmailStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  email: boolean,
+  email_status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### count
+
+`people.count`
+
+Count profiles matching search filters (free)
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.people.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `job_title` | `string[]` | No | — |
+| `past_job_title` | `string[]` | No | — |
+| `exclude_job_titles` | `string[]` | No | — |
+| `job_function` | `string[]` | No | — |
+| `seniority` | `string[]` | No | — |
+| `current_titles_only` | `boolean` | No | — |
+| `include_related_job_titles` | `boolean` | No | — |
+| `match_experience` | `current \| past \| both` | No | — |
+| `skills` | `string[]` | No | — |
+| `languages` | `object[]` | No | — |
+| `education` | `string[]` | No | — |
+| `educations` | `object[]` | No | — |
+| `location` | `string[]` | No | — |
+| `location_radius` | `number` | No | — |
+| `current_work_location` | `string[]` | No | — |
+| `past_work_location` | `string[]` | No | — |
+| `company` | `string[]` | No | — |
+| `past_company` | `string[]` | No | — |
+| `company_filter` | `current \| past \| past_only \| both` | No | — |
+| `current_company_only` | `boolean` | No | — |
+| `exclude_companies` | `string[]` | No | — |
+| `exclude_companies_filter` | `current \| past \| both` | No | — |
+| `domain` | `string[]` | No | — |
+| `industry` | `string[]` | No | — |
+| `keyword` | `string` | No | — |
+| `company_size` | `string[]` | No | — |
+| `years_of_experience` | `string[]` | No | — |
+| `years_in_current_role` | `string[]` | No | — |
+| `recently_changed_jobs` | `boolean` | No | — |
+| `is_currently_working` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  language: string,
+  proficiency?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="educations full type">
+
+```ts
+{
+  school_name?: string,
+  field_of_study?: string,
+  location?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `total_results` | `number` | Yes | — |
+| `estimated_personal_emails` | `number` | No | — |
+| `estimated_work_emails` | `number` | No | — |
+| `estimated_phones` | `number` | No | — |
+
+
+
+---
+
+### decisionMakers
+
+`people.decisionMakers`
+
+List a company's decision makers by domain, name, or LinkedIn URL
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.people.decisionMakers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `name` | `string` | No | — |
+| `page` | `number` | No | — |
+| `reveal_info` | `boolean` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `profiles` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  page: number,
+  page_size: number,
+  total_results: number
+}
+```
+</Accordion>
+
+<Accordion title="profiles full type">
+
+```ts
+{
+} | tuple
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrich
+
+`people.enrich`
+
+Find a profile from a LinkedIn URL, email, phone, or name plus company, school, or location
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.people.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `company` | `string[]` | No | — |
+| `company_domain` | `string[]` | No | — |
+| `education` | `string[]` | No | — |
+| `location` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `include` | `work_email \| personal_email \| phone[]` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  url?: string | null,
+  email?: string[],
+  work_email?: string[],
+  personal_email?: string[],
+  phone?: string[],
+  github?: string[],
+  twitter?: string[],
+  full_name?: string | null,
+  headline?: string | null,
+  industry?: string | null,
+  country?: string | null,
+  experience?: {
+    title?: string | null,
+    summary?: string | null,
+    locality?: string | null,
+    company_name?: string | null,
+    linkedin_url?: string | null,
+    domain?: string | null,
+    logo_url?: string | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    is_current?: boolean | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  education?: {
+    school_name?: string | null,
+    degree?: string | null,
+    field_of_study?: string | null,
+    description?: string | null,
+    url?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  volunteering_experiences?: {
+    role?: string | null,
+    company_name?: string | null,
+    company_url?: string | null,
+    cause?: string | null,
+    company_id?: number | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  job_function?: string | null,
+  work_status?: string | null,
+  profile_picture_url?: string | null,
+  updated_at?: string | null,
+  company?: {
+    name?: string | null,
+    url?: string | null,
+    li_vanity?: string | null,
+    linkedin_company_id?: number | null,
+    domain?: string | null,
+    email_domain?: string | null,
+    overview?: string | null,
+    description?: string | null,
+    type?: string | null,
+    size?: number | null,
+    country?: string | null,
+    revenue?: number | string | null,
+    founded_at?: number | null,
+    industry?: string | null,
+    headquarter?: string | null,
+    website?: string | null,
+    location?: string | null,
+    logo_url?: string | null,
+    specialties?: string[],
+    technologies?: string[],
+    locations?: (
+      string | {
+        city?: string | null,
+        line1?: string | null,
+        line2?: string | null,
+        state?: string | null,
+        country?: string | null,
+        postalCode?: string | null,
+        description?: string | null,
+        isPrimary?: boolean
+      }
+    )[],
+    employees?: number | null,
+    followers?: number | null,
+    funding?: {
+      total_funding_usd?: number | null,
+      rounds?: {
+        funding_type?: string | null,
+        announced_date?: string | null,
+        investor_names?: string[],
+        lead_investors?: string[],
+        money_raised_usd?: number | null,
+        number_of_investors?: number | null
+      }[],
+      funding_status?: string | null,
+      latest_date?: string | null,
+      number_of_funding_rounds?: number | null
+    } | null
+  } | null,
+  location?: string | null,
+  languages?: {
+    name?: string | null,
+    proficiency?: string | null
+  }[],
+  summary?: string | null,
+  skills?: string[],
+  certifications?: {
+    name?: string | null,
+    title?: string | null,
+    authority?: string | null,
+    license?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  publications?: {
+    url?: string | null,
+    title?: string | null,
+    description?: string | null,
+    publisher?: string | null,
+    authors?: string[],
+    published_on_year?: number | null,
+    published_on_month?: number | null,
+    published_on_day?: number | null
+  }[],
+  projects?: {
+    title?: string | null,
+    description?: string | null,
+    start_date_year?: number | string | null,
+    start_date_month?: number | null,
+    end_date_year?: number | string | null,
+    end_date_month?: number | null
+  }[],
+  followers?: number | null,
+  seniority?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`people.search`
+
+Search profiles by title, company, location, skills, and more, 25 per page
+
+**Risk:** `read`
+
+```ts
+await corsair.contactout.api.people.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `job_title` | `string[]` | No | — |
+| `past_job_title` | `string[]` | No | — |
+| `exclude_job_titles` | `string[]` | No | — |
+| `job_function` | `string[]` | No | — |
+| `seniority` | `string[]` | No | — |
+| `current_titles_only` | `boolean` | No | — |
+| `include_related_job_titles` | `boolean` | No | — |
+| `match_experience` | `current \| past \| both` | No | — |
+| `skills` | `string[]` | No | — |
+| `languages` | `object[]` | No | — |
+| `education` | `string[]` | No | — |
+| `educations` | `object[]` | No | — |
+| `location` | `string[]` | No | — |
+| `location_radius` | `number` | No | — |
+| `current_work_location` | `string[]` | No | — |
+| `past_work_location` | `string[]` | No | — |
+| `company` | `string[]` | No | — |
+| `past_company` | `string[]` | No | — |
+| `company_filter` | `current \| past \| past_only \| both` | No | — |
+| `current_company_only` | `boolean` | No | — |
+| `exclude_companies` | `string[]` | No | — |
+| `exclude_companies_filter` | `current \| past \| both` | No | — |
+| `domain` | `string[]` | No | — |
+| `industry` | `string[]` | No | — |
+| `keyword` | `string` | No | — |
+| `company_size` | `string[]` | No | — |
+| `years_of_experience` | `string[]` | No | — |
+| `years_in_current_role` | `string[]` | No | — |
+| `recently_changed_jobs` | `boolean` | No | — |
+| `is_currently_working` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `data_types` | `personal_email \| work_email \| phone[]` | No | — |
+| `reveal_info` | `boolean` | No | — |
+| `detailed_experience` | `boolean` | No | — |
+| `detailed_education` | `boolean` | No | — |
+| `output_fields` | `string[]` | No | — |
+| `emailType` | `work \| personal` | No | Send the work-email key (default) or the personal-email key |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  language: string,
+  proficiency?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="educations full type">
+
+```ts
+{
+  school_name?: string,
+  field_of_study?: string,
+  location?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `profiles` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  page: number,
+  page_size: number,
+  total_results: number
+}
+```
+</Accordion>
+
+<Accordion title="profiles full type">
+
+```ts
+{
+} | tuple
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -224,14 +224,16 @@ await corsair.celigo.api.connections.evaluateVirtualImportMap({});
 <Accordion title="import full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -244,7 +246,8 @@ Record<string, string | number | boolean | null | object>[]
 <Accordion title="Output full type">
 
 ```ts
-(string | number | boolean | null | object)[] | Record<string, string | number | boolean | null | object>
+any[] | {
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -275,7 +278,8 @@ await corsair.celigo.api.connections.executeVirtualExport({});
 <Accordion title="export full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -293,7 +297,8 @@ Record<string, string | number | boolean | null | object>
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -326,14 +331,16 @@ await corsair.celigo.api.connections.executeVirtualExportPaged({});
 <Accordion title="export full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="pagedExportState full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -352,14 +359,16 @@ Record<string, string | number | boolean | null | object>
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 
 <Accordion title="pagedExportState full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -392,14 +401,16 @@ await corsair.celigo.api.connections.executeVirtualImport({});
 <Accordion title="import full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -415,10 +426,12 @@ Record<string, string | number | boolean | null | object>[]
 {
   statusCode?: number,
   id?: string,
-  _json?: Record<string, string | number | boolean | null | object>,
+  _json?: {
+  },
   ignored?: boolean,
   stage?: string,
-  errors?: Record<string, string | number | boolean | null | object>[]
+  errors?: {
+  }[]
 }[]
 ```
 </Accordion>
@@ -569,7 +582,8 @@ await corsair.celigo.api.connections.getDependencies({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -647,7 +661,7 @@ await corsair.celigo.api.connections.patch({});
 {
   op: replace | add | remove,
   path: string,
-  value?: string | number | boolean | null | object
+  value?: any
 }[]
 ```
 </Accordion>
@@ -694,7 +708,8 @@ await corsair.celigo.api.connections.ping({});
 {
   code: number
 } | {
-  errors: Record<string, string | number | boolean | null | object>[]
+  errors: {
+  }[]
 }
 ```
 </Accordion>
@@ -735,7 +750,8 @@ await corsair.celigo.api.connections.testVirtual({});
 {
   code: number
 } | {
-  errors: Record<string, string | number | boolean | null | object>[]
+  errors: {
+  }[]
 }
 ```
 </Accordion>
@@ -1112,7 +1128,8 @@ await corsair.celigo.api.errors.updateTags({});
 <Accordion title="errorsToReturn full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1147,7 +1164,8 @@ await corsair.celigo.api.exports.clone({});
 <Accordion title="connectionMap full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1395,7 +1413,7 @@ await corsair.celigo.api.exports.patch({});
 {
   op: replace | add | remove,
   path: string,
-  value?: string | number | boolean | null | object
+  value?: any
 }[]
 ```
 </Accordion>
@@ -1584,7 +1602,8 @@ await corsair.celigo.api.flows.clone({});
 <Accordion title="connectionMap full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1790,7 +1809,8 @@ await corsair.celigo.api.flows.getDependencies({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2049,7 +2069,7 @@ await corsair.celigo.api.flows.patch({});
 {
   op: replace | add | remove,
   path: string,
-  value?: string | number | boolean | null | object
+  value?: any
 }[]
 ```
 </Accordion>
@@ -2343,7 +2363,8 @@ await corsair.celigo.api.imports.clone({});
 <Accordion title="connectionMap full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2548,7 +2569,8 @@ await corsair.celigo.api.imports.getDependencies({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2579,7 +2601,8 @@ await corsair.celigo.api.imports.invoke({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -2595,10 +2618,12 @@ Record<string, string | number | boolean | null | object>[]
 {
   statusCode?: number,
   id?: string,
-  _json?: Record<string, string | number | boolean | null | object>,
+  _json?: {
+  },
   ignored?: boolean,
   stage?: string,
-  errors?: Record<string, string | number | boolean | null | object>[]
+  errors?: {
+  }[]
 }[]
 ```
 </Accordion>
@@ -2674,7 +2699,7 @@ await corsair.celigo.api.imports.patch({});
 {
   op: replace | add | remove,
   path: string,
-  value?: string | number | boolean | null | object
+  value?: any
 }[]
 ```
 </Accordion>
@@ -2754,7 +2779,8 @@ await corsair.celigo.api.integrations.clone({});
 <Accordion title="connectionMap full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2993,7 +3019,8 @@ await corsair.celigo.api.integrations.getDependencies({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3337,7 +3364,7 @@ await corsair.celigo.api.integrations.patch({});
 {
   op: replace | add | remove,
   path: string,
-  value?: string | number | boolean | null | object
+  value?: any
 }[]
 ```
 </Accordion>
@@ -3610,7 +3637,8 @@ await corsair.celigo.api.processors.generateStructuredFile({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 
@@ -3621,7 +3649,8 @@ Record<string, string | number | boolean | null | object>[]
   name: string,
   version: 1 | 2,
   format: delimited | delimited/x12 | delimited/edifact | fixed,
-  rules: Record<string, string | number | boolean | null | object>[]
+  rules: {
+  }[]
 }
 ```
 </Accordion>
@@ -3629,7 +3658,8 @@ Record<string, string | number | boolean | null | object>[]
 <Accordion title="options full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3672,7 +3702,8 @@ await corsair.celigo.api.processors.parseCsv({});
 <Accordion title="rules full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 
@@ -3693,7 +3724,7 @@ Record<string, string | number | boolean | null | object>
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `mediaType` | `string` | No | — |
-| `data` | `(string | number | boolean | null | object)[]` | Yes | — |
+| `data` | `any[]` | Yes | — |
 | `duration` | `number` | No | — |
 
 
@@ -3724,14 +3755,16 @@ await corsair.celigo.api.processors.parseStructuredFile({});
 <Accordion title="rules full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="options full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3743,7 +3776,7 @@ Record<string, string | number | boolean | null | object>
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `mediaType` | `string` | No | — |
-| `data` | `(string | number | boolean | null | object)[]` | Yes | — |
+| `data` | `any[]` | Yes | — |
 | `duration` | `number` | No | — |
 
 
@@ -3773,7 +3806,8 @@ await corsair.celigo.api.processors.parseXml({});
 <Accordion title="rules full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3785,7 +3819,7 @@ Record<string, string | number | boolean | null | object>
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `mediaType` | `string` | No | — |
-| `data` | `(string | number | boolean | null | object)[]` | Yes | — |
+| `data` | `any[]` | Yes | — |
 | `duration` | `number` | No | — |
 
 
@@ -3933,7 +3967,8 @@ await corsair.celigo.api.scripts.getLogs({});
 <Accordion title="logs full type">
 
 ```ts
-Record<string, string | number | boolean | null | object>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -4127,7 +4162,8 @@ await corsair.celigo.api.state.get({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object> | (string | number | boolean | null | object)[]
+{
+} | any[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -4163,7 +4199,8 @@ await corsair.celigo.api.state.getForResource({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object> | (string | number | boolean | null | object)[]
+{
+} | any[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -4250,7 +4287,8 @@ await corsair.celigo.api.state.set({});
 <Accordion title="value full type">
 
 ```ts
-Record<string, string | number | boolean | null | object> | (string | number | boolean | null | object)[]
+{
+} | any[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -4292,7 +4330,8 @@ await corsair.celigo.api.state.setForResource({});
 <Accordion title="value full type">
 
 ```ts
-Record<string, string | number | boolean | null | object> | (string | number | boolean | null | object)[]
+{
+} | any[]
 ```
 </Accordion>
 </AccordionGroup>

@@ -1,0 +1,285 @@
+---
+title: API
+description: "API reference for Bytedance: every `bytedance.api.*` operation with input and output types."
+---
+
+Every `bytedance.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Tasks
+
+### delete
+
+`tasks.delete`
+
+Cancel a queued video task, or delete a finished task record
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bytedance.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a video generation task: status, video URL (valid 24h), and token usage
+
+**Risk:** `read`
+
+```ts
+await corsair.bytedance.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `model` | `string` | No | — |
+| `status` | `queued \| running \| cancelled \| succeeded \| failed \| expired` | Yes | — |
+| `content` | `object` | No | — |
+| `error` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `frames` | `number` | No | — |
+| `framespersecond` | `number` | No | — |
+| `generate_audio` | `boolean` | No | — |
+| `output_format` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `ratio` | `string` | No | — |
+| `resolution` | `string` | No | — |
+| `seed` | `number` | No | — |
+| `service_tier` | `string` | No | — |
+| `execution_expires_after` | `number` | No | — |
+| `draft` | `boolean` | No | — |
+| `draft_task_id` | `string` | No | — |
+| `safety_identifier` | `string` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  video_url?: string | null,
+  last_frame_url?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  completion_tokens?: number | null,
+  total_tokens?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List video generation tasks from the past 7 days, filtered by status, model, or ids
+
+**Risk:** `read`
+
+```ts
+await corsair.bytedance.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_num` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `status` | `queued \| running \| cancelled \| succeeded \| failed` | No | — |
+| `task_ids` | `string[]` | No | — |
+| `model` | `string` | No | — |
+| `service_tier` | `default \| flex` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  model?: string | null,
+  status: queued | running | cancelled | succeeded | failed | expired,
+  content?: {
+    video_url?: string | null,
+    last_frame_url?: string | null
+  } | null,
+  error?: {
+    code: string,
+    message: string
+  } | null,
+  created_at?: number | null,
+  updated_at?: number | null,
+  duration?: number | null,
+  frames?: number | null,
+  framespersecond?: number | null,
+  generate_audio?: boolean | null,
+  output_format?: string | null,
+  priority?: number | null,
+  ratio?: string | null,
+  resolution?: string | null,
+  seed?: number | null,
+  service_tier?: string | null,
+  execution_expires_after?: number | null,
+  draft?: boolean | null,
+  draft_task_id?: string | null,
+  safety_identifier?: string | null,
+  usage?: {
+    completion_tokens?: number | null,
+    total_tokens?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video
+
+### create
+
+`video.create`
+
+Start a Seedance video generation task from text, frames, or reference media; returns a task id
+
+**Risk:** `write`
+
+```ts
+await corsair.bytedance.api.video.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model ID (dreamina-seedance-2-5-260628, dreamina-seedance-2-0-260128, dreamina-seedance-2-0-fast-260128, dreamina-seedance-2-0-mini-260615, seedance-1-5-pro-251215, seedance-1-0-pro-250528, seedance-1-0-pro-fast-251015) or an inference endpoint ID |
+| `content` | `object[]` | Yes | — |
+| `omni_reference_task_type` | `auto \| reference \| edit \| extend` | No | — |
+| `resolution` | `480p \| 720p \| 1080p \| 4k` | No | — |
+| `ratio` | `16:9 \| 4:3 \| 1:1 \| 3:4 \| 9:16 \| 21:9 \| adaptive` | No | — |
+| `duration` | `-1 \| number` | No | — |
+| `frames` | `number` | No | — |
+| `generate_audio` | `boolean` | No | — |
+| `watermark` | `boolean` | No | — |
+| `output_format` | `mp4 \| mov` | No | — |
+| `seed` | `number` | No | — |
+| `camera_fixed` | `boolean` | No | — |
+| `return_last_frame` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `service_tier` | `default \| flex` | No | — |
+| `callback_url` | `string` | No | — |
+| `execution_expires_after` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `safety_identifier` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+(
+  {
+    type: text,
+    text: string
+  } | {
+    type: image_url,
+    image_url: {
+      url: string
+    },
+    role?: first_frame | last_frame | reference_image
+  } | {
+    type: video_url,
+    video_url: {
+      url: string
+    },
+    role: reference_video
+  } | {
+    type: audio_url,
+    audio_url: {
+      url: string
+    },
+    role: reference_audio
+  } | {
+    type: draft_task,
+    draft_task: {
+      id: string
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+

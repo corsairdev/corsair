@@ -197,7 +197,8 @@ await corsair.composio.api.meta.checkActiveConnection({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -255,7 +256,8 @@ await corsair.composio.api.meta.checkActiveConnections({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -316,7 +318,8 @@ await corsair.composio.api.meta.createPlan({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -353,7 +356,8 @@ await corsair.composio.api.meta.enableTrigger({});
   connected_account_id: string,
   toolkit_slug: string,
   trigger_name: string,
-  config_params?: Record<string, JsonValue>,
+  config_params?: {
+  },
   user_id?: string
 }
 ```
@@ -375,7 +379,8 @@ await corsair.composio.api.meta.enableTrigger({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -410,7 +415,8 @@ await corsair.composio.api.meta.executeTool({});
 ```ts
 {
   tool_slug: string,
-  arguments: Record<string, JsonValue>,
+  arguments: {
+  },
   connected_account_id?: string,
   allow_destructive?: boolean
 }
@@ -433,7 +439,8 @@ await corsair.composio.api.meta.executeTool({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -488,7 +495,8 @@ await corsair.composio.api.meta.getDependencyGraph({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -543,7 +551,8 @@ await corsair.composio.api.meta.getRequiredParameters({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -598,7 +607,8 @@ await corsair.composio.api.meta.getResponseSchema({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -649,12 +659,14 @@ await corsair.composio.api.meta.getToolSchemas({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -690,7 +702,8 @@ await corsair.composio.api.meta.initiateConnection({});
 ```ts
 {
   toolkit: string,
-  parameters?: Record<string, string>
+  parameters?: {
+  }
 }
 ```
 </Accordion>
@@ -711,7 +724,8 @@ await corsair.composio.api.meta.initiateConnection({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -770,7 +784,8 @@ await corsair.composio.api.meta.listToolkits({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -825,7 +840,8 @@ await corsair.composio.api.meta.listTriggers({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -876,12 +892,14 @@ await corsair.composio.api.meta.manageConnections({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -917,10 +935,12 @@ await corsair.composio.api.meta.multiExecuteTool({});
 {
   tools: {
     tool_slug: string,
-    arguments: Record<string, JsonValue>
+    arguments: {
+    }
   }[],
   sync_response_to_workbench: boolean,
-  memory?: Record<string, string[]>,
+  memory?: {
+  },
   thought?: string,
   current_step?: string,
   current_step_metric?: string,
@@ -940,12 +960,14 @@ await corsair.composio.api.meta.multiExecuteTool({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -996,12 +1018,14 @@ await corsair.composio.api.meta.remoteBashTool({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -1055,12 +1079,14 @@ await corsair.composio.api.meta.remoteWorkbench({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -1120,12 +1146,14 @@ await corsair.composio.api.meta.searchTools({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -1161,7 +1189,7 @@ await corsair.composio.api.meta.waitForConnection({});
 ```ts
 {
   toolkits: string[],
-  mode?: 'any' | 'all',
+  mode?: any | all,
   timeout_seconds?: number
 }
 ```
@@ -1183,7 +1211,8 @@ await corsair.composio.api.meta.waitForConnection({});
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1217,7 +1246,7 @@ await corsair.composio.api.meta.waitForConnections({});
 ```ts
 {
   toolkits: string[],
-  mode?: 'any' | 'all',
+  mode?: any | all,
   session_id?: string
 }
 ```
@@ -1234,12 +1263,14 @@ await corsair.composio.api.meta.waitForConnections({});
 ```ts
 {
   result_type: completed | failed,
-  data: Record<string, JsonValue>,
+  data: {
+  },
   error?: string | null,
   log_id: string
 } | {
   result_type: input_required,
-  input_requests: Record<string, Record<string, JsonValue>>,
+  input_requests: {
+  },
   request_state?: string
 }
 ```
@@ -1305,6 +1336,7 @@ await corsair.composio.api.sessions.create({});
 }
 ```
 </Accordion>
+
 <Accordion title="config full type">
 
 ```ts
@@ -1422,7 +1454,8 @@ await corsair.composio.api.tools.execute({});
 <Accordion title="arguments full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1442,7 +1475,8 @@ Record<string, JsonValue>
 <Accordion title="data full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1505,14 +1539,16 @@ await corsair.composio.api.tools.get({});
 <Accordion title="input_parameters full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="output_parameters full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1571,8 +1607,10 @@ await corsair.composio.api.tools.list({});
     name: string,
     logo?: string
   },
-  input_parameters: Record<string, JsonValue>,
-  output_parameters: Record<string, JsonValue>,
+  input_parameters: {
+  },
+  output_parameters: {
+  },
   no_auth: boolean,
   version: string,
   available_versions: string[],

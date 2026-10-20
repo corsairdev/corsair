@@ -1,0 +1,1204 @@
+{
+  "id": "convex",
+  "displayName": "Convex",
+  "description": "Convex plugin for Corsair",
+  "npmPackageName": "@corsair-dev/convex",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "subdomain",
+        "deploy_key"
+      ]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "subdomain",
+        "deploy_key"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "convex.api.customDomains.delete",
+      "shortPath": "customDomains.delete",
+      "description": "Remove a custom domain from a Convex deployment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestDestination",
+            "optional": false,
+            "type": "convexCloud | convexSite"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployKeys.create",
+      "shortPath": "deployKeys.create",
+      "description": "Create a deploy key for a Convex deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allowedActions",
+            "optional": true,
+            "type": "deployment:deploy | deployment:env:view | deployment:env:write | deployment:pause | deployment:unpause | deployment:logs:view | deployment:metrics:view | deployment:integrations:view | deployment:integrations:write | deployment:data:view | deployment:data:write | deployment:backups:view | deployment:backups:create | deployment:backups:download | deployment:backups:delete | deployment:backups:import | deployment:functions:actAsUser | deployment:functions:runInternalQueries | deployment:functions:runInternalMutations | deployment:functions:runInternalActions | deployment:functions:runTestQuery | deployment:auditLog:view | deployment:usageLimits:view | deployment:usageLimits:write | deployment:usage:view | deployment:aiGateway:use[]"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployKeys.list",
+      "shortPath": "deployKeys.list",
+      "description": "List deploy keys for a Convex deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, creationTime: number, lastUsedTime?: number | null, expiresAt?: number | null, creator?: number | null, managedBy?: vercel | { oauthApp: string } | null, allowedActions: string[] }[]"
+      }
+    },
+    {
+      "path": "convex.api.deployment.executeQueryBatch",
+      "shortPath": "deployment.executeQueryBatch",
+      "description": "Execute a batch of Convex queries against a deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "{ path: string, args: {}, format?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "({ status: success, value: lazy, logLines?: string[] } | { status: error, errorMessage: string, errorData?: lazy, logLines?: string[] })[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployment.getQueryTimestamp",
+      "shortPath": "deployment.getQueryTimestamp",
+      "description": "Get the current query timestamp for a Convex deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployment.listLogStreams",
+      "shortPath": "deployment.listLogStreams",
+      "description": "List log streams configured for a Convex deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, logStreamType: datadog | webhook | axiom | sentry | postHogLogs | postHogErrorTracking | s3Export, status: { type: pending | restarting | failed | active | deleting, reason?: string }, topics?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "convex.api.deployments.create",
+      "shortPath": "deployments.create",
+      "description": "Create a new deployment for a Convex project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "dev | prod | preview | custom"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastDeployTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deploymentType",
+            "optional": false,
+            "type": "dev | prod | preview | custom"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previewIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dashboardEditConfirmation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendLogsToClient",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "cloud | local"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deviceName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployments.delete",
+      "shortPath": "deployments.delete",
+      "description": "Delete a Convex deployment and all of its data and files",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployments.get",
+      "shortPath": "deployments.get",
+      "description": "Get details about a Convex cloud deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastDeployTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deploymentType",
+            "optional": false,
+            "type": "dev | prod | preview | custom"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previewIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dashboardEditConfirmation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendLogsToClient",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "cloud | local"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deviceName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.deployments.list",
+      "shortPath": "deployments.list",
+      "description": "List deployments for a Convex project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeLocal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deploymentType",
+            "optional": true,
+            "type": "dev | prod | preview | custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, name: string, createTime: number, lastDeployTime?: number | null, deploymentType: dev | prod | preview | custom, projectId: number, creator?: number | null, previewIdentifier?: string | null, region?: string, isDefault?: boolean, reference?: string, dashboardEditConfirmation?: boolean | null, deploymentUrl?: string, expiresAt?: number | null, class?: string, sendLogsToClient?: boolean | null, kind: cloud | local, port?: number, deviceName?: string, isActive?: boolean }[]"
+      }
+    },
+    {
+      "path": "convex.api.deployments.update",
+      "shortPath": "deployments.update",
+      "description": "Update properties of an existing Convex deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dashboardEditConfirmation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sendLogsToClient",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deploymentType",
+            "optional": true,
+            "type": "dev | prod | preview | custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.platform.getTokenDetails",
+      "shortPath": "platform.getTokenDetails",
+      "description": "Get details about the token used to authenticate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "teamToken | projectToken"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.platform.listDeploymentClasses",
+      "shortPath": "platform.listDeploymentClasses",
+      "description": "List the deployment classes available to a Convex team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type: string, available: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.platform.listDeploymentRegions",
+      "shortPath": "platform.listDeploymentRegions",
+      "description": "List the deployment regions available to a Convex team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, displayName: string, available: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new Convex project, optionally provisioning a deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deploymentType",
+            "optional": true,
+            "type": "dev | prod | preview | custom"
+          },
+          {
+            "key": "deploymentClass",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentRegion",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deploymentName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a Convex project and all of its deployments",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.projects.getById",
+      "shortPath": "projects.getById",
+      "description": "Get a Convex project by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "prodDeploymentName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devDeploymentName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.projects.getBySlug",
+      "shortPath": "projects.getBySlug",
+      "description": "Get a Convex project by team identifier and project slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id_or_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "teamSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "prodDeploymentName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "devDeploymentName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "convex.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects in a Convex team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, slug: string, teamId: number, teamSlug: string, createTime: number, prodDeploymentName?: string | null, devDeploymentName?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ hasMore: boolean, nextCursor?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "convex.db.deployKeys.search",
+      "entityName": "deployKeys",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "deploymentName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastUsedTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "expiresAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "creator",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "convex.db.deployments.search",
+      "entityName": "deployments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastDeployTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "creator",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "previewIdentifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDefault",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "reference",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dashboardEditConfirmation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deploymentUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expiresAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sendLogsToClient",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "port",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "deviceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isActive",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "convex.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "teamSlug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "prodDeploymentName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "devDeploymentName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

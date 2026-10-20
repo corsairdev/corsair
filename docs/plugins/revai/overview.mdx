@@ -106,7 +106,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.getJob({ id: "Umx5c6F7pH7r" });
+await tenant.revai.api.jobs.getJob({});
 ```
 
 
@@ -114,7 +114,7 @@ await tenant.revai.api.jobs.getJob({ id: "Umx5c6F7pH7r" });
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.submitJob({ media_url: "https://www.rev.ai/FTC_Sample_1.mp3" });
+await tenant.revai.api.jobs.submitJob({});
 ```
 
 

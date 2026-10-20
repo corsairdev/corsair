@@ -93,7 +93,8 @@ await corsair.claidai.api.backgroundGenerate({});
 
 ```ts
 {
-  input?: Record<string, JsonValue>,
+  input?: {
+  },
   output?: {
     ext?: string | null,
     mps?: number | null,
@@ -490,7 +491,8 @@ await corsair.claidai.api.imageAiEdit({});
   status: string,
   result_url?: string,
   created_at?: string,
-  request?: Record<string, JsonValue>,
+  request?: {
+  },
   errors?: {
     error: string,
     created_at?: string | number
@@ -622,7 +624,8 @@ string | string[] | {
 <Accordion title="operations full type">
 
 ```ts
-Record<string, JsonValue>
+{
+}
 ```
 </Accordion>
 
@@ -654,7 +657,8 @@ string | {
   status: string,
   result_url?: string,
   created_at?: string,
-  request?: Record<string, JsonValue>,
+  request?: {
+  },
   errors?: {
     error: string,
     created_at?: string | number
@@ -797,7 +801,8 @@ await corsair.claidai.api.imageGenerate({});
 
 ```ts
 {
-  input?: Record<string, JsonValue>,
+  input?: {
+  },
   output?: {
     ext?: string | null,
     mps?: number | null,

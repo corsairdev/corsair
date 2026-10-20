@@ -1,0 +1,262 @@
+{
+  "id": "updownio",
+  "displayName": "Updown.io",
+  "description": "Website and API uptime monitoring - read your checks and the monitoring node addresses to allowlist.",
+  "npmPackageName": "@corsair-dev/updownio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "updownio.api.checks.list",
+      "shortPath": "checks.list",
+      "description": "List all monitoring checks on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ token: string, url?: string | null, type?: string | null, alias?: string | null, last_status?: number | null, uptime?: number | null, down?: boolean | null, down_since?: string | null, up_since?: string | null, error?: string | null, period?: number | null, apdex_t?: number | null, string_match?: string | null, enabled?: boolean | null, published?: boolean | null, disabled_locations?: string[] | null, recipients?: string[] | null, last_check_at?: string | null, next_check_at?: string | null, created_at?: string | null, mute_until?: string | null, favicon_url?: string | null, custom_headers?: {} | null, http_verb?: string | null, http_body?: string | null, ssl?: { tested_at?: string | null, expires_at?: string | null, valid?: boolean | null, error?: string | null, cert?: { subject?: string | null, subject_org?: string | null, san?: string[] | null, issuer?: string | null, issuer_org?: string | null, from?: string | null, to?: string | null, algorithm?: string | null } | null } | null, domain?: { tested_at?: string | null, expires_at?: string | null, remaining_days?: number | null, source?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "updownio.api.nodes.list",
+      "shortPath": "nodes.list",
+      "description": "List all Updown.io monitoring and webhook nodes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "updownio.api.nodes.listIps",
+      "shortPath": "nodes.listIps",
+      "description": "List all Updown.io node IP addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(string | string)[]"
+      }
+    },
+    {
+      "path": "updownio.api.nodes.listIpv4",
+      "shortPath": "nodes.listIpv4",
+      "description": "List all Updown.io node IPv4 addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "updownio.api.nodes.listIpv6",
+      "shortPath": "nodes.listIpv6",
+      "description": "List all Updown.io node IPv6 addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "updownio.db.checks.search",
+      "entityName": "checks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uptime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "down",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "down_since",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "up_since",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "apdex_t",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "string_match",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "published",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "last_check_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "next_check_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mute_until",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "favicon_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "http_verb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "http_body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "updownio.db.nodes.search",
+      "entityName": "nodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip6",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

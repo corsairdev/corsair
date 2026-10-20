@@ -51,24 +51,35 @@ A note activity was created in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `activity.note.created` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  lead_id?: string,
-  note?: string,
-  user_id?: string | null,
+  id?: string,
+  object_type: activity.note,
+  object_id?: string,
+  action: created,
   organization_id?: string,
+  data: {
+    id: string,
+    lead_id?: string,
+    note?: string,
+    user_id?: string | null,
+    organization_id?: string,
+    date_created?: string,
+    date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
   date_created?: string,
-  date_updated?: string
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
 }
 ```
 </Accordion>
@@ -81,18 +92,29 @@ A note activity was created in Close CRM
 
 ```ts
 {
-  event_type: activity.note.created,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
-  data: {
-    id: string,
-    lead_id?: string,
-    note?: string,
-    user_id?: string | null,
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: activity.note,
+    object_id?: string,
+    action: created,
     organization_id?: string,
+    data: {
+      id: string,
+      lead_id?: string,
+      note?: string,
+      user_id?: string | null,
+      organization_id?: string,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
     date_created?: string,
-    date_updated?: string
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```
@@ -131,49 +153,19 @@ A contact was created in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `contact.created` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  lead_id?: string,
-  name?: string,
-  title?: string | null,
-  emails?: {
-    email: string,
-    type?: string
-  }[],
-  phones?: {
-    phone: string,
-    type?: string
-  }[],
+  id?: string,
+  object_type: contact,
+  object_id?: string,
+  action: created,
   organization_id?: string,
-  created_by?: string | null,
-  date_created?: string,
-  date_updated?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: contact.created,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
   data: {
     id: string,
     lead_id?: string,
@@ -191,6 +183,58 @@ A contact was created in Close CRM
     created_by?: string | null,
     date_created?: string,
     date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
+  date_created?: string,
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: contact,
+    object_id?: string,
+    action: created,
+    organization_id?: string,
+    data: {
+      id: string,
+      lead_id?: string,
+      name?: string,
+      title?: string | null,
+      emails?: {
+        email: string,
+        type?: string
+      }[],
+      phones?: {
+        phone: string,
+        type?: string
+      }[],
+      organization_id?: string,
+      created_by?: string | null,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
+    date_created?: string,
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```
@@ -229,48 +273,19 @@ A lead was created in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `lead.created` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  name?: string,
-  status_id?: string | null,
-  status_label?: string | null,
-  description?: string | null,
-  url?: string | null,
+  id?: string,
+  object_type: lead,
+  object_id?: string,
+  action: created,
   organization_id?: string,
-  contacts?: {
-  }[],
-  custom?: {
-  },
-  created_by?: string | null,
-  updated_by?: string | null,
-  date_created?: string,
-  date_updated?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: lead.created,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
   data: {
     id: string,
     name?: string,
@@ -287,6 +302,57 @@ A lead was created in Close CRM
     updated_by?: string | null,
     date_created?: string,
     date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
+  date_created?: string,
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: lead,
+    object_id?: string,
+    action: created,
+    organization_id?: string,
+    data: {
+      id: string,
+      name?: string,
+      status_id?: string | null,
+      status_label?: string | null,
+      description?: string | null,
+      url?: string | null,
+      organization_id?: string,
+      contacts?: {
+      }[],
+      custom?: {
+      },
+      created_by?: string | null,
+      updated_by?: string | null,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
+    date_created?: string,
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```
@@ -323,48 +389,19 @@ A lead was updated in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `lead.updated` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  name?: string,
-  status_id?: string | null,
-  status_label?: string | null,
-  description?: string | null,
-  url?: string | null,
+  id?: string,
+  object_type: lead,
+  object_id?: string,
+  action: updated,
   organization_id?: string,
-  contacts?: {
-  }[],
-  custom?: {
-  },
-  created_by?: string | null,
-  updated_by?: string | null,
-  date_created?: string,
-  date_updated?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: lead.updated,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
   data: {
     id: string,
     name?: string,
@@ -381,6 +418,57 @@ A lead was updated in Close CRM
     updated_by?: string | null,
     date_created?: string,
     date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
+  date_created?: string,
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: lead,
+    object_id?: string,
+    action: updated,
+    organization_id?: string,
+    data: {
+      id: string,
+      name?: string,
+      status_id?: string | null,
+      status_label?: string | null,
+      description?: string | null,
+      url?: string | null,
+      organization_id?: string,
+      contacts?: {
+      }[],
+      custom?: {
+      },
+      created_by?: string | null,
+      updated_by?: string | null,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
+    date_created?: string,
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```
@@ -419,48 +507,19 @@ An opportunity was created in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `opportunity.created` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  lead_id?: string,
-  lead_name?: string,
-  status_id?: string,
-  status_label?: string,
-  status_type?: string,
-  value?: number,
-  value_period?: string,
-  confidence?: number,
-  user_id?: string | null,
+  id?: string,
+  object_type: opportunity,
+  object_id?: string,
+  action: created,
   organization_id?: string,
-  date_won?: string | null,
-  date_lost?: string | null,
-  date_created?: string,
-  date_updated?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: opportunity.created,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
   data: {
     id: string,
     lead_id?: string,
@@ -477,6 +536,57 @@ An opportunity was created in Close CRM
     date_lost?: string | null,
     date_created?: string,
     date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
+  date_created?: string,
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: opportunity,
+    object_id?: string,
+    action: created,
+    organization_id?: string,
+    data: {
+      id: string,
+      lead_id?: string,
+      lead_name?: string,
+      status_id?: string,
+      status_label?: string,
+      status_type?: string,
+      value?: number,
+      value_period?: string,
+      confidence?: number,
+      user_id?: string | null,
+      organization_id?: string,
+      date_won?: string | null,
+      date_lost?: string | null,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
+    date_created?: string,
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```
@@ -515,44 +625,19 @@ A task was created in Close CRM
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event_type` | `task.created` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `object_type` | `string` | No | — |
-| `action` | `string` | No | — |
-| `data` | `object` | Yes | — |
+| `subscription_id` | `string` | No | — |
+| `event` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="event full type">
 
 ```ts
 {
-  id: string,
-  lead_id?: string,
-  text?: string,
-  due_date?: string | null,
-  is_complete?: boolean,
-  assigned_to?: string | null,
-  type?: string,
+  id?: string,
+  object_type: string,
+  object_id?: string,
+  action: created,
   organization_id?: string,
-  created_by?: string | null,
-  date_created?: string,
-  date_updated?: string
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  event_type: task.created,
-  organization_id?: string,
-  object_type?: string,
-  action?: string,
   data: {
     id: string,
     lead_id?: string,
@@ -565,6 +650,53 @@ A task was created in Close CRM
     created_by?: string | null,
     date_created?: string,
     date_updated?: string
+  },
+  previous_data?: any,
+  changed_fields?: string[],
+  date_created?: string,
+  date_updated?: string,
+  user_id?: string,
+  lead_id?: string,
+  request_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscription_id?: string,
+  event: {
+    id?: string,
+    object_type: string,
+    object_id?: string,
+    action: created,
+    organization_id?: string,
+    data: {
+      id: string,
+      lead_id?: string,
+      text?: string,
+      due_date?: string | null,
+      is_complete?: boolean,
+      assigned_to?: string | null,
+      type?: string,
+      organization_id?: string,
+      created_by?: string | null,
+      date_created?: string,
+      date_updated?: string
+    },
+    previous_data?: any,
+    changed_fields?: string[],
+    date_created?: string,
+    date_updated?: string,
+    user_id?: string,
+    lead_id?: string,
+    request_id?: string
   }
 }
 ```

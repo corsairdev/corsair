@@ -1,0 +1,774 @@
+{
+  "id": "claidai",
+  "displayName": "Claid.ai",
+  "description": "Claid.ai plugin for Corsair",
+  "npmPackageName": "@corsair-dev/claidai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "claidai.api.backgroundGenerate",
+      "shortPath": "backgroundGenerate",
+      "description": "Generate an AI background for an image.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "{ image_url: string, placement_type?: absolute | original, rotation_degree?: number, scale?: number, position?: { x: number, y: number } }",
+            "description": "Product object to place on the scene"
+          },
+          {
+            "key": "scene",
+            "optional": false,
+            "type": "{ prompt?: string | { generate: boolean, guidelines?: string }, negative_prompt?: string, model?: v1 | v2, template_url?: string, template_mode?: transform | adjust | lock, color?: string, view?: top | front, aspect_ratio?: string, preference?: fast | optimal | best }",
+            "description": "Scene settings"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ destination?: string, number_of_images?: number, format?: png | jpeg | webp | avif }",
+            "description": "Output settings"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: {}, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.backgroundRemove",
+      "shortPath": "backgroundRemove",
+      "description": "Remove the background from an image using Claid.ai.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Background color, for example \"#ffffff\" or \"transparent\""
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null } | { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.createStorage",
+      "shortPath": "createStorage",
+      "description": "Create a Claid.ai storage connection.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ name: string, type: s3, parameters: { path?: string, bucket: string, credentials: { access_key: string, secret_access_key: string } } } | { name: string, type: gcs, parameters: { path?: string, bucket: string, credentials: { access_key: string, secret_access_key: string } } } | { name: string, type: web_folder, parameters: { base_url: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: web_folder | s3 | gcs, parameters: { path?: string, bucket: string, credentials?: { access_key: string } } | { base_url: string }, created_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.deleteStorage",
+      "shortPath": "deleteStorage",
+      "description": "Delete a Claid.ai storage connection.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storage_id",
+            "optional": false,
+            "type": "number",
+            "description": "Storage ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "lazy",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.generativeResize",
+      "shortPath": "generativeResize",
+      "description": "Resize an image using generative expansion.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number | string",
+            "description": "Target width"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number | string",
+            "description": "Target height"
+          },
+          {
+            "key": "feathering",
+            "optional": true,
+            "type": "string",
+            "description": "Transition smoothness, for example \"20%\""
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null } | { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.imageAiEdit",
+      "shortPath": "imageAiEdit",
+      "description": "Submit an AI image editing task.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "{ prompt: string, model?: v1 | v2, inference_steps?: number, guidance_scale?: number, aspect_ratio?: string }",
+            "description": "AI edit options"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ destination?: string, format?: png | jpeg, number_of_images?: number }",
+            "description": "Output settings"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: {}, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.imageEditBatch",
+      "shortPath": "imageEditBatch",
+      "description": "Process multiple images using Claid.ai.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | { source: string, recursive?: boolean }",
+            "description": "Storage folder URI, list of image URLs, or a source object"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{}",
+            "description": "Image editing operations, for example { resizing: { width: 1000 } }"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, status: string, result_url?: string, created_at?: string, request?: {}, errors?: { error: string, created_at?: string | number }[], result?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }, results?: { input_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_object?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output_objects?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.imageGenerate",
+      "shortPath": "imageGenerate",
+      "description": "Generate an image using Claid.ai.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Text prompt"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ number_of_images?: number, guidance_scale?: number }",
+            "description": "Generation options"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string",
+            "description": "Storage folder URI for results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: {}, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.licensePlateBlur",
+      "shortPath": "licensePlateBlur",
+      "description": "Detect and blur license plates in an image.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null } | { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.patchStorage",
+      "shortPath": "patchStorage",
+      "description": "Update a Claid.ai storage connection.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storage_id",
+            "optional": false,
+            "type": "number",
+            "description": "Storage ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Storage name"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "web_folder | s3 | gcs",
+            "description": "Storage connector type"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ base_url: string } | { path?: string, bucket?: string, credentials?: { access_key?: string, secret_access_key?: string } }",
+            "description": "Storage connection parameters to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: web_folder | s3 | gcs, parameters: { path?: string, bucket: string, credentials?: { access_key: string } } | { base_url: string }, created_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.polishImage",
+      "shortPath": "polishImage",
+      "description": "Polish and restore an image.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null } | { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.smartFrame",
+      "shortPath": "smartFrame",
+      "description": "Place an image inside a smart frame.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Image URL or storage URI of the input image"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number | string",
+            "description": "Canvas width"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number | string",
+            "description": "Canvas height"
+          },
+          {
+            "key": "padding",
+            "optional": true,
+            "type": "string",
+            "description": "Space around the object, for example \"10%\" or \"30px\""
+          },
+          {
+            "key": "background_color",
+            "optional": true,
+            "type": "string",
+            "description": "Canvas color, for example \"#ffffff\""
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string | { destination?: string, format?: jpeg | png | webp | avif | tiff }",
+            "description": "Output destination: a storage URI or an output settings object"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ input?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }, output?: { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null } | { ext?: string | null, mps?: number | null, mime?: string | null, format?: string | null, width?: number | null, height?: number | null, tmp_url?: string | null, object_key?: string | null, object_bucket?: string | null, object_uri?: string | null, claid_storage_uri?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.storageDetails",
+      "shortPath": "storageDetails",
+      "description": "Get details of a Claid.ai storage connection.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storage_id",
+            "optional": false,
+            "type": "number",
+            "description": "Storage ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: web_folder | s3 | gcs, parameters: { path?: string, bucket: string, credentials?: { access_key: string } } | { base_url: string }, created_at: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.storageList",
+      "shortPath": "storageList",
+      "description": "List Claid.ai storage connections.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: web_folder | s3 | gcs, parameters: { path?: string, bucket: string, credentials?: { access_key: string } } | { base_url: string }, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "claidai.api.storageTypes",
+      "shortPath": "storageTypes",
+      "description": "List supported Claid.ai storage types.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "web_folder | s3 | gcs[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "claidai.db.editedImages.search",
+      "entityName": "editedImages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mps",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tmp_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_bucket",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "claid_storage_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "claidai.db.generatedImages.search",
+      "entityName": "generatedImages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mps",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tmp_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_bucket",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "claid_storage_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "claidai.db.imageTasks.search",
+      "entityName": "imageTasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "result_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "claidai.db.storages.search",
+      "entityName": "storages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "claidai.db.storageTypes.search",
+      "entityName": "storageTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

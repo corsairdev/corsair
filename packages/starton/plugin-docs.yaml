@@ -1,5 +1,6 @@
 displayName: Starton
 description: Web3 backend for deploying and calling smart contracts, managing wallets, watching blockchain events, and pinning files to IPFS.
+domain: starton.io
 recommendedAuth: api_key
 examples:
   read:

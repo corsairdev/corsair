@@ -8,7 +8,7 @@ Use **Reducto** through Corsair: one client, typed API calls, local DB sync.
 **What you get:**
 
 - 20 typed API operations
-- 1 synced entity (`jobs`) for fast `.search()` / `.list()`
+- 12 synced entities (`classifyOutputs`, `editFormFields`, `editOutputs`, `extractCitations`, `extractOutputs`, `extractRecords`, and 6 more) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -109,7 +109,7 @@ See the full list on the [API](/plugins/reducto/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.reducto.db.<entity>.search()` and `.list()`: `jobs`.
+Synced entities support `tenant.reducto.db.<entity>.search()` and `.list()`: `classifyOutputs`, `editFormFields`, `editOutputs`, `extractCitations`, `extractOutputs`, `extractRecords`, `jobs`, `parseBlocks`, `parseChunks`, `parseOcrItems`, `pipelineOutputs`, `splitSegments`.
 
 See [Database](/plugins/reducto/database) for filters and operators.
 

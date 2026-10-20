@@ -36,7 +36,8 @@ await corsair.starton.api.ipfs.uploadFile({});
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -65,14 +66,16 @@ Record<string, object | string | number | boolean | null>
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="directoryContent full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -116,7 +119,8 @@ await corsair.starton.api.smartContract.call({});
 
 ```ts
 (
-  string | number | boolean | Record<string, object | string | number | boolean | null>
+  string | number | boolean | {
+  }
 )[]
 ```
 </Accordion>
@@ -175,7 +179,8 @@ await corsair.starton.api.smartContract.call({});
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 
@@ -185,7 +190,8 @@ Record<string, object | string | number | boolean | null>
 {
   message: string,
   type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-  context?: Record<string, object | string | number | boolean | null>,
+  context?: {
+  },
   createdAt: string
 }[]
 ```
@@ -232,7 +238,8 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
 
 ```ts
 (
-  string | number | boolean | Record<string, object | string | number | boolean | null>
+  string | number | boolean | {
+  }
 )[]
 ```
 </Accordion>
@@ -251,7 +258,8 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 
@@ -287,10 +295,12 @@ Record<string, object | string | number | boolean | null>
   name: string,
   description?: string | null,
   network: string,
-  abi?: Record<string, object | string | number | boolean | null>[],
+  abi?: {
+  }[],
   address: string,
   params?: string[] | null,
-  compilationDetails?: Record<string, object | string | number | boolean | null> | null,
+  compilationDetails?: {
+  } | null,
   creationHash?: string | null,
   status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
   state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
@@ -298,7 +308,8 @@ Record<string, object | string | number | boolean | null>
   blockNumber?: number | null,
   templateId?: string | null,
   projectId: string,
-  metadata?: Record<string, object | string | number | boolean | null> | null,
+  metadata?: {
+  } | null,
   uiData?: {
     version: 1,
     deployMethod: web3 | kms,
@@ -327,7 +338,8 @@ Record<string, object | string | number | boolean | null>
   gasPrice?: string | null,
   maxFeePerGas?: string | null,
   maxPriorityFeePerGas?: string | null,
-  metadata?: Record<string, object | string | number | boolean | null> | null,
+  metadata?: {
+  } | null,
   nonce?: number | null,
   type?: number | null,
   signerWallet: string,
@@ -340,7 +352,8 @@ Record<string, object | string | number | boolean | null>
   logs: {
     message: string,
     type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-    context?: Record<string, object | string | number | boolean | null>,
+    context?: {
+    },
     createdAt: string
   }[],
   to?: string | null,
@@ -402,10 +415,12 @@ await corsair.starton.api.smartContract.list({});
   name: string,
   description?: string | null,
   network: string,
-  abi?: Record<string, object | string | number | boolean | null>[],
+  abi?: {
+  }[],
   address: string,
   params?: string[] | null,
-  compilationDetails?: Record<string, object | string | number | boolean | null> | null,
+  compilationDetails?: {
+  } | null,
   creationHash?: string | null,
   status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
   state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
@@ -413,7 +428,8 @@ await corsair.starton.api.smartContract.list({});
   blockNumber?: number | null,
   templateId?: string | null,
   projectId: string,
-  metadata?: Record<string, object | string | number | boolean | null> | null,
+  metadata?: {
+  } | null,
   uiData?: {
     version: 1,
     deployMethod: web3 | kms,
@@ -471,7 +487,8 @@ await corsair.starton.api.smartContract.read({});
 
 ```ts
 (
-  string | number | boolean | Record<string, object | string | number | boolean | null>
+  string | number | boolean | {
+  }
 )[]
 ```
 </Accordion>
@@ -493,7 +510,8 @@ await corsair.starton.api.smartContract.read({});
 <Accordion title="response full type">
 
 ```ts
-string | number | boolean | Record<string, object | string | number | boolean | null> | (Record<string, object | string | number | boolean | null> | string | number | boolean | null)[]
+string | number | boolean | {
+} | any[]
 ```
 </Accordion>
 
@@ -501,7 +519,8 @@ string | number | boolean | Record<string, object | string | number | boolean | 
 
 ```ts
 (
-  string | number | boolean | Record<string, object | string | number | boolean | null>
+  string | number | boolean | {
+  }
 )[]
 ```
 </Accordion>
@@ -562,9 +581,12 @@ await corsair.starton.api.template.list({});
   tags: string[],
   category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL,
   humanReadableAbi: string[],
-  abi: Record<string, object | string | number | boolean | null>[],
-  form?: Record<string, object | string | number | boolean | null> | null,
-  compilationDetails?: Record<string, object | string | number | boolean | null> | null,
+  abi: {
+  }[],
+  form?: {
+  } | null,
+  compilationDetails?: {
+  } | null,
   isAudited: boolean,
   isActivated: boolean,
   order: number,
@@ -654,7 +676,8 @@ await corsair.starton.api.transaction.get({});
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 
@@ -664,7 +687,8 @@ Record<string, object | string | number | boolean | null>
 {
   message: string,
   type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-  context?: Record<string, object | string | number | boolean | null>,
+  context?: {
+  },
   createdAt: string
 }[]
 ```
@@ -702,7 +726,8 @@ await corsair.starton.api.wallet.create({});
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -727,7 +752,8 @@ Record<string, object | string | number | boolean | null>
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -776,7 +802,8 @@ await corsair.starton.api.wallet.list({});
   kmsId: string,
   name?: string | null,
   description?: string | null,
-  metadata?: Record<string, object | string | number | boolean | null> | null,
+  metadata?: {
+  } | null,
   projectId: string,
   createdAt: string,
   updatedAt: string
@@ -875,21 +902,24 @@ await corsair.starton.api.watcher.get({});
 <Accordion title="customEventAbi full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>[]
+{
+}[]
 ```
 </Accordion>
 
 <Accordion title="metadata full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="customFilters full type">
 
 ```ts
-Record<string, object | string | number | boolean | null>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -937,10 +967,13 @@ await corsair.starton.api.webhook.list({});
   id: string,
   refId: string,
   status: RETRYING | SUCCESSFUL | FAILED | CANCELED,
-  payload?: Record<string, object | string | number | boolean | null> | null,
+  payload?: {
+  } | null,
   url: string,
-  headers?: Record<string, object | string | number | boolean | null> | null,
-  attempts: Record<string, object | string | number | boolean | null>[],
+  headers?: {
+  } | null,
+  attempts: {
+  }[],
   projectId: string,
   createdAt: string,
   updatedAt: string

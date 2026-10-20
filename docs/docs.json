@@ -322,6 +322,14 @@
                 ]
               },
               {
+                "group": "Akta",
+                "pages": [
+                  "plugins/akta/overview",
+                  "plugins/akta/api",
+                  "plugins/akta/database"
+                ]
+              },
+              {
                 "group": "Alchemy",
                 "pages": [
                   "plugins/alchemy/overview",
@@ -335,6 +343,14 @@
                   "plugins/algolia/overview",
                   "plugins/algolia/api",
                   "plugins/algolia/database"
+                ]
+              },
+              {
+                "group": "Alibaba",
+                "pages": [
+                  "plugins/alibaba/overview",
+                  "plugins/alibaba/api",
+                  "plugins/alibaba/database"
                 ]
               },
               {
@@ -497,6 +513,14 @@
                   "plugins/apipie/overview",
                   "plugins/apipie/api",
                   "plugins/apipie/database"
+                ]
+              },
+              {
+                "group": "Apollo",
+                "pages": [
+                  "plugins/apollo/overview",
+                  "plugins/apollo/api",
+                  "plugins/apollo/database"
                 ]
               },
               {
@@ -1004,6 +1028,14 @@
                 ]
               },
               {
+                "group": "Bytedance",
+                "pages": [
+                  "plugins/bytedance/overview",
+                  "plugins/bytedance/api",
+                  "plugins/bytedance/database"
+                ]
+              },
+              {
                 "group": "ByteForms",
                 "pages": [
                   "plugins/byteforms/overview",
@@ -1032,19 +1064,19 @@
                 ]
               },
               {
-                "group": "CallPage",
-                "pages": [
-                  "plugins/callpage/overview",
-                  "plugins/callpage/api",
-                  "plugins/callpage/database"
-                ]
-              },
-              {
                 "group": "Callingly",
                 "pages": [
                   "plugins/callingly/overview",
                   "plugins/callingly/api",
                   "plugins/callingly/database"
+                ]
+              },
+              {
+                "group": "CallPage",
+                "pages": [
+                  "plugins/callpage/overview",
+                  "plugins/callpage/api",
+                  "plugins/callpage/database"
                 ]
               },
               {
@@ -1210,6 +1242,14 @@
                 ]
               },
               {
+                "group": "Clay",
+                "pages": [
+                  "plugins/clay/overview",
+                  "plugins/clay/api",
+                  "plugins/clay/database"
+                ]
+              },
+              {
                 "group": "ClickHouse",
                 "pages": [
                   "plugins/clickhouse/overview",
@@ -1226,6 +1266,22 @@
                 ]
               },
               {
+                "group": "ClickSend",
+                "pages": [
+                  "plugins/clicksend/overview",
+                  "plugins/clicksend/api",
+                  "plugins/clicksend/database"
+                ]
+              },
+              {
+                "group": "Clickup",
+                "pages": [
+                  "plugins/clickup/overview",
+                  "plugins/clickup/api",
+                  "plugins/clickup/database"
+                ]
+              },
+              {
                 "group": "Clientary",
                 "pages": [
                   "plugins/clientary/overview",
@@ -1239,6 +1295,14 @@
                   "plugins/clockify/overview",
                   "plugins/clockify/api",
                   "plugins/clockify/database"
+                ]
+              },
+              {
+                "group": "Cloro",
+                "pages": [
+                  "plugins/cloro/overview",
+                  "plugins/cloro/api",
+                  "plugins/cloro/database"
                 ]
               },
               {
@@ -1292,6 +1356,14 @@
                   "plugins/coda/api",
                   "plugins/coda/database",
                   "plugins/coda/webhooks"
+                ]
+              },
+              {
+                "group": "CodeInterpreter",
+                "pages": [
+                  "plugins/codeinterpreter/overview",
+                  "plugins/codeinterpreter/api",
+                  "plugins/codeinterpreter/database"
                 ]
               },
               {
@@ -1352,6 +1424,14 @@
                 ]
               },
               {
+                "group": "ContactOut",
+                "pages": [
+                  "plugins/contactout/overview",
+                  "plugins/contactout/api",
+                  "plugins/contactout/database"
+                ]
+              },
+              {
                 "group": "Contentful",
                 "pages": [
                   "plugins/contentfulgraphql/overview",
@@ -1365,6 +1445,14 @@
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
+                ]
+              },
+              {
+                "group": "ContextDev",
+                "pages": [
+                  "plugins/contextdev/overview",
+                  "plugins/contextdev/api",
+                  "plugins/contextdev/database"
                 ]
               },
               {
@@ -1442,11 +1530,27 @@
                 ]
               },
               {
+                "group": "Cutt.ly",
+                "pages": [
+                  "plugins/cuttly/overview",
+                  "plugins/cuttly/api",
+                  "plugins/cuttly/database"
+                ]
+              },
+              {
                 "group": "Dadataru",
                 "pages": [
                   "plugins/dadataru/overview",
                   "plugins/dadataru/api",
                   "plugins/dadataru/database"
+                ]
+              },
+              {
+                "group": "Daffy",
+                "pages": [
+                  "plugins/daffy/overview",
+                  "plugins/daffy/api",
+                  "plugins/daffy/database"
                 ]
               },
               {
@@ -1463,6 +1567,14 @@
                   "plugins/datadog/overview",
                   "plugins/datadog/api",
                   "plugins/datadog/database"
+                ]
+              },
+              {
+                "group": "DataForSeo",
+                "pages": [
+                  "plugins/dataforseo/overview",
+                  "plugins/dataforseo/api",
+                  "plugins/dataforseo/database"
                 ]
               },
               {
@@ -1529,6 +1641,14 @@
                   "plugins/docmosis/overview",
                   "plugins/docmosis/api",
                   "plugins/docmosis/database"
+                ]
+              },
+              {
+                "group": "Docsumo",
+                "pages": [
+                  "plugins/docsumo/overview",
+                  "plugins/docsumo/api",
+                  "plugins/docsumo/database"
                 ]
               },
               {
@@ -1764,6 +1884,14 @@
                   "plugins/formbricks/overview",
                   "plugins/formbricks/api",
                   "plugins/formbricks/database"
+                ]
+              },
+              {
+                "group": "Fundable",
+                "pages": [
+                  "plugins/fundable/overview",
+                  "plugins/fundable/api",
+                  "plugins/fundable/database"
                 ]
               },
               {
@@ -2022,6 +2150,14 @@
                 ]
               },
               {
+                "group": "Hunter.io",
+                "pages": [
+                  "plugins/hunterio/overview",
+                  "plugins/hunterio/api",
+                  "plugins/hunterio/database"
+                ]
+              },
+              {
                 "group": "Imagior",
                 "pages": [
                   "plugins/imagior/overview",
@@ -2099,11 +2235,27 @@
                 ]
               },
               {
+                "group": "Keenable",
+                "pages": [
+                  "plugins/keenable/overview",
+                  "plugins/keenable/api",
+                  "plugins/keenable/database"
+                ]
+              },
+              {
                 "group": "Kibana",
                 "pages": [
                   "plugins/kibana/overview",
                   "plugins/kibana/api",
                   "plugins/kibana/database"
+                ]
+              },
+              {
+                "group": "Kling",
+                "pages": [
+                  "plugins/kling/overview",
+                  "plugins/kling/api",
+                  "plugins/kling/database"
                 ]
               },
               {
@@ -2133,11 +2285,27 @@
                 ]
               },
               {
+                "group": "LiteScrape",
+                "pages": [
+                  "plugins/litescrape/overview",
+                  "plugins/litescrape/api",
+                  "plugins/litescrape/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",
                   "plugins/loyverse/api",
                   "plugins/loyverse/database"
+                ]
+              },
+              {
+                "group": "Magic Hour",
+                "pages": [
+                  "plugins/magichour/overview",
+                  "plugins/magichour/api",
+                  "plugins/magichour/database"
                 ]
               },
               {
@@ -2199,6 +2367,14 @@
                 ]
               },
               {
+                "group": "MiniMax",
+                "pages": [
+                  "plugins/minimax/overview",
+                  "plugins/minimax/api",
+                  "plugins/minimax/database"
+                ]
+              },
+              {
                 "group": "Monday.com",
                 "pages": [
                   "plugins/monday/overview",
@@ -2206,6 +2382,14 @@
                   "plugins/monday/api",
                   "plugins/monday/database",
                   "plugins/monday/webhooks"
+                ]
+              },
+              {
+                "group": "MrScraper",
+                "pages": [
+                  "plugins/mrscraper/overview",
+                  "plugins/mrscraper/api",
+                  "plugins/mrscraper/database"
                 ]
               },
               {
@@ -2259,6 +2443,14 @@
                 ]
               },
               {
+                "group": "Octen",
+                "pages": [
+                  "plugins/octen/overview",
+                  "plugins/octen/api",
+                  "plugins/octen/database"
+                ]
+              },
+              {
                 "group": "Ollama",
                 "pages": [
                   "plugins/ollama/overview",
@@ -2298,6 +2490,15 @@
                   "plugins/openweathermap/overview",
                   "plugins/openweathermap/api",
                   "plugins/openweathermap/database"
+                ]
+              },
+              {
+                "group": "Orbit",
+                "pages": [
+                  "plugins/orbit/overview",
+                  "plugins/orbit/api",
+                  "plugins/orbit/database",
+                  "plugins/orbit/webhooks"
                 ]
               },
               {
@@ -2356,6 +2557,14 @@
                 ]
               },
               {
+                "group": "People Data Labs",
+                "pages": [
+                  "plugins/pdl/overview",
+                  "plugins/pdl/api",
+                  "plugins/pdl/database"
+                ]
+              },
+              {
                 "group": "Perplexity",
                 "pages": [
                   "plugins/perplexityai/overview",
@@ -2385,6 +2594,14 @@
                   "plugins/plain/overview",
                   "plugins/plain/api",
                   "plugins/plain/database"
+                ]
+              },
+              {
+                "group": "Ploid",
+                "pages": [
+                  "plugins/ploid/overview",
+                  "plugins/ploid/api",
+                  "plugins/ploid/database"
                 ]
               },
               {
@@ -2445,6 +2662,14 @@
                   "plugins/reducto/overview",
                   "plugins/reducto/api",
                   "plugins/reducto/database"
+                ]
+              },
+              {
+                "group": "Remoet",
+                "pages": [
+                  "plugins/remoet/overview",
+                  "plugins/remoet/api",
+                  "plugins/remoet/database"
                 ]
               },
               {
@@ -2531,6 +2756,15 @@
                 ]
               },
               {
+                "group": "Saperly",
+                "pages": [
+                  "plugins/saperly/overview",
+                  "plugins/saperly/api",
+                  "plugins/saperly/database",
+                  "plugins/saperly/webhooks"
+                ]
+              },
+              {
                 "group": "Scale AI",
                 "pages": [
                   "plugins/scaleai/overview",
@@ -2544,6 +2778,14 @@
                   "plugins/scrapegraphai/overview",
                   "plugins/scrapegraphai/api",
                   "plugins/scrapegraphai/database"
+                ]
+              },
+              {
+                "group": "Search1API",
+                "pages": [
+                  "plugins/search1api/overview",
+                  "plugins/search1api/api",
+                  "plugins/search1api/database"
                 ]
               },
               {
@@ -2702,6 +2944,22 @@
                 ]
               },
               {
+                "group": "Surf",
+                "pages": [
+                  "plugins/surf/overview",
+                  "plugins/surf/api",
+                  "plugins/surf/database"
+                ]
+              },
+              {
+                "group": "Suzanne",
+                "pages": [
+                  "plugins/suzanne/overview",
+                  "plugins/suzanne/api",
+                  "plugins/suzanne/database"
+                ]
+              },
+              {
                 "group": "Synthflow AI",
                 "pages": [
                   "plugins/synthflowai/overview",
@@ -2775,6 +3033,15 @@
                   "plugins/timelink/overview",
                   "plugins/timelink/api",
                   "plugins/timelink/database"
+                ]
+              },
+              {
+                "group": "TinyFish",
+                "pages": [
+                  "plugins/tinyfish/overview",
+                  "plugins/tinyfish/api",
+                  "plugins/tinyfish/database",
+                  "plugins/tinyfish/webhooks"
                 ]
               },
               {
@@ -2947,6 +3214,14 @@
                   "plugins/vapi/api",
                   "plugins/vapi/database",
                   "plugins/vapi/webhooks"
+                ]
+              },
+              {
+                "group": "Vaquill",
+                "pages": [
+                  "plugins/vaquill/overview",
+                  "plugins/vaquill/api",
+                  "plugins/vaquill/database"
                 ]
               },
               {

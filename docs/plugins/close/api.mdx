@@ -11,6 +11,51 @@ Every `close.api.*` operation is listed below with parameter shapes and return t
 
 ## Activities
 
+### createCall
+
+`activities.createCall`
+
+Log an external call activity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.activities.createCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `direction` | `inbound \| outbound` | No | — |
+| `contact_id` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `note` | `string` | No | — |
+| `recording_url` | `string` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `direction` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `status` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_created` | `string` | No | — |
+
+
+
+---
+
 ### createNote
 
 `activities.createNote`
@@ -20,7 +65,7 @@ Create a note activity
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.activities.createNote({ lead_id: 'lead_123', note: 'Example note' });
+await corsair.close.api.activities.createNote({});
 ```
 
 **Input**
@@ -43,6 +88,81 @@ await corsair.close.api.activities.createNote({ lead_id: 'lead_123', note: 'Exam
 | `organization_id` | `string` | No | — |
 | `date_created` | `string` | No | — |
 | `date_updated` | `string` | No | — |
+
+
+
+---
+
+### createSms
+
+`activities.createSms`
+
+Create an SMS activity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.activities.createSms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `local_phone` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `direction` | `inbound \| outbound` | No | — |
+| `status` | `inbox \| draft \| scheduled \| outbox \| sent \| error` | No | — |
+| `contact_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `local_phone` | `string` | No | — |
+| `remote_phone` | `string` | No | — |
+| `text` | `string` | No | — |
+| `direction` | `string` | No | — |
+| `status` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_created` | `string` | No | — |
+
+
+
+---
+
+### deleteCall
+
+`activities.deleteCall`
+
+Delete a call activity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.activities.deleteCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
 
 
 
@@ -95,126 +215,6 @@ await corsair.close.api.activities.listCalls({});
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-### createCall
-
-`activities.createCall`
-
-Create a call activity
-
-**Risk:** `write`
-
-```ts
-await corsair.close.api.activities.createCall({ lead_id: 'lead_123', direction: 'outbound' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `lead_id` | `string` | Yes | — |
-| `direction` | `'inbound' \| 'outbound'` | No | — |
-| `contact_id` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `note` | `string` | No | — |
-| `recording_url` | `string` | No | — |
-| `user_id` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `lead_id` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `status` | `string` | No | — |
-| `user_id` | `string \| null` | No | — |
-| `organization_id` | `string` | No | — |
-| `date_created` | `string` | No | — |
-
-
-
----
-
-### deleteCall
-
-`activities.deleteCall`
-
-Delete a call activity
-
-**Risk:** `destructive`
-
-```ts
-await corsair.close.api.activities.deleteCall({ id: 'call_123' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | Yes | — |
-| `id` | `string` | Yes | — |
-
-
-
----
-
-### createSms
-
-`activities.createSms`
-
-Create an SMS activity
-
-**Risk:** `write`
-
-```ts
-await corsair.close.api.activities.createSms({ lead_id: 'lead_123', local_phone: '+15551234567', text: 'Hello' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `lead_id` | `string` | Yes | — |
-| `local_phone` | `string` | Yes | — |
-| `text` | `string` | No | — |
-| `direction` | `'inbound' \| 'outbound'` | No | — |
-| `status` | `'inbox' \| 'draft' \| 'scheduled' \| 'outbox' \| 'sent' \| 'error'` | No | — |
-| `contact_id` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `lead_id` | `string` | No | — |
-| `local_phone` | `string` | No | — |
-| `remote_phone` | `string` | No | — |
-| `text` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `status` | `string` | No | — |
-| `user_id` | `string \| null` | No | — |
-| `organization_id` | `string` | No | — |
-| `date_created` | `string` | No | — |
 
 
 
@@ -333,7 +333,7 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.contacts.create({ lead_id: 'lead_123' });
+await corsair.close.api.contacts.create({});
 ```
 
 **Input**
@@ -420,7 +420,7 @@ Delete a contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.contacts.delete({ id: 'cont_123' });
+await corsair.close.api.contacts.delete({});
 ```
 
 **Input**
@@ -451,7 +451,7 @@ Retrieve a contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.contacts.get({ id: 'cont_123' });
+await corsair.close.api.contacts.get({});
 ```
 
 **Input**
@@ -571,7 +571,7 @@ Update a contact
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.contacts.update({ id: 'cont_123' });
+await corsair.close.api.contacts.update({});
 ```
 
 **Input**
@@ -760,14 +760,16 @@ await corsair.close.api.leads.create({});
 <Accordion title="custom full type">
 
 ```ts
-Record<string, unknown>
+{
+}
 ```
 </Accordion>
 
 <Accordion title="contacts full type">
 
 ```ts
-Record<string, unknown>[]
+{
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -796,14 +798,16 @@ Record<string, unknown>[]
 <Accordion title="contacts full type">
 
 ```ts
-Record<string, unknown>[]
+{
+}[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-Record<string, unknown>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -821,7 +825,7 @@ Delete a lead by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.leads.delete({ id: 'lead_123' });
+await corsair.close.api.leads.delete({});
 ```
 
 **Input**
@@ -852,7 +856,7 @@ Retrieve a lead by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.leads.get({ id: 'lead_123' });
+await corsair.close.api.leads.get({});
 ```
 
 **Input**
@@ -885,14 +889,16 @@ await corsair.close.api.leads.get({ id: 'lead_123' });
 <Accordion title="contacts full type">
 
 ```ts
-Record<string, unknown>[]
+{
+}[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-Record<string, unknown>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -944,8 +950,10 @@ await corsair.close.api.leads.list({});
   description?: string | null,
   url?: string | null,
   organization_id?: string,
-  contacts?: Record<string, unknown>[],
-  custom?: Record<string, unknown>,
+  contacts?: {
+  }[],
+  custom?: {
+  },
   created_by?: string | null,
   updated_by?: string | null,
   date_created?: string,
@@ -968,7 +976,7 @@ Update an existing lead
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.leads.update({ id: 'lead_123' });
+await corsair.close.api.leads.update({});
 ```
 
 **Input**
@@ -986,7 +994,8 @@ await corsair.close.api.leads.update({ id: 'lead_123' });
 <Accordion title="custom full type">
 
 ```ts
-Record<string, unknown>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1015,14 +1024,16 @@ Record<string, unknown>
 <Accordion title="contacts full type">
 
 ```ts
-Record<string, unknown>[]
+{
+}[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-Record<string, unknown>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1042,7 +1053,7 @@ Create an opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.opportunities.create({ lead_id: 'lead_123', status_id: 'status_123' });
+await corsair.close.api.opportunities.create({});
 ```
 
 **Input**
@@ -1092,7 +1103,7 @@ Delete an opportunity
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.opportunities.delete({ id: 'opp_123' });
+await corsair.close.api.opportunities.delete({});
 ```
 
 **Input**
@@ -1123,7 +1134,7 @@ Retrieve an opportunity by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.opportunities.get({ id: 'opp_123' });
+await corsair.close.api.opportunities.get({});
 ```
 
 **Input**
@@ -1227,7 +1238,7 @@ Update an opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.opportunities.update({ id: 'opp_123' });
+await corsair.close.api.opportunities.update({});
 ```
 
 **Input**
@@ -1278,7 +1289,7 @@ Create a task
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.tasks.create({ lead_id: 'lead_123', text: 'example' });
+await corsair.close.api.tasks.create({});
 ```
 
 **Input**
@@ -1322,7 +1333,7 @@ Delete a task
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.tasks.delete({ id: 'task_123' });
+await corsair.close.api.tasks.delete({});
 ```
 
 **Input**
@@ -1353,7 +1364,7 @@ Retrieve a task by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.tasks.get({ id: 'task_123' });
+await corsair.close.api.tasks.get({});
 ```
 
 **Input**
@@ -1449,7 +1460,7 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.tasks.update({ id: 'task_123' });
+await corsair.close.api.tasks.update({});
 ```
 
 **Input**
@@ -1561,3 +1572,4 @@ await corsair.close.api.users.list({});
 
 
 ---
+

@@ -1,0 +1,5824 @@
+{
+  "id": "clickup",
+  "displayName": "Clickup",
+  "description": "Clickup plugin for Corsair",
+  "npmPackageName": "@corsair-dev/clickup",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 157,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "clickup.api.chat.channelsCreate",
+      "shortPath": "chat.channelsCreate",
+      "description": "Create a chat channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsCreateDm",
+      "shortPath": "chat.channelsCreateDm",
+      "description": "Create a direct message channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsCreateLocation",
+      "shortPath": "chat.channelsCreateLocation",
+      "description": "Create a location chat channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "space_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsDelete",
+      "shortPath": "chat.channelsDelete",
+      "description": "Delete a chat channel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsFollowers",
+      "shortPath": "chat.channelsFollowers",
+      "description": "List followers of a chat channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsGet",
+      "shortPath": "chat.channelsGet",
+      "description": "Get a single chat channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsList",
+      "shortPath": "chat.channelsList",
+      "description": "List chat channels in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_follower",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_closed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsMembers",
+      "shortPath": "chat.channelsMembers",
+      "description": "List members of a chat channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.channelsUpdate",
+      "shortPath": "chat.channelsUpdate",
+      "description": "Update a chat channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.messagesCreate",
+      "shortPath": "chat.messagesCreate",
+      "description": "Send a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message | post"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.chat.messagesDelete",
+      "shortPath": "chat.messagesDelete",
+      "description": "Delete a chat message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.chat.messagesList",
+      "shortPath": "chat.messagesList",
+      "description": "List messages in a chat channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.messagesUpdate",
+      "shortPath": "chat.messagesUpdate",
+      "description": "Update a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.chat.reactionsCreate",
+      "shortPath": "chat.reactionsCreate",
+      "description": "React to a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.chat.reactionsDelete",
+      "shortPath": "chat.reactionsDelete",
+      "description": "Remove a reaction from a chat message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.chat.reactionsGet",
+      "shortPath": "chat.reactionsGet",
+      "description": "List reactions on a chat message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.repliesCreate",
+      "shortPath": "chat.repliesCreate",
+      "description": "Reply to a chat message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "message | post"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.chat.repliesGet",
+      "shortPath": "chat.repliesGet",
+      "description": "List replies to a chat message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.subtypes",
+      "shortPath": "chat.subtypes",
+      "description": "List post subtype IDs for a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_type",
+            "optional": false,
+            "type": "post | ai | syncup | ai_via_brain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subtypes",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.chat.taggedUsers",
+      "shortPath": "chat.taggedUsers",
+      "description": "List users tagged in a chat message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.checklists.create",
+      "shortPath": "checklists.create",
+      "description": "Create a checklist in a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.checklists.delete",
+      "shortPath": "checklists.delete",
+      "description": "Delete a checklist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklist_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.checklists.itemsCreate",
+      "shortPath": "checklists.itemsCreate",
+      "description": "Create a checklist item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.checklists.itemsDelete",
+      "shortPath": "checklists.itemsDelete",
+      "description": "Delete a checklist item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "checklist_item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.checklists.itemsUpdate",
+      "shortPath": "checklists.itemsUpdate",
+      "description": "Update a checklist item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "checklist_item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.checklists.update",
+      "shortPath": "checklists.update",
+      "description": "Update a checklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklist_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.customFields.accessible",
+      "shortPath": "customFields.accessible",
+      "description": "List accessible custom fields for a List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.customFields.folderFields",
+      "shortPath": "customFields.folderFields",
+      "description": "List custom fields available in a Folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.customFields.removeValue",
+      "shortPath": "customFields.removeValue",
+      "description": "Remove a custom field value from a Task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.customFields.setValue",
+      "shortPath": "customFields.setValue",
+      "description": "Set a custom field value on a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.dependencies.add",
+      "shortPath": "dependencies.add",
+      "description": "Add a waiting-on/blocking dependency to a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depends_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependency_of",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.dependencies.delete",
+      "shortPath": "dependencies.delete",
+      "description": "Remove a dependency from a Task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depends_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependency_of",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.docs.content",
+      "shortPath": "docs.content",
+      "description": "Get full Doc content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.create",
+      "shortPath": "docs.create",
+      "description": "Create a new Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "PUBLIC | PRIVATE"
+          },
+          {
+            "key": "create_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.createPage",
+      "shortPath": "docs.createPage",
+      "description": "Create a page in a Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          },
+          {
+            "key": "parent_page_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.pageContent",
+      "shortPath": "docs.pageContent",
+      "description": "Get a single Doc page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.pageListing",
+      "shortPath": "docs.pageListing",
+      "description": "Get the page listing structure of a Doc",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_page_depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.pages",
+      "shortPath": "docs.pages",
+      "description": "List pages in a Doc",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_page_depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.search",
+      "shortPath": "docs.search",
+      "description": "Search Docs in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.docs.updatePage",
+      "shortPath": "docs.updatePage",
+      "description": "Update a Doc page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sub_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_format",
+            "optional": true,
+            "type": "text/md | text/plain"
+          },
+          {
+            "key": "content_edit_mode",
+            "optional": true,
+            "type": "replace | append | prepend"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new Folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a Folder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get a single Folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List Folders in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folders",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Rename a Folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.viewsCreate",
+      "shortPath": "folders.viewsCreate",
+      "description": "Create a view in a Folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "list | board | calendar | table | timeline | workload | activity | map | chat | gantt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.folders.viewsGet",
+      "shortPath": "folders.viewsGet",
+      "description": "List views in a Folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.create",
+      "shortPath": "goals.create",
+      "description": "Create a new Goal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "multiple_owners",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.delete",
+      "shortPath": "goals.delete",
+      "description": "Delete a Goal",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goal_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.goals.get",
+      "shortPath": "goals.get",
+      "description": "Get a single Goal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goal_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.keyResultsCreate",
+      "shortPath": "goals.keyResultsCreate",
+      "description": "Create a key result for a Goal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goal_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owners",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number | currency | boolean | percentage | automatic"
+          },
+          {
+            "key": "steps_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "steps_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "task_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.keyResultsDelete",
+      "shortPath": "goals.keyResultsDelete",
+      "description": "Delete a key result",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key_result_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.goals.keyResultsUpdate",
+      "shortPath": "goals.keyResultsUpdate",
+      "description": "Update a key result",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key_result_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "steps_current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.list",
+      "shortPath": "goals.list",
+      "description": "List Goals in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goals",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.goals.update",
+      "shortPath": "goals.update",
+      "description": "Update a Goal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "goal_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.guests.addToFolder",
+      "shortPath": "guests.addToFolder",
+      "description": "Share a Folder with a guest",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_level",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.addToList",
+      "shortPath": "guests.addToList",
+      "description": "Share a List with a guest",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_level",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.addToTask",
+      "shortPath": "guests.addToTask",
+      "description": "Share a Task with a guest",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permission_level",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.get",
+      "shortPath": "guests.get",
+      "description": "Get a Workspace guest",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guest",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.guests.invite",
+      "shortPath": "guests.invite",
+      "description": "Invite a guest to a Workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_edit_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_see_time_spent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_see_time_estimated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_create_views",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guest",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.guests.remove",
+      "shortPath": "guests.remove",
+      "description": "Remove a guest from a Workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.removeFromFolder",
+      "shortPath": "guests.removeFromFolder",
+      "description": "Remove a guest from a Folder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.removeFromList",
+      "shortPath": "guests.removeFromList",
+      "description": "Remove a guest from a List",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.removeFromTask",
+      "shortPath": "guests.removeFromTask",
+      "description": "Remove a guest from a Task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.guests.update",
+      "shortPath": "guests.update",
+      "description": "Update a Workspace guest",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "guest_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_edit_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_see_time_spent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_see_time_estimated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_create_views",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guest",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.commentsCreate",
+      "shortPath": "lists.commentsCreate",
+      "description": "Comment on a List",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notify_all",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.commentsGet",
+      "shortPath": "lists.commentsGet",
+      "description": "Get comments on a List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a List in a Folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.createFolderless",
+      "shortPath": "lists.createFolderless",
+      "description": "Create a folderless List in a Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.createFromTemplate",
+      "shortPath": "lists.createFromTemplate",
+      "description": "Create a List from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a List",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.lists.folderless",
+      "shortPath": "lists.folderless",
+      "description": "List folderless Lists in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get a single List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List Lists in a Folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.members",
+      "shortPath": "lists.members",
+      "description": "List members of a List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update a List",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.viewsCreate",
+      "shortPath": "lists.viewsCreate",
+      "description": "Create a view in a List",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "list | board | calendar | table | timeline | workload | activity | map | chat | gantt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.lists.viewsGet",
+      "shortPath": "lists.viewsGet",
+      "description": "List views in a List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.availableFields",
+      "shortPath": "spaces.availableFields",
+      "description": "List custom fields available in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.create",
+      "shortPath": "spaces.create",
+      "description": "Create a new Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "multiple_assignees",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.delete",
+      "shortPath": "spaces.delete",
+      "description": "Delete a Space",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Get a single Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List Spaces in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.tagsCreate",
+      "shortPath": "spaces.tagsCreate",
+      "description": "Create a tag in a Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_fg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_bg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.spaces.tagsDelete",
+      "shortPath": "spaces.tagsDelete",
+      "description": "Delete a tag from a Space",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_name_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_tag_fg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_tag_bg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.spaces.tagsGet",
+      "shortPath": "spaces.tagsGet",
+      "description": "List tags in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ name: string, tag_fg?: string, tag_bg?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.tagsUpdate",
+      "shortPath": "spaces.tagsUpdate",
+      "description": "Update a tag in a Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_fg",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_bg",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.spaces.update",
+      "shortPath": "spaces.update",
+      "description": "Update an existing Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin_can_manage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "multiple_assignees",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.viewsCreate",
+      "shortPath": "spaces.viewsCreate",
+      "description": "Create a view in a Space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "list | board | calendar | table | timeline | workload | activity | map | chat | gantt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.spaces.viewsGet",
+      "shortPath": "spaces.viewsGet",
+      "description": "List views in a Space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.create",
+      "shortPath": "taskComments.create",
+      "description": "Comment on a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notify_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.delete",
+      "shortPath": "taskComments.delete",
+      "description": "Delete a Task comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.get",
+      "shortPath": "taskComments.get",
+      "description": "Get comments on a Task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.threadedCreate",
+      "shortPath": "taskComments.threadedCreate",
+      "description": "Reply to a comment in a thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notify_all",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.threadedGet",
+      "shortPath": "taskComments.threadedGet",
+      "description": "Get threaded replies to a comment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskComments.update",
+      "shortPath": "taskComments.update",
+      "description": "Update a Task comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolved",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.taskLinks.add",
+      "shortPath": "taskLinks.add",
+      "description": "Link two Tasks",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links_to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.taskLinks.delete",
+      "shortPath": "taskLinks.delete",
+      "description": "Delete a link between two Tasks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links_to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.taskLists.add",
+      "shortPath": "taskLists.add",
+      "description": "Add a Task to an additional List",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.taskLists.remove",
+      "shortPath": "taskLists.remove",
+      "description": "Remove a Task from an additional List",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.attachmentsCreate",
+      "shortPath": "tasks.attachmentsCreate",
+      "description": "Upload a file attachment to a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.bulkTimeInStatus",
+      "shortPath": "tasks.bulkTimeInStatus",
+      "description": "Get time in status for multiple Tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.createFromTemplate",
+      "shortPath": "tasks.createFromTemplate",
+      "description": "Create a Task from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a Task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.tasks.filteredTeam",
+      "shortPath": "tasks.filteredTeam",
+      "description": "List filtered Tasks across a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "space_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtasks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a single Task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_subtasks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List Tasks in a List",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subtasks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.members",
+      "shortPath": "tasks.members",
+      "description": "List members with explicit Task access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.moveToHomeList",
+      "shortPath": "tasks.moveToHomeList",
+      "description": "Move a Task to a new home List",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "move_custom_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_fields_to_move",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.tagsAdd",
+      "shortPath": "tasks.tagsAdd",
+      "description": "Add a tag to a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.tagsRemove",
+      "shortPath": "tasks.tagsRemove",
+      "description": "Remove a tag from a Task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_task_ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.templates",
+      "shortPath": "tasks.templates",
+      "description": "List Task templates in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.tasks.timeInStatus",
+      "shortPath": "tasks.timeInStatus",
+      "description": "Get time a Task spent in each status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.trackedTimeCreate",
+      "shortPath": "tasks.trackedTimeCreate",
+      "description": "Record legacy tracked time for a Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.trackedTimeDelete",
+      "shortPath": "tasks.trackedTimeDelete",
+      "description": "Delete a legacy time-tracked interval",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.tasks.trackedTimeGet",
+      "shortPath": "tasks.trackedTimeGet",
+      "description": "Get legacy tracked time for a Task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.trackedTimeUpdate",
+      "shortPath": "tasks.trackedTimeUpdate",
+      "description": "Edit a legacy time-tracked interval",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update an existing Task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time_estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "admins",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a user group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List user groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "add",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "rem",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Create a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a time entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Get a single time entry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.history",
+      "shortPath": "timeEntries.history",
+      "description": "Get time entry change history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.range",
+      "shortPath": "timeEntries.range",
+      "description": "List time entries in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "space_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.running",
+      "shortPath": "timeEntries.running",
+      "description": "Get the running time entry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.start",
+      "shortPath": "timeEntries.start",
+      "description": "Start a time entry timer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.stop",
+      "shortPath": "timeEntries.stop",
+      "description": "Stop the running time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.tagsAdd",
+      "shortPath": "timeEntries.tagsAdd",
+      "description": "Add tags to time entries",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "timer_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.tagsGetAll",
+      "shortPath": "timeEntries.tagsGetAll",
+      "description": "List all time entry tags in a Workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.tagsRemove",
+      "shortPath": "timeEntries.tagsRemove",
+      "description": "Remove tags from time entries",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "timer_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.tagsUpdate",
+      "shortPath": "timeEntries.tagsUpdate",
+      "description": "Rename a time entry tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "new_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "foreground_color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Update a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_action",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a Workspace user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.users.invite",
+      "shortPath": "users.invite",
+      "description": "Invite a user to a Workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.users.remove",
+      "shortPath": "users.remove",
+      "description": "Remove a user from a Workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a Workspace user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.views.chatCommentsCreate",
+      "shortPath": "views.chatCommentsCreate",
+      "description": "Comment on a Chat view",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notify_all",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.views.chatCommentsGet",
+      "shortPath": "views.chatCommentsGet",
+      "description": "Get comments on a Chat view",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.views.delete",
+      "shortPath": "views.delete",
+      "description": "Delete a View",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "clickup.api.views.get",
+      "shortPath": "views.get",
+      "description": "Get a single View",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.views.tasks",
+      "shortPath": "views.tasks",
+      "description": "List Tasks visible in a View",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.views.update",
+      "shortPath": "views.update",
+      "description": "Update a View",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "view_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "list | board | calendar | table | timeline | workload | activity | map | chat | gantt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaceAcl.update",
+      "shortPath": "workspaceAcl.update",
+      "description": "Update privacy and access for a Workspace object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object_type",
+            "optional": false,
+            "type": "space | folder | list | task | view | doc | goal | dashboard | whiteboard"
+          },
+          {
+            "key": "object_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "grants",
+            "optional": true,
+            "type": "{ kind: user | group, id: string, permission_level: 1 | 3 | 4 | 5 | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.authorizedUser",
+      "shortPath": "workspaces.authorizedUser",
+      "description": "Get the authorized ClickUp user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, username: string, email: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.customRoles",
+      "shortPath": "workspaces.customRoles",
+      "description": "List Workspace custom roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_members",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_roles",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.customTaskTypes",
+      "shortPath": "workspaces.customTaskTypes",
+      "description": "List Workspace custom task types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_items",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.everythingViewsCreate",
+      "shortPath": "workspaces.everythingViewsCreate",
+      "description": "Create an Everything-level Workspace view",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "list | board | calendar | table | timeline | workload | activity | map | chat | gantt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.everythingViewsGet",
+      "shortPath": "workspaces.everythingViewsGet",
+      "description": "List Everything-level Workspace views",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "views",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "List Workspaces (Teams)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.plan",
+      "shortPath": "workspaces.plan",
+      "description": "Get the Workspace subscription plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.seats",
+      "shortPath": "workspaces.seats",
+      "description": "Get Workspace seat utilization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "seats",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.sharedHierarchy",
+      "shortPath": "workspaces.sharedHierarchy",
+      "description": "Get hierarchy shared with the authorized user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickup.api.workspaces.teamFields",
+      "shortPath": "workspaces.teamFields",
+      "description": "List Workspace-level custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id: string, name: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

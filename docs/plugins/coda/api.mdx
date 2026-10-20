@@ -574,7 +574,8 @@ await corsair.coda.api.automations.trigger({});
 <Accordion title="payload full type">
 
 ```ts
-Record<string, string | number | boolean | null | object | array>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2351,7 +2352,8 @@ await corsair.coda.api.packAssets.upload({});
 <Accordion title="headers full type">
 
 ```ts
-Record<string, string>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -3377,7 +3379,8 @@ await corsair.coda.api.packListings.get({});
     allowedConfigurations?: {
       configurationId: string,
       name: string,
-      policy?: Record<string, string | number | boolean | null | object | array>,
+      policy?: {
+      },
       hasSharedConnection?: boolean
     }[],
     allowedPackIds?: number[],
@@ -3424,13 +3427,15 @@ await corsair.coda.api.packListings.get({});
     allowedConfigurations?: {
       configurationId: string,
       name: string,
-      policy?: Record<string, string | number | boolean | null | object | array>,
+      policy?: {
+      },
       hasSharedConnection?: boolean
     }[],
     allowedPackIds?: number[]
   },
   ingestionLimitSettings?: {
-    tableSettings?: Record<string, { maxBytesPerSyncTableOverride?: number | null, excludeIngestionByDefault?: boolean, parameterLimits?: Record<string, { default: string, allowed: string[] }> }>,
+    tableSettings?: {
+    },
     maxBytesPerSyncTableDefault?: number | null,
     allowedTablesCount: number
   }
@@ -3444,7 +3449,8 @@ await corsair.coda.api.packListings.get({});
 {
   configurationId: string,
   name: string,
-  policy?: Record<string, string | number | boolean | null | object | array>,
+  policy?: {
+  },
   hasSharedConnection?: boolean
 }
 ```
@@ -3710,7 +3716,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3737,7 +3743,7 @@ await corsair.coda.api.packLogs.list({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: invocation,
     context: {
@@ -3749,7 +3755,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3792,7 +3798,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3836,7 +3842,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3863,7 +3869,7 @@ await corsair.coda.api.packLogs.list({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: auth,
     context: {
@@ -3875,7 +3881,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3915,7 +3921,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3942,7 +3948,7 @@ await corsair.coda.api.packLogs.list({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: ingestionDebug,
     context: {
@@ -3954,7 +3960,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -3981,7 +3987,7 @@ await corsair.coda.api.packLogs.list({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: agentRuntime,
     context: {
@@ -3993,7 +3999,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -4038,7 +4044,7 @@ await corsair.coda.api.packLogs.list({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -4133,7 +4139,7 @@ await corsair.coda.api.packLogs.listGrouped({});
         connectionId: string,
         connectionName?: string,
         requestId: string,
-        requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+        requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
         createdAt: string,
         logId: string,
         docObjectId?: string,
@@ -4178,7 +4184,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4205,7 +4211,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: invocation,
         context: {
@@ -4217,7 +4223,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4260,7 +4266,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4304,7 +4310,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4331,7 +4337,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: auth,
         context: {
@@ -4343,7 +4349,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4383,7 +4389,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4410,7 +4416,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: ingestionDebug,
         context: {
@@ -4422,7 +4428,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4449,7 +4455,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: agentRuntime,
         context: {
@@ -4461,7 +4467,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4506,7 +4512,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4552,7 +4558,7 @@ await corsair.coda.api.packLogs.listGrouped({});
         connectionId: string,
         connectionName?: string,
         requestId: string,
-        requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+        requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
         createdAt: string,
         logId: string,
         docObjectId?: string,
@@ -4594,7 +4600,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4621,7 +4627,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: invocation,
         context: {
@@ -4633,7 +4639,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4676,7 +4682,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4720,7 +4726,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4747,7 +4753,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: auth,
         context: {
@@ -4759,7 +4765,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4799,7 +4805,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4826,7 +4832,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: ingestionDebug,
         context: {
@@ -4838,7 +4844,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4865,7 +4871,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: agentRuntime,
         context: {
@@ -4877,7 +4883,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -4922,7 +4928,7 @@ await corsair.coda.api.packLogs.listGrouped({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5021,7 +5027,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
         connectionId: string,
         connectionName?: string,
         requestId: string,
-        requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+        requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
         createdAt: string,
         logId: string,
         docObjectId?: string,
@@ -5066,7 +5072,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5093,7 +5099,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: invocation,
         context: {
@@ -5105,7 +5111,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5148,7 +5154,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5192,7 +5198,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5219,7 +5225,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: auth,
         context: {
@@ -5231,7 +5237,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5271,7 +5277,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5298,7 +5304,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: ingestionDebug,
         context: {
@@ -5310,7 +5316,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5337,7 +5343,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: agentRuntime,
         context: {
@@ -5349,7 +5355,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5394,7 +5400,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5440,7 +5446,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
         connectionId: string,
         connectionName?: string,
         requestId: string,
-        requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+        requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
         createdAt: string,
         logId: string,
         docObjectId?: string,
@@ -5482,7 +5488,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5509,7 +5515,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: invocation,
         context: {
@@ -5521,7 +5527,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5564,7 +5570,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5608,7 +5614,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5635,7 +5641,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: auth,
         context: {
@@ -5647,7 +5653,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5687,7 +5693,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5714,7 +5720,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: ingestionDebug,
         context: {
@@ -5726,7 +5732,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5753,7 +5759,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           executingAgentInstanceId?: string
         },
         message: string,
-        level: error | warn | info | debug | trace | "unknown"
+        level: error | warn | info | debug | trace | unknown
       } | {
         type: agentRuntime,
         context: {
@@ -5765,7 +5771,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5810,7 +5816,7 @@ await corsair.coda.api.packLogs.listGroupedIngestion({});
           connectionId: string,
           connectionName?: string,
           requestId: string,
-          requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+          requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
           createdAt: string,
           logId: string,
           docObjectId?: string,
@@ -5910,7 +5916,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -5937,7 +5943,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: invocation,
     context: {
@@ -5949,7 +5955,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -5992,7 +5998,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6036,7 +6042,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6063,7 +6069,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: auth,
     context: {
@@ -6075,7 +6081,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6115,7 +6121,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6142,7 +6148,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: ingestionDebug,
     context: {
@@ -6154,7 +6160,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6181,7 +6187,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       executingAgentInstanceId?: string
     },
     message: string,
-    level: error | warn | info | debug | trace | "unknown"
+    level: error | warn | info | debug | trace | unknown
   } | {
     type: agentRuntime,
     context: {
@@ -6193,7 +6199,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6238,7 +6244,7 @@ await corsair.coda.api.packLogs.listIngestion({});
       connectionId: string,
       connectionName?: string,
       requestId: string,
-      requestType: "unknown" | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
+      requestType: unknown | connectionNameMetadataRequest | parameterAutocompleteMetadataRequest | postAuthSetupMetadataRequest | propertyOptionsMetadataRequest | getSyncTableSchemaMetadataRequest | getDynamicSyncTableNameMetadataRequest | listSyncTableDynamicUrlsMetadataRequest | searchSyncTableDynamicUrlsMetadataRequest | getDynamicSyncTableDisplayUrlMetadataRequest | getIdentifiersForConnectionRequest | invokeFormulaRequest | invokeSyncFormulaRequest | invokeSyncUpdateFormulaRequest | invokeExecuteGetPermissionsRequest | validateParametersMetadataRequest | mcp,
       createdAt: string,
       logId: string,
       docObjectId?: string,
@@ -6330,7 +6336,8 @@ await corsair.coda.api.packLogs.listIngestionExecutions({});
   ingestionExecutionId: string,
   ingestionId: string,
   ingestionName: string,
-  ingestionStatusCounts?: Record<string, number>,
+  ingestionStatusCounts?: {
+  },
   lastFinishedFullWorkflowExecutionId?: string,
   lastFinishedIncrementalWorkflowExecutionId?: string,
   latestFullWorkflowExecutionId?: string,
@@ -6947,7 +6954,8 @@ await corsair.coda.api.packs.getConfigurationSchema({});
 <Accordion title="Output full type">
 
 ```ts
-Record<string, string | number | boolean | null | object | array>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -7483,7 +7491,8 @@ await corsair.coda.api.packVersions.register({});
 <Accordion title="headers full type">
 
 ```ts
-Record<string, string>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -7606,7 +7615,8 @@ await corsair.coda.api.packVersions.uploadSourceCode({});
 <Accordion title="headers full type">
 
 ```ts
-Record<string, string>
+{
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -8580,7 +8590,8 @@ await corsair.coda.api.rows.get({});
 <Accordion title="values full type">
 
 ```ts
-Record<string, string | number | boolean | object | array>
+{
+}
 ```
 </Accordion>
 
@@ -8662,7 +8673,8 @@ await corsair.coda.api.rows.list({});
   browserLink: string,
   createdAt: string,
   updatedAt: string,
-  values: Record<string, string | number | boolean | object | array>
+  values: {
+  }
 }[]
 ```
 </Accordion>

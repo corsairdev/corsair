@@ -162,7 +162,8 @@ await corsair.convex.api.deployment.executeQueryBatch({
 ```ts
 {
   path: string,
-  args: Record<string, JsonValue>,
+  args: {
+  },
   format?: string | null
 }[]
 ```
@@ -184,12 +185,12 @@ await corsair.convex.api.deployment.executeQueryBatch({
 (
   {
     status: success,
-    value: JsonValue,
+    value: lazy,
     logLines?: string[]
   } | {
     status: error,
     errorMessage: string,
-    errorData?: JsonValue,
+    errorData?: lazy,
     logLines?: string[]
   }
 )[]

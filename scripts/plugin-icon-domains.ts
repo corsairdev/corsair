@@ -20,6 +20,7 @@ const PLUGIN_DISCOVERY_SKIP_DIRS = new Set([
 
 /** Hand-tuned domains for plugins where `<id>.com` is wrong and yaml is not set yet. */
 const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
+	akta: 'akta.pro',
 	ably: 'ably.io',
 	abstract: 'abstractapi.com',
 	anthropicadministrator: 'anthropic.com',

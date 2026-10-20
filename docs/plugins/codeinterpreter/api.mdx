@@ -1,0 +1,213 @@
+---
+title: API
+description: "API reference for CodeInterpreter: every `codeinterpreter.api.*` operation with input and output types."
+---
+
+Every `codeinterpreter.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Code
+
+### execute
+
+`code.execute`
+
+Execute code in the sandbox
+
+**Risk:** `write`
+
+```ts
+await corsair.codeinterpreter.api.code.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `language` | `string` | No | — |
+| `session_id` | `string` | No | — |
+| `args` | `string[]` | No | — |
+| `files` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exit_code` | `number` | Yes | — |
+| `stdout` | `string` | No | — |
+| `stderr` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `output_files` | `object[]` | No | — |
+| `session_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="output_files full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## File
+
+### delete
+
+`file.delete`
+
+Delete a file from the sandbox
+
+**Risk:** `destructive`
+
+```ts
+await corsair.codeinterpreter.api.file.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `session_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `file_id` | `string` | Yes | — |
+
+
+
+---
+
+### download
+
+`file.download`
+
+Download a file from the sandbox
+
+**Risk:** `read`
+
+```ts
+await corsair.codeinterpreter.api.file.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `session_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `mime_type` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`file.list`
+
+List files in the sandbox
+
+**Risk:** `read`
+
+```ts
+await corsair.codeinterpreter.api.file.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  size?: number,
+  mime_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`file.upload`
+
+Upload a file to the sandbox
+
+**Risk:** `write`
+
+```ts
+await corsair.codeinterpreter.api.file.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `content_encoding` | `utf8 \| base64` | No | — |
+| `session_id` | `string` | No | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `session_id` | `string` | No | — |
+
+
+
+---
+
