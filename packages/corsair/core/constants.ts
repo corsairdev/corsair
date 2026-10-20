@@ -181,6 +181,7 @@ export const BaseProviders = [
 	'cursor',
 	'customerio',
 	'customgpt',
+	'cuttly',
 	'dadataru',
 	'databricks',
 	'datadog',
@@ -582,6 +583,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
+	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
@@ -989,6 +991,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'customerio'
 	| 'customgpt'
+	| 'cuttly'
 	| 'dadataru'
 	| 'databricks'
 	| 'datadog'
