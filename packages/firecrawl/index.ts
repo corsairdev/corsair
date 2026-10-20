@@ -12,8 +12,7 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	createManagedPricingCredentialCache,
-	getManagedPricingApiKey,
-	requireHubForManagedPricing,
+	resolveManagedPricingApiKey,
 } from 'corsair/hub';
 import {
 	AgentEndpoints,
@@ -370,14 +369,11 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'managed_pricing') {
-				requireHubForManagedPricing('firecrawl', ctx.hub);
-				const result = await getManagedPricingApiKey({
-					hub: ctx.hub,
+				return resolveManagedPricingApiKey(ctx, {
 					plugin: 'firecrawl',
-					tenantId: ctx.tenantId,
 					cache: firecrawlManagedPricingCache,
+					operation: ctx.meteredOperationId,
 				});
-				return result.apiKey;
 			}
 
 			throw new AuthMissingError('firecrawl', authType ?? 'api_key');

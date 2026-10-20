@@ -1,10 +1,15 @@
 import { ReconnectRequiredError } from '../../core/auth/errors/reconnect-required';
 import {
-	parseHubApiErrorBody,
+	formatHubApiErrorMessage,
 	parseHubReconnectBody,
 } from '../contracts/connect-api';
 import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
+import { CORSAIR_SDK_VERSION } from '../sdk-version';
 import type { HubConfig } from '../types';
+
+function corsairSdkVersionHeader(): Record<string, string> {
+	return { 'x-corsair-sdk-version': CORSAIR_SDK_VERSION };
+}
 
 export function normalizeHubApiUrl(apiUrl: string): string {
 	return apiUrl.replace(/\/$/, '');
@@ -83,16 +88,7 @@ export function parseHubApiError(
 	status: number,
 	notFoundMessage?: string,
 ): string {
-	if (status === 404 && notFoundMessage) {
-		return notFoundMessage;
-	}
-
-	const message = parseHubApiErrorBody(payload);
-	if (message) {
-		return message;
-	}
-
-	return `Hub API returned HTTP ${status}`;
+	return formatHubApiErrorMessage(payload, status, notFoundMessage);
 }
 
 // A `reconnect_required` body becomes a typed error carrying Hub's scoped connect
@@ -121,6 +117,7 @@ export async function hubApiPost<T>(input: {
 	body: unknown;
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
+	extraHeaders?: Record<string, string>;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
@@ -130,6 +127,8 @@ export async function hubApiPost<T>(input: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
 			...instanceKeyHeader(input.hub),
+			...corsairSdkVersionHeader(),
+			...input.extraHeaders,
 		},
 		body: JSON.stringify(input.body),
 	});
