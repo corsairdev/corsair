@@ -148,7 +148,7 @@ export const BaseProviders = [
 	'classmarker',
 	'clay',
 	'clickhouse',
-	'clickmeeting',
+	'clicksend',
 	'clientary',
 	'clockify',
 	'close',
@@ -546,7 +546,7 @@ export const ProviderDisplayNames = {
 	classmarker: 'ClassMarker',
 	clay: 'Clay',
 	clickhouse: 'Clickhouse',
-	clickmeeting: 'ClickMeeting',
+	clicksend: 'ClickSend',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	close: 'Close',
@@ -950,7 +950,7 @@ export type AllProviders =
 	| 'classmarker'
 	| 'clay'
 	| 'clickhouse'
-	| 'clickmeeting'
+	| 'clicksend'
 	| 'clientary'
 	| 'clockify'
 	| 'close'
