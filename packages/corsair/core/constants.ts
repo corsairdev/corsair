@@ -232,6 +232,7 @@ export const BaseProviders = [
 	'hubspot',
 	'huggingface',
 	'humanitix',
+	'hunterio',
 	'imagior',
 	'imejisio',
 	'imgbb',
@@ -600,6 +601,7 @@ export const ProviderDisplayNames = {
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
 	humanitix: 'Humanitix',
+	hunterio: 'Hunter.io',
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
@@ -975,6 +977,7 @@ export type AllProviders =
 	| 'hubspot'
 	| 'huggingface'
 	| 'humanitix'
+	| 'hunterio'
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
