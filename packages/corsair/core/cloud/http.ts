@@ -1,4 +1,5 @@
 import { ManagementApiError } from '../management/errors';
+import { activeMode } from '../permissions';
 
 export type CloudTransport = {
 	baseUrl: string;
@@ -57,6 +58,7 @@ export async function cloudRequest<T>(
 	path: string,
 	body?: unknown,
 ): Promise<T> {
+	const mode = activeMode();
 	const doFetch = transport.fetch ?? globalThis.fetch;
 	const timeoutMs = transport.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 	const controller = new AbortController();
@@ -75,6 +77,9 @@ export async function cloudRequest<T>(
 			headers: {
 				authorization: `Bearer ${transport.apiKey}`,
 				'content-type': 'application/json',
+				// The scope is process-local, so the mode travels for the server to
+				// judge an operation by it.
+				...(mode ? { 'x-corsair-mode': mode } : {}),
 			},
 			body: body === undefined ? undefined : JSON.stringify(body),
 			signal: controller.signal,

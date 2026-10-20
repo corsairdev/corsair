@@ -42,6 +42,39 @@ function createContext() {
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
 				deleteByEntityId: jest.fn().mockResolvedValue(true),
 			},
+			parseChunks: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			parseBlocks: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			parseOcrItems: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			extractOutputs: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			extractRecords: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			extractCitations: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			splitSegments: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			classifyOutputs: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			editOutputs: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			editFormFields: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+			pipelineOutputs: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
 		},
 	};
 }
@@ -54,7 +87,25 @@ const parseResponse = {
 	usage: { num_pages: 2, credits: 2 },
 	result: {
 		type: 'full' as const,
-		chunks: [{ content: 'Hello', embed: 'Hello' }],
+		chunks: [
+			{
+				content: 'Hello',
+				embed: 'Hello',
+				blocks: [
+					{
+						type: 'Text',
+						content: 'Hello',
+						bbox: {
+							left: 0.1,
+							top: 0.2,
+							width: 0.3,
+							height: 0.04,
+							page: 1,
+						},
+					},
+				],
+			},
+		],
 	},
 };
 
@@ -63,7 +114,7 @@ describe('Reducto endpoint routing', () => {
 		jest.clearAllMocks();
 	});
 
-	it('parse.parse posts /parse and caches the job', async () => {
+	it('parse.parse posts /parse and persists the job', async () => {
 		mockRequest.mockResolvedValue(parseResponse);
 		const ctx = createContext();
 
@@ -77,7 +128,17 @@ describe('Reducto endpoint routing', () => {
 		});
 		expect(ctx.db.jobs.upsertByEntityId).toHaveBeenCalledWith(
 			'job-1',
-			expect.objectContaining({ jobId: 'job-1' }),
+			expect.objectContaining({
+				jobId: 'job-1',
+				duration: 1.2,
+				numPages: 2,
+				parseResultKind: 'full',
+				usage: { numPages: 2, credits: 2 },
+			}),
+		);
+		expect(ctx.db.parseBlocks.upsertByEntityId).toHaveBeenCalledWith(
+			'job-1#c0#b0',
+			expect.objectContaining({ type: 'Text', jobId: 'job-1' }),
 		);
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
@@ -221,8 +282,16 @@ describe('Reducto endpoint routing', () => {
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('/pipeline_async');
 	});
 
-	it('jobs.get reads /job/{job_id} and caches the path id', async () => {
-		mockRequest.mockResolvedValue({ status: 'Completed', result: null });
+	it('jobs.get reads /job/{job_id} and persists the path id', async () => {
+		const polledResult = {
+			type: 'full' as const,
+			chunks: [{ content: 'Done', blocks: [] }],
+		};
+		mockRequest.mockResolvedValue({
+			status: 'Completed',
+			result: polledResult,
+			progress: 100,
+		});
 		const ctx = createContext();
 		await (Jobs.get as AnyEndpoint)(ctx, { job_id: 'job-1' });
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -235,7 +304,12 @@ describe('Reducto endpoint routing', () => {
 		);
 		expect(ctx.db.jobs.upsertByEntityId).toHaveBeenCalledWith(
 			'job-1',
-			expect.objectContaining({ jobId: 'job-1', status: 'Completed' }),
+			expect.objectContaining({
+				jobId: 'job-1',
+				status: 'Completed',
+				progress: 100,
+				parseResultKind: 'full',
+			}),
 		);
 	});
 
@@ -273,7 +347,7 @@ describe('Reducto endpoint routing', () => {
 		);
 	});
 
-	it('jobs.cancel posts /cancel/{job_id} and keeps earlier cache fields', async () => {
+	it('jobs.cancel posts /cancel/{job_id} and keeps earlier persisted fields', async () => {
 		mockRequest.mockResolvedValue({});
 		const ctx = createContext();
 		ctx.db.jobs.findByEntityId.mockResolvedValue({
