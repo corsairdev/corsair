@@ -1032,6 +1032,14 @@
                 ]
               },
               {
+                "group": "CallPage",
+                "pages": [
+                  "plugins/callpage/overview",
+                  "plugins/callpage/api",
+                  "plugins/callpage/database"
+                ]
+              },
+              {
                 "group": "Callingly",
                 "pages": [
                   "plugins/callingly/overview",
