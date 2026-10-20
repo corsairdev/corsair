@@ -1,0 +1,47 @@
+displayName: Search1API
+description: Live web search, crawl, extraction, and site-wide data in one API for AI agents.
+domain: search1api.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: web.search
+    title: Search the web
+    args:
+      query: open source integration layer
+      max_results: 10
+  write:
+    path: content.crawl
+    title: Crawl a page
+    args:
+      url: https://example.com/docs
+dbExample:
+  entity: searchResults
+  note: Search hits are cached by link when a database is configured, so repeated searches refresh rows instead of duplicating them.
+  data:
+    query: corsair
+apiExamples:
+  web.search:
+    call: "{ query: 'open source integration layer', search_service: 'duckduckgo', max_results: 10 }"
+  web.ask:
+    query: what shipped in AI this week?
+  web.trending:
+    call: "{ search_service: 'github', max_results: 10 }"
+  web.feedback:
+    call: "{ message: 'POST /crawl returned empty content for example.com/docs', category: 'bug', request_id: 'req_8f3a' }"
+  content.crawl:
+    url: https://example.com/docs
+  content.screenshot:
+    url: https://example.com
+    full_page: true
+    viewport:
+      width: 1440
+      height: 900
+  content.sitemap:
+    call: "{ url: 'https://example.com', type: 'sitemap' }"
+  content.extract:
+    url: https://example.com/pricing
+    prompt: List the pricing tiers
+  deepcrawl.start:
+    call: "{ url: 'https://example.com', type: 'sitemap' }"
+  account.usage: {}
+  account.health: {}
