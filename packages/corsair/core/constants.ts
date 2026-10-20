@@ -157,6 +157,7 @@ export const BaseProviders = [
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
+	'codeinterpreter',
 	'coda',
 	'cody',
 	'coinbase',
@@ -555,6 +556,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
+	codeinterpreter: 'CodeInterpreter',
 	coda: 'Coda',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
@@ -959,6 +961,7 @@ export type AllProviders =
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
+	| 'codeinterpreter'
 	| 'coda'
 	| 'cody'
 	| 'coinbase'
