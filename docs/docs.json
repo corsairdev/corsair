@@ -1442,6 +1442,14 @@
                 ]
               },
               {
+                "group": "DocuSign",
+                "pages": [
+                  "plugins/docusign/overview",
+                  "plugins/docusign/api",
+                  "plugins/docusign/database"
+                ]
+              },
+              {
                 "group": "Dodo Payments",
                 "pages": [
                   "plugins/dodopayments/overview",
