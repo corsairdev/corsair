@@ -250,6 +250,45 @@ paths:
         "502": { $ref: "#/components/responses/Error" }
         "500": { $ref: "#/components/responses/Error" }
 
+  /{tenant}/{plugin}/db/{entity}/{method}:
+    post:
+      operationId: entityDb
+      tags: [invoke]
+      summary: Call a plugin's entity store for a tenant.
+      description: >
+        The HTTP face of `client.<plugin>.db.<entity>.<method>(...)`. Entity rows
+        live in the project's own schema, so this is how a cloud client reaches
+        them. A Date argument is sent as `{"$date": "<iso>"}`: `search`'s date
+        filters are matched on an actual Date, and a bare ISO string is dropped
+        rather than rejected.
+      parameters:
+        - { name: tenant, in: path, required: true, schema: { type: string } }
+        - { name: plugin, in: path, required: true, schema: { type: string } }
+        - { name: entity, in: path, required: true, schema: { type: string }, description: "Entity type, e.g. channels" }
+        - name: method
+          in: path
+          required: true
+          description: One of the entity-client methods.
+          schema:
+            type: string
+            enum: [findByEntityId, existsByEntityId, findIdByEntityId, findById, findManyByEntityIds, list, search, upsertByEntityId, deleteById, deleteByEntityId, count]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                args:
+                  type: array
+                  items: {}
+                  description: "Positional arguments for the method, in order."
+      responses:
+        "200": { description: Result, content: { application/json: { schema: { type: object, properties: { data: {} } } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "500": { $ref: "#/components/responses/Error" }
+
   /instances:
     # Served at the PROJECT ROOT (one level above /api/corsair), so this path
     # overrides the document server base. The SDK resolves it once per client
@@ -345,7 +384,7 @@ components:
       description: "Shape follows the SDK's management PluginInfo type; treated as open."
       properties:
         id: { type: string }
-        authType: { type: [string, "null"], enum: [oauth_2, api_key, bot_token, managed, null] }
+        authType: { type: [string, "null"], enum: [oauth_2, api_key, bot_token, managed, managed_pricing, null] }
         configured: { type: boolean }
         missingFields: { type: array, items: { type: string } }
         oauth:
