@@ -448,8 +448,25 @@ export default function PrivacyPolicyPage() {
 						or improve any artificial intelligence or machine learning model,
 						and we do not transfer it to any AI provider that would use it for
 						that purpose. The use of raw or derived user data received from
-						Google Workspace APIs will adhere to the Google User Data Policy,
-						including the Limited Use requirements.
+						Google Workspace APIs will adhere to the{' '}
+						<a
+							href="https://developers.google.com/terms/api-services-user-data-policy"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google API Services User Data Policy
+						</a>{' '}
+						and the{' '}
+						<a
+							href="https://developers.google.com/workspace/workspace-api-user-data-developer-policy"
+							target="_blank"
+							rel="noopener noreferrer"
+							className={legalLinkClassName}
+						>
+							Google Workspace User Data and Developer Policy
+						</a>
+						, including the Limited Use requirements.
 					</p>
 				</LegalSubsection>
 
