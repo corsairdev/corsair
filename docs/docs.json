@@ -1221,6 +1221,15 @@
                 ]
               },
               {
+                "group": "Coda",
+                "pages": [
+                  "plugins/coda/overview",
+                  "plugins/coda/api",
+                  "plugins/coda/database",
+                  "plugins/coda/webhooks"
+                ]
+              },
+              {
                 "group": "Cody",
                 "pages": [
                   "plugins/cody/overview",
