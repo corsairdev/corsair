@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'notion',
 	'ocrspace',
 	'ocrwebservice',
+	'octen',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -635,6 +636,7 @@ export const ProviderDisplayNames = {
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ocrwebservice: 'OcrWebService',
+	octen: 'Octen',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -1014,6 +1016,7 @@ export type AllProviders =
 	| 'notion'
 	| 'ocrspace'
 	| 'ocrwebservice'
+	| 'octen'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
