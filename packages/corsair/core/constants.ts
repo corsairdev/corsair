@@ -256,6 +256,7 @@ export const BaseProviders = [
 	'mailtrap',
 	'marketstack',
 	'merriamwebsterdict',
+	'minimax',
 	'monday',
 	'neon',
 	'nextdns',
@@ -629,6 +630,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	minimax: 'MiniMax',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
@@ -1009,6 +1011,7 @@ export type AllProviders =
 	| 'mailtrap'
 	| 'marketstack'
 	| 'merriamwebsterdict'
+	| 'minimax'
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
