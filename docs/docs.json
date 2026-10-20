@@ -1138,6 +1138,14 @@
                 ]
               },
               {
+                "group": "Claid.ai",
+                "pages": [
+                  "plugins/claidai/overview",
+                  "plugins/claidai/api",
+                  "plugins/claidai/database"
+                ]
+              },
+              {
                 "group": "Classmarker",
                 "pages": [
                   "plugins/classmarker/overview",

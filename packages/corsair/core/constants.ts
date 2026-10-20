@@ -137,6 +137,7 @@ export const BaseProviders = [
 	'chmeetings',
 	'cincopa',
 	'circleci',
+	'claidai',
 	'classmarker',
 	'clay',
 	'clickhouse',
@@ -516,6 +517,7 @@ export const ProviderDisplayNames = {
 	chmeetings: 'ChMeetings',
 	cincopa: 'Cincopa',
 	circleci: 'CircleCI',
+	claidai: 'Claid.ai',
 	classmarker: 'ClassMarker',
 	clay: 'Clay',
 	clickhouse: 'Clickhouse',
@@ -902,6 +904,7 @@ export type AllProviders =
 	| 'chmeetings'
 	| 'cincopa'
 	| 'circleci'
+	| 'claidai'
 	| 'classmarker'
 	| 'clay'
 	| 'clickhouse'
