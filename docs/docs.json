@@ -1670,6 +1670,14 @@
                 ]
               },
               {
+                "group": "Fixer",
+                "pages": [
+                  "plugins/fixer/overview",
+                  "plugins/fixer/api",
+                  "plugins/fixer/database"
+                ]
+              },
+              {
                 "group": "Flexisign",
                 "pages": [
                   "plugins/flexisign/overview",
