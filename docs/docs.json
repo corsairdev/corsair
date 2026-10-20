@@ -1278,6 +1278,14 @@
                 ]
               },
               {
+                "group": "Convex",
+                "pages": [
+                  "plugins/convex/overview",
+                  "plugins/convex/api",
+                  "plugins/convex/database"
+                ]
+              },
+              {
                 "group": "ConvoloAi",
                 "pages": [
                   "plugins/convoloai/overview",

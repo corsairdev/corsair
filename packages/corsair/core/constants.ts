@@ -158,6 +158,7 @@ export const BaseProviders = [
 	'contentfulgraphql',
 	'contextdev',
 	'contextsevenmcp',
+	'convex',
 	'convoloai',
 	'cosmic',
 	'countdownapi',
@@ -535,6 +536,7 @@ export const ProviderDisplayNames = {
 	contentfulgraphql: 'Contentful GraphQL',
 	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
+	convex: 'Convex',
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
@@ -919,6 +921,7 @@ export type AllProviders =
 	| 'contentfulgraphql'
 	| 'contextdev'
 	| 'contextsevenmcp'
+	| 'convex'
 	| 'convoloai'
 	| 'cosmic'
 	| 'countdownapi'
