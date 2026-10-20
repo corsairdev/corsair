@@ -247,6 +247,7 @@ export const BaseProviders = [
 	'leexi',
 	'linear',
 	'linkedin',
+	'litescrape',
 	'loyverse',
 	'mailboxlayer',
 	'mailcheck',
@@ -617,6 +618,7 @@ export const ProviderDisplayNames = {
 	leexi: 'Leexi',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
@@ -994,6 +996,7 @@ export type AllProviders =
 	| 'leexi'
 	| 'linear'
 	| 'linkedin'
+	| 'litescrape'
 	| 'loyverse'
 	| 'mailboxlayer'
 	| 'mailcheck'
