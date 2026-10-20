@@ -249,6 +249,7 @@ export const BaseProviders = [
 	'linkedin',
 	'litescrape',
 	'loyverse',
+	'magichour',
 	'mailboxlayer',
 	'mailcheck',
 	'mailchimp',
@@ -620,6 +621,7 @@ export const ProviderDisplayNames = {
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
+	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
@@ -998,6 +1000,7 @@ export type AllProviders =
 	| 'linkedin'
 	| 'litescrape'
 	| 'loyverse'
+	| 'magichour'
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
