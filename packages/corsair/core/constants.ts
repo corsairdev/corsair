@@ -259,6 +259,7 @@ export const BaseProviders = [
 	'merriamwebsterdict',
 	'minimax',
 	'monday',
+	'mrscraper',
 	'neon',
 	'nextdns',
 	'northflank',
@@ -634,6 +635,7 @@ export const ProviderDisplayNames = {
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	monday: 'Monday',
+	mrscraper: 'MrScraper',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
@@ -1016,6 +1018,7 @@ export type AllProviders =
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'monday'
+	| 'mrscraper'
 	| 'neon'
 	| 'nextdns'
 	| 'northflank'
