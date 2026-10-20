@@ -183,6 +183,7 @@ export const BaseProviders = [
 	'customgpt',
 	'cuttly',
 	'dadataru',
+	'daffy',
 	'databricks',
 	'datadog',
 	'dataforseo',
@@ -585,6 +586,7 @@ export const ProviderDisplayNames = {
 	customgpt: 'CustomGPT',
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
+	daffy: 'Daffy',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	dataforseo: 'DataForSEO',
@@ -993,6 +995,7 @@ export type AllProviders =
 	| 'customgpt'
 	| 'cuttly'
 	| 'dadataru'
+	| 'daffy'
 	| 'databricks'
 	| 'datadog'
 	| 'dataforseo'
