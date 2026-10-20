@@ -1024,6 +1024,14 @@
                 ]
               },
               {
+                "group": "Callingly",
+                "pages": [
+                  "plugins/callingly/overview",
+                  "plugins/callingly/api",
+                  "plugins/callingly/database"
+                ]
+              },
+              {
                 "group": "CampaignCleaner",
                 "pages": [
                   "plugins/campaigncleaner/overview",
