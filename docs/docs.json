@@ -1242,6 +1242,15 @@
                 ]
               },
               {
+                "group": "Close",
+                "pages": [
+                  "plugins/close/overview",
+                  "plugins/close/api",
+                  "plugins/close/database",
+                  "plugins/close/webhooks"
+                ]
+              },
+              {
                 "group": "Cloudcart",
                 "pages": [
                   "plugins/cloudcart/overview",
