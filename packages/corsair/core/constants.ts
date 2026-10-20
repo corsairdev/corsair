@@ -140,6 +140,7 @@ export const BaseProviders = [
 	'chaser',
 	'chatbotkit',
 	'chatfai',
+	'chatwork',
 	'chmeetings',
 	'cincopa',
 	'circleci',
@@ -533,6 +534,7 @@ export const ProviderDisplayNames = {
 	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
+	chatwork: 'Chatwork',
 	chmeetings: 'ChMeetings',
 	cincopa: 'Cincopa',
 	circleci: 'CircleCI',
@@ -932,6 +934,7 @@ export type AllProviders =
 	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
+	| 'chatwork'
 	| 'chmeetings'
 	| 'cincopa'
 	| 'circleci'
