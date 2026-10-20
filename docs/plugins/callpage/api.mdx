@@ -1,0 +1,1379 @@
+---
+title: API
+description: "API reference for CallPage: every `callpage.api.*` operation with input and output types."
+---
+
+Every `callpage.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### get
+
+`calls.get`
+
+Get a CallPage call by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.calls.get({ callId: 99 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `to` | `string` | No | — |
+| `to_formatted` | `string` | No | — |
+| `human_status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `scheduled_at` | `string` | No | — |
+| `cancelled_at` | `string` | No | — |
+| `scheduled_success` | `boolean` | No | — |
+| `leadable_id` | `number` | No | — |
+| `leadable_type` | `string` | No | — |
+| `leadable_description` | `string` | No | — |
+| `utm` | `object` | No | — |
+| `referer` | `object` | No | — |
+| `request` | `object` | No | — |
+| `call` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="utm full type">
+
+```ts
+{
+  utm_medium?: string | null,
+  utm_source?: string | null,
+  utm_content?: string | null,
+  utm_campaign?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="referer full type">
+
+```ts
+{
+  medium?: string | null,
+  source?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="request full type">
+
+```ts
+{
+  id?: number,
+  ip?: string | null,
+  url?: string | null,
+  locale?: string | null,
+  geo_city?: string | null,
+  geo_country_code?: string | null,
+  geo_country_name?: string | null,
+  user_agent_device?: string | null,
+  user_agent_device_type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="call full type">
+
+```ts
+{
+  id?: number,
+  sid?: string | null,
+  type?: number | null,
+  transcribed?: boolean | null,
+  billing_time?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`calls.history`
+
+List and filter CallPage call history.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.calls.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `display_hidden` | `number` | No | — |
+| `call_id` | `number[]` | No | — |
+| `phone_number` | `string` | No | — |
+| `user_ids` | `number[]` | No | — |
+| `statuses` | `string[]` | No | — |
+| `tag_ids` | `number[]` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+| `widget_ids` | `number[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `url` | `string` | No | — |
+| `incoming_number_ids` | `number[]` | No | — |
+| `tel` | `string` | No | — |
+| `widget_id` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  to?: string | null,
+  to_formatted?: string | null,
+  human_status?: string | null,
+  created_at?: string | null,
+  scheduled_at?: string | null,
+  cancelled_at?: string | null,
+  scheduled_success?: boolean | null,
+  leadable_id?: number | null,
+  leadable_type?: string | null,
+  leadable_description?: string | null,
+  utm?: {
+    utm_medium?: string | null,
+    utm_source?: string | null,
+    utm_content?: string | null,
+    utm_campaign?: string | null
+  },
+  referer?: {
+    medium?: string | null,
+    source?: string | null
+  },
+  request?: {
+    id?: number,
+    ip?: string | null,
+    url?: string | null,
+    locale?: string | null,
+    geo_city?: string | null,
+    geo_country_code?: string | null,
+    geo_country_name?: string | null,
+    user_agent_device?: string | null,
+    user_agent_device_type?: string | null
+  },
+  call?: {
+    id?: number,
+    sid?: string | null,
+    type?: number | null,
+    transcribed?: boolean | null,
+    billing_time?: number | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Managers
+
+### create
+
+`managers.create`
+
+Create a CallPage manager for a widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.managers.create({ widget_id: 1, user_id: 2, enabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `widget_id` | `number` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `business_times` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="business_times full type">
+
+```ts
+{
+  day_of_week: number,
+  enabled: boolean,
+  start_time?: string | null,
+  end_time?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`managers.delete`
+
+Delete a CallPage manager from a widget.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.callpage.api.managers.delete({ widget_id: 1, user_id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `widget_id` | `number` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`managers.get`
+
+Get a CallPage manager by user and widget.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.managers.get({ widget_id: 1, user_id: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `widget_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `widget_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `enabled` | `boolean` | No | — |
+| `user` | `object` | No | — |
+| `departments` | `object[]` | No | — |
+| `business_times` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  tel?: string | null,
+  email?: string | null,
+  avatar?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="departments full type">
+
+```ts
+{
+  id: number,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="business_times full type">
+
+```ts
+{
+  day_of_week: number,
+  enabled: boolean,
+  timezone?: string | null,
+  start_time?: string | null,
+  end_time?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`managers.list`
+
+List managers for a CallPage widget with pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.managers.list({ widget_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  widget_id?: number,
+  user_id?: number,
+  enabled?: boolean,
+  user?: {
+    id: number,
+    name?: string | null,
+    tel?: string | null,
+    email?: string | null,
+    avatar?: string | null
+  },
+  departments?: {
+    id: number,
+    name: string
+  }[],
+  business_times?: {
+    day_of_week: number,
+    enabled: boolean,
+    timezone?: string | null,
+    start_time?: string | null,
+    end_time?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### statusStatistics
+
+`managers.statusStatistics`
+
+Count enabled and disabled managers for a CallPage widget.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.managers.statusStatistics({ widget_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `enabled` | `number` | Yes | — |
+| `disabled` | `number` | Yes | — |
+
+
+
+---
+
+### update
+
+`managers.update`
+
+Update a CallPage manager.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.managers.update({ widget_id: 1, user_id: 2, enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `widget_id` | `number` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `business_times` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="business_times full type">
+
+```ts
+{
+  day_of_week: number,
+  enabled: boolean,
+  start_time?: string | null,
+  end_time?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+## Root
+
+### get
+
+`root.get`
+
+Get the CallPage API root greeting to verify connectivity.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.root.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Sms
+
+### create
+
+`sms.create`
+
+Create a custom SMS message for a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.sms.create({ widget_id: 1, message_id: 'visitor.dial-completed', text: 'Thanks for calling' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`sms.list`
+
+List SMS messages for a CallPage widget.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.sms.list({ widget_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  widget_id?: number,
+  message_id: string,
+  text: string,
+  enabled?: boolean | number,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reset
+
+`sms.reset`
+
+Reset CallPage widget SMS messages to defaults.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.callpage.api.sms.reset({ widget_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | No | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### update
+
+`sms.update`
+
+Update a custom SMS message for a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.sms.update({ widget_id: 1, message_id: 'visitor.dial-completed', text: 'Thanks for calling' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a CallPage user.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.users.create({ name: 'Test Manager', tel: '+48888888888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `tel` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `admin \| manager` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a CallPage user.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.callpage.api.users.delete({ id: 1380 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`users.get`
+
+Get a CallPage user.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.users.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `tel` | `string` | No | — |
+| `tel_formatted` | `string` | No | — |
+| `tel_extension` | `string` | No | — |
+| `last_online` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+| `activated_at` | `string` | No | — |
+| `role` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `caller_id` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="role full type">
+
+```ts
+{
+  slug: string
+}
+```
+</Accordion>
+
+<Accordion title="caller_id full type">
+
+```ts
+{
+  id?: number,
+  tel?: string | null,
+  activated_at?: string | null,
+  updated_at?: string | null,
+  tel_formatted?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List CallPage users.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  email?: string | null,
+  tel?: string | null,
+  tel_formatted?: string | null,
+  tel_extension?: string | null,
+  last_online?: string | null,
+  parent_id?: number | null,
+  activated_at?: string | null,
+  role?: {
+    slug: string
+  } | null,
+  avatar?: string | null,
+  caller_id?: {
+    id?: number,
+    tel?: string | null,
+    activated_at?: string | null,
+    updated_at?: string | null,
+    tel_formatted?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`users.update`
+
+Update a CallPage user.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.users.update({ id: 1380, name: 'Test Manager', tel: '+48888888888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tel` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `admin \| manager` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+## Voice Messages
+
+### create
+
+`voiceMessages.create`
+
+Create a custom voice message for a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.voiceMessages.create({ widget_id: 3, message_id: 'manager.call', enabled: true, file: 'https://example.com/manager.call.mp3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `file` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`voiceMessages.list`
+
+List voice messages for a CallPage widget.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.voiceMessages.list({ widget_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  widget_id?: number,
+  message_id: string,
+  enabled?: boolean | number,
+  updated_at?: string | null,
+  recording?: {
+    full_url: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reset
+
+`voiceMessages.reset`
+
+Reset CallPage widget voice messages to defaults.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.callpage.api.voiceMessages.reset({ widget_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | No | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### update
+
+`voiceMessages.update`
+
+Update a custom voice message for a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.voiceMessages.update({ widget_id: 3, message_id: 'manager.call', enabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `number` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `file` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+## Widgets
+
+### addUsers
+
+`widgets.addUsers`
+
+Add users to a CallPage widget as managers.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.widgets.addUsers({ id: 2, user_id: [1, 4] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `user_id` | `number \| number[]` | Yes | — |
+| `business_times` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="business_times full type">
+
+```ts
+{
+  day_of_week: number,
+  enabled: boolean,
+  start_time?: string | null,
+  end_time?: string | null
+}[] | {
+  day_of_week: number,
+  enabled: boolean,
+  start_time?: string | null,
+  end_time?: string | null
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  user_id: number,
+  manager_id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### call
+
+`widgets.call`
+
+Initiate a CallPage widget call.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.widgets.call({ id: 1, tel: '+48888888888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `tel` | `string` | Yes | — |
+| `department_id` | `number` | No | — |
+| `manager_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### callOrSchedule
+
+`widgets.callOrSchedule`
+
+Initiate or schedule a CallPage widget call.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.widgets.callOrSchedule({ id: 1, tel: '+48888888888' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `tel` | `string` | Yes | — |
+| `department_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`widgets.create`
+
+Create a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.widgets.create({ url: 'https://example.com', description: 'Landing page' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `settings` | `object` | No | — |
+| `locale_code` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+Record<string, string | number | boolean | null>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`widgets.delete`
+
+Delete a CallPage widget.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.callpage.api.widgets.delete({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`widgets.get`
+
+Get a CallPage widget.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.widgets.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `widget_id` | `number` | No | — |
+| `encrypted_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `locale_code` | `string` | No | — |
+| `installation_status` | `number` | No | — |
+| `installed_at` | `string` | No | — |
+| `company_sms_name` | `string` | No | — |
+| `call_requests_count` | `number` | No | — |
+| `managers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="managers full type">
+
+```ts
+{
+  id: number,
+  widget_id?: number,
+  user_id?: number,
+  enabled?: boolean,
+  user?: {
+    id: number,
+    name?: string | null,
+    tel?: string | null,
+    email?: string | null,
+    avatar?: string | null
+  },
+  departments?: {
+    id: number,
+    name: string
+  }[],
+  business_times?: {
+    day_of_week: number,
+    enabled: boolean,
+    timezone?: string | null,
+    start_time?: string | null,
+    end_time?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`widgets.list`
+
+List CallPage widgets with pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.callpage.api.widgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  description?: string | null,
+  url?: string | null,
+  enabled?: boolean,
+  locale_code?: string | null,
+  installation_status?: number | null,
+  installed_at?: string | null,
+  company_sms_name?: string | null,
+  call_requests_count?: number | null,
+  managers?: {
+    id: number,
+    widget_id?: number,
+    user_id?: number,
+    enabled?: boolean,
+    user?: {
+      id: number,
+      name?: string | null,
+      tel?: string | null,
+      email?: string | null,
+      avatar?: string | null
+    },
+    departments?: {
+      id: number,
+      name: string
+    }[],
+    business_times?: {
+      day_of_week: number,
+      enabled: boolean,
+      timezone?: string | null,
+      start_time?: string | null,
+      end_time?: string | null
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`widgets.update`
+
+Update a CallPage widget.
+
+**Risk:** `write`
+
+```ts
+await corsair.callpage.api.widgets.update({ id: 1, url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `settings` | `object` | No | — |
+| `locale_code` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+Record<string, string | number | boolean | null>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+

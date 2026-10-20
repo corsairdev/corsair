@@ -674,6 +674,14 @@
                 ]
               },
               {
+                "group": "Benzinga",
+                "pages": [
+                  "plugins/benzinga/overview",
+                  "plugins/benzinga/api",
+                  "plugins/benzinga/database"
+                ]
+              },
+              {
                 "group": "Best Buy Remix API",
                 "pages": [
                   "plugins/bestbuy/overview",
@@ -751,6 +759,14 @@
                   "plugins/bitwarden/overview",
                   "plugins/bitwarden/api",
                   "plugins/bitwarden/database"
+                ]
+              },
+              {
+                "group": "Blackbaud",
+                "pages": [
+                  "plugins/blackbaud/overview",
+                  "plugins/blackbaud/api",
+                  "plugins/blackbaud/database"
                 ]
               },
               {
@@ -972,6 +988,14 @@
                 ]
               },
               {
+                "group": "BuiltWith",
+                "pages": [
+                  "plugins/builtwith/overview",
+                  "plugins/builtwith/api",
+                  "plugins/builtwith/database"
+                ]
+              },
+              {
                 "group": "Bunnycdn",
                 "pages": [
                   "plugins/bunnycdn/overview",
@@ -1005,6 +1029,22 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "CallPage",
+                "pages": [
+                  "plugins/callpage/overview",
+                  "plugins/callpage/api",
+                  "plugins/callpage/database"
+                ]
+              },
+              {
+                "group": "Callingly",
+                "pages": [
+                  "plugins/callingly/overview",
+                  "plugins/callingly/api",
+                  "plugins/callingly/database"
                 ]
               },
               {
@@ -1082,6 +1122,14 @@
                 ]
               },
               {
+                "group": "Celigo",
+                "pages": [
+                  "plugins/celigo/overview",
+                  "plugins/celigo/api",
+                  "plugins/celigo/database"
+                ]
+              },
+              {
                 "group": "Certifier",
                 "pages": [
                   "plugins/certifier/overview",
@@ -1114,6 +1162,14 @@
                 ]
               },
               {
+                "group": "Chatwork",
+                "pages": [
+                  "plugins/chatwork/overview",
+                  "plugins/chatwork/api",
+                  "plugins/chatwork/database"
+                ]
+              },
+              {
                 "group": "ChMeetings",
                 "pages": [
                   "plugins/chmeetings/overview",
@@ -1135,6 +1191,14 @@
                   "plugins/circleci/overview",
                   "plugins/circleci/api",
                   "plugins/circleci/database"
+                ]
+              },
+              {
+                "group": "Claid.ai",
+                "pages": [
+                  "plugins/claidai/overview",
+                  "plugins/claidai/api",
+                  "plugins/claidai/database"
                 ]
               },
               {
@@ -1178,6 +1242,15 @@
                 ]
               },
               {
+                "group": "Close",
+                "pages": [
+                  "plugins/close/overview",
+                  "plugins/close/api",
+                  "plugins/close/database",
+                  "plugins/close/webhooks"
+                ]
+              },
+              {
                 "group": "Cloudcart",
                 "pages": [
                   "plugins/cloudcart/overview",
@@ -1213,6 +1286,15 @@
                 ]
               },
               {
+                "group": "Coda",
+                "pages": [
+                  "plugins/coda/overview",
+                  "plugins/coda/api",
+                  "plugins/coda/database",
+                  "plugins/coda/webhooks"
+                ]
+              },
+              {
                 "group": "Cody",
                 "pages": [
                   "plugins/cody/overview",
@@ -1230,11 +1312,27 @@
                 ]
               },
               {
+                "group": "CoinMarketCal",
+                "pages": [
+                  "plugins/coinmarketcal/overview",
+                  "plugins/coinmarketcal/api",
+                  "plugins/coinmarketcal/database"
+                ]
+              },
+              {
                 "group": "College Football Data",
                 "pages": [
                   "plugins/collegefootballdata/overview",
                   "plugins/collegefootballdata/api",
                   "plugins/collegefootballdata/database"
+                ]
+              },
+              {
+                "group": "Composio",
+                "pages": [
+                  "plugins/composio/overview",
+                  "plugins/composio/api",
+                  "plugins/composio/database"
                 ]
               },
               {
@@ -1267,6 +1365,14 @@
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
+                ]
+              },
+              {
+                "group": "Convex",
+                "pages": [
+                  "plugins/convex/overview",
+                  "plugins/convex/api",
+                  "plugins/convex/database"
                 ]
               },
               {
@@ -1418,11 +1524,27 @@
                 ]
               },
               {
+                "group": "Docmosis",
+                "pages": [
+                  "plugins/docmosis/overview",
+                  "plugins/docmosis/api",
+                  "plugins/docmosis/database"
+                ]
+              },
+              {
                 "group": "Docupost",
                 "pages": [
                   "plugins/docupost/overview",
                   "plugins/docupost/api",
                   "plugins/docupost/database"
+                ]
+              },
+              {
+                "group": "DocuSign",
+                "pages": [
+                  "plugins/docusign/overview",
+                  "plugins/docusign/api",
+                  "plugins/docusign/database"
                 ]
               },
               {
@@ -1610,6 +1732,14 @@
                   "plugins/fireflies/api",
                   "plugins/fireflies/database",
                   "plugins/fireflies/webhooks"
+                ]
+              },
+              {
+                "group": "Fixer",
+                "pages": [
+                  "plugins/fixer/overview",
+                  "plugins/fixer/api",
+                  "plugins/fixer/database"
                 ]
               },
               {
@@ -2310,6 +2440,14 @@
                 ]
               },
               {
+                "group": "Reducto",
+                "pages": [
+                  "plugins/reducto/overview",
+                  "plugins/reducto/api",
+                  "plugins/reducto/database"
+                ]
+              },
+              {
                 "group": "remove.bg",
                 "pages": [
                   "plugins/removebg/overview",
@@ -2349,6 +2487,14 @@
                   "plugins/retailed/overview",
                   "plugins/retailed/api",
                   "plugins/retailed/database"
+                ]
+              },
+              {
+                "group": "RevAI",
+                "pages": [
+                  "plugins/revai/overview",
+                  "plugins/revai/api",
+                  "plugins/revai/database"
                 ]
               },
               {
@@ -2504,6 +2650,14 @@
                 ]
               },
               {
+                "group": "Starton",
+                "pages": [
+                  "plugins/starton/overview",
+                  "plugins/starton/api",
+                  "plugins/starton/database"
+                ]
+              },
+              {
                 "group": "Strava",
                 "pages": [
                   "plugins/strava/overview",
@@ -2624,6 +2778,14 @@
                 ]
               },
               {
+                "group": "TinyPNG",
+                "pages": [
+                  "plugins/tinypng/overview",
+                  "plugins/tinypng/api",
+                  "plugins/tinypng/database"
+                ]
+              },
+              {
                 "group": "TinyURL",
                 "pages": [
                   "plugins/tinyurl/overview",
@@ -2692,6 +2854,14 @@
                 ]
               },
               {
+                "group": "Turso",
+                "pages": [
+                  "plugins/turso/overview",
+                  "plugins/turso/api",
+                  "plugins/turso/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",
@@ -2751,6 +2921,14 @@
                   "plugins/uniswapapi/overview",
                   "plugins/uniswapapi/api",
                   "plugins/uniswapapi/database"
+                ]
+              },
+              {
+                "group": "Updown.io",
+                "pages": [
+                  "plugins/updownio/overview",
+                  "plugins/updownio/api",
+                  "plugins/updownio/database"
                 ]
               },
               {

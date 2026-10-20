@@ -383,6 +383,8 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  *     return await ctx.keys.get_bot_token();
  *   } else if (ctx.authType === 'managed') {
  *     return await ctx.keys.get_access_token();
+ *   } else if (ctx.authType === 'managed_pricing') {
+ *     return resolveManagedPricingApiKey(ctx, { plugin: '…', cache });
  *   }
  *   return '';
  * }
@@ -404,6 +406,12 @@ export type KeyBuilderContext<
 				tenantId: string;
 				/** Hub config when createCorsair({ hub: ... }) is configured */
 				hub?: HubConfig;
+				/**
+				 * Explorer shortPath for the endpoint being invoked (e.g. `scrape.run`).
+				 * Set by the runtime on endpoint calls only; forwarded to Hub for metering.
+				 * Credit prices live in Hub — not in the OSS SDK.
+				 */
+				meteredOperationId?: string;
 			}
 		: never
 	: never;
