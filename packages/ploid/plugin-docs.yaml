@@ -1,0 +1,59 @@
+displayName: Ploid
+description: Agent-native people API for evidence-backed people search, identity resolution, deep profiles, and contact enrichment.
+
+examples:
+  read:
+    path: account.credits
+    title: Read the workspace ACU balance
+    args: {}
+  write:
+    path: person.resolve
+    title: Resolve a person to a permanent person_id
+    args:
+      name: Jane Doe
+      company: acme.com
+
+dbExample:
+  entity: people
+  note: Read a previously resolved or enriched person without calling the API.
+  data:
+    personId: per_abc123
+    name: Jane Doe
+    company: Acme
+  limit: 10
+
+apiExamples:
+  search.search:
+    args:
+      query: venture-backed founders in Berlin
+      num_results: 25
+  search.candidates:
+    args:
+      name: Jane Doe
+      company: Acme
+      limit: 5
+  person.resolve:
+    args:
+      name: Jane Doe
+      company: acme.com
+  person.get:
+    args:
+      identifier:
+        person_id: per_abc123
+  person.getRun:
+    args:
+      id: run_abc123
+  person.cancelRun:
+    args:
+      id: run_abc123
+  contacts.enrich:
+    args:
+      identifier:
+        person_id: per_abc123
+      fields:
+        - work_email
+        - phone
+  account.credits:
+    args: {}
+  account.usage:
+    args: {}

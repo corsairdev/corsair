@@ -406,23 +406,88 @@ export const UrlResultSchema = z
 	})
 	.loose();
 
+export const BboxSchema = z
+	.object({
+		left: z.number(),
+		top: z.number(),
+		width: z.number(),
+		height: z.number(),
+		page: z.number().int(),
+		original_page: z.number().int().optional(),
+	})
+	.loose();
+
+export const ParseBlockSchema = z
+	.object({
+		type: z.string(),
+		content: z.string().optional(),
+		bbox: BboxSchema.optional(),
+		confidence: z.string().optional(),
+		granular_confidence: z
+			.object({
+				parse_confidence: z.number().nullable().optional(),
+				extract_confidence: z.number().nullable().optional(),
+			})
+			.loose()
+			.optional(),
+		image_url: z.string().nullable().optional(),
+		chart_data: z.array(z.string()).optional(),
+		merged_tables: z.array(z.unknown()).optional(),
+		extra: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+export const ParseChunkSchema = z
+	.object({
+		content: z.string(),
+		embed: z.string().optional(),
+		blocks: z.array(ParseBlockSchema).optional(),
+		enriched: z.string().nullable().optional(),
+		enrichment_success: z.boolean().optional(),
+	})
+	.loose();
+
+export const ParseOcrWordSchema = z
+	.object({
+		text: z.string(),
+		bbox: BboxSchema,
+		confidence: z.number().optional(),
+		chunk_index: z.number().int().optional(),
+		rotation: z.number().optional(),
+	})
+	.loose();
+
+export const ParseOcrSchema = z
+	.object({
+		words: z.array(ParseOcrWordSchema).optional(),
+		lines: z.array(ParseOcrWordSchema).optional(),
+	})
+	.loose();
+
 export const FullResultSchema = z
 	.object({
 		type: z.literal('full'),
-		chunks: z.array(
-			z
-				.object({
-					content: z.string(),
-					embed: z.string().optional(),
-					// z.unknown() is used because block layout fields vary by parse model.
-					blocks: z.array(z.unknown()).optional(),
-				})
-				.loose(),
-		),
+		chunks: z.array(ParseChunkSchema),
+		ocr: ParseOcrSchema.optional(),
+		custom: z.unknown().nullable().optional(),
 	})
 	.loose();
 
 export const ParseResultSchema = z.union([FullResultSchema, UrlResultSchema]);
+
+export const DocumentPropertiesSchema = z
+	.object({
+		title: z.string().nullable().optional(),
+		author: z.string().nullable().optional(),
+		subject: z.string().nullable().optional(),
+		keywords: z.string().nullable().optional(),
+		creator: z.string().nullable().optional(),
+		producer: z.string().nullable().optional(),
+		last_modified_by: z.string().nullable().optional(),
+		created_at: z.string().nullable().optional(),
+		modified_at: z.string().nullable().optional(),
+	})
+	.loose();
 
 export const ParseResponseSchema = z
 	.object({
@@ -430,8 +495,10 @@ export const ParseResponseSchema = z
 		duration: z.number(),
 		usage: ParseUsageSchema,
 		result: ParseResultSchema,
+		response_type: z.string().nullable().optional(),
 		pdf_url: z.string().nullable().optional(),
 		studio_link: z.string().nullable().optional(),
+		document_properties: DocumentPropertiesSchema.nullable().optional(),
 	})
 	.loose();
 
