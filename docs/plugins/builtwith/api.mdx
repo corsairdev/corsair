@@ -1,0 +1,777 @@
+---
+title: API
+description: "API reference for BuiltWith: every `builtwith.api.*` operation with input and output types."
+---
+
+Every `builtwith.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Create Domain List File
+
+### createDomainListFile
+
+`createDomainListFile`
+
+Build a deduplicated TXT or ZIP domain list file locally for bulk lookups
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.createDomainListFile({
+	domains: ['builtwith.com', 'shopify.com'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `string[]` | Yes | — |
+| `fileName` | `string` | No | — |
+| `format` | `txt \| zip` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | — |
+| `format` | `txt \| zip` | Yes | — |
+| `content` | `string` | Yes | — |
+| `encoding` | `utf8 \| base64` | Yes | — |
+| `domainCount` | `number` | Yes | — |
+| `domains` | `string[]` | Yes | — |
+
+
+
+---
+
+## Datasets
+
+### lookup
+
+`datasets.lookup`
+
+Look up technology usage totals from the Trends API, optionally at a historical date
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.datasets.lookup({ tech: 'Shopify', date: '2024-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tech` | `string` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Tech` | `object` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Tech full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  link?: string,
+  icon?: string,
+  is_premium?: string,
+  tag?: string,
+  categories?: string[],
+  trends_link?: string,
+  coverage?: {
+    ten_k?: number,
+    hundred_k?: number,
+    milly?: number,
+    live?: number,
+    expired?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain
+
+### lookup
+
+`domain.lookup`
+
+Look up current and historical technologies for up to 16 root domains
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.domain.lookup({ lookup: 'builtwith.com', liveonly: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `hidedl` | `boolean` | No | — |
+| `hidetext` | `boolean` | No | — |
+| `liveonly` | `boolean` | No | — |
+| `nometa` | `boolean` | No | — |
+| `nopii` | `boolean` | No | — |
+| `noattr` | `boolean` | No | — |
+| `trust` | `boolean` | No | — |
+| `fdrange` | `string` | No | — |
+| `ldrange` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Results` | `object[]` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Results full type">
+
+```ts
+{
+  Lookup?: string,
+  Result?: {
+    IsDB?: string,
+    Spend?: number,
+    SalesRevenue?: number,
+    Paths?: {
+      Domain?: string,
+      Url?: string,
+      SubDomain?: string,
+      FirstIndexed?: string | number,
+      LastIndexed?: string | number,
+      Technologies?: {
+        Name: string,
+        Id?: number,
+        Parent?: string,
+        Description?: string,
+        Link?: string,
+        confidence?: number,
+        IsPremium?: string,
+        Tag?: string,
+        Categories?: string[],
+        FirstDetected?: string | number,
+        LastDetected?: string | number
+      }[]
+    }[]
+  },
+  Meta?: {
+    ARank?: number | null,
+    QRank?: number | null,
+    Majestic?: number | null,
+    Umbrella?: number | null,
+    CompanyName?: string | null,
+    City?: string | null,
+    Postcode?: string | null,
+    State?: string | null,
+    Country?: string | null,
+    Vertical?: string | null,
+    PrimaryBusiness?: string | null,
+    Telephones?: string[] | null,
+    Emails?: string[] | null,
+    Social?: string[] | null,
+    company_reg?: {
+      type: string,
+      number: string
+    }[] | null
+  },
+  Attributes?: {
+  },
+  FirstIndexed?: string | number,
+  LastIndexed?: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Financial
+
+### lookup
+
+`financial.lookup`
+
+Look up financial information for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.financial.lookup({ lookup: 'shopify.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `employees` | `number` | No | — |
+| `followers` | `number` | No | — |
+| `products` | `number` | No | — |
+| `spend` | `number` | No | — |
+| `edgar` | `object` | No | — |
+| `companyhouse` | `object` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="edgar full type">
+
+```ts
+{
+  companyName?: string,
+  cik?: string | number,
+  sic?: string | number,
+  exchanges?: string[],
+  tickers?: string[],
+  financials?: {
+    periodStartDate?: string,
+    periodEndDate?: string,
+    revenue?: number,
+    operatingIncome?: number,
+    netIncome?: number,
+    assets?: number,
+    liabilities?: number,
+    cash?: number,
+    equity?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="companyhouse full type">
+
+```ts
+{
+  companyName?: string,
+  regNo?: string | number,
+  accountingType?: string,
+  sic?: string | number,
+  financials?: {
+    balanceSheetDate?: string,
+    debtors?: number,
+    fixedAssets?: number,
+    currentAssets?: number,
+    creditors?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Free
+
+### lookup
+
+`free.lookup`
+
+Get technology group and category counts with last-updated dates for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.free.lookup({ lookup: 'builtwith.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `first` | `number` | No | — |
+| `last` | `number` | No | — |
+| `groups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  name: string,
+  live?: number | null,
+  dead?: number | null,
+  latest?: number | null,
+  oldest?: number | null,
+  categories?: {
+    name: string,
+    live?: number | null,
+    dead?: number | null,
+    latest?: number | null,
+    oldest?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### getList
+
+`lists.getList`
+
+List websites using a technology, paginated with the NextOffset token
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.lists.getList({ tech: 'Shopify', country: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tech` | `string` | Yes | — |
+| `otherTechs` | `string[]` | No | — |
+| `all` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `meta` | `boolean` | No | — |
+| `offset` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `NextOffset` | `string` | No | — |
+| `Results` | `object[]` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Results full type">
+
+```ts
+{
+  D: string,
+  LOS?: string[],
+  FD?: number,
+  LD?: number,
+  S?: number,
+  SKU?: number,
+  R?: number,
+  F?: number,
+  E?: number,
+  A?: number,
+  Q?: number,
+  M?: number,
+  U?: number,
+  META?: {
+    CompanyName?: string | null,
+    City?: string | null,
+    Postcode?: string | null,
+    State?: string | null,
+    Country?: string | null,
+    Vertical?: string | null,
+    PrimaryBusiness?: string | null,
+    Telephones?: string[] | null,
+    Emails?: string[] | null,
+    Social?: string[] | null,
+    Titles?: string[] | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mcp
+
+### lookup
+
+`mcp.lookup`
+
+Search the BuiltWith registry of remote MCP servers by keyword or category
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.mcp.lookup({ search: 'payments' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `category` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Domain?: string,
+  Category?: string,
+  Description?: string,
+  Endpoints?: {
+    Endpoint: string,
+    AuthRequired?: boolean,
+    Tools?: {
+      Name: string,
+      Description?: string
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Product
+
+### lookup
+
+`product.lookup`
+
+Find eCommerce shops selling a product, or list a shop's products
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.product.lookup({ query: 'running shoes', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `is_more` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `results` | `number` | No | — |
+| `shop_count` | `number` | No | — |
+| `credits` | `number` | No | — |
+| `used` | `number` | No | — |
+| `remaining` | `number` | No | — |
+| `used_this_query` | `number` | No | — |
+| `next_page` | `string` | No | — |
+| `shops` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="shops full type">
+
+```ts
+{
+  Domain: string,
+  Products?: {
+    Title: string,
+    Url?: string,
+    Indexed?: string,
+    FirstIndexed?: string,
+    Price?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recommendations
+
+### lookup
+
+`recommendations.lookup`
+
+Get technology recommendations for up to 16 domains
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.recommendations.lookup({ lookup: 'builtwith.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Recommendations` | `object[]` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Recommendations full type">
+
+```ts
+{
+  Domain: string,
+  Compiled?: string,
+  Recommendations?: {
+    name: string,
+    link?: string,
+    tag?: string,
+    categories?: string[],
+    stars?: number,
+    match?: number
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Redirects
+
+### lookup
+
+`redirects.lookup`
+
+Get live and historical inbound and outbound redirects for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.redirects.lookup({ lookup: 'builtwith.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Lookup` | `string` | No | — |
+| `Inbound` | `object[]` | No | — |
+| `Outbound` | `object[]` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Inbound full type">
+
+```ts
+{
+  Domain: string,
+  FirstDetected?: string,
+  LastDetected?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="Outbound full type">
+
+```ts
+{
+  Domain: string,
+  FirstDetected?: string,
+  LastDetected?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Social
+
+### lookup
+
+`social.lookup`
+
+Find root domains linked to social media profile URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.builtwith.api.social.lookup({ lookup: 'twitter.com/builtwith' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Socials` | `object[]` | No | — |
+| `Errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="Socials full type">
+
+```ts
+{
+  Name?: string,
+  Results?: {
+    SocialUrl: string,
+    Domains?: {
+      Root: string,
+      BuiltWithRank?: number
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="Errors full type">
+
+```ts
+{
+  Message: string,
+  Code: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
