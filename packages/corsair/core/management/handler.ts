@@ -4,6 +4,8 @@ import {
 	clearConnectRequest,
 	readConnectRequest,
 } from '../connect-request/store';
+import { runWithMode } from '../permissions';
+import type { PermissionMode } from '../plugins';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import type { CappedReadOptions } from './body-limit';
 import {
@@ -12,8 +14,20 @@ import {
 	resolveBodyStallTimeoutMs,
 	resolveMaxBodyBytes,
 } from './body-limit';
-import { callDisabled, listRegisteredOps, resolveCall } from './call';
-import { errorResponse, json, ManagementApiError, notFound } from './errors';
+import {
+	callDisabled,
+	listRegisteredOps,
+	resolveCall,
+	withTenantClient,
+} from './call';
+import { callPluginDb, decodeDbArgs, encodeDbArgs } from './db';
+import {
+	badRequest,
+	errorResponse,
+	json,
+	ManagementApiError,
+	notFound,
+} from './errors';
 import {
 	completeOAuthCallback,
 	createConnectLink,
@@ -80,10 +94,11 @@ export type ManagementHandlerOptions = {
 	 */
 	resolveTenant?: (req: Request) => string | null | Promise<string | null>;
 	/**
-	 * Enables the tool-call route `POST /:tenant/:plugin/call/:op` (and `GET
-	 * /call`). Off by default: the route trusts the `tenant` in the URL, so it is
-	 * only safe when the developer's own backend fronts this handler and owns
-	 * access control. The name is deliberately loud.
+	 * Enables the tool-call route `POST /:tenant/:plugin/call/:op`, `GET /call`
+	 * and the entity-store route `POST /:tenant/:plugin/db/:entityType/:method`.
+	 * Off by default: they trust the `tenant` in the URL, so they are only safe
+	 * when the developer's own backend fronts this handler and owns access
+	 * control. The name is deliberately loud.
 	 */
 	unsafeAllowUnauthenticated?: boolean;
 	/**
@@ -329,10 +344,58 @@ const ROUTES: Route[] = [
 	},
 	{
 		method: 'POST',
+		pattern: '/:tenant/:plugin/db/:entityType/:method',
+		handler: async ({
+			corsair,
+			internal,
+			req,
+			params,
+			body,
+			scopedTenant,
+			allowCall,
+		}) => {
+			if (!allowCall) throw callDisabled('/db');
+			// Entity clients carry no permission wrapper, so this reaches tenant
+			// rows with no policy in front of it. Server mode only, like the other
+			// admin routes — an end-user handler must not expose it to a browser.
+			assertAdminRouteAllowed(scopedTenant);
+			const input = (body ?? {}) as { args?: unknown };
+			// apply() takes an object as an empty argument list, so an `args` of
+			// the wrong shape would call the method with nothing and report success.
+			if (input.args !== undefined && !Array.isArray(input.args)) {
+				throw badRequest('args must be an array');
+			}
+			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
+			const args = decodeDbArgs(input.args ?? []) as unknown[];
+			const data = await withTenantClient(
+				corsair,
+				internal,
+				{ plugin: params.plugin!, tenant },
+				(client) =>
+					withRequestMode(req, () =>
+						callPluginDb(
+							client,
+							{
+								plugin: params.plugin!,
+								entityType: params.entityType!,
+								method: params.method!,
+							},
+							args,
+						),
+					),
+			);
+			// Encoded on the way out too: a Date read back as a string and fed to
+			// search() would be dropped as a filter, not rejected.
+			return json(200, { data: encodeDbArgs(data) });
+		},
+	},
+	{
+		method: 'POST',
 		pattern: '/:tenant/:plugin/call/:op',
 		handler: async ({
 			corsair,
 			internal,
+			req,
 			params,
 			body,
 			scopedTenant,
@@ -344,12 +407,14 @@ const ROUTES: Route[] = [
 			// the resolver's value is authoritative (and null → 401), same as every
 			// other tenant-taking route. No resolver → the URL value is trusted.
 			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
-			const data = await resolveCall(corsair, internal, {
-				plugin: params.plugin!,
-				op: params.op!,
-				tenant,
-				args: input.args,
-			});
+			const data = await withRequestMode(req, () =>
+				resolveCall(corsair, internal, {
+					plugin: params.plugin!,
+					op: params.op!,
+					tenant,
+					args: input.args,
+				}),
+			);
 			return json(200, { data });
 		},
 	},
@@ -430,6 +495,31 @@ async function parseBody(
 }
 
 const DEFAULT_BASE_PATH = '/api/corsair';
+
+const REQUEST_MODES = new Set<PermissionMode>([
+	'open',
+	'cautious',
+	'strict',
+	'readonly',
+]);
+
+/**
+ * The mode a caller asked this request to run under. The binding layer
+ * composes it with the plugin's own, so it can only tighten.
+ *
+ * A misspelled value is refused: the caller meant to restrict the call, and
+ * running it unrestricted is the one outcome they did not ask for.
+ */
+function withRequestMode<T>(req: Request, fn: () => T): T {
+	const raw = req.headers.get('x-corsair-mode');
+	if (raw === null) return fn();
+	if (!REQUEST_MODES.has(raw as PermissionMode)) {
+		throw badRequest(
+			`Unknown permission mode "${raw}" — expected one of ${[...REQUEST_MODES].join(', ')}`,
+		);
+	}
+	return runWithMode(raw as PermissionMode, fn);
+}
 
 export function managementHandler(
 	// `corsair: unknown` is intentional: the handler accepts both

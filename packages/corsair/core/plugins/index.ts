@@ -1,5 +1,8 @@
 import type { ZodTypeAny } from 'zod';
-import type { CorsairDatabaseInput } from '../../db/kysely/database';
+import type {
+	CorsairDatabaseInput,
+	CorsairDbTables,
+} from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
 import type { HubConfig, HubConfigInput } from '../../hub';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
@@ -380,6 +383,8 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  *     return await ctx.keys.get_bot_token();
  *   } else if (ctx.authType === 'managed') {
  *     return await ctx.keys.get_access_token();
+ *   } else if (ctx.authType === 'managed_pricing') {
+ *     return resolveManagedPricingApiKey(ctx, { plugin: '…', cache });
  *   }
  *   return '';
  * }
@@ -401,6 +406,12 @@ export type KeyBuilderContext<
 				tenantId: string;
 				/** Hub config when createCorsair({ hub: ... }) is configured */
 				hub?: HubConfig;
+				/**
+				 * Explorer shortPath for the endpoint being invoked (e.g. `scrape.run`).
+				 * Set by the runtime on endpoint calls only; forwarded to Hub for metering.
+				 * Credit prices live in Hub — not in the OSS SDK.
+				 */
+				meteredOperationId?: string;
 			}
 		: never
 	: never;
@@ -756,6 +767,11 @@ export type CorsairPermissionsOptions = {
 export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	/** Database connection for ORM entities (e.g. `slack.api.messages.post(...)` for API, `slack.db.messages.findByEntityId(...)` for DB) */
 	database?: CorsairDatabaseInput;
+	/**
+	 * Remap Corsair logical table names (`corsair_events`, etc.) to physical
+	 * table names in your database. Omitted keys keep the default `corsair_*` name.
+	 */
+	dbTables?: CorsairDbTables;
 	/** Array of plugin definitions to include */
 	plugins: Plugins;
 	/** If true, enables tenant-scoped access via `withTenant()` */

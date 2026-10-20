@@ -1,0 +1,14 @@
+displayName: Starton
+description: Web3 backend for deploying and calling smart contracts, managing wallets, watching blockchain events, and pinning files to IPFS.
+recommendedAuth: api_key
+examples:
+  read:
+    path: smartContract.list
+    title: List smart contracts
+  write:
+    path: ipfs.uploadFile
+    title: Upload a file to IPFS
+    args:
+      content: aGVsbG8gd29ybGQ=
+      filename: hello.txt
+      contentType: text/plain

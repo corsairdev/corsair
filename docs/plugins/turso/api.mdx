@@ -1,0 +1,128 @@
+---
+title: API
+description: "API reference for Turso: every `turso.api.*` operation with input and output types."
+---
+
+Every `turso.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Changes
+
+### listen
+
+`changes.listen`
+
+Listen to committed insert/update/delete events for a table in a Turso database
+
+**Risk:** `read`
+
+```ts
+await corsair.turso.api.changes.listen({
+  databaseUrl: 'https://mydb-myorg.turso.io',
+  table: 'users',
+  action: 'insert',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseUrl` | `string` | Yes | Database-specific URL, e.g. https://mydb-myorg.turso.io — NOT the platform API host |
+| `table` | `string` | Yes | Table to watch for committed changes |
+| `action` | `insert \| update \| delete` | Yes | Which committed action to stream: insert, update or delete |
+| `maxEvents` | `number` | No | Stop after this many events have been received |
+| `timeoutMs` | `number` | No | Stop listening after this many milliseconds |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  mode: stream,
+  table: string,
+  action: insert | update | delete,
+  events: {
+    table: string,
+    action: insert | update | delete,
+    receivedAt: string,
+    data?: Record<string, JSON value> | null
+  }[],
+  stoppedBy: max_events | timeout | stream_closed
+} | {
+  mode: health_check,
+  table: string,
+  action: insert | update | delete,
+  listenAvailable: false,
+  reason: string,
+  databaseReachable: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Regions
+
+### closest
+
+`regions.closest`
+
+Get the closest Turso region based on client location, to minimize latency
+
+**Risk:** `read`
+
+```ts
+await corsair.turso.api.regions.closest({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server` | `string` | Yes | Location code for the server that answered the request |
+| `client` | `string` | No | Location code for the requesting client |
+
+
+
+---
+
+## Tokens
+
+### validate
+
+`tokens.validate`
+
+Validate a Turso API token and retrieve its expiration time (-1 when it never expires)
+
+**Risk:** `read`
+
+```ts
+await corsair.turso.api.tokens.validate({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exp` | `number` | Yes | Token expiry in unix epoch seconds, or -1 when the token never expires |
+
+
+
+---
+
