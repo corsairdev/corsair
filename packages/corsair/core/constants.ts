@@ -151,6 +151,7 @@ export const BaseProviders = [
 	'cody',
 	'coinbase',
 	'collegefootballdata',
+	'composio',
 	'confluence',
 	'connecteam',
 	'contactout',
@@ -527,6 +528,7 @@ export const ProviderDisplayNames = {
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	collegefootballdata: 'College Football Data',
+	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
 	contactout: 'ContactOut',
@@ -910,6 +912,7 @@ export type AllProviders =
 	| 'cody'
 	| 'coinbase'
 	| 'collegefootballdata'
+	| 'composio'
 	| 'confluence'
 	| 'connecteam'
 	| 'contactout'
