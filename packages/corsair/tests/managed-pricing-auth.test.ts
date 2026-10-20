@@ -3,6 +3,7 @@ import {
 	createManagedPricingCredentialCache,
 	getManagedPricingApiKey,
 	requireHubForManagedPricing,
+	resolveManagedPricingApiKey,
 } from '../hub/managed-pricing-auth';
 import type { HubConfig } from '../hub/types';
 
@@ -12,10 +13,49 @@ const hub: HubConfig = {
 	apiUrl: 'https://hub.test',
 };
 
+const TEST_OPERATION = 'scrape.run';
+
 describe('requireHubForManagedPricing', () => {
 	it('throws AuthMissingError when hub is missing', () => {
 		expect(() => requireHubForManagedPricing('firecrawl', undefined)).toThrow(
 			AuthMissingError,
+		);
+	});
+});
+
+describe('resolveManagedPricingApiKey', () => {
+	const cache = createManagedPricingCredentialCache();
+	const originalFetch = global.fetch;
+
+	afterEach(() => {
+		global.fetch = originalFetch;
+		jest.restoreAllMocks();
+	});
+
+	it('forwards operation from input when ctx has no meteredOperationId', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			headers: { get: () => 'application/json' },
+			text: async () =>
+				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
+		})) as typeof fetch;
+
+		const apiKey = await resolveManagedPricingApiKey(
+			{ hub, tenantId: 'tenant_a' },
+			{ plugin: 'firecrawl', cache, operation: TEST_OPERATION },
+		);
+
+		expect(apiKey).toBe('fc-test-key');
+		expect(global.fetch).toHaveBeenCalledWith(
+			'https://hub.test/managed-pricing/credentials',
+			expect.objectContaining({
+				body: JSON.stringify({
+					plugin: 'firecrawl',
+					tenantId: 'tenant_a',
+					operation: TEST_OPERATION,
+				}),
+			}),
 		);
 	});
 });
@@ -38,12 +78,15 @@ describe('getManagedPricingApiKey', () => {
 				JSON.stringify({ api_key: 'fc-test-key', expires_in: 3600 }),
 		})) as typeof fetch;
 
-		const result = await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'tenant_a',
-			cache,
-		});
+		const result = await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'tenant_a',
+				cache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
 		expect(result.apiKey).toBe('fc-test-key');
 		expect(result.fromCache).toBe(false);
@@ -54,6 +97,7 @@ describe('getManagedPricingApiKey', () => {
 				body: JSON.stringify({
 					plugin: 'firecrawl',
 					tenantId: 'tenant_a',
+					operation: TEST_OPERATION,
 				}),
 			}),
 		);
@@ -70,19 +114,25 @@ describe('getManagedPricingApiKey', () => {
 
 		const localCache = createManagedPricingCredentialCache();
 
-		await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'tenant_a',
-			cache: localCache,
-		});
+		await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'tenant_a',
+				cache: localCache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
-		const second = await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'tenant_a',
-			cache: localCache,
-		});
+		const second = await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'tenant_a',
+				cache: localCache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
 		expect(second.fromCache).toBe(true);
 		expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -108,21 +158,27 @@ describe('getManagedPricingApiKey', () => {
 
 		const sharedCache = createManagedPricingCredentialCache();
 
-		const first = await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'default',
-			cache: sharedCache,
-		});
-		const second = await getManagedPricingApiKey({
-			hub: {
-				...hub,
-				projectApiKey: 'ck_dev_other_project',
+		const first = await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'default',
+				cache: sharedCache,
 			},
-			plugin: 'firecrawl',
-			tenantId: 'default',
-			cache: sharedCache,
-		});
+			{ operation: TEST_OPERATION },
+		);
+		const second = await getManagedPricingApiKey(
+			{
+				hub: {
+					...hub,
+					projectApiKey: 'ck_dev_other_project',
+				},
+				plugin: 'firecrawl',
+				tenantId: 'default',
+				cache: sharedCache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
 		expect(first.apiKey).toBe('key-project-a');
 		expect(second.apiKey).toBe('key-project-b');
@@ -149,21 +205,27 @@ describe('getManagedPricingApiKey', () => {
 
 		const sharedCache = createManagedPricingCredentialCache();
 
-		const first = await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'default',
-			cache: sharedCache,
-		});
-		const second = await getManagedPricingApiKey({
-			hub: {
-				...hub,
-				apiUrl: 'https://other-hub.test/',
+		const first = await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'default',
+				cache: sharedCache,
 			},
-			plugin: 'firecrawl',
-			tenantId: 'default',
-			cache: sharedCache,
-		});
+			{ operation: TEST_OPERATION },
+		);
+		const second = await getManagedPricingApiKey(
+			{
+				hub: {
+					...hub,
+					apiUrl: 'https://other-hub.test/',
+				},
+				plugin: 'firecrawl',
+				tenantId: 'default',
+				cache: sharedCache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
 		expect(first.apiKey).toBe('key-hub-a');
 		expect(second.apiKey).toBe('key-hub-b');
@@ -181,12 +243,15 @@ describe('getManagedPricingApiKey', () => {
 
 		const localCache = createManagedPricingCredentialCache();
 
-		await getManagedPricingApiKey({
-			hub,
-			plugin: 'firecrawl',
-			tenantId: 'tenant_a',
-			cache: localCache,
-		});
+		await getManagedPricingApiKey(
+			{
+				hub,
+				plugin: 'firecrawl',
+				tenantId: 'tenant_a',
+				cache: localCache,
+			},
+			{ operation: TEST_OPERATION },
+		);
 
 		const forced = await getManagedPricingApiKey(
 			{
@@ -195,7 +260,7 @@ describe('getManagedPricingApiKey', () => {
 				tenantId: 'tenant_a',
 				cache: localCache,
 			},
-			{ forceRefresh: true },
+			{ operation: TEST_OPERATION, forceRefresh: true },
 		);
 
 		expect(forced.fromCache).toBe(false);
