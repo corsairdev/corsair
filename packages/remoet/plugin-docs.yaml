@@ -1,0 +1,69 @@
+displayName: Remoet
+description: Read and manage a Remoet user's career profile (work experience, projects, education, visibility) and feed, look up what Remoet knows about a job page, search jobs and companies, and star or save jobs. Remoet is an AI-agent-first tech job platform for tracking tech jobs from companies you love.
+examples:
+  read:
+    path: jobs.search
+    title: Search open jobs
+    args:
+      searchQuery: typescript
+      remotePolicy:
+        - remote
+      pageSize: 5
+  write:
+    path: workExperience.create
+    title: Add a work experience entry
+    args:
+      title: Senior Engineer
+      companyName: Acme
+      startDate: '2023-04-01'
+      technologies:
+        - TypeScript
+        - Go
+
+apiExamples:
+  workExperience.create:
+    title: Senior Engineer
+    companyName: Acme
+    startDate: '2023-04-01'
+    technologies:
+      - TypeScript
+      - Go
+  workExperience.update:
+    id: 65f0000000000000000000a1
+    isCurrent: false
+  workExperience.delete:
+    id: 65f0000000000000000000a1
+  projects.create:
+    title: corsair-remoet
+    shortDescription: A Corsair plugin
+  projects.update:
+    id: 65f0000000000000000000a2
+    isOpenSource: true
+  projects.delete:
+    id: 65f0000000000000000000a2
+  education.create:
+    institution: MIT
+  education.update:
+    id: 65f0000000000000000000a3
+    isCurrent: true
+  education.delete:
+    id: 65f0000000000000000000a3
+  linkTrees.get:
+    slug: my-links
+  jobContext.get:
+    url: https://job-boards.greenhouse.io/starburst/jobs/5432864008
+  stars.create:
+    companySlug: starburst
+  stars.delete:
+    companySlug: starburst
+  companies.get:
+    slug: starburst
+  savedJobs.create:
+    jobId: 65f0000000000000000000b1
+  savedJobs.update:
+    savedJobId: 65f0000000000000000000b2
+    note: Great stack
+  savedJobs.delete:
+    savedJobId: 65f0000000000000000000b2
+  profile.update:
+    location: Stockholm
