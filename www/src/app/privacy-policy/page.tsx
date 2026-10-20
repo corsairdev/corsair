@@ -196,8 +196,8 @@ export default function PrivacyPolicyPage() {
 					<p>
 						Stored credentials and SDK data are{' '}
 						<strong className="font-medium text-[#1c1c1c]">
-							retained until you delete the applicable Hub project or Cloud
-							environment
+							retained until you remove the connection or delete the applicable
+							Hub project or Cloud environment
 						</strong>{' '}
 						(or as otherwise described in Section 9). This is separate from
 						operational logging: when integration calls pass through the hosted
@@ -347,10 +347,14 @@ export default function PrivacyPolicyPage() {
 						passes to them, and AI conditions that decide whether an incoming
 						event should start a workflow. When a workflow run fails, Corsair
 						may also send the workflow&apos;s code and error message to an AI
-						model to suggest a fix. These requests go through a model gateway
-						that Corsair operates and are sent to an AI model provider under
-						terms that prohibit it from using the data to train or improve its
-						models. Section 5 describes how this applies to Google user data.
+						model to suggest a fix. Corsair&apos;s assistant for writing
+						workflows sends the chat messages it receives, along with the list
+						of the Customer&apos;s connected integrations and our public catalog
+						of operations, to an AI model. These requests go through a model
+						gateway that Corsair operates and are sent to an AI model provider
+						under terms that prohibit it from using the data to train or improve
+						its models. Section 5 describes how this applies to Google user
+						data.
 					</p>
 				</LegalSubsection>
 
@@ -430,9 +434,11 @@ export default function PrivacyPolicyPage() {
 						under terms that prohibit it from using the data to train or improve
 						its models. The provider may keep the data for a limited time only
 						to monitor for abuse. Corsair&apos;s assistant for writing workflows
-						uses only the list of a Customer&apos;s connected integrations and
-						our public catalog of operations; it does not receive Google user
-						data.
+						does not fetch Google user data itself. It receives the chat
+						messages sent to it, the list of a Customer&apos;s connected
+						integrations, and our public catalog of operations; if a message
+						contains Google user data, that message is handled under the same
+						terms as the AI requests above.
 					</p>
 				</LegalSubsection>
 
@@ -627,9 +633,9 @@ export default function PrivacyPolicyPage() {
 					</strong>{' '}
 					OAuth tokens, API keys, connection records, and other SDK-persisted
 					data (in a Corsair-managed database or a database you provide) are
-					retained until you delete the relevant Hub project or Cloud
-					environment (or we delete them following account termination, subject
-					to any legal retention requirements).
+					retained until you remove the connection they belong to or delete the
+					relevant Hub project or Cloud environment (or we delete them following
+					account termination, subject to any legal retention requirements).
 				</p>
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">
