@@ -880,9 +880,9 @@
             "type": "string"
           },
           {
-            "key": "start_at",
+            "key": "next_page_token",
             "optional": true,
-            "type": "number"
+            "type": "string"
           },
           {
             "key": "max_results",
@@ -918,6 +918,16 @@
             "key": "maxResults",
             "optional": true,
             "type": "number"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isLast",
+            "optional": true,
+            "type": "boolean"
           },
           {
             "key": "issues",

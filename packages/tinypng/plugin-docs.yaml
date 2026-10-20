@@ -1,0 +1,38 @@
+displayName: TinyPNG
+description: Image compression API for shrinking, resizing, and converting AVIF, WebP, JPEG, and PNG images.
+
+examples:
+  read:
+    path: account.getCompressionCount
+    title: Get this month's compression count
+  write:
+    path: images.shrink
+    title: Compress an image from a URL
+    args:
+      source:
+        url: https://tinypng.com/images/panda-happy.png
+
+apiExamples:
+  images.shrink:
+    args:
+      source:
+        url: https://tinypng.com/images/panda-happy.png
+  images.output:
+    args:
+      imageId: 2xnsp7jn34e5
+  images.transform:
+    args:
+      imageId: 2xnsp7jn34e5
+      resize:
+        method: fit
+        width: 150
+        height: 100
+      convert:
+        type: image/webp
+  images.compressAndStoreInAzure:
+    args:
+      source:
+        url: https://tinypng.com/images/panda-happy.png
+      blobUrl: https://myaccount.blob.core.windows.net/images/panda.png?sv=2022-11-02&sig=REDACTED
+  account.getCompressionCount:
+    args: {}

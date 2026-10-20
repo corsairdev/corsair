@@ -1,10 +1,15 @@
 import { ReconnectRequiredError } from '../../core/auth/errors/reconnect-required';
 import {
-	parseHubApiErrorBody,
+	formatHubApiErrorMessage,
 	parseHubReconnectBody,
 } from '../contracts/connect-api';
 import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
+import { CORSAIR_SDK_VERSION } from '../sdk-version';
 import type { HubConfig } from '../types';
+
+function corsairSdkVersionHeader(): Record<string, string> {
+	return { 'x-corsair-sdk-version': CORSAIR_SDK_VERSION };
+}
 
 export function normalizeHubApiUrl(apiUrl: string): string {
 	return apiUrl.replace(/\/$/, '');
@@ -38,6 +43,20 @@ export function appDeliveryUrlHeader(hub: HubConfig): Record<string, string> {
 	return url ? { 'x-corsair-delivery-url': url } : {};
 }
 
+/**
+ * Which instance of the project this call is about.
+ *
+ * A project key spans every instance of its project, so a callback that mutates
+ * state — a connection status report, a webhook link — cannot be resolved from
+ * the key alone. Hub rejects those unpinned rather than guess at the project's
+ * primary. One process can serve several instances, so this travels on the
+ * config a Corsair was built with, never an environment variable.
+ */
+export function instanceKeyHeader(hub: HubConfig): Record<string, string> {
+	const key = hub.instanceKey?.trim();
+	return key ? { 'x-corsair-instance-key': key } : {};
+}
+
 export async function readHubJsonResponse(
 	response: Response,
 ): Promise<unknown> {
@@ -69,16 +88,7 @@ export function parseHubApiError(
 	status: number,
 	notFoundMessage?: string,
 ): string {
-	if (status === 404 && notFoundMessage) {
-		return notFoundMessage;
-	}
-
-	const message = parseHubApiErrorBody(payload);
-	if (message) {
-		return message;
-	}
-
-	return `Hub API returned HTTP ${status}`;
+	return formatHubApiErrorMessage(payload, status, notFoundMessage);
 }
 
 // A `reconnect_required` body becomes a typed error carrying Hub's scoped connect
@@ -107,6 +117,7 @@ export async function hubApiPost<T>(input: {
 	body: unknown;
 	notFoundMessage?: string;
 	parseResponse: (payload: unknown) => T;
+	extraHeaders?: Record<string, string>;
 }): Promise<T> {
 	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
 	const response = await fetch(`${apiUrl}${input.path}`, {
@@ -115,6 +126,9 @@ export async function hubApiPost<T>(input: {
 			'content-type': 'application/json',
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
+			...instanceKeyHeader(input.hub),
+			...corsairSdkVersionHeader(),
+			...input.extraHeaders,
 		},
 		body: JSON.stringify(input.body),
 	});
@@ -140,6 +154,7 @@ export async function hubApiGet<T>(input: {
 		headers: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
 			...appDeliveryUrlHeader(input.hub),
+			...instanceKeyHeader(input.hub),
 		},
 	});
 

@@ -8,7 +8,8 @@ export function isAuthType(value: unknown): value is AuthTypes {
 		value === 'oauth_2' ||
 		value === 'api_key' ||
 		value === 'bot_token' ||
-		value === 'managed'
+		value === 'managed' ||
+		value === 'managed_pricing'
 	);
 }
 
@@ -17,6 +18,13 @@ export function getPluginAuthType(
 ): AuthTypes | undefined {
 	const authType = plugin.options?.authType;
 	return isAuthType(authType) ? authType : undefined;
+}
+
+/** Managed pricing plugins are API-only until Hub-backed webhook routing exists. */
+export function managedPricingDisablesWebhooks(
+	authType: AuthTypes | undefined,
+): boolean {
+	return authType === 'managed_pricing';
 }
 
 export function getAccountFields(

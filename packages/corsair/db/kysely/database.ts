@@ -1,4 +1,4 @@
-import type { SqliteDialectConfig } from 'kysely';
+import type { KyselyPlugin, SqliteDialectConfig } from 'kysely';
 import { Kysely, PostgresDialect, SqliteDialect } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
 import type { Pool } from 'pg';
@@ -11,6 +11,28 @@ import type {
 	CorsairPermission,
 } from '../index';
 import { SqliteDatePlugin } from './sqlite-date-plugin.js';
+import type {
+	CorsairDbTables,
+	CorsairResolvedTableNames,
+} from './table-names.js';
+import {
+	applyCorsairTableNameMap,
+	createTableNameMapPlugin,
+	resolveCorsairDbTables,
+	tableNamesAreCustomized,
+	validateCorsairDbTables,
+} from './table-names.js';
+
+export type {
+	CorsairCoreTableName,
+	CorsairDbTables,
+	CorsairResolvedTableNames,
+} from './table-names.js';
+export {
+	CORSAIR_CORE_TABLE_NAMES,
+	resolveCorsairDbTables,
+	validateCorsairDbTables,
+} from './table-names.js';
 
 export type CorsairKyselyDatabase = {
 	corsair_integrations: CorsairIntegration;
@@ -24,6 +46,13 @@ export type CorsairDatabase = {
 	db: Kysely<CorsairKyselyDatabase>;
 	/** True when the underlying dialect is Postgres (pg Pool or postgres.js). Omitting defaults to true. */
 	isPg?: boolean;
+	/** Physical table names for each Corsair logical table key. Omitting uses the defaults. */
+	tableNames?: CorsairResolvedTableNames;
+};
+
+export type CreateCorsairDatabaseOptions = {
+	/** Remap logical Corsair table names to physical tables in your database. */
+	dbTables?: CorsairDbTables;
 };
 
 /**
@@ -177,28 +206,50 @@ function isKysely(
 	);
 }
 
+function buildKyselyPlugins(
+	tableNames: CorsairResolvedTableNames,
+	sqlite: boolean,
+): KyselyPlugin[] {
+	const plugins: KyselyPlugin[] = [];
+	if (sqlite) plugins.push(new SqliteDatePlugin());
+	if (tableNamesAreCustomized(tableNames)) {
+		plugins.push(createTableNameMapPlugin(tableNames));
+	}
+	return plugins;
+}
+
+// The factory always resolves the names; only a hand-built literal may omit them.
 export function createCorsairDatabase(
 	input: CorsairDatabaseInput,
-): CorsairDatabase {
+	options?: CreateCorsairDatabaseOptions,
+): CorsairDatabase & { tableNames: CorsairResolvedTableNames } {
+	validateCorsairDbTables(options?.dbTables);
+	const tableNames = resolveCorsairDbTables(options?.dbTables);
+
 	if (isKysely(input)) {
 		// Caller supplies a Kysely instance directly; we cannot inspect the
 		// underlying dialect, so assume Postgres (the only prod target).
-		return { db: input, isPg: true };
+		return {
+			db: applyCorsairTableNameMap(input, tableNames),
+			isPg: true,
+			tableNames,
+		};
 	}
 
 	if (isBetterSqlite3(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new SqliteDialect({ database: input }),
-			plugins: [new SqliteDatePlugin()],
+			plugins: buildKyselyPlugins(tableNames, true),
 		});
-		return { db, isPg: false };
+		return { db, isPg: false, tableNames };
 	}
 
 	if (isPgPool(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new PostgresDialect({ pool: input }),
+			plugins: buildKyselyPlugins(tableNames, false),
 		});
-		return { db, isPg: true };
+		return { db, isPg: true, tableNames };
 	}
 
 	if (isPostgresJs(input)) {
@@ -207,8 +258,9 @@ export function createCorsairDatabase(
 			dialect: new PostgresJSDialect({
 				postgres: withParamSerialization(input),
 			}),
+			plugins: buildKyselyPlugins(tableNames, false),
 		});
-		return { db, isPg: true };
+		return { db, isPg: true, tableNames };
 	}
 
 	throw new Error(

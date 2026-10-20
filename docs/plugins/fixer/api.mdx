@@ -1,0 +1,208 @@
+---
+title: API
+description: "API reference for Fixer: every `fixer.api.*` operation with input and output types."
+---
+
+Every `fixer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Currencies
+
+### getAll
+
+`currencies.getAll`
+
+Retrieve list of supported currency symbols and names
+
+**Risk:** `read`
+
+```ts
+await corsair.fixer.api.currencies.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `symbols` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="symbols full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rates
+
+### convert
+
+`rates.convert`
+
+Convert amounts between two currencies using real-time or historical rates
+
+**Risk:** `read`
+
+```ts
+await corsair.fixer.api.rates.convert({ from: 'USD', to: 'EUR', amount: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `query` | `object` | No | — |
+| `info` | `object` | No | — |
+| `date` | `string` | No | — |
+| `result` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  from: string,
+  to: string,
+  amount: number
+}
+```
+</Accordion>
+
+<Accordion title="info full type">
+
+```ts
+{
+  timestamp?: number,
+  rate: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### historical
+
+`rates.historical`
+
+Retrieve historical exchange rates for a specific date (YYYY-MM-DD)
+
+**Risk:** `read`
+
+```ts
+await corsair.fixer.api.rates.historical({
+	date: '2026-01-01',
+	symbols: ['USD'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | — |
+| `base` | `string` | No | — |
+| `symbols` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `historical` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `base` | `string` | No | — |
+| `rates` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### latest
+
+`rates.latest`
+
+Retrieve real-time exchange rates for all or specified currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.fixer.api.rates.latest({
+	base: 'EUR',
+	symbols: ['USD', 'GBP'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base` | `string` | No | — |
+| `symbols` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `timestamp` | `number` | No | — |
+| `base` | `string` | No | — |
+| `date` | `string` | No | — |
+| `rates` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -77,6 +77,8 @@ function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 			return ['api_key'];
 		case 'bot_token':
 			return ['bot_token'];
+		case 'managed_pricing':
+			return [];
 	}
 }
 
