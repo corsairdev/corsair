@@ -522,21 +522,22 @@ export default function PrivacyPolicyPage() {
 						With the Corsair SDK and Hub, Google OAuth tokens are stored in the
 						Customer&apos;s own database, encrypted with a key the Customer
 						holds; Hub handles them only briefly to complete the connection and
-						refresh tokens. With Corsair Cloud, OAuth tokens and data the
-						integrations save are stored encrypted at rest with keys Corsair
-						manages, and Google user data passes through Corsair&apos;s servers
-						while an integration runs. Data is encrypted in transit.
+						refresh tokens. With Corsair Cloud, the Corsair-managed database is
+						encrypted at rest, OAuth tokens are additionally encrypted with keys
+						Corsair manages, and Google user data passes through Corsair&apos;s
+						servers while an integration runs. Data is encrypted in transit.
 					</p>
 					<p>
-						Corsair Cloud keeps Google OAuth tokens until the Customer removes
-						the connection or deletes the project or environment, and keeps
-						approval requests, which can include the details of an action
-						waiting for approval, until the project or environment is deleted.
-						Google notifications delivered through Hub are deleted after 14
-						days, and workflow run records 30 days after the run finishes. Chats
-						with the workflow assistant are kept until the project or
-						environment is deleted. An End User can revoke access at any time on
-						their{' '}
+						Corsair Cloud keeps Google OAuth tokens, and the Google user data
+						the SDK stores for a connection (such as cached items and received
+						events), until the Customer removes the connection or deletes the
+						project or environment, and keeps approval requests, which can
+						include the details of an action waiting for approval, until the
+						project or environment is deleted. Google notifications delivered
+						through Hub are deleted after 14 days, and workflow run records 30
+						days after the run finishes. Chats with the workflow assistant are
+						kept until the project or environment is deleted. An End User can
+						revoke access at any time on their{' '}
 						<a
 							href="https://myaccount.google.com/permissions"
 							target="_blank"
