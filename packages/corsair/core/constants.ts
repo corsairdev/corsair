@@ -721,7 +721,6 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
-	replicate: 'Replicate',
 	removebg: 'remove.bg',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
