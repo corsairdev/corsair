@@ -126,8 +126,10 @@ export {
 	getManagedPricingApiKey,
 	type ManagedPricingApiKeyResult,
 	type ManagedPricingAuthContext,
+	type ManagedPricingKeyBuilderContext,
 	managedPricingHubScope,
 	requireHubForManagedPricing,
+	resolveManagedPricingApiKey,
 } from './managed-pricing-auth';
 export {
 	createHubPermissionSession,
