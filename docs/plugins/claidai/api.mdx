@@ -1,0 +1,1313 @@
+---
+title: API
+description: "API reference for Claid.ai: every `claidai.api.*` operation with input and output types."
+---
+
+Every `claidai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Background Generate
+
+### backgroundGenerate
+
+`backgroundGenerate`
+
+Generate an AI background for an image.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.backgroundGenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | Yes | Product object to place on the scene |
+| `scene` | `object` | Yes | Scene settings |
+| `output` | `object` | No | Output settings |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  image_url: string,
+  placement_type?: absolute | original,
+  rotation_degree?: number,
+  scale?: number,
+  position?: {
+    x: number,
+    y: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="scene full type">
+
+```ts
+{
+  prompt?: string | {
+    generate: boolean,
+    guidelines?: string
+  },
+  negative_prompt?: string,
+  model?: v1 | v2,
+  template_url?: string,
+  template_mode?: transform | adjust | lock,
+  color?: string,
+  view?: top | front,
+  aspect_ratio?: string,
+  preference?: fast | optimal | best
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  destination?: string,
+  number_of_images?: number,
+  format?: png | jpeg | webp | avif
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: Record<string, JsonValue>,
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Background Remove
+
+### backgroundRemove
+
+`backgroundRemove`
+
+Remove the background from an image using Claid.ai.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.backgroundRemove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `color` | `string` | No | Background color, for example "#ffffff" or "transparent" |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  },
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  } | {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Create Storage
+
+### createStorage
+
+`createStorage`
+
+Create a Claid.ai storage connection.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.createStorage({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name: string,
+  type: s3,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials: {
+      access_key: string,
+      secret_access_key: string
+    }
+  }
+} | {
+  name: string,
+  type: gcs,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials: {
+      access_key: string,
+      secret_access_key: string
+    }
+  }
+} | {
+  name: string,
+  type: web_folder,
+  parameters: {
+    base_url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: web_folder | s3 | gcs,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials?: {
+      access_key: string
+    }
+  } | {
+    base_url: string
+  },
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Delete Storage
+
+### deleteStorage
+
+`deleteStorage`
+
+Delete a Claid.ai storage connection.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.deleteStorage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storage_id` | `number` | Yes | Storage ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `lazy` | No | Deletion result |
+
+
+
+---
+
+## Generative Resize
+
+### generativeResize
+
+`generativeResize`
+
+Resize an image using generative expansion.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.generativeResize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `width` | `number \| string` | Yes | Target width |
+| `height` | `number \| string` | Yes | Target height |
+| `feathering` | `string` | No | Transition smoothness, for example "20%" |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  },
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  } | {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Ai Edit
+
+### imageAiEdit
+
+`imageAiEdit`
+
+Submit an AI image editing task.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.imageAiEdit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `options` | `object` | Yes | AI edit options |
+| `output` | `object` | No | Output settings |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  prompt: string,
+  model?: v1 | v2,
+  inference_steps?: number,
+  guidance_scale?: number,
+  aspect_ratio?: string
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  destination?: string,
+  format?: png | jpeg,
+  number_of_images?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  status: string,
+  result_url?: string,
+  created_at?: string,
+  request?: Record<string, JsonValue>,
+  errors?: {
+    error: string,
+    created_at?: string | number
+  }[],
+  result?: {
+    input_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_objects?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    }[]
+  },
+  results?: {
+    input_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_objects?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Edit Batch
+
+### imageEditBatch
+
+`imageEditBatch`
+
+Process multiple images using Claid.ai.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.imageEditBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | Storage folder URI, list of image URLs, or a source object |
+| `operations` | `object` | Yes | Image editing operations, for example { resizing: { width: 1000 } } |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | {
+  source: string,
+  recursive?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="operations full type">
+
+```ts
+Record<string, JsonValue>
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  status: string,
+  result_url?: string,
+  created_at?: string,
+  request?: Record<string, JsonValue>,
+  errors?: {
+    error: string,
+    created_at?: string | number
+  }[],
+  result?: {
+    input_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_objects?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    }[]
+  },
+  results?: {
+    input_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_object?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    },
+    output_objects?: {
+      ext?: string | null,
+      mps?: number | null,
+      mime?: string | null,
+      format?: string | null,
+      width?: number | null,
+      height?: number | null,
+      tmp_url?: string | null,
+      object_key?: string | null,
+      object_bucket?: string | null,
+      object_uri?: string | null,
+      claid_storage_uri?: string | null
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Generate
+
+### imageGenerate
+
+`imageGenerate`
+
+Generate an image using Claid.ai.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.imageGenerate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Text prompt |
+| `options` | `object` | No | Generation options |
+| `output` | `string` | No | Storage folder URI for results |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  number_of_images?: number,
+  guidance_scale?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: Record<string, JsonValue>,
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## License Plate Blur
+
+### licensePlateBlur
+
+`licensePlateBlur`
+
+Detect and blur license plates in an image.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.licensePlateBlur({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  },
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  } | {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Patch Storage
+
+### patchStorage
+
+`patchStorage`
+
+Update a Claid.ai storage connection.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.patchStorage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storage_id` | `number` | Yes | Storage ID |
+| `name` | `string` | No | Storage name |
+| `type` | `web_folder \| s3 \| gcs` | No | Storage connector type |
+| `parameters` | `object` | No | Storage connection parameters to update |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+  base_url: string
+} | {
+  path?: string,
+  bucket?: string,
+  credentials?: {
+    access_key?: string,
+    secret_access_key?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: web_folder | s3 | gcs,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials?: {
+      access_key: string
+    }
+  } | {
+    base_url: string
+  },
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Polish Image
+
+### polishImage
+
+`polishImage`
+
+Polish and restore an image.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.polishImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  },
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  } | {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smart Frame
+
+### smartFrame
+
+`smartFrame`
+
+Place an image inside a smart frame.
+
+**Risk:** `write`
+
+```ts
+await corsair.claidai.api.smartFrame({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Image URL or storage URI of the input image |
+| `width` | `number \| string` | Yes | Canvas width |
+| `height` | `number \| string` | Yes | Canvas height |
+| `padding` | `string` | No | Space around the object, for example "10%" or "30px" |
+| `background_color` | `string` | No | Canvas color, for example "#ffffff" |
+| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+string | {
+  destination?: string,
+  format?: jpeg | png | webp | avif | tiff
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  },
+  output?: {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  } | {
+    ext?: string | null,
+    mps?: number | null,
+    mime?: string | null,
+    format?: string | null,
+    width?: number | null,
+    height?: number | null,
+    tmp_url?: string | null,
+    object_key?: string | null,
+    object_bucket?: string | null,
+    object_uri?: string | null,
+    claid_storage_uri?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Storage Details
+
+### storageDetails
+
+`storageDetails`
+
+Get details of a Claid.ai storage connection.
+
+**Risk:** `read`
+
+```ts
+await corsair.claidai.api.storageDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storage_id` | `number` | Yes | Storage ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: web_folder | s3 | gcs,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials?: {
+      access_key: string
+    }
+  } | {
+    base_url: string
+  },
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Storage List
+
+### storageList
+
+`storageList`
+
+List Claid.ai storage connections.
+
+**Risk:** `read`
+
+```ts
+await corsair.claidai.api.storageList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: web_folder | s3 | gcs,
+  parameters: {
+    path?: string,
+    bucket: string,
+    credentials?: {
+      access_key: string
+    }
+  } | {
+    base_url: string
+  },
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Storage Types
+
+### storageTypes
+
+`storageTypes`
+
+List supported Claid.ai storage types.
+
+**Risk:** `read`
+
+```ts
+await corsair.claidai.api.storageTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `web_folder \| s3 \| gcs[]` | Yes | — |
+
+
+
+---
+

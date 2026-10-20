@@ -1,0 +1,453 @@
+---
+title: Database
+description: "Celigo local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Celigo plugin syncs data locally. Use `corsair.celigo.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Connections
+
+Path: `celigo.db.connections.search`
+
+```ts
+const rows = await corsair.celigo.db.connections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `assistant` | `string` | equals, contains, startsWith, endsWith, in |
+| `agentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `borrowConcurrencyFromConnectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentConnectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `mcpOwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionRole` | `string` | equals, contains, startsWith, endsWith, in |
+| `offline` | `boolean` | equals |
+| `isHTTP` | `boolean` | equals |
+| `autoRecoverRateLimitErrors` | `boolean` | equals |
+| `enableMicroBatchForOneToMany` | `boolean` | equals |
+| `enableCsvObjectParsing` | `boolean` | equals |
+| `debugDate` | `date` | equals, before, after, between |
+| `debugUntil` | `date` | equals, before, after, between |
+| `parentSyncedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Exports
+
+Path: `celigo.db.exports.search`
+
+```ts
+const rows = await corsair.celigo.db.exports.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `adaptorType` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageSize` | `number` | equals, gt, gte, lt, lte, in |
+| `dataURITemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `traceKeyTemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `skipRetries` | `boolean` | equals |
+| `oneToMany` | `boolean` | equals |
+| `pathToMany` | `string` | equals, contains, startsWith, endsWith, in |
+| `isLookup` | `boolean` | equals |
+| `ediProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `postParseListenerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `assistant` | `string` | equals, contains, startsWith, endsWith, in |
+| `apiIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `asynchronous` | `boolean` | equals |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Flows
+
+Path: `celigo.db.flows.search`
+
+```ts
+const rows = await corsair.celigo.db.flows.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `schedule` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `disabled` | `boolean` | equals |
+| `exportId` | `string` | equals, contains, startsWith, endsWith, in |
+| `importId` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `wizardState` | `string` | equals, contains, startsWith, endsWith, in |
+| `runPageGeneratorsInParallel` | `boolean` | equals |
+| `autoResolveMatchingTraceKeys` | `boolean` | equals |
+| `isAbstract` | `boolean` | equals |
+| `abstractFlowId` | `string` | equals, contains, startsWith, endsWith, in |
+| `flowGroupingId` | `string` | equals, contains, startsWith, endsWith, in |
+| `keepDeltaBehindFlowId` | `string` | equals, contains, startsWith, endsWith, in |
+| `keepDeltaBehindExportId` | `string` | equals, contains, startsWith, endsWith, in |
+| `draft` | `boolean` | equals |
+| `draftExpiresAt` | `date` | equals, before, after, between |
+| `hidden` | `boolean` | equals |
+| `numInstances` | `number` | equals, gt, gte, lt, lte, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `free` | `boolean` | equals |
+| `lastExecutedAt` | `date` | equals, before, after, between |
+| `resolvedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Iclients
+
+Path: `celigo.db.iclients.search`
+
+```ts
+const rows = await corsair.celigo.db.iclients.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `provider` | `string` | equals, contains, startsWith, endsWith, in |
+| `published` | `boolean` | equals |
+| `enableJWT` | `boolean` | equals |
+| `enableIClientReferences` | `boolean` | equals |
+| `formType` | `string` | equals, contains, startsWith, endsWith, in |
+| `httpConnectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `httpConnectorApiId` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Imports
+
+Path: `celigo.db.imports.search`
+
+```ts
+const rows = await corsair.celigo.db.imports.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `adaptorType` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `distributed` | `boolean` | equals |
+| `maxAttempts` | `number` | equals, gt, gte, lt, lte, in |
+| `ignoreExisting` | `boolean` | equals |
+| `ignoreMissing` | `boolean` | equals |
+| `idLockTemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `dataURITemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `traceKeyTemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `oneToMany` | `boolean` | equals |
+| `pathToMany` | `string` | equals, contains, startsWith, endsWith, in |
+| `blobKeyPath` | `string` | equals, contains, startsWith, endsWith, in |
+| `blob` | `boolean` | equals |
+| `assistant` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleteAfterImport` | `boolean` | equals |
+| `ediProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `inputContext` | `string` | equals, contains, startsWith, endsWith, in |
+| `apiIdentifier` | `string` | equals, contains, startsWith, endsWith, in |
+| `draft` | `boolean` | equals |
+| `draftExpiresAt` | `date` | equals, before, after, between |
+| `debugUntil` | `date` | equals, before, after, between |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Integrations
+
+Path: `celigo.db.integrations.search`
+
+```ts
+const rows = await corsair.celigo.db.integrations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `readme` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `mode` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `updateInProgress` | `boolean` | equals |
+| `celigoAgentAutoRunMode` | `boolean` | equals |
+| `sampleIntegration` | `boolean` | equals |
+| `syncs` | `boolean` | equals |
+| `childDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Jobs
+
+Path: `celigo.db.jobs.search`
+
+```ts
+const rows = await corsair.celigo.db.jobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `flowId` | `string` | equals, contains, startsWith, endsWith, in |
+| `exportId` | `string` | equals, contains, startsWith, endsWith, in |
+| `importId` | `string` | equals, contains, startsWith, endsWith, in |
+| `expOrImpId` | `string` | equals, contains, startsWith, endsWith, in |
+| `retryOfJobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `flowJobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentJobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `bulkJobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `triggeredBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `canceledBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `flowExecutionGroupId` | `string` | equals, contains, startsWith, endsWith, in |
+| `numError` | `number` | equals, gt, gte, lt, lte, in |
+| `numOpenError` | `number` | equals, gt, gte, lt, lte, in |
+| `numResolved` | `number` | equals, gt, gte, lt, lte, in |
+| `numResolvedByAdaptor` | `number` | equals, gt, gte, lt, lte, in |
+| `numSuccess` | `number` | equals, gt, gte, lt, lte, in |
+| `numIgnore` | `number` | equals, gt, gte, lt, lte, in |
+| `numExport` | `number` | equals, gt, gte, lt, lte, in |
+| `numPagesGenerated` | `number` | equals, gt, gte, lt, lte, in |
+| `numPagesProcessed` | `number` | equals, gt, gte, lt, lte, in |
+| `doneExporting` | `boolean` | equals |
+| `retriable` | `boolean` | equals |
+| `logMode` | `string` | equals, contains, startsWith, endsWith, in |
+| `startedAt` | `date` | equals, before, after, between |
+| `endedAt` | `date` | equals, before, after, between |
+| `resolvedAt` | `date` | equals, before, after, between |
+| `lastExecutedAt` | `date` | equals, before, after, between |
+| `purgeAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scripts
+
+Path: `celigo.db.scripts.search`
+
+```ts
+const rows = await corsair.celigo.db.scripts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `postResponseHookToProcessOnChildRecord` | `boolean` | equals |
+| `debugUntil` | `date` | equals, before, after, between |
+| `sourceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `celigo.db.tags.search`
+
+```ts
+const rows = await corsair.celigo.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `tagId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `celigo.db.users.search`
+
+```ts
+const rows = await corsair.celigo.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `sharedWithUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `accessLevel` | `string` | equals, contains, startsWith, endsWith, in |
+| `userType` | `string` | equals, contains, startsWith, endsWith, in |
+| `accepted` | `boolean` | equals |
+| `disabled` | `boolean` | equals |
+| `dismissed` | `boolean` | equals |
+| `accountSSORequired` | `boolean` | equals |
+| `accountMFARequired` | `boolean` | equals |
+| `allowAccessToAPIM` | `boolean` | equals |
+| `allowToEditRetryData` | `boolean` | equals |
+| `allowIntegrationWorkspaceCreation` | `boolean` | equals |
+| `isProductionAdmin` | `boolean` | equals |
+| `ssoSetupPending` | `boolean` | equals |
+| `createdVia` | `string` | equals, contains, startsWith, endsWith, in |
+| `provisionedBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `scimSsoClientId` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastSignIn` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `lastModified` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

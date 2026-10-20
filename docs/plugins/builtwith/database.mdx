@@ -1,0 +1,330 @@
+---
+title: Database
+description: "BuiltWith local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The BuiltWith plugin syncs data locally. Use `corsair.builtwith.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Company Financials
+
+Path: `builtwith.db.companyFinancials.search`
+
+```ts
+const rows = await corsair.builtwith.db.companyFinancials.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `employees` | `number` | equals, gt, gte, lt, lte, in |
+| `followers` | `number` | equals, gt, gte, lt, lte, in |
+| `products` | `number` | equals, gt, gte, lt, lte, in |
+| `spend` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Domain Coverage
+
+Path: `builtwith.db.domainCoverage.search`
+
+```ts
+const rows = await corsair.builtwith.db.domainCoverage.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `first` | `number` | equals, gt, gte, lt, lte, in |
+| `last` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Domains
+
+Path: `builtwith.db.domains.search`
+
+```ts
+const rows = await corsair.builtwith.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `lookup` | `string` | equals, contains, startsWith, endsWith, in |
+| `isDb` | `string` | equals, contains, startsWith, endsWith, in |
+| `spend` | `number` | equals, gt, gte, lt, lte, in |
+| `salesRevenue` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Domain Technologies
+
+Path: `builtwith.db.domainTechnologies.search`
+
+```ts
+const rows = await corsair.builtwith.db.domainTechnologies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `subDomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `technologyId` | `number` | equals, gt, gte, lt, lte, in |
+| `parent` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `link` | `string` | equals, contains, startsWith, endsWith, in |
+| `confidence` | `number` | equals, gt, gte, lt, lte, in |
+| `isPremium` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## List Sites
+
+Path: `builtwith.db.listSites.search`
+
+```ts
+const rows = await corsair.builtwith.db.listSites.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tech` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstDetected` | `number` | equals, gt, gte, lt, lte, in |
+| `lastDetected` | `number` | equals, gt, gte, lt, lte, in |
+| `monthlySpend` | `number` | equals, gt, gte, lt, lte, in |
+| `skuCount` | `number` | equals, gt, gte, lt, lte, in |
+| `salesRevenue` | `number` | equals, gt, gte, lt, lte, in |
+| `socialFollowers` | `number` | equals, gt, gte, lt, lte, in |
+| `employees` | `number` | equals, gt, gte, lt, lte, in |
+| `pageRank` | `number` | equals, gt, gte, lt, lte, in |
+| `trancoRank` | `number` | equals, gt, gte, lt, lte, in |
+| `majesticRank` | `number` | equals, gt, gte, lt, lte, in |
+| `umbrellaRank` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Mcp Servers
+
+Path: `builtwith.db.mcpServers.search`
+
+```ts
+const rows = await corsair.builtwith.db.mcpServers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Products
+
+Path: `builtwith.db.products.search`
+
+```ts
+const rows = await corsair.builtwith.db.products.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `shop` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `indexed` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstIndexed` | `string` | equals, contains, startsWith, endsWith, in |
+| `price` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Recommendations
+
+Path: `builtwith.db.recommendations.search`
+
+```ts
+const rows = await corsair.builtwith.db.recommendations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `compiled` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `link` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `stars` | `number` | equals, gt, gte, lt, lte, in |
+| `match` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Redirects
+
+Path: `builtwith.db.redirects.search`
+
+```ts
+const rows = await corsair.builtwith.db.redirects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `lookup` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstDetected` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastDetected` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Social Links
+
+Path: `builtwith.db.socialLinks.search`
+
+```ts
+const rows = await corsair.builtwith.db.socialLinks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `socialUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `root` | `string` | equals, contains, startsWith, endsWith, in |
+| `builtWithRank` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Technologies
+
+Path: `builtwith.db.technologies.search`
+
+```ts
+const rows = await corsair.builtwith.db.technologies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `link` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `isPremium` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `trendsLink` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

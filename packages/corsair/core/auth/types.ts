@@ -39,6 +39,10 @@ export const BASE_AUTH_FIELDS = {
 			'webhook_signature',
 		] as const,
 	},
+	managed_pricing: {
+		integration: [] as const,
+		account: [] as const,
+	},
 } as const satisfies Record<
 	AuthTypes,
 	{

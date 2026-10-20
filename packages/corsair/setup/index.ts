@@ -680,7 +680,11 @@ async function checkAuthStatus(
 	const isReady =
 		missingIntegration.length === 0 && missingAccount.length === 0;
 
-	if (isReady) {
+	if (authType === 'managed_pricing') {
+		log(
+			`[corsair:setup] '${pluginId}' (managed_pricing) uses Corsair metered credentials via Hub — nothing to store in your database. Pass hub: { ... } to createCorsair().`,
+		);
+	} else if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
 	} else if (authType === 'managed') {
 		log(

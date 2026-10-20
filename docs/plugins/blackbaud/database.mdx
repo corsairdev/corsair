@@ -1,0 +1,212 @@
+---
+title: Database
+description: "Blackbaud local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Blackbaud plugin syncs data locally. Use `corsair.blackbaud.db.<entity>.search({ entity_id?, data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Batch Gifts
+
+Path: `blackbaud.db.batchGifts.search`
+
+```ts
+const rows = await corsair.blackbaud.db.batchGifts.search({
+    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `batch_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `constituency` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_added` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `gift_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `gift_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_anonymous` | `boolean` | equals |
+| `lookup_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `subtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `batch_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `approved_gift_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Gifts
+
+Path: `blackbaud.db.gifts.search`
+
+```ts
+const rows = await corsair.blackbaud.db.gifts.search({
+    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `batch_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `constituency` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_added` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `gift_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `gift_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_anonymous` | `boolean` | equals |
+| `lookup_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `subtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Memberships
+
+Path: `blackbaud.db.memberships.search`
+
+```ts
+const rows = await corsair.blackbaud.db.memberships.search({
+    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `dues` | `number` | equals, gt, gte, lt, lte, in |
+| `category_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `program_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sub_category_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_renewed_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_dropped_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `next_renewal_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `joined_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_years` | `number` | equals, gt, gte, lt, lte, in |
+| `times_renewed` | `number` | equals, gt, gte, lt, lte, in |
+| `consec_years` | `number` | equals, gt, gte, lt, lte, in |
+| `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## One Roster Keys
+
+Path: `blackbaud.db.oneRosterKeys.search`
+
+```ts
+const rows = await corsair.blackbaud.db.oneRosterKeys.search({
+    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `kty` | `string` | equals, contains, startsWith, endsWith, in |
+| `alg` | `string` | equals, contains, startsWith, endsWith, in |
+| `use` | `string` | equals, contains, startsWith, endsWith, in |
+| `kid` | `string` | equals, contains, startsWith, endsWith, in |
+| `x5t` | `string` | equals, contains, startsWith, endsWith, in |
+| `e` | `string` | equals, contains, startsWith, endsWith, in |
+| `n` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payment Transactions
+
+Path: `blackbaud.db.paymentTransactions.search`
+
+```ts
+const rows = await corsair.blackbaud.db.paymentTransactions.search({
+    entity_id: { equals: '<id>' }, // optional, top-level (not inside data)
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+`entity_id` (`string`; equals, contains, startsWith, endsWith, in) is a top-level `.search()` option. The fields below go inside `data`.
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `net_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `additional_fee` | `number` | equals, gt, gte, lt, lte, in |
+| `application_fee` | `number` | equals, gt, gte, lt, lte, in |
+| `total_fees` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `transaction_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `pending_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `transaction_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `transaction_category` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `application` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorization_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `check_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+| `disbursement_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `donor_ip_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_live` | `boolean` | equals |
+| `token` | `string` | equals, contains, startsWith, endsWith, in |
+| `reference_transaction_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
