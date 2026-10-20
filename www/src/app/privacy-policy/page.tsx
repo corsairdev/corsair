@@ -194,12 +194,16 @@ export default function PrivacyPolicyPage() {
 						described above.
 					</p>
 					<p>
-						Stored credentials and SDK data are{' '}
+						A connection&apos;s credentials (such as an End User&apos;s OAuth
+						tokens) and the data the SDK stores for that connection are{' '}
 						<strong className="font-medium text-[#1c1c1c]">
 							retained until you remove the connection or delete the applicable
 							Hub project or Cloud environment
-						</strong>{' '}
-						(or as otherwise described in Section 9). This is separate from
+						</strong>
+						. Integration-level settings, such as your OAuth application&apos;s
+						client ID and client secret, and approval requests are retained
+						until you delete the applicable Hub project or Cloud environment (or
+						as otherwise described in Section 9). This is separate from
 						operational logging: when integration calls pass through the hosted
 						runtime, Corsair also retains call{' '}
 						<strong className="font-medium text-[#1c1c1c]">metadata</strong>{' '}
@@ -525,10 +529,14 @@ export default function PrivacyPolicyPage() {
 					</p>
 					<p>
 						Corsair Cloud keeps Google OAuth tokens until the Customer removes
-						the connection or deletes the project or environment. Google
-						notifications delivered through Hub are deleted after 14 days, and
-						workflow run records 30 days after the run finishes. An End User can
-						revoke access at any time on their{' '}
+						the connection or deletes the project or environment, and keeps
+						approval requests, which can include the details of an action
+						waiting for approval, until the project or environment is deleted.
+						Google notifications delivered through Hub are deleted after 14
+						days, and workflow run records 30 days after the run finishes. Chats
+						with the workflow assistant are kept until the project or
+						environment is deleted. An End User can revoke access at any time on
+						their{' '}
 						<a
 							href="https://myaccount.google.com/permissions"
 							target="_blank"
@@ -648,11 +656,15 @@ export default function PrivacyPolicyPage() {
 					<strong className="font-medium text-[#1c1c1c]">
 						Corsair Cloud — credentials and SDK database:
 					</strong>{' '}
-					OAuth tokens, API keys, connection records, and other SDK-persisted
-					data (in a Corsair-managed database or a database you provide) are
-					retained until you remove the connection they belong to or delete the
-					relevant Hub project or Cloud environment (or we delete them following
-					account termination, subject to any legal retention requirements).
+					A connection&apos;s OAuth tokens, API keys, and the data the SDK
+					stores for it (in a Corsair-managed database or a database you
+					provide) are retained until you remove the connection or delete the
+					relevant Hub project or Cloud environment. Integration-level OAuth
+					application credentials (client ID and client secret), approval
+					requests, and other SDK-persisted data are retained until you delete
+					the relevant Hub project or Cloud environment (or we delete them
+					following account termination, subject to any legal retention
+					requirements).
 				</p>
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">
@@ -680,7 +692,8 @@ export default function PrivacyPolicyPage() {
 					<strong className="font-medium text-[#1c1c1c]">Workflows:</strong>{' '}
 					Workflow run records, including the triggering event and each
 					step&apos;s output and errors, are deleted 30 days after the run
-					finishes.
+					finishes. Chats with the workflow assistant are kept until you delete
+					the relevant Hub project or environment.
 				</p>
 				<p>
 					Hub account profile information from Google or GitHub sign-in is
