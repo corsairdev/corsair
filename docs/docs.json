@@ -2433,6 +2433,14 @@
                 ]
               },
               {
+                "group": "RevAI",
+                "pages": [
+                  "plugins/revai/overview",
+                  "plugins/revai/api",
+                  "plugins/revai/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
