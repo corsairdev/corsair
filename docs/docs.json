@@ -1271,6 +1271,14 @@
                 ]
               },
               {
+                "group": "CoinMarketCal",
+                "pages": [
+                  "plugins/coinmarketcal/overview",
+                  "plugins/coinmarketcal/api",
+                  "plugins/coinmarketcal/database"
+                ]
+              },
+              {
                 "group": "College Football Data",
                 "pages": [
                   "plugins/collegefootballdata/overview",
