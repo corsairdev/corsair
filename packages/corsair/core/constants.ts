@@ -372,6 +372,7 @@ export const BaseProviders = [
 	'typeform',
 	'unione',
 	'uniswapapi',
+	'updownio',
 	'uploadcare',
 	'vapi',
 	'vaquill',
@@ -767,6 +768,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	unione: 'Unione',
 	uniswapapi: 'Uniswap',
+	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
@@ -1168,6 +1170,7 @@ export type AllProviders =
 	| 'typeform'
 	| 'unione'
 	| 'uniswapapi'
+	| 'updownio'
 	| 'uploadcare'
 	| 'vapi'
 	| 'vaquill'
