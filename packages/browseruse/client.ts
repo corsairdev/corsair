@@ -6,6 +6,7 @@ export class BrowserUseAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		public readonly retryAfterMs?: number,
 	) {
 		super(message);
 		this.name = 'BrowserUseAPIError';
@@ -15,9 +16,9 @@ export class BrowserUseAPIError extends Error {
 export class BrowserUseRateLimitError extends BrowserUseAPIError {
 	constructor(
 		message = 'Browser Use API rate limit exceeded',
-		public readonly retryAfterMs?: number,
+		retryAfterMs?: number,
 	) {
-		super(message, 429);
+		super(message, 429, retryAfterMs);
 		this.name = 'BrowserUseRateLimitError';
 	}
 }
@@ -40,12 +41,18 @@ export async function tryGetStoredKey(
 	}
 }
 
-type Query = Record<string, string | number | boolean | undefined>;
+type QueryValue = string | number | boolean | string[] | null | undefined;
+type Query = Record<string, QueryValue>;
 
 export function browserUseUrl(path: string, query: Query = {}): string {
 	const params = new URLSearchParams();
 	for (const [key, value] of Object.entries(query)) {
-		if (value !== undefined) params.set(key, String(value));
+		if (value === undefined || value === null) continue;
+		if (Array.isArray(value)) {
+			for (const item of value) params.append(key, item);
+			continue;
+		}
+		params.set(key, String(value));
 	}
 	const suffix = path.startsWith('/') ? path : `/${path}`;
 	const qs = params.toString();
@@ -90,14 +97,15 @@ export async function requestBrowserUse<T>(
 		'X-Browser-Use-API-Key': apiKey,
 		Accept: 'application/json',
 	};
-	if (method !== 'GET') headers['Content-Type'] = 'application/json';
+	const hasBody = method !== 'GET' && options.body !== undefined;
+	if (hasBody) headers['Content-Type'] = 'application/json';
 
 	let res: Response;
 	try {
 		res = await fetch(browserUseUrl(path, options.query), {
 			method,
 			headers,
-			body: method === 'GET' ? undefined : JSON.stringify(options.body ?? {}),
+			body: hasBody ? JSON.stringify(options.body) : undefined,
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
 	} catch (error) {
@@ -109,12 +117,14 @@ export async function requestBrowserUse<T>(
 		);
 	}
 
-	if (res.status === 429) {
-		const retry = retryAfterMs(res);
-		throw new BrowserUseRateLimitError(await parseErrorBody(res), retry);
-	}
 	if (!res.ok) {
-		throw new BrowserUseAPIError(await parseErrorBody(res), res.status);
+		const retry = retryAfterMs(res);
+		const message = await parseErrorBody(res);
+		if (res.status === 429) {
+			throw new BrowserUseRateLimitError(message, retry);
+		}
+		// 503 on cancel carries Retry-After and asks for another attempt.
+		throw new BrowserUseAPIError(message, res.status, retry);
 	}
 
 	const text = await res.text();
