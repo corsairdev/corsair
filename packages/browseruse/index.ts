@@ -22,6 +22,7 @@ import {
 	runsCancel,
 	runsCreate,
 	runsGet,
+	runsGetStatus,
 } from './endpoints';
 import type {
 	BrowserUseEndpointInputs,
@@ -50,7 +51,9 @@ export type BrowserUsePluginOptions = {
  */
 export const browserUseAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		// The project key is the only credential. An extra account field
+		// would leave a saved key looking incomplete.
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -84,6 +87,7 @@ export type BrowserUseEndpoints = {
 	browsersStop: BrowserUseEndpoint<'browsersStop'>;
 	runsCreate: BrowserUseEndpoint<'runsCreate'>;
 	runsGet: BrowserUseEndpoint<'runsGet'>;
+	runsGetStatus: BrowserUseEndpoint<'runsGetStatus'>;
 	runsCancel: BrowserUseEndpoint<'runsCancel'>;
 };
 
@@ -97,6 +101,7 @@ const browserUseEndpointsNested = {
 	runs: {
 		create: runsCreate,
 		get: runsGet,
+		getStatus: runsGetStatus,
 		cancel: runsCancel,
 	},
 } as const;
@@ -125,6 +130,10 @@ export const browserUseEndpointSchemas = {
 	'runs.get': {
 		input: BrowserUseEndpointInputSchemas.runsGet,
 		output: BrowserUseEndpointOutputSchemas.runsGet,
+	},
+	'runs.getStatus': {
+		input: BrowserUseEndpointInputSchemas.runsGetStatus,
+		output: BrowserUseEndpointOutputSchemas.runsGetStatus,
 	},
 	'runs.cancel': {
 		input: BrowserUseEndpointInputSchemas.runsCancel,
@@ -161,7 +170,13 @@ const browserUseEndpointMeta = {
 	},
 	'runs.get': {
 		riskLevel: 'read',
-		description: 'GET /runs/{id} — run status, result, structured output, cost',
+		description:
+			'GET /runs/{id} — full run once status is terminal: result, tokens, cost',
+	},
+	'runs.getStatus': {
+		riskLevel: 'read',
+		description:
+			'GET /runs/{id}/status — cheap poll until completed, failed, or cancelled',
 	},
 	'runs.cancel': {
 		riskLevel: 'write',
@@ -188,7 +203,21 @@ export type InternalBrowserUsePlugin =
 export type ExternalBrowserUsePlugin<T extends BrowserUsePluginOptions> =
 	BaseBrowserUsePlugin<T>;
 
+function mergeErrorHandlers(
+	builtin: CorsairErrorHandler,
+	user: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	// DEFAULT matches every error. It stays last so a caller handler can run.
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const { DEFAULT: userDefault, ...userRest } = user ?? {};
+	const fallback = userDefault ?? builtinDefault;
+	return fallback
+		? { ...builtinRest, ...userRest, DEFAULT: fallback }
+		: { ...builtinRest, ...userRest };
+}
+
 export function browseruse<const T extends BrowserUsePluginOptions>(
+	// Factory default is an empty options object. T is the caller's options.
 	incomingOptions: BrowserUsePluginOptions & T = {} as BrowserUsePluginOptions &
 		T,
 ): ExternalBrowserUsePlugin<T> {
@@ -207,10 +236,7 @@ export function browseruse<const T extends BrowserUsePluginOptions>(
 		endpointMeta: browserUseEndpointMeta,
 		endpointSchemas: browserUseEndpointSchemas,
 		webhookSchemas: {},
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: BrowserUseKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
