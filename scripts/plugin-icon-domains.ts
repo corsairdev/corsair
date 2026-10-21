@@ -75,6 +75,8 @@ const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
 	youcom: 'you.com',
 	zohobigin: 'bigin.zoho.com',
 	zohomail: 'zoho.com',
+	accrediblecertificates: 'accredible.com',
+	agentmail: 'agentmail.to',
 };
 
 let yamlDomainsCache: Record<string, string> | null = null;

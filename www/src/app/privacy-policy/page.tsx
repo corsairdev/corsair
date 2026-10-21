@@ -355,10 +355,10 @@ export default function PrivacyPolicyPage() {
 						workflows sends the chat messages it receives, along with the list
 						of the Customer&apos;s connected integrations and our public catalog
 						of operations, to an AI model. These requests go through a model
-						gateway that Corsair operates and are sent to an AI model provider
-						under terms that prohibit it from using the data to train or improve
-						its models. Section 5 describes how this applies to Google user
-						data.
+						gateway that Corsair operates and are sent to Microsoft Azure OpenAI
+						Service under terms that prohibit it from using the data to train or
+						improve its models. Section 5 describes how this applies to Google
+						user data.
 					</p>
 				</LegalSubsection>
 
@@ -483,13 +483,17 @@ export default function PrivacyPolicyPage() {
 							screen and Google&apos;s consent screen;
 						</li>
 						<li>
+							to an AI assistant or service the End User connects to Corsair,
+							only for requests the End User makes;
+						</li>
+						<li>
 							to the service providers described in Section 8 that host and run
 							the Service, under contracts that let them use the data only to
 							provide their services to Corsair;
 						</li>
 						<li>
-							to the AI model provider described above, only when a Customer
-							uses an AI feature;
+							to Microsoft Azure OpenAI Service, only when a Customer uses an AI
+							feature;
 						</li>
 						<li>
 							when required by law, or to protect against security incidents and
@@ -627,8 +631,9 @@ export default function PrivacyPolicyPage() {
 						model gateway, and store Service data;
 					</li>
 					<li>
-						AI model providers, only for the optional AI features described in
-						Section 4, under terms that prohibit them from training on the data;
+						AI model providers (currently Microsoft Azure OpenAI Service), only
+						for the optional AI features described in Section 4, under terms
+						that prohibit them from training on the data;
 					</li>
 					<li>
 						Government or regulatory authorities where required by law; and

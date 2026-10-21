@@ -85,6 +85,8 @@ const DOMAIN_OVERRIDES: Record<string, string> = {
 	youtube: 'youtube.com',
 	zohomail: 'zoho.com',
 	zoom: 'zoom.us',
+	accrediblecertificates: 'accredible.com',
+	agentmail: 'agentmail.to',
 };
 
 // Products whose public favicon is generic (Microsoft serves the same squares
