@@ -16,7 +16,7 @@ examples:
       timeout: 15
 dbExample:
   entity: runs
-  note: Runs are upserted by id on create, get and cancel, so polling a run updates one row.
+  note: Runs are merged by id. A status poll updates status and leaves the task and result already stored.
   data:
     model: gpt-6-luna
 apiExamples:
@@ -31,6 +31,8 @@ apiExamples:
   runs.create:
     call: "{ task: 'Find the top 3 trending repos on GitHub today' }"
   runs.get:
+    call: "{ id: '<run-id>' }"
+  runs.getStatus:
     call: "{ id: '<run-id>' }"
   runs.cancel:
     call: "{ id: '<run-id>' }"

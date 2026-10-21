@@ -18,7 +18,8 @@ pnpm add @corsair-dev/browseruse
 | `browsers.stop` | `browseruse.api.browsers.stop` | `write` | PATCH /browsers/{id} — stop a browser and refund unused time |
 | `runs.cancel` | `browseruse.api.runs.cancel` | `write` | POST /runs/{id}/cancel — cancel an in-flight run |
 | `runs.create` | `browseruse.api.runs.create` | `write` | POST /runs — start a browser agent run for a natural-language task |
-| `runs.get` | `browseruse.api.runs.get` | `read` | GET /runs/{id} — run status, result, structured output, cost |
+| `runs.get` | `browseruse.api.runs.get` | `read` | GET /runs/{id} — full run once status is terminal: result, tokens, cost |
+| `runs.getStatus` | `browseruse.api.runs.getStatus` | `read` | GET /runs/{id}/status — cheap poll until completed, failed, or cancelled |
 
 ## Auth
 
@@ -26,7 +27,11 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-No webhooks.
+No webhooks. v4 runs are polled with `runs.getStatus`, then read once with `runs.get`.
+
+## Not implemented
+
+Sessions, profiles, workspaces, extensions, run events, and attachments are not wrapped. The hosted-agent loop and direct browser control are. A cancel that returns 503 is retried with `Retry-After` capped at 60 seconds. 429 uses the same cap, then jittered backoff when the header is missing. 401, 402, and 409 do not retry.
 
 ## Reference
 
