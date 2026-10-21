@@ -15,6 +15,7 @@ import {
 	runsGet,
 	runsGetStatus,
 } from './endpoints';
+import { saveRun } from './endpoints/save';
 import { BrowserUseEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { browseruse } from './index';
@@ -70,6 +71,7 @@ const mockCtx = {
 		runs: { upsertByEntityId: upsertRun, findByEntityId: findRun },
 	},
 	$getAccountId: async () => 'test-account',
+	// The stub is not a full plugin context. The handlers only read key, database, and db.
 } as never;
 
 const BROWSER_ID = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
@@ -312,15 +314,16 @@ describe('Browser Use plugin & client tests', () => {
 	});
 
 	it('keeps a full run when a status poll overlaps the get', async () => {
-		const row: Record<string, unknown> = {
+		let stored: Record<string, unknown> = {
 			id: RUN_ID,
 			status: 'running',
 			task: runSummary.task,
 		};
-		findRun.mockImplementation(async () => ({ data: { ...row } }));
+		findRun.mockImplementation(async () => ({ data: { ...stored } }));
+		// upsert replaces the row. A merge-style mock would hide a stale write.
 		upsertRun.mockImplementation(
 			async (_id: string, data: Record<string, unknown>) => {
-				Object.assign(row, data);
+				stored = { ...data };
 			},
 		);
 		mockFetch.mockImplementation(async (url: string) => {
@@ -331,12 +334,35 @@ describe('Browser Use plugin & client tests', () => {
 			runsGet(mockCtx, { id: RUN_ID }),
 			runsGetStatus(mockCtx, { id: RUN_ID }),
 		]);
-		expect(row).toMatchObject({
+		expect(stored).toMatchObject({
 			status: 'completed',
 			task: runSummary.task,
 			result: runSummary.result,
 			totalInputTokens: 100,
 		});
+	});
+
+	it('does not let a stale running response rewind a completed run', async () => {
+		let stored: Record<string, unknown> = {
+			id: RUN_ID,
+			status: 'completed',
+			task: runSummary.task,
+			result: 'done',
+		};
+		findRun.mockImplementation(async () => ({ data: { ...stored } }));
+		upsertRun.mockImplementation(
+			async (_id: string, data: Record<string, unknown>) => {
+				stored = { ...data };
+			},
+		);
+		await saveRun(mockCtx, {
+			id: RUN_ID,
+			status: 'running',
+			result: 'later detail',
+		});
+		expect(stored.status).toBe('completed');
+		expect(stored.result).toBe('later detail');
+		expect(stored.task).toBe(runSummary.task);
 	});
 
 	it('still returns when the database write fails', async () => {
