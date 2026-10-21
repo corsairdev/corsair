@@ -972,6 +972,14 @@
                 ]
               },
               {
+                "group": "Browser Use",
+                "pages": [
+                  "plugins/browseruse/overview",
+                  "plugins/browseruse/api",
+                  "plugins/browseruse/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",

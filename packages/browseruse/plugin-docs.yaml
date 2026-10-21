@@ -1,0 +1,36 @@
+displayName: Browser Use
+description: Stealth cloud browsers you drive over CDP with Playwright or Puppeteer, plus hosted browser agent runs, behind one API key.
+domain: browser-use.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: runs.get
+    title: Read an agent run result
+    args:
+      id: 00000000-0000-0000-0000-000000000000
+  write:
+    path: browsers.create
+    title: Start a cloud browser
+    args:
+      proxyCountryCode: us
+      timeout: 15
+dbExample:
+  entity: runs
+  note: Runs are upserted by id on create, get and cancel, so polling a run updates one row.
+  data:
+    model: gpt-6-luna
+apiExamples:
+  browsers.create:
+    call: "{ proxyCountryCode: 'us', timeout: 15 }"
+  browsers.get:
+    call: "{ id: '<browser-id>' }"
+  browsers.list:
+    call: "{ filterBy: 'active', pageSize: 20 }"
+  browsers.stop:
+    call: "{ id: '<browser-id>' }"
+  runs.create:
+    call: "{ task: 'Find the top 3 trending repos on GitHub today' }"
+  runs.get:
+    call: "{ id: '<run-id>' }"
+  runs.cancel:
+    call: "{ id: '<run-id>' }"
