@@ -13,6 +13,7 @@ import {
 	runsCancel,
 	runsCreate,
 	runsGet,
+	runsGetStatus,
 } from './endpoints';
 import { BrowserUseEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
@@ -44,19 +45,29 @@ afterAll(() => {
 
 const upsertBrowser = jest.fn();
 const upsertRun = jest.fn();
+const findBrowser = jest.fn();
+const findRun = jest.fn();
 
 beforeEach(() => {
 	mockFetch.mockReset();
 	upsertBrowser.mockReset();
 	upsertRun.mockReset();
+	findBrowser.mockReset();
+	findRun.mockReset();
+	findBrowser.mockResolvedValue(undefined);
+	findRun.mockResolvedValue(undefined);
 	jest.mocked(logEventFromContext).mockReset();
 });
 
 const mockCtx = {
 	key: 'bu_test',
+	database: {},
 	db: {
-		browsers: { upsertByEntityId: upsertBrowser },
-		runs: { upsertByEntityId: upsertRun },
+		browsers: {
+			upsertByEntityId: upsertBrowser,
+			findByEntityId: findBrowser,
+		},
+		runs: { upsertByEntityId: upsertRun, findByEntityId: findRun },
 	},
 	$getAccountId: async () => 'test-account',
 } as never;
@@ -79,8 +90,15 @@ const browser = {
 	browserCost: '0',
 	agentSessionId: null,
 	recordingUrl: null,
+	recordingAvailable: false,
 	metadata: {},
-	extensions: [],
+	extensions: [
+		{
+			id: '11111111-1111-4111-8111-111111111111',
+			runtimeId: 'abcd',
+			version: '1.0.0',
+		},
+	],
 };
 
 const runSummary = {
@@ -119,7 +137,8 @@ describe('Browser Use plugin & client tests', () => {
 	it('creates plugin instance with browsers and runs ops', () => {
 		const plugin = browseruse({ key: 'bu_test' });
 		expect(plugin.id).toBe('browseruse');
-		expect(plugin.authConfig?.api_key?.account).toEqual(['one']);
+		expect(plugin.authConfig?.api_key?.account).toEqual([]);
+		expect(plugin.endpoints?.runs.getStatus).toBeDefined();
 		expect(plugin.endpoints?.browsers.create).toBeDefined();
 		expect(plugin.endpoints?.browsers.get).toBeDefined();
 		expect(plugin.endpoints?.browsers.list).toBeDefined();
@@ -163,6 +182,7 @@ describe('Browser Use plugin & client tests', () => {
 			timeout: 15,
 		});
 		expect(result.cdpUrl).toBe(browser.cdpUrl);
+		expect(result.extensions?.[0]?.runtimeId).toBe('abcd');
 		const req = lastCall();
 		expect(req.url).toBe('https://api.browser-use.com/api/v4/browsers');
 		expect(req.init.method).toBe('POST');
@@ -253,6 +273,8 @@ describe('Browser Use plugin & client tests', () => {
 		mockFetch.mockResolvedValue(json(runSummary));
 		const result = await runsGet(mockCtx, { id: RUN_ID });
 		expect(result.result).toBe('1. a 2. b 3. c');
+		expect(result.contextLimit).toBe(400000);
+		expect(result.totalInputTokens).toBe(100);
 		expect(lastCall().url).toBe(
 			`https://api.browser-use.com/api/v4/runs/${RUN_ID}`,
 		);
@@ -267,6 +289,26 @@ describe('Browser Use plugin & client tests', () => {
 			`https://api.browser-use.com/api/v4/runs/${RUN_ID}/cancel`,
 		);
 		expect(lastCall().init.method).toBe('POST');
+		expect(lastCall().init.body).toBeUndefined();
+	});
+
+	it('polls GET /runs/{id}/status and keeps fields the status body omits', async () => {
+		findRun.mockResolvedValue({
+			data: { id: RUN_ID, status: 'running', task: runSummary.task },
+		});
+		mockFetch.mockResolvedValue(json({ status: 'completed' }));
+		const result = await runsGetStatus(mockCtx, { id: RUN_ID });
+		expect(result.status).toBe('completed');
+		expect(lastCall().url).toBe(
+			`https://api.browser-use.com/api/v4/runs/${RUN_ID}/status`,
+		);
+		expect(upsertRun).toHaveBeenCalledWith(
+			RUN_ID,
+			expect.objectContaining({
+				status: 'completed',
+				task: runSummary.task,
+			}),
+		);
 	});
 
 	it('still returns when the database write fails', async () => {
@@ -277,6 +319,50 @@ describe('Browser Use plugin & client tests', () => {
 			id: RUN_ID,
 		});
 		warn.mockRestore();
+	});
+
+	it('rejects an invalid browser before any request', async () => {
+		await expect(browsersCreate(mockCtx, { timeout: 500 })).rejects.toThrow();
+		expect(mockFetch).not.toHaveBeenCalled();
+	});
+
+	it('rejects a country code the spec does not list', () => {
+		expect(() =>
+			BrowserUseEndpointInputSchemas.browsersCreate.parse({
+				proxyCountryCode: 'zz',
+			}),
+		).toThrow();
+	});
+
+	it('repeats metadata query params', () => {
+		expect(
+			browserUseUrl('/browsers', {
+				metadata: ['team=growth', 'env'],
+			}),
+		).toBe(
+			'https://api.browser-use.com/api/v4/browsers?metadata=team%3Dgrowth&metadata=env',
+		);
+	});
+
+	it('keeps a caller error handler ahead of the catch-all default', () => {
+		const plugin = browseruse({
+			errorHandlers: {
+				zzzUser: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+		const names = Object.keys(plugin.errorHandlers ?? {});
+		expect(names.indexOf('zzzUser')).toBeLessThan(names.indexOf('DEFAULT'));
+		expect(names.at(-1)).toBe('DEFAULT');
+	});
+
+	it('does not write when no database is configured', async () => {
+		mockFetch.mockResolvedValue(json(runSummary));
+		const ctx = { ...(mockCtx as object), database: undefined } as never;
+		await runsGet(ctx, { id: RUN_ID });
+		expect(upsertRun).not.toHaveBeenCalled();
 	});
 
 	it('rejects invalid inputs', () => {
@@ -328,6 +414,29 @@ describe('Browser Use plugin & client tests', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err as Error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(err as Error),
-		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 3000 });
+		).resolves.toMatchObject({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff_jitter',
+		});
+		const retry = await errorHandlers.RATE_LIMIT_ERROR.handler(err as Error);
+		expect(retry.headersRetryAfterMs).toBeGreaterThanOrEqual(3000);
+		expect(retry.headersRetryAfterMs).toBeLessThan(3250);
+	});
+
+	it('retries a 503 cancel after a capped Retry-After', async () => {
+		mockFetch.mockResolvedValue(
+			json(
+				{ detail: 'The run is finishing' },
+				{ status: 503, headers: { 'Retry-After': '3600' } },
+			),
+		);
+		const err = await requestBrowserUse(`/runs/${RUN_ID}/cancel`, 'bu_test', {
+			method: 'POST',
+		}).catch((e: unknown) => e);
+		expect(errorHandlers.FINISHING_ERROR.match(err as Error)).toBe(true);
+		const retry = await errorHandlers.FINISHING_ERROR.handler(err as Error);
+		expect(retry.maxRetries).toBe(2);
+		expect(retry.headersRetryAfterMs).toBeGreaterThanOrEqual(60_000);
+		expect(retry.headersRetryAfterMs).toBeLessThan(60_250);
 	});
 });
