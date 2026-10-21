@@ -1,30 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BrowserUseContext, BrowserUseEndpoints } from '..';
+import type { BrowserUseEndpoints } from '..';
 import { requestBrowserUse } from '../client';
-import type { BrowserUseBrowser } from '../schema';
+import { saveBrowser } from './save';
 import {
+	BrowsersCreateInputSchema,
 	BrowsersCreateOutputSchema,
+	BrowsersGetInputSchema,
 	BrowsersGetOutputSchema,
+	BrowsersListInputSchema,
 	BrowsersListOutputSchema,
+	BrowsersStopInputSchema,
 	BrowsersStopOutputSchema,
 } from './types';
-
-async function saveBrowser(ctx: BrowserUseContext, browser: BrowserUseBrowser) {
-	if (!ctx.db.browsers) return;
-	try {
-		await ctx.db.browsers.upsertByEntityId(browser.id, browser);
-	} catch (error) {
-		console.warn('Failed to save Browser Use browser to database:', error);
-	}
-}
 
 export const browsersCreate: BrowserUseEndpoints['browsersCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const body = BrowsersCreateInputSchema.parse(input);
 	const raw = await requestBrowserUse('/browsers', ctx.key, {
 		method: 'POST',
-		body: input,
+		body,
 	});
 	const browser = BrowsersCreateOutputSchema.parse(raw);
 	await saveBrowser(ctx, browser);
@@ -36,8 +32,9 @@ export const browsersGet: BrowserUseEndpoints['browsersGet'] = async (
 	ctx,
 	input,
 ) => {
+	const validated = BrowsersGetInputSchema.parse(input);
 	const raw = await requestBrowserUse(
-		`/browsers/${encodeURIComponent(input.id)}`,
+		`/browsers/${encodeURIComponent(validated.id)}`,
 		ctx.key,
 	);
 	const browser = BrowsersGetOutputSchema.parse(raw);
@@ -50,7 +47,8 @@ export const browsersList: BrowserUseEndpoints['browsersList'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await requestBrowserUse('/browsers', ctx.key, { query: input });
+	const query = BrowsersListInputSchema.parse(input);
+	const raw = await requestBrowserUse('/browsers', ctx.key, { query });
 	const page = BrowsersListOutputSchema.parse(raw);
 	for (const browser of page.items) await saveBrowser(ctx, browser);
 	await logEventFromContext(ctx, 'browseruse.browsers.list', {}, 'completed');
@@ -62,8 +60,9 @@ export const browsersStop: BrowserUseEndpoints['browsersStop'] = async (
 	ctx,
 	input,
 ) => {
+	const validated = BrowsersStopInputSchema.parse(input);
 	const raw = await requestBrowserUse(
-		`/browsers/${encodeURIComponent(input.id)}`,
+		`/browsers/${encodeURIComponent(validated.id)}`,
 		ctx.key,
 		{ method: 'PATCH', body: { action: 'stop' } },
 	);

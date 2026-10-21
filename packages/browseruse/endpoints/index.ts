@@ -4,5 +4,5 @@ export {
 	browsersList,
 	browsersStop,
 } from './browsers';
-export { runsCancel, runsCreate, runsGet } from './runs';
+export { runsCancel, runsCreate, runsGet, runsGetStatus } from './runs';
 export * from './types';

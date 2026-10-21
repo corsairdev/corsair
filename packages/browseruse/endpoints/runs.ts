@@ -1,30 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BrowserUseContext, BrowserUseEndpoints } from '..';
+import type { BrowserUseEndpoints } from '..';
 import { requestBrowserUse } from '../client';
-import type { BrowserUseRun } from '../schema';
+import { saveRun } from './save';
 import {
+	RunsCancelInputSchema,
 	RunsCancelOutputSchema,
+	RunsCreateInputSchema,
 	RunsCreateOutputSchema,
+	RunsGetInputSchema,
 	RunsGetOutputSchema,
+	RunsStatusInputSchema,
+	RunsStatusOutputSchema,
 } from './types';
 
-async function saveRun(ctx: BrowserUseContext, run: BrowserUseRun) {
-	if (!ctx.db.runs) return;
-	try {
-		await ctx.db.runs.upsertByEntityId(run.id, run);
-	} catch (error) {
-		console.warn('Failed to save Browser Use run to database:', error);
-	}
-}
-
-/** Starts an agent run and returns immediately; poll `runs.get` until terminal. */
+/** Starts an agent run and returns immediately. Poll `runs.getStatus` until terminal, then `runs.get`. */
 export const runsCreate: BrowserUseEndpoints['runsCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const body = RunsCreateInputSchema.parse(input);
 	const raw = await requestBrowserUse('/runs', ctx.key, {
 		method: 'POST',
-		body: input,
+		body,
 	});
 	const run = RunsCreateOutputSchema.parse(raw);
 	await saveRun(ctx, {
@@ -33,15 +30,16 @@ export const runsCreate: BrowserUseEndpoints['runsCreate'] = async (
 		model: run.model,
 		sessionId: run.sessionId,
 		workspaceId: run.workspaceId,
-		task: input.task,
+		task: body.task,
 	});
 	await logEventFromContext(ctx, 'browseruse.runs.create', {}, 'completed');
 	return run;
 };
 
 export const runsGet: BrowserUseEndpoints['runsGet'] = async (ctx, input) => {
+	const validated = RunsGetInputSchema.parse(input);
 	const raw = await requestBrowserUse(
-		`/runs/${encodeURIComponent(input.id)}`,
+		`/runs/${encodeURIComponent(validated.id)}`,
 		ctx.key,
 	);
 	const run = RunsGetOutputSchema.parse(raw);
@@ -50,12 +48,29 @@ export const runsGet: BrowserUseEndpoints['runsGet'] = async (ctx, input) => {
 	return run;
 };
 
+/** Cheap indexed lookup. The v4 docs say to poll this, not the full run. */
+export const runsGetStatus: BrowserUseEndpoints['runsGetStatus'] = async (
+	ctx,
+	input,
+) => {
+	const validated = RunsStatusInputSchema.parse(input);
+	const raw = await requestBrowserUse(
+		`/runs/${encodeURIComponent(validated.id)}/status`,
+		ctx.key,
+	);
+	const status = RunsStatusOutputSchema.parse(raw);
+	await saveRun(ctx, { id: validated.id, status: status.status });
+	await logEventFromContext(ctx, 'browseruse.runs.getStatus', {}, 'completed');
+	return status;
+};
+
 export const runsCancel: BrowserUseEndpoints['runsCancel'] = async (
 	ctx,
 	input,
 ) => {
+	const validated = RunsCancelInputSchema.parse(input);
 	const raw = await requestBrowserUse(
-		`/runs/${encodeURIComponent(input.id)}/cancel`,
+		`/runs/${encodeURIComponent(validated.id)}/cancel`,
 		ctx.key,
 		{ method: 'POST' },
 	);
