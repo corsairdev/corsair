@@ -1,19 +1,37 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { BrowserUseAPIError, BrowserUseRateLimitError } from './client';
 
+const RETRY_AFTER_CAP_MS = 60_000;
+
+function cappedRetryAfter(error: Error): number | undefined {
+	if (!(error instanceof BrowserUseAPIError)) return undefined;
+	if (error.retryAfterMs === undefined) return undefined;
+	const jitter = Math.floor(Math.random() * 250);
+	return Math.min(error.retryAfterMs, RETRY_AFTER_CAP_MS) + jitter;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof BrowserUseRateLimitError) return true;
 			return error instanceof BrowserUseAPIError && error.status === 429;
 		},
-		handler: async (error: Error) => {
-			const retryAfterMs =
-				error instanceof BrowserUseRateLimitError
-					? error.retryAfterMs
-					: undefined;
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			// Two retries after the first call. A missing Retry-After uses backoff.
+			maxRetries: 2,
+			headersRetryAfterMs: cappedRetryAfter(error),
+			retryStrategy: 'exponential_backoff_jitter' as const,
+		}),
+	},
+	// Cancel returns 503 while the run is finishing and sets Retry-After.
+	FINISHING_ERROR: {
+		match: (error: Error) =>
+			error instanceof BrowserUseAPIError && error.status === 503,
+		handler: async (error: Error) => ({
+			maxRetries: 2,
+			headersRetryAfterMs: cappedRetryAfter(error),
+			retryStrategy: 'exponential_backoff_jitter' as const,
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) =>
@@ -21,7 +39,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
+		match: (_error: Error) => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
