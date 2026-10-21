@@ -23,10 +23,12 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff_jitter' as const,
 		}),
 	},
-	// Cancel returns 503 while the run is finishing and sets Retry-After.
+	// Only cancel documents a 503 that should be repeated. A create 503 must not start a second browser or run.
 	FINISHING_ERROR: {
 		match: (error: Error) =>
-			error instanceof BrowserUseAPIError && error.status === 503,
+			error instanceof BrowserUseAPIError &&
+			error.status === 503 &&
+			error.path?.endsWith('/cancel') === true,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs: cappedRetryAfter(error),

@@ -311,6 +311,34 @@ describe('Browser Use plugin & client tests', () => {
 		);
 	});
 
+	it('keeps a full run when a status poll overlaps the get', async () => {
+		const row: Record<string, unknown> = {
+			id: RUN_ID,
+			status: 'running',
+			task: runSummary.task,
+		};
+		findRun.mockImplementation(async () => ({ data: { ...row } }));
+		upsertRun.mockImplementation(
+			async (_id: string, data: Record<string, unknown>) => {
+				Object.assign(row, data);
+			},
+		);
+		mockFetch.mockImplementation(async (url: string) => {
+			if (url.endsWith('/status')) return json({ status: 'completed' });
+			return json(runSummary);
+		});
+		await Promise.all([
+			runsGet(mockCtx, { id: RUN_ID }),
+			runsGetStatus(mockCtx, { id: RUN_ID }),
+		]);
+		expect(row).toMatchObject({
+			status: 'completed',
+			task: runSummary.task,
+			result: runSummary.result,
+			totalInputTokens: 100,
+		});
+	});
+
 	it('still returns when the database write fails', async () => {
 		upsertRun.mockRejectedValue(new Error('db down'));
 		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -438,5 +466,16 @@ describe('Browser Use plugin & client tests', () => {
 		expect(retry.maxRetries).toBe(2);
 		expect(retry.headersRetryAfterMs).toBeGreaterThanOrEqual(60_000);
 		expect(retry.headersRetryAfterMs).toBeLessThan(60_250);
+	});
+
+	it('does not retry a 503 from creating a browser', async () => {
+		mockFetch.mockResolvedValue(
+			json({ detail: 'unavailable' }, { status: 503 }),
+		);
+		const err = await requestBrowserUse('/browsers', 'bu_test', {
+			method: 'POST',
+			body: {},
+		}).catch((e: unknown) => e);
+		expect(errorHandlers.FINISHING_ERROR.match(err as Error)).toBe(false);
 	});
 });

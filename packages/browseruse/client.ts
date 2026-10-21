@@ -7,6 +7,8 @@ export class BrowserUseAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		public readonly retryAfterMs?: number,
+		// Request path, so a 503 retry can be limited to cancel.
+		public readonly path?: string,
 	) {
 		super(message);
 		this.name = 'BrowserUseAPIError';
@@ -73,6 +75,7 @@ async function parseErrorBody(res: Response): Promise<string> {
 	const text = await res.text();
 	if (!text) return `Browser Use request failed (${res.status})`;
 	try {
+		// FastAPI detail is a string or a validation list. Both are read below.
 		const body = JSON.parse(text) as { detail?: unknown; message?: unknown };
 		if (typeof body.detail === 'string' && body.detail) return body.detail;
 		if (body.detail !== undefined) return JSON.stringify(body.detail);
@@ -88,6 +91,7 @@ export async function requestBrowserUse<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH';
+		// Each endpoint parses its body before this call. The helper cannot name every shape.
 		body?: unknown;
 		query?: Query;
 	} = {},
@@ -124,11 +128,12 @@ export async function requestBrowserUse<T>(
 			throw new BrowserUseRateLimitError(message, retry);
 		}
 		// 503 on cancel carries Retry-After and asks for another attempt.
-		throw new BrowserUseAPIError(message, res.status, retry);
+		throw new BrowserUseAPIError(message, res.status, retry, path);
 	}
 
 	const text = await res.text();
 	try {
+		// Caller parses this JSON with the operation schema. T is that boundary.
 		return JSON.parse(text) as T;
 	} catch {
 		throw new BrowserUseAPIError(

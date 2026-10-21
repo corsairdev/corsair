@@ -28,15 +28,17 @@ await corsair.browseruse.api.browsers.create({ proxyCountryCode: 'us', timeout: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `profileId` | `string` | No | — |
-| `proxyCountryCode` | `string` | No | — |
+| `proxyCountryCode` | `ad \| ae \| af \| ag \| ai \| al \| am \| an \| ao \| aq \| ar \| as \| at \| au \| aw \| az \| ba \| bb \| bd \| be \| bf \| bg \| bh \| bi \| bj \| bl \| bm \| bn \| bo \| bq \| br \| bs \| bt \| bv \| bw \| by \| bz \| ca \| cc \| cd \| cf \| cg \| ch \| ci \| ck \| cl \| cm \| co \| cr \| cs \| cu \| cv \| cw \| cx \| cy \| cz \| de \| dj \| dk \| dm \| do \| dz \| ec \| ee \| eg \| eh \| er \| es \| et \| fi \| fj \| fk \| fm \| fo \| fr \| ga \| gd \| ge \| gf \| gg \| gh \| gi \| gl \| gm \| gn \| gp \| gq \| gr \| gs \| gt \| gu \| gw \| gy \| hk \| hm \| hn \| hr \| ht \| hu \| id \| ie \| il \| im \| in \| iq \| ir \| is \| it \| je \| jm \| jo \| jp \| ke \| kg \| kh \| ki \| km \| kn \| kp \| kr \| kw \| ky \| kz \| la \| lb \| lc \| li \| lk \| lr \| ls \| lt \| lu \| lv \| ly \| ma \| mc \| md \| me \| mf \| mg \| mh \| mk \| ml \| mm \| mn \| mo \| mp \| mq \| mr \| ms \| mt \| mu \| mv \| mw \| mx \| my \| mz \| na \| nc \| ne \| nf \| ng \| ni \| nl \| no \| np \| nr \| nu \| nz \| om \| pa \| pe \| pf \| pg \| ph \| pk \| pl \| pm \| pn \| pr \| ps \| pt \| pw \| py \| qa \| re \| ro \| rs \| ru \| rw \| sa \| sb \| sc \| sd \| se \| sg \| sh \| si \| sj \| sk \| sl \| sm \| sn \| so \| sr \| ss \| st \| sv \| sx \| sy \| sz \| tc \| td \| tf \| tg \| th \| tj \| tk \| tl \| tm \| tn \| to \| tr \| tt \| tv \| tw \| tz \| ua \| ug \| uk \| us \| uy \| uz \| va \| vc \| ve \| vg \| vi \| vn \| vu \| wf \| ws \| xk \| ye \| yt \| za \| zm \| zw` | No | — |
 | `timeout` | `number` | No | — |
 | `browserScreenWidth` | `number` | No | — |
 | `browserScreenHeight` | `number` | No | — |
 | `allowResizing` | `boolean` | No | — |
+| `pdfRendererEnabled` | `boolean` | No | — |
 | `solveCaptchas` | `boolean` | No | — |
 | `enableRecording` | `boolean` | No | — |
 | `metadata` | `object` | No | — |
 | `customProxy` | `object` | No | — |
+| `extensionIds` | `string[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -53,8 +55,8 @@ await corsair.browseruse.api.browsers.create({ proxyCountryCode: 'us', timeout: 
 {
   host: string,
   port: number,
-  username?: string,
-  password?: string,
+  username?: string | null,
+  password?: string | null,
   ignoreCertErrors?: boolean
 }
 ```
@@ -79,7 +81,9 @@ await corsair.browseruse.api.browsers.create({ proxyCountryCode: 'us', timeout: 
 | `browserCost` | `string` | No | — |
 | `agentSessionId` | `string` | No | — |
 | `recordingUrl` | `string` | No | — |
+| `recordingAvailable` | `boolean` | No | — |
 | `metadata` | `object` | No | — |
+| `extensions` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -87,6 +91,17 @@ await corsair.browseruse.api.browsers.create({ proxyCountryCode: 'us', timeout: 
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="extensions full type">
+
+```ts
+{
+  id: string,
+  runtimeId: string,
+  version: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -131,7 +146,9 @@ await corsair.browseruse.api.browsers.get({ id: '<browser-id>' });
 | `browserCost` | `string` | No | — |
 | `agentSessionId` | `string` | No | — |
 | `recordingUrl` | `string` | No | — |
+| `recordingAvailable` | `boolean` | No | — |
 | `metadata` | `object` | No | — |
+| `extensions` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -139,6 +156,17 @@ await corsair.browseruse.api.browsers.get({ id: '<browser-id>' });
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="extensions full type">
+
+```ts
+{
+  id: string,
+  runtimeId: string,
+  version: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -166,6 +194,8 @@ await corsair.browseruse.api.browsers.list({ filterBy: 'active', pageSize: 20 })
 | `pageSize` | `number` | No | — |
 | `pageNumber` | `number` | No | — |
 | `filterBy` | `active \| stopped` | No | — |
+| `metadata` | `string[]` | No | — |
+| `agentSessionId` | `string` | No | — |
 
 
 
@@ -195,8 +225,14 @@ await corsair.browseruse.api.browsers.list({ filterBy: 'active', pageSize: 20 })
   browserCost?: string,
   agentSessionId?: string | null,
   recordingUrl?: string | null,
+  recordingAvailable?: boolean,
   metadata?: {
-  }
+  },
+  extensions?: {
+    id: string,
+    runtimeId: string,
+    version: string
+  }[]
 }[]
 ```
 </Accordion>
@@ -242,7 +278,9 @@ await corsair.browseruse.api.browsers.stop({ id: '<browser-id>' });
 | `browserCost` | `string` | No | — |
 | `agentSessionId` | `string` | No | — |
 | `recordingUrl` | `string` | No | — |
+| `recordingAvailable` | `boolean` | No | — |
 | `metadata` | `object` | No | — |
+| `extensions` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="metadata full type">
@@ -250,6 +288,17 @@ await corsair.browseruse.api.browsers.stop({ id: '<browser-id>' });
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="extensions full type">
+
+```ts
+{
+  id: string,
+  runtimeId: string,
+  version: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -285,18 +334,32 @@ await corsair.browseruse.api.runs.cancel({ id: '<run-id>' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `queued \| dispatching \| running \| completed \| failed \| cancelled` | Yes | — |
-| `model` | `string` | Yes | — |
-| `sessionId` | `string` | Yes | — |
-| `workspaceId` | `string` | No | — |
-| `task` | `string` | No | — |
+| `task` | `string` | Yes | — |
 | `title` | `string` | No | — |
+| `model` | `string` | Yes | — |
+| `contextLimit` | `number` | Yes | — |
+| `status` | `queued \| dispatching \| running \| completed \| failed \| cancelled` | Yes | — |
 | `result` | `string` | No | — |
 | `output` | `any` | No | — |
 | `error` | `string` | No | — |
-| `totalCostUsd` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `sessionId` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `judgement` | `object` | No | — |
+| `totalInputTokens` | `number` | Yes | — |
+| `totalOutputTokens` | `number` | Yes | — |
+| `totalCostUsd` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="judgement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -319,14 +382,23 @@ await corsair.browseruse.api.runs.create({ task: 'Find the top 3 trending repos 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `task` | `string` | Yes | — |
-| `model` | `string` | No | — |
+| `model` | `mimo-v2.6-pro \| mimo-v2.6-flash \| deepseek-v4.1-flash \| glm-5.2 \| grok-4.5 \| grok-4.6 \| glm-5.3-flash \| deepseek-v4-flash-vision \| kimi-k3 \| minimax-m3 \| claude-opus-4.7 \| claude-opus-4.8 \| claude-opus-5 \| claude-opus-5-5 \| claude-fable-5 \| claude-sonnet-5 \| claude-sonnet-5-5 \| gpt-5.5 \| gpt-5.6 \| gpt-6-astra \| gpt-6-sol \| gpt-6.1-sol \| gpt-6-luna \| gpt-5.6-sol \| gpt-5.6-terra \| gpt-5.6-luna \| gemini-3.6-flash \| gemini-3.5-flash \| gemini-3.1-pro \| gemini-3-flash \| bu-ultrafast \| bu-fast` | No | — |
 | `modelParams` | `object` | No | — |
 | `outputSchema` | `object` | No | — |
 | `sessionId` | `string` | No | — |
 | `workspaceId` | `string` | No | — |
 | `browserSettings` | `object` | No | — |
 | `keepAlive` | `number` | No | — |
-| `maxCostUsd` | `number` | No | — |
+| `agentmail` | `boolean` | No | — |
+| `agentcardWalletId` | `string` | No | — |
+| `stripeLinkConnectionId` | `string` | No | — |
+| `agenticAutofillGrantId` | `string` | No | — |
+| `attachedFileIds` | `string[]` | No | — |
+| `secretBindings` | `object[]` | No | — |
+| `opVaultId` | `string` | No | — |
+| `opVaultAllowedDomains` | `string[]` | No | — |
+| `judge` | `object` | No | — |
+| `maxCostUsd` | `number \| string` | No | — |
 
 <AccordionGroup>
 <Accordion title="modelParams full type">
@@ -349,9 +421,49 @@ await corsair.browseruse.api.runs.create({ task: 'Find the top 3 trending repos 
 
 ```ts
 {
-  profileId?: string,
-  proxyCountryCode?: string | null,
-  record?: boolean
+  profileId?: string | null,
+  proxyCountryCode?: ad | ae | af | ag | ai | al | am | an | ao | aq | ar | as | at | au | aw | az | ba | bb | bd | be | bf | bg | bh | bi | bj | bl | bm | bn | bo | bq | br | bs | bt | bv | bw | by | bz | ca | cc | cd | cf | cg | ch | ci | ck | cl | cm | co | cr | cs | cu | cv | cw | cx | cy | cz | de | dj | dk | dm | do | dz | ec | ee | eg | eh | er | es | et | fi | fj | fk | fm | fo | fr | ga | gd | ge | gf | gg | gh | gi | gl | gm | gn | gp | gq | gr | gs | gt | gu | gw | gy | hk | hm | hn | hr | ht | hu | id | ie | il | im | in | iq | ir | is | it | je | jm | jo | jp | ke | kg | kh | ki | km | kn | kp | kr | kw | ky | kz | la | lb | lc | li | lk | lr | ls | lt | lu | lv | ly | ma | mc | md | me | mf | mg | mh | mk | ml | mm | mn | mo | mp | mq | mr | ms | mt | mu | mv | mw | mx | my | mz | na | nc | ne | nf | ng | ni | nl | no | np | nr | nu | nz | om | pa | pe | pf | pg | ph | pk | pl | pm | pn | pr | ps | pt | pw | py | qa | re | ro | rs | ru | rw | sa | sb | sc | sd | se | sg | sh | si | sj | sk | sl | sm | sn | so | sr | ss | st | sv | sx | sy | sz | tc | td | tf | tg | th | tj | tk | tl | tm | tn | to | tr | tt | tv | tw | tz | ua | ug | uk | us | uy | uz | va | vc | ve | vg | vi | vn | vu | wf | ws | xk | ye | yt | za | zm | zw | null,
+  customProxy?: {
+    host: string,
+    port: number,
+    username?: string | null,
+    password?: string | null,
+    ignoreCertErrors?: boolean
+  } | null,
+  screenWidth?: number | null,
+  screenHeight?: number | null,
+  allowResizing?: boolean | null,
+  record?: boolean | null,
+  extensionIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="secretBindings full type">
+
+```ts
+{
+  alias: string,
+  source: {
+    type: inline,
+    value: string
+  } | {
+    type: onepassword,
+    integrationId: string,
+    vaultId: string,
+    itemId: string,
+    fieldId: string
+  },
+  allowedDomains: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="judge full type">
+
+```ts
+{
+  context?: string | null
 }
 ```
 </Accordion>
@@ -380,7 +492,7 @@ await corsair.browseruse.api.runs.create({ task: 'Find the top 3 trending repos 
 
 `runs.get`
 
-GET /runs/{id} — run status, result, structured output, cost
+GET /runs/{id} — full run once status is terminal: result, tokens, cost
 
 **Risk:** `read`
 
@@ -401,18 +513,62 @@ await corsair.browseruse.api.runs.get({ id: '<run-id>' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `queued \| dispatching \| running \| completed \| failed \| cancelled` | Yes | — |
-| `model` | `string` | Yes | — |
-| `sessionId` | `string` | Yes | — |
-| `workspaceId` | `string` | No | — |
-| `task` | `string` | No | — |
+| `task` | `string` | Yes | — |
 | `title` | `string` | No | — |
+| `model` | `string` | Yes | — |
+| `contextLimit` | `number` | Yes | — |
+| `status` | `queued \| dispatching \| running \| completed \| failed \| cancelled` | Yes | — |
 | `result` | `string` | No | — |
 | `output` | `any` | No | — |
 | `error` | `string` | No | — |
-| `totalCostUsd` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `sessionId` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `judgement` | `object` | No | — |
+| `totalInputTokens` | `number` | Yes | — |
+| `totalOutputTokens` | `number` | Yes | — |
+| `totalCostUsd` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="judgement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`runs.getStatus`
+
+GET /runs/{id}/status — cheap poll until completed, failed, or cancelled
+
+**Risk:** `read`
+
+```ts
+await corsair.browseruse.api.runs.getStatus({ id: '<run-id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `queued \| dispatching \| running \| completed \| failed \| cancelled` | Yes | — |
 
 
 

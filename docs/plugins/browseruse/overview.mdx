@@ -7,7 +7,7 @@ Use **Browser Use** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
-- 7 typed API operations
+- 8 typed API operations
 - 2 synced entities (`browsers`, `runs`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -101,7 +101,7 @@ await tenant.browseruse.api.runs.get({ id: '00000000-0000-0000-0000-000000000000
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.browseruse.api.browsers.create({ proxyCountryCode: 'us', timeout: 15 });
+await tenant.browseruse.api.browsers.create({ timeout: 15 });
 ```
 
 
@@ -109,7 +109,7 @@ See the full list on the [API](/plugins/browseruse/api) page.
 
 ## Query synced data
 
-Runs are upserted by id on create, get and cancel, so polling a run updates one row.
+Runs are merged by id. A status poll updates status and leaves the task and result already stored.
 
 ```ts
 const tenant = corsair.withTenant('acme');

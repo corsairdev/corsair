@@ -12,7 +12,6 @@ examples:
     path: browsers.create
     title: Start a cloud browser
     args:
-      proxyCountryCode: us
       timeout: 15
 dbExample:
   entity: runs
