@@ -1,0 +1,3 @@
+displayName: DNSFilter
+description: Cloud DNS security and content filtering - manage networks, policies, roaming clients, block pages, and traffic reporting.
+recommendedAuth: api_key
