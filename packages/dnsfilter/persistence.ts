@@ -177,8 +177,12 @@ export async function persistUserAgents(
 		try {
 			await ctx.db.userAgents.upsertByEntityId(id, {
 				id,
-				name: toStringOrUndefined(attributes.name),
-				platform: toStringOrUndefined(attributes.platform),
+				name:
+					toStringOrUndefined(attributes.friendly_name) ??
+					toStringOrUndefined(attributes.hostname),
+				platform:
+					toStringOrUndefined(attributes.os_name) ??
+					toStringOrUndefined(attributes.agent_type),
 				status: toStringOrUndefined(attributes.status),
 				organizationId:
 					relationshipId(row, 'organization') ??
@@ -187,7 +191,8 @@ export async function persistUserAgents(
 					relationshipId(row, 'network') ??
 					toStringOrUndefined(attributes.network_id),
 				createdAt: toDate(attributes.created_at),
-				lastSeenAt: toDate(attributes.last_seen_at),
+				lastSeenAt:
+					toDate(attributes.last_sync) ?? toDate(attributes.last_seen_at),
 			});
 		} catch (error) {
 			console.warn('Failed to persist DNSFilter user agent:', error);
@@ -260,7 +265,9 @@ export async function persistSubnets(
 		try {
 			await ctx.db.subnets.upsertByEntityId(id, {
 				id,
-				subnet: toStringOrUndefined(attributes.subnet ?? attributes.cidr),
+				name: toStringOrUndefined(attributes.name),
+				from: toStringOrUndefined(attributes.from),
+				to: toStringOrUndefined(attributes.to),
 				networkId:
 					relationshipId(row, 'network') ??
 					toStringOrUndefined(attributes.network_id),
@@ -281,14 +288,21 @@ export async function persistUnblockRequests(
 		const id = toId(row.id);
 		if (!id) continue;
 		const attributes = attributesOf(row);
+		const organization = asRecord(attributes.organization);
 		try {
 			await ctx.db.unblockRequests.upsertByEntityId(id, {
 				id,
 				domain: toStringOrUndefined(attributes.domain),
-				status: toStringOrUndefined(attributes.status),
-				organizationId: toStringOrUndefined(attributes.organization_id),
-				createdAt: toDate(attributes.created_at),
-				resolvedAt: toDate(attributes.resolved_at),
+				status:
+					toStringOrUndefined(attributes.status) ??
+					toStringOrUndefined(attributes.action),
+				organizationId:
+					toId(organization?.id) ??
+					toStringOrUndefined(attributes.organization_id),
+				createdAt:
+					toDate(attributes.time_of_attempt) ?? toDate(attributes.created_at),
+				resolvedAt:
+					toDate(attributes.resolved_date) ?? toDate(attributes.decided_at),
 			});
 		} catch (error) {
 			console.warn('Failed to persist DNSFilter unblock request:', error);
@@ -304,13 +318,15 @@ export async function persistScheduledReports(
 		const id = toId(row.id);
 		if (!id) continue;
 		const attributes = attributesOf(row);
+		const organization = asRecord(attributes.organization);
 		try {
 			await ctx.db.scheduledReports.upsertByEntityId(id, {
 				id,
 				name: toStringOrUndefined(attributes.name),
-				schedule: toStringOrUndefined(attributes.schedule),
+				frequency: toStringOrUndefined(attributes.frequency),
 				organizationId:
 					relationshipId(row, 'organization') ??
+					toId(organization?.id) ??
 					toStringOrUndefined(attributes.organization_id),
 				createdAt: toDate(attributes.created_at),
 				updatedAt: toDate(attributes.updated_at),

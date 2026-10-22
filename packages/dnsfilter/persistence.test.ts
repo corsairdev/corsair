@@ -108,20 +108,28 @@ describe('DNSFilter persistence', () => {
 		);
 	});
 
-	it('tolerates object schedules on scheduled reports', async () => {
+	it('maps the DNSFilter frequency field on scheduled reports', async () => {
 		const scheduledReports = entityClient();
 		const ctx = createContext({ scheduledReports });
 
 		await persistScheduledReports(ctx, {
 			data: {
 				id: 'report-1',
-				attributes: { name: 'Weekly', schedule: { cron: '0 9 * * 1' } },
+				attributes: {
+					name: 'Weekly',
+					frequency: 'weekly',
+					organization_id: 12,
+				},
 			},
 		});
 
 		expect(scheduledReports.upsertByEntityId).toHaveBeenCalledWith(
 			'report-1',
-			expect.objectContaining({ name: 'Weekly', schedule: undefined }),
+			expect.objectContaining({
+				name: 'Weekly',
+				frequency: 'weekly',
+				organizationId: '12',
+			}),
 		);
 	});
 

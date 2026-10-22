@@ -42,6 +42,7 @@ function lastRequestCall() {
 	return calls[calls.length - 1] as [
 		{
 			BASE: string;
+			TOKEN?: unknown;
 			HEADERS: Record<string, string>;
 		},
 		{
@@ -70,6 +71,13 @@ describe('makeDnsfilterRequest', () => {
 		expect(options.url).toBe('/v1/networks');
 		expect(options.method).toBe('GET');
 		expect(config.HEADERS['Content-Type']).toBe('application/json');
+	});
+
+	it('never sets TOKEN, which the shared client turns into Bearer auth', async () => {
+		await makeDnsfilterRequest('/v1/networks', 'secret-key');
+
+		const [config] = lastRequestCall();
+		expect(config.TOKEN).toBeUndefined();
 	});
 
 	it('passes path parameters separately from the template', async () => {
@@ -104,6 +112,25 @@ describe('makeDnsfilterRequest', () => {
 		const [, options] = lastRequestCall();
 		expect(options.query).toEqual({ protected: false });
 		expect(options.body).toEqual({ name: 'HQ' });
+	});
+
+	it('preserves null body values and array bodies', async () => {
+		await makeDnsfilterRequest('/v2/scheduled_reports/{id}', 'secret-key', {
+			method: 'PATCH',
+			path: { id: 7 },
+			body: { name: null, days: ['mon', 'tue'] },
+		});
+
+		const [, options] = lastRequestCall();
+		expect(options.body).toEqual({ name: null, days: ['mon', 'tue'] });
+
+		await makeDnsfilterRequest('/v1/networks', 'secret-key', {
+			method: 'PUT',
+			body: [{ id: 1 }, { id: 2 }],
+		});
+
+		const [, arrayOptions] = lastRequestCall();
+		expect(arrayOptions.body).toEqual([{ id: 1 }, { id: 2 }]);
 	});
 
 	it('normalises v1 error bodies', async () => {

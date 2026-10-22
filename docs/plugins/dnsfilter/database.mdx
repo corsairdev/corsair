@@ -167,7 +167,7 @@ const rows = await corsair.dnsfilter.db.scheduledReports.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `schedule` | `string` | equals, contains, startsWith, endsWith, in |
+| `frequency` | `string` | equals, contains, startsWith, endsWith, in |
 | `organizationId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
@@ -194,7 +194,9 @@ const rows = await corsair.dnsfilter.db.subnets.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `subnet` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
 | `networkId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |

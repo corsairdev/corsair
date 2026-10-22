@@ -33,6 +33,12 @@ export type DnsfilterRequestOptions = {
 	path?: Record<string, string | number>;
 	/** Query string values; nested objects become `key[subkey]` pairs. */
 	query?: Record<string, unknown>;
+	/**
+	 * JSON request body. `unknown` is required because DNSFilter request bodies
+	 * are JSON:API envelopes with per-operation shapes (`{ network: ... }`,
+	 * `{ policy: ... }`); the typed shape is enforced by the endpoint's zod
+	 * input schema before this helper is called.
+	 */
 	body?: unknown;
 };
 
@@ -72,6 +78,19 @@ function withoutUndefined(
 	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
 }
 
+/**
+ * Bodies keep `null` (a `null` clears a field on PATCH/PUT) and pass arrays
+ * through unchanged; only `undefined` properties are dropped.
+ */
+function withoutUndefinedBody(body: unknown): unknown {
+	if (!body || typeof body !== 'object') return body;
+	if (Array.isArray(body)) return body;
+	const entries = Object.entries(body as Record<string, unknown>).filter(
+		([, value]) => value !== undefined,
+	);
+	return entries.length > 0 ? Object.fromEntries(entries) : undefined;
+}
+
 function toDnsfilterError(error: unknown): Error {
 	if (error instanceof ApiError) {
 		return new DnsfilterAPIError(
@@ -103,7 +122,8 @@ export async function makeDnsfilterRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// No TOKEN: the shared client turns TOKEN into `Bearer <token>`, and
+		// DNSFilter expects the raw key in the Authorization header below.
 		HEADERS: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
@@ -116,7 +136,7 @@ export async function makeDnsfilterRequest<T>(
 		url: endpoint,
 		path,
 		query: withoutUndefined(query),
-		body: withoutUndefined(asRecord(body) ?? undefined),
+		body: withoutUndefinedBody(body),
 		mediaType: 'application/json; charset=utf-8',
 	};
 

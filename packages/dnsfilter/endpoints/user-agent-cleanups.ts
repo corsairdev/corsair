@@ -1,70 +1,90 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
+import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
+import {
+	DnsfilterEndpointInputSchemas,
+	DnsfilterEndpointOutputSchemas,
+} from './types';
 
 // Clean up user agent - POST /v1/user_agent_cleanups
 export const userAgentCleanupsCreate: DnsfilterEndpoints['userAgentCleanupsCreate'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.userAgentCleanupsCreate.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentCleanupsCreate']
 		>('/v1/user_agent_cleanups', ctx.key, {
 			method: 'POST',
 			body: {
-				organization_id: input.organization_id,
-				organization_ids: input.organization_ids,
-				inactive_for: input.inactive_for,
+				organization_id: values.organization_id,
+				organization_ids: values.organization_ids,
+				inactive_for: values.inactive_for,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentCleanupsCreate.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.create',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Get a user agent cleanup - GET /v1/user_agent_cleanups/{id}
 export const userAgentCleanupsGet: DnsfilterEndpoints['userAgentCleanupsGet'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.userAgentCleanupsGet.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentCleanupsGet']
 		>('/v1/user_agent_cleanups/{id}', ctx.key, {
 			method: 'GET',
 			path: {
-				id: input.id,
+				id: values.id,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentCleanupsGet.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.get',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Update a user agent cleanup - PUT /v1/user_agent_cleanups/{id}
 export const userAgentCleanupsUpdate: DnsfilterEndpoints['userAgentCleanupsUpdate'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.userAgentCleanupsUpdate.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentCleanupsUpdate']
 		>('/v1/user_agent_cleanups/{id}', ctx.key, {
 			method: 'PUT',
 			path: {
-				id: input.id,
+				id: values.id,
 			},
 			body: {
-				start: input.start,
-				inactive_for: input.inactive_for,
+				start: values.start,
+				inactive_for: values.inactive_for,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentCleanupsUpdate.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentCleanups.update',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};

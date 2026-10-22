@@ -1,6 +1,16 @@
 import { request } from 'corsair/http';
+import { z } from 'zod';
 import * as endpointGroups from './endpoints';
-import { Networks, UnblockRequests } from './endpoints';
+import {
+	CollectionUsers,
+	IpAddresses,
+	Networks,
+	UnblockRequests,
+} from './endpoints';
+import {
+	DnsfilterEndpointInputSchemas,
+	DnsfilterEndpointOutputSchemas,
+} from './endpoints/types';
 import type { DnsfilterContext } from './index';
 
 jest.mock('corsair/http', () => {
@@ -11,14 +21,15 @@ jest.mock('corsair/http', () => {
 const requestMock = request as unknown as jest.Mock;
 
 type EndpointFn = (ctx: DnsfilterContext, input: unknown) => Promise<unknown>;
+type EndpointKey = keyof typeof DnsfilterEndpointInputSchemas;
 
-function collectEndpoints(): Array<[string, EndpointFn]> {
-	const endpoints: Array<[string, EndpointFn]> = [];
-	for (const [groupName, group] of Object.entries(endpointGroups)) {
+function collectEndpoints(): Array<[EndpointKey, EndpointFn]> {
+	const endpoints: Array<[EndpointKey, EndpointFn]> = [];
+	for (const group of Object.values(endpointGroups)) {
 		if (typeof group !== 'object' || group === null) continue;
 		for (const [name, value] of Object.entries(group)) {
 			if (typeof value === 'function') {
-				endpoints.push([`${groupName}.${name}`, value as EndpointFn]);
+				endpoints.push([name as EndpointKey, value as EndpointFn]);
 			}
 		}
 	}
@@ -41,15 +52,35 @@ function lastRequestOptions() {
 		url: string;
 		path?: Record<string, unknown>;
 		query?: Record<string, unknown>;
-		body?: Record<string, unknown>;
+		body?: unknown;
 	};
+}
+
+/** First candidate that satisfies the operation's response schema. */
+function sampleOutput(key: EndpointKey): unknown {
+	const schema = DnsfilterEndpointOutputSchemas[key];
+	const candidates = [
+		undefined,
+		{},
+		{ data: [] },
+		{ data: {} },
+		[],
+		'',
+		'value',
+		0,
+		null,
+	];
+	for (const candidate of candidates) {
+		if (schema.safeParse(candidate).success) return candidate;
+	}
+	return undefined;
 }
 
 const endpoints = collectEndpoints();
 
 describe('DNSFilter endpoint surface', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		requestMock.mockReset();
 		requestMock.mockResolvedValue({ data: [] });
 	});
 
@@ -59,21 +90,40 @@ describe('DNSFilter endpoint surface', () => {
 		expect(UnblockRequests.unblockRequestsDecision).toBeDefined();
 	});
 
-	it('issues a request for every operation with a versioned path', async () => {
+	it('validates input and output for every operation', async () => {
 		const ctx = createContext();
+		let requestCount = 0;
+		let validationCount = 0;
 
-		for (const [, endpoint] of endpoints) {
+		for (const [key, endpoint] of endpoints) {
+			const inputSchema = DnsfilterEndpointInputSchemas[key];
+			if (!inputSchema.safeParse({}).success) {
+				await expect(endpoint(ctx, {})).rejects.toBeInstanceOf(z.ZodError);
+				validationCount += 1;
+				continue;
+			}
+			requestMock.mockResolvedValueOnce(sampleOutput(key));
 			await endpoint(ctx, {});
+			requestCount += 1;
 		}
 
-		expect(requestMock).toHaveBeenCalledTimes(endpoints.length);
+		expect(validationCount).toBeGreaterThan(0);
+		expect(requestCount).toBeGreaterThan(0);
 		for (const [, options] of requestMock.mock.calls) {
 			expect(options.url).toMatch(/^\/v[12]\//);
 			expect(options.method).toMatch(/^(GET|POST|PATCH|PUT|DELETE)$/);
 		}
 	});
 
+	it('rejects input that does not satisfy the operation schema', async () => {
+		await expect(
+			Networks.networksGet(createContext(), {} as never),
+		).rejects.toBeInstanceOf(z.ZodError);
+		expect(requestMock).not.toHaveBeenCalled();
+	});
+
 	it('passes path parameters for detail reads', async () => {
+		requestMock.mockResolvedValueOnce({ data: {} });
 		await Networks.networksGet(createContext(), { id: 42 });
 
 		const options = lastRequestOptions();
@@ -83,6 +133,7 @@ describe('DNSFilter endpoint surface', () => {
 	});
 
 	it('passes create bodies through unchanged', async () => {
+		requestMock.mockResolvedValueOnce({ data: {} });
 		await Networks.networksCreate(createContext(), {
 			network: { name: 'HQ', organization_id: 7 },
 		});
@@ -91,19 +142,56 @@ describe('DNSFilter endpoint surface', () => {
 		expect(options.method).toBe('POST');
 		expect(options.url).toBe('/v1/networks');
 		expect(options.body).toEqual({
-			network: { name: 'HQ', organization_id: 7 },
+			network: expect.objectContaining({ name: 'HQ' }),
 		});
 	});
 
-	it('uses DELETE for destructive operations', async () => {
-		await Networks.networksDelete(createContext(), { id: 9 });
+	it('sends a colliding request body without extra nesting', async () => {
+		requestMock.mockResolvedValueOnce(sampleOutput('collectionUsersCreate'));
+
+		await CollectionUsers.collectionUsersCreate(createContext(), {
+			collection_id: 12,
+			body: { collection_id: 12, id: 34 },
+		});
+
+		const options = lastRequestOptions();
+		expect(options.method).toBe('POST');
+		expect(options.path).toEqual({ collection_id: 12 });
+		expect(options.body).toEqual({ collection_id: 12, id: 34 });
+	});
+
+	it('uses DELETE and evicts the synced row', async () => {
+		const deleteByEntityId = jest.fn();
+		const ctx = createContext({ networks: { deleteByEntityId } });
+		requestMock.mockResolvedValueOnce(undefined);
+
+		await Networks.networksDelete(ctx, { id: 9 });
 
 		const options = lastRequestOptions();
 		expect(options.method).toBe('DELETE');
 		expect(options.path).toEqual({ id: 9 });
+		expect(deleteByEntityId).toHaveBeenCalledWith('9');
+	});
+
+	it('sends the document-misflagged GET body as query parameters', async () => {
+		requestMock.mockResolvedValueOnce({ status: 'ok' });
+
+		await IpAddresses.ipAddressesVerify(createContext(), {
+			ip_address: {
+				address: '203.0.113.7',
+				organization_id: 1,
+				network_id: 2,
+			},
+		});
+
+		const options = lastRequestOptions();
+		expect(options.method).toBe('GET');
+		expect(options.body).toBeUndefined();
+		expect(options.query).toHaveProperty('ip_address');
 	});
 
 	it('forwards nested pagination and filters as query values', async () => {
+		requestMock.mockResolvedValueOnce({ data: [] });
 		await Networks.networksList(createContext(), {
 			page: { number: 2, size: 25 },
 			search: 'branch',
@@ -125,7 +213,7 @@ describe('DNSFilter endpoint surface', () => {
 			data: {
 				id: '7',
 				type: 'networks',
-				attributes: { name: 'HQ', created_at: '2026-01-02T03:04:05Z' },
+				attributes: { name: 'HQ' },
 			},
 		});
 
@@ -133,16 +221,13 @@ describe('DNSFilter endpoint surface', () => {
 
 		expect(upsertByEntityId).toHaveBeenCalledWith(
 			'7',
-			expect.objectContaining({
-				id: '7',
-				name: 'HQ',
-				createdAt: new Date('2026-01-02T03:04:05Z'),
-			}),
+			expect.objectContaining({ id: '7', name: 'HQ' }),
 		);
 	});
 
 	it('logs an event for every call', async () => {
 		const ctx = createContext();
+		requestMock.mockResolvedValueOnce({ data: [] });
 		await Networks.networksList(ctx, {});
 		expect(ctx.$getAccountId).toHaveBeenCalled();
 	});

@@ -1,94 +1,116 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
+import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
+import {
+	DnsfilterEndpointInputSchemas,
+	DnsfilterEndpointOutputSchemas,
+} from './types';
 
 // Bulk delete user agent - POST /v1/user_agent_bulk_deletes
 export const userAgentBulkDeletesCreate: DnsfilterEndpoints['userAgentBulkDeletesCreate'] =
 	async (ctx, input) => {
+		const values =
+			DnsfilterEndpointInputSchemas.userAgentBulkDeletesCreate.parse(
+				input ?? {},
+			);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentBulkDeletesCreate']
 		>('/v1/user_agent_bulk_deletes', ctx.key, {
 			method: 'POST',
 			query: {
-				agent_state: input.agent_state,
-				agent_version: input.agent_version,
-				block_page_id: input.block_page_id,
-				name_search: input.name_search,
-				network_ids: input.network_ids,
-				organization_id: input.organization_id,
-				organization_ids: input.organization_ids,
-				policy_id: input.policy_id,
-				policy_schedule: input.policy_schedule,
-				queue_uninstall: input.queue_uninstall,
-				release_channels: input.release_channels,
-				scheduled_policy_id: input.scheduled_policy_id,
-				search: input.search,
-				state: input.state,
-				status: input.status,
-				tags: input.tags,
-				traffic_received_last_15_mins: input.traffic_received_last_15_mins,
-				type: input.type,
+				agent_state: values.agent_state,
+				agent_version: values.agent_version,
+				block_page_id: values.block_page_id,
+				name_search: values.name_search,
+				network_ids: values.network_ids,
+				organization_id: values.organization_id,
+				organization_ids: values.organization_ids,
+				policy_id: values.policy_id,
+				policy_schedule: values.policy_schedule,
+				queue_uninstall: values.queue_uninstall,
+				release_channels: values.release_channels,
+				scheduled_policy_id: values.scheduled_policy_id,
+				search: values.search,
+				state: values.state,
+				status: values.status,
+				tags: values.tags,
+				traffic_received_last_15_mins: values.traffic_received_last_15_mins,
+				type: values.type,
 			},
 			body: {
-				ids: input.ids,
-				exclude_ids: input.exclude_ids,
+				ids: values.ids,
+				exclude_ids: values.exclude_ids,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCreate.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.create',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Get a user agent bulk delete - GET /v1/user_agent_bulk_deletes/{id}
 export const userAgentBulkDeletesGet: DnsfilterEndpoints['userAgentBulkDeletesGet'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.userAgentBulkDeletesGet.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentBulkDeletesGet']
 		>('/v1/user_agent_bulk_deletes/{id}', ctx.key, {
 			method: 'GET',
 			path: {
-				id: input.id,
+				id: values.id,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesGet.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.get',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Counts for user agent bulk deletes - GET /v1/user_agent_bulk_deletes/counts
 export const userAgentBulkDeletesCounts: DnsfilterEndpoints['userAgentBulkDeletesCounts'] =
 	async (ctx, input) => {
+		const values =
+			DnsfilterEndpointInputSchemas.userAgentBulkDeletesCounts.parse(
+				input ?? {},
+			);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['userAgentBulkDeletesCounts']
 		>('/v1/user_agent_bulk_deletes/counts', ctx.key, {
 			method: 'GET',
 			query: {
-				agent_state: input.agent_state,
-				name_search: input.name_search,
-				network_ids: input.network_ids,
-				organization_id: input.organization_id,
-				search: input.search,
-				state: input.state,
-				status: input.status,
-				tags: input.tags,
-				traffic_received_last_15_mins: input.traffic_received_last_15_mins,
-				type: input.type,
+				agent_state: values.agent_state,
+				name_search: values.name_search,
+				network_ids: values.network_ids,
+				organization_id: values.organization_id,
+				search: values.search,
+				state: values.state,
+				status: values.status,
+				tags: values.tags,
+				traffic_received_last_15_mins: values.traffic_received_last_15_mins,
+				type: values.type,
 			},
 		});
+		const result =
+			DnsfilterEndpointOutputSchemas.userAgentBulkDeletesCounts.parse(response);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.userAgentBulkDeletes.counts',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};

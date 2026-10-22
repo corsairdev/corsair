@@ -4090,7 +4090,9 @@ List IP addresses
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.ipAddresses.list({});
+await corsair.dnsfilter.api.ipAddresses.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**
@@ -5608,7 +5610,9 @@ Create a network
 **Risk:** `write`
 
 ```ts
-await corsair.dnsfilter.api.networks.create({});
+await corsair.dnsfilter.api.networks.create({
+	network: { name: 'HQ', organization_id: 99 },
+});
 ```
 
 **Input**
@@ -5739,7 +5743,7 @@ Delete a network
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.dnsfilter.api.networks.delete({});
+await corsair.dnsfilter.api.networks.delete({ id: 12345 });
 ```
 
 **Input**
@@ -5908,7 +5912,7 @@ Get a network
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.networks.get({});
+await corsair.dnsfilter.api.networks.get({ id: 12345 });
 ```
 
 **Input**
@@ -6017,7 +6021,9 @@ List networks
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.networks.list({});
+await corsair.dnsfilter.api.networks.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**
@@ -6917,7 +6923,10 @@ Update a network
 **Risk:** `write`
 
 ```ts
-await corsair.dnsfilter.api.networks.update({});
+await corsair.dnsfilter.api.networks.update({
+	id: 12345,
+	network: { name: 'HQ', organization_id: 99 },
+});
 ```
 
 **Input**
@@ -9681,7 +9690,7 @@ Get a policy
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.policies.get({});
+await corsair.dnsfilter.api.policies.get({ id: 321 });
 ```
 
 **Input**
@@ -9803,7 +9812,9 @@ List policies
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.policies.list({});
+await corsair.dnsfilter.api.policies.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**
@@ -11967,7 +11978,9 @@ List scheduled reports V2
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.scheduledReportsV2.list({});
+await corsair.dnsfilter.api.scheduledReportsV2.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**
@@ -14995,7 +15008,7 @@ Decision for unblock requests
 **Risk:** `write`
 
 ```ts
-await corsair.dnsfilter.api.unblockRequests.decision({});
+await corsair.dnsfilter.api.unblockRequests.decision({ id: '8f14e45f', decision: 'allow' });
 ```
 
 **Input**
@@ -15135,7 +15148,9 @@ List unblock requests
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.unblockRequests.list({});
+await corsair.dnsfilter.api.unblockRequests.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**
@@ -17039,7 +17054,9 @@ List users
 **Risk:** `read`
 
 ```ts
-await corsair.dnsfilter.api.users.list({});
+await corsair.dnsfilter.api.users.list({
+	page: { number: 1, size: 25 },
+});
 ```
 
 **Input**

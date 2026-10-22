@@ -2,142 +2,181 @@ import { logEventFromContext } from 'corsair/core';
 import type { DnsfilterEndpoints } from '..';
 import { makeDnsfilterRequest } from '../client';
 import { persistSubnets } from '../persistence';
+import { redactSensitive } from '../redact';
 import type { DnsfilterEndpointOutputs } from './types';
+import {
+	DnsfilterEndpointInputSchemas,
+	DnsfilterEndpointOutputSchemas,
+} from './types';
 
 // List all network subnets - GET /v1/networks/subnets
 export const networkSubnetsListAll: DnsfilterEndpoints['networkSubnetsListAll'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsListAll.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsListAll']
 		>('/v1/networks/subnets', ctx.key, {
 			method: 'GET',
 			query: {
-				organization_id: input.organization_id,
+				organization_id: values.organization_id,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsListAll.parse(response);
+		await persistSubnets(ctx, result);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.listAll',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // List network subnets - GET /v1/networks/{id}/subnets
 export const networkSubnetsList: DnsfilterEndpoints['networkSubnetsList'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsList.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsList']
 		>('/v1/networks/{id}/subnets', ctx.key, {
 			method: 'GET',
 			path: {
-				id: input.id,
+				id: values.id,
 			},
 			query: {
-				page: input.page,
+				page: values.page,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsList.parse(response);
+		await persistSubnets(ctx, result);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.list',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Create a network subnet - POST /v1/networks/{id}/subnets
 export const networkSubnetsCreate: DnsfilterEndpoints['networkSubnetsCreate'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsCreate.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsCreate']
 		>('/v1/networks/{id}/subnets', ctx.key, {
 			method: 'POST',
 			path: {
-				id: input.id,
+				id: values.id,
 			},
 			body: {
-				network_subnet: input.network_subnet,
+				network_subnet: values.network_subnet,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsCreate.parse(response);
+		await persistSubnets(ctx, result);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.create',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Get a network subnet - GET /v1/networks/{id}/subnets/{subnet_id}
 export const networkSubnetsGet: DnsfilterEndpoints['networkSubnetsGet'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsGet.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsGet']
 		>('/v1/networks/{id}/subnets/{subnet_id}', ctx.key, {
 			method: 'GET',
 			path: {
-				id: input.id,
-				subnet_id: input.subnet_id,
+				id: values.id,
+				subnet_id: values.subnet_id,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsGet.parse(response);
+		await persistSubnets(ctx, result);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.get',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Update a network subnet - PATCH /v1/networks/{id}/subnets/{subnet_id}
 export const networkSubnetsUpdate: DnsfilterEndpoints['networkSubnetsUpdate'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsUpdate.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsUpdate']
 		>('/v1/networks/{id}/subnets/{subnet_id}', ctx.key, {
 			method: 'PATCH',
 			path: {
-				id: input.id,
-				subnet_id: input.subnet_id,
+				id: values.id,
+				subnet_id: values.subnet_id,
 			},
 			body: {
-				network_subnet: input.network_subnet,
+				network_subnet: values.network_subnet,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsUpdate.parse(response);
+		await persistSubnets(ctx, result);
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.update',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
 
 // Delete a network subnet - DELETE /v1/networks/{id}/subnets/{subnet_id}
 export const networkSubnetsDelete: DnsfilterEndpoints['networkSubnetsDelete'] =
 	async (ctx, input) => {
+		const values = DnsfilterEndpointInputSchemas.networkSubnetsDelete.parse(
+			input ?? {},
+		);
 		const response = await makeDnsfilterRequest<
 			DnsfilterEndpointOutputs['networkSubnetsDelete']
 		>('/v1/networks/{id}/subnets/{subnet_id}', ctx.key, {
 			method: 'DELETE',
 			path: {
-				id: input.id,
-				subnet_id: input.subnet_id,
+				id: values.id,
+				subnet_id: values.subnet_id,
 			},
 		});
-		await persistSubnets(ctx, response);
+		const result =
+			DnsfilterEndpointOutputSchemas.networkSubnetsDelete.parse(response);
+		try {
+			await ctx.db.subnets.deleteByEntityId(String(values.subnet_id));
+		} catch (error) {
+			console.warn('Failed to evict DNSFilter subnets row:', error);
+		}
 		await logEventFromContext(
 			ctx,
 			'dnsfilter.networkSubnets.delete',
-			input ?? {},
+			redactSensitive(values),
 			'completed',
 		);
-		return response;
+		return result;
 	};
