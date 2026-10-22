@@ -1,0 +1,1908 @@
+{
+  "id": "magichour",
+  "displayName": "Magic Hour",
+  "description": "AI video, image, and audio generation with async project polling and pre-signed uploads.",
+  "npmPackageName": "@corsair-dev/magichour",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "magichour.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the account's credit balance and subscription details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tier",
+            "optional": false,
+            "type": "free | creator | pro | business"
+          },
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ name?: string | null, status: active | past_due, price: { amount: number, currency: string }, discount?: { percent_off?: number | null, amount_off?: number | null } | null, billing_interval?: month | year |  | null, current_period_end?: string | null, cancel_at_period_end: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.audio.voiceCloner",
+      "shortPath": "audio.voiceCloner",
+      "description": "Clone a voice from an audio sample and generate speech",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ audio_file_path: string }"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.audio.voiceGenerator",
+      "shortPath": "audio.voiceGenerator",
+      "description": "Generate speech audio from text using a preset voice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string, voice_name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.audioProjects.delete",
+      "shortPath": "audioProjects.delete",
+      "description": "Permanently delete rendered audio file(s) [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "magichour.api.audioProjects.getDetails",
+      "shortPath": "audioProjects.getDetails",
+      "description": "Check the progress, status, and downloads of an audio project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | queued | rendering | complete | error | canceled"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ url: string, expires_at: string }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message: string, code: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.faceDetection.detect",
+      "shortPath": "faceDetection.detect",
+      "description": "Detect faces in an image or video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "confidence_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ target_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.faceDetection.getDetails",
+      "shortPath": "faceDetection.getDetails",
+      "description": "Get the details and detected faces of a face detection task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | rendering | complete | error"
+          },
+          {
+            "key": "faces",
+            "optional": false,
+            "type": "{ path: string, url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.files.generateUploadUrls",
+      "shortPath": "files.generateUploadUrls",
+      "description": "Generate pre-signed URLs for uploading video, audio, or image assets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ type: video | audio | image, extension: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ upload_url: string, expires_at: string, file_path: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.files.savedItemsList",
+      "shortPath": "files.savedItemsList",
+      "description": "List saved items (characters, references, voices, moodboards, brand kits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "character | reference | voice | moodboard | brand_kit"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, type: character | reference | voice | moodboard | brand_kit, name?: string | null, assets: { file_path: string, media_kind: IMAGE | VIDEO | AUDIO, is_primary: boolean, url: string, url_expires_at: string }[] }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.imageProjects.delete",
+      "shortPath": "imageProjects.delete",
+      "description": "Permanently delete rendered image(s) [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "magichour.api.imageProjects.getDetails",
+      "shortPath": "imageProjects.getDetails",
+      "description": "Check the progress, status, and downloads of an image project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | queued | rendering | complete | error | canceled"
+          },
+          {
+            "key": "image_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ url: string, expires_at: string }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message: string, code: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.backgroundRemover",
+      "shortPath": "images.backgroundRemover",
+      "description": "Remove or replace an image background",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string, background_image_file_path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.bodySwap",
+      "shortPath": "images.bodySwap",
+      "description": "Place a person into a scene image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": false,
+            "type": "640px | 1k | 2k | 4k"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ person_file_path: string, scene_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.clothesChanger",
+      "shortPath": "images.clothesChanger",
+      "description": "Change outfits in a photo using a garment reference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ person_file_path: string, garment_file_path: string, garment_type?: entire_outfit | upper_body | lower_body | dresses }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.faceEditor",
+      "shortPath": "images.faceEditor",
+      "description": "Edit facial features of an image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string }"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ enhance_face?: boolean, eyebrow_direction?: number, eye_gaze_horizontal?: number, eye_gaze_vertical?: number, eye_open_ratio?: number, lip_open_ratio?: number, head_roll?: number, mouth_grim?: number, mouth_pout?: number, mouth_purse?: number, mouth_smile?: number, mouth_position_horizontal?: number, mouth_position_vertical?: number, head_pitch?: number, head_yaw?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.faceSwapPhoto",
+      "shortPath": "images.faceSwapPhoto",
+      "description": "Swap faces in a photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ face_swap_mode?: all-faces | individual-faces, source_file_path?: string, face_mappings?: { original_face: string, new_face: string }[], target_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.gifGenerator",
+      "shortPath": "images.gifGenerator",
+      "description": "Generate an animated GIF from a prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string }"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "gif | mp4 | webm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.headshotGenerator",
+      "shortPath": "images.headshotGenerator",
+      "description": "Generate a professional headshot from a photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ prompt?: string }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.headSwap",
+      "shortPath": "images.headSwap",
+      "description": "Swap a head onto a body image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_resolution",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ body_file_path: string, head_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.imageEditor",
+      "shortPath": "images.imageEditor",
+      "description": "Edit an image with a prompt-driven AI model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_count",
+            "optional": true,
+            "type": "1 | 4 | 9 | 16"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "auto | 16:9 | 9:16 | 4:3 | 3:2 | 1:1 | 4:5 | 2:3"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "auto | 640px | 1k | 2k | 4k"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_paths?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.imageGenerator",
+      "shortPath": "images.imageGenerator",
+      "description": "Generate images from a text prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "1:1 | 16:9 | 9:16"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "auto | 640px | 1k | 2k | 4k"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string, tool?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.imageUpscaler",
+      "shortPath": "images.imageUpscaler",
+      "description": "Upscale an image 2x or 4x with AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scale_factor",
+            "optional": false,
+            "type": "2 | 4"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ mode?: pro | preserve | balanced | creative, prompt?: string }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.memeGenerator",
+      "shortPath": "images.memeGenerator",
+      "description": "Generate a meme from a topic and template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ topic: string, template: string, searchWeb?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.photoColorizer",
+      "shortPath": "images.photoColorizer",
+      "description": "Colorize a black-and-white photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.images.qrCodeGenerator",
+      "shortPath": "images.qrCodeGenerator",
+      "description": "Generate an artistic QR code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ art_style: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videoProjects.delete",
+      "shortPath": "videoProjects.delete",
+      "description": "Permanently delete a rendered video [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "magichour.api.videoProjects.getDetails",
+      "shortPath": "videoProjects.getDetails",
+      "description": "Check the progress, status, and downloads of a video project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "draft | queued | rendering | complete | error | canceled"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fps",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ message: string, code: string }"
+          },
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ url: string, expires_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.animation",
+      "shortPath": "videos.animation",
+      "description": "Create a stylized animation video from an image and audio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fps",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ art_style: string, art_style_custom?: string, camera_effect: string, prompt_type: custom | use_lyrics | ai_choose, prompt?: string, transition_speed: number }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ audio_source: none | file | youtube, audio_file_path?: string, youtube_url?: string, image_file_path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.audioToVideo",
+      "shortPath": "videos.audioToVideo",
+      "description": "Create a video from an audio track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ audio_file_path: string, image_file_path?: string }"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ prompt?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.autoSubtitleGenerator",
+      "shortPath": "videos.autoSubtitleGenerator",
+      "description": "Generate styled subtitles for a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ video_file_path: string }"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ template?: karaoke | cinematic | minimalist | highlight, custom_config?: { font?: string, font_size?: number, font_style?: string, text_color?: string, highlighted_text_color?: string, stroke_color?: string, stroke_width?: number, vertical_position?: string, horizontal_position?: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.characterReplace",
+      "shortPath": "videos.characterReplace",
+      "description": "Replace or animate a character in a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "wan-animate | kling-3.0"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ video_file_path: string, image_file_path: string }"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ mode?: replace | animate, selection_mode?: auto | point, points?: { position_x: number, position_y: number, time_seconds: number }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.faceSwap",
+      "shortPath": "videos.faceSwap",
+      "description": "Swap faces in a video using a reference face image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ version?: v1 | v2 | default }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ face_swap_mode?: all-faces | individual-faces, image_file_path?: string, face_mappings?: { original_face: string, new_face: string }[], video_source: file | youtube, video_file_path?: string, youtube_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.imageToVideo",
+      "shortPath": "videos.imageToVideo",
+      "description": "Animate a still image into a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "360p | 480p | 720p | 1080p | 4k"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ prompt?: string }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string, end_image_file_path?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.lipSync",
+      "shortPath": "videos.lipSync",
+      "description": "Sync a video's lip movement to an audio track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "max_fps_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ audio_file_path: string, video_source: file | youtube, video_file_path?: string, youtube_url?: string }"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ generation_mode?: lite | standard | pro }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.talkingPhoto",
+      "shortPath": "videos.talkingPhoto",
+      "description": "Create a talking photo video from an image and an audio file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string, audio_file_path: string }"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "{ generation_mode?: realistic | prompted | pro | standard | stable | expressive, prompt?: string }"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.textToVideo",
+      "shortPath": "videos.textToVideo",
+      "description": "Generate a video from a text prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16 | 1:1"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "360p | 480p | 720p | 1080p | 4k"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string }"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ name: string, file_path: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.ugcAd",
+      "shortPath": "videos.ugcAd",
+      "description": "Create a spoken UGC ad video from an image and a script",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ image_file_path: string }"
+          },
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "kling-3.0 | ltx-2.5 | veo3.1"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.videoEditor",
+      "shortPath": "videos.videoEditor",
+      "description": "Edit a video with a prompt-driven AI model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "gemini-omni-1.1 | gemini-omni | ltx-2.5 | ltx-2.3"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ prompt: string }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ video_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.videoToVideo",
+      "shortPath": "videos.videoToVideo",
+      "description": "Restyle an existing video with a new art style",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fps_resolution",
+            "optional": true,
+            "type": "FULL | HALF"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ art_style: string, version?: v1 | v2 | default, prompt_type?: default | custom | append_default, prompt?: string | null, model?: Dreamshaper | Absolute Reality | Flat 2D Anime | Soft Anime | Kaywaii | Western Anime | 3D Anime | default }"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ video_source: file | youtube, video_file_path?: string, youtube_url?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "magichour.api.videos.videoTranslator",
+      "shortPath": "videos.videoTranslator",
+      "description": "Translate the speech in a video into another language",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_seconds",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "target_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p"
+          },
+          {
+            "key": "assets",
+            "optional": false,
+            "type": "{ video_file_path: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits_charged",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

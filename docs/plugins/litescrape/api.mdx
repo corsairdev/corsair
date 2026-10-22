@@ -1,0 +1,3814 @@
+---
+title: API
+description: "API reference for LiteScrape: every `litescrape.api.*` operation with input and output types."
+---
+
+Every `litescrape.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apple App Store
+
+### product
+
+`appleAppStore.product`
+
+Get an Apple App Store product page with version history and privacy labels (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.appleAppStore.product({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `type` | `app` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `version_history` | `object[]` | No | — |
+| `ratings_and_reviews` | `object` | No | — |
+| `privacy` | `object` | No | — |
+| `information` | `object` | No | — |
+| `iphone_screenshots` | `object[]` | No | — |
+| `ipad_screenshots` | `object[]` | No | — |
+| `featured_in` | `object[]` | No | — |
+| `more_by_this_developer` | `object[]` | No | — |
+| `you_may_also_like` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="version_history full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="ratings_and_reviews full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="privacy full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="iphone_screenshots full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="ipad_screenshots full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="featured_in full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="more_by_this_developer full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="you_may_also_like full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`appleAppStore.reviews`
+
+Get Apple App Store reviews, newest or most helpful first (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.appleAppStore.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `sort` | `mostrecent \| mosthelpful` | No | — |
+| `country` | `string` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`appleAppStore.search`
+
+Search the Apple App Store for apps with developer, price and rating (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.appleAppStore.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `term` | `string` | Yes | — |
+| `num` | `number` | No | — |
+| `disallow_explicit` | `boolean` | No | — |
+| `property` | `developer` | No | — |
+| `category_id` | `string` | No | — |
+| `device` | `mobile \| tablet \| desktop` | No | — |
+| `country` | `string` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Apple Maps
+
+### places
+
+`appleMaps.places`
+
+Get Apple Maps places by MUID with address, hours and ratings
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.appleMaps.places({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `muid` | `string` | Yes | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `place_results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="place_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`appleMaps.reviews`
+
+Get Apple Maps rating summary and written reviews by MUID
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.appleMaps.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `muid` | `string` | Yes | — |
+| `locale` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `place_info` | `object` | No | — |
+| `rating_summary` | `object` | No | — |
+| `ratings` | `object[]` | No | — |
+| `reviews` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="place_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="rating_summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ratings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bing
+
+### maps
+
+`bing.maps`
+
+Get Bing Maps listings by query or one place by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.bing.maps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `cp` | `string` | No | — |
+| `setlang` | `string` | No | — |
+| `first` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `local_results` | `object[]` | No | — |
+| `place_results` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="local_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="place_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`bing.search`
+
+Search Bing for organic results, knowledge cards and rich modules
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.bing.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `filters` | `string` | No | — |
+| `location` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `mkt` | `string` | No | — |
+| `cc` | `string` | No | — |
+| `first` | `number` | No | — |
+| `safeSearch` | `off \| moderate \| strict` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `knowledge_graph` | `object` | No | — |
+| `knowledge_graph_list` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  snippet?: string,
+  displayed_link?: string,
+  source?: string,
+  date?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+  title?: string,
+  type?: string,
+  kgmid?: string,
+  description?: string
+}
+```
+</Accordion>
+
+<Accordion title="knowledge_graph_list full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Duckduckgo
+
+### maps
+
+`duckduckgo.maps`
+
+Get DuckDuckGo Maps places within a bounding box
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.duckduckgo.maps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `bbox` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `strict_bbox` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `local_results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="local_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`duckduckgo.search`
+
+Search DuckDuckGo for organic results with region and safe-search controls
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.duckduckgo.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `kl` | `string` | No | — |
+| `safe` | `1 \| -1 \| -2` | No | — |
+| `df` | `string` | No | — |
+| `start` | `number` | No | — |
+| `m` | `number` | No | — |
+| `search_assist` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  snippet?: string,
+  displayed_link?: string,
+  source?: string,
+  date?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google
+
+### ads
+
+`google.ads`
+
+Get Google text, local and shopping ads plus the rest of the results page (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.ads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `safe` | `active \| off` | No | — |
+| `nfpr` | `0 \| 1` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `ads` | `object[]` | No | — |
+| `local_ads` | `object[]` | No | — |
+| `shopping_results` | `object[]` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `related_questions` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ads full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="local_ads full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="shopping_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  snippet?: string,
+  displayed_link?: string,
+  source?: string,
+  date?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related_questions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+  title?: string,
+  value?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aiMode
+
+`google.aiMode`
+
+Ask Google AI Mode a question and get text blocks with cited references
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.aiMode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `continuable` | `boolean` | No | — |
+| `subsequent_request_token` | `string` | No | — |
+| `image_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `text_blocks` | `object[]` | No | — |
+| `references` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="text_blocks full type">
+
+```ts
+{
+  type?: string,
+  text?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  title?: string,
+  link?: string,
+  snippet?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aiOverview
+
+`google.aiOverview`
+
+Get Google's AI Overview for a query as text blocks and cited references
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.aiOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `ludocid` | `string` | No | — |
+| `kgmid` | `string` | No | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `radius` | `number` | No | — |
+| `lsig` | `string` | No | — |
+| `si` | `string` | No | — |
+| `ibp` | `string` | No | — |
+| `uds` | `string` | No | — |
+| `color_scheme` | `light \| dark` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `cr` | `string` | No | — |
+| `lr` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `tbs` | `string` | No | — |
+| `safe` | `active \| off` | No | — |
+| `nfpr` | `0 \| 1` | No | — |
+| `filter` | `0 \| 1` | No | — |
+| `pws` | `0 \| 1` | No | — |
+| `peek_pws` | `0 \| 1` | No | — |
+| `tbm` | `string` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+| `as_dt` | `i \| e` | No | — |
+| `as_epq` | `string` | No | — |
+| `as_eq` | `string` | No | — |
+| `as_lq` | `string` | No | — |
+| `as_nlo` | `number` | No | — |
+| `as_nhi` | `number` | No | — |
+| `as_oq` | `string` | No | — |
+| `as_q` | `string` | No | — |
+| `as_qdr` | `string` | No | — |
+| `as_rq` | `string` | No | — |
+| `as_sitesearch` | `string` | No | — |
+| `oq` | `string` | No | — |
+| `gs_lp` | `string` | No | — |
+| `sclient` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `ai_overview` | `object` | No | — |
+| `pagination` | `object` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ai_overview full type">
+
+```ts
+{
+  text_blocks?: {
+  }[],
+  references?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### local
+
+`google.local`
+
+Get Google local results with rating, reviews, category, address and place IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.local({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `ludocid` | `string` | No | — |
+| `tbs` | `string` | No | — |
+| `start` | `number` | No | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `local_results` | `object[]` | No | — |
+| `local_map` | `object` | No | — |
+| `discover_more_places` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="local_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="local_map full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="discover_more_places full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`google.search`
+
+Search Google for organic results, Knowledge Graph, related searches and the AI Overview
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fast_mode` | `boolean` | No | — |
+| `q` | `string` | No | — |
+| `ludocid` | `string` | No | — |
+| `kgmid` | `string` | No | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `radius` | `number` | No | — |
+| `lsig` | `string` | No | — |
+| `si` | `string` | No | — |
+| `ibp` | `string` | No | — |
+| `uds` | `string` | No | — |
+| `color_scheme` | `light \| dark` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `cr` | `string` | No | — |
+| `lr` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `tbs` | `string` | No | — |
+| `safe` | `active \| off` | No | — |
+| `nfpr` | `0 \| 1` | No | — |
+| `filter` | `0 \| 1` | No | — |
+| `pws` | `0 \| 1` | No | — |
+| `peek_pws` | `0 \| 1` | No | — |
+| `tbm` | `string` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+| `as_dt` | `i \| e` | No | — |
+| `as_epq` | `string` | No | — |
+| `as_eq` | `string` | No | — |
+| `as_lq` | `string` | No | — |
+| `as_nlo` | `number` | No | — |
+| `as_nhi` | `number` | No | — |
+| `as_oq` | `string` | No | — |
+| `as_q` | `string` | No | — |
+| `as_qdr` | `string` | No | — |
+| `as_rq` | `string` | No | — |
+| `as_sitesearch` | `string` | No | — |
+| `oq` | `string` | No | — |
+| `gs_lp` | `string` | No | — |
+| `sclient` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `knowledge_graph` | `object` | No | — |
+| `ai_overview` | `object` | No | — |
+| `related_questions` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `shopping_results` | `object[]` | No | — |
+| `immersive_products` | `object[]` | No | — |
+| `perspectives` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  snippet?: string,
+  displayed_link?: string,
+  source?: string,
+  date?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+  title?: string,
+  type?: string,
+  kgmid?: string,
+  description?: string
+}
+```
+</Accordion>
+
+<Accordion title="ai_overview full type">
+
+```ts
+{
+  text_blocks?: {
+  }[],
+  references?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="related_questions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+  title?: string,
+  value?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="shopping_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="immersive_products full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="perspectives full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shopping
+
+`google.shopping`
+
+Get Google Shopping products with price, merchant, rating and delivery
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.shopping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `shoprs` | `string` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+| `min_price` | `number` | No | — |
+| `max_price` | `number` | No | — |
+| `sort_by` | `1 \| 2 \| 3` | No | — |
+| `on_sale` | `boolean` | No | — |
+| `free_shipping` | `boolean` | No | — |
+| `small_business` | `boolean` | No | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `shopping_results` | `object[]` | No | — |
+| `categorized_shopping_results` | `object[]` | No | — |
+| `filters` | `object[]` | No | — |
+| `carousel_filters` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="shopping_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="categorized_shopping_results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  title?: string,
+  value?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="carousel_filters full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shoppingProduct
+
+`google.shoppingProduct`
+
+Get one Google Shopping product page with every merchant offer and specification
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.google.shoppingProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gpcid` | `string` | No | — |
+| `headline_offer_docid` | `string` | No | — |
+| `image_docid` | `string` | No | — |
+| `prds` | `string` | No | — |
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `uule` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `product_result` | `object` | No | — |
+| `offers` | `object[]` | No | — |
+| `related_products` | `object[]` | No | — |
+| `product_reviews` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="product_result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="offers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_products full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="product_reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Maps
+
+### contributorReviews
+
+`googleMaps.contributorReviews`
+
+Get the public review history for one Google Maps contributor
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.contributorReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contributor_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `contributor` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="contributor full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### photoMeta
+
+`googleMaps.photoMeta`
+
+Get the place, contributor and date of a Google Maps photo
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.photoMeta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `place_info` | `object` | No | — |
+| `contributor` | `object` | No | — |
+| `photo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="place_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="contributor full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="photo full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### popularTimes
+
+`googleMaps.popularTimes`
+
+See how busy a Google Maps place is right now
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.popularTimes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `popular_times` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="popular_times full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts
+
+`googleMaps.posts`
+
+Read the posts published by a Google Maps business
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.posts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+| `next_page_token` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `posts` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="posts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`googleMaps.reviews`
+
+Get Google Maps reviews with rating, text, author, date and likes
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `string` | No | — |
+| `data_id` | `string` | No | — |
+| `sort_by` | `qualityScore \| newestFirst \| ratingHigh \| ratingLow` | No | — |
+| `topic_id` | `string` | No | — |
+| `query` | `string` | No | — |
+| `num` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `source_metadata` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `place_info` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `topics` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="place_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="topics full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`googleMaps.search`
+
+Get Google Maps places by query or one place by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googleMaps.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `type` | `search \| place` | No | — |
+| `place_id` | `string` | No | — |
+| `data_cid` | `string` | No | — |
+| `data` | `string` | No | — |
+| `ll` | `string` | No | — |
+| `location` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `z` | `number` | No | — |
+| `m` | `number` | No | — |
+| `nearby` | `boolean` | No | — |
+| `min_price` | `number` | No | — |
+| `max_price` | `number` | No | — |
+| `min_rating` | `2.0 \| 2.5 \| 3.0 \| 3.5 \| 4.0 \| 4.5` | No | — |
+| `open_state` | `now \| 24h` | No | — |
+| `open_on_day` | `mon \| tue \| wed \| thu \| fri \| sat \| sun` | No | — |
+| `open_at_hour` | `number` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `google_domain` | `string` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `local_results` | `object[]` | No | — |
+| `place_results` | `object` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="local_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="place_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Google Play
+
+### apps
+
+`googlePlay.apps`
+
+Search and browse Google Play apps with charts, categories and storefronts (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.apps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `apps_category` | `string` | No | — |
+| `store_device` | `phone \| tablet \| tv \| chromebook \| watch \| car` | No | — |
+| `age` | `AGE_RANGE1 \| AGE_RANGE2 \| AGE_RANGE3` | No | — |
+| `chart` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+| `section_page_token` | `string` | No | — |
+| `see_more_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `app_highlight` | `object` | No | — |
+| `items_highlight` | `object` | No | — |
+| `charts` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="app_highlight full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="items_highlight full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="charts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### books
+
+`googlePlay.books`
+
+Browse Google Play ebooks and audiobooks with categories and charts (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.books({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `books_category` | `string` | No | — |
+| `age` | `AGE_RANGE1 \| AGE_RANGE2 \| AGE_RANGE3` | No | — |
+| `price` | `1 \| 2` | No | — |
+| `chart` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+| `section_page_token` | `string` | No | — |
+| `see_more_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `charts` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="charts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### games
+
+`googlePlay.games`
+
+Browse Google Play games by category, chart and device (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.games({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `games_category` | `string` | No | — |
+| `store_device` | `phone \| tablet \| tv \| chromebook \| watch \| windows` | No | — |
+| `chart` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+| `section_page_token` | `string` | No | — |
+| `see_more_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `items_highlight` | `object` | No | — |
+| `charts` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="items_highlight full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="charts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### movies
+
+`googlePlay.movies`
+
+Browse Google Play movies, shows and episodes with categories and charts (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.movies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `movies_category` | `string` | No | — |
+| `age` | `AGE_RANGE1 \| AGE_RANGE2 \| AGE_RANGE3` | No | — |
+| `chart` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+| `section_page_token` | `string` | No | — |
+| `see_more_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `charts` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  link?: string,
+  price?: string,
+  merchant?: string,
+  rating?: number,
+  reviews?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="charts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### product
+
+`googlePlay.product`
+
+Get a Google Play product page with ratings, permissions, media and reviews (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.product({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `store` | `apps \| books \| audiobooks \| movies \| tv` | No | — |
+| `season_id` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `product_info` | `object` | No | — |
+| `about_this_app` | `object` | No | — |
+| `ratings` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `media` | `object` | No | — |
+| `permissions` | `object[]` | No | — |
+| `data_safety` | `object` | No | — |
+| `developer_contact` | `object` | No | — |
+| `similar_results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="product_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="about_this_app full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="ratings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="permissions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="data_safety full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="developer_contact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="similar_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`googlePlay.reviews`
+
+Get Google Play reviews filtered by rating and platform (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.googlePlay.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `store` | `apps \| books \| audiobooks \| movies \| tv` | No | — |
+| `num` | `number` | No | — |
+| `platform` | `phone \| tablet \| watch \| chromebook \| tv` | No | — |
+| `rating` | `number` | No | — |
+| `sort_by` | `1 \| 2 \| 3` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `litescrape_pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="litescrape_pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Keys
+
+### status
+
+`keys.status`
+
+Get LiteScrape key status, remaining calls and concurrency limit
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.keys.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `remaining_calls` | `number` | Yes | — |
+| `concurrency_limit` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `zdr_enabled` | `boolean` | No | — |
+| `zdr_available` | `boolean` | No | — |
+
+
+
+---
+
+## Tripadvisor
+
+### place
+
+`tripadvisor.place`
+
+Get Tripadvisor place details by place ID
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.tripadvisor.place({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `number` | Yes | — |
+| `tripadvisor_domain` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `geo_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `place_results` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="place_results full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`tripadvisor.reviews`
+
+Get Tripadvisor reviews sorted by recency or relevance
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.tripadvisor.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `number` | Yes | — |
+| `tripadvisor_domain` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+| `sort_by` | `recent \| relevance` | No | — |
+| `translate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `sort` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`tripadvisor.search`
+
+Search Tripadvisor hotels, restaurants and attractions
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.tripadvisor.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `tripadvisor_domain` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `geo_id` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `place_type` | `all \| accommodation \| attraction \| attraction_product \| eatery \| geo` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `search_results` | `object[]` | No | — |
+| `map_previews` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="map_previews full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### fetch
+
+`web.fetch`
+
+Render a public web page and return it as Markdown, HTML or text (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.web.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `respond_with` | `markdown \| html \| text` | No | — |
+| `target_selector` | `string` | No | — |
+| `remove_selector` | `string` | No | — |
+| `retain_links` | `none \| all \| text \| gpt-oss` | No | — |
+| `retain_images` | `none \| all \| alt` | No | — |
+| `with_iframe` | `true \| false \| quoted` | No | — |
+| `with_shadow_dom` | `boolean` | No | — |
+| `respond_timing` | `html \| visible-content \| mutation-idle \| resource-idle \| media-idle \| network-idle` | No | — |
+| `wait_for_selector` | `string` | No | — |
+| `page_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `locale` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `content` | `string` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+
+
+
+---
+
+### screenshot
+
+`web.screenshot`
+
+Capture a web page screenshot as a PNG download URL (Alpha)
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.web.screenshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `full_page` | `boolean` | No | — |
+| `respond_timing` | `html \| visible-content \| mutation-idle \| resource-idle \| media-idle \| network-idle` | No | — |
+| `wait_for_selector` | `string` | No | — |
+| `page_timeout` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `locale` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `referer` | `string` | No | — |
+| `remove_overlay` | `boolean` | No | — |
+| `detach_invisibles` | `boolean` | No | — |
+| `assert_status_code` | `number` | No | — |
+| `robots_txt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `screenshot_url` | `string` | Yes | — |
+| `full_page` | `boolean` | No | — |
+
+
+
+---
+
+## Yelp
+
+### reviews
+
+`yelp.reviews`
+
+Get Yelp reviews with rating, text, reviewer and owner replies
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.yelp.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `string` | Yes | — |
+| `yelp_domain` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `sortby` | `relevance_desc \| date_desc \| date_asc \| rating_desc \| rating_asc \| elites_desc` | No | — |
+| `rating` | `string` | No | — |
+| `start` | `number` | No | — |
+| `num` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `reviews` | `object[]` | No | — |
+| `review_languages` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+  position?: number,
+  rating?: number,
+  title?: string,
+  snippet?: string,
+  text?: string,
+  date?: string,
+  author?: string,
+  reviewer?: string,
+  likes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="review_languages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`yelp.search`
+
+Search Yelp businesses with rating, reviews, categories and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.litescrape.api.yelp.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `find_desc` | `string` | No | — |
+| `find_loc` | `string` | Yes | — |
+| `yelp_domain` | `string` | No | — |
+| `l` | `string` | No | — |
+| `cflt` | `string` | No | — |
+| `sortby` | `recommended \| rating \| review_count` | No | — |
+| `attrs` | `string` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | No | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `organic_results` | `object[]` | No | — |
+| `ads_results` | `object[]` | No | — |
+| `filters` | `object[]` | No | — |
+| `related_links` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id?: string,
+  status?: string,
+  total_time_taken?: number,
+  google_url?: string,
+  bing_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="ads_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  place_id?: string,
+  data_id?: string,
+  type?: string,
+  address?: string,
+  phone?: string,
+  website?: string,
+  rating?: number,
+  reviews?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  title?: string,
+  value?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="related_links full type">
+
+```ts
+{
+  title?: string,
+  link?: string,
+  snippet?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  next?: string,
+  next_page_token?: string,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

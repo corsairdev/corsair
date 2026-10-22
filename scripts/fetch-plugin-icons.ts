@@ -52,6 +52,12 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://media.licdn.com/dms/image/v2/D560BAQGBEC5giXvomQ/company-logo_200_200/B56ZlidRJjIsAM-/0/1758293463972/filevine_logo?e=2147483647&v=beta&t=oruRrK3tPc5_e8haya4o-oxpBMhFDjjgoa_1xePKBYI',
 	currentsapi:
 		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://currentsapi.services&size=128',
+	// starton.io answers 402 and starton.com has no favicon; the GitHub org mark is the public logo.
+	starton: 'https://github.com/starton-io.png?size=200',
+	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
+	turso: 'https://turso.tech/apple-touch-icon.png',
+	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
+	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
 };
 
 type FetchResult =

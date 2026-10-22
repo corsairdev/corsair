@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Integration platform for building, running and monitoring flows, connections, exports and imports."
+---
+
+Use **Celigo** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 118 typed API operations
+- 10 synced entities (`connections`, `exports`, `flows`, `iclients`, `imports`, `integrations`, and 4 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/celigo
+```
+```bash yarn
+yarn add corsair @corsair-dev/celigo
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/celigo
+```
+```bash bun
+bun add corsair @corsair-dev/celigo
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { celigo } from '@corsair-dev/celigo';
+
+export const corsair = createCorsair({
+	plugins: [
+		celigo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+celigo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'celigo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List flows**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.celigo.api.flows.list({});
+```
+
+
+**Create a tag**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.celigo.api.tags.create({ tag: 'production' });
+```
+
+
+See the full list on the [API](/plugins/celigo/api) page.
+
+## Query synced data
+
+Search flows read through the API without hitting Celigo again.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.celigo.db.flows.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `connections`, `exports`, `flows`, `iclients`, `imports`, `integrations`, `jobs`, `scripts`, `tags`, `users`. See [Database](/plugins/celigo/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/celigo/api">
+    Every `celigo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/celigo/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

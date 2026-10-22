@@ -25,6 +25,7 @@ const BASE: Record<AuthTypes, { integration: string[]; account: string[] }> = {
 		integration: [],
 		account: ['access_token', 'refresh_token', 'expires_at'],
 	},
+	managed_pricing: { integration: [], account: [] },
 };
 
 export const getCredentials: HandlerFn = async (ctx) => {

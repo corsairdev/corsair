@@ -1,0 +1,2109 @@
+{
+  "id": "remoet",
+  "displayName": "Remoet",
+  "description": "Read and manage a Remoet user's career profile (work experience, projects, education, visibility) and feed, look up what Remoet knows about a job page, search jobs and companies, and star or save jobs. Remoet is an AI-agent-first tech job platform for tracking tech jobs from companies you love.",
+  "npmPackageName": "@corsair-dev/remoet",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "remoet.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get one Remoet company by slug, including its tech stack, perks and open-role counts; pass checkTechStack to see which technologies it uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The company's slug, e.g. \"stripe\"."
+          },
+          {
+            "key": "checkTechStack",
+            "optional": true,
+            "type": "string[]",
+            "description": "Technologies to check against the company's full stack (max 50); matches come back in matchedTechStack."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nbrOfStars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "techStack",
+            "optional": true,
+            "type": "string[]",
+            "description": "A preview capped by Remoet; techStackCount is the full size."
+          },
+          {
+            "key": "matchedTechStack",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "techStackCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "experienceLevels",
+            "optional": true,
+            "type": "{ junior?: number | null, mid?: number | null, senior?: number | null }"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isStarred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobPreview",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "careersUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "perks",
+            "optional": true,
+            "type": "{ id?: string | null, title: string, tags?: string[] | null, description?: string | null, category?: string | null }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.companies.search",
+      "shortPath": "companies.search",
+      "description": "Search Remoet's tech companies by name, description, tech stack or seniority, or set starred to list the companies the user has starred. Paginated with page and pageSize (max 100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set true to list every starred company instead of searching; the other filters and paging are ignored."
+          },
+          {
+            "key": "searchQuery",
+            "optional": true,
+            "type": "string",
+            "description": "Search keyword: matches company name, description and about text."
+          },
+          {
+            "key": "techStack",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "techStackMatch",
+            "optional": true,
+            "type": "any | all",
+            "description": "How techStack combines: \"any\" (at least one) or \"all\" (every one required)."
+          },
+          {
+            "key": "experienceLevel",
+            "optional": true,
+            "type": "junior | mid | senior[]"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "stars | jobCount | name"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, max 100."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": false,
+            "type": "{ id: string, name: string, slug: string, url?: string | null, nbrOfStars?: number | null, jobCount?: number | null, techStack?: string[] | null, matchedTechStack?: string[] | null, techStackCount?: number | null, experienceLevels?: { junior?: number | null, mid?: number | null, senior?: number | null } | null, shortDescription?: string | null, isStarred?: boolean | null, jobPreview?: string[] | null }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.education.create",
+      "shortPath": "education.create",
+      "description": "Add an education entry to the user's profile: institution is required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "institution",
+            "optional": false,
+            "type": "string",
+            "description": "Institution name, e.g. \"MIT\"."
+          },
+          {
+            "key": "institutionUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Institution website URL. On update, '' clears it."
+          },
+          {
+            "key": "studyLevel",
+            "optional": true,
+            "type": "HIGH_SCHOOL | ASSOCIATE | BACHELOR | MASTER | DOCTORATE | BOOTCAMP | OTHER",
+            "description": "Level of study."
+          },
+          {
+            "key": "fieldOfStudy",
+            "optional": true,
+            "type": "string",
+            "description": "Field of study, e.g. \"Computer Science\". On update, '' clears it."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether currently studying here."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of studies and achievements. On update, '' clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "institution",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "institutionUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "studyLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.education.delete",
+      "shortPath": "education.delete",
+      "description": "Permanently remove an education entry by its id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.education.list",
+      "shortPath": "education.list",
+      "description": "List the education entries on the user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate?: string | null, endDate?: string | null, isCurrent?: boolean | null, description?: string | null }[]"
+      }
+    },
+    {
+      "path": "remoet.api.education.update",
+      "shortPath": "education.update",
+      "description": "Update an education entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it. startDate, endDate and isCurrent can only be replaced, never cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "institution",
+            "optional": true,
+            "type": "string",
+            "description": "Institution name, e.g. \"MIT\"."
+          },
+          {
+            "key": "institutionUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Institution website URL. On update, '' clears it."
+          },
+          {
+            "key": "studyLevel",
+            "optional": true,
+            "type": "HIGH_SCHOOL | ASSOCIATE | BACHELOR | MASTER | DOCTORATE | BOOTCAMP | OTHER",
+            "description": "Level of study."
+          },
+          {
+            "key": "fieldOfStudy",
+            "optional": true,
+            "type": "string",
+            "description": "Field of study, e.g. \"Computer Science\". On update, '' clears it."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether currently studying here."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of studies and achievements. On update, '' clears it."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "institution",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "institutionUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "studyLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldOfStudy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.feed.list",
+      "shortPath": "feed.list",
+      "description": "List a page of the user's composed feed: their own item lane (new jobs, welcome, starred-company snapshots) merged with blog posts, job of the day and broadcasts, newest first. Paginated with pageSize (max 50) and cursor, taken from the previous page's nextCursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, max 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "nextCursor from the previous page. Omit for the newest page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "filtersApplied",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id: string, kind: string, date: string, item?: { id: string, type: string, listingId?: string | null, isStarred?: boolean | null, listingName?: string | null, listingSlug?: string | null, listingImage?: string | null, jobs: { id: string, isActive: boolean, savedJobId?: string | null, title: string, url?: string | null, remotePolicy?: string | null, remoteRestrictions?: string | null, techStack?: string[] | null, salaryEnriched?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel?: string | null, isOnPublishablePlatform?: boolean | null, postingCount?: number | null, matchesFilters: boolean }[], jobCount?: number | null, createdAt: string } | null, blogPost?: { id: string, createdAt: string, updatedAt: string, publishedAt?: string | null, isPublished: boolean, isFeatured?: boolean | null, views?: number | null, image?: string | null, title: string, slug: string, description: string, tags?: string[] | null, readingTime?: number | null, audience?: string | null } | null, broadcast?: { id: string, title: string, body: string, createdAt: string } | null, jobOfTheDay?: { id: string, listingId: string, listingName: string, listingSlug?: string | null, listingImage?: string | null, job: { id: string, isActive: boolean, savedJobId?: string | null, title: string, url?: string | null, remotePolicy?: string | null, remoteRestrictions?: string | null, techStack?: string[] | null, salaryEnriched?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel?: string | null, isOnPublishablePlatform?: boolean | null, postingCount?: number | null }, nbrOfStars?: number | null, createdAt: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.jobContext.get",
+      "shortPath": "jobContext.get",
+      "description": "Look up what Remoet knows about a job page URL: company, tech stack, salary, remote policy, reposts and how long ago Remoet first saw it (at least that old, not a posting date). Returns match null for untracked pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full URL of the job page, e.g. an ATS posting."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "match",
+            "optional": true,
+            "type": "{ company: string, companySlug: string, firstSeenAt: string, daysSinceFirstSeen: number, firstSeenAtIsCensored: boolean, isActive: boolean, deactivatedAt?: string | null, reposts: { removedAt: string, repostedAt: string, gapDays: number }[], otherOpenRoles: number, isStarred: boolean, techStack: string[], remotePolicy?: string | null, remoteRestrictions?: string | null, salary?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel?: string | null, summary?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.jobs.search",
+      "shortPath": "jobs.search",
+      "description": "Search Remoet's public tech job catalogue by keywords, tech stack, company, location, remote policy, seniority and salary floor. Each job's firstSeenAt is when Remoet first saw it, not when it was posted. Paginated with page and pageSize (max 50)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchQuery",
+            "optional": true,
+            "type": "string",
+            "description": "Free text, matched against the job title, summary and tech stack. Comma-separate keywords to require ALL of them."
+          },
+          {
+            "key": "techStack",
+            "optional": true,
+            "type": "string[]",
+            "description": "Match roles carrying technologies from this list, e.g. [\"React\", \"Go\"]."
+          },
+          {
+            "key": "techStackMatch",
+            "optional": true,
+            "type": "any | all",
+            "description": "How techStack combines: \"any\" (at least one) or \"all\" (every one required)."
+          },
+          {
+            "key": "companySlug",
+            "optional": true,
+            "type": "string",
+            "description": "Restrict to one company by its Remoet slug, e.g. \"stripe\"."
+          },
+          {
+            "key": "remotePolicy",
+            "optional": true,
+            "type": "onsite | hybrid | remote | remote-restricted[]"
+          },
+          {
+            "key": "experienceLevel",
+            "optional": true,
+            "type": "junior | mid | senior[]"
+          },
+          {
+            "key": "salaryMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum salary."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string[]",
+            "description": "Place names, e.g. [\"Berlin\"]. Each may itself contain a comma, e.g. \"Portland, OR\"."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "newest | salary"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, max 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ id: string, title: string, company: string, companySlug: string, url?: string | null, applyUrl?: string | null, companyUrl?: string | null, location?: string | null, remotePolicy?: string | null, remoteRestrictions?: string | null, experienceLevel?: string | null, salary?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, techStack?: string[] | null, summary?: string | null, firstSeenAt: string, lastVerifiedAt?: string | null, duplicateCount?: number | null }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string",
+            "description": "Present on an empty result: which filter emptied it and what to try."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.linkTrees.get",
+      "shortPath": "linkTrees.get",
+      "description": "Get one of the user's link tree pages by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The link tree's own slug, from linkTrees.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ id: string, label: string, url: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.linkTrees.list",
+      "shortPath": "linkTrees.list",
+      "description": "List the user's shareable link tree pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, title: string, description?: string | null, slug: string, links: { id: string, label: string, url: string }[], createdAt: string, updatedAt: string }[]"
+      }
+    },
+    {
+      "path": "remoet.api.profile.get",
+      "shortPath": "profile.get",
+      "description": "Get the signed-in user's whole Remoet profile: contact fields, work experience, projects, education and link trees",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ghId",
+            "optional": true,
+            "type": "number",
+            "description": "Numeric GitHub user id; absent for users who never linked GitHub."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "{ updatedAt: string, isPublic?: boolean | null, slug?: string | null, name?: { value?: string | null, isPublic: boolean } | null, avatarUrl?: { value?: string | null, isPublic: boolean } | null, phone?: { value?: string | null, isPublic: boolean } | null, url?: { value?: string | null, isPublic: boolean } | null, summary?: { value?: string | null, isPublic: boolean } | null, location?: { value?: string | null, isPublic: boolean } | null, githubUrl?: { value?: string | null, isPublic: boolean } | null, facebookUrl?: { value?: string | null, isPublic: boolean } | null, twitterUrl?: { value?: string | null, isPublic: boolean } | null, linkedinUrl?: { value?: string | null, isPublic: boolean } | null, youtubeUrl?: { value?: string | null, isPublic: boolean } | null }"
+          },
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ id: string, createdAt: string, updatedAt: string, userId?: string | null, title: string, startDate: string, endDate?: string | null, isCurrent?: boolean | null, isPublic?: boolean | null, companyName?: string | null, technologies?: string[] | null, description?: string | null, isRemote?: boolean | null, companyUrl?: string | null, listingId?: string | null }[]"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate?: string | null, endDate?: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
+          },
+          {
+            "key": "linkTrees",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string | null, slug: string, links: { id: string, label: string, url: string }[], createdAt: string, updatedAt: string }[]"
+          },
+          {
+            "key": "education",
+            "optional": false,
+            "type": "{ id: string, institution: string, institutionUrl?: string | null, studyLevel?: string | null, fieldOfStudy?: string | null, startDate?: string | null, endDate?: string | null, isCurrent?: boolean | null, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.profile.getLinks",
+      "shortPath": "profile.getLinks",
+      "description": "Get the user's public profile links (website, GitHub, LinkedIn and more); private links come back null",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "githubUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebookUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twitterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "youtubeUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.profile.update",
+      "shortPath": "profile.update",
+      "description": "Update the user's Remoet profile: contact fields, name, avatarUrl, socials and summary (each may be set to null to clear it, 500 characters max, 5000 for summary), and visibility. Visibility controls who can see the profile in company candidate lists: NONE hides it from every company, STARRED shows it only to companies the user has starred, and ALL shows it to every company on Remoet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Phone number. Null clears it."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Personal website URL. Null clears it."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null",
+            "description": "Location. Null clears it."
+          },
+          {
+            "key": "githubUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GitHub profile URL. Null clears it."
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn profile URL. Null clears it."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full name. Null clears it."
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Avatar/photo URL. Null clears it."
+          },
+          {
+            "key": "facebookUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Facebook profile URL. Null clears it."
+          },
+          {
+            "key": "twitterUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Twitter/X profile URL. Null clears it."
+          },
+          {
+            "key": "youtubeUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "YouTube channel URL. Null clears it."
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Brief professional summary or bio. Null clears it."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "NONE | STARRED | ALL",
+            "description": "Who can see the profile in company candidate lists. Not writable to null; leave it out to leave it unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Add a project entry to the user's profile: title and shortDescription are required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Project title."
+          },
+          {
+            "key": "shortDescription",
+            "optional": false,
+            "type": "string",
+            "description": "A one-line summary of the project."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Full project description. On update, '' clears it."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string",
+            "description": "Role on the project. On update, '' clears it."
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]",
+            "description": "Technologies used, e.g. [\"React\", \"Node.js\"]. On update, [] empties it."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is an ongoing project."
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this was remote work."
+          },
+          {
+            "key": "isOpenSource",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is open source."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "repoUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Repository URL. On update, '' clears it."
+          },
+          {
+            "key": "demoUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Live demo URL. On update, '' clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOpenSource",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "repoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "demoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string",
+            "description": "Set when this project is linked to a work experience entry."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently remove a project entry by its id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects on the user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, title: string, shortDescription?: string | null, technologies?: string[] | null, isCurrent?: boolean | null, isRemote?: boolean | null, isOpenSource?: boolean | null, description?: string | null, role?: string | null, startDate?: string | null, endDate?: string | null, repoUrl?: string | null, demoUrl?: string | null, jobId?: string | null }[]"
+      }
+    },
+    {
+      "path": "remoet.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Project title."
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string",
+            "description": "A one-line summary of the project."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Full project description. On update, '' clears it."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string",
+            "description": "Role on the project. On update, '' clears it."
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]",
+            "description": "Technologies used, e.g. [\"React\", \"Node.js\"]. On update, [] empties it."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is an ongoing project."
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this was remote work."
+          },
+          {
+            "key": "isOpenSource",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is open source."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "repoUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Repository URL. On update, '' clears it."
+          },
+          {
+            "key": "demoUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Live demo URL. On update, '' clears it."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isOpenSource",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "repoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "demoUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string",
+            "description": "Set when this project is linked to a work experience entry."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.savedJobs.create",
+      "shortPath": "savedJobs.create",
+      "description": "Save a job to the user's saved jobs by its id, with an optional note (500 characters max)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the job, e.g. from jobs.search or starredJobs.list."
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "ai_job | listing_job",
+            "description": "\"ai_job\" (the default) or \"listing_job\"."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional note about why this job is interesting."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The saved-job entry id, used by savedJobs.update and savedJobs.delete."
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "savedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null }"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lockedReason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.savedJobs.delete",
+      "shortPath": "savedJobs.delete",
+      "description": "Permanently remove a saved-job entry by its saved-job id (not the job id)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "savedJobId",
+            "optional": false,
+            "type": "string",
+            "description": "The saved-job entry id, not the job id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.savedJobs.list",
+      "shortPath": "savedJobs.list",
+      "description": "List the user's saved jobs with their notes. A locked entry has job null and a lockedReason saying how to unlock it, usually: star the company to see it again. Paginated with page and pageSize (max 50)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, max 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, jobId: string, jobType: string, note?: string | null, savedAt: string, job?: { title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null } | null, locked?: boolean, lockedReason?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.savedJobs.update",
+      "shortPath": "savedJobs.update",
+      "description": "Replace the note on a saved-job entry by its saved-job id (not the job id); null clears it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "savedJobId",
+            "optional": false,
+            "type": "string",
+            "description": "The saved-job entry id, not the job id."
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string | null",
+            "description": "The new note, or null to clear it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The saved-job entry id, used by savedJobs.update and savedJobs.delete."
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "savedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ title: string, listingId?: string | null, techStack?: string[] | null, remotePolicy?: string | null, experienceLevel?: string | null, salaryMin?: number | null, salaryMax?: number | null, salaryCurrency?: string | null, applicationUrl?: string | null, isActive?: boolean | null, deactivatedAt?: string | null }"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lockedReason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.starredJobs.list",
+      "shortPath": "starredJobs.list",
+      "description": "List jobs at the companies the user has starred, filtered by keywords, location, tech stack, remote policy, seniority and salary floor. createdAt is when Remoet first saw a job, not when it was posted. Paginated with page and pageSize (max 50)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchQuery",
+            "optional": true,
+            "type": "string",
+            "description": "Search keywords for job title, summary or tech stack."
+          },
+          {
+            "key": "locationQuery",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by location or remote restrictions."
+          },
+          {
+            "key": "techStack",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "techStackMatch",
+            "optional": true,
+            "type": "any | all",
+            "description": "How techStack combines: \"any\" (at least one) or \"all\" (every one required)."
+          },
+          {
+            "key": "remotePolicy",
+            "optional": true,
+            "type": "onsite | hybrid | remote | remote-restricted[]"
+          },
+          {
+            "key": "experienceLevel",
+            "optional": true,
+            "type": "junior | mid | senior[]"
+          },
+          {
+            "key": "salaryMin",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum salary."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt | remotePolicy | salaryEnriched.from | experienceLevel"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting from 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, max 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ id: string, title: string, url?: string | null, createdAt: string, remotePolicy?: string | null, remoteRestrictions?: string | null, techStack?: string[] | null, salaryEnriched?: { from?: number | null, to?: number | null, currency?: string | null, period?: string | null } | null, experienceLevel?: string | null, benefits?: string[] | null, summary?: string | null, isOnPublishablePlatform?: boolean | null, listing: { id: string, name: string, slug: string }, postingCount?: number | null, postingLocations?: string[] | null }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "starsOverCap",
+            "optional": true,
+            "type": "{ surplusStars: number, maxActiveStars: number, starsPendingDeletionAt?: string | null, note: string }",
+            "description": "Present when the user holds more stars than the cap allows."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.stars.create",
+      "shortPath": "stars.create",
+      "description": "Star a company on Remoet by its slug so its jobs reach the user feed. Stars are capped per user, and removing one spends from a limited unstar budget",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": false,
+            "type": "string",
+            "description": "Slug of an active Remoet company, e.g. from jobContext.get."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.stars.delete",
+      "shortPath": "stars.delete",
+      "description": "Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companySlug",
+            "optional": false,
+            "type": "string",
+            "description": "Slug of the company to unstar."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.workExperience.create",
+      "shortPath": "workExperience.create",
+      "description": "Add a work experience entry to the user's profile: title and startDate are required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Job title."
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Company name. On update, '' clears it."
+          },
+          {
+            "key": "companyUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Company website URL. On update, '' clears it."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is the current job."
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this job is remote."
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]",
+            "description": "Technologies used, e.g. [\"React\", \"Node.js\"]. On update, [] empties it."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Job description. On update, '' clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Null or absent for a current role."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "companyUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listingId",
+            "optional": true,
+            "type": "string",
+            "description": "Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.workExperience.delete",
+      "shortPath": "workExperience.delete",
+      "description": "Permanently remove a work experience entry by its id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoet.api.workExperience.list",
+      "shortPath": "workExperience.list",
+      "description": "List the user's work experience (their employment history, not job postings)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt: string, updatedAt: string, userId?: string | null, title: string, startDate: string, endDate?: string | null, isCurrent?: boolean | null, isPublic?: boolean | null, companyName?: string | null, technologies?: string[] | null, description?: string | null, isRemote?: boolean | null, companyUrl?: string | null, listingId?: string | null }[]"
+      }
+    },
+    {
+      "path": "remoet.api.workExperience.update",
+      "shortPath": "workExperience.update",
+      "description": "Update a work experience entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Job title."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Company name. On update, '' clears it."
+          },
+          {
+            "key": "companyUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Company website URL. On update, '' clears it."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, e.g. \"2024-01-15\"."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this is the current job."
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether this job is remote."
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]",
+            "description": "Technologies used, e.g. [\"React\", \"Node.js\"]. On update, [] empties it."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Job description. On update, '' clears it."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Null or absent for a current role."
+          },
+          {
+            "key": "isCurrent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isRemote",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "companyUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listingId",
+            "optional": true,
+            "type": "string",
+            "description": "Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

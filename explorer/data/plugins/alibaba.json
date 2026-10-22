@@ -1,0 +1,423 @@
+{
+  "id": "alibaba",
+  "displayName": "Alibaba",
+  "description": "Alibaba plugin for Corsair",
+  "npmPackageName": "@corsair-dev/alibaba",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "alibaba.api.image.generate",
+      "shortPath": "image.generate",
+      "description": "Generate or edit images with Qwen-Image 3.0 or Wan 2.7 Image; returns image URLs valid for 24 hours",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "qwen-image-3.0-pro | qwen-image-3.0 | wan2.7-image-pro | wan2.7-image"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ size?: string, n?: number, seed?: number, watermark?: boolean, negative_prompt?: string, prompt_extend?: boolean, prompt_extend_mode?: direct | agent, enable_thinking?: boolean, thinking_mode?: boolean, enable_sequential?: boolean, bbox_list?: tuple[][], color_palette?: { hex: string, ratio: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ rewrite_status?: string | null, choices: { finish_reason?: string | null, message: { role: string, content: { image: string }[] } }[] }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ output_width?: number | null, output_height?: number | null, input_image_count?: number | null, output_image_count?: number | null, input_image_type?: string | null, output_image_type?: string | null, width?: number | null, height?: number | null, image_count?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alibaba.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a generation task status and, once it succeeds, the video URL (valid 24 hours)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ task_id: string, task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN, submit_time?: string | null, scheduled_time?: string | null, end_time?: string | null, video_url?: string | null, orig_prompt?: string | null, code?: string | null, message?: string | null }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ duration?: number | null, input_video_duration?: number | null, output_video_duration?: number | null, SR?: number | null, ratio?: string | null, video_count?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alibaba.api.video.edit",
+      "shortPath": "video.edit",
+      "description": "Start a Wan 2.7 video editing task on an input video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "wan2.7-videoedit"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "negative_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ type: video | reference_image, url: string | string }[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ resolution?: 720P | 1080P, ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4, duration?: 0 | number, audio_setting?: auto | origin, prompt_extend?: boolean, watermark?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ task_id: string, task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alibaba.api.video.imageToVideo",
+      "shortPath": "video.imageToVideo",
+      "description": "Start a Wan 2.7 image-to-video task from a first frame, first and last frames, or a clip to continue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "wan2.7-i2v"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "negative_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ type: first_frame | last_frame | driving_audio | first_clip, url: string }[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ resolution?: 720P | 1080P, duration?: number, prompt_extend?: boolean, watermark?: boolean, seed?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ task_id: string, task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alibaba.api.video.referenceToVideo",
+      "shortPath": "video.referenceToVideo",
+      "description": "Start a Wan 2.7 reference-to-video task from reference images, videos, and voices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "wan2.7-r2v"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "negative_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ type: reference_image | reference_video | first_frame, url: string, reference_voice?: string }[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ resolution?: 720P | 1080P, ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4, duration?: number, prompt_extend?: boolean, watermark?: boolean, seed?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ task_id: string, task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alibaba.api.video.textToVideo",
+      "shortPath": "video.textToVideo",
+      "description": "Start a Wan text-to-video task (Wan 3.0 also takes reference media, files, and links); returns a task id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "wan2.7-t2v | wan3.0-video | wan3.0-video-prime"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "negative_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ type: first_frame | last_frame | reference_image | reference_video | reference_audio | file | link, url: string }[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ resolution?: 480P | 720P | 1080P, ratio?: 16:9 | 9:16 | 1:1 | 4:3 | 3:4 | 21:9 | adaptive, duration?: -1 | number, audio?: boolean, prompt_extend?: boolean, watermark?: boolean, seed?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ task_id: string, task_status: PENDING | RUNNING | SUCCEEDED | FAILED | CANCELED | UNKNOWN }"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "alibaba.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alibaba.db.videoTasks.search",
+      "entityName": "videoTasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "taskId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "submitTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "durationSeconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "errorCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

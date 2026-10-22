@@ -1,0 +1,1199 @@
+---
+title: API
+description: "API reference for Chatwork: every `chatwork.api.*` operation with input and output types."
+---
+
+Every `chatwork.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get profile information of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `number` | Yes | The Chatwork account ID |
+| `room_id` | `number` | Yes | The user personal room ID |
+| `name` | `string` | Yes | The user name |
+| `chatwork_id` | `string` | No | The Chatwork ID handle |
+| `organization_id` | `number` | No | The organization ID |
+| `organization_name` | `string` | No | The organization name |
+| `department` | `string` | No | The department name |
+| `title` | `string` | No | The user title/position |
+| `url` | `string` | No | The user website URL |
+| `introduction` | `string` | No | The user profile introduction |
+| `login_mail` | `string` | No | The login email address |
+| `mail` | `string` | No | The user email address |
+| `tel_organization` | `string` | No | Organization phone number |
+| `tel_extension` | `string` | No | Extension phone number |
+| `tel_mobile` | `string` | No | Mobile phone number |
+| `skype` | `string` | No | Skype handle |
+| `facebook` | `string` | No | Facebook profile |
+| `twitter` | `string` | No | Twitter/X handle |
+| `avatar_image_url` | `string` | No | Avatar image URL |
+
+
+
+---
+
+### getStatus
+
+`account.getStatus`
+
+Get unread, mention and open task counts for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.account.getStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unread_room_num` | `number` | Yes | Number of rooms with unread messages |
+| `mention_room_num` | `number` | Yes | Number of rooms with unread mentions |
+| `mytask_room_num` | `number` | Yes | Number of rooms with my open tasks |
+| `unread_num` | `number` | Yes | Total unread messages |
+| `mention_num` | `number` | Yes | Total unread mentions |
+| `mytask_num` | `number` | Yes | Total open tasks assigned to me |
+
+
+
+---
+
+### listTasks
+
+`account.listTasks`
+
+List tasks assigned to the authenticated user (up to 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.account.listTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assigned_by_account_id` | `number` | No | Only tasks assigned by this account ID |
+| `status` | `open \| done` | No | Task status filter (default open) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  task_id: number,
+  assigned_by_account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  },
+  message_id: string,
+  body: string,
+  limit_time: number,
+  status: open | done,
+  limit_type?: none | date | time,
+  room: {
+    room_id: number,
+    name: string,
+    icon_path: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### list
+
+`contacts.list`
+
+List contacts of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.contacts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  account_id: number,
+  room_id: number,
+  name: string,
+  chatwork_id?: string,
+  organization_id?: number,
+  organization_name?: string,
+  department?: string,
+  avatar_image_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listIncomingRequests
+
+`contacts.listIncomingRequests`
+
+List pending contact requests sent to the authenticated user (up to 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.contacts.listIncomingRequests({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_id: number,
+  account_id: number,
+  message?: string | null,
+  name: string,
+  chatwork_id?: string,
+  organization_id?: number,
+  organization_name?: string,
+  department?: string,
+  avatar_image_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Files
+
+### get
+
+`files.get`
+
+Get file details, optionally with a temporary download URL
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `file_id` | `number` | Yes | The ID of the file |
+| `create_download_url` | `boolean` | No | Generate a download URL valid for 30 seconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | Yes | The file ID |
+| `account` | `object` | Yes | The uploader |
+| `message_id` | `string` | Yes | The message ID the file was posted with |
+| `filename` | `string` | Yes | The file name |
+| `filesize` | `number` | Yes | The file size in bytes |
+| `upload_time` | `number` | Yes | Upload timestamp in Unix seconds |
+| `download_url` | `string` | No | Temporary download URL |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id: number,
+  name: string,
+  avatar_image_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files uploaded to a chat room (up to 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `account_id` | `number` | No | Only files uploaded by this account ID |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  file_id: number,
+  account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  },
+  message_id: string,
+  filename: string,
+  filesize: number,
+  upload_time: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to a chat room
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `file_base64` | `string` | Yes | File contents as base64 (max 5MB) |
+| `file_name` | `string` | Yes | File name including extension |
+| `content_type` | `string` | No | MIME type of the file (default application/octet-stream) |
+| `message` | `string` | No | Message body to post together with the file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `number` | Yes | The uploaded file ID |
+
+
+
+---
+
+## Links
+
+### create
+
+`links.create`
+
+Create an invitation link for a group chat
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.links.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `code` | `string` | No | Path part of the invitation link URL (random if omitted) |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval (default true) |
+| `description` | `string` | No | Description shown on the link page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public` | `boolean` | Yes | Whether the invitation link is enabled |
+| `url` | `string` | No | The invitation link URL |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval |
+| `description` | `string` | No | The link page description |
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Delete the invitation link of a group chat
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.chatwork.api.links.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public` | `boolean` | Yes | Whether the invitation link is enabled |
+| `url` | `string` | No | The invitation link URL |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval |
+| `description` | `string` | No | The link page description |
+
+
+
+---
+
+### get
+
+`links.get`
+
+Get the invitation link of a group chat
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.links.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public` | `boolean` | Yes | Whether the invitation link is enabled |
+| `url` | `string` | No | The invitation link URL |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval |
+| `description` | `string` | No | The link page description |
+
+
+
+---
+
+### update
+
+`links.update`
+
+Update the invitation link of a group chat
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.links.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `code` | `string` | No | Path part of the invitation link URL (random if omitted) |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval (default true) |
+| `description` | `string` | No | Description shown on the link page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public` | `boolean` | Yes | Whether the invitation link is enabled |
+| `url` | `string` | No | The invitation link URL |
+| `need_acceptance` | `boolean` | No | Whether joining requires admin approval |
+| `description` | `string` | No | The link page description |
+
+
+
+---
+
+## Members
+
+### list
+
+`members.list`
+
+List members belonging to a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  account_id: number,
+  role: admin | member | readonly | string,
+  name: string,
+  chatwork_id?: string,
+  organization_id?: number,
+  organization_name?: string,
+  department?: string,
+  avatar_image_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`members.update`
+
+Replace the member list and roles of a group chat
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.members.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members_admin_ids` | `number[]` | Yes | Account IDs to grant the admin role (at least one) |
+| `members_member_ids` | `number[]` | No | Account IDs to grant the member role |
+| `members_readonly_ids` | `number[]` | No | Account IDs to grant the read-only role |
+| `room_id` | `number` | Yes | The ID of the room |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `admin` | `number[]` | Yes | Account IDs with the admin role |
+| `member` | `number[]` | Yes | Account IDs with the member role |
+| `readonly` | `number[]` | Yes | Account IDs with the read-only role |
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a message from a chat room
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.chatwork.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | Yes | The ID of the message to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The message ID |
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific message from a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | Yes | The ID of the message to retrieve |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The unique message ID |
+| `account` | `object` | Yes | The sender profile summary |
+| `body` | `string` | Yes | The message content |
+| `send_time` | `number` | Yes | Sent timestamp in Unix seconds |
+| `update_time` | `number` | Yes | Updated timestamp in Unix seconds (0 if not updated) |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id: number,
+  name: string,
+  avatar_image_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a chat room (up to 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `force` | `0 \| 1` | No | 0: get only unread messages (default), 1: get up to 100 latest messages |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message_id: string,
+  account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  },
+  body: string,
+  send_time: number,
+  update_time: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markRead
+
+`messages.markRead`
+
+Mark messages in a chat room as read
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.messages.markRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | No | Mark messages up to this ID as read (all if omitted) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unread_num` | `number` | Yes | Remaining unread messages in the room |
+| `mention_num` | `number` | Yes | Remaining unread mentions in the room |
+
+
+
+---
+
+### markUnread
+
+`messages.markUnread`
+
+Mark messages in a chat room as unread from a given message
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.messages.markUnread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | Yes | Mark this message and every later one as unread |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unread_num` | `number` | Yes | Remaining unread messages in the room |
+| `mention_num` | `number` | Yes | Remaining unread mentions in the room |
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a new message to a chat room
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room to post to |
+| `body` | `string` | Yes | The message body text |
+| `self_unread` | `0 \| 1 \| boolean` | No | Whether the posted message should be marked as unread for the sender (0: read, 1: unread) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The ID of the created message |
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Edit the body of a message
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | Yes | The ID of the message to update |
+| `body` | `string` | Yes | The new message body |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The message ID |
+
+
+
+---
+
+## Rooms
+
+### create
+
+`rooms.create`
+
+Create a new group chat
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.rooms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members_admin_ids` | `number[]` | Yes | Account IDs to grant the admin role (at least one) |
+| `members_member_ids` | `number[]` | No | Account IDs to grant the member role |
+| `members_readonly_ids` | `number[]` | No | Account IDs to grant the read-only role |
+| `name` | `string` | Yes | The group chat name |
+| `description` | `string` | No | The group chat description |
+| `icon_preset` | `group \| check \| document \| meeting \| event \| project \| business \| study \| security \| star \| idea \| heart \| magcup \| beer \| music \| sports \| travel` | No | The group chat icon type |
+| `link` | `boolean` | No | Whether to create an invitation link |
+| `link_code` | `string` | No | Path part of the invitation link URL (random if omitted) |
+| `link_need_acceptance` | `boolean` | No | Whether joining via the link requires admin approval |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The room ID |
+
+
+
+---
+
+### delete
+
+`rooms.delete`
+
+Leave or permanently delete a group chat
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.chatwork.api.rooms.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `action_type` | `leave \| delete` | Yes | leave: leave the group chat; delete: delete it for every member (irreversible) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the operation succeeded |
+
+
+
+---
+
+### get
+
+`rooms.get`
+
+Get details of a specific chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.rooms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room to retrieve |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The room ID |
+| `name` | `string` | Yes | The room name |
+| `type` | `string` | Yes | The room type (e.g. my, direct, group) |
+| `role` | `string` | Yes | The current user role in the room (e.g. admin, member, readonly) |
+| `sticky` | `boolean` | Yes | Whether the room is pinned |
+| `unread_num` | `number` | Yes | Number of unread messages |
+| `mention_num` | `number` | Yes | Number of unread mentions |
+| `mytask_num` | `number` | Yes | Number of open tasks assigned to me |
+| `message_num` | `number` | Yes | Total number of messages in the room |
+| `file_num` | `number` | Yes | Total number of files in the room |
+| `task_num` | `number` | Yes | Total number of tasks in the room |
+| `icon_path` | `string` | Yes | Icon image URL or icon path |
+| `last_update_time` | `number` | Yes | Last updated timestamp in Unix seconds |
+| `description` | `string` | No | Detailed room description |
+
+
+
+---
+
+### list
+
+`rooms.list`
+
+List chat rooms the authenticated user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.rooms.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  room_id: number,
+  name: string,
+  type: string,
+  role: string,
+  sticky: boolean,
+  unread_num: number,
+  mention_num: number,
+  mytask_num: number,
+  message_num: number,
+  file_num: number,
+  task_num: number,
+  icon_path: string,
+  last_update_time: number,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`rooms.update`
+
+Update the name, description or icon of a group chat
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.rooms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `name` | `string` | No | New group chat name |
+| `description` | `string` | No | New group chat description |
+| `icon_preset` | `group \| check \| document \| meeting \| event \| project \| business \| study \| security \| star \| idea \| heart \| magcup \| beer \| music \| sports \| travel` | No | New group chat icon type |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The room ID |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a chat room
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `body` | `string` | Yes | The task content |
+| `to_ids` | `number[]` | Yes | Account IDs of the assignees |
+| `limit` | `number` | No | Deadline as a Unix timestamp in seconds |
+| `limit_type` | `none \| date \| time` | No | The deadline type |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_ids` | `number[]` | Yes | IDs of the created tasks |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a specific task in a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `task_id` | `number` | Yes | The ID of the task |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | The task ID |
+| `assigned_by_account` | `object` | Yes | The account that assigned the task |
+| `message_id` | `string` | Yes | The message ID the task belongs to |
+| `body` | `string` | Yes | The task content |
+| `limit_time` | `number` | Yes | Deadline in Unix seconds (0 if none) |
+| `status` | `open \| done` | Yes | The task status |
+| `limit_type` | `none \| date \| time` | No | The deadline type |
+| `account` | `object` | Yes | The task assignee |
+
+<AccordionGroup>
+<Accordion title="assigned_by_account full type">
+
+```ts
+{
+  account_id: number,
+  name: string,
+  avatar_image_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  account_id: number,
+  name: string,
+  avatar_image_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks in a chat room (up to 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `account_id` | `number` | No | Only tasks assigned to this account ID |
+| `assigned_by_account_id` | `number` | No | Only tasks assigned by this account ID |
+| `status` | `open \| done` | No | Task status filter (default open) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  task_id: number,
+  assigned_by_account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  },
+  message_id: string,
+  body: string,
+  limit_time: number,
+  status: open | done,
+  limit_type?: none | date | time,
+  account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateStatus
+
+`tasks.updateStatus`
+
+Mark a task as done or reopen it
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.tasks.updateStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `task_id` | `number` | Yes | The ID of the task |
+| `status` | `open \| done` | Yes | done: complete the task; open: reopen it |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | The updated task ID |
+
+
+
+---
+

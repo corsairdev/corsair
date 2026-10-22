@@ -1,0 +1,136 @@
+---
+title: Overview
+description: "Serverless SQLite databases on libSQL with global replication."
+---
+
+Use **Turso** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 3 typed API operations
+- 1 synced entity (`changeEvents`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/turso
+```
+```bash yarn
+yarn add corsair @corsair-dev/turso
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/turso
+```
+```bash bun
+bun add corsair @corsair-dev/turso
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { turso } from '@corsair-dev/turso';
+
+export const corsair = createCorsair({
+	plugins: [
+		turso(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+turso()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'turso',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Validate the API token**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.turso.api.tokens.validate({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/turso/api) reference._
+
+
+See the full list on the [API](/plugins/turso/api) page.
+
+## Query synced data
+
+Search change events streamed by changes.listen without listening again.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.turso.db.changeEvents.search({
+	data: { table: 'users' },
+	limit: 20,
+});
+```
+
+Synced entities: `changeEvents`. See [Database](/plugins/turso/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/turso/api">
+    Every `turso.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/turso/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

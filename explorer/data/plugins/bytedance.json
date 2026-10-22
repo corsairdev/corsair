@@ -1,0 +1,420 @@
+{
+  "id": "bytedance",
+  "displayName": "Bytedance",
+  "description": "Bytedance plugin for Corsair",
+  "npmPackageName": "@corsair-dev/bytedance",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bytedance.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Cancel a queued video task, or delete a finished task record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bytedance.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a video generation task: status, video URL (valid 24h), and token usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | running | cancelled | succeeded | failed | expired"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ video_url?: string | null, last_frame_url?: string | null }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frames",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "framespersecond",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "generate_audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ratio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "execution_expires_after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft_task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safety_identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ completion_tokens?: number | null, total_tokens?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bytedance.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List video generation tasks from the past 7 days, filtered by status, model, or ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | running | cancelled | succeeded | failed"
+          },
+          {
+            "key": "task_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "default | flex"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, model?: string | null, status: queued | running | cancelled | succeeded | failed | expired, content?: { video_url?: string | null, last_frame_url?: string | null } | null, error?: { code: string, message: string } | null, created_at?: number | null, updated_at?: number | null, duration?: number | null, frames?: number | null, framespersecond?: number | null, generate_audio?: boolean | null, output_format?: string | null, priority?: number | null, ratio?: string | null, resolution?: string | null, seed?: number | null, service_tier?: string | null, execution_expires_after?: number | null, draft?: boolean | null, draft_task_id?: string | null, safety_identifier?: string | null, usage?: { completion_tokens?: number | null, total_tokens?: number | null } | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bytedance.api.video.create",
+      "shortPath": "video.create",
+      "description": "Start a Seedance video generation task from text, frames, or reference media; returns a task id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Model ID (dreamina-seedance-2-5-260628, dreamina-seedance-2-0-260128, dreamina-seedance-2-0-fast-260128, dreamina-seedance-2-0-mini-260615, seedance-1-5-pro-251215, seedance-1-0-pro-250528, seedance-1-0-pro-fast-251015) or an inference endpoint ID"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "({ type: text, text: string } | { type: image_url, image_url: { url: string }, role?: first_frame | last_frame | reference_image } | { type: video_url, video_url: { url: string }, role: reference_video } | { type: audio_url, audio_url: { url: string }, role: reference_audio } | { type: draft_task, draft_task: { id: string } })[]"
+          },
+          {
+            "key": "omni_reference_task_type",
+            "optional": true,
+            "type": "auto | reference | edit | extend"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "480p | 720p | 1080p | 4k"
+          },
+          {
+            "key": "ratio",
+            "optional": true,
+            "type": "16:9 | 4:3 | 1:1 | 3:4 | 9:16 | 21:9 | adaptive"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "-1 | number"
+          },
+          {
+            "key": "frames",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "generate_audio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "watermark",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "mp4 | mov"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "camera_fixed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_last_frame",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "default | flex"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "execution_expires_after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "safety_identifier",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bytedance.db.videoTasks.search",
+      "entityName": "videoTasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "videoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastFrameUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolution",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ratio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalTokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "errorCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

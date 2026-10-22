@@ -1,0 +1,15 @@
+displayName: Saperly
+description: Phone numbers, voice, and SMS for AI agents. The workspace is resolved from a bearer API key.
+apiExamples:
+  numbers.list: {}
+  numbers.provision:
+    areaCode: '415'
+    idempotencyKey: 3f1d6c5e-2b7a-4f0e-9c2d-8a1b6e4f0c11
+  messages.send:
+    fromNumberId: num_01H
+    to: '+15555550123'
+    body: Hello from Corsair
+  calls.place:
+    fromNumberId: num_01H
+    to: '+15555550123'
+  usage.summary: {}

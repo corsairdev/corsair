@@ -1,0 +1,74 @@
+---
+title: Database
+description: "ContactOut local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ContactOut plugin syncs data locally. Use `corsair.contactout.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Companies
+
+Path: `contactout.db.companies.search`
+
+```ts
+const rows = await corsair.contactout.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkedinUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `foundedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Profiles
+
+Path: `contactout.db.profiles.search`
+
+```ts
+const rows = await corsair.contactout.db.profiles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkedinUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `headline` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyDomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `seniority` | `string` | equals, contains, startsWith, endsWith, in |
+| `hasWorkEmail` | `boolean` | equals |
+| `hasPersonalEmail` | `boolean` | equals |
+| `hasPhone` | `boolean` | equals |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

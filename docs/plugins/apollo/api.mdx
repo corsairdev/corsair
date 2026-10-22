@@ -1,0 +1,1281 @@
+---
+title: API
+description: "API reference for Apollo: every `apollo.api.*` operation with input and output types."
+---
+
+Every `apollo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## News
+
+### search
+
+`news.search`
+
+Search news articles about companies by Apollo organization id
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.news.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_ids` | `string[]` | Yes | — |
+| `categories` | `string[]` | No | — |
+| `published_at` | `object` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="published_at full type">
+
+```ts
+{
+  min?: string,
+  max?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `news_articles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  per_page: number,
+  total_entries: number,
+  total_pages: number
+}
+```
+</Accordion>
+
+<Accordion title="news_articles full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  domain?: string | null,
+  title?: string | null,
+  snippet?: string | null,
+  organization_ids?: string[] | null,
+  published_at?: string | null,
+  event_categories?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### enrich
+
+`organizations.enrich`
+
+Enrich a company by domain, LinkedIn URL, or website
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.organizations.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `website` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website_url?: string | null,
+  blog_url?: string | null,
+  angellist_url?: string | null,
+  linkedin_url?: string | null,
+  linkedin_uid?: string | null,
+  twitter_url?: string | null,
+  facebook_url?: string | null,
+  crunchbase_url?: string | null,
+  logo_url?: string | null,
+  primary_domain?: string | null,
+  phone?: string | null,
+  sanitized_phone?: string | null,
+  languages?: string[] | null,
+  alexa_ranking?: number | null,
+  founded_year?: number | null,
+  publicly_traded_symbol?: string | null,
+  publicly_traded_exchange?: string | null,
+  industry?: string | null,
+  industries?: string[] | null,
+  secondary_industries?: string[] | null,
+  industry_tag_id?: string | null,
+  keywords?: string[] | null,
+  sic_codes?: string[] | null,
+  naics_codes?: string[] | null,
+  estimated_num_employees?: number | null,
+  organization_headcount_six_month_growth?: number | null,
+  organization_headcount_twelve_month_growth?: number | null,
+  organization_headcount_twenty_four_month_growth?: number | null,
+  departmental_head_count?: {
+  } | null,
+  annual_revenue?: number | null,
+  annual_revenue_printed?: string | null,
+  organization_revenue?: number | null,
+  organization_revenue_printed?: string | null,
+  total_funding?: number | null,
+  total_funding_printed?: string | null,
+  latest_funding_stage?: string | null,
+  latest_funding_round_date?: string | null,
+  funding_events?: {
+    id: string,
+    date?: string | null,
+    detected_at?: string | null,
+    news_url?: string | null,
+    type?: string | null,
+    investors?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  }[] | null,
+  technology_names?: string[] | null,
+  current_technologies?: {
+    uid: string,
+    name: string,
+    category?: string | null
+  }[] | null,
+  raw_address?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  short_description?: string | null,
+  seo_description?: string | null,
+  owned_by_organization_id?: string | null,
+  num_suborganizations?: number | null,
+  suborganizations?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    industries?: string[] | null,
+    estimated_num_employees?: number | null,
+    country?: string | null
+  }[] | null,
+  retail_location_count?: number | null,
+  num_retail_locations?: number | null,
+  num_languages?: number | null,
+  primary_phone?: {
+    number?: string | null,
+    sanitized_number?: string | null,
+    source?: string | null
+  } | null,
+  latest_funding_detected_at?: string | null,
+  account_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get complete organization info by Apollo id
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website_url?: string | null,
+  blog_url?: string | null,
+  angellist_url?: string | null,
+  linkedin_url?: string | null,
+  linkedin_uid?: string | null,
+  twitter_url?: string | null,
+  facebook_url?: string | null,
+  crunchbase_url?: string | null,
+  logo_url?: string | null,
+  primary_domain?: string | null,
+  phone?: string | null,
+  sanitized_phone?: string | null,
+  languages?: string[] | null,
+  alexa_ranking?: number | null,
+  founded_year?: number | null,
+  publicly_traded_symbol?: string | null,
+  publicly_traded_exchange?: string | null,
+  industry?: string | null,
+  industries?: string[] | null,
+  secondary_industries?: string[] | null,
+  industry_tag_id?: string | null,
+  keywords?: string[] | null,
+  sic_codes?: string[] | null,
+  naics_codes?: string[] | null,
+  estimated_num_employees?: number | null,
+  organization_headcount_six_month_growth?: number | null,
+  organization_headcount_twelve_month_growth?: number | null,
+  organization_headcount_twenty_four_month_growth?: number | null,
+  departmental_head_count?: {
+  } | null,
+  annual_revenue?: number | null,
+  annual_revenue_printed?: string | null,
+  organization_revenue?: number | null,
+  organization_revenue_printed?: string | null,
+  total_funding?: number | null,
+  total_funding_printed?: string | null,
+  latest_funding_stage?: string | null,
+  latest_funding_round_date?: string | null,
+  funding_events?: {
+    id: string,
+    date?: string | null,
+    detected_at?: string | null,
+    news_url?: string | null,
+    type?: string | null,
+    investors?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  }[] | null,
+  technology_names?: string[] | null,
+  current_technologies?: {
+    uid: string,
+    name: string,
+    category?: string | null
+  }[] | null,
+  raw_address?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  short_description?: string | null,
+  seo_description?: string | null,
+  owned_by_organization_id?: string | null,
+  num_suborganizations?: number | null,
+  suborganizations?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    industries?: string[] | null,
+    estimated_num_employees?: number | null,
+    country?: string | null
+  }[] | null,
+  retail_location_count?: number | null,
+  num_retail_locations?: number | null,
+  num_languages?: number | null,
+  primary_phone?: {
+    number?: string | null,
+    sanitized_number?: string | null,
+    source?: string | null
+  } | null,
+  latest_funding_detected_at?: string | null,
+  account_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobPostings
+
+`organizations.jobPostings`
+
+List a company's current job postings
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.organizations.jobPostings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_job_postings` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization_job_postings full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  url?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  posted_at?: string | null,
+  last_seen_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  per_page: number,
+  total_entries: number,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`organizations.search`
+
+Search companies by name, location, size, industry, funding, technology, and hiring filters
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.organizations.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q_organization_name` | `string` | No | — |
+| `q_organization_keyword_tags` | `string[]` | No | — |
+| `q_not_organization_keyword_tags` | `string[]` | No | — |
+| `latest_funding_amount_range` | `object` | No | — |
+| `total_funding_range` | `object` | No | — |
+| `latest_funding_date_range` | `object` | No | — |
+| `organization_locations` | `string[]` | No | — |
+| `organization_not_locations` | `string[]` | No | — |
+| `organization_industry_tag_ids` | `string[]` | No | — |
+| `organization_not_industry_tag_ids` | `string[]` | No | — |
+| `organization_industries` | `string[]` | No | — |
+| `organization_naics_codes` | `string[]` | No | — |
+| `not_organization_naics_codes` | `string[]` | No | — |
+| `organization_sic_codes` | `string[]` | No | — |
+| `not_organization_sic_codes` | `string[]` | No | — |
+| `organization_ids` | `string[]` | No | — |
+| `organization_num_employees_ranges` | `string[]` | No | — |
+| `revenue_range` | `object` | No | — |
+| `currently_using_any_of_technology_uids` | `string[]` | No | — |
+| `q_organization_job_titles` | `string[]` | No | — |
+| `organization_job_locations` | `string[]` | No | — |
+| `organization_num_jobs_range` | `object` | No | — |
+| `organization_job_posted_at_range` | `object` | No | — |
+| `organization_headcount_growth_past_n_months` | `6 \| 12 \| 24` | No | — |
+| `organization_headcount_growth_range` | `object` | No | — |
+| `lookalike_organization_ids` | `string[]` | No | — |
+| `not_organization_websites_list` | `string[]` | No | — |
+| `q_organization_domains_list` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="latest_funding_amount_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="total_funding_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="latest_funding_date_range full type">
+
+```ts
+{
+  min?: string,
+  max?: string
+}
+```
+</Accordion>
+
+<Accordion title="revenue_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="organization_num_jobs_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="organization_job_posted_at_range full type">
+
+```ts
+{
+  min?: string,
+  max?: string
+}
+```
+</Accordion>
+
+<Accordion title="organization_headcount_growth_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `organizations` | `object[]` | Yes | — |
+| `accounts` | `object[]` | No | — |
+| `breadcrumbs` | `object[]` | No | — |
+| `partial_results_only` | `boolean` | No | — |
+| `partial_results_limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  per_page: number,
+  total_entries: number,
+  total_pages: number
+}
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website_url?: string | null,
+  blog_url?: string | null,
+  angellist_url?: string | null,
+  linkedin_url?: string | null,
+  linkedin_uid?: string | null,
+  twitter_url?: string | null,
+  facebook_url?: string | null,
+  crunchbase_url?: string | null,
+  logo_url?: string | null,
+  primary_domain?: string | null,
+  phone?: string | null,
+  sanitized_phone?: string | null,
+  languages?: string[] | null,
+  alexa_ranking?: number | null,
+  founded_year?: number | null,
+  publicly_traded_symbol?: string | null,
+  publicly_traded_exchange?: string | null,
+  industry?: string | null,
+  industries?: string[] | null,
+  secondary_industries?: string[] | null,
+  industry_tag_id?: string | null,
+  keywords?: string[] | null,
+  sic_codes?: string[] | null,
+  naics_codes?: string[] | null,
+  estimated_num_employees?: number | null,
+  organization_headcount_six_month_growth?: number | null,
+  organization_headcount_twelve_month_growth?: number | null,
+  organization_headcount_twenty_four_month_growth?: number | null,
+  departmental_head_count?: {
+  } | null,
+  annual_revenue?: number | null,
+  annual_revenue_printed?: string | null,
+  organization_revenue?: number | null,
+  organization_revenue_printed?: string | null,
+  total_funding?: number | null,
+  total_funding_printed?: string | null,
+  latest_funding_stage?: string | null,
+  latest_funding_round_date?: string | null,
+  funding_events?: {
+    id: string,
+    date?: string | null,
+    detected_at?: string | null,
+    news_url?: string | null,
+    type?: string | null,
+    investors?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  }[] | null,
+  technology_names?: string[] | null,
+  current_technologies?: {
+    uid: string,
+    name: string,
+    category?: string | null
+  }[] | null,
+  raw_address?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  short_description?: string | null,
+  seo_description?: string | null,
+  owned_by_organization_id?: string | null,
+  num_suborganizations?: number | null,
+  suborganizations?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    industries?: string[] | null,
+    estimated_num_employees?: number | null,
+    country?: string | null
+  }[] | null,
+  retail_location_count?: number | null,
+  num_retail_locations?: number | null,
+  num_languages?: number | null,
+  primary_phone?: {
+    number?: string | null,
+    sanitized_number?: string | null,
+    source?: string | null
+  } | null,
+  latest_funding_detected_at?: string | null,
+  account_id?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="accounts full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website_url?: string | null,
+  blog_url?: string | null,
+  angellist_url?: string | null,
+  linkedin_url?: string | null,
+  linkedin_uid?: string | null,
+  twitter_url?: string | null,
+  facebook_url?: string | null,
+  crunchbase_url?: string | null,
+  logo_url?: string | null,
+  primary_domain?: string | null,
+  phone?: string | null,
+  sanitized_phone?: string | null,
+  languages?: string[] | null,
+  alexa_ranking?: number | null,
+  founded_year?: number | null,
+  publicly_traded_symbol?: string | null,
+  publicly_traded_exchange?: string | null,
+  industry?: string | null,
+  industries?: string[] | null,
+  secondary_industries?: string[] | null,
+  industry_tag_id?: string | null,
+  keywords?: string[] | null,
+  sic_codes?: string[] | null,
+  naics_codes?: string[] | null,
+  estimated_num_employees?: number | null,
+  organization_headcount_six_month_growth?: number | null,
+  organization_headcount_twelve_month_growth?: number | null,
+  organization_headcount_twenty_four_month_growth?: number | null,
+  departmental_head_count?: {
+  } | null,
+  annual_revenue?: number | null,
+  annual_revenue_printed?: string | null,
+  organization_revenue?: number | null,
+  organization_revenue_printed?: string | null,
+  total_funding?: number | null,
+  total_funding_printed?: string | null,
+  latest_funding_stage?: string | null,
+  latest_funding_round_date?: string | null,
+  funding_events?: {
+    id: string,
+    date?: string | null,
+    detected_at?: string | null,
+    news_url?: string | null,
+    type?: string | null,
+    investors?: string | null,
+    amount?: string | null,
+    currency?: string | null
+  }[] | null,
+  technology_names?: string[] | null,
+  current_technologies?: {
+    uid: string,
+    name: string,
+    category?: string | null
+  }[] | null,
+  raw_address?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  short_description?: string | null,
+  seo_description?: string | null,
+  owned_by_organization_id?: string | null,
+  num_suborganizations?: number | null,
+  suborganizations?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    industries?: string[] | null,
+    estimated_num_employees?: number | null,
+    country?: string | null
+  }[] | null,
+  retail_location_count?: number | null,
+  num_retail_locations?: number | null,
+  num_languages?: number | null,
+  primary_phone?: {
+    number?: string | null,
+    sanitized_number?: string | null,
+    source?: string | null
+  } | null,
+  latest_funding_detected_at?: string | null,
+  account_id?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="breadcrumbs full type">
+
+```ts
+{
+  label: string,
+  signal_field_name: string,
+  value: string | number,
+  display_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### enrich
+
+`people.enrich`
+
+Enrich a person by name, email, LinkedIn URL, or Apollo id; optionally reveal personal emails and phones
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.people.enrich({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `hashed_email` | `string` | No | — |
+| `organization_name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `linkedin_url` | `string` | No | — |
+| `reveal_personal_emails` | `boolean` | No | — |
+| `reveal_phone_number` | `boolean` | No | — |
+| `run_waterfall_email` | `boolean` | No | — |
+| `run_waterfall_phone` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `poll_only` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person` | `object` | No | — |
+| `request_id` | `number` | No | — |
+| `waterfall` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  title?: string | null,
+  headline?: string | null,
+  linkedin_url?: string | null,
+  twitter_url?: string | null,
+  github_url?: string | null,
+  facebook_url?: string | null,
+  photo_url?: string | null,
+  email?: string | null,
+  email_status?: string | null,
+  extrapolated_email_confidence?: number | null,
+  organization_id?: string | null,
+  organization?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    blog_url?: string | null,
+    angellist_url?: string | null,
+    linkedin_url?: string | null,
+    linkedin_uid?: string | null,
+    twitter_url?: string | null,
+    facebook_url?: string | null,
+    crunchbase_url?: string | null,
+    logo_url?: string | null,
+    primary_domain?: string | null,
+    phone?: string | null,
+    sanitized_phone?: string | null,
+    languages?: string[] | null,
+    alexa_ranking?: number | null,
+    founded_year?: number | null,
+    publicly_traded_symbol?: string | null,
+    publicly_traded_exchange?: string | null,
+    industry?: string | null,
+    industries?: string[] | null,
+    secondary_industries?: string[] | null,
+    industry_tag_id?: string | null,
+    keywords?: string[] | null,
+    sic_codes?: string[] | null,
+    naics_codes?: string[] | null,
+    estimated_num_employees?: number | null,
+    organization_headcount_six_month_growth?: number | null,
+    organization_headcount_twelve_month_growth?: number | null,
+    organization_headcount_twenty_four_month_growth?: number | null,
+    departmental_head_count?: {
+    } | null,
+    annual_revenue?: number | null,
+    annual_revenue_printed?: string | null,
+    organization_revenue?: number | null,
+    organization_revenue_printed?: string | null,
+    total_funding?: number | null,
+    total_funding_printed?: string | null,
+    latest_funding_stage?: string | null,
+    latest_funding_round_date?: string | null,
+    funding_events?: {
+      id: string,
+      date?: string | null,
+      detected_at?: string | null,
+      news_url?: string | null,
+      type?: string | null,
+      investors?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    }[] | null,
+    technology_names?: string[] | null,
+    current_technologies?: {
+      uid: string,
+      name: string,
+      category?: string | null
+    }[] | null,
+    raw_address?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    short_description?: string | null,
+    seo_description?: string | null,
+    owned_by_organization_id?: string | null,
+    num_suborganizations?: number | null,
+    suborganizations?: {
+      id: string,
+      name?: string | null,
+      website_url?: string | null,
+      industries?: string[] | null,
+      estimated_num_employees?: number | null,
+      country?: string | null
+    }[] | null,
+    retail_location_count?: number | null,
+    num_retail_locations?: number | null,
+    num_languages?: number | null,
+    primary_phone?: {
+      number?: string | null,
+      sanitized_number?: string | null,
+      source?: string | null
+    } | null,
+    latest_funding_detected_at?: string | null,
+    account_id?: string | null
+  } | null,
+  employment_history?: {
+    id?: string | null,
+    organization_id?: string | null,
+    organization_name?: string | null,
+    title?: string | null,
+    current?: boolean | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    description?: string | null
+  }[] | null,
+  match_confidence?: high | medium | low | none | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  postal_code?: string | null,
+  formatted_address?: string | null,
+  time_zone?: string | null,
+  seniority?: string | null,
+  departments?: string[] | null,
+  subdepartments?: string[] | null,
+  functions?: string[] | null,
+  contact_id?: string | null,
+  contact?: {
+    id: string,
+    email?: string | null,
+    email_status?: string | null,
+    sanitized_phone?: string | null,
+    direct_dial_status?: string | null,
+    phone_numbers?: {
+      raw_number?: string | null,
+      sanitized_number?: string | null,
+      type?: string | null,
+      position?: number | null,
+      status?: string | null,
+      dnc_status?: string | null
+    }[] | null
+  } | null,
+  revealed_for_current_team?: boolean | null,
+  is_likely_to_engage?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="waterfall full type">
+
+```ts
+{
+  status: string,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`people.get`
+
+Get complete person info by Apollo id
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.people.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  name?: string | null,
+  title?: string | null,
+  headline?: string | null,
+  linkedin_url?: string | null,
+  twitter_url?: string | null,
+  github_url?: string | null,
+  facebook_url?: string | null,
+  photo_url?: string | null,
+  email?: string | null,
+  email_status?: string | null,
+  extrapolated_email_confidence?: number | null,
+  organization_id?: string | null,
+  organization?: {
+    id: string,
+    name?: string | null,
+    website_url?: string | null,
+    blog_url?: string | null,
+    angellist_url?: string | null,
+    linkedin_url?: string | null,
+    linkedin_uid?: string | null,
+    twitter_url?: string | null,
+    facebook_url?: string | null,
+    crunchbase_url?: string | null,
+    logo_url?: string | null,
+    primary_domain?: string | null,
+    phone?: string | null,
+    sanitized_phone?: string | null,
+    languages?: string[] | null,
+    alexa_ranking?: number | null,
+    founded_year?: number | null,
+    publicly_traded_symbol?: string | null,
+    publicly_traded_exchange?: string | null,
+    industry?: string | null,
+    industries?: string[] | null,
+    secondary_industries?: string[] | null,
+    industry_tag_id?: string | null,
+    keywords?: string[] | null,
+    sic_codes?: string[] | null,
+    naics_codes?: string[] | null,
+    estimated_num_employees?: number | null,
+    organization_headcount_six_month_growth?: number | null,
+    organization_headcount_twelve_month_growth?: number | null,
+    organization_headcount_twenty_four_month_growth?: number | null,
+    departmental_head_count?: {
+    } | null,
+    annual_revenue?: number | null,
+    annual_revenue_printed?: string | null,
+    organization_revenue?: number | null,
+    organization_revenue_printed?: string | null,
+    total_funding?: number | null,
+    total_funding_printed?: string | null,
+    latest_funding_stage?: string | null,
+    latest_funding_round_date?: string | null,
+    funding_events?: {
+      id: string,
+      date?: string | null,
+      detected_at?: string | null,
+      news_url?: string | null,
+      type?: string | null,
+      investors?: string | null,
+      amount?: string | null,
+      currency?: string | null
+    }[] | null,
+    technology_names?: string[] | null,
+    current_technologies?: {
+      uid: string,
+      name: string,
+      category?: string | null
+    }[] | null,
+    raw_address?: string | null,
+    street_address?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    short_description?: string | null,
+    seo_description?: string | null,
+    owned_by_organization_id?: string | null,
+    num_suborganizations?: number | null,
+    suborganizations?: {
+      id: string,
+      name?: string | null,
+      website_url?: string | null,
+      industries?: string[] | null,
+      estimated_num_employees?: number | null,
+      country?: string | null
+    }[] | null,
+    retail_location_count?: number | null,
+    num_retail_locations?: number | null,
+    num_languages?: number | null,
+    primary_phone?: {
+      number?: string | null,
+      sanitized_number?: string | null,
+      source?: string | null
+    } | null,
+    latest_funding_detected_at?: string | null,
+    account_id?: string | null
+  } | null,
+  employment_history?: {
+    id?: string | null,
+    organization_id?: string | null,
+    organization_name?: string | null,
+    title?: string | null,
+    current?: boolean | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    description?: string | null
+  }[] | null,
+  match_confidence?: high | medium | low | none | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  postal_code?: string | null,
+  formatted_address?: string | null,
+  time_zone?: string | null,
+  seniority?: string | null,
+  departments?: string[] | null,
+  subdepartments?: string[] | null,
+  functions?: string[] | null,
+  contact_id?: string | null,
+  contact?: {
+    id: string,
+    email?: string | null,
+    email_status?: string | null,
+    sanitized_phone?: string | null,
+    direct_dial_status?: string | null,
+    phone_numbers?: {
+      raw_number?: string | null,
+      sanitized_number?: string | null,
+      type?: string | null,
+      position?: number | null,
+      status?: string | null,
+      dnc_status?: string | null
+    }[] | null
+  } | null,
+  revealed_for_current_team?: boolean | null,
+  is_likely_to_engage?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`people.search`
+
+Search net-new people by title, seniority, location, and employer filters (redacted profiles, no credits)
+
+**Risk:** `read`
+
+```ts
+await corsair.apollo.api.people.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_titles` | `string[]` | No | — |
+| `include_similar_titles` | `boolean` | No | — |
+| `person_not_titles` | `string[]` | No | — |
+| `person_not_past_titles` | `string[]` | No | — |
+| `q_keywords` | `string` | No | — |
+| `q_person_name` | `string` | No | — |
+| `person_locations` | `string[]` | No | — |
+| `person_not_locations` | `string[]` | No | — |
+| `person_seniorities` | `string[]` | No | — |
+| `contact_email_status` | `verified \| unverified \| likely to engage \| unavailable[]` | No | — |
+| `currently_using_all_of_technology_uids` | `string[]` | No | — |
+| `currently_not_using_any_of_technology_uids` | `string[]` | No | — |
+| `organization_locations` | `string[]` | No | — |
+| `organization_not_locations` | `string[]` | No | — |
+| `organization_industry_tag_ids` | `string[]` | No | — |
+| `organization_not_industry_tag_ids` | `string[]` | No | — |
+| `organization_industries` | `string[]` | No | — |
+| `organization_naics_codes` | `string[]` | No | — |
+| `not_organization_naics_codes` | `string[]` | No | — |
+| `organization_sic_codes` | `string[]` | No | — |
+| `not_organization_sic_codes` | `string[]` | No | — |
+| `organization_ids` | `string[]` | No | — |
+| `organization_num_employees_ranges` | `string[]` | No | — |
+| `revenue_range` | `object` | No | — |
+| `currently_using_any_of_technology_uids` | `string[]` | No | — |
+| `q_organization_job_titles` | `string[]` | No | — |
+| `organization_job_locations` | `string[]` | No | — |
+| `organization_num_jobs_range` | `object` | No | — |
+| `organization_job_posted_at_range` | `object` | No | — |
+| `organization_headcount_growth_past_n_months` | `6 \| 12 \| 24` | No | — |
+| `organization_headcount_growth_range` | `object` | No | — |
+| `lookalike_organization_ids` | `string[]` | No | — |
+| `not_organization_websites_list` | `string[]` | No | — |
+| `q_organization_domains_list` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="revenue_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="organization_num_jobs_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="organization_job_posted_at_range full type">
+
+```ts
+{
+  min?: string,
+  max?: string
+}
+```
+</Accordion>
+
+<Accordion title="organization_headcount_growth_range full type">
+
+```ts
+{
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_entries` | `number` | Yes | — |
+| `people` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  id: string,
+  first_name?: string | null,
+  last_name_obfuscated?: string | null,
+  title?: string | null,
+  last_refreshed_at?: string | null,
+  has_email?: boolean | null,
+  has_city?: boolean | null,
+  has_state?: boolean | null,
+  has_country?: boolean | null,
+  has_direct_phone?: string | boolean | null,
+  organization?: {
+    name?: string | null,
+    has_industry?: boolean | null,
+    has_phone?: boolean | null,
+    has_city?: boolean | null,
+    has_state?: boolean | null,
+    has_country?: boolean | null,
+    has_zip_code?: boolean | null,
+    has_revenue?: boolean | null,
+    has_employee_count?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

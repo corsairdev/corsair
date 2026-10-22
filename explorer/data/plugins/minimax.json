@@ -1,0 +1,1807 @@
+{
+  "id": "minimax",
+  "displayName": "MiniMax",
+  "description": "MiniMax AI platform: chat, speech, voice, music, image and video generation.",
+  "npmPackageName": "@corsair-dev/minimax",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "minimax.api.chat.completion",
+      "shortPath": "chat.completion",
+      "description": "Create a chat completion with a MiniMax text model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "MiniMax-M3.1-Flash-Preview | MiniMax-M3 | MiniMax-M2.7 | MiniMax-M2.7-highspeed | MiniMax-M2.5 | MiniMax-M2.5-highspeed | MiniMax-M2.1 | MiniMax-M2"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant | tool, name?: string, content?: string | { type?: string }[] | null, tool_calls?: { type?: string }[] }[]"
+          },
+          {
+            "key": "max_completion_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: string, function: { name: string, description?: string, parameters?: {} } }[]"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: string }"
+          },
+          {
+            "key": "mask_sensitive_info",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{ finish_reason?: string, index?: number, message?: { role: system | user | assistant | tool, name?: string, content?: string | { type?: string }[] | null, tool_calls?: { type?: string }[] } }[]"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "chat.completion | chat.completion.chunk"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ total_tokens?: number }"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.chat.createResponse",
+      "shortPath": "chat.createResponse",
+      "description": "Create a model response via the Responses API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | { type?: message | function_call | function_call_output | reasoning, role?: user | assistant | system | developer | tool, content?: string | { type?: string }[], call_id?: string, name?: string, arguments?: string, output?: string | { type?: string }[], summary?: {}[] }[]"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "service_tier",
+            "optional": true,
+            "type": "standard | priority"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: string }[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "prompt_cache_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ format?: {} }"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: string }"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | incomplete | failed"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ type?: string }[]"
+          },
+          {
+            "key": "output_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: string, message?: string }"
+          },
+          {
+            "key": "incomplete_details",
+            "optional": true,
+            "type": "{ reason?: string }"
+          },
+          {
+            "key": "parallel_tool_calls",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "truncation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.chat.estimateInputTokens",
+      "shortPath": "chat.estimateInputTokens",
+      "description": "Estimate the input token count of a request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | { type?: message | function_call | function_call_output | reasoning, role?: user | assistant | system | developer | tool, content?: string | { type?: string }[], call_id?: string, name?: string, arguments?: string, output?: string | { type?: string }[], summary?: {}[] }[]"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: string }[]"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "none | auto"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ format?: {} }"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: string }"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "response.input_tokens"
+          },
+          {
+            "key": "input_tokens",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete an uploaded file permanently [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "voice_clone | prompt_audio | t2a_async | t2a_async_input | video_generation"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.files.list",
+      "shortPath": "files.list",
+      "description": "List uploaded files for a purpose",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "voice_clone | prompt_audio | t2a_async_input | video_generation_input"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ file_id?: number, bytes?: number, created_at?: number, filename?: string, purpose?: string, download_url?: string }[]"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.files.retrieve",
+      "shortPath": "files.retrieve",
+      "description": "Retrieve the metadata of an uploaded file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{ file_id?: number, bytes?: number, created_at?: number, filename?: string, purpose?: string, download_url?: string }"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.image.generate",
+      "shortPath": "image.generate",
+      "description": "Generate images from a prompt, optionally with a subject reference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "image-01 | image-01-live"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject_reference",
+            "optional": true,
+            "type": "{ type: character, image_file: string }[]"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "1:1 | 16:9 | 4:3 | 3:2 | 2:3 | 3:4 | 9:16 | 21:9"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "url | base64"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_optimizer",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ image_urls?: string[], image_base64?: string[] }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ success_count?: number, failed_count?: number }"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.models.list",
+      "shortPath": "models.list",
+      "description": "List available models (OpenAI-compatible)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object?: string, created?: number, owned_by?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.models.listAnthropic",
+      "shortPath": "models.listAnthropic",
+      "description": "List available models (Anthropic-compatible)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, created_at?: string, display_name?: string, type?: string }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.models.retrieve",
+      "shortPath": "models.retrieve",
+      "description": "Retrieve a model (OpenAI-compatible)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.models.retrieveAnthropic",
+      "shortPath": "models.retrieveAnthropic",
+      "description": "Retrieve a model (Anthropic-compatible)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.music.coverPreprocess",
+      "shortPath": "music.coverPreprocess",
+      "description": "Preprocess reference audio for two-step music cover generation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "music-cover"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_base64",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cover_feature_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formatted_lyrics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structure_result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trace_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.music.generate",
+      "shortPath": "music.generate",
+      "description": "Generate a song from a prompt and lyrics",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "music-3.0 | music-2.6 | music-cover | music-3.0-free | music-2.6-free | music-cover-free"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lyrics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "url | hex"
+          },
+          {
+            "key": "audio_setting",
+            "optional": true,
+            "type": "{ sample_rate?: number, bitrate?: number, format?: mp3 | wav | pcm }"
+          },
+          {
+            "key": "lyrics_optimizer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_instrumental",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "audio_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_feature_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ status?: number, audio?: string }"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.music.generateLyrics",
+      "shortPath": "music.generateLyrics",
+      "description": "Generate or edit song lyrics",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "write_full_song | edit"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lyrics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "song_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style_tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lyrics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.speech.createAsyncTask",
+      "shortPath": "speech.createAsyncTask",
+      "description": "Create an asynchronous long-text speech synthesis task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "speech-2.8-hd | speech-2.8-turbo | speech-2.6-hd | speech-2.6-turbo | speech-02-hd | speech-02-turbo | speech-01-hd | speech-01-turbo"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_file_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "voice_setting",
+            "optional": false,
+            "type": "{ voice_id: string, speed?: number, vol?: number, pitch?: number, emotion?: happy | sad | angry | fearful | disgusted | surprised | calm | fluent | whisper, english_normalization?: boolean, latex_read?: boolean }"
+          },
+          {
+            "key": "audio_setting",
+            "optional": true,
+            "type": "{ audio_sample_rate?: number, bitrate?: number, format?: mp3 | pcm | flac | wav | pcmu_raw | pcmu_wav | opus, channel?: number }"
+          },
+          {
+            "key": "pronunciation_dict",
+            "optional": true,
+            "type": "{ tone?: string[] }"
+          },
+          {
+            "key": "language_boost",
+            "optional": true,
+            "type": "Chinese | Chinese,Yue | English | Arabic | Russian | Spanish | French | Portuguese | German | Turkish | Dutch | Ukrainian | Vietnamese | Indonesian | Japanese | Italian | Korean | Thai | Polish | Romanian | Greek | Czech | Finnish | Hindi | Bulgarian | Danish | Hebrew | Malay | Persian | Slovak | Swedish | Croatian | Filipino | Hungarian | Norwegian | Slovenian | Catalan | Nynorsk | Tamil | Afrikaans | auto"
+          },
+          {
+            "key": "voice_modify",
+            "optional": true,
+            "type": "{ pitch?: number, intensity?: number, timbre?: number, sound_effects?: spacious_echo | auditorium_echo | lofi_telephone | robotic }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage_characters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.speech.queryAsyncTask",
+      "shortPath": "speech.queryAsyncTask",
+      "description": "Query the status of an asynchronous speech synthesis task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | failed | expired | processing | Success | Failed | Expired | Processing"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.speech.t2a",
+      "shortPath": "speech.t2a",
+      "description": "Synthesize speech from text (synchronous T2A)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "speech-2.8-hd | speech-2.8-turbo | speech-2.6-hd | speech-2.6-turbo | speech-02-hd | speech-02-turbo | speech-01-hd | speech-01-turbo"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voice_setting",
+            "optional": true,
+            "type": "{ voice_id: string, speed?: number, vol?: number, pitch?: number, emotion?: happy | sad | angry | fearful | disgusted | surprised | calm | fluent | whisper, text_normalization?: boolean, latex_read?: boolean }"
+          },
+          {
+            "key": "audio_setting",
+            "optional": true,
+            "type": "{ sample_rate?: number, bitrate?: number, format?: mp3 | pcm | flac | wav | pcmu_raw | pcmu_wav | opus, channel?: number, force_cbr?: boolean }"
+          },
+          {
+            "key": "pronunciation_dict",
+            "optional": true,
+            "type": "{ tone?: string[] }"
+          },
+          {
+            "key": "timbre_weights",
+            "optional": true,
+            "type": "{ voice_id: string, weight: number }[]"
+          },
+          {
+            "key": "language_boost",
+            "optional": true,
+            "type": "Chinese | Chinese,Yue | English | Arabic | Russian | Spanish | French | Portuguese | German | Turkish | Dutch | Ukrainian | Vietnamese | Indonesian | Japanese | Italian | Korean | Thai | Polish | Romanian | Greek | Czech | Finnish | Hindi | Bulgarian | Danish | Hebrew | Malay | Persian | Slovak | Swedish | Croatian | Filipino | Hungarian | Norwegian | Slovenian | Catalan | Nynorsk | Tamil | Afrikaans | auto"
+          },
+          {
+            "key": "text_normalization_mode",
+            "optional": true,
+            "type": "basic | quality"
+          },
+          {
+            "key": "voice_modify",
+            "optional": true,
+            "type": "{ pitch?: number, intensity?: number, timbre?: number, sound_effects?: spacious_echo | auditorium_echo | lofi_telephone | robotic }"
+          },
+          {
+            "key": "subtitle_enable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subtitle_type",
+            "optional": true,
+            "type": "sentence | word | word_streaming"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "url | hex"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ audio?: string, status?: number, subtitle_file?: string, subtitle?: string, subtitles?: {}[] }"
+          },
+          {
+            "key": "trace_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_info",
+            "optional": true,
+            "type": "{ audio_length?: number, audio_sample_rate?: number, audio_size?: number, bitrate?: number, audio_format?: string, audio_channel?: number, usage_characters?: number, word_count?: number }"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.cancelOrDeleteV2",
+      "shortPath": "video.cancelOrDeleteV2",
+      "description": "Cancel a queued task or delete a finished task record permanently [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "cancelled | deleted"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "cancelled | deleted"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.contextIr",
+      "shortPath": "video.contextIr",
+      "description": "Create an H3-Context-IR task that enriches a video prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "MiniMax-H3"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type: text | image_url | video_url | audio_url, text?: string, image_url?: { url: string }, video_url?: { url: string }, audio_url?: { url: string }, role?: first_frame | last_frame | reference_image | reference_video | reference_audio }[]"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ratio",
+            "optional": true,
+            "type": "adaptive | 21:9 | 16:9 | 4:3 | 1:1 | 3:4 | 9:16"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.generate",
+      "shortPath": "video.generate",
+      "description": "Create a Hailuo video generation task (text, image, first/last frame or subject reference)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "MiniMax-Hailuo-2.3 | MiniMax-Hailuo-2.3-Fast | MiniMax-Hailuo-02 | T2V-01-Director | T2V-01 | I2V-01-Director | I2V-01-live | I2V-01 | S2V-01"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_frame_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_frame_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject_reference",
+            "optional": true,
+            "type": "{ type: character, image: string[] }[]"
+          },
+          {
+            "key": "prompt_optimizer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fast_pretreatment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "512P | 720P | 768P | 1080P"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.generateV2",
+      "shortPath": "video.generateV2",
+      "description": "Create an H3 multimodal video generation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "MiniMax-H3 | MiniMax-H3-Max"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type: text | image_url | video_url | audio_url, text?: string, image_url?: { url: string }, video_url?: { url: string }, audio_url?: { url: string }, role?: first_frame | last_frame | reference_image | reference_video | reference_audio }[]"
+          },
+          {
+            "key": "resolution",
+            "optional": false,
+            "type": "480P | 768P | 2K"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ratio",
+            "optional": true,
+            "type": "adaptive | 21:9 | 16:9 | 4:3 | 1:1 | 3:4 | 9:16"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{ prompt_expansion_mode?: string }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.listV2",
+      "shortPath": "video.listV2",
+      "description": "List H3 video tasks from the last 7 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNum",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | running | succeeded | failed | cancelled"
+          },
+          {
+            "key": "taskIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taskType",
+            "optional": true,
+            "type": "generation | h3_context_ir | regeneration"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string, model?: string, status?: queued | running | succeeded | failed | cancelled, error?: { code?: string, message?: string }, created_at?: number, updated_at?: number, content?: { url?: string, prompt?: string }, resolution?: string, duration?: number, usage?: {}, ratio?: string, task_type?: generation | h3_context_ir | regeneration, modality?: video | text }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.query",
+      "shortPath": "video.query",
+      "description": "Query a Hailuo video generation task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Preparing | Queueing | Processing | Success | Fail"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "video_height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.queryV2",
+      "shortPath": "video.queryV2",
+      "description": "Query an H3 video task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id?: string, model?: string, status?: queued | running | succeeded | failed | cancelled, error?: { code?: string, message?: string }, created_at?: number, updated_at?: number, content?: { url?: string, prompt?: string }, resolution?: string, duration?: number, usage?: {}, ratio?: string, task_type?: generation | h3_context_ir | regeneration, modality?: video | text }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.regenerate",
+      "shortPath": "video.regenerate",
+      "description": "Create a 2K video regeneration task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "MiniMax-H3"
+          },
+          {
+            "key": "source_task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ type: text | image_url | video_url | audio_url, text?: string, image_url?: { url: string }, video_url?: { url: string }, audio_url?: { url: string }, role?: base_video | first_frame | last_frame | reference_image | reference_video | reference_audio }[]"
+          },
+          {
+            "key": "resolution",
+            "optional": false,
+            "type": "2K"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aigc_watermark",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.templateGenerate",
+      "shortPath": "video.templateGenerate",
+      "description": "Create a Video Agent task from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text_inputs",
+            "optional": true,
+            "type": "{ value: string }[]"
+          },
+          {
+            "key": "media_inputs",
+            "optional": true,
+            "type": "{ value: string }[]"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.video.templateQuery",
+      "shortPath": "video.templateQuery",
+      "description": "Query a Video Agent template generation task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Preparing | Queueing | Processing | Success | Fail"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.voice.clone",
+      "shortPath": "voice.clone",
+      "description": "Clone a voice from uploaded audio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clone_prompt",
+            "optional": true,
+            "type": "{ prompt_audio: number, prompt_text: string }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "speech-2.8-hd | speech-2.8-turbo | speech-2.6-hd | speech-2.6-turbo | speech-02-hd | speech-02-turbo | speech-01-hd | speech-01-turbo"
+          },
+          {
+            "key": "language_boost",
+            "optional": true,
+            "type": "Chinese | Chinese,Yue | English | Arabic | Russian | Spanish | French | Portuguese | German | Turkish | Dutch | Ukrainian | Vietnamese | Indonesian | Japanese | Italian | Korean | Thai | Polish | Romanian | Greek | Czech | Finnish | Hindi | Bulgarian | Danish | Hebrew | Malay | Persian | Slovak | Swedish | Croatian | Filipino | Hungarian | Norwegian | Slovenian | Catalan | Nynorsk | Tamil | Afrikaans | auto"
+          },
+          {
+            "key": "text_validation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accuracy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "need_noise_reduction",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "need_volume_normalization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aigc_watermark",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "demo_audio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_sensitive",
+            "optional": true,
+            "type": "{ type?: number }"
+          },
+          {
+            "key": "extra_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.voice.delete",
+      "shortPath": "voice.delete",
+      "description": "Delete a generated voice permanently [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_type",
+            "optional": false,
+            "type": "voice_cloning | voice_generation"
+          },
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.voice.design",
+      "shortPath": "voice.design",
+      "description": "Design a custom voice from a description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preview_text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trial_audio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "minimax.api.voice.list",
+      "shortPath": "voice.list",
+      "description": "List system, cloned and generated voices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_type",
+            "optional": false,
+            "type": "system | voice_cloning | voice_generation | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system_voice",
+            "optional": true,
+            "type": "{ voice_id: string, voice_name?: string, description?: string[], created_time?: string }[]"
+          },
+          {
+            "key": "voice_cloning",
+            "optional": true,
+            "type": "{ voice_id: string, voice_name?: string, description?: string[], created_time?: string }[]"
+          },
+          {
+            "key": "voice_generation",
+            "optional": true,
+            "type": "{ voice_id: string, voice_name?: string, description?: string[], created_time?: string }[]"
+          },
+          {
+            "key": "base_resp",
+            "optional": true,
+            "type": "{ status_code: number, status_msg?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

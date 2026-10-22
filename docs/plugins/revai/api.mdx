@@ -1,0 +1,184 @@
+---
+title: API
+description: "API reference for RevAI: every `revai.api.*` operation with input and output types."
+---
+
+Every `revai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Jobs
+
+### getJob
+
+`jobs.getJob`
+
+Get an async job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
+| `created_on` | `string` | No | — |
+| `completed_on` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
+| `metadata` | `string` | No | — |
+| `media_url` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `language` | `string` | No | — |
+| `transcriber` | `string` | No | — |
+| `failure` | `string` | No | — |
+| `failure_detail` | `string` | No | — |
+| `duration_seconds` | `number` | No | — |
+| `stream_duration_seconds` | `number` | No | — |
+| `delete_after_seconds` | `number` | No | — |
+| `skip_diarization` | `boolean` | No | — |
+| `skip_postprocessing` | `boolean` | No | — |
+| `skip_punctuation` | `boolean` | No | — |
+| `remove_disfluencies` | `boolean` | No | — |
+| `remove_atmospherics` | `boolean` | No | — |
+| `filter_profanity` | `boolean` | No | — |
+| `custom_vocabulary_id` | `string` | No | — |
+| `speaker_channels_count` | `number` | No | — |
+| `enable_multilingual` | `boolean` | No | — |
+
+
+
+---
+
+### getTranscript
+
+`jobs.getTranscript`
+
+Get transcript of a job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  monologues: {
+    speaker?: number,
+    elements: {
+      type: string,
+      value: string,
+      ts?: number | null,
+      end_ts?: number | null,
+      confidence?: number | null
+    }[]
+  }[]
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### submitJob
+
+`jobs.submitJob`
+
+Submit an async job
+
+**Risk:** `write`
+
+```ts
+await corsair.revai.api.jobs.submitJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_url` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+| `language` | `string` | No | — |
+| `notification_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="notification_config full type">
+
+```ts
+{
+  url: string,
+  auth_headers?: {
+    Authorization: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `in_progress \| transcribed \| failed` | No | — |
+| `created_on` | `string` | No | — |
+| `completed_on` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `async \| human_tc \| stream` | No | — |
+| `metadata` | `string` | No | — |
+| `media_url` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `language` | `string` | No | — |
+| `transcriber` | `string` | No | — |
+| `failure` | `string` | No | — |
+| `failure_detail` | `string` | No | — |
+| `duration_seconds` | `number` | No | — |
+| `stream_duration_seconds` | `number` | No | — |
+| `delete_after_seconds` | `number` | No | — |
+| `skip_diarization` | `boolean` | No | — |
+| `skip_postprocessing` | `boolean` | No | — |
+| `skip_punctuation` | `boolean` | No | — |
+| `remove_disfluencies` | `boolean` | No | — |
+| `remove_atmospherics` | `boolean` | No | — |
+| `filter_profanity` | `boolean` | No | — |
+| `custom_vocabulary_id` | `string` | No | — |
+| `speaker_channels_count` | `number` | No | — |
+| `enable_multilingual` | `boolean` | No | — |
+
+
+
+---
+

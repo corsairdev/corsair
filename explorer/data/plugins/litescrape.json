@@ -1,0 +1,3424 @@
+{
+  "id": "litescrape",
+  "displayName": "LiteScrape",
+  "description": "Search, maps, reviews and web-data scraping API (Google, Bing, DuckDuckGo, Apple, Yelp, Tripadvisor and app stores).",
+  "npmPackageName": "@corsair-dev/litescrape",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "litescrape.api.appleAppStore.product",
+      "shortPath": "appleAppStore.product",
+      "description": "Get an Apple App Store product page with version history and privacy labels (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "app"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "version_history",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "ratings_and_reviews",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "iphone_screenshots",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "ipad_screenshots",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "featured_in",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "more_by_this_developer",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "you_may_also_like",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.appleAppStore.reviews",
+      "shortPath": "appleAppStore.reviews",
+      "description": "Get Apple App Store reviews, newest or most helpful first (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "mostrecent | mosthelpful"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.appleAppStore.search",
+      "shortPath": "appleAppStore.search",
+      "description": "Search the Apple App Store for apps with developer, price and rating (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "term",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "disallow_explicit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "property",
+            "optional": true,
+            "type": "developer"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "mobile | tablet | desktop"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.appleMaps.places",
+      "shortPath": "appleMaps.places",
+      "description": "Get Apple Maps places by MUID with address, hours and ratings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "muid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "place_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.appleMaps.reviews",
+      "shortPath": "appleMaps.reviews",
+      "description": "Get Apple Maps rating summary and written reviews by MUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "muid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "place_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "rating_summary",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ratings",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.bing.maps",
+      "shortPath": "bing.maps",
+      "description": "Get Bing Maps listings by query or one place by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "setlang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "local_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "place_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.bing.search",
+      "shortPath": "bing.search",
+      "description": "Search Bing for organic results, knowledge cards and rich modules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mkt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "safeSearch",
+            "optional": true,
+            "type": "off | moderate | strict"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, snippet?: string, displayed_link?: string, source?: string, date?: string }[]"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{ title?: string, type?: string, kgmid?: string, description?: string }"
+          },
+          {
+            "key": "knowledge_graph_list",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.duckduckgo.maps",
+      "shortPath": "duckduckgo.maps",
+      "description": "Get DuckDuckGo Maps places within a bounding box",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "strict_bbox",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "local_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.duckduckgo.search",
+      "shortPath": "duckduckgo.search",
+      "description": "Search DuckDuckGo for organic results with region and safe-search controls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "1 | -1 | -2"
+          },
+          {
+            "key": "df",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "m",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_assist",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, snippet?: string, displayed_link?: string, source?: string, date?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.ads",
+      "shortPath": "google.ads",
+      "description": "Get Google text, local and shopping ads plus the rest of the results page (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "active | off"
+          },
+          {
+            "key": "nfpr",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ads",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "local_ads",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, description?: string }[]"
+          },
+          {
+            "key": "shopping_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, snippet?: string, displayed_link?: string, source?: string, date?: string }[]"
+          },
+          {
+            "key": "related_questions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{ title?: string, value?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.aiMode",
+      "shortPath": "google.aiMode",
+      "description": "Ask Google AI Mode a question and get text blocks with cited references",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "continuable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subsequent_request_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text_blocks",
+            "optional": true,
+            "type": "{ type?: string, text?: string }[]"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ title?: string, link?: string, snippet?: string }[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.aiOverview",
+      "shortPath": "google.aiOverview",
+      "description": "Get Google's AI Overview for a query as text blocks and cited references",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ludocid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kgmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lsig",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "si",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ibp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color_scheme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "tbs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "active | off"
+          },
+          {
+            "key": "nfpr",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "pws",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "peek_pws",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "tbm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_dt",
+            "optional": true,
+            "type": "i | e"
+          },
+          {
+            "key": "as_epq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_eq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_lq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_nlo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_nhi",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_oq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_qdr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_rq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_sitesearch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gs_lp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sclient",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ai_overview",
+            "optional": true,
+            "type": "{ text_blocks?: {}[], references?: {}[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.local",
+      "shortPath": "google.local",
+      "description": "Get Google local results with rating, reviews, category, address and place IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ludocid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tbs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "local_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "local_map",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "discover_more_places",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.search",
+      "shortPath": "google.search",
+      "description": "Search Google for organic results, Knowledge Graph, related searches and the AI Overview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fast_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ludocid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kgmid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lsig",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "si",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ibp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color_scheme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "tbs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "active | off"
+          },
+          {
+            "key": "nfpr",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "pws",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "peek_pws",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "tbm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_dt",
+            "optional": true,
+            "type": "i | e"
+          },
+          {
+            "key": "as_epq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_eq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_lq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_nlo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_nhi",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "as_oq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_qdr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_rq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "as_sitesearch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oq",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gs_lp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sclient",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, snippet?: string, displayed_link?: string, source?: string, date?: string }[]"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "{ title?: string, type?: string, kgmid?: string, description?: string }"
+          },
+          {
+            "key": "ai_overview",
+            "optional": true,
+            "type": "{ text_blocks?: {}[], references?: {}[] }"
+          },
+          {
+            "key": "related_questions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "{ title?: string, value?: string }[]"
+          },
+          {
+            "key": "shopping_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "immersive_products",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "perspectives",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.shopping",
+      "shortPath": "google.shopping",
+      "description": "Get Google Shopping products with price, merchant, rating and delivery",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shoprs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "on_sale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "free_shipping",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "small_business",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "shopping_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "categorized_shopping_results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ title?: string, value?: string }[]"
+          },
+          {
+            "key": "carousel_filters",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.google.shoppingProduct",
+      "shortPath": "google.shoppingProduct",
+      "description": "Get one Google Shopping product page with every merchant offer and specification",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gpcid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline_offer_docid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_docid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "product_result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "offers",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "related_products",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "product_reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.contributorReviews",
+      "shortPath": "googleMaps.contributorReviews",
+      "description": "Get the public review history for one Google Maps contributor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contributor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "contributor",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.photoMeta",
+      "shortPath": "googleMaps.photoMeta",
+      "description": "Get the place, contributor and date of a Google Maps photo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "place_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "contributor",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.popularTimes",
+      "shortPath": "googleMaps.popularTimes",
+      "description": "See how busy a Google Maps place is right now",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "popular_times",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.posts",
+      "shortPath": "googleMaps.posts",
+      "description": "Read the posts published by a Google Maps business",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "posts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.reviews",
+      "shortPath": "googleMaps.reviews",
+      "description": "Get Google Maps reviews with rating, text, author, date and likes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "qualityScore | newestFirst | ratingHigh | ratingLow"
+          },
+          {
+            "key": "topic_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_metadata",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "place_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googleMaps.search",
+      "shortPath": "googleMaps.search",
+      "description": "Get Google Maps places by query or one place by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "search | place"
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_cid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ll",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "z",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "m",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nearby",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_rating",
+            "optional": true,
+            "type": "2.0 | 2.5 | 3.0 | 3.5 | 4.0 | 4.5"
+          },
+          {
+            "key": "open_state",
+            "optional": true,
+            "type": "now | 24h"
+          },
+          {
+            "key": "open_on_day",
+            "optional": true,
+            "type": "mon | tue | wed | thu | fri | sat | sun"
+          },
+          {
+            "key": "open_at_hour",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "local_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "place_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.apps",
+      "shortPath": "googlePlay.apps",
+      "description": "Search and browse Google Play apps with charts, categories and storefronts (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apps_category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_device",
+            "optional": true,
+            "type": "phone | tablet | tv | chromebook | watch | car"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "AGE_RANGE1 | AGE_RANGE2 | AGE_RANGE3"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "see_more_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "app_highlight",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "items_highlight",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "charts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.books",
+      "shortPath": "googlePlay.books",
+      "description": "Browse Google Play ebooks and audiobooks with categories and charts (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "books_category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "AGE_RANGE1 | AGE_RANGE2 | AGE_RANGE3"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "1 | 2"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "see_more_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "charts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.games",
+      "shortPath": "googlePlay.games",
+      "description": "Browse Google Play games by category, chart and device (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "games_category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_device",
+            "optional": true,
+            "type": "phone | tablet | tv | chromebook | watch | windows"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "see_more_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "items_highlight",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "charts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.movies",
+      "shortPath": "googlePlay.movies",
+      "description": "Browse Google Play movies, shows and episodes with categories and charts (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "movies_category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "AGE_RANGE1 | AGE_RANGE2 | AGE_RANGE3"
+          },
+          {
+            "key": "chart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "see_more_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, link?: string, price?: string, merchant?: string, rating?: number, reviews?: number, thumbnail?: string }[]"
+          },
+          {
+            "key": "charts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.product",
+      "shortPath": "googlePlay.product",
+      "description": "Get a Google Play product page with ratings, permissions, media and reviews (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "apps | books | audiobooks | movies | tv"
+          },
+          {
+            "key": "season_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "product_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "about_this_app",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ratings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "data_safety",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "developer_contact",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "similar_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.googlePlay.reviews",
+      "shortPath": "googlePlay.reviews",
+      "description": "Get Google Play reviews filtered by rating and platform (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "apps | books | audiobooks | movies | tv"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "phone | tablet | watch | chromebook | tv"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "litescrape_pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.keys.status",
+      "shortPath": "keys.status",
+      "description": "Get LiteScrape key status, remaining calls and concurrency limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "remaining_calls",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "concurrency_limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zdr_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "zdr_available",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.tripadvisor.place",
+      "shortPath": "tripadvisor.place",
+      "description": "Get Tripadvisor place details by place ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tripadvisor_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geo_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "place_results",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.tripadvisor.reviews",
+      "shortPath": "tripadvisor.reviews",
+      "description": "Get Tripadvisor reviews sorted by recency or relevance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tripadvisor_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "recent | relevance"
+          },
+          {
+            "key": "translate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.tripadvisor.search",
+      "shortPath": "tripadvisor.search",
+      "description": "Search Tripadvisor hotels, restaurants and attractions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tripadvisor_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geo_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "place_type",
+            "optional": true,
+            "type": "all | accommodation | attraction | attraction_product | eatery | geo"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "map_previews",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.web.fetch",
+      "shortPath": "web.fetch",
+      "description": "Render a public web page and return it as Markdown, HTML or text (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "respond_with",
+            "optional": true,
+            "type": "markdown | html | text"
+          },
+          {
+            "key": "target_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retain_links",
+            "optional": true,
+            "type": "none | all | text | gpt-oss"
+          },
+          {
+            "key": "retain_images",
+            "optional": true,
+            "type": "none | all | alt"
+          },
+          {
+            "key": "with_iframe",
+            "optional": true,
+            "type": "true | false | quoted"
+          },
+          {
+            "key": "with_shadow_dom",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "respond_timing",
+            "optional": true,
+            "type": "html | visible-content | mutation-idle | resource-idle | media-idle | network-idle"
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.web.screenshot",
+      "shortPath": "web.screenshot",
+      "description": "Capture a web page screenshot as a PNG download URL (Alpha)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "respond_timing",
+            "optional": true,
+            "type": "html | visible-content | mutation-idle | resource-idle | media-idle | network-idle"
+          },
+          {
+            "key": "wait_for_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_overlay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detach_invisibles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "assert_status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "robots_txt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "screenshot_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.yelp.reviews",
+      "shortPath": "yelp.reviews",
+      "description": "Get Yelp reviews with rating, text, reviewer and owner replies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "yelp_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortby",
+            "optional": true,
+            "type": "relevance_desc | date_desc | date_asc | rating_desc | rating_asc | elites_desc"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{ position?: number, rating?: number, title?: string, snippet?: string, text?: string, date?: string, author?: string, reviewer?: string, likes?: number }[]"
+          },
+          {
+            "key": "review_languages",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "litescrape.api.yelp.search",
+      "shortPath": "yelp.search",
+      "description": "Search Yelp businesses with rating, reviews, categories and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "find_desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "find_loc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "yelp_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cflt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortby",
+            "optional": true,
+            "type": "recommended | rating | review_count"
+          },
+          {
+            "key": "attrs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": true,
+            "type": "{ id?: string, status?: string, total_time_taken?: number, google_url?: string, bing_url?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "ads_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, place_id?: string, data_id?: string, type?: string, address?: string, phone?: string, website?: string, rating?: number, reviews?: number }[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ title?: string, value?: string }[]"
+          },
+          {
+            "key": "related_links",
+            "optional": true,
+            "type": "{ title?: string, link?: string, snippet?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string, next_page_token?: string, page?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
