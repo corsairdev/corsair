@@ -24,18 +24,21 @@ const requestMock = request as unknown as jest.Mock;
 type EndpointFn = (ctx: DnsfilterContext, input: unknown) => Promise<unknown>;
 type EndpointKey = keyof typeof DnsfilterEndpointInputSchemas;
 
-function collectEndpoints(): Array<[EndpointKey, EndpointFn]> {
-	const endpoints: Array<[EndpointKey, EndpointFn]> = [];
+function collectEndpoints(): Map<EndpointKey, EndpointFn> {
+	const endpoints = new Map<EndpointKey, EndpointFn>();
 	for (const group of Object.values(endpointGroups)) {
 		if (typeof group !== 'object' || group === null) continue;
 		for (const [name, value] of Object.entries(group)) {
 			if (typeof value === 'function') {
-				endpoints.push([name as EndpointKey, value as EndpointFn]);
+				endpoints.set(name as EndpointKey, value as EndpointFn);
 			}
 		}
 	}
 	return endpoints;
 }
+
+const endpoints = collectEndpoints();
+const endpointKeys = [...endpoints.keys()].sort();
 
 function createContext(db: Record<string, unknown> = {}): DnsfilterContext {
 	return {
@@ -77,43 +80,67 @@ function sampleOutput(key: EndpointKey): unknown {
 	return undefined;
 }
 
-const endpoints = collectEndpoints();
-
 describe('DNSFilter endpoint surface', () => {
 	beforeEach(() => {
 		requestMock.mockReset();
 		requestMock.mockResolvedValue({ data: [] });
 	});
 
-	it('exposes all 248 JSON operations from the public spec', () => {
-		expect(endpoints).toHaveLength(248);
+	it('exposes all 248 JSON operations across 46 resource groups', () => {
+		const groups = Object.values(endpointGroups).filter(
+			(value) =>
+				typeof value === 'object' &&
+				value !== null &&
+				Object.values(value).every((entry) => typeof entry === 'function'),
+		);
+
+		expect(endpoints.size).toBe(248);
+		expect(groups).toHaveLength(46);
 		expect(Networks.networksGet).toBeDefined();
 		expect(UnblockRequests.unblockRequestsDecision).toBeDefined();
 	});
+});
 
-	it('validates input and output for every operation', async () => {
-		const ctx = createContext();
-		let requestCount = 0;
-		let validationCount = 0;
+// One case per operation: required inputs are rejected before the transport,
+// while optional-input operations hit the mocked transport and parse the result.
+describe.each(endpointKeys)('endpoint %s', (key) => {
+	beforeEach(() => {
+		requestMock.mockReset();
+		requestMock.mockResolvedValue({ data: [] });
+	});
 
-		for (const [key, endpoint] of endpoints) {
-			const inputSchema = DnsfilterEndpointInputSchemas[key];
-			if (!inputSchema.safeParse({}).success) {
-				await expect(endpoint(ctx, {})).rejects.toBeInstanceOf(z.ZodError);
-				validationCount += 1;
-				continue;
-			}
-			requestMock.mockResolvedValueOnce(sampleOutput(key));
-			await endpoint(ctx, {});
-			requestCount += 1;
+	it('validates input, calls the API, and parses the response', async () => {
+		const endpoint = endpoints.get(key);
+		const inputSchema = DnsfilterEndpointInputSchemas[key];
+		const outputSchema = DnsfilterEndpointOutputSchemas[key];
+
+		expect(endpoint).toBeDefined();
+		expect(inputSchema).toBeDefined();
+		expect(outputSchema).toBeDefined();
+
+		if (!inputSchema.safeParse({}).success) {
+			await expect(endpoint?.(createContext(), {})).rejects.toBeInstanceOf(
+				z.ZodError,
+			);
+			expect(requestMock).not.toHaveBeenCalled();
+			return;
 		}
 
-		expect(validationCount).toBeGreaterThan(0);
-		expect(requestCount).toBeGreaterThan(0);
-		for (const [, options] of requestMock.mock.calls) {
-			expect(options.url).toMatch(/^\/v[12]\//);
-			expect(options.method).toMatch(/^(GET|POST|PATCH|PUT|DELETE)$/);
-		}
+		requestMock.mockResolvedValueOnce(sampleOutput(key));
+		const result = await endpoint?.(createContext(), {});
+
+		expect(requestMock).toHaveBeenCalledTimes(1);
+		const options = lastRequestOptions();
+		expect(options.url).toMatch(/^\/v[12]\//);
+		expect(options.method).toMatch(/^(GET|POST|PATCH|PUT|DELETE)$/);
+		expect(outputSchema.safeParse(result).success).toBe(true);
+	});
+});
+
+describe('DNSFilter request wiring', () => {
+	beforeEach(() => {
+		requestMock.mockReset();
+		requestMock.mockResolvedValue({ data: [] });
 	});
 
 	it('rejects input that does not satisfy the operation schema', async () => {
